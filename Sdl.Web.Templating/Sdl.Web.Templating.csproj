@@ -64,7 +64,8 @@
     <Compile Include="ExtensionMethods\GeneralExtensionMethods.cs" />
     <Compile Include="ExtensionMethods\ItemFieldsExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PublishConfiguration.cs" />
+    <Compile Include="PublishVersion.cs" />
+    <Compile Include="RenderComponentPresentations.cs" />
     <Compile Include="TemplateBase\TemplateBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

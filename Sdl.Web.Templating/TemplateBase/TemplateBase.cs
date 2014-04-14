@@ -434,6 +434,18 @@ namespace Sdl.Web.ContentManagement.Templating
             return XmlElementToTcmUriList(orgItem.GetListItems(filter));
         }
 
+        protected OrganizationalItem GetChildOrganizationalItem(OrganizationalItem root, string title)
+        {
+            foreach (var child in this.GetOrganizationalItemContents(root, root is Folder ? ItemType.Folder : ItemType.StructureGroup, false))
+            {
+                if (child.Value.ToLower() == title.ToLower())
+                {
+                    return (OrganizationalItem)m_Engine.GetObject(child.Key);
+                }
+            }
+            return null;
+        }
+
         protected List<KeyValuePair<TcmUri, string>> GetUsingItems(RepositoryLocalObject subject, ItemType itemType)
         {
             UsingItemsFilter filter = new UsingItemsFilter(m_Engine.GetSession());

@@ -26,6 +26,9 @@ namespace Sdl.Web.ContentManagement.Templating
         private TemplatingLogger m_Logger;
         protected int m_RenderContext = -1;
 
+        protected const string JSON_MIMETYPE = "application/json";
+        protected const string JSON_EXTENSION = ".json";
+
         protected TemplatingLogger Logger
         {
             get
@@ -225,6 +228,17 @@ namespace Sdl.Web.ContentManagement.Templating
                 }
                 return templateUri;
             }
+        }
+
+        protected bool IsMasterWebPublication()
+        {
+            var publication = this.GetPublication();
+            //TODO - possibly need to extend with metadata or something for the case we have a non-published parent and all children at same level - one publication should be leading
+            if (publication.PublicationUrl == "" || publication.PublicationUrl == "/")
+            {
+                return true;
+            }
+            return false;
         }
 
         #endregion

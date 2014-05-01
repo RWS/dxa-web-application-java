@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 
-namespace Sdl.Web.ContentManagement.ExtensionMethods
+namespace Sdl.Web.Templating.ExtensionMethods
 {
     public static class GeneralExtensionMethods
     {

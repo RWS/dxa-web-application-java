@@ -212,6 +212,7 @@ namespace Sdl.Web.Templating
 
                         // TODO: serialize schema fields xml to json in a smart way
                         StringBuilder fields = new StringBuilder();
+                        // adding some dummy data
                         fields.AppendFormat("{0}:{1}", Json.Encode("s:articleHeadline"), Json.Encode("xpath/of/headline/field"));
                         fields.AppendFormat(",{0}:{1}", Json.Encode("s:articleBody"), Json.Encode("xpath/of/body/field"));
                         string fieldsJson = string.Format("{0}:{{{1}}}", Json.Encode("fields"), fields);

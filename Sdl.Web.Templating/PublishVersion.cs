@@ -84,6 +84,7 @@ namespace Sdl.Web.Templating
             }
             List<string> files = new List<string>();
             Component allComponent = null;
+            bool isArray = false;
             foreach (var item in GetOrganizationalItemContents(folder, ItemType.Component, false))
             {
                 var comp = (Component)MEngine.GetObject(item.Key.ToString());
@@ -103,15 +104,19 @@ namespace Sdl.Web.Templating
                         switch (configType)
                         {
                             case TemplateConfigName:
+                                isArray = false;
                                 settings = ReadTemplateData();
                                 break;
                             case SchemasConfigName:
+                                isArray = false;
                                 settings = ReadSchemaData();
                                 break;
                             case TaxonomiesConfigName:
+                                isArray = false;
                                 settings = ReadTaxonomiesData();
                                 break;
                             case MappingsConfigName:
+                                isArray = true;
                                 settings = ReadMappingsData();
                                 break;
                         }
@@ -124,7 +129,15 @@ namespace Sdl.Web.Templating
                 //Add all the JSON files to the package and publish them as binaries
                 foreach (var key in settings.Keys)
                 {
-                    Item jsonItem = MPackage.CreateStringItem(ContentType.Text, String.Format("{{{0}}}", String.Join(",\n", settings[key])));
+                    Item jsonItem;
+                    if (isArray)
+                    {
+                        jsonItem = MPackage.CreateStringItem(ContentType.Text, String.Format("[{0}]", String.Join(",\n", settings[key]))); 
+                    }
+                    else
+                    {
+                        jsonItem = MPackage.CreateStringItem(ContentType.Text, String.Format("{{{0}}}", String.Join(",\n", settings[key])));
+                    }
                     var filename = key + JsonExtension;
                     MPackage.PushItem(type + "/" + filename, jsonItem);
                     var binary = MEngine.PublishingContext.RenderedItem.AddBinary(jsonItem.GetAsStream(), filename, sg, key, comp, JsonMimetype);
@@ -180,7 +193,7 @@ namespace Sdl.Web.Templating
                 XElement vocabulariesXml = XElement.Parse(Encoding.Unicode.GetString(globalAppData.Data));
                 foreach (var vocabulary in vocabulariesXml.Elements())
                 {
-                    res[VocabulariesConfigName].Add(String.Format("{0}:{1}", Json.Encode(vocabulary.Attribute("prefix").Value), Json.Encode(vocabulary.Attribute("name").Value)));
+                    res[VocabulariesConfigName].Add(String.Format("{{{0}:{1}}}", Json.Encode(vocabulary.Attribute("prefix").Value), Json.Encode(vocabulary.Attribute("name").Value)));
                 }
             }
 
@@ -203,20 +216,41 @@ namespace Sdl.Web.Templating
                     var module = GetModuleName(schema.WebDavUrl);
                     if (module != null)
                     {
-                        var key = module + "." + MappingsConfigName;
+                        var key = module + "." + SchemasConfigName;
                         if (!res.ContainsKey(key))
                         {
                             res.Add(key, new List<string>());
                         }
                         //res[key].Add(String.Format("{0}:{1}", Json.Encode(GetKeyFromSchema(schema)), Json.Encode(schema.Id.ItemId)));
 
-                        // TODO: serialize schema fields xml to json in a smart way
-                        StringBuilder fields = new StringBuilder();
-                        // adding some dummy data
-                        fields.AppendFormat("{0}:{1}", Json.Encode("s:articleHeadline"), Json.Encode("xpath/of/headline/field"));
-                        fields.AppendFormat(",{0}:{1}", Json.Encode("s:articleBody"), Json.Encode("xpath/of/body/field"));
-                        string fieldsJson = string.Format("{0}:{{{1}}}", Json.Encode("fields"), fields);
+                        //// TODO: serialize schema fields xml to json in a smart way
+                        //StringBuilder fields = new StringBuilder();
+                        //// adding some dummy data
+                        //fields.AppendFormat("{0}:{1}", Json.Encode("s:articleHeadline"), Json.Encode("xpath/of/headline/field"));
+                        //fields.AppendFormat(",{0}:{1}", Json.Encode("s:articleBody"), Json.Encode("xpath/of/body/field"));
+                        //string fieldsJson = string.Format("{0}:{{{1}}}", Json.Encode("fields"), fields);
 
+                        //// add schema typeof from appdata
+                        //ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
+                        //if (appData != null)
+                        //{
+                        //    string typeOf = Encoding.Unicode.GetString(appData.Data);
+                        //    if (!string.IsNullOrEmpty(typeOf))
+                        //    {
+                        //        fieldsJson = string.Format("{0}:{1},{2}", Json.Encode("typeof"), Json.Encode(typeOf), fieldsJson);
+                        //    }
+                        //}
+                        //string contents = string.Format("{{{0}:{1},{2}}}", Json.Encode("key"), Json.Encode(GetKeyFromSchema(schema)), fieldsJson);
+                        //res[key].Add(string.Format("{0}:{1}", Json.Encode(string.Format("tcm:0-{0}-8", schema.Id.ItemId)), contents));
+
+                        StringBuilder fields = new StringBuilder();
+                        // field: {"isMultiValue":true,"semantics":[],"fields":[]}
+
+                        
+                        StringBuilder semantics = new StringBuilder();
+                        // schema semantics: {"vocab":"s","entity":"Article"}
+                        // field semantics: {"vocab":"s","property":"headline"}
+                        
                         // add schema typeof from appdata
                         ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
                         if (appData != null)
@@ -224,11 +258,29 @@ namespace Sdl.Web.Templating
                             string typeOf = Encoding.Unicode.GetString(appData.Data);
                             if (!string.IsNullOrEmpty(typeOf))
                             {
-                                fieldsJson = string.Format("{0}:{1},{2}", Json.Encode("typeof"), Json.Encode(typeOf), fieldsJson);
+                                // typeOf = "s:Article" but can also be "s:Article,x:Something"
+                                string[] values = typeOf.Split(',');
+                                bool first = true;
+                                foreach (var value in values)
+                                {
+                                    string[] parts = value.Split(':');
+                                    if (first)
+                                    {
+                                        semantics.AppendFormat("{{{0}:{1},{2}:{3}}}", Json.Encode("vocab"), Json.Encode(parts[0]), Json.Encode("entity"), Json.Encode(parts[1]));
+                                        first = false;
+                                    }
+                                    else
+                                    {
+                                        semantics.AppendFormat(",{{{0}:{1},{2}:{3}}}", Json.Encode("vocab"), Json.Encode(parts[0]), Json.Encode("entity"), Json.Encode(parts[1]));                                                                            
+                                    }
+                                }
                             }
                         }
-                        string contents = string.Format("{{{0}:{1},{2}}}", Json.Encode("key"), Json.Encode(GetKeyFromSchema(schema)), fieldsJson);
-                        res[key].Add(string.Format("{0}:{1}", Json.Encode(string.Format("tcm:0-{0}-8", schema.Id.ItemId)), contents));
+
+                        res[key].Add(string.Format("{{{0}:{1},{2}:{3},{4}:[{5}],{6}:[{7}]}}", 
+                            Json.Encode("id"), Json.Encode(schema.Id.ItemId),
+                            Json.Encode("rootElement"), Json.Encode(schema.RootElementName),
+                            Json.Encode("fields"), fields, Json.Encode("semantics"), semantics));
                     }
                 }
             }

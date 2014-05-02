@@ -221,70 +221,105 @@ namespace Sdl.Web.Templating
                         {
                             res.Add(key, new List<string>());
                         }
-                        //res[key].Add(String.Format("{0}:{1}", Json.Encode(GetKeyFromSchema(schema)), Json.Encode(schema.Id.ItemId)));
 
-                        //// TODO: serialize schema fields xml to json in a smart way
-                        //StringBuilder fields = new StringBuilder();
-                        //// adding some dummy data
-                        //fields.AppendFormat("{0}:{1}", Json.Encode("s:articleHeadline"), Json.Encode("xpath/of/headline/field"));
-                        //fields.AppendFormat(",{0}:{1}", Json.Encode("s:articleBody"), Json.Encode("xpath/of/body/field"));
-                        //string fieldsJson = string.Format("{0}:{{{1}}}", Json.Encode("fields"), fields);
-
-                        //// add schema typeof from appdata
-                        //ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
-                        //if (appData != null)
-                        //{
-                        //    string typeOf = Encoding.Unicode.GetString(appData.Data);
-                        //    if (!string.IsNullOrEmpty(typeOf))
-                        //    {
-                        //        fieldsJson = string.Format("{0}:{1},{2}", Json.Encode("typeof"), Json.Encode(typeOf), fieldsJson);
-                        //    }
-                        //}
-                        //string contents = string.Format("{{{0}:{1},{2}}}", Json.Encode("key"), Json.Encode(GetKeyFromSchema(schema)), fieldsJson);
-                        //res[key].Add(string.Format("{0}:{1}", Json.Encode(string.Format("tcm:0-{0}-8", schema.Id.ItemId)), contents));
-
-                        StringBuilder fields = new StringBuilder();
-                        // field: {"isMultiValue":true,"semantics":[],"fields":[]}
-
-                        
-                        StringBuilder semantics = new StringBuilder();
-                        // schema semantics: {"vocab":"s","entity":"Article"}
-                        // field semantics: {"vocab":"s","property":"headline"}
-                        
                         // add schema typeof from appdata
+                        StringBuilder schemaSemantics = new StringBuilder();
                         ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
                         if (appData != null)
                         {
                             string typeOf = Encoding.Unicode.GetString(appData.Data);
-                            if (!string.IsNullOrEmpty(typeOf))
+                            schemaSemantics.Append(BuildSemanticsJson(typeOf, "vocab", "entity"));
+                        }
+
+                        // TODO: serialize schema fields xml to json in a smart way
+                        // field: {"name":"something","isMultiValue":true,"semantics":[],"fields":[]}
+                        // field semantics: {"vocab":"s","property":"headline"}
+                        StringBuilder fields = new StringBuilder();
+
+                        // load namespace manager with schema namespaces
+                        XmlNamespaceManager nsmgr = new XmlNamespaceManager(schema.Xsd.OwnerDocument.NameTable);
+                        nsmgr.AddNamespace("xsd", "http://www.w3.org/2001/XMLSchema");
+                        nsmgr.AddNamespace("tcm", "http://www.tridion.com/ContentManager/5.0");
+                        nsmgr.AddNamespace("mapping", "http://www.sdl.com/tridion/SemanticMapping");
+
+                        // loop over all field elements in schema
+                        bool first = true;
+                        foreach (XmlNode fieldNode in schema.Xsd.SelectNodes(string.Format("/xsd:schema/xsd:element[@name='{0}']/xsd:complexType/xsd:sequence/xsd:element", schema.RootElementName), nsmgr))
+                        {
+                            if (first)
                             {
-                                // typeOf = "s:Article" but can also be "s:Article,x:Something"
-                                string[] values = typeOf.Split(',');
-                                bool first = true;
-                                foreach (var value in values)
-                                {
-                                    string[] parts = value.Split(':');
-                                    if (first)
-                                    {
-                                        semantics.AppendFormat("{{{0}:{1},{2}:{3}}}", Json.Encode("vocab"), Json.Encode(parts[0]), Json.Encode("entity"), Json.Encode(parts[1]));
-                                        first = false;
-                                    }
-                                    else
-                                    {
-                                        semantics.AppendFormat(",{{{0}:{1},{2}:{3}}}", Json.Encode("vocab"), Json.Encode(parts[0]), Json.Encode("entity"), Json.Encode(parts[1]));                                                                            
-                                    }
-                                }
+                                first = false;
                             }
+                            else
+                            {
+                                fields.Append(",");
+                            }
+                            StringBuilder fieldSemantics = new StringBuilder();
+                            StringBuilder embeddedFields = new StringBuilder();
+
+                            // if maxOccurs is anything else than 1, it is a multi value field
+                            bool isMultiValue = !fieldNode.Attributes["maxOccurs"].Value.Equals("1");
+
+                            // read semantic mapping from field
+                            // schema semantics: {"vocab":"s","entity":"Article"}
+                            XmlNode propertyNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:property", nsmgr);
+                            string property = propertyNode != null ? propertyNode.InnerText : null;
+                            fieldSemantics.Append(BuildSemanticsJson(property, "vocab", "property"));
+
+                            XmlNode typeOfNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:typeof", nsmgr);
+                            string typeOf = typeOfNode != null ? typeOfNode.InnerText : null;
+                            if (fieldSemantics.Length > 0 && !string.IsNullOrEmpty(typeOf))
+                            {
+                                fieldSemantics.Append(",");
+                                fieldSemantics.Append(BuildSemanticsJson(typeOf, "vocab", "entity"));
+                            }
+
+                            // TODO: handle embedded fields
+
+                            fields.AppendFormat("{{{0}:{1},{2}:{3},{4}:[{5}],{6}:[{7}]}}", 
+                                Json.Encode("name"), Json.Encode(fieldNode.Attributes["name"].Value), 
+                                Json.Encode("isMultiValue"), Json.Encode(isMultiValue), 
+                                Json.Encode("semantics"), fieldSemantics, 
+                                Json.Encode("fields"), embeddedFields);
                         }
 
                         res[key].Add(string.Format("{{{0}:{1},{2}:{3},{4}:[{5}],{6}:[{7}]}}", 
                             Json.Encode("id"), Json.Encode(schema.Id.ItemId),
                             Json.Encode("rootElement"), Json.Encode(schema.RootElementName),
-                            Json.Encode("fields"), fields, Json.Encode("semantics"), semantics));
+                            Json.Encode("fields"), fields, Json.Encode("semantics"), schemaSemantics));
                     }
                 }
             }
             return res;
+        }
+
+        // schema semantics: {"vocab":"s","entity":"Article"}
+        // field semantics: {"vocab":"s","property":"headline"}
+        // semantics: {"prefixName":"a","itemName":"b"},{"prefixName":"c","itemName":"d"}
+        private static string BuildSemanticsJson(string input, string prefixName, string itemName)
+        {
+            StringBuilder semantics = new StringBuilder();
+            if (!string.IsNullOrEmpty(input))
+            {
+                // input = "s:Article" but can also be "s:Article,x:Something"
+                string[] values = input.Split(',');
+                bool first = true;
+                foreach (var value in values)
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        semantics.Append(",");
+                    }
+                    string[] parts = value.Split(':');
+                    semantics.AppendFormat("{{{0}:{1},{2}:{3}}}", Json.Encode(prefixName), Json.Encode(parts[0]), Json.Encode(itemName), Json.Encode(parts[1]));
+                }
+            }
+
+            return semantics.ToString();
         }
 
         private Dictionary<string, List<string>> ReadTaxonomiesData()

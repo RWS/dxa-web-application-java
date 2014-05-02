@@ -267,23 +267,16 @@ namespace Sdl.Web.Templating
         // field semantics: {"vocab":"s","property":"headline"}
         private string BuildSchemaFieldsJson(Schema schema, XmlNamespaceManager nsmgr, bool embedded = false)
         {
-            StringBuilder schemaSemantics = new StringBuilder();
-            if (embedded)
-            {
-                // add schema typeof from appdata for embedded schemas
-                ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
-                if (appData != null)
-                {
-                    string typeOf = Encoding.Unicode.GetString(appData.Data);
-                    schemaSemantics.Append(BuildSemanticsJson(typeOf, "vocab", "entity"));
-                }                
-            }
-
             StringBuilder fields = new StringBuilder();
 
             // loop over all field elements in schema
             bool first = true;
-            foreach (XmlNode fieldNode in schema.Xsd.SelectNodes(string.Format("/xsd:schema/xsd:element[@name='{0}']/xsd:complexType/xsd:sequence/xsd:element", schema.RootElementName), nsmgr))
+            string xpath = string.Format("/xsd:schema/xsd:element[@name='{0}']/xsd:complexType/xsd:sequence/xsd:element", schema.RootElementName);
+            if (embedded)
+            {
+                xpath = string.Format("/xsd:schema/xsd:complexType[@name='{0}']/xsd:sequence/xsd:element", schema.RootElementName);
+            }
+            foreach (XmlNode fieldNode in schema.Xsd.SelectNodes(xpath, nsmgr))
             {
                 if (first)
                 {
@@ -314,13 +307,20 @@ namespace Sdl.Web.Templating
                     }
                     fieldSemantics.Append(BuildSemanticsJson(typeOf, "vocab", "entity"));
                 }
+
+                // add schema typeof from appdata for embedded schemas
                 if (embedded)
                 {
-                    if (fieldSemantics.Length > 0)
+                    ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
+                    if (appData != null)
                     {
-                        fieldSemantics.Append(",");
+                        if (fieldSemantics.Length > 0)
+                        {
+                            fieldSemantics.Append(",");
+                        }
+                        string schemaTypeOf = Encoding.Unicode.GetString(appData.Data);
+                        fieldSemantics.Append(BuildSemanticsJson(schemaTypeOf, "vocab", "entity"));
                     }
-                    fieldSemantics.Append(schemaSemantics);
                 }
 
                 // handle embedded fields

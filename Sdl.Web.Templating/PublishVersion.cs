@@ -37,6 +37,15 @@ namespace Sdl.Web.Templating
         private const string VocabulariesAppDataId = "http://www.sdl.com/tridion/SemanticMapping/vocabularies";
         private const string TypeOfAppDataId = "http://www.sdl.com/tridion/SemanticMapping/typeof";
 
+        private readonly Dictionary<string, string> _namespaces = new Dictionary<string, string>
+            {
+                {"xsd", "http://www.w3.org/2001/XMLSchema"},
+                {"tcm", "http://www.tridion.com/ContentManager/5.0"},
+                {"xlink", "http://www.w3.org/1999/xlink"},
+                {"tcmi","http://www.tridion.com/ContentManager/5.0/Instance"},
+                {"mapping", "http://www.sdl.com/tridion/SemanticMapping"}
+            };
+
         private string _moduleRoot = string.Empty;
 
         public override void Transform(Engine engine, Package package)
@@ -52,7 +61,7 @@ namespace Sdl.Web.Templating
             }
             catch
             {
-                throw new Exception(String.Format("Cannot find modules folder: {0}. Please check it exists and update your TBB parameters accordingly.",folderWebDavUrl));
+                throw new Exception(String.Format("Cannot find modules folder: {0}. Please check it exists and update your TBB parameters accordingly.", folderWebDavUrl));
             }
             _moduleRoot = folder.WebDavUrl;
             if (sg == null)
@@ -124,7 +133,7 @@ namespace Sdl.Web.Templating
                 }
                 else
                 {
-                    settings = new Dictionary<string,List<string>> {{configType, ReadComponentData(comp)}};
+                    settings = new Dictionary<string, List<string>> { { configType, ReadComponentData(comp) } };
                 }
                 //Add all the JSON files to the package and publish them as binaries
                 foreach (var key in settings.Keys)
@@ -132,7 +141,7 @@ namespace Sdl.Web.Templating
                     Item jsonItem;
                     if (isArray)
                     {
-                        jsonItem = MPackage.CreateStringItem(ContentType.Text, String.Format("[{0}]", String.Join(",\n", settings[key]))); 
+                        jsonItem = MPackage.CreateStringItem(ContentType.Text, String.Format("[{0}]", String.Join(",\n", settings[key])));
                     }
                     else
                     {
@@ -242,24 +251,21 @@ namespace Sdl.Web.Templating
                         // build field elements from schema
                         fields.Append(BuildSchemaFieldsJson(schema, nsmgr));
 
-                        res[key].Add(string.Format("{{{0}:{1},{2}:{3},{4}:[{5}],{6}:[{7}]}}", 
-                            Json.Encode("id"), Json.Encode(schema.Id.ItemId),
-                            Json.Encode("rootElement"), Json.Encode(schema.RootElementName),
-                            Json.Encode("fields"), fields, Json.Encode("semantics"), schemaSemantics));
+                        res[key].Add(string.Format("{{\"id\":{0},\"rootElement\":{1},\"fields\":[{2}],\"semantics\":[{3}]}}", Json.Encode(schema.Id.ItemId), Json.Encode(schema.RootElementName), fields, schemaSemantics));
                     }
                 }
             }
             return res;
         }
 
-        private static XmlNamespaceManager SchemaNamespaceManager(XmlNameTable nameTable)
+        private XmlNamespaceManager SchemaNamespaceManager(XmlNameTable nameTable)
         {
             // load namespace manager with schema namespaces
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(nameTable);
-            nsmgr.AddNamespace("xsd", "http://www.w3.org/2001/XMLSchema");
-            nsmgr.AddNamespace("tcm", "http://www.tridion.com/ContentManager/5.0");
-            nsmgr.AddNamespace("xlink", "http://www.w3.org/1999/xlink");
-            nsmgr.AddNamespace("mapping", "http://www.sdl.com/tridion/SemanticMapping");
+            foreach (var item in _namespaces)
+            {
+                nsmgr.AddNamespace(item.Key, item.Value);
+            }
             return nsmgr;
         }
 
@@ -334,13 +340,33 @@ namespace Sdl.Web.Templating
                 }
 
                 // TODO: handle link fields
+                //XmlAttribute typeAttribute = fieldNode.Attributes["type"];
+                //if (typeAttribute != null)
+                //{
+                //    bool isSimpleLink = typeAttribute.Value.Equals("tcmi:SimpleLink");
+                //    XmlNode allowedTargetSchemasNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:AllowedTargetSchemas", nsmgr);
+                //    if (allowedTargetSchemasNode != null)
+                //    {
+                //        foreach (XmlNode allowedTargetSchemaNode in allowedTargetSchemasNode.SelectNodes("tcm:TargetSchema", nsmgr))
+                //        {
+                //            string uri = allowedTargetSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
+                //            Schema allowedTargetSchema = (Schema)MEngine.GetObject(uri);
 
+                //        }
+                //    }
+                //    else
+                //    {
+                //        // if there are no allowed target schemas, all schemas are allowed...
+                //    }
+                //}
+                //else
+                //{
+                //    // if there is no type attribute, it is not a simple type so look for <xsd:complexType> inside the element
+                //}
 
-                fields.AppendFormat("{{{0}:{1},{2}:{3},{4}:[{5}],{6}:[{7}]}}",
-                    Json.Encode("name"), Json.Encode(fieldNode.Attributes["name"].Value),
-                    Json.Encode("isMultiValue"), Json.Encode(isMultiValue),
-                    Json.Encode("semantics"), fieldSemantics,
-                    Json.Encode("fields"), embeddedFields);
+                fields.AppendFormat("{{\"name\":{0},\"isMultiValue\":{1},\"semantics\":[{2}],\"fields\":[{3}]}}",
+                    Json.Encode(fieldNode.Attributes["name"].Value),
+                    Json.Encode(isMultiValue), fieldSemantics, embeddedFields);
             }
 
             return fields.ToString();
@@ -398,7 +424,7 @@ namespace Sdl.Web.Templating
             var schemaFilter = new RepositoryItemsFilter(MEngine.GetSession())
                 {
                     Recursive = true,
-                    ItemTypes = new List<ItemType> {ItemType.Schema},
+                    ItemTypes = new List<ItemType> { ItemType.Schema },
                     BaseColumns = ListBaseColumns.Extended
                 };
             foreach (XmlElement item in GetPublication().GetListItems(schemaFilter).ChildNodes)

@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Web;
 using System.Web.Script.Serialization;
 using Sdl.Web.Templating.ExtensionMethods;
-using Sdl.Web.Templating;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
@@ -13,14 +10,11 @@ using Tridion.ContentManager.Templating.Assembly;
 using Tridion.ContentManager;
 using System.Xml;
 using Tridion.ContentManager.ContentManagement;
-using System.IO;
 using Tridion.ContentManager.Publishing;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
-using Sdl.Web.Templating.TemplateBase;
 
 namespace Sdl.Web.Templating
-
 {
     /// <summary>
     /// Generates sitemap JSON. Should be used in a page template
@@ -42,16 +36,16 @@ namespace Sdl.Web.Templating
                     string nav = GenerateNavigation();
                     if (!string.IsNullOrEmpty(GenerateNavigation()))
                     {
-                        package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Xml, nav));
+                        package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, nav));
                     }
                 }
             }
         }
 
         public string GenerateNavigation()
-        {            
+        {
             try
-            {                
+            {
                 return new JavaScriptSerializer().Serialize(GenerateStructureGroupNavigation(_startPoint));
             }
             catch (Exception ex)
@@ -64,125 +58,59 @@ namespace Sdl.Web.Templating
         private SitemapFolder GenerateStructureGroupNavigation(StructureGroup startPoint)
         {
             var root = GenerateFolderNode(startPoint);
-         
-            try
+            var orderedDocument = GetItemsInFolderAsAList(startPoint);
+
+            foreach (XElement pgNode in orderedDocument)
             {
-                var orderedDocument = GetItemsInFolderAsAList(startPoint);
-                foreach (XElement pgNode in orderedDocument)
+                Page page = MEngine.GetObject(pgNode.Attribute("ID").Value) as Page;
+                if (page != null)
                 {
-                    Page page = MEngine.GetObject(pgNode.Attribute("ID").Value) as Page;
-                    if (page != null)                                          
-                        if (IsPublished(page) && IsNavigationPage(pgNode.Attribute("Title").Value))                                               
-                                root.Items.Add(GeneratePageNode(page, pgNode.Attribute("Title").Value));                                          
-                    else                    
-                        if (IsNavigationStructureGroup(pgNode.Attribute("Title").Value))                                                   
-                            GenerateStructureGroupNavigation(MEngine.GetObject(pgNode.Attribute("ID").Value) as StructureGroup);                                            
+                    if (IsPublished(page) && isVisible(pgNode.Attribute("Title").Value))
+                        root.Items.Add(GeneratePageNode(page));
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.Error("An error occured building the Navigation: " + ex.ToString());
-            }
+                else
+                {
+                    if (isVisible(pgNode.Attribute("Title").Value))
+                        root.Items.Add(GenerateStructureGroupNavigation(MEngine.GetObject(pgNode.Attribute("ID").Value) as StructureGroup));
+                }
 
+            }
             return root;
-        }
-
-        private List<XElement> GetItemsInFolderAsAList(StructureGroup startPoint)
-        {
-            var filter = new OrganizationalItemItemsFilter(MEngine.GetSession());
-            //get pages first to see if they have to appear in nav 
-            filter.ItemTypes = new List<ItemType> {ItemType.Page, ItemType.StructureGroup};
-            filter.BaseColumns = ListBaseColumns.Extended;
-            XmlElement pagesXml = startPoint.GetListItems(filter);
-            XmlDocument rootDocument = new XmlDocument();
-            XDocument pageDoc = new XDocument();
-
-            rootDocument.LoadXml(pagesXml.OuterXml);
-            pageDoc = XDocument.Parse(rootDocument.OuterXml);
-
-            var orderedDocument = (from XElement el in pageDoc.Root.Descendants()
-                orderby el.Attribute("Title").Value
-                select el).ToList();
-            return orderedDocument;
-        }
-
-        private bool IsPublished(Page page)
-        {
-            bool isPublished = false;
-            if (MEngine.PublishingContext.PublicationTarget != null)
-                isPublished = PublishEngine.IsPublished(page, MEngine.PublishingContext.PublicationTarget);
-            return isPublished;
         }
 
         private SitemapFolder GenerateFolderNode(StructureGroup startPoint)
         {
             SitemapFolder root = new SitemapFolder(GetNavigationTitle(startPoint));
 
-            root.Id = root.Title;
-            //TODO: Add  .WriteAttributeString("fullTitle", startPoint.Title);
+            root.Id = startPoint.Id;
             root.Url = GetUrl(startPoint);
-            //TODO: Analyze writer.WriteAttributeString("type", ItemType.StructureGroup.ToString());
+            root.Type = ItemType.StructureGroup.ToString();
+
             return root;
         }
-        private SitemapPage GeneratePageNode(Page page, string pTitle)
+
+        private string GetNavigationTitle(StructureGroup sg)
         {
-
-            bool isPublished = true;
-            if (MEngine.PublishingContext.PublicationTarget != null)
-                isPublished = PublishEngine.IsPublished(page, MEngine.PublishingContext.PublicationTarget);
-            if (isPublished)
-            {
-                SitemapPage sitemapPage = new SitemapPage(GetNavigationTitle(page));
-                return sitemapPage;
-
-            }
-            return null;
+            string result = Regex.Replace(sg.Title, @"^\d{3}\s", string.Empty);
+            return result;
         }
 
         private string GetUrl(StructureGroup sg)
         {
             String url = sg.PublishLocationUrl;
-            
             //TODO: Logic can be included here to be able to add external urls
-   
-            //ASP.NET sitemap provider requires unencoded urls
             return System.Web.HttpUtility.UrlDecode(url);
-          
-        }
-        // Check if a page is visible
-        private bool CheckVisible(Page page)
-        {
-            // return !page.PublishLocationUrl.ToLower().EndsWith("index.aspx");
-            Match match = Regex.Match(page.Title, @"^\d{3}\s");
-            return match.Success;
         }
 
-        //private string GetUrl(Page page)
-        //{
-        //    string result = string.Empty;
-        //    if (page.PublishLocationUrl.EndsWith(".aspx"))
-        //    {
-        //        result = page.PublishLocationUrl.Substring(0, page.PublishLocationUrl.LastIndexOf("."));
-        //    }
-        //    else
-        //    {
-        //        result = page.PublishLocationUrl;
-        //    }
-        //    //ASP.NET sitemap provider requires unencoded urls
-        //    return System.Web.HttpUtility.UrlDecode(result);
-        //}
-
-        private string GetNavigationTitle(StructureGroup _startPoint)
+        private SitemapPage GeneratePageNode(Page page)
         {
-            string result = Regex.Replace(_startPoint.Title, @"^\d{3}\s", string.Empty);
-            return result;
-        }
+            SitemapPage sitemapPage = new SitemapPage(GetNavigationTitle(page));
 
-        private bool IsNavigationStructureGroup(string sgTitle)
-        {
-            //Match match = Regex.Match(sgTitle, @"^\d{3}\s");
-            //return match.Success;
-            return true;
+            sitemapPage.Id = page.Id;
+            sitemapPage.Url = GetUrl(page);
+            sitemapPage.Type = ItemType.Page.ToString();
+
+            return sitemapPage;
         }
 
         private string GetNavigationTitle(Page page)
@@ -192,6 +120,7 @@ namespace Sdl.Web.Templating
                 ItemFields meta = null;
                 if (cp.Component.Metadata != null)
                 {
+                    //TODO: Implement this on the schemas
                     ItemFields fields = new ItemFields(cp.Component.Metadata, cp.Component.MetadataSchema);
                     meta = fields.GetEmbeddedField("StandardMetaData");
                     if (meta != null)
@@ -202,18 +131,51 @@ namespace Sdl.Web.Templating
                     }
                 }
             }
-
             string result = Regex.Replace(page.Title, @"^\d{3}\s", string.Empty);
             return result;
         }
 
-        private bool IsNavigationPage(string pTitle)
+        private string GetUrl(Page page)
         {
-            return true;
+            String url = page.PublishLocationUrl;
+            return System.Web.HttpUtility.UrlDecode(url);
+        }
+
+        private List<XElement> GetItemsInFolderAsAList(StructureGroup startPoint)
+        {
+            var filter = new OrganizationalItemItemsFilter(MEngine.GetSession());
+            //get pages first to see if they have to appear in nav 
+            filter.ItemTypes = new List<ItemType> { ItemType.Page, ItemType.StructureGroup };
+            filter.BaseColumns = ListBaseColumns.Extended;
+            XmlElement pagesXml = startPoint.GetListItems(filter);
+            XmlDocument rootDocument = new XmlDocument();
+            XDocument pageDoc = new XDocument();
+
+            rootDocument.LoadXml(pagesXml.OuterXml);
+            pageDoc = XDocument.Parse(rootDocument.OuterXml);
+
+            var orderedDocument = (from XElement el in pageDoc.Root.Descendants()
+                                   orderby el.Attribute("Title").Value
+                                   select el).ToList();
+            return orderedDocument;
+        }
+
+        private bool IsPublished(Page page)
+        {
+            if (MEngine.PublishingContext.PublicationTarget != null)
+                return PublishEngine.IsPublished(page, MEngine.PublishingContext.PublicationTarget);
+            return false;
+        }
+
+        private bool isVisible(string title)
+        {
+            // return !page.PublishLocationUrl.ToLower().EndsWith("index.aspx");
+            Match match = Regex.Match(title, @"^\d{3}\s");
+            return match.Success;
         }
     }
 
-#region Sitemap Classes
+    #region Sitemap Classes
 
     public abstract class SitemapItem
     {
@@ -231,7 +193,7 @@ namespace Sdl.Web.Templating
         }
 
         public List<SitemapItem> Items { get; set; }
-
+        public string Type { get; set; }
     }
 
     public class SitemapPage : SitemapItem
@@ -241,9 +203,10 @@ namespace Sdl.Web.Templating
             Title = title;
         }
 
+        public string Type { get; set; }
     }
 
-#endregion Sitemap Classes
+    #endregion Sitemap Classes
 
 
 

@@ -1,0 +1,32 @@
+﻿<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="uuid:C993953F-E7F9-49B4-AD5E-6AEB28EDC14B" xmlns:tcmi="http://www.tridion.com/ContentManager/5.0/Instance" elementFormDefault="qualified" targetNamespace="uuid:C993953F-E7F9-49B4-AD5E-6AEB28EDC14B">
+    <xsd:import namespace="http://www.tridion.com/ContentManager/5.0/Instance" schemaLocation="cm_xml_inst.xsd"></xsd:import>
+    <xsd:annotation>
+        <xsd:appinfo>
+            <tcm:Labels xmlns:tcm="http://www.tridion.com/ContentManager/5.0">
+                <tcm:Label ElementName="folderWebDavUrl" Metadata="false">Webdav URL of Modules Folder (relative to root folder)</tcm:Label>
+                <tcm:Label ElementName="sg_TargetStructureGroup" Metadata="false">Structure Group to publish assets (config/resources etc.) to (typically [root sg]/system).</tcm:Label>
+            </tcm:Labels>
+        </xsd:appinfo>
+    </xsd:annotation>
+    <xsd:element name="Parameters">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="folderWebDavUrl" minOccurs="1" maxOccurs="1" type="xsd:normalizedString">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <ExtensionXml xmlns="http://www.tridion.com/ContentManager/5.0"></ExtensionXml>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element name="sg_TargetStructureGroup" minOccurs="1" maxOccurs="1" type="tcmi:SimpleLink">
+                    <xsd:annotation>
+                        <xsd:appinfo>
+                            <ExtensionXml xmlns="http://www.tridion.com/ContentManager/5.0"></ExtensionXml>
+                            <tcm:linktype xmlns:tcm="http://www.tridion.com/ContentManager/5.0">ExternalLink</tcm:linktype>
+                        </xsd:appinfo>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

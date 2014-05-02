@@ -237,51 +237,10 @@ namespace Sdl.Web.Templating
                         StringBuilder fields = new StringBuilder();
 
                         // load namespace manager with schema namespaces
-                        XmlNamespaceManager nsmgr = new XmlNamespaceManager(schema.Xsd.OwnerDocument.NameTable);
-                        nsmgr.AddNamespace("xsd", "http://www.w3.org/2001/XMLSchema");
-                        nsmgr.AddNamespace("tcm", "http://www.tridion.com/ContentManager/5.0");
-                        nsmgr.AddNamespace("mapping", "http://www.sdl.com/tridion/SemanticMapping");
+                        XmlNamespaceManager nsmgr = SchemaNamespaceManager(schema.Xsd.OwnerDocument.NameTable);
 
-                        // loop over all field elements in schema
-                        bool first = true;
-                        foreach (XmlNode fieldNode in schema.Xsd.SelectNodes(string.Format("/xsd:schema/xsd:element[@name='{0}']/xsd:complexType/xsd:sequence/xsd:element", schema.RootElementName), nsmgr))
-                        {
-                            if (first)
-                            {
-                                first = false;
-                            }
-                            else
-                            {
-                                fields.Append(",");
-                            }
-                            StringBuilder fieldSemantics = new StringBuilder();
-                            StringBuilder embeddedFields = new StringBuilder();
-
-                            // if maxOccurs is anything else than 1, it is a multi value field
-                            bool isMultiValue = !fieldNode.Attributes["maxOccurs"].Value.Equals("1");
-
-                            // read semantic mapping from field
-                            // schema semantics: {"vocab":"s","entity":"Article"}
-                            XmlNode propertyNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:property", nsmgr);
-                            string property = propertyNode != null ? propertyNode.InnerText : null;
-                            fieldSemantics.Append(BuildSemanticsJson(property, "vocab", "property"));
-
-                            XmlNode typeOfNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:typeof", nsmgr);
-                            string typeOf = typeOfNode != null ? typeOfNode.InnerText : null;
-                            if (fieldSemantics.Length > 0 && !string.IsNullOrEmpty(typeOf))
-                            {
-                                fieldSemantics.Append(",");
-                                fieldSemantics.Append(BuildSemanticsJson(typeOf, "vocab", "entity"));
-                            }
-
-                            // TODO: handle embedded fields
-
-                            fields.AppendFormat("{{{0}:{1},{2}:{3},{4}:[{5}],{6}:[{7}]}}", 
-                                Json.Encode("name"), Json.Encode(fieldNode.Attributes["name"].Value), 
-                                Json.Encode("isMultiValue"), Json.Encode(isMultiValue), 
-                                Json.Encode("semantics"), fieldSemantics, 
-                                Json.Encode("fields"), embeddedFields);
-                        }
+                        // build field elements from schema
+                        fields.Append(BuildSchemaFieldsJson(schema, nsmgr));
 
                         res[key].Add(string.Format("{{{0}:{1},{2}:{3},{4}:[{5}],{6}:[{7}]}}", 
                             Json.Encode("id"), Json.Encode(schema.Id.ItemId),
@@ -291,6 +250,100 @@ namespace Sdl.Web.Templating
                 }
             }
             return res;
+        }
+
+        private static XmlNamespaceManager SchemaNamespaceManager(XmlNameTable nameTable)
+        {
+            // load namespace manager with schema namespaces
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(nameTable);
+            nsmgr.AddNamespace("xsd", "http://www.w3.org/2001/XMLSchema");
+            nsmgr.AddNamespace("tcm", "http://www.tridion.com/ContentManager/5.0");
+            nsmgr.AddNamespace("xlink", "http://www.w3.org/1999/xlink");
+            nsmgr.AddNamespace("mapping", "http://www.sdl.com/tridion/SemanticMapping");
+            return nsmgr;
+        }
+
+        // field: {"name":"something","isMultiValue":true,"semantics":[],"fields":[]}
+        // field semantics: {"vocab":"s","property":"headline"}
+        private string BuildSchemaFieldsJson(Schema schema, XmlNamespaceManager nsmgr, bool embedded = false)
+        {
+            StringBuilder schemaSemantics = new StringBuilder();
+            if (embedded)
+            {
+                // add schema typeof from appdata for embedded schemas
+                ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
+                if (appData != null)
+                {
+                    string typeOf = Encoding.Unicode.GetString(appData.Data);
+                    schemaSemantics.Append(BuildSemanticsJson(typeOf, "vocab", "entity"));
+                }                
+            }
+
+            StringBuilder fields = new StringBuilder();
+
+            // loop over all field elements in schema
+            bool first = true;
+            foreach (XmlNode fieldNode in schema.Xsd.SelectNodes(string.Format("/xsd:schema/xsd:element[@name='{0}']/xsd:complexType/xsd:sequence/xsd:element", schema.RootElementName), nsmgr))
+            {
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    fields.Append(",");
+                }
+                StringBuilder fieldSemantics = new StringBuilder();
+
+                // if maxOccurs is anything else than 1, it is a multi value field
+                bool isMultiValue = !fieldNode.Attributes["maxOccurs"].Value.Equals("1");
+
+                // read semantic mapping from field
+                // schema semantics: {"vocab":"s","entity":"Article"}
+                XmlNode propertyNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:property", nsmgr);
+                string property = propertyNode != null ? propertyNode.InnerText : null;
+                fieldSemantics.Append(BuildSemanticsJson(property, "vocab", "property"));
+
+                XmlNode typeOfNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:typeof", nsmgr);
+                string typeOf = typeOfNode != null ? typeOfNode.InnerText : null;
+                if (!string.IsNullOrEmpty(typeOf))
+                {
+                    if (fieldSemantics.Length > 0)
+                    {
+                        fieldSemantics.Append(",");
+                    }
+                    fieldSemantics.Append(BuildSemanticsJson(typeOf, "vocab", "entity"));
+                }
+                if (embedded)
+                {
+                    if (fieldSemantics.Length > 0)
+                    {
+                        fieldSemantics.Append(",");
+                    }
+                    fieldSemantics.Append(schemaSemantics);
+                }
+
+                // handle embedded fields
+                StringBuilder embeddedFields = new StringBuilder();
+                XmlNode embeddedSchemaNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:EmbeddedSchema", nsmgr);
+                if (embeddedSchemaNode != null)
+                {
+                    string uri = embeddedSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
+                    Schema embeddedSchema = (Schema)MEngine.GetObject(uri);
+                    embeddedFields.Append(BuildSchemaFieldsJson(embeddedSchema, nsmgr, true));
+                }
+
+                // TODO: handle link fields
+
+
+                fields.AppendFormat("{{{0}:{1},{2}:{3},{4}:[{5}],{6}:[{7}]}}",
+                    Json.Encode("name"), Json.Encode(fieldNode.Attributes["name"].Value),
+                    Json.Encode("isMultiValue"), Json.Encode(isMultiValue),
+                    Json.Encode("semantics"), fieldSemantics,
+                    Json.Encode("fields"), embeddedFields);
+            }
+
+            return fields.ToString();
         }
 
         // schema semantics: {"vocab":"s","entity":"Article"}

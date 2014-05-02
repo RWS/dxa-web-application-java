@@ -1,43 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Tridion.ContentManager.Templating.Assembly;
-using Tridion.ContentManager.Templating;
-using Tridion.ContentManager.ContentManagement;
-using Tridion.ContentManager.CommunicationManagement;
-using Tridion.ContentManager.Publishing.Rendering;
-using Tridion.ContentManager.Publishing;
-using Tridion.ContentManager;
-using System.IO;
-using System.Xml;
-using Tridion.ContentManager.ContentManagement.Fields;
 using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Xml;
+using Tridion.ContentManager;
+using Tridion.ContentManager.CommunicationManagement;
+using Tridion.ContentManager.ContentManagement;
+using Tridion.ContentManager.Publishing;
+using Tridion.ContentManager.Publishing.Rendering;
+using Tridion.ContentManager.Templating;
+using Tridion.ContentManager.Templating.Assembly;
 
-namespace Sdl.Web.ContentManagement.Templating
+namespace Sdl.Web.Templating.TemplateBase
 {
     /// <summary>
     /// Base class for common functionality used by TBBs
     /// </summary>
     public abstract class TemplateBase : ITemplate
     {
-        protected Engine m_Engine;
-        protected Package m_Package;
-        private TemplatingLogger m_Logger;
-        protected int m_RenderContext = -1;
+        protected Engine MEngine;
+        protected Package MPackage;
+        protected int MRenderContext = -1;
 
-        protected const string JSON_MIMETYPE = "application/json";
-        protected const string JSON_EXTENSION = ".json";
+        protected const string JsonMimetype = "application/json";
+        protected const string JsonExtension = ".json";
 
         protected TemplatingLogger Logger
         {
             get
             {
-                if (m_Logger == null) m_Logger = TemplatingLogger.GetLogger(this.GetType());
+                if (_mLogger == null)
+                {
+                    _mLogger = TemplatingLogger.GetLogger(GetType());
+                }
 
-                return m_Logger;
+                return _mLogger;
             }
         }
+
+        private TemplatingLogger _mLogger;
+
         /// <summary>
         /// Initializes the engine and package to use in this TemplateBase object.
         /// </summary>
@@ -45,8 +48,8 @@ namespace Sdl.Web.ContentManagement.Templating
         /// <param name="package">The package to use in calls to the other methods of this TemplateBase object</param>
         protected void Initialize(Engine engine, Package package)
         {
-            m_Engine = engine;
-            m_Package = package;
+            MEngine = engine;
+            MPackage = package;
         }
 
         public virtual void Transform(Engine engine, Package package) { }
@@ -58,33 +61,35 @@ namespace Sdl.Web.ContentManagement.Templating
         /// </summary>
         protected void CheckInitialized()
         {
-            if (m_Engine == null || m_Package == null)
+            if (MEngine == null || MPackage == null)
             {
                 throw new InvalidOperationException("This method can not be invoked, unless Initialize has been called");
             }
         }
 
-        #region Get context objects and information 
- 
+        #region Get context objects and information
+
         /// <summary>
         /// True if the rendering context is a page, rather than component
         /// </summary>
         public bool IsPageTemplate()
         {
-          
-                if (m_RenderContext == -1)
+
+            if (MRenderContext == -1)
+            {
+                if (MEngine.PublishingContext.ResolvedItem.Item is Page)
                 {
-                    if (m_Engine.PublishingContext.ResolvedItem.Item is Page)
-                        m_RenderContext = 1;
-                    else
-                        m_RenderContext = 0;
+                    MRenderContext = 1;
                 }
-                if (m_RenderContext == 1)
-                    return true;
                 else
-                    return false;
-            
+                {
+                    MRenderContext = 0;
+                }
+            }
+
+            return MRenderContext == 1;
         }
+
         /// <summary>
         /// Returns the component object that is defined in the package for this template.
         /// </summary>
@@ -96,17 +101,15 @@ namespace Sdl.Web.ContentManagement.Templating
         public Component GetComponent()
         {
             CheckInitialized();
-            Item component = m_Package.GetByName("Component");
+            Item component = MPackage.GetByName("Component");
             if (component != null)
             {
-                return (Component)m_Engine.GetObject(component.GetAsSource().GetValue("ID"));
+                return (Component)MEngine.GetObject(component.GetAsSource().GetValue("ID"));
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
-        
+
         /// <summary>
         /// Returns the Template from the resolved item if it's a Component Template
         /// </summary>
@@ -114,17 +117,15 @@ namespace Sdl.Web.ContentManagement.Templating
         protected ComponentTemplate GetComponentTemplate()
         {
             CheckInitialized();
-            Template template = m_Engine.PublishingContext.ResolvedItem.Template;
+            Template template = MEngine.PublishingContext.ResolvedItem.Template;
 
             // "if (template is ComponentTemplate)" might work instead
             if (template.GetType().Name.Equals("ComponentTemplate"))
             {
                 return (ComponentTemplate)template;
             }
-            else
-            {
-                return null;
-            }
+
+            return null;
         }
 
         /// <summary>
@@ -138,17 +139,23 @@ namespace Sdl.Web.ContentManagement.Templating
         public Page GetPage()
         {
             CheckInitialized();
+
             //first try to get from the render context
-            RenderContext renderContext = m_Engine.PublishingContext.RenderContext;
+            RenderContext renderContext = MEngine.PublishingContext.RenderContext;
             if (renderContext != null)
             {
                 Page contextPage = renderContext.ContextItem as Page;
                 if (contextPage != null)
+                {
                     return contextPage;
+                }
             }
-            Item pageItem = m_Package.GetByType(ContentType.Page);
+
+            Item pageItem = MPackage.GetByType(ContentType.Page);
             if (pageItem != null)
-                return (Page)m_Engine.GetObject(pageItem.GetAsSource().GetValue("ID"));
+            {
+                return (Page)MEngine.GetObject(pageItem.GetAsSource().GetValue("ID"));
+            }
 
             return null;
         }
@@ -166,31 +173,38 @@ namespace Sdl.Web.ContentManagement.Templating
         {
             CheckInitialized();
 
-            RepositoryLocalObject pubItem = null;
+            RepositoryLocalObject pubItem;
             Repository repository = null;
 
-            if (m_Package.GetByType(ContentType.Page) != null)
+            if (MPackage.GetByType(ContentType.Page) != null)
+            {
                 pubItem = GetPage();
+            }
             else
+            {
                 pubItem = GetComponent();
+            }
 
-            if (pubItem != null) repository = pubItem.ContextRepository;
+            if (pubItem != null)
+            {
+                repository = pubItem.ContextRepository;
+            }
 
             return repository as Publication;
         }
 
         protected bool IsPublishingToStaging()
         {
-            if (m_Engine.PublishingContext != null && m_Engine.PublishingContext.PublicationTarget != null)
+            if (MEngine.PublishingContext != null && MEngine.PublishingContext.PublicationTarget != null)
             {
-                return m_Engine.PublishingContext.PublicationTarget != null ? m_Engine.PublishingContext.PublicationTarget.Title.ToLower().Contains("staging") : false;
+                return MEngine.PublishingContext.PublicationTarget != null && MEngine.PublishingContext.PublicationTarget.Title.ToLower().Contains("staging");
             }
             return false;
         }
 
         protected bool IsPreviewMode()
         {
-            return m_Engine.RenderMode == RenderMode.PreviewDynamic || m_Engine.RenderMode == RenderMode.PreviewStatic;
+            return MEngine.RenderMode == RenderMode.PreviewDynamic || MEngine.RenderMode == RenderMode.PreviewStatic;
         }
 
         #endregion
@@ -204,35 +218,34 @@ namespace Sdl.Web.ContentManagement.Templating
         /// </summary>
         protected void PutContextComponentOnTop()
         {
-            Item mainComponent = m_Package.GetByName("Component");
+            Item mainComponent = MPackage.GetByName("Component");
             if (mainComponent != null)
             {
-                m_Package.Remove(mainComponent);
-                m_Package.PushItem("Component", mainComponent);
+                MPackage.Remove(mainComponent);
+                MPackage.PushItem("Component", mainComponent);
             }
         }
 
         protected TcmUri GetDefaultTemplate(Schema schema)
         {
-            var templates = this.GetUsingItems(schema, ItemType.ComponentTemplate);
+            var templates = GetUsingItems(schema, ItemType.ComponentTemplate);
             if (templates == null || templates.Count == 0)
             {
                 return null;
             }
-            else
+
+            var templateUri = templates.Where(t => t.Value.Contains("[Default]")).Select(t => t.Key).FirstOrDefault();
+            if (templateUri == null)
             {
-                var templateUri = templates.Where(t => t.Value.Contains("[Default]")).Select(t => t.Key).FirstOrDefault();
-                if (templateUri == null)
-                {
-                    templateUri = templates[0].Key;
-                }
-                return templateUri;
+                templateUri = templates[0].Key;
             }
+
+            return templateUri;
         }
 
         protected bool IsMasterWebPublication()
         {
-            var publication = this.GetPublication();
+            var publication = GetPublication();
             //TODO - possibly need to extend with metadata or something for the case we have a non-published parent and all children at same level - one publication should be leading
             if (publication.PublicationUrl == "" || publication.PublicationUrl == "/")
             {
@@ -264,15 +277,15 @@ namespace Sdl.Web.ContentManagement.Templating
             {
                 foreach (string key in items.Keys)
                 {
-                    m_Package.PushItem(key, items[key]);
+                    MPackage.PushItem(key, items[key]);
                 }
             }
-            if (m_Engine.PublishingContext.RenderContext != null && !m_Engine.PublishingContext.RenderContext.ContextVariables.Contains(variableName))
+            if (MEngine.PublishingContext.RenderContext != null && !MEngine.PublishingContext.RenderContext.ContextVariables.Contains(variableName))
             {
-                m_Engine.PublishingContext.RenderContext.ContextVariables.Add(variableName, items);
+                MEngine.PublishingContext.RenderContext.ContextVariables.Add(variableName, items);
             }
         }
-        
+
         /// <summary>
         /// Load package items from the publishing context variables and push them into the package.
         /// The context variables are used as a cache, so they can be populated (using PushAndAddToContextVariables)
@@ -282,18 +295,14 @@ namespace Sdl.Web.ContentManagement.Templating
         /// <returns>false if the context variable is empty, true otherwise</returns>
         protected bool PushFromContextVariable(string variableName)
         {
-
-            
-            
-            if (m_Engine.PublishingContext.RenderContext != null && m_Engine.PublishingContext.RenderContext.ContextVariables.Contains(variableName))
+            if (MEngine.PublishingContext.RenderContext != null && MEngine.PublishingContext.RenderContext.ContextVariables.Contains(variableName))
             {
-                
-                Dictionary<string, Item> items = m_Engine.PublishingContext.RenderContext.ContextVariables[variableName] as Dictionary<string, Item>;
+                Dictionary<string, Item> items = MEngine.PublishingContext.RenderContext.ContextVariables[variableName] as Dictionary<string, Item>;
                 if (items != null)
                 {
                     foreach (string key in items.Keys)
                     {
-                        m_Package.PushItem(key, items[key]);
+                        MPackage.PushItem(key, items[key]);
                     }
                 }
                 return true;
@@ -309,41 +318,41 @@ namespace Sdl.Web.ContentManagement.Templating
         /// Add binaries from a given folder (and subfolders recursively) to the package
         /// publish them and update the package item with the publish path
         /// </summary>
-        /// <param name="rootSGWebDavUrl">Root Structure Group to add in</param>
+        /// <param name="rootSgWebDavUrl">Root Structure Group to add in</param>
         /// <param name="folder">Root folder to look in</param>
         /// <param name="path">path from root structure group to add in</param>
-        protected void AddBinariesFromFolder(string rootSGWebDavUrl, Folder folder, string path)
+        protected void AddBinariesFromFolder(string rootSgWebDavUrl, Folder folder, string path)
         {
             StructureGroup sg = null;
             //Loop through all components in the folder
             foreach (KeyValuePair<TcmUri, string> item in GetOrganizationalItemContents(folder, ItemType.Component, false))
             {
-                Component mmComp;
-                mmComp = m_Engine.GetObject(item.Key) as Component;
+                Component mmComp = (Component)MEngine.GetObject(item.Key);
+
                 //if its a MM comp then add it to the package, and publish it
                 if (mmComp.ComponentType == ComponentType.Multimedia)
                 {
                     if (sg == null)
                     {
                         //Try to get a reference to the sub Structure Group based on the folder title
-                        sg = m_Engine.GetObject(rootSGWebDavUrl + path) as StructureGroup;
+                        sg = MEngine.GetObject(rootSgWebDavUrl + path) as StructureGroup;
                         if (sg == null)
                         {
-                            Exception ex = new Exception(String.Format("Could not find Structure Group {0}. Please create this and republish", rootSGWebDavUrl + path));
+                            Exception ex = new Exception(String.Format("Could not find Structure Group {0}. Please create this and republish", rootSgWebDavUrl + path));
                             Logger.Error(ex.Message);
                             throw ex;
                         }
                     }
                     AddBinary(mmComp, sg);
                 }
-
             }
+
             //Loop through all subfolders to recurse
             foreach (KeyValuePair<TcmUri, string> item in GetOrganizationalItemContents(folder, ItemType.Folder, false))
             {
                 Logger.Info(String.Format("Processing subfolder: {0} ({1})", item.Value, item.Key));
-                Folder subFolder = m_Engine.GetObject(item.Key) as Folder;
-                AddBinariesFromFolder(rootSGWebDavUrl, subFolder, path + "/" + subFolder.Title);
+                Folder subFolder = MEngine.GetObject(item.Key) as Folder;
+                AddBinariesFromFolder(rootSgWebDavUrl, subFolder, path + "/" + subFolder.Title);
             }
         }
 
@@ -354,11 +363,10 @@ namespace Sdl.Web.ContentManagement.Templating
         /// <param name="sg">The target SG</param>
         protected void AddBinary(Component mmComp, StructureGroup sg)
         {
-            Item packageItem = null;
             string filename = GetFilename(mmComp.BinaryContent.Filename);
 
             //Check if the binary is already in the package (for example, if the DWT already added it
-            packageItem = m_Package.GetByName(filename);
+            Item packageItem = MPackage.GetByName(filename);
             if (packageItem != null)
             {
                 Logger.Debug("An item with the same name exists in the package");
@@ -374,8 +382,8 @@ namespace Sdl.Web.ContentManagement.Templating
             if (packageItem == null)
             {
                 Logger.Debug(String.Format("Pushing item {0} to the package", filename));
-                packageItem = m_Package.CreateMultimediaItem(mmComp.Id);
-                m_Package.PushItem(filename, packageItem);
+                packageItem = MPackage.CreateMultimediaItem(mmComp.Id);
+                MPackage.PushItem(filename, packageItem);
             }
 
             //Publish the binary into the appropriate SG
@@ -385,8 +393,8 @@ namespace Sdl.Web.ContentManagement.Templating
                 {
                     byte[] data = new byte[itemStream.Length];
                     itemStream.Read(data, 0, data.Length);
-                    Logger.Info(String.Format("Adding binary component {0}({1}) ", mmComp.Title, mmComp.Id.ToString()));
-                    string publishedPath = m_Engine.AddBinary(mmComp.Id, null, sg.Id, data, filename);
+                    Logger.Info(String.Format("Adding binary component {0}({1}) ", mmComp.Title, mmComp.Id));
+                    string publishedPath = MEngine.AddBinary(mmComp.Id, null, sg.Id, data, filename);
                     packageItem.Properties[Item.ItemPropertyPublishedPath] = publishedPath;
                 }
                 finally
@@ -400,6 +408,7 @@ namespace Sdl.Web.ContentManagement.Templating
         /// Publish a binary with the tcm uri as part of the file name to ensure uniqueness
         /// </summary>
         /// <param name="comp">The binary to publish</param>
+        /// <param name="sg">Optional Structure Group to publish to</param>
         /// <returns>The publish path of the binary</returns>
         public string AddBinaryWithUniqueFilename(Component comp, StructureGroup sg = null)
         {
@@ -408,16 +417,18 @@ namespace Sdl.Web.ContentManagement.Templating
             string filename = GetFilename(comp.BinaryContent.Filename);
             //make sure filename is unique by appending pub and component id
             string suffix = GetBinaryFileSuffix(comp.Id.ToString());
-            int pos = filename.LastIndexOf(".");
+            int pos = filename.LastIndexOf(".", StringComparison.Ordinal);
             if (pos > 0)
             {
                 filename = filename.Substring(0, pos) + suffix + filename.Substring(pos);
             }
             else
+            {
                 filename += suffix;
+            }
 
             Logger.Debug(String.Format("Adding binary to package: {0}", filename));
-            return m_Engine.AddBinary(comp.Id, TcmUri.UriNull, sg!=null ? sg.Id : null, ms.ToArray(), filename);
+            return MEngine.AddBinary(comp.Id, TcmUri.UriNull, sg != null ? sg.Id : null, ms.ToArray(), filename);
 
         }
 
@@ -431,7 +442,7 @@ namespace Sdl.Web.ContentManagement.Templating
         {
             if (fullpath.Contains(@"\"))
             {
-                int pos = fullpath.LastIndexOf(@"\");
+                int pos = fullpath.LastIndexOf(@"\", StringComparison.Ordinal);
                 return fullpath.Substring(pos + 1);
             }
             return fullpath;
@@ -442,19 +453,21 @@ namespace Sdl.Web.ContentManagement.Templating
         #region TOM.NET Helper functions
         protected List<KeyValuePair<TcmUri, string>> GetOrganizationalItemContents(OrganizationalItem orgItem, ItemType itemType, bool recursive)
         {
-            var filter = new OrganizationalItemItemsFilter(orgItem.Session);
-            filter.ItemTypes = new List<ItemType> { itemType};
-            filter.Recursive = recursive;
+            var filter = new OrganizationalItemItemsFilter(orgItem.Session)
+                {
+                    ItemTypes = new List<ItemType> { itemType },
+                    Recursive = recursive
+                };
             return XmlElementToTcmUriList(orgItem.GetListItems(filter));
         }
 
         protected OrganizationalItem GetChildOrganizationalItem(OrganizationalItem root, string title)
         {
-            foreach (var child in this.GetOrganizationalItemContents(root, root is Folder ? ItemType.Folder : ItemType.StructureGroup, false))
+            foreach (var child in GetOrganizationalItemContents(root, root is Folder ? ItemType.Folder : ItemType.StructureGroup, false))
             {
                 if (child.Value.ToLower() == title.ToLower())
                 {
-                    return (OrganizationalItem)m_Engine.GetObject(child.Key);
+                    return (OrganizationalItem)MEngine.GetObject(child.Key);
                 }
             }
             return null;
@@ -462,9 +475,11 @@ namespace Sdl.Web.ContentManagement.Templating
 
         protected List<KeyValuePair<TcmUri, string>> GetUsingItems(RepositoryLocalObject subject, ItemType itemType)
         {
-            UsingItemsFilter filter = new UsingItemsFilter(m_Engine.GetSession());
-            filter.ItemTypes = new List<ItemType> { itemType };
-            filter.BaseColumns = ListBaseColumns.IdAndTitle;
+            UsingItemsFilter filter = new UsingItemsFilter(MEngine.GetSession())
+                {
+                    ItemTypes = new List<ItemType> { itemType },
+                    BaseColumns = ListBaseColumns.IdAndTitle
+                };
             return XmlElementToTcmUriList(subject.GetListUsingItems(filter));
         }
 
@@ -486,11 +501,13 @@ namespace Sdl.Web.ContentManagement.Templating
         protected string GetPageOrStructureGroupTitle(RepositoryLocalObject pageOrSg)
         {
             if (pageOrSg is Page)
+            {
                 return GetPageTitle(pageOrSg as Page);
-            else
-                return GetStructureGroupTitle(pageOrSg as StructureGroup);
+            }
+
+            return GetStructureGroupTitle(pageOrSg as StructureGroup);
         }
-        
+
         protected string GetPageTitle(Page page)
         {
             string title = null;
@@ -502,18 +519,24 @@ namespace Sdl.Web.ContentManagement.Templating
                 Component firstComp = page.ComponentPresentations[0].Component;
                 if (firstComp != null)
                 {
-                    string metaFieldName = "ShortTitle";
-                    string fieldName = "Heading";
+                    const string metaFieldName = "ShortTitle";
+                    const string fieldName = "Heading";
                     XmlElement data = firstComp.Metadata;
                     XmlNode titleField = null;
-                    if (data!=null)
+                    if (data != null)
+                    {
                         titleField = data.SelectSingleNode(String.Format("//*[local-name()='{0}']", metaFieldName));
+                    }
                     if (titleField != null)
-                        title = titleField.InnerText; 
+                    {
+                        title = titleField.InnerText;
+                    }
                     data = firstComp.Content;
                     titleField = data.SelectSingleNode(String.Format("//*[local-name()='{0}']", fieldName));
                     if (titleField != null)
+                    {
                         title = titleField.InnerText;
+                    }
                 }
             }
             //2. Fallback on page title
@@ -526,7 +549,7 @@ namespace Sdl.Web.ContentManagement.Templating
 
         protected string GetStructureGroupTitle(StructureGroup sg)
         {
-            return this.StripPrefix(sg.Title);
+            return StripPrefix(sg.Title);
         }
 
         /// <summary>
@@ -540,13 +563,15 @@ namespace Sdl.Web.ContentManagement.Templating
         {
             int length = 4;
             if (title.Length < 4)
+            {
                 length = title.Length - 1;
+            }
             string prefix = title.Substring(0, length);
-            int result = 0;
+            int result;
             //Handle number prefix
             if (int.TryParse(prefix, out result))
             {
-                title = title.Substring(title.IndexOf(" ") + 1);
+                title = title.Substring(title.IndexOf(" ", StringComparison.Ordinal) + 1);
             }
             title = title.Trim();
             return title;
@@ -557,23 +582,20 @@ namespace Sdl.Web.ContentManagement.Templating
 
         protected string GetFolderWebdavUrlFromPackageVariable(string packageVariable)
         {
-            var folder = m_Package.GetValue(packageVariable);
+            var folder = MPackage.GetValue(packageVariable);
             if (!String.IsNullOrEmpty(folder))
             {
-                folder = this.GetPublication().RootFolder.WebDavUrl + "/" + folder;
-                if (m_Engine.GetSession().IsExistingObject(folder))
+                folder = GetPublication().RootFolder.WebDavUrl + "/" + folder;
+
+                if (MEngine.GetSession().IsExistingObject(folder))
                 {
                     return folder;
                 }
-                else
-                {
-                    throw new Exception(String.Format("Folder {0} does not exist. Please check TBB parameters/package variables", folder));
-                }
+
+                throw new Exception(String.Format("Folder {0} does not exist. Please check TBB parameters/package variables", folder));
             }
-            else
-            {
-                throw new Exception(String.Format("No {0} parameter/package variable found. Please check TBB parameters/package variables", packageVariable));
-            }
+
+            throw new Exception(String.Format("No {0} parameter/package variable found. Please check TBB parameters/package variables", packageVariable));
         }
 
         #endregion
@@ -582,12 +604,12 @@ namespace Sdl.Web.ContentManagement.Templating
 
         protected string Config(string key, string defaultValue)
         {
-            return m_Package.GetValue(key) ?? defaultValue;
+            return MPackage.GetValue(key) ?? defaultValue;
         }
 
         protected string Config(string key)
         {
-            return m_Package.GetValue(key) ?? key;
+            return MPackage.GetValue(key) ?? key;
         }
 
         protected string GetEnvironmentIdentifier()
@@ -597,9 +619,9 @@ namespace Sdl.Web.ContentManagement.Templating
 
         protected string GetStaticsBaseUrlAndPath()
         {
-            string host = string.Empty;
-            string path = string.Empty;
-            if (this.IsPreviewMode() || this.IsPublishingToStaging())
+            string host;
+            string path;
+            if (IsPreviewMode() || IsPublishingToStaging())
             {
                 host = Config("EnvironmentConfig.StaticsHostStaging");
                 path = Config("EnvironmentConfig.StaticsRootStaging");
@@ -618,9 +640,9 @@ namespace Sdl.Web.ContentManagement.Templating
 
         protected string FormatDate(DateTime date, string format = null)
         {
-            var dateFormat = format ?? Config("SiteConfig.FormatDateTime",null);
+            var dateFormat = format ?? Config("SiteConfig.FormatDateTime", null);
             var culture = Config("SiteConfig.Culture", null);
-            return culture==null ?  date.ToString(dateFormat) : date.ToString(dateFormat, new CultureInfo(culture));
+            return culture == null ? date.ToString(dateFormat) : date.ToString(dateFormat, new CultureInfo(culture));
         }
 
         #endregion

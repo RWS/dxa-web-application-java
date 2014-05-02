@@ -4,7 +4,7 @@ using System.Linq;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 
-namespace Sdl.Web.ContentManagement.ExtensionMethods
+namespace Sdl.Web.Templating.ExtensionMethods
 {
     public static class ItemFieldsExtensions
     {
@@ -131,7 +131,7 @@ namespace Sdl.Web.ContentManagement.ExtensionMethods
         /// Manual unification of different field types logic to overcome native tridion implementation shortcoming,
         /// which is not polymorphic.
         /// </summary>
-        static readonly IDictionary<Type, Func<ItemFields, string, string>> valueResolver =
+        static readonly IDictionary<Type, Func<ItemFields, string, string>> ValueResolver =
             new Dictionary<Type, Func<ItemFields, string, string>> {
             { typeof(KeywordField), (fields, name) => fields.GetKeywordValues(name).Select(k => k.Title).FirstOrDefault() },
             { typeof(ComponentLinkField), (fields, name) => fields.GetComponentValues(name).Select(c => c.Id).FirstOrDefault() },
@@ -152,8 +152,8 @@ namespace Sdl.Web.ContentManagement.ExtensionMethods
                 null == fields
                 || !fields.Contains(fieldName)
                     ? string.Empty
-                    : valueResolver.ContainsKey((fieldType = (field = fields[fieldName]).GetType()))
-                        ? valueResolver[fieldType](fields, fieldName) ?? string.Empty
+                    : ValueResolver.ContainsKey((fieldType = (field = fields[fieldName]).GetType()))
+                        ? ValueResolver[fieldType](fields, fieldName) ?? string.Empty
                         : field.ToString();
         }
     }

@@ -157,21 +157,6 @@ namespace Sdl.Web.Templating
             return match.Success;
         }
 
-        //private string GetUrl(Page page)
-        //{
-        //    string result = string.Empty;
-        //    if (page.PublishLocationUrl.EndsWith(".aspx"))
-        //    {
-        //        result = page.PublishLocationUrl.Substring(0, page.PublishLocationUrl.LastIndexOf("."));
-        //    }
-        //    else
-        //    {
-        //        result = page.PublishLocationUrl;
-        //    }
-        //    //ASP.NET sitemap provider requires unencoded urls
-        //    return System.Web.HttpUtility.UrlDecode(result);
-        //}
-
         private string GetNavigationTitle(StructureGroup _startPoint)
         {
             string result = Regex.Replace(_startPoint.Title, @"^\d{3}\s", string.Empty);

@@ -4,8 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Web;
 using System.Web.Script.Serialization;
-using Sdl.Web.ContentManagement.ExtensionMethods;
-using Sdl.Web.ContentManagement.Templating;
+using Sdl.Web.Templating.ExtensionMethods;
+using Sdl.Web.Templating;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
@@ -17,6 +17,7 @@ using System.IO;
 using Tridion.ContentManager.Publishing;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Sdl.Web.Templating.TemplateBase;
 
 namespace Sdl.Web.Templating
 
@@ -25,7 +26,7 @@ namespace Sdl.Web.Templating
     /// Generates sitemap JSON. Should be used in a page template
     /// </summary>
     [TcmTemplateTitle("Generate Sitemap")]
-    public class GenerateSiteMap : TemplateBase
+    public class GenerateSiteMap : Sdl.Web.Templating.TemplateBase.TemplateBase
     {
         private StructureGroup _startPoint;
 
@@ -58,7 +59,6 @@ namespace Sdl.Web.Templating
                 Logger.Error(ex.Message);
                 throw;
             }
-            return String.Empty;
         }
 
         private SitemapFolder GenerateStructureGroupNavigation(StructureGroup startPoint)
@@ -70,13 +70,13 @@ namespace Sdl.Web.Templating
                 var orderedDocument = GetItemsInFolderAsAList(startPoint);
                 foreach (XElement pgNode in orderedDocument)
                 {
-                    Page page = m_Engine.GetObject(pgNode.Attribute("ID").Value) as Page;
+                    Page page = MEngine.GetObject(pgNode.Attribute("ID").Value) as Page;
                     if (page != null)                                          
                         if (IsPublished(page) && IsNavigationPage(pgNode.Attribute("Title").Value))                                               
                                 root.Items.Add(GeneratePageNode(page, pgNode.Attribute("Title").Value));                                          
                     else                    
                         if (IsNavigationStructureGroup(pgNode.Attribute("Title").Value))                                                   
-                            GenerateStructureGroupNavigation(m_Engine.GetObject(pgNode.Attribute("ID").Value) as StructureGroup);                                            
+                            GenerateStructureGroupNavigation(MEngine.GetObject(pgNode.Attribute("ID").Value) as StructureGroup);                                            
                 }
             }
             catch (Exception ex)
@@ -89,7 +89,7 @@ namespace Sdl.Web.Templating
 
         private List<XElement> GetItemsInFolderAsAList(StructureGroup startPoint)
         {
-            var filter = new OrganizationalItemItemsFilter(m_Engine.GetSession());
+            var filter = new OrganizationalItemItemsFilter(MEngine.GetSession());
             //get pages first to see if they have to appear in nav 
             filter.ItemTypes = new List<ItemType> {ItemType.Page, ItemType.StructureGroup};
             filter.BaseColumns = ListBaseColumns.Extended;
@@ -109,8 +109,8 @@ namespace Sdl.Web.Templating
         private bool IsPublished(Page page)
         {
             bool isPublished = false;
-            if (m_Engine.PublishingContext.PublicationTarget != null)
-                isPublished = PublishEngine.IsPublished(page, m_Engine.PublishingContext.PublicationTarget);
+            if (MEngine.PublishingContext.PublicationTarget != null)
+                isPublished = PublishEngine.IsPublished(page, MEngine.PublishingContext.PublicationTarget);
             return isPublished;
         }
 
@@ -128,8 +128,8 @@ namespace Sdl.Web.Templating
         {
 
             bool isPublished = true;
-            if (m_Engine.PublishingContext.PublicationTarget != null)
-                isPublished = PublishEngine.IsPublished(page, m_Engine.PublishingContext.PublicationTarget);
+            if (MEngine.PublishingContext.PublicationTarget != null)
+                isPublished = PublishEngine.IsPublished(page, MEngine.PublishingContext.PublicationTarget);
             if (isPublished)
             {
                 SitemapPage sitemapPage = new SitemapPage(GetNavigationTitle(page));
@@ -156,6 +156,21 @@ namespace Sdl.Web.Templating
             Match match = Regex.Match(page.Title, @"^\d{3}\s");
             return match.Success;
         }
+
+        //private string GetUrl(Page page)
+        //{
+        //    string result = string.Empty;
+        //    if (page.PublishLocationUrl.EndsWith(".aspx"))
+        //    {
+        //        result = page.PublishLocationUrl.Substring(0, page.PublishLocationUrl.LastIndexOf("."));
+        //    }
+        //    else
+        //    {
+        //        result = page.PublishLocationUrl;
+        //    }
+        //    //ASP.NET sitemap provider requires unencoded urls
+        //    return System.Web.HttpUtility.UrlDecode(result);
+        //}
 
         private string GetNavigationTitle(StructureGroup _startPoint)
         {

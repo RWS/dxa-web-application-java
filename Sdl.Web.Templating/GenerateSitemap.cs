@@ -55,7 +55,7 @@ namespace Sdl.Web.Templating
             }
         }
 
-        private SitemapFolder GenerateStructureGroupNavigation(StructureGroup startPoint)
+        private SitemapItem GenerateStructureGroupNavigation(StructureGroup startPoint)
         {
             var root = GenerateFolderNode(startPoint);
             var orderedDocument = GetItemsInFolderAsAList(startPoint);
@@ -82,9 +82,9 @@ namespace Sdl.Web.Templating
             return root;
         }
 
-        private static SitemapFolder GenerateFolderNode(StructureGroup startPoint)
+        private static SitemapItem GenerateFolderNode(StructureGroup startPoint)
         {
-            SitemapFolder root = new SitemapFolder(GetNavigationTitle(startPoint))
+            SitemapItem root = new SitemapItem(GetNavigationTitle(startPoint))
                 {
                     Id = startPoint.Id,
                     Url = GetUrl(startPoint),
@@ -107,16 +107,16 @@ namespace Sdl.Web.Templating
             return System.Web.HttpUtility.UrlDecode(url);
         }
 
-        private static SitemapPage GeneratePageNode(Page page)
+        private static SitemapItem GeneratePageNode(Page page)
         {
-            SitemapPage sitemapPage = new SitemapPage(GetNavigationTitle(page))
+            SitemapItem SitemapItem = new SitemapItem(GetNavigationTitle(page))
                 {
                     Id = page.Id,
                     Url = GetUrl(page),
                     Type = ItemType.Page.ToString()
                 };
 
-            return sitemapPage;
+            return SitemapItem;
         }
 
         private static string GetNavigationTitle(Page page)
@@ -185,34 +185,27 @@ namespace Sdl.Web.Templating
 
     #region Sitemap Classes
 
-    public abstract class SitemapItem
-    {
-        public string Title { get; set; }
-        public string Url { get; set; }
-        public string Id { get; set; }
-    }
 
-    public class SitemapFolder : SitemapItem
+    public class SitemapItem
     {
-        public SitemapFolder(String title)
+        public SitemapItem()
         {
-            Title = title;
             Items = new List<SitemapItem>();
         }
 
-        public List<SitemapItem> Items { get; set; }
-        public string Type { get; set; }
-    }
-
-    public class SitemapPage : SitemapItem
-    {
-        public SitemapPage(String title)
+        public SitemapItem(String title)
         {
+            Items = new List<SitemapItem>();
             Title = title;
         }
 
+        public string Title { get; set; }
+        public string Url { get; set; }
+        public string Id { get; set; }
         public string Type { get; set; }
+        public List<SitemapItem> Items { get; set; }
     }
+
 
     #endregion Sitemap Classes
 }

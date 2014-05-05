@@ -202,7 +202,7 @@ namespace Sdl.Web.Templating
                 XElement vocabulariesXml = XElement.Parse(Encoding.Unicode.GetString(globalAppData.Data));
                 foreach (var vocabulary in vocabulariesXml.Elements())
                 {
-                    res[VocabulariesConfigName].Add(String.Format("{{{0}:{1}}}", Json.Encode(vocabulary.Attribute("prefix").Value), Json.Encode(vocabulary.Attribute("name").Value)));
+                    res[VocabulariesConfigName].Add(String.Format("{{{0}:{1},{2}:{3}}}", Json.Encode("prefix"), Json.Encode(vocabulary.Attribute("prefix").Value), Json.Encode("vocab"), Json.Encode(vocabulary.Attribute("name").Value)));
                 }
             }
 

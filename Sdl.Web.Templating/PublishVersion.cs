@@ -433,7 +433,7 @@ namespace Sdl.Web.Templating
                     }
                     var value = properties[index];
                     string[] parts = value.Split(':');
-                    semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1},\"Property\":{2}}}", Json.Encode(parts[0]), entities[parts[0]], Json.Encode(parts[1]));
+                    semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1},\"Property\":{2}}}", Json.Encode(parts[0]), Json.Encode(entities[parts[0]]), Json.Encode(parts[1]));
                 }
             }
 

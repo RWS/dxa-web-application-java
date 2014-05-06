@@ -36,6 +36,8 @@ namespace Sdl.Web.Templating
         private const string VocabulariesConfigName = "vocabularies";
         private const string VocabulariesAppDataId = "http://www.sdl.com/tridion/SemanticMapping/vocabularies";
         private const string TypeOfAppDataId = "http://www.sdl.com/tridion/SemanticMapping/typeof";
+        private const string TsiPrefix = "tsi";
+        private const string TsiVocabulary = "http://www.sdl.com/tridion/schemas/core";
 
         private readonly Dictionary<string, string> _namespaces = new Dictionary<string, string>
             {
@@ -194,6 +196,8 @@ namespace Sdl.Web.Templating
 
         private Dictionary<string, List<string>> ReadMappingsData()
         {
+            bool containsTsiVocabulary = false;
+
             // generate a list of vocabulary prefix and name from appdata
             var res = new Dictionary<string, List<string>> { { VocabulariesConfigName, new List<string>() } };
             ApplicationData globalAppData = MEngine.GetSession().SystemManager.LoadGlobalApplicationData(VocabulariesAppDataId);
@@ -202,8 +206,18 @@ namespace Sdl.Web.Templating
                 XElement vocabulariesXml = XElement.Parse(Encoding.Unicode.GetString(globalAppData.Data));
                 foreach (var vocabulary in vocabulariesXml.Elements())
                 {
-                    res[VocabulariesConfigName].Add(String.Format("{{{0}:{1},{2}:{3}}}", Json.Encode("Prefix"), Json.Encode(vocabulary.Attribute("prefix").Value), Json.Encode("Vocab"), Json.Encode(vocabulary.Attribute("name").Value)));
+                    string prefix = vocabulary.Attribute("prefix").Value;
+                    res[VocabulariesConfigName].Add(String.Format("{{\"Prefix\":{0},\"Vocab\":{1}}}", Json.Encode(prefix), Json.Encode(vocabulary.Attribute("name").Value)));
+                    if (prefix.Equals(TsiPrefix))
+                    {
+                        containsTsiVocabulary = true;
+                    }
                 }
+            }
+            // add tsi vocabulary if it is not there already
+            if (!containsTsiVocabulary)
+            {
+                res[VocabulariesConfigName].Add(String.Format("{{\"Prefix\":{0},\"Vocab\":{1}}}", Json.Encode(TsiPrefix), Json.Encode(TsiVocabulary)));
             }
 
             // generate a list of schema + id, separated by module
@@ -231,25 +245,27 @@ namespace Sdl.Web.Templating
                             res.Add(key, new List<string>());
                         }
 
-                        // add schema typeof from appdata
+                        // add schema typeof using tridion standard implementation vocabulary prefix
+                        string typeOf = string.Format("{0}:{1}", TsiPrefix, schema.RootElementName);
                         StringBuilder schemaSemantics = new StringBuilder();
+                        // append schema typeof from appdata 
                         ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
                         if (appData != null)
                         {
-                            string typeOf = Encoding.Unicode.GetString(appData.Data);
-                            schemaSemantics.Append(BuildSemanticsJson(typeOf, "Vocab", "Entity"));
+                            typeOf += "," + Encoding.Unicode.GetString(appData.Data);
                         }
+                        schemaSemantics.Append(BuildSchemaSemanticsJson(typeOf));
 
                         // TODO: serialize schema fields xml to json in a smart way
-                        // field: {"name":"something","isMultiValue":true,"semantics":[],"fields":[]}
-                        // field semantics: {"vocab":"s","property":"headline"}
+                        // field: {"Name":"something","IsMultiValue":true,"Semantics":[],"Fields":[]}
+                        // field semantics: {"Prefix":"s","Entity";"Article","Property":"headline"}
                         StringBuilder fields = new StringBuilder();
 
                         // load namespace manager with schema namespaces
                         XmlNamespaceManager nsmgr = SchemaNamespaceManager(schema.Xsd.OwnerDocument.NameTable);
 
                         // build field elements from schema
-                        fields.Append(BuildSchemaFieldsJson(schema, nsmgr));
+                        fields.Append(BuildSchemaFieldsJson(schema, typeOf, nsmgr));
 
                         res[key].Add(string.Format("{{\"Id\":{0},\"RootElement\":{1},\"Fields\":[{2}],\"Semantics\":[{3}]}}", Json.Encode(schema.Id.ItemId), Json.Encode(schema.RootElementName), fields, schemaSemantics));
                     }
@@ -269,9 +285,9 @@ namespace Sdl.Web.Templating
             return nsmgr;
         }
 
-        // field: {"name":"something","isMultiValue":true,"semantics":[],"fields":[]}
-        // field semantics: {"vocab":"s","property":"headline"}
-        private string BuildSchemaFieldsJson(Schema schema, XmlNamespaceManager nsmgr, bool embedded = false)
+        // field: {"Name":"something","IsMultiValue":true,"Semantics":[],"Fields":[]}
+        // field semantics: {"Prefix":"s","Entity":"Article","Property":"headline"}
+        private string BuildSchemaFieldsJson(Schema schema, string typeOf, XmlNamespaceManager nsmgr, bool embedded = false)
         {
             StringBuilder fields = new StringBuilder();
 
@@ -284,50 +300,28 @@ namespace Sdl.Web.Templating
             }
             foreach (XmlNode fieldNode in schema.Xsd.SelectNodes(xpath, nsmgr))
             {
-                if (first)
-                {
-                    first = false;
-                }
-                else
-                {
-                    fields.Append(",");
-                }
+                string fieldTypeOf = typeOf;
                 StringBuilder fieldSemantics = new StringBuilder();
 
                 // if maxOccurs is anything else than 1, it is a multi value field
                 bool isMultiValue = !fieldNode.Attributes["maxOccurs"].Value.Equals("1");
 
-                // read semantic mapping from field
-                // schema semantics: {"vocab":"s","entity":"Article"}
-                XmlNode propertyNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:property", nsmgr);
-                string property = propertyNode != null ? propertyNode.InnerText : null;
-                fieldSemantics.Append(BuildSemanticsJson(property, "Vocab", "Property"));
-
+                // read semantic mapping from field so we can append it to the schema typeof
                 XmlNode typeOfNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:typeof", nsmgr);
-                string typeOf = typeOfNode != null ? typeOfNode.InnerText : null;
-                if (!string.IsNullOrEmpty(typeOf))
+                if (typeOfNode != null)
                 {
-                    if (fieldSemantics.Length > 0)
-                    {
-                        fieldSemantics.Append(",");
-                    }
-                    fieldSemantics.Append(BuildSemanticsJson(typeOf, "Vocab", "Entity"));
+                    fieldTypeOf = typeOf + "," + typeOfNode.InnerText;
                 }
 
-                // add schema typeof from appdata for embedded schemas
-                if (embedded)
+                // use field xml name as initial semantic mapping for field
+                string property = string.Format("{0}:{1}", TsiPrefix, fieldNode.Attributes["name"].Value);
+                // read semantic mapping from field and append if available
+                XmlNode propertyNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:property", nsmgr);
+                if (propertyNode != null)
                 {
-                    ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
-                    if (appData != null)
-                    {
-                        if (fieldSemantics.Length > 0)
-                        {
-                            fieldSemantics.Append(",");
-                        }
-                        string schemaTypeOf = Encoding.Unicode.GetString(appData.Data);
-                        fieldSemantics.Append(BuildSemanticsJson(schemaTypeOf, "Vocab", "Entity"));
-                    }
+                    property += "," + propertyNode.InnerText;
                 }
+                fieldSemantics.Append(BuildFieldSemanticsJson(property, fieldTypeOf));
 
                 // handle embedded fields
                 StringBuilder embeddedFields = new StringBuilder();
@@ -336,7 +330,14 @@ namespace Sdl.Web.Templating
                 {
                     string uri = embeddedSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
                     Schema embeddedSchema = (Schema)MEngine.GetObject(uri);
-                    embeddedFields.Append(BuildSchemaFieldsJson(embeddedSchema, nsmgr, true));
+                    string embeddedTypeOf = string.Format("{0}:{1}", TsiPrefix, embeddedSchema.RootElementName);
+                    // append schema typeof from appdata for embedded schemas
+                    ApplicationData appData = embeddedSchema.LoadApplicationData(TypeOfAppDataId);
+                    if (appData != null)
+                    {
+                        embeddedTypeOf += "," + Encoding.Unicode.GetString(appData.Data);
+                    }
+                    embeddedFields.Append(BuildSchemaFieldsJson(embeddedSchema, embeddedTypeOf, nsmgr, true));
                 }
 
                 // TODO: handle link fields
@@ -351,7 +352,7 @@ namespace Sdl.Web.Templating
                 //        {
                 //            string uri = allowedTargetSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
                 //            Schema allowedTargetSchema = (Schema)MEngine.GetObject(uri);
-
+                //
                 //        }
                 //    }
                 //    else
@@ -364,6 +365,14 @@ namespace Sdl.Web.Templating
                 //    // if there is no type attribute, it is not a simple type so look for <xsd:complexType> inside the element
                 //}
 
+                if (first)
+                {
+                    first = false;
+                }
+                else
+                {
+                    fields.Append(",");
+                }
                 fields.AppendFormat("{{\"Name\":{0},\"IsMultiValue\":{1},\"Semantics\":[{2}],\"Fields\":[{3}]}}",
                     Json.Encode(fieldNode.Attributes["name"].Value),
                     Json.Encode(isMultiValue), fieldSemantics, embeddedFields);
@@ -372,10 +381,8 @@ namespace Sdl.Web.Templating
             return fields.ToString();
         }
 
-        // schema semantics: {"Vocab":"s","Entity":"Article"}
-        // field semantics: {"Vocab":"s","Property":"headline"}
-        // semantics: {"prefixName":"a","itemName":"b"},{"prefixName":"c","itemName":"d"}
-        private static string BuildSemanticsJson(string input, string prefixName, string itemName)
+        // schema semantics: {"Prefix":"s","Entity":"Article"}
+        private static string BuildSchemaSemanticsJson(string input)
         {
             StringBuilder semantics = new StringBuilder();
             if (!string.IsNullOrEmpty(input))
@@ -394,7 +401,39 @@ namespace Sdl.Web.Templating
                         semantics.Append(",");
                     }
                     string[] parts = value.Split(':');
-                    semantics.AppendFormat("{{{0}:{1},{2}:{3}}}", Json.Encode(prefixName), Json.Encode(parts[0]), Json.Encode(itemName), Json.Encode(parts[1]));
+                    semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1}}}", Json.Encode(parts[0]), Json.Encode(parts[1]));
+                }
+            }
+
+            return semantics.ToString();
+        }
+
+        // field semantics: {"Prefix":"s","Entity":"Article","Property":"headline"}
+        private static string BuildFieldSemanticsJson(string input, string entity)
+        {
+            Dictionary<string, string> entities = new Dictionary<string, string>();
+            StringBuilder semantics = new StringBuilder();
+            if (!string.IsNullOrEmpty(input))
+            {
+                // entity = "s:Article" but can also be "s:Article,x:Something"
+                string[] values = entity.Split(',');
+                foreach (var value in values)
+                {
+                    string[] parts = value.Split(':');
+                    entities.Add(parts[0], parts[1]);
+                }
+
+                // input = "s:headline" but can also be "s:headline,x:something"
+                string[] properties = input.Split(',');
+                for (int index = 0; index < properties.Length; index++)
+                {
+                    if (index > 0)
+                    {
+                        semantics.Append(",");
+                    }
+                    var value = properties[index];
+                    string[] parts = value.Split(':');
+                    semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1},\"Property\":{2}}}", Json.Encode(parts[0]), entities[parts[0]], Json.Encode(parts[1]));
                 }
             }
 

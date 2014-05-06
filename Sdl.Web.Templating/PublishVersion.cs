@@ -160,7 +160,7 @@ namespace Sdl.Web.Templating
                 throw new Exception(String.Format("Cannot find '_All' component. Please ensure that this component is in the {0} folder.", folder.WebDavUrl));
             }
             //We create a special asset file _all.js which contains the path of all other asset files of this type that have been published
-            Item filesItem = MPackage.CreateStringItem(ContentType.Text, String.Format("{{\"defaultLocalization\":{0},\"files\":[{1}]}}", Json.Encode(IsMasterWebPublication()), String.Join(",", files)));
+            Item filesItem = MPackage.CreateStringItem(ContentType.Text, String.Format("{{\"defaultLocalization\":{0},\"staging\":{1},\"files\":[{2}]}}", Json.Encode(IsMasterWebPublication()), Json.Encode(IsPublishingToStaging()), String.Join(",", files)));
             MPackage.PushItem(type + "/" + BootstrapFilename + JsonExtension, filesItem);
             var bootstrapBinary = MEngine.PublishingContext.RenderedItem.AddBinary(filesItem.GetAsStream(), BootstrapFilename + JsonExtension, sg, type, allComponent, JsonMimetype);
             return bootstrapBinary.Url;

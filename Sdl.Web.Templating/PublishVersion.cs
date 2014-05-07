@@ -308,75 +308,7 @@ namespace Sdl.Web.Templating
             }
             foreach (XmlNode fieldNode in schema.Xsd.SelectNodes(xpath, nsmgr))
             {
-                string name = fieldNode.Attributes["name"].Value;
-                string path = parentPath + "/" + name;
-                string fieldTypeOf = typeOf;
-                StringBuilder fieldSemantics = new StringBuilder();
-
-                // if maxOccurs is anything else than 1, it is a multi value field
-                bool isMultiValue = !fieldNode.Attributes["maxOccurs"].Value.Equals("1");
-
-                // read semantic mapping from field so we can append it to the schema typeof
-                XmlNode typeOfNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:typeof", nsmgr);
-                if (typeOfNode != null)
-                {
-                    fieldTypeOf = typeOf + "," + typeOfNode.InnerText;
-                }
-
-                // use field xml name as initial semantic mapping for field
-                string property = string.Format("{0}:{1}", DefaultVocabularyPrefix, fieldNode.Attributes["name"].Value);
-                // read semantic mapping from field and append if available
-                XmlNode propertyNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:property", nsmgr);
-                if (propertyNode != null)
-                {
-                    property += "," + propertyNode.InnerText;
-                }
-                fieldSemantics.Append(BuildFieldSemanticsJson(property, fieldTypeOf));
-
-                // handle embedded fields
-                StringBuilder embeddedFields = new StringBuilder();
-                XmlNode embeddedSchemaNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:EmbeddedSchema", nsmgr);
-                if (embeddedSchemaNode != null)
-                {
-                    string uri = embeddedSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
-                    Schema embeddedSchema = (Schema)MEngine.GetObject(uri);
-                    string embeddedTypeOf = string.Format("{0}:{1}", DefaultVocabularyPrefix, embeddedSchema.RootElementName);
-
-                    // append schema typeof from appdata for embedded schemas
-                    ApplicationData appData = embeddedSchema.LoadApplicationData(TypeOfAppDataId);
-                    if (appData != null)
-                    {
-                        embeddedTypeOf += "," + Encoding.Unicode.GetString(appData.Data);
-                    }
-
-                    embeddedFields.Append(BuildSchemaFieldsJson(embeddedSchema, path, embeddedTypeOf, nsmgr, true));
-                }
-
-                // TODO: handle link fields
-                //XmlAttribute typeAttribute = fieldNode.Attributes["type"];
-                //if (typeAttribute != null)
-                //{
-                //    bool isSimpleLink = typeAttribute.Value.Equals("tcmi:SimpleLink");
-                //    XmlNode allowedTargetSchemasNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:AllowedTargetSchemas", nsmgr);
-                //    if (allowedTargetSchemasNode != null)
-                //    {
-                //        foreach (XmlNode allowedTargetSchemaNode in allowedTargetSchemasNode.SelectNodes("tcm:TargetSchema", nsmgr))
-                //        {
-                //            string uri = allowedTargetSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
-                //            Schema allowedTargetSchema = (Schema)MEngine.GetObject(uri);
-                //
-                //        }
-                //    }
-                //    else
-                //    {
-                //        // if there are no allowed target schemas, all schemas are allowed...
-                //    }
-                //}
-                //else
-                //{
-                //    // if there is no type attribute, it is not a simple type so look for <xsd:complexType> inside the element
-                //}
-
+                string fieldJson = BuildFieldJson(fieldNode, parentPath, typeOf, nsmgr);
                 if (first)
                 {
                     first = false;
@@ -385,10 +317,113 @@ namespace Sdl.Web.Templating
                 {
                     fields.Append(",");
                 }
-                fields.AppendFormat("{{\"Name\":{0},\"Path\":{1},\"IsMultiValue\":{2},\"Semantics\":[{3}],\"Fields\":[{4}]}}", Json.Encode(name), Json.Encode(path), Json.Encode(isMultiValue), fieldSemantics, embeddedFields);
+                fields.Append(fieldJson);
+            }
+
+            // embedded schemas do not contain metadata fields
+            if (!embedded)
+            {
+                // add metadata fields
+                xpath = "/xsd:schema/xsd:element[@name='Metadata']/xsd:complexType/xsd:sequence/xsd:element";
+                foreach (XmlNode fieldNode in schema.Xsd.SelectNodes(xpath, nsmgr))
+                {
+                    // change last item in parentPath to Metadata
+                    int index = parentPath.LastIndexOf('/');
+                    if (index != -1)
+                    {
+                        parentPath = parentPath.Substring(0, index) + "/Metadata";
+                    }
+
+                    string fieldJson = BuildFieldJson(fieldNode, parentPath, typeOf, nsmgr);
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        fields.Append(",");
+                    }
+                    fields.Append(fieldJson);
+                }                
             }
 
             return fields.ToString();
+        }
+
+        // field: {"Name":"something","Path":"/something","IsMultiValue":true,"Semantics":[],"Fields":[]}
+        private string BuildFieldJson(XmlNode fieldNode, string parentPath, string typeOf, XmlNamespaceManager nsmgr)
+        {
+            string name = fieldNode.Attributes["name"].Value;
+            string path = parentPath + "/" + name;
+            string fieldTypeOf = typeOf;
+            StringBuilder fieldSemantics = new StringBuilder();
+
+            // if maxOccurs is anything else than 1, it is a multi value field
+            bool isMultiValue = !fieldNode.Attributes["maxOccurs"].Value.Equals("1");
+
+            // read semantic mapping from field so we can append it to the schema typeof
+            XmlNode typeOfNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:typeof", nsmgr);
+            if (typeOfNode != null)
+            {
+                fieldTypeOf = typeOf + "," + typeOfNode.InnerText;
+            }
+
+            // use field xml name as initial semantic mapping for field
+            string property = string.Format("{0}:{1}", DefaultVocabularyPrefix, fieldNode.Attributes["name"].Value);
+
+            // read semantic mapping from field and append if available
+            XmlNode propertyNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:property", nsmgr);
+            if (propertyNode != null)
+            {
+                property += "," + propertyNode.InnerText;
+            }
+            fieldSemantics.Append(BuildFieldSemanticsJson(property, fieldTypeOf));
+
+            // handle embedded fields
+            StringBuilder embeddedFields = new StringBuilder();
+            XmlNode embeddedSchemaNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:EmbeddedSchema", nsmgr);
+            if (embeddedSchemaNode != null)
+            {
+                string uri = embeddedSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
+                Schema embeddedSchema = (Schema)MEngine.GetObject(uri);
+                string embeddedTypeOf = string.Format("{0}:{1}", DefaultVocabularyPrefix, embeddedSchema.RootElementName);
+
+                // append schema typeof from appdata for embedded schemas
+                ApplicationData appData = embeddedSchema.LoadApplicationData(TypeOfAppDataId);
+                if (appData != null)
+                {
+                    embeddedTypeOf += "," + Encoding.Unicode.GetString(appData.Data);
+                }
+
+                embeddedFields.Append(BuildSchemaFieldsJson(embeddedSchema, path, embeddedTypeOf, nsmgr, true));
+            }
+
+            // TODO: handle link fields
+            //XmlAttribute typeAttribute = fieldNode.Attributes["type"];
+            //if (typeAttribute != null)
+            //{
+            //    bool isSimpleLink = typeAttribute.Value.Equals("tcmi:SimpleLink");
+            //    XmlNode allowedTargetSchemasNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:AllowedTargetSchemas", nsmgr);
+            //    if (allowedTargetSchemasNode != null)
+            //    {
+            //        foreach (XmlNode allowedTargetSchemaNode in allowedTargetSchemasNode.SelectNodes("tcm:TargetSchema", nsmgr))
+            //        {
+            //            string uri = allowedTargetSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
+            //            Schema allowedTargetSchema = (Schema)MEngine.GetObject(uri);
+            //
+            //        }
+            //    }
+            //    else
+            //    {
+            //        // if there are no allowed target schemas, all schemas are allowed...
+            //    }
+            //}
+            //else
+            //{
+            //    // if there is no type attribute, it is not a simple type so look for <xsd:complexType> inside the element
+            //}
+
+            return string.Format("{{\"Name\":{0},\"Path\":{1},\"IsMultiValue\":{2},\"Semantics\":[{3}],\"Fields\":[{4}]}}", Json.Encode(name), Json.Encode(path), Json.Encode(isMultiValue), fieldSemantics, embeddedFields);
         }
 
         // schema semantics: {"Prefix":"s","Entity":"Article"}

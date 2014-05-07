@@ -39,11 +39,13 @@ namespace Sdl.Web.Templating
         private const string DefaultVocabularyPrefix = "tsi";
         private const string DefaultVocabulary = "http://www.sdl.com/tridion/schemas/core";
 
+        // list of known namespaces that are used in our schemas
         private readonly Dictionary<string, string> _namespaces = new Dictionary<string, string>
             {
-                {"xsd", "http://www.w3.org/2001/XMLSchema"},
-                {"tcm", "http://www.tridion.com/ContentManager/5.0"},
-                {"xlink", "http://www.w3.org/1999/xlink"},
+                {Tridion.Constants.XsdPrefix, Tridion.Constants.XsdNamespace},
+                {Tridion.Constants.TcmPrefix, Tridion.Constants.TcmNamespace},
+                {Tridion.Constants.XlinkPrefix, Tridion.Constants.XlinkNamespace},
+                {Tridion.Constants.XhtmlPrefix, Tridion.Constants.XhtmlNamespace},
                 {"tcmi","http://www.tridion.com/ContentManager/5.0/Instance"},
                 {"mapping", "http://www.sdl.com/tridion/SemanticMapping"}
             };

@@ -231,8 +231,8 @@ namespace Sdl.Web.Templating
             {
                 var type = item.GetAttribute("Type");
                 var subType = item.GetAttribute("SubType");
-                // we only consider normal schemas (type=8 subtype=0)
-                if ((type == "8" && subType == "0"))
+                // we consider normal schemas (type=8 subtype=0) and multimedia schemas (type=8 subtype=1)
+                if ((type == "8" && (subType == "0" || subType == "1")))
                 {
                     var id = item.GetAttribute("ID");
                     var schema = (Schema)MEngine.GetObject(id);
@@ -245,8 +245,15 @@ namespace Sdl.Web.Templating
                             res.Add(key, new List<string>());
                         }
 
+                        // multimedia schemas don't have a root element name, so lets use its title without any invalid characters
+                        string rootElementName = schema.RootElementName;
+                        if (string.IsNullOrEmpty(rootElementName))
+                        {
+                            rootElementName = Regex.Replace(schema.Title.Trim(), @"[^A-Za-z0-9.]+", "");
+                        }
+
                         // add schema typeof using tridion standard implementation vocabulary prefix
-                        string typeOf = string.Format("{0}:{1}", DefaultVocabularyPrefix, schema.RootElementName);
+                        string typeOf = string.Format("{0}:{1}", DefaultVocabularyPrefix, rootElementName);
                         StringBuilder schemaSemantics = new StringBuilder();
                         // append schema typeof from appdata 
                         ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
@@ -265,10 +272,10 @@ namespace Sdl.Web.Templating
                         XmlNamespaceManager nsmgr = SchemaNamespaceManager(schema.Xsd.OwnerDocument.NameTable);
 
                         // build field elements from schema
-                        string path = "/" + schema.RootElementName;
+                        string path = "/" + rootElementName;
                         fields.Append(BuildSchemaFieldsJson(schema, path, typeOf, nsmgr));
 
-                        res[key].Add(string.Format("{{\"Id\":{0},\"RootElement\":{1},\"Fields\":[{2}],\"Semantics\":[{3}]}}", Json.Encode(schema.Id.ItemId), Json.Encode(schema.RootElementName), fields, schemaSemantics));
+                        res[key].Add(string.Format("{{\"Id\":{0},\"RootElement\":{1},\"Fields\":[{2}],\"Semantics\":[{3}]}}", Json.Encode(schema.Id.ItemId), Json.Encode(rootElementName), fields, schemaSemantics));
                     }
                 }
             }
@@ -535,6 +542,10 @@ namespace Sdl.Web.Templating
         private static string GetKeyFromSchema(Schema schema)
         {
             var key = schema.RootElementName;
+            if (string.IsNullOrEmpty(key))
+            {
+                key = Regex.Replace(schema.Title.Trim(), @"[^A-Za-z0-9.]+", "");
+            }
             return key.Substring(0, 1).ToLower() + key.Substring(1);
         }
 

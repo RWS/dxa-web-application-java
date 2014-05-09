@@ -107,16 +107,30 @@ namespace Sdl.Web.Templating
             return System.Web.HttpUtility.UrlDecode(url);
         }
 
-        private static SitemapItem GeneratePageNode(Page page)
+        private SitemapItem GeneratePageNode(Page page)
         {
             SitemapItem SitemapItem = new SitemapItem(GetNavigationTitle(page))
                 {
                     Id = page.Id,
                     Url = GetUrl(page),
-                    Type = ItemType.Page.ToString()
+                    Type = ItemType.Page.ToString(),
+                    PublishedDate = GetPublishedDate(page, MEngine.PublishingContext.PublicationTarget)
                 };
 
             return SitemapItem;
+        }
+
+        private static DateTime GetPublishedDate(Page page, PublicationTarget target )
+        {
+            var publishInfos = PublishEngine.GetPublishInfo(page);
+            foreach (var publishInfo in publishInfos)
+            {
+                if (publishInfo.PublicationTarget == target)
+                {
+                    return publishInfo.PublishedAt;
+                }
+            }
+            return DateTime.MinValue;
         }
 
         private static string GetNavigationTitle(Page page)
@@ -217,6 +231,7 @@ namespace Sdl.Web.Templating
         public string Id { get; set; }
         public string Type { get; set; }
         public List<SitemapItem> Items { get; set; }
+        public DateTime PublishedDate { get; set; }
     }
 
 

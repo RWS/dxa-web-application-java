@@ -37,7 +37,7 @@ namespace Sdl.Web.Templating
         private const string VocabulariesAppDataId = "http://www.sdl.com/tridion/SemanticMapping/vocabularies";
         private const string TypeOfAppDataId = "http://www.sdl.com/tridion/SemanticMapping/typeof";
         private const string DefaultVocabularyPrefix = "tsi";
-        private const string DefaultVocabulary = "http://www.sdl.com/tridion/schemas/core";
+        private const string DefaultVocabulary = "http://www.sdl.com/web/schemas/core";
 
         // list of known namespaces that are used in our schemas
         private readonly Dictionary<string, string> _namespaces = new Dictionary<string, string>

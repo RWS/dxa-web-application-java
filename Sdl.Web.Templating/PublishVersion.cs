@@ -294,19 +294,9 @@ namespace Sdl.Web.Templating
                     res.Add(module.Key, new List<string>());
                 }
 
-                StringBuilder allowedComponentTypes = new StringBuilder();
-                bool firstInRegion = true;
                 foreach (var region in modules[module.Key])
                 {
-                    if (firstInRegion)
-                    {
-                        firstInRegion = false;
-                    }
-                    else
-                    {
-                        allowedComponentTypes.Append(",");
-                    }
-
+                    StringBuilder allowedComponentTypes = new StringBuilder();
                     bool first = true; 
                     foreach (var componentType in region.Value)
                     {
@@ -369,7 +359,7 @@ namespace Sdl.Web.Templating
                     // do not append empty strings (template.RelatedSchemas can be empty)
                     if (allowedComponentTypes.Length > 0)
                     {
-                        modules[key][region].Add(allowedComponentTypes.ToString());                        
+                        modules[key][region].Add(allowedComponentTypes.ToString());                       
                     }
                 }
             }

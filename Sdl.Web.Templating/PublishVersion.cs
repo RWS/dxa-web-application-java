@@ -33,6 +33,7 @@ namespace Sdl.Web.Templating
         private const string SchemasConfigName = "schemas";
         private const string TaxonomiesConfigName = "taxonomies";
         private const string MappingsConfigName = "mappings";
+        private const string RegionConfigName = "regions";
         private const string VocabulariesConfigName = "vocabularies";
         private const string VocabulariesAppDataId = "http://www.sdl.com/tridion/SemanticMapping/vocabularies";
         private const string TypeOfAppDataId = "http://www.sdl.com/tridion/SemanticMapping/typeof";
@@ -281,7 +282,99 @@ namespace Sdl.Web.Templating
                     }
                 }
             }
+
+            // get region mappings for all templates
+            Dictionary<string, Dictionary<string, List<string>>> modules = BuildRegionMappings();
+
+            // append region mappings 
+            foreach (var module in modules)
+            {
+                if (!res.ContainsKey(module.Key))
+                {
+                    res.Add(module.Key, new List<string>());
+                }
+
+                StringBuilder allowedComponentTypes = new StringBuilder();
+                bool firstInRegion = true;
+                foreach (var region in modules[module.Key])
+                {
+                    if (firstInRegion)
+                    {
+                        firstInRegion = false;
+                    }
+                    else
+                    {
+                        allowedComponentTypes.Append(",");
+                    }
+
+                    bool first = true; 
+                    foreach (var componentType in region.Value)
+                    {
+                        if (first)
+                        {
+                            first = false;
+                        }
+                        else
+                        {
+                            allowedComponentTypes.Append(",");
+                        }
+                        allowedComponentTypes.Append(componentType);
+                    }
+                    res[module.Key].Add(string.Format("{{{0}:[{1}]}}", Json.Encode(region.Key), allowedComponentTypes));
+                }
+            }
+
             return res;
+        }
+
+        private Dictionary<string, Dictionary<string, List<string>>> BuildRegionMappings()
+        {
+            // format: module { region { schema, template } }
+            Dictionary<string, Dictionary<string, List<string>>> modules = new Dictionary<string, Dictionary<string, List<string>>>();
+             
+            var templateFilter = new ComponentTemplatesFilter(MEngine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
+            foreach (XmlElement item in GetPublication().GetListComponentTemplates(templateFilter).ChildNodes)
+            {
+                var id = item.GetAttribute("ID");
+                var template = (ComponentTemplate)MEngine.GetObject(id);
+                var region = GetRegionFromTemplate(template);
+                var module = GetModuleName(template.WebDavUrl);
+                if (module != null)
+                {
+                    var key = module + "." + RegionConfigName;
+                    if (!modules.ContainsKey(key))
+                    {
+                        modules.Add(key, new Dictionary<string, List<string>>());
+                    }
+                    if (!modules[key].ContainsKey(region))
+                    {
+                        modules[key].Add(region, new List<string>());
+                    }
+
+                    StringBuilder allowedComponentTypes = new StringBuilder();
+                    bool first = true;
+                    foreach (var schema in template.RelatedSchemas)
+                    {
+                        if (first)
+                        {
+                            first = false;
+                        }
+                        else
+                        {
+                            allowedComponentTypes.Append(",");
+                        }
+                        allowedComponentTypes.AppendFormat("{{\"schema\":{0},\"template\":{1}}}", Json.Encode(schema.Id.GetVersionlessUri().ToString()), Json.Encode(template.Id.GetVersionlessUri().ToString()));
+                    }
+
+                    // do not append empty strings (template.RelatedSchemas can be empty)
+                    if (allowedComponentTypes.Length > 0)
+                    {
+                        modules[key][region].Add(allowedComponentTypes.ToString());                        
+                    }
+                }
+            }
+
+            return modules;
         }
 
         private XmlNamespaceManager SchemaNamespaceManager(XmlNameTable nameTable)
@@ -568,6 +661,20 @@ namespace Sdl.Web.Templating
         {
             var key = taxonomy.XmlName;
             return key.Substring(0, 1).ToLower() + key.Substring(1);
+        }
+
+        private static string GetRegionFromTemplate(ComponentTemplate template)
+        {
+            string region = "Main";
+
+            string title = template.Title;
+            if (title.Contains('['))
+            {
+                int start = title.IndexOf('[') + 1;
+                int length = title.IndexOf(']') - start;
+                region = title.Substring(start, length);
+            }
+            return region;
         }
 
         private static string GetKeyFromTemplate(ComponentTemplate template)

@@ -320,7 +320,7 @@ namespace Sdl.Web.Templating
                         }
                         allowedComponentTypes.Append(componentType);
                     }
-                    res[module.Key].Add(string.Format("{{{0}:[{1}]}}", Json.Encode(region.Key), allowedComponentTypes));
+                    res[module.Key].Add(string.Format("{{\"Region\":{0},\"ComponentTypes\":[{1}]}}", Json.Encode(region.Key), allowedComponentTypes));
                 }
             }
 
@@ -363,7 +363,7 @@ namespace Sdl.Web.Templating
                         {
                             allowedComponentTypes.Append(",");
                         }
-                        allowedComponentTypes.AppendFormat("{{\"schema\":{0},\"template\":{1}}}", Json.Encode(schema.Id.GetVersionlessUri().ToString()), Json.Encode(template.Id.GetVersionlessUri().ToString()));
+                        allowedComponentTypes.AppendFormat("{{\"Schema\":{0},\"Template\":{1}}}", Json.Encode(schema.Id.GetVersionlessUri().ToString()), Json.Encode(template.Id.GetVersionlessUri().ToString()));
                     }
 
                     // do not append empty strings (template.RelatedSchemas can be empty)

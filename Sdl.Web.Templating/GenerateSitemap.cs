@@ -23,7 +23,7 @@ namespace Sdl.Web.Templating
     public class GenerateSiteMap : TemplateBase.TemplateBase
     {
         private StructureGroup _startPoint;
-
+        private const string MAIN_REGION_NAME = "Main";
         public override void Transform(Engine engine, Package package)
         {
             Initialize(engine, package);
@@ -65,14 +65,14 @@ namespace Sdl.Web.Templating
                 Page page = MEngine.GetObject(pgNode.Attribute("ID").Value) as Page;
                 if (page != null)
                 {
-                    if (IsPublished(page) && IsVisible(pgNode.Attribute("Title").Value))
+                    if (IsPublished(page) && !IsSystem(pgNode.Attribute("Title").Value))
                     {
                         root.Items.Add(GeneratePageNode(page));
                     }
                 }
                 else
                 {
-                    if (IsVisible(pgNode.Attribute("Title").Value))
+                    if (!IsSystem(pgNode.Attribute("Title").Value))
                     {
                         root.Items.Add(GenerateStructureGroupNavigation(MEngine.GetObject(pgNode.Attribute("ID").Value) as StructureGroup));
                     }
@@ -82,25 +82,26 @@ namespace Sdl.Web.Templating
             return root;
         }
 
-        private static SitemapItem GenerateFolderNode(StructureGroup startPoint)
+        private SitemapItem GenerateFolderNode(StructureGroup startPoint)
         {
             SitemapItem root = new SitemapItem(GetNavigationTitle(startPoint))
                 {
                     Id = startPoint.Id,
                     Url = GetUrl(startPoint),
-                    Type = ItemType.StructureGroup.ToString()
+                    Type = ItemType.StructureGroup.ToString(),
+                    Visible = IsVisible(startPoint.Title)
                 };
 
             return root;
         }
 
-        private static string GetNavigationTitle(StructureGroup sg)
+        private string GetNavigationTitle(StructureGroup sg)
         {
-            string result = Regex.Replace(sg.Title, @"^\d{3}\s", string.Empty);
+            string result = StripPrefix(sg.Title);
             return result;
         }
 
-        private static string GetUrl(StructureGroup sg)
+        private string GetUrl(StructureGroup sg)
         {
             String url = sg.PublishLocationUrl;
             //TODO: Logic can be included here to be able to add external urls
@@ -114,13 +115,14 @@ namespace Sdl.Web.Templating
                     Id = page.Id,
                     Url = GetUrl(page),
                     Type = ItemType.Page.ToString(),
-                    PublishedDate = GetPublishedDate(page, MEngine.PublishingContext.PublicationTarget)
+                    PublishedDate = GetPublishedDate(page, MEngine.PublishingContext.PublicationTarget),
+                    Visible = IsVisible(page.Title)
                 };
 
             return SitemapItem;
         }
 
-        private static DateTime GetPublishedDate(Page page, PublicationTarget target )
+        private DateTime GetPublishedDate(Page page, PublicationTarget target )
         {
             var publishInfos = PublishEngine.GetPublishInfo(page);
             foreach (var publishInfo in publishInfos)
@@ -133,28 +135,62 @@ namespace Sdl.Web.Templating
             return DateTime.MinValue;
         }
 
-        private static string GetNavigationTitle(Page page)
+        private string GetNavigationTitle(Page page)
+        {
+            Component mainComp = GetMainComponentOnPage(page);
+            var title =  GetNavigationTitleFromComp(mainComp);
+            return String.IsNullOrEmpty(title) ? StripPrefix(page.Title) : title;
+        }
+
+        private Component GetMainComponentOnPage(Page page)
         {
             foreach (var cp in page.ComponentPresentations)
             {
-                if (cp.Component.Metadata != null)
+                var region = GetRegionFromComponentPresentation(cp);
+                if (region == MAIN_REGION_NAME)
                 {
-                    //TODO: Implement this on the schemas
-                    ItemFields fields = new ItemFields(cp.Component.Metadata, cp.Component.MetadataSchema);
-                    ItemFields meta = fields.GetEmbeddedField("StandardMetaData");
-                    if (meta != null)
-                    {
-                        string title = meta.GetTextValue("NavigationTitle");
-                        if (!string.IsNullOrEmpty(title)) return title;
-                        break;
-                    }
+                    return cp.Component;
                 }
             }
-            string result = Regex.Replace(page.Title, @"^\d{3}\s", string.Empty);
-            return result;
+            return null;
         }
 
-        private static string GetUrl(Page page)
+        private object GetRegionFromComponentPresentation(Tridion.ContentManager.CommunicationManagement.ComponentPresentation cp)
+        {
+            var match = Regex.Match(cp.ComponentTemplate.Title, @".*?\[(.*?)\]");
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
+            //default region name
+            return MAIN_REGION_NAME;
+        }
+
+        private string GetNavigationTitleFromComp(Component mainComp)
+        {
+            //TODO, make the field names used to extract the title configurable as TBB parameters
+            string title = null;
+            if (mainComp != null)
+            {
+                if (mainComp.Metadata != null)
+                {
+                    ItemFields meta = new ItemFields(mainComp.Metadata, mainComp.MetadataSchema);
+                    var embedMeta = meta.GetEmbeddedField("standardMeta");
+                    if (embedMeta != null)
+                    {
+                        title = embedMeta.GetTextValue("name");
+                    }
+                }
+                if (String.IsNullOrEmpty(title))
+                {
+                    ItemFields content = new ItemFields(mainComp.Content, mainComp.Schema);
+                    title = content.GetTextValue("headline");
+                }
+            }
+            return title;
+        }
+
+        private string GetUrl(Page page)
         {
             String url = page.PublishLocationUrl;
             return System.Web.HttpUtility.UrlDecode(url);
@@ -189,11 +225,15 @@ namespace Sdl.Web.Templating
             return false;
         }
 
-        private static bool IsVisible(string title)
+        private bool IsVisible(string title)
         {
-            // return !page.PublishLocationUrl.ToLower().EndsWith("index.aspx");
             Match match = Regex.Match(title, @"^\d{3}\s");
             return match.Success;
+        }
+
+        private bool IsSystem(string title)
+        {
+            return title.StartsWith("_");
         }
     }
 
@@ -225,6 +265,7 @@ namespace Sdl.Web.Templating
 
         private string RemoveNonRequiredExtensions(string value)
         {
+            //TODO make this configurable with TBB parameters
             return value.Replace(".html","");
         }
 
@@ -232,6 +273,7 @@ namespace Sdl.Web.Templating
         public string Type { get; set; }
         public List<SitemapItem> Items { get; set; }
         public DateTime PublishedDate { get; set; }
+        public bool Visible { get; set; }
     }
 
 

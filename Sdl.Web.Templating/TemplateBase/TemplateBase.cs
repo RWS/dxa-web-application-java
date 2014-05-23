@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Xml;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
@@ -552,29 +553,9 @@ namespace Sdl.Web.Templating.TemplateBase
             return StripPrefix(sg.Title);
         }
 
-        /// <summary>
-        /// Removes the prefix of a string based on the following convention:
-        /// 1) Number prefix - '100 The Title' becomes 'The Title'
-        /// It either contains three digits and be followed by space
-        /// </summary>
-        /// <param name="title">The string to strip</param>
-        /// <returns>The stripped string</returns>
         public string StripPrefix(string title)
         {
-            int length = 4;
-            if (title.Length < 4)
-            {
-                length = title.Length - 1;
-            }
-            string prefix = title.Substring(0, length);
-            int result;
-            //Handle number prefix
-            if (int.TryParse(prefix, out result))
-            {
-                title = title.Substring(title.IndexOf(" ", StringComparison.Ordinal) + 1);
-            }
-            title = title.Trim();
-            return title;
+            return Regex.Replace(title, @"^\d{3}\s", string.Empty);
         }
         #endregion
 

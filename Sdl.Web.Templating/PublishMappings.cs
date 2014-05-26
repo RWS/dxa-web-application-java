@@ -52,7 +52,7 @@ namespace Sdl.Web.Templating
             List<string> filesCreated = new List<string>();
             if (IsMasterWebPublication())
             {
-                filesCreated.AddRange(PublishJsonData(ReadMappingsData(), coreConfigComponent, sg));
+                filesCreated.AddRange(PublishJsonData(ReadMappingsData(), coreConfigComponent,"mapping", sg));
             }
             //Publish the boostrap list, this is used by the web application to load in all other mapping files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "mapping-");

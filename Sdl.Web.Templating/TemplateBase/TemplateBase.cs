@@ -632,17 +632,17 @@ namespace Sdl.Web.Templating.TemplateBase
 
         #endregion
 
-        protected List<string> PublishJsonData(Dictionary<string, List<string>> settings, Component relatedComponent, StructureGroup sg, bool isArray = false)
+        protected List<string> PublishJsonData(Dictionary<string, List<string>> settings, Component relatedComponent, string variantName, StructureGroup sg, bool isArray = false)
         {
             List<string> files = new List<string>();
             foreach (var key in settings.Keys)
             {
-                files.Add(PublishJsonData(settings[key], relatedComponent, key, sg, isArray));
+                files.Add(PublishJsonData(settings[key], relatedComponent, key, variantName+key, sg, isArray));
             }
             return files;
         }
 
-        protected string PublishJsonData(List<string> settings, Component relatedComponent, string filename, StructureGroup sg, bool isArray = false)
+        protected string PublishJsonData(List<string> settings, Component relatedComponent, string filename, string variantName, StructureGroup sg, bool isArray = false)
         {
             string json = null;
             if (isArray)
@@ -653,7 +653,7 @@ namespace Sdl.Web.Templating.TemplateBase
             {
                 json = String.Format("{{{0}}}", String.Join(",\n", settings));
             }
-            return PublishJson(json, relatedComponent, sg, filename, filename);
+            return PublishJson(json, relatedComponent, sg, filename, variantName);
         }
 
         protected string PublishBootstrapJson(List<string> filesCreated, Component relatedComponent, StructureGroup sg, string variantName = null)

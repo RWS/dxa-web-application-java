@@ -44,7 +44,7 @@ namespace Sdl.Web.Templating
             {
                 data.AddRange(ReadComponentData(configComp));
             }
-            return PublishJsonData(data, module, moduleName, sg);
+            return PublishJsonData(data, module, moduleName,"resource", sg);
         }
     }
 }

@@ -69,7 +69,6 @@
     <Compile Include="PublishMappings.cs" />
     <Compile Include="PublishResources.cs" />
     <Compile Include="PublishStaticBootstrap.cs" />
-    <Compile Include="PublishVersion.cs" />
     <Compile Include="RenderComponentPresentations.cs" />
     <Compile Include="TemplateBase\TemplateBase.cs" />
   </ItemGroup>

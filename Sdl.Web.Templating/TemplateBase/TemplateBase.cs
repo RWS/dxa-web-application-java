@@ -656,9 +656,10 @@ namespace Sdl.Web.Templating.TemplateBase
             return PublishJson(json, relatedComponent, sg, filename, variantName);
         }
 
-        protected string PublishBootstrapJson(List<string> filesCreated, Component relatedComponent, StructureGroup sg, string variantName = null)
+        protected string PublishBootstrapJson(List<string> filesCreated, Component relatedComponent, StructureGroup sg, string variantName = null, List<string> additionalData = null)
         {
-            return PublishJson(String.Format("{{\"files\":[{0}]}}", String.Join(",", filesCreated)), relatedComponent, sg, BootstrapFilename, variantName + "bootstrap");
+            string extras = additionalData != null && additionalData.Count > 0 ? String.Join(",", additionalData) + "," : "";
+            return PublishJson(String.Format("{{{0}\"files\":[{1}]}}", extras, String.Join(",", filesCreated)), relatedComponent, sg, BootstrapFilename, variantName + "bootstrap");
         }
 
         protected string PublishJson(string json, Component relatedComponent, StructureGroup sg, string filename, string variantName)
@@ -666,7 +667,7 @@ namespace Sdl.Web.Templating.TemplateBase
             Item jsonItem = MPackage.CreateStringItem(ContentType.Text, json);
             var binary = MEngine.PublishingContext.RenderedItem.AddBinary(jsonItem.GetAsStream(), filename + JsonExtension, sg, variantName, relatedComponent, JsonMimetype);
             MPackage.PushItem(binary.Url, jsonItem);
-            return binary.Url;
+            return Json.Encode(binary.Url);
         }
 
         protected StructureGroup GetSystemStructureGroup(string subStructureGroupTitle=null)

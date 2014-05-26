@@ -46,8 +46,11 @@ namespace Sdl.Web.Templating
                 filesCreated.AddRange(PublishJsonData(ReadTemplateData(), coreConfigComponent,"templates", sg));
                 filesCreated.AddRange(PublishJsonData(ReadTaxonomiesData(), coreConfigComponent,"taxonomies", sg));
             }
+            List<string> additionalData = new List<string>();
+            additionalData.Add(String.Format("\"defaultLocalization\":{0}", Json.Encode(IsMasterWebPublication())));
+            additionalData.Add(String.Format("\"staging\":{0}", Json.Encode(IsPublishingToStaging())));
             //Publish the boostrap list, this is used by the web application to load in all other configuration files
-            PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "config-");
+            PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "config-",additionalData);
         }
 
 

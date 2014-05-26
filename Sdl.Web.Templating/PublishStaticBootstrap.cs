@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Helpers;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
@@ -20,9 +21,8 @@ namespace Sdl.Web.Templating
             //The core configuration component should be the one being processed by the template
             var coreConfigComponent = this.GetComponent();
             var sg = GetSystemStructureGroup();
-            List<string> filesCreated = GetBootstrapFiles();
             //Publish the boostrap list, this is used by the web application to load in all other static files
-            PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "statics-");
+            PublishBootstrapJson(GetBootstrapFiles(), coreConfigComponent, sg, "statics-");
         }
 
         private List<string> GetBootstrapFiles()
@@ -32,7 +32,7 @@ namespace Sdl.Web.Templating
             {
                 if (item.Key.EndsWith(BootstrapFilename + JsonExtension))
                 {
-                    files.Add(item.Key);
+                    files.Add(Json.Encode(item.Key));
                 }
             }
             return files;

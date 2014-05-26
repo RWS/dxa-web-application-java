@@ -28,7 +28,6 @@ namespace Sdl.Web.Templating
     [TcmTemplateParameterSchema("resource:Sdl.Web.Templating.Resources.Schemas.Publish Version Parameters.xsd")]
     public class PublishVersion : TemplateBase.TemplateBase
     {
-        private const string BootstrapFilename = "_all";
         private const string TemplateConfigName = "templates";
         private const string SchemasConfigName = "schemas";
         private const string TaxonomiesConfigName = "taxonomies";

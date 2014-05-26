@@ -8,10 +8,13 @@ using System.Xml;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
+using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Publishing;
 using Tridion.ContentManager.Publishing.Rendering;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
+using Sdl.Web.Templating.ExtensionMethods;
+using System.Web.Helpers;
 
 namespace Sdl.Web.Templating.TemplateBase
 {
@@ -26,7 +29,8 @@ namespace Sdl.Web.Templating.TemplateBase
 
         protected const string JsonMimetype = "application/json";
         protected const string JsonExtension = ".json";
-
+        protected const string BootstrapFilename = "_all";
+        
         protected TemplatingLogger Logger
         {
             get
@@ -627,5 +631,140 @@ namespace Sdl.Web.Templating.TemplateBase
         }
 
         #endregion
+
+        protected List<string> PublishJsonData(Dictionary<string, List<string>> settings, Component relatedComponent, StructureGroup sg, bool isArray = false)
+        {
+            List<string> files = new List<string>();
+            foreach (var key in settings.Keys)
+            {
+                files.Add(PublishJsonData(settings[key], relatedComponent, key, sg, isArray));
+            }
+            return files;
+        }
+
+        protected string PublishJsonData(List<string> settings, Component relatedComponent, string filename, StructureGroup sg, bool isArray = false)
+        {
+            string json = null;
+            if (isArray)
+            {
+                json = String.Format("[{0}]", String.Join(",\n", settings));
+            }
+            else
+            {
+                json = String.Format("{{{0}}}", String.Join(",\n", settings));
+            }
+            return PublishJson(json, relatedComponent, sg, filename, filename);
+        }
+
+        protected string PublishBootstrapJson(List<string> filesCreated, Component relatedComponent, StructureGroup sg, string variantName = null)
+        {
+            return PublishJson(String.Format("{{\"files\":[{0}]}}", String.Join(",", filesCreated)), relatedComponent, sg, BootstrapFilename, variantName + "bootstrap");
+        }
+
+        protected string PublishJson(string json, Component relatedComponent, StructureGroup sg, string filename, string variantName)
+        {
+            Item jsonItem = MPackage.CreateStringItem(ContentType.Text, json);
+            var binary = MEngine.PublishingContext.RenderedItem.AddBinary(jsonItem.GetAsStream(), filename + JsonExtension, sg, variantName, relatedComponent, JsonMimetype);
+            MPackage.PushItem(binary.Url, jsonItem);
+            return binary.Url;
+        }
+
+        protected StructureGroup GetSystemStructureGroup(string subStructureGroupTitle=null)
+        {
+            var webdavUrl = String.Format("{0}/_System{1}", this.GetPublication().RootStructureGroup.WebDavUrl, subStructureGroupTitle==null ? "" : "/" + subStructureGroupTitle);
+            var sg = MEngine.GetObject(webdavUrl) as StructureGroup;
+            if (sg == null)
+            {
+                throw new Exception(String.Format("Cannot find structure group with webdav URL: {0}", webdavUrl));
+            }
+            return sg;
+        }
+
+        protected Dictionary<string, Component> GetActiveModules(Component coreConfigComponent)
+        {
+            var results = new Dictionary<string, Component>();
+            results.Add(GetModuleNameFromConfig(coreConfigComponent), coreConfigComponent);
+            foreach (var item in this.GetUsingItems(coreConfigComponent.Schema, ItemType.Component))
+            {
+                var comp = (Component)MEngine.GetObject(MEngine.LocalizeUri(item.Key));
+                var fields = new ItemFields(comp.Content, comp.Schema);
+                var moduleName = GetModuleNameFromConfig(comp).ToLower();
+                if (fields.GetTextValue("isActive").ToLower() == "yes" && !results.ContainsKey(moduleName))
+                {
+                    results.Add(moduleName, comp);
+                }
+            }
+            return results;
+        }
+
+        protected string GetModuleNameFromConfig(Component configComponent)
+        {
+            //Module config components are always found in /Modules/{Name}/System/, so the module name is defined to be the name of the folder 2 levels up.
+            return configComponent.OrganizationalItem.OrganizationalItem.Title.ToLower();
+        }
+
+        protected string GetModulesRoot(Component configComponent)
+        {
+            //Module config components are always found in /Modules/{Name}/System/, so the module root is defined as the folder 3 levels up.
+            return configComponent.OrganizationalItem.OrganizationalItem.OrganizationalItem.WebDavUrl;
+        }
+
+        protected string GetModuleNameFromItem(RepositoryLocalObject item, string moduleRoot)
+        {
+            //The module name is the name of the folder within the first level of the module root folder 
+            //in which the item lives
+            var fullItemWebdavUrl = item.WebDavUrl;
+            if (fullItemWebdavUrl.StartsWith(moduleRoot))
+            {
+                Logger.Debug(fullItemWebdavUrl + ":" + moduleRoot);
+                var res = fullItemWebdavUrl.Substring(moduleRoot.Length + 1);
+                var pos = res.IndexOf("/", StringComparison.Ordinal);
+                Logger.Debug(res);
+                return res.Substring(0, pos).ToLower();
+            }
+            return null;
+        }
+
+
+        protected static List<string> ReadComponentData(Component comp)
+        {
+            var fields = new ItemFields(comp.Content, comp.Schema);
+            var settings = new List<string>();
+            var configFields = fields.GetEmbeddedFields("settings");
+            if (configFields.Any())
+            {
+                //either schema is a generic multival embedded name/value
+                foreach (var setting in configFields)
+                {
+                    settings.Add(String.Format("{0}:{1}", Json.Encode(setting.GetTextValue("name")), Json.Encode(setting.GetTextValue("value"))));
+                }
+            }
+            else
+            {
+                //... or its a custom schema with individual fields
+                foreach (var field in fields)
+                {
+                    //TODO handle more types
+                    if (field is TextField)
+                    {
+                        settings.Add(String.Format("{0}:{1}", Json.Encode(field.Name), Json.Encode(fields.GetTextValue(field.Name))));
+                    }
+                }
+            }
+            return settings;
+        }
+
+
+
+        protected static string GetRegionFromTemplate(ComponentTemplate template)
+        {
+            var match = Regex.Match(template.Title, @".*?\[(.*?)\]");
+            if (match.Success)
+            {
+                return match.Groups[1].Value;
+            }
+            //default region name
+            return "Main";
+        }
     }
 }

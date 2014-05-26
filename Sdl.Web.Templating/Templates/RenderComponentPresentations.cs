@@ -1,11 +1,15 @@
-﻿using System.Text;
+﻿using Sdl.Web.Tridion.Common;
+using System.Text;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
-namespace Sdl.Web.Templating
+namespace Sdl.Web.Tridion.Templates
 {
+    /// <summary>
+    /// Renders the component presentations to the package output. Useful when there is no page layout for publishing data
+    /// </summary>
     [TcmTemplateTitle("Render Component Presentations")]
-    public class RenderComponentPresentations : TemplateBase.TemplateBase
+    public class RenderComponentPresentations : TemplateBase
     {
         public override void Transform(Engine engine, Package package)
         {
@@ -19,7 +23,6 @@ namespace Sdl.Web.Templating
                     output.AppendLine(engine.RenderComponentPresentation(cp.Component.Id, cp.ComponentTemplate.Id));
                 }
             }
-
             package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, output.ToString()));
         }
     }

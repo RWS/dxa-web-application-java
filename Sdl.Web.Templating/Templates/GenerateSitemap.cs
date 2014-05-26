@@ -5,26 +5,26 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Linq;
-using Sdl.Web.Templating.ExtensionMethods;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Publishing;
-using Tridion.ContentManager.Templating;
+using tpl = Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
+using Sdl.Web.Tridion.Common;
 
-namespace Sdl.Web.Templating
+namespace Sdl.Web.Tridion.Templates
 {
     /// <summary>
     /// Generates sitemap JSON. Should be used in a page template
     /// </summary>
     [TcmTemplateTitle("Generate Sitemap")]
-    public class GenerateSiteMap : TemplateBase.TemplateBase
+    public class GenerateSiteMap : TemplateBase
     {
         private StructureGroup _startPoint;
         private const string MAIN_REGION_NAME = "Main";
-        public override void Transform(Engine engine, Package package)
+        public override void Transform(tpl.Engine engine, tpl.Package package)
         {
             Initialize(engine, package);
             if (GetPage() != null)
@@ -36,7 +36,7 @@ namespace Sdl.Web.Templating
                     string nav = GenerateNavigation();
                     if (!string.IsNullOrEmpty(GenerateNavigation()))
                     {
-                        package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, nav));
+                        package.PushItem(tpl.Package.OutputName, package.CreateStringItem(tpl.ContentType.Text, nav));
                     }
                 }
             }
@@ -62,7 +62,7 @@ namespace Sdl.Web.Templating
 
             foreach (XElement pgNode in orderedDocument)
             {
-                Page page = MEngine.GetObject(pgNode.Attribute("ID").Value) as Page;
+                Page page = Engine.GetObject(pgNode.Attribute("ID").Value) as Page;
                 if (page != null)
                 {
                     if (IsPublished(page) && !IsSystem(pgNode.Attribute("Title").Value))
@@ -74,7 +74,7 @@ namespace Sdl.Web.Templating
                 {
                     if (!IsSystem(pgNode.Attribute("Title").Value))
                     {
-                        root.Items.Add(GenerateStructureGroupNavigation(MEngine.GetObject(pgNode.Attribute("ID").Value) as StructureGroup));
+                        root.Items.Add(GenerateStructureGroupNavigation(Engine.GetObject(pgNode.Attribute("ID").Value) as StructureGroup));
                     }
                 }
 
@@ -95,10 +95,15 @@ namespace Sdl.Web.Templating
             return root;
         }
 
-        private string GetNavigationTitle(StructureGroup sg)
+        protected string GetNavigationTitle(StructureGroup sg)
         {
             string result = StripPrefix(sg.Title);
             return result;
+        }
+
+        protected string StripPrefix(string title)
+        {
+            return Regex.Replace(title, @"^\d{3}\s", String.Empty);
         }
 
         private string GetUrl(StructureGroup sg)
@@ -115,7 +120,7 @@ namespace Sdl.Web.Templating
                     Id = page.Id,
                     Url = GetUrl(page),
                     Type = ItemType.Page.ToString(),
-                    PublishedDate = GetPublishedDate(page, MEngine.PublishingContext.PublicationTarget),
+                    PublishedDate = GetPublishedDate(page, Engine.PublishingContext.PublicationTarget),
                     Visible = IsVisible(page.Title)
                 };
 
@@ -155,7 +160,7 @@ namespace Sdl.Web.Templating
             return null;
         }
 
-        private object GetRegionFromComponentPresentation(Tridion.ContentManager.CommunicationManagement.ComponentPresentation cp)
+        private string GetRegionFromComponentPresentation(ComponentPresentation cp)
         {
             var match = Regex.Match(cp.ComponentTemplate.Title, @".*?\[(.*?)\]");
             if (match.Success)
@@ -198,7 +203,7 @@ namespace Sdl.Web.Templating
 
         private IEnumerable<XElement> GetItemsInFolderAsAList(StructureGroup startPoint)
         {
-            var filter = new OrganizationalItemItemsFilter(MEngine.GetSession())
+            var filter = new OrganizationalItemItemsFilter(Engine.GetSession())
                 {
                     ItemTypes = new List<ItemType> {ItemType.Page, ItemType.StructureGroup},
                     BaseColumns = ListBaseColumns.Extended
@@ -218,9 +223,9 @@ namespace Sdl.Web.Templating
 
         private bool IsPublished(Page page)
         {
-            if (MEngine.PublishingContext.PublicationTarget != null)
+            if (Engine.PublishingContext.PublicationTarget != null)
             {
-                return PublishEngine.IsPublished(page, MEngine.PublishingContext.PublicationTarget);
+                return PublishEngine.IsPublished(page, Engine.PublishingContext.PublicationTarget);
             }
             return false;
         }

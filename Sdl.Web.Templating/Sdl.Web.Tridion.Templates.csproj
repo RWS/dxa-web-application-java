@@ -7,8 +7,8 @@
     <ProjectGuid>{1F678CC2-4586-4F0C-8E70-3F6944BD6AAF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sdl.Web.Templating</RootNamespace>
-    <AssemblyName>Sdl.Web.Templating</AssemblyName>
+    <RootNamespace>Sdl.Web.Tridion.Templates</RootNamespace>
+    <AssemblyName>Sdl.Web.Tridion.Templates</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -61,21 +61,17 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExtensionMethods\GeneralExtensionMethods.cs" />
-    <Compile Include="ExtensionMethods\ItemFieldsExtensions.cs" />
-    <Compile Include="GenerateSitemap.cs" />
+    <Compile Include="Common\GeneralExtensionMethods.cs" />
+    <Compile Include="Common\ItemFieldsExtensions.cs" />
+    <Compile Include="Common\Utility.cs" />
+    <Compile Include="Templates\GenerateSitemap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PublishConfiguration.cs" />
-    <Compile Include="PublishMappings.cs" />
-    <Compile Include="PublishResources.cs" />
-    <Compile Include="PublishStaticBootstrap.cs" />
-    <Compile Include="RenderComponentPresentations.cs" />
-    <Compile Include="TemplateBase\TemplateBase.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\Schemas\Publish Version Parameters.xsd">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <Compile Include="Templates\PublishConfiguration.cs" />
+    <Compile Include="Templates\PublishMappings.cs" />
+    <Compile Include="Templates\PublishResources.cs" />
+    <Compile Include="Templates\PublishStaticBootstrap.cs" />
+    <Compile Include="Templates\RenderComponentPresentations.cs" />
+    <Compile Include="Common\TemplateBase.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

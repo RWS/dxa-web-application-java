@@ -12,16 +12,23 @@ using System.Xml;
 using System.Web.Helpers;
 using System.Text.RegularExpressions;
 using Tridion.ContentManager.Templating.Assembly;
-using Sdl.Web.Templating.ExtensionMethods;
+using Sdl.Web.Tridion.Common;
 
-namespace Sdl.Web.Templating
+namespace Sdl.Web.Tridion.Templates
 {
+    /// <summary>
+    /// Publishes site configuration as JSON files. Multiple configuration components can 
+    /// be linked to a module configuration. The values in these are merged into a single
+    /// configuration file per module. There are also JSON files published containing schema and template
+    /// information (1 per module) and a general taxonomies configuration json file
+    /// </summary>
     [TcmTemplateTitle("Publish Configuration")]
-    public class PublishConfiguration : TemplateBase.TemplateBase
+    public class PublishConfiguration : TemplateBase
     {
         private const string TemplateConfigName = "templates";
         private const string SchemasConfigName = "schemas";
         private const string TaxonomiesConfigName = "taxonomies";
+        
         private string _moduleRoot = string.Empty;
 
         public override void Transform(Engine engine, Package package)
@@ -46,49 +53,42 @@ namespace Sdl.Web.Templating
                 filesCreated.AddRange(PublishJsonData(ReadTemplateData(), coreConfigComponent,"templates", sg));
                 filesCreated.AddRange(PublishJsonData(ReadTaxonomiesData(), coreConfigComponent,"taxonomies", sg));
             }
-            List<string> additionalData = new List<string>();
-            additionalData.Add(String.Format("\"defaultLocalization\":{0}", Json.Encode(IsMasterWebPublication())));
-            additionalData.Add(String.Format("\"staging\":{0}", Json.Encode(IsPublishingToStaging())));
             //Publish the boostrap list, this is used by the web application to load in all other configuration files
-            PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "config-",additionalData);
+            PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "config-", BuildAdditionalData());
         }
 
-
-
-        protected string ProcessModule(string moduleName, Component module, StructureGroup sg)
+        protected virtual string ProcessModule(string moduleName, Component module, StructureGroup sg)
         {
-            List<string> data = new List<string>();
+            Dictionary<string, string> data = new Dictionary<string, string>();
             ItemFields fields = new ItemFields(module.Content, module.Schema);
             foreach (var configComp in fields.GetComponentValues("furtherConfiguration"))
             {
-                data.AddRange(ReadComponentData(configComp));
+                data = MergeData(data, ReadComponentData(configComp));
             }
-            return PublishJsonData(data, module, moduleName,"config", sg);
+            return PublishJsonData(data, module, moduleName, "config", sg);
         }
 
-        
-
-        private Dictionary<string, List<string>> ReadTaxonomiesData()
+        protected virtual Dictionary<string, List<string>> ReadTaxonomiesData()
         {
             //Generate a list of taxonomy + id
             var res = new Dictionary<string, List<string>>();
             var settings = new List<string>();
-            var taxFilter = new TaxonomiesFilter(MEngine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
+            var taxFilter = new TaxonomiesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
             foreach (XmlElement item in GetPublication().GetListTaxonomies(taxFilter).ChildNodes)
             {
                 var id = item.GetAttribute("ID");
-                var taxonomy = (Category)MEngine.GetObject(id);
-                settings.Add(String.Format("{0}:{1}", Json.Encode(GetKeyFromTaxonomy(taxonomy)), Json.Encode(taxonomy.Id.ItemId)));
+                var taxonomy = (Category)Engine.GetObject(id);
+                settings.Add(String.Format("{0}:{1}", Json.Encode(Utility.GetKeyFromTaxonomy(taxonomy)), Json.Encode(taxonomy.Id.ItemId)));
             }
             res.Add("core." + TaxonomiesConfigName, settings);
             return res;
         }
 
-        private Dictionary<string, List<string>> ReadSchemaData()
+        protected virtual Dictionary<string, List<string>> ReadSchemaData()
         {
             //Generate a list of schema + mapping details, separated by module
             var res = new Dictionary<string, List<string>>();
-            var schemaFilter = new RepositoryItemsFilter(MEngine.GetSession())
+            var schemaFilter = new RepositoryItemsFilter(Engine.GetSession())
             {
                 Recursive = true,
                 ItemTypes = new List<ItemType> { ItemType.Schema },
@@ -102,7 +102,7 @@ namespace Sdl.Web.Templating
                 if ((type == "8" && subType == "0"))
                 {
                     var id = item.GetAttribute("ID");
-                    var schema = (Schema)MEngine.GetObject(id);
+                    var schema = (Schema)Engine.GetObject(id);
                     var module = GetModuleNameFromItem(schema, _moduleRoot);
                     if (module != null)
                     {
@@ -111,22 +111,22 @@ namespace Sdl.Web.Templating
                         {
                             res.Add(key, new List<string>());
                         }
-                        res[key].Add(String.Format("{0}:{1}", Json.Encode(GetKeyFromSchema(schema)), Json.Encode(schema.Id.ItemId)));
+                        res[key].Add(String.Format("{0}:{1}", Json.Encode(Utility.GetKeyFromSchema(schema)), Json.Encode(schema.Id.ItemId)));
                     }
                 }
             }
             return res;
         }
 
-        private Dictionary<string, List<string>> ReadTemplateData()
+        protected virtual Dictionary<string, List<string>> ReadTemplateData()
         {
             //Generate a list of dynamic CT + id, separated by module
             var res = new Dictionary<string, List<string>>();
-            var templateFilter = new ComponentTemplatesFilter(MEngine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
+            var templateFilter = new ComponentTemplatesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
             foreach (XmlElement item in GetPublication().GetListComponentTemplates(templateFilter).ChildNodes)
             {
                 var id = item.GetAttribute("ID");
-                var template = (ComponentTemplate)MEngine.GetObject(id);
+                var template = (ComponentTemplate)Engine.GetObject(id);
                 //Only consider dynamic CTs
                 if (template.IsRepositoryPublishable)
                 {
@@ -138,33 +138,21 @@ namespace Sdl.Web.Templating
                         {
                             res.Add(key, new List<string>());
                         }
-                        res[key].Add(String.Format("{0}:{1}", Json.Encode(GetKeyFromTemplate(template)), Json.Encode(template.Id.ItemId)));
+                        res[key].Add(String.Format("{0}:{1}", Json.Encode(Utility.GetKeyFromTemplate(template)), Json.Encode(template.Id.ItemId)));
                     }
                 }
             }
             return res;
         }
 
-        private static string GetKeyFromTaxonomy(Category taxonomy)
+        protected List<string> BuildAdditionalData()
         {
-            var key = taxonomy.XmlName;
-            return key.Substring(0, 1).ToLower() + key.Substring(1);
+            //Some additional data required to configure the web application
+            List<string> additionalData = new List<string>();
+            additionalData.Add(String.Format("\"defaultLocalization\":{0}", Json.Encode(IsMasterWebPublication())));
+            additionalData.Add(String.Format("\"staging\":{0}", Json.Encode(IsPublishingToStaging())));
+            return additionalData;
         }
 
-        private static string GetKeyFromTemplate(ComponentTemplate template)
-        {
-            var key = Regex.Replace(template.Title, @"[\[\]\s\.]", "");
-            return key.Substring(0, 1).ToLower() + key.Substring(1);
-        }
-
-        private static string GetKeyFromSchema(Schema schema)
-        {
-            var key = schema.RootElementName;
-            if (string.IsNullOrEmpty(key))
-            {
-                key = Regex.Replace(schema.Title.Trim(), @"[^A-Za-z0-9.]+", "");
-            }
-            return key.Substring(0, 1).ToLower() + key.Substring(1);
-        }
     }
 }

@@ -8,15 +8,18 @@ using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
-using Sdl.Web.Templating.ExtensionMethods;
+using Sdl.Web.Tridion.Common;
 
-namespace Sdl.Web.Templating
+namespace Sdl.Web.Tridion.Templates
 {
+    /// <summary>
+    /// Publish resource JSON files (one per module). A module configuration can link to 
+    /// multiple resource components - these are merged into a single JSON file
+    /// </summary>
     [TcmTemplateTitle("Publish Resources")]
-    public class PublishResources : TemplateBase.TemplateBase
+    public class PublishResources : TemplateBase
     {
         private string _moduleRoot = string.Empty;
-
         public override void Transform(Engine engine, Package package)
         {
             this.Initialize(engine, package);
@@ -38,11 +41,11 @@ namespace Sdl.Web.Templating
 
         protected string ProcessModule(string moduleName, Component module, StructureGroup sg)
         {
-            List<string> data = new List<string>();
+            Dictionary<string, string> data = new Dictionary<string, string>();
             ItemFields fields = new ItemFields(module.Content, module.Schema);
             foreach (var configComp in fields.GetComponentValues("resource"))
             {
-                data.AddRange(ReadComponentData(configComp));
+                data = MergeData(data, ReadComponentData(configComp));
             }
             return PublishJsonData(data, module, moduleName,"resource", sg);
         }

@@ -4,11 +4,10 @@ using System.Linq;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 
-namespace Sdl.Web.Templating.ExtensionMethods
+namespace Sdl.Web.Tridion.Common
 {
     public static class ItemFieldsExtensions
     {
-
         public static double GetNumberValue(this ItemFields fields, string fieldName)
         {
             return fields.GetNumberValues(fieldName).FirstOrDefault();

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sdl.Web.Tridion.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,16 +8,20 @@ using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Xml;
 using System.Xml.Linq;
+using Tridion;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
-namespace Sdl.Web.Templating
+namespace Sdl.Web.Tridion.Templates
 {
+    /// <summary>
+    /// Publishes schema and region mapping information in JSON format
+    /// </summary>
     [TcmTemplateTitle("Publish Mappings")]
-    public class PublishMappings : TemplateBase.TemplateBase
+    public class PublishMappings : TemplateBase
     {
         private const string SchemasConfigName = "schemas";
         private const string MappingsConfigName = "mappings";
@@ -30,10 +35,10 @@ namespace Sdl.Web.Templating
         // list of known namespaces that are used in our schemas
         private readonly Dictionary<string, string> _namespaces = new Dictionary<string, string>
             {
-                {Tridion.Constants.XsdPrefix, Tridion.Constants.XsdNamespace},
-                {Tridion.Constants.TcmPrefix, Tridion.Constants.TcmNamespace},
-                {Tridion.Constants.XlinkPrefix, Tridion.Constants.XlinkNamespace},
-                {Tridion.Constants.XhtmlPrefix, Tridion.Constants.XhtmlNamespace},
+                {Constants.XsdPrefix, Constants.XsdNamespace},
+                {Constants.TcmPrefix, Constants.TcmNamespace},
+                {Constants.XlinkPrefix, Constants.XlinkNamespace},
+                {Constants.XhtmlPrefix, Constants.XhtmlNamespace},
                 {"tcmi","http://www.tridion.com/ContentManager/5.0/Instance"},
                 {"mapping", "http://www.sdl.com/tridion/SemanticMapping"}
             };
@@ -64,7 +69,7 @@ namespace Sdl.Web.Templating
 
             // generate a list of vocabulary prefix and name from appdata
             var res = new Dictionary<string, List<string>> { { VocabulariesConfigName, new List<string>() } };
-            ApplicationData globalAppData = MEngine.GetSession().SystemManager.LoadGlobalApplicationData(VocabulariesAppDataId);
+            ApplicationData globalAppData = Engine.GetSession().SystemManager.LoadGlobalApplicationData(VocabulariesAppDataId);
             if (globalAppData != null)
             {
                 XElement vocabulariesXml = XElement.Parse(Encoding.Unicode.GetString(globalAppData.Data));
@@ -85,7 +90,7 @@ namespace Sdl.Web.Templating
             }
 
             // generate a list of schema + id, separated by module
-            var schemaFilter = new RepositoryItemsFilter(MEngine.GetSession())
+            var schemaFilter = new RepositoryItemsFilter(Engine.GetSession())
             {
                 Recursive = true,
                 ItemTypes = new List<ItemType> { ItemType.Schema },
@@ -100,7 +105,7 @@ namespace Sdl.Web.Templating
                 if ((type == "8" && (subType == "0" || subType == "1")))
                 {
                     var id = item.GetAttribute("ID");
-                    var schema = (Schema)MEngine.GetObject(id);
+                    var schema = (Schema)Engine.GetObject(id);
                     
                     // multimedia schemas don't have a root element name, so lets use its title without any invalid characters
                     string rootElementName = schema.RootElementName;
@@ -167,11 +172,11 @@ namespace Sdl.Web.Templating
             // format:  region { schema, template } 
             Dictionary<string, List<string>> regions = new Dictionary<string, List<string>>();
 
-            var templateFilter = new ComponentTemplatesFilter(MEngine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
+            var templateFilter = new ComponentTemplatesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
             foreach (XmlElement item in GetPublication().GetListComponentTemplates(templateFilter).ChildNodes)
             {
                 var id = item.GetAttribute("ID");
-                var template = (ComponentTemplate)MEngine.GetObject(id);
+                var template = (ComponentTemplate)Engine.GetObject(id);
                 var region = GetRegionFromTemplate(template);
                 
                 if (!regions.ContainsKey(region))
@@ -306,7 +311,7 @@ namespace Sdl.Web.Templating
             if (embeddedSchemaNode != null)
             {
                 string uri = embeddedSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
-                Schema embeddedSchema = (Schema)MEngine.GetObject(uri);
+                Schema embeddedSchema = (Schema)Engine.GetObject(uri);
                 string embeddedTypeOf = string.Format("{0}:{1}", DefaultVocabularyPrefix, embeddedSchema.RootElementName);
 
                 // append schema typeof from appdata for embedded schemas

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sdl.Web.Tridion.Common;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,10 +9,13 @@ using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
-namespace Sdl.Web.Templating
+namespace Sdl.Web.Tridion.Templates
 {
+    /// <summary>
+    /// Publishes the _all.json file which is used to load all other JSON configuration/resource/mapping files
+    /// </summary>
     [TcmTemplateTitle("Publish Static Bootstrap")]
-    public class PublishStaticBootstrap : TemplateBase.TemplateBase
+    public class PublishStaticBootstrap : TemplateBase
     {
         private string _moduleRoot = string.Empty;
 
@@ -28,7 +32,7 @@ namespace Sdl.Web.Templating
         private List<string> GetBootstrapFiles()
         {
             List<string> files = new List<string>();
-            foreach (var item in MPackage.GetEntries())
+            foreach (var item in Package.GetEntries())
             {
                 if (item.Key.EndsWith(BootstrapFilename + JsonExtension))
                 {

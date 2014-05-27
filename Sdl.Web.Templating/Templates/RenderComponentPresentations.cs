@@ -1,5 +1,6 @@
 ﻿using Sdl.Web.Tridion.Common;
 using System.Text;
+using System.Text.RegularExpressions;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
@@ -20,10 +21,16 @@ namespace Sdl.Web.Tridion.Templates
             {
                 foreach (var cp in page.ComponentPresentations)
                 {
-                    output.AppendLine(engine.RenderComponentPresentation(cp.Component.Id, cp.ComponentTemplate.Id));
+                    output.AppendLine(RemoveTcdl(engine.RenderComponentPresentation(cp.Component.Id, cp.ComponentTemplate.Id)));
                 }
             }
             package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, output.ToString()));
+        }
+
+        private string RemoveTcdl(string p)
+        {
+            p = Regex.Replace(p, "<tcdl:ComponentPresentation[^>]+>", "");
+            return p.Replace("</tcdl:ComponentPresentation>", "");
         }
     }
 }

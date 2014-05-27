@@ -24,6 +24,7 @@ namespace Sdl.Web.Tridion.Templates
     {
         private StructureGroup _startPoint;
         private const string MAIN_REGION_NAME = "Main";
+
         public override void Transform(tpl.Engine engine, tpl.Package package)
         {
             Initialize(engine, package);

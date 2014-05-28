@@ -404,7 +404,11 @@ namespace Sdl.Web.Tridion.Templates
                     }
                     var value = properties[index];
                     string[] parts = value.Split(':');
-                    semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1},\"Property\":{2}}}", Json.Encode(parts[0]), Json.Encode(entities[parts[0]]), Json.Encode(parts[1]));
+
+                    if (entities.ContainsKey(parts[0]))
+                    {
+                        semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1},\"Property\":{2}}}", Json.Encode(parts[0]), Json.Encode(entities[parts[0]]), Json.Encode(parts[1]));
+                    }
                 }
             }
 

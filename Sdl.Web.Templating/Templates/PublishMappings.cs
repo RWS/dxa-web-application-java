@@ -384,6 +384,7 @@ namespace Sdl.Web.Tridion.Templates
         {
             Dictionary<string, string> entities = new Dictionary<string, string>();
             StringBuilder semantics = new StringBuilder();
+            bool first = true;
             if (!string.IsNullOrEmpty(input))
             {
                 // entity = "s:Article" but can also be "s:Article,x:Something"
@@ -402,11 +403,11 @@ namespace Sdl.Web.Tridion.Templates
                     string[] parts = value.Split(':');
                     if (entities.ContainsKey(parts[0]))
                     {
-                        if (index > 0)
+                        if (!first)
                         {
                             semantics.Append(",");
                         }
-                        
+                        first = false;
                         semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1},\"Property\":{2}}}", Json.Encode(parts[0]), Json.Encode(entities[parts[0]]), Json.Encode(parts[1]));
                     }
                 }

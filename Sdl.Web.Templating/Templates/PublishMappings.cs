@@ -398,15 +398,14 @@ namespace Sdl.Web.Tridion.Templates
                 string[] properties = input.Split(',');
                 for (int index = 0; index < properties.Length; index++)
                 {
-                    var value = properties[index];
-                    string[] parts = value.Split(':');
+                    string property = properties[index];
+                    string[] parts = property.Split(':');
                     if (entities.ContainsKey(parts[0]))
                     {
                         if (index > 0)
                         {
                             semantics.Append(",");
-                        }
-                        
+                        }                        
                         semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1},\"Property\":{2}}}", Json.Encode(parts[0]), Json.Encode(entities[parts[0]]), Json.Encode(parts[1]));
                     }
                 }

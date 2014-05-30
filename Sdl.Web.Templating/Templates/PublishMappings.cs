@@ -1,13 +1,11 @@
-﻿using Sdl.Web.Tridion.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Web.Helpers;
 using System.Xml;
 using System.Xml.Linq;
+using Sdl.Web.Tridion.Common;
 using Tridion;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
@@ -24,14 +22,15 @@ namespace Sdl.Web.Tridion.Templates
     public class PublishMappings : TemplateBase
     {
         private const string SchemasConfigName = "schemas";
-        private const string MappingsConfigName = "mappings";
         private const string RegionConfigName = "regions";
         private const string VocabulariesConfigName = "vocabularies";
         private const string VocabulariesAppDataId = "http://www.sdl.com/tridion/SemanticMapping/vocabularies";
         private const string TypeOfAppDataId = "http://www.sdl.com/tridion/SemanticMapping/typeof";
+        private const string TypeOfAppDataStartElement = "<typeof>";
+        private const string TypeOfAppDataEndElement = "<typeof>";
         private const string DefaultVocabularyPrefix = "tsi";
         private const string DefaultVocabulary = "http://www.sdl.com/web/schemas/core";
-        
+
         // list of known namespaces that are used in our schemas
         private readonly Dictionary<string, string> _namespaces = new Dictionary<string, string>
             {
@@ -43,22 +42,25 @@ namespace Sdl.Web.Tridion.Templates
                 {"mapping", "http://www.sdl.com/tridion/SemanticMapping"}
             };
 
-        private string _moduleRoot = string.Empty;
+        //private string _moduleRoot;
 
         public override void Transform(Engine engine, Package package)
         {
-            this.Initialize(engine, package);
+            Initialize(engine, package);
+
             //The core configuration component should be the one being processed by the template
-            var coreConfigComponent = this.GetComponent();
+            var coreConfigComponent = GetComponent();
             var sg = GetSystemStructureGroup("mappings");
-            _moduleRoot = GetModulesRoot(coreConfigComponent);
+            //_moduleRoot = GetModulesRoot(coreConfigComponent);
+
             //Get all the active modules
-            Dictionary<string, Component> moduleComponents = GetActiveModules(coreConfigComponent);
+            //Dictionary<string, Component> moduleComponents = GetActiveModules(coreConfigComponent);
             List<string> filesCreated = new List<string>();
             if (IsMasterWebPublication())
             {
-                filesCreated.AddRange(PublishJsonData(ReadMappingsData(), coreConfigComponent,"mapping", sg,true));
+                filesCreated.AddRange(PublishJsonData(ReadMappingsData(), coreConfigComponent, "mapping", sg, true));
             }
+
             //Publish the boostrap list, this is used by the web application to load in all other mapping files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "mapping-");
         }
@@ -106,21 +108,21 @@ namespace Sdl.Web.Tridion.Templates
                 {
                     var id = item.GetAttribute("ID");
                     var schema = (Schema)Engine.GetObject(id);
-                    
+
                     // multimedia schemas don't have a root element name, so lets use its title without any invalid characters
                     string rootElementName = schema.RootElementName;
-                    if (string.IsNullOrEmpty(rootElementName))
+                    if (String.IsNullOrEmpty(rootElementName))
                     {
                         rootElementName = Regex.Replace(schema.Title.Trim(), @"[^A-Za-z0-9.]+", "");
                     }
                     // add schema typeof using tridion standard implementation vocabulary prefix
-                    string typeOf = string.Format("{0}:{1}", DefaultVocabularyPrefix, rootElementName);
+                    string typeOf = String.Format("{0}:{1}", DefaultVocabularyPrefix, rootElementName);
                     StringBuilder schemaSemantics = new StringBuilder();
                     // append schema typeof from appdata 
                     ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
                     if (appData != null)
                     {
-                        typeOf += "," + Encoding.Unicode.GetString(appData.Data);
+                        typeOf += "," + ExtractTypeOfAppData(appData);
                     }
                     schemaSemantics.Append(BuildSchemaSemanticsJson(typeOf));
 
@@ -136,8 +138,8 @@ namespace Sdl.Web.Tridion.Templates
                     string path = "/" + rootElementName;
                     fields.Append(BuildSchemaFieldsJson(schema, path, typeOf, nsmgr));
 
-                    res[SchemasConfigName].Add(string.Format("{{\"Id\":{0},\"RootElement\":{1},\"Fields\":[{2}],\"Semantics\":[{3}]}}", Json.Encode(schema.Id.ItemId), Json.Encode(rootElementName), fields, schemaSemantics));
-                    
+                    res[SchemasConfigName].Add(String.Format("{{\"Id\":{0},\"RootElement\":{1},\"Fields\":[{2}],\"Semantics\":[{3}]}}", Json.Encode(schema.Id.ItemId), Json.Encode(rootElementName), fields, schemaSemantics));
+
                 }
             }
 
@@ -161,10 +163,23 @@ namespace Sdl.Web.Tridion.Templates
                     }
                     allowedComponentTypes.Append(componentType);
                 }
-                res[RegionConfigName].Add(string.Format("{{\"Region\":{0},\"ComponentTypes\":[{1}]}}", Json.Encode(region.Key), allowedComponentTypes));
+                res[RegionConfigName].Add(String.Format("{{\"Region\":{0},\"ComponentTypes\":[{1}]}}", Json.Encode(region.Key), allowedComponentTypes));
             }
 
             return res;
+        }
+
+        private static string ExtractTypeOfAppData(ApplicationData appData)
+        {
+            if (appData != null)
+            {
+                // appdata is supposed to be a unicode encoded string
+                string xmlData = Encoding.Unicode.GetString(appData.Data);
+
+                // remove start and end xml element from appdata string
+                return xmlData.Replace(TypeOfAppDataStartElement, String.Empty).Replace(TypeOfAppDataEndElement, String.Empty);
+            }
+            return null;
         }
 
         private Dictionary<string, List<string>> BuildRegionMappings()
@@ -178,7 +193,7 @@ namespace Sdl.Web.Tridion.Templates
                 var id = item.GetAttribute("ID");
                 var template = (ComponentTemplate)Engine.GetObject(id);
                 var region = GetRegionFromTemplate(template);
-                
+
                 if (!regions.ContainsKey(region))
                 {
                     regions.Add(region, new List<string>());
@@ -227,10 +242,10 @@ namespace Sdl.Web.Tridion.Templates
 
             // loop over all field elements in schema
             bool first = true;
-            string xpath = string.Format("/xsd:schema/xsd:element[@name='{0}']/xsd:complexType/xsd:sequence/xsd:element", schema.RootElementName);
+            string xpath = String.Format("/xsd:schema/xsd:element[@name='{0}']/xsd:complexType/xsd:sequence/xsd:element", schema.RootElementName);
             if (embedded)
             {
-                xpath = string.Format("/xsd:schema/xsd:complexType[@name='{0}']/xsd:sequence/xsd:element", schema.RootElementName);
+                xpath = String.Format("/xsd:schema/xsd:complexType[@name='{0}']/xsd:sequence/xsd:element", schema.RootElementName);
             }
             foreach (XmlNode fieldNode in schema.Xsd.SelectNodes(xpath, nsmgr))
             {
@@ -295,7 +310,7 @@ namespace Sdl.Web.Tridion.Templates
             }
 
             // use field xml name as initial semantic mapping for field
-            string property = string.Format("{0}:{1}", DefaultVocabularyPrefix, fieldNode.Attributes["name"].Value);
+            string property = String.Format("{0}:{1}", DefaultVocabularyPrefix, fieldNode.Attributes["name"].Value);
 
             // read semantic mapping from field and append if available
             XmlNode propertyNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:ExtensionXml/mapping:property", nsmgr);
@@ -312,13 +327,13 @@ namespace Sdl.Web.Tridion.Templates
             {
                 string uri = embeddedSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
                 Schema embeddedSchema = (Schema)Engine.GetObject(uri);
-                string embeddedTypeOf = string.Format("{0}:{1}", DefaultVocabularyPrefix, embeddedSchema.RootElementName);
+                string embeddedTypeOf = String.Format("{0}:{1}", DefaultVocabularyPrefix, embeddedSchema.RootElementName);
 
                 // append schema typeof from appdata for embedded schemas
                 ApplicationData appData = embeddedSchema.LoadApplicationData(TypeOfAppDataId);
                 if (appData != null)
                 {
-                    embeddedTypeOf += "," + Encoding.Unicode.GetString(appData.Data);
+                    embeddedTypeOf += "," + ExtractTypeOfAppData(appData);
                 }
 
                 embeddedFields.Append(BuildSchemaFieldsJson(embeddedSchema, path, embeddedTypeOf, nsmgr, true));
@@ -349,14 +364,14 @@ namespace Sdl.Web.Tridion.Templates
             //    // if there is no type attribute, it is not a simple type so look for <xsd:complexType> inside the element
             //}
 
-            return string.Format("{{\"Name\":{0},\"Path\":{1},\"IsMultiValue\":{2},\"Semantics\":[{3}],\"Fields\":[{4}]}}", Json.Encode(name), Json.Encode(path), Json.Encode(isMultiValue), fieldSemantics, embeddedFields);
+            return String.Format("{{\"Name\":{0},\"Path\":{1},\"IsMultiValue\":{2},\"Semantics\":[{3}],\"Fields\":[{4}]}}", Json.Encode(name), Json.Encode(path), Json.Encode(isMultiValue), fieldSemantics, embeddedFields);
         }
 
         // schema semantics: {"Prefix":"s","Entity":"Article"}
         private static string BuildSchemaSemanticsJson(string input)
         {
             StringBuilder semantics = new StringBuilder();
-            if (!string.IsNullOrEmpty(input))
+            if (!String.IsNullOrEmpty(input))
             {
                 // input = "s:Article" but can also be "s:Article,x:Something"
                 string[] values = input.Split(',');
@@ -384,7 +399,7 @@ namespace Sdl.Web.Tridion.Templates
         {
             Dictionary<string, string> entities = new Dictionary<string, string>();
             StringBuilder semantics = new StringBuilder();
-            if (!string.IsNullOrEmpty(input))
+            if (!String.IsNullOrEmpty(input))
             {
                 // entity = "s:Article" but can also be "s:Article,x:Something"
                 string[] values = entity.Split(',');
@@ -405,7 +420,7 @@ namespace Sdl.Web.Tridion.Templates
                         if (index > 0)
                         {
                             semantics.Append(",");
-                        }                        
+                        }
                         semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1},\"Property\":{2}}}", Json.Encode(parts[0]), Json.Encode(entities[parts[0]]), Json.Encode(parts[1]));
                     }
                 }

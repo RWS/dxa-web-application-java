@@ -308,7 +308,8 @@ namespace Sdl.Web.Tridion.Templates
             {
                 return PublishEngine.IsPublished(page, Engine.PublishingContext.PublicationTarget);
             }
-            return false;
+            //For preview we always return true - to help debugging
+            return true;
         }
 
         private static bool IsVisible(string title)

@@ -1,18 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web.Helpers;
+using System.Xml;
+using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
-using System.Xml;
-using System.Web.Helpers;
-using System.Text.RegularExpressions;
 using Tridion.ContentManager.Templating.Assembly;
-using Sdl.Web.Tridion.Common;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -28,19 +24,22 @@ namespace Sdl.Web.Tridion.Templates
         private const string TemplateConfigName = "templates";
         private const string SchemasConfigName = "schemas";
         private const string TaxonomiesConfigName = "taxonomies";
-        
-        private string _moduleRoot = string.Empty;
+
+        private string _moduleRoot = String.Empty;
 
         public override void Transform(Engine engine, Package package)
         {
-            this.Initialize(engine, package);
+            Initialize(engine, package);
+            
             //The core configuration component should be the one being processed by the template
-            var coreConfigComponent = this.GetComponent();
+            var coreConfigComponent = GetComponent();
             var sg = GetSystemStructureGroup("config");
             _moduleRoot = GetModulesRoot(coreConfigComponent);
+
             //Get all the active modules
             Dictionary<string, Component> moduleComponents = GetActiveModules(coreConfigComponent);
             List<string> filesCreated = new List<string>();
+            
             //For each active module, publish the config and add the filename(s) to the bootstrap list
             foreach (var module in moduleComponents)
             {
@@ -49,9 +48,9 @@ namespace Sdl.Web.Tridion.Templates
             //template, schema and taxonomy config is only published from the master web publication/default localization
             if (IsMasterWebPublication())
             {
-                filesCreated.AddRange(PublishJsonData(ReadSchemaData(), coreConfigComponent,"schemas", sg));
-                filesCreated.AddRange(PublishJsonData(ReadTemplateData(), coreConfigComponent,"templates", sg));
-                filesCreated.AddRange(PublishJsonData(ReadTaxonomiesData(), coreConfigComponent,"taxonomies", sg));
+                filesCreated.AddRange(PublishJsonData(ReadSchemaData(), coreConfigComponent, "schemas", sg));
+                filesCreated.AddRange(PublishJsonData(ReadTemplateData(), coreConfigComponent, "templates", sg));
+                filesCreated.AddRange(PublishJsonData(ReadTaxonomiesData(), coreConfigComponent, "taxonomies", sg));
             }
             //Publish the boostrap list, this is used by the web application to load in all other configuration files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "config-", BuildAdditionalData());
@@ -148,9 +147,11 @@ namespace Sdl.Web.Tridion.Templates
         protected List<string> BuildAdditionalData()
         {
             //Some additional data required to configure the web application
-            List<string> additionalData = new List<string>();
-            additionalData.Add(String.Format("\"defaultLocalization\":{0}", Json.Encode(IsMasterWebPublication())));
-            additionalData.Add(String.Format("\"staging\":{0}", Json.Encode(IsPublishingToStaging())));
+            List<string> additionalData = new List<string>
+                {
+                    String.Format("\"defaultLocalization\":{0}", Json.Encode(IsMasterWebPublication())),
+                    String.Format("\"staging\":{0}", Json.Encode(IsPublishingToStaging()))
+                };
             return additionalData;
         }
 

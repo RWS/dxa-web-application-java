@@ -23,7 +23,7 @@ namespace Sdl.Web.Tridion.Templates
     public class GenerateSiteMap : TemplateBase
     {
         private StructureGroup _startPoint;
-        private const string MAIN_REGION_NAME = "Main";
+        private const string MainRegionName = "Main";
 
         public override void Transform(tpl.Engine engine, tpl.Package package)
         {
@@ -107,7 +107,7 @@ namespace Sdl.Web.Tridion.Templates
             return Regex.Replace(title, @"^\d{3}\s", String.Empty);
         }
 
-        private string GetUrl(StructureGroup sg)
+        private static string GetUrl(StructureGroup sg)
         {
             String url = sg.PublishLocationUrl;
             //TODO: Logic can be included here to be able to add external urls
@@ -116,7 +116,7 @@ namespace Sdl.Web.Tridion.Templates
 
         private SitemapItem GeneratePageNode(Page page)
         {
-            SitemapItem SitemapItem = new SitemapItem(GetNavigationTitle(page))
+            SitemapItem sitemapItem = new SitemapItem(GetNavigationTitle(page))
                 {
                     Id = page.Id,
                     Url = GetUrl(page),
@@ -125,10 +125,10 @@ namespace Sdl.Web.Tridion.Templates
                     Visible = IsVisible(page.Title)
                 };
 
-            return SitemapItem;
+            return sitemapItem;
         }
 
-        private DateTime GetPublishedDate(Page page, PublicationTarget target )
+        private static DateTime GetPublishedDate(Page page, PublicationTarget target )
         {
             var publishInfos = PublishEngine.GetPublishInfo(page);
             foreach (var publishInfo in publishInfos)
@@ -148,12 +148,12 @@ namespace Sdl.Web.Tridion.Templates
             return String.IsNullOrEmpty(title) ? StripPrefix(page.Title) : title;
         }
 
-        private Component GetMainComponentOnPage(Page page)
+        private static Component GetMainComponentOnPage(Page page)
         {
             foreach (var cp in page.ComponentPresentations)
             {
                 var region = GetRegionFromComponentPresentation(cp);
-                if (region == MAIN_REGION_NAME)
+                if (region == MainRegionName)
                 {
                     return cp.Component;
                 }
@@ -161,7 +161,7 @@ namespace Sdl.Web.Tridion.Templates
             return null;
         }
 
-        private string GetRegionFromComponentPresentation(ComponentPresentation cp)
+        private static string GetRegionFromComponentPresentation(ComponentPresentation cp)
         {
             var match = Regex.Match(cp.ComponentTemplate.Title, @".*?\[(.*?)\]");
             if (match.Success)
@@ -169,10 +169,10 @@ namespace Sdl.Web.Tridion.Templates
                 return match.Groups[1].Value;
             }
             //default region name
-            return MAIN_REGION_NAME;
+            return MainRegionName;
         }
 
-        private string GetNavigationTitleFromComp(Component mainComp)
+        private static string GetNavigationTitleFromComp(Component mainComp)
         {
             //TODO, make the field names used to extract the title configurable as TBB parameters
             string title = null;
@@ -196,7 +196,7 @@ namespace Sdl.Web.Tridion.Templates
             return title;
         }
 
-        private string GetUrl(Page page)
+        private static string GetUrl(Page page)
         {
             String url = page.PublishLocationUrl;
             return System.Web.HttpUtility.UrlDecode(url);
@@ -231,13 +231,13 @@ namespace Sdl.Web.Tridion.Templates
             return false;
         }
 
-        private bool IsVisible(string title)
+        private static bool IsVisible(string title)
         {
             Match match = Regex.Match(title, @"^\d{3}\s");
             return match.Success;
         }
 
-        private bool IsSystem(string title)
+        private static bool IsSystem(string title)
         {
             return title.StartsWith("_");
         }

@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 
@@ -29,7 +25,7 @@ namespace Sdl.Web.Tridion.Common
         public static string GetKeyFromSchema(Schema schema)
         {
             var key = schema.RootElementName;
-            if (string.IsNullOrEmpty(key))
+            if (String.IsNullOrEmpty(key))
             {
                 key = Regex.Replace(schema.Title.Trim(), @"[^A-Za-z0-9.]+", "");
             }

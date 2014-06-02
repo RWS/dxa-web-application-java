@@ -1,11 +1,7 @@
-﻿using Sdl.Web.Tridion.Common;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Helpers;
-using Tridion.ContentManager.ContentManagement;
+using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
@@ -17,14 +13,16 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Publish Static Bootstrap")]
     public class PublishStaticBootstrap : TemplateBase
     {
-        private string _moduleRoot = string.Empty;
+        //private string _moduleRoot = String.Empty;
 
         public override void Transform(Engine engine, Package package)
         {
-            this.Initialize(engine, package);
+            Initialize(engine, package);
+            
             //The core configuration component should be the one being processed by the template
-            var coreConfigComponent = this.GetComponent();
+            var coreConfigComponent = GetComponent();
             var sg = GetSystemStructureGroup();
+
             //Publish the boostrap list, this is used by the web application to load in all other static files
             PublishBootstrapJson(GetBootstrapFiles(), coreConfigComponent, sg, "statics-");
         }

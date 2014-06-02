@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Web.Helpers;
 using System.Xml;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
@@ -13,7 +12,6 @@ using Tridion.ContentManager.Publishing;
 using Tridion.ContentManager.Publishing.Rendering;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
-using System.Web.Helpers;
 
 namespace Sdl.Web.Tridion.Common
 {

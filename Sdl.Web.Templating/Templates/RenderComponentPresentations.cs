@@ -27,7 +27,7 @@ namespace Sdl.Web.Tridion.Templates
             package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, output.ToString()));
         }
 
-        private string RemoveTcdl(string p)
+        private static string RemoveTcdl(string p)
         {
             p = Regex.Replace(p, "<tcdl:ComponentPresentation[^>]+>", "");
             return p.Replace("</tcdl:ComponentPresentation>", "");

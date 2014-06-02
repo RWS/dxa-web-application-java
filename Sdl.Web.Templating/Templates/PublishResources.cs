@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
-using Sdl.Web.Tridion.Common;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -19,22 +16,27 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Publish Resources")]
     public class PublishResources : TemplateBase
     {
-        private string _moduleRoot = string.Empty;
+        //private string _moduleRoot;
+
         public override void Transform(Engine engine, Package package)
         {
-            this.Initialize(engine, package);
+            Initialize(engine, package);
+            
             //The core configuration component should be the one being processed by the template
-            var coreConfigComponent = this.GetComponent();
+            var coreConfigComponent = GetComponent();
             var sg = GetSystemStructureGroup("resources");
-            _moduleRoot = GetModulesRoot(coreConfigComponent);
+            //_moduleRoot = GetModulesRoot(coreConfigComponent);
+
             //Get all the active modules
             Dictionary<string, Component> moduleComponents = GetActiveModules(coreConfigComponent);
             List<string> filesCreated = new List<string>();
+            
             //For each active module, publish the config and add the filename(s) to the bootstrap list
             foreach (var module in moduleComponents)
             {
                 filesCreated.Add(ProcessModule(module.Key, module.Value, sg));
             }
+
             //Publish the boostrap list, this is used by the web application to load in all other resource files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "resource-");
         }
@@ -43,11 +45,12 @@ namespace Sdl.Web.Tridion.Templates
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
             ItemFields fields = new ItemFields(module.Content, module.Schema);
+
             foreach (var configComp in fields.GetComponentValues("resource"))
             {
                 data = MergeData(data, ReadComponentData(configComp));
             }
-            return PublishJsonData(data, module, moduleName,"resource", sg);
+            return PublishJsonData(data, module, moduleName, "resource", sg);
         }
     }
 }

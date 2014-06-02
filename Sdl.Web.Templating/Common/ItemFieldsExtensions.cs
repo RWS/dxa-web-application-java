@@ -150,9 +150,9 @@ namespace Sdl.Web.Tridion.Common
             return
                 null == fields
                 || !fields.Contains(fieldName)
-                    ? string.Empty
+                    ? String.Empty
                     : ValueResolver.ContainsKey((fieldType = (field = fields[fieldName]).GetType()))
-                        ? ValueResolver[fieldType](fields, fieldName) ?? string.Empty
+                        ? ValueResolver[fieldType](fields, fieldName) ?? String.Empty
                         : field.ToString();
         }
     }

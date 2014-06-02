@@ -24,10 +24,12 @@ namespace Sdl.Web.Tridion.Templates
     {
         private StructureGroup _startPoint;
         private const string MainRegionName = "Main";
+        protected NavigationConfig config = null;
 
         public override void Transform(tpl.Engine engine, tpl.Package package)
         {
             Initialize(engine, package);
+            config = LoadConfig(this.GetComponent());
             if (GetPage() != null)
             {
                 _startPoint = GetPublication().RootStructureGroup;
@@ -41,6 +43,30 @@ namespace Sdl.Web.Tridion.Templates
                     }
                 }
             }
+        }
+
+        private NavigationConfig LoadConfig(Component component)
+        {
+            NavigationConfig res = new NavigationConfig();
+            res.NavType = NavigationType.Simple;
+            if (component.Metadata != null)
+            {
+                var meta = new ItemFields(component.Metadata, component.MetadataSchema);
+                var type = meta.GetKeywordValue("navigationType");
+                switch (type.Key.ToLower())
+                {
+                    case "localizable":
+                        res.NavType = NavigationType.Localizable;
+                        break;
+                }
+                var navTextFields = meta.GetSingleFieldValue("navigationTextFieldPaths");
+                if (!String.IsNullOrEmpty(navTextFields))
+                {
+                    res.NavTextFieldPaths = navTextFields.Split(',').Select(s => s.Trim()).ToList();
+                }
+                res.ExternalUrlTemplate = meta.GetSingleFieldValue("externalLinkTemplate");
+            }
+            return res;
         }
 
         public string GenerateNavigation()
@@ -110,7 +136,6 @@ namespace Sdl.Web.Tridion.Templates
         private static string GetUrl(StructureGroup sg)
         {
             String url = sg.PublishLocationUrl;
-            //TODO: Logic can be included here to be able to add external urls
             return System.Web.HttpUtility.UrlDecode(url);
         }
 
@@ -143,25 +168,73 @@ namespace Sdl.Web.Tridion.Templates
 
         private string GetNavigationTitle(Page page)
         {
-            Component mainComp = GetMainComponentOnPage(page);
-            var title =  GetNavigationTitleFromComp(mainComp);
+            string title = null;
+            if (config.NavType == NavigationType.Localizable)
+            {
+                title = GetNavTextFromPageComponents(page);
+            }
             return String.IsNullOrEmpty(title) ? StripPrefix(page.Title) : title;
         }
 
-        private static Component GetMainComponentOnPage(Page page)
+        private string GetNavTextFromPageComponents(Page page)
         {
+            string title = null;
             foreach (var cp in page.ComponentPresentations)
             {
-                var region = GetRegionFromComponentPresentation(cp);
-                if (region == MainRegionName)
+                title = GetNavTitleFromComponent(cp.Component);
+                if (!String.IsNullOrEmpty(title))
                 {
-                    return cp.Component;
+                    return title;
+                }
+            }
+            return title;
+        }
+
+        private string GetNavTitleFromComponent(Component component)
+        {
+            List<XmlElement> data = new List<XmlElement>();
+            if (component.Content != null)
+            {
+                data.Add(component.Content);
+            }
+            if (component.Metadata != null)
+            {
+                data.Add(component.Metadata);
+            }
+            var meta = component.Metadata;
+            var content = component.Content;
+            foreach (var fieldname in config.NavTextFieldPaths)
+            {
+                var title = GetNavTitleFromField(fieldname, data);
+                if (!String.IsNullOrEmpty(title))
+                {
+                    return title;
                 }
             }
             return null;
         }
 
-        private static string GetRegionFromComponentPresentation(ComponentPresentation cp)
+        private string GetNavTitleFromField(string fieldname, List<XmlElement> data)
+        {
+            string xpath = GetXPathFromFieldName(fieldname);
+            foreach (var fieldData in data)
+            {
+                var field = fieldData.SelectSingleNode(xpath);
+                if (field != null)
+                {
+                    return field.InnerText;
+                }
+            }
+            return null;
+        }
+
+        private string GetXPathFromFieldName(string fieldname)
+        {
+            var bits = fieldname.Split('/');
+            return "//" + String.Join("/", bits.Select(f => String.Format("*[local-name()='{0}']", f)));
+        }
+
+        private string GetRegionFromComponentPresentation(ComponentPresentation cp)
         {
             var match = Regex.Match(cp.ComponentTemplate.Title, @".*?\[(.*?)\]");
             if (match.Success)
@@ -172,7 +245,7 @@ namespace Sdl.Web.Tridion.Templates
             return MainRegionName;
         }
 
-        private static string GetNavigationTitleFromComp(Component mainComp)
+        private string GetNavigationTitleFromComp(Component mainComp)
         {
             //TODO, make the field names used to extract the title configurable as TBB parameters
             string title = null;
@@ -196,9 +269,19 @@ namespace Sdl.Web.Tridion.Templates
             return title;
         }
 
-        private static string GetUrl(Page page)
+        protected string GetUrl(Page page)
         {
             String url = page.PublishLocationUrl;
+            if (config.ExternalUrlTemplate.ToLower() == page.PageTemplate.Title.ToLower() && page.Metadata != null)
+            {
+                var meta = new ItemFields(page.Metadata,page.MetadataSchema);
+                var link = meta.GetEmbeddedField("redirect");
+                url = link.GetExternalLink("externalLink");
+                if (String.IsNullOrEmpty(url))
+                {
+                    url = link.GetSingleFieldValue("internalLink");
+                }
+            }
             return System.Web.HttpUtility.UrlDecode(url);
         }
 
@@ -241,6 +324,19 @@ namespace Sdl.Web.Tridion.Templates
         {
             return title.StartsWith("_");
         }
+    }
+
+    public enum NavigationType
+    {
+        Simple,
+        Localizable
+    }
+
+    public class NavigationConfig
+    {
+        public List<string> NavTextFieldPaths { get; set; }
+        public NavigationType NavType {get;set;}
+        public string ExternalUrlTemplate {get;set;}
     }
 
     #region Sitemap Classes

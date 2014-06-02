@@ -30,17 +30,14 @@ namespace Sdl.Web.Tridion.Templates
         {
             Initialize(engine, package);
             config = LoadConfig(this.GetComponent());
-            if (GetPage() != null)
-            {
-                _startPoint = GetPublication().RootStructureGroup;
+            _startPoint = GetPublication().RootStructureGroup;
 
-                if (_startPoint != null)
+            if (_startPoint != null)
+            {
+                string nav = GenerateNavigation();
+                if (!string.IsNullOrEmpty(GenerateNavigation()))
                 {
-                    string nav = GenerateNavigation();
-                    if (!string.IsNullOrEmpty(GenerateNavigation()))
-                    {
-                        package.PushItem(tpl.Package.OutputName, package.CreateStringItem(tpl.ContentType.Text, nav));
-                    }
+                    package.PushItem(tpl.Package.OutputName, package.CreateStringItem(tpl.ContentType.Text, nav));
                 }
             }
         }

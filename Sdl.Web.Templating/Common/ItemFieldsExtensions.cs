@@ -60,6 +60,11 @@ namespace Sdl.Web.Tridion.Common
                     : new string[0];
         }
 
+        public static Component GetMultimediaLink(this ItemFields fields, string fieldName)
+        {
+            return fields.GetMultimediaLinks(fieldName).FirstOrDefault();
+        }
+
         public static IEnumerable<Component> GetMultimediaLinks(this ItemFields fields, string fieldName)
         {
             return

@@ -60,6 +60,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\_references\2013-sp1\Tridion.ContentManager.Templating.dll</HintPath>
     </Reference>
+    <Reference Include="Tridion.Logging, Version=7.1.0.52, Culture=neutral, PublicKeyToken=ddfc895746e5ee6b, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\_references\2013-sp1\Tridion.Logging.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\GeneralExtensionMethods.cs" />

@@ -23,10 +23,16 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Publish HTML Design")]
     public class PublishHtmlDesign : TemplateBase
     {
+        // template builder log
+        private static readonly TemplatingLogger Log = TemplatingLogger.GetLogger(typeof(PublishHtmlDesign));
+
+        // json content in page
+        private const string Json = "{{\"status\":\"Success\",\"files\":[{0}]}}";
+
         public override void Transform(Engine engine, Package package)
         {
             Initialize(engine, package);
-            StringBuilder messages = new StringBuilder();
+            StringBuilder publishedFiles = new StringBuilder();
 
             try
             {
@@ -50,6 +56,9 @@ namespace Sdl.Web.Tridion.Templates
                 File.WriteAllBytes(zipfile, design.BinaryContent.GetByteArray());
                 ZipFile.ExtractToDirectory(zipfile, tempFolder);
 
+                // save favicon to disk (if available)
+
+
                 // build html design
                 ProcessStartInfo info = new ProcessStartInfo
                 {
@@ -72,8 +81,9 @@ namespace Sdl.Web.Tridion.Templates
                     string output = reader.ReadToEnd();
                     if (!String.IsNullOrEmpty(output))
                     {
-                        messages.AppendLine("Grunt output:");
-                        messages.AppendLine(output);
+                        Log.Info(output);
+                      
+                        // TODO: check for errors in standard output and throw exception?
                     }
                 }
                 using (StreamReader reader = cmd.StandardError)
@@ -81,8 +91,9 @@ namespace Sdl.Web.Tridion.Templates
                     string error = reader.ReadToEnd();
                     if (!String.IsNullOrEmpty(error))
                     {
-                        messages.AppendLine("Grunt errors:");
-                        messages.AppendLine(error);
+                        Log.Error(error);
+
+                        // TODO: throw exception and stop processing of template?
                     }
                 }
                 cmd.WaitForExit();
@@ -93,16 +104,14 @@ namespace Sdl.Web.Tridion.Templates
                 if (Directory.Exists(dist))
                 {
                     string[] files = Directory.GetFiles(dist, "*.*", SearchOption.AllDirectories);
-                    messages.AppendLine("");
-                    messages.AppendLine("Files:");
 
                     foreach (var file in files)
                     {
                         string filename = file.Substring(file.LastIndexOf('\\') + 1);
                         string extension = filename.Substring(filename.LastIndexOf('.') + 1);
-                        messages.AppendLine(file);
+                        Log.Debug(file);
 
-                        // determine correct structure group
+                        // determine correct structure group (create if not exists)
                         Publication pub = (Publication)config.ContextRepository;
                         string relativeFolderPath = file.Substring(dist.Length - 1, file.LastIndexOf('\\') + 1 - dist.Length);
                         relativeFolderPath = relativeFolderPath.Replace("system", "_System").Replace('\\', '/');
@@ -111,7 +120,11 @@ namespace Sdl.Web.Tridion.Templates
                         StructureGroup sg = engine.GetObject(publishSgWebDavUrl) as StructureGroup;
                         if (sg == null)
                         {
-                            messages.AppendLine("The structure group mirroring the asset folder does not exist.  SG=" + publishSgWebDavUrl);
+                            Log.Error("The structure group mirroring the asset folder does not exist. SG=" + publishSgWebDavUrl);
+                            // TODO: remove logging error and else branch (we will publish the binary)
+
+                            // TODO: create structure group
+
                         }
                         else 
                         {
@@ -121,8 +134,13 @@ namespace Sdl.Web.Tridion.Templates
                                 Item binaryItem = Package.CreateStreamItem(GetContentType(extension), fs);
                                 var binary = engine.PublishingContext.RenderedItem.AddBinary(binaryItem.GetAsStream(), filename, sg, "dist-" + filename, config, GetMimeType(extension));
                                 binaryItem.Properties[Item.ItemPropertyPublishedPath] = binary.Url;
-                                //package.PushItem(filename, binaryItem);
-                                package.PushItem(binary.Url, binaryItem);
+                                package.PushItem(filename, binaryItem);
+                                //package.PushItem(binary.Url, binaryItem);
+                                if (publishedFiles.Length > 0)
+                                {
+                                    publishedFiles.Append(",");
+                                }
+                                publishedFiles.AppendFormat("\"{0}\"", binary.Url);
                             }
                         }
                     }
@@ -133,11 +151,14 @@ namespace Sdl.Web.Tridion.Templates
             }
             catch (Exception ex)
             {
-                messages.AppendLine(ex.Message);
+                Log.Error(ex.Message);
+
+                // TODO: throw readable exception for know cases (nodejs not installed etc.)
+                throw new Exception(ex.Message, ex);
             }
 
-            // output messages
-            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, messages.ToString()));
+            // output json result
+            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(Json, publishedFiles)));
         }
 
         private static ContentType GetContentType(string extension)

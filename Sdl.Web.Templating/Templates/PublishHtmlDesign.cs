@@ -1,16 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Security.Principal;
 using System.Text;
-using System.Web.Helpers;
 using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
-using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
@@ -26,6 +21,7 @@ namespace Sdl.Web.Tridion.Templates
         // template builder log
         private static readonly TemplatingLogger Log = TemplatingLogger.GetLogger(typeof(PublishHtmlDesign));
 
+        // name of system structure group
         private const string SystemSgName = "_System";
  
         // json content in page
@@ -36,8 +32,10 @@ namespace Sdl.Web.Tridion.Templates
             Initialize(engine, package);
             StringBuilder publishedFiles = new StringBuilder();
 
+            // not using System.IO.Path.GetTempPath() because the paths in our zip are already quite long,
+            // so we need a very short temp path for the extract of our zipfile to succeed
             // using drive from tridion cm homedir for temp folder
-            string tempFolder = ConfigurationSettings.GetTcmHomeDirectory().Substring(0, 3) + "tmp" + DateTime.Now.ToString("yyyyMMddHHmmss") + "\\";
+            string tempFolder = ConfigurationSettings.GetTcmHomeDirectory().Substring(0, 3) + "t" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "\\";
 
             try
             {
@@ -46,6 +44,7 @@ namespace Sdl.Web.Tridion.Templates
                 var fields = new ItemFields(config.Content, config.Schema);
                 var design = fields.GetMultimediaLink("design");
                 var favicon = fields.GetMultimediaLink("favicon");
+                var variables = fields.GetMultimediaLink("variables");
 
                 // create temp folder
                 Directory.CreateDirectory(tempFolder);
@@ -56,11 +55,18 @@ namespace Sdl.Web.Tridion.Templates
                 File.WriteAllBytes(zipfile, design.BinaryContent.GetByteArray());
                 ZipFile.ExtractToDirectory(zipfile, tempFolder);
 
+                // save less variables to disk (if available) in unpacked zip structure
+                if (variables != null)
+                {
+                    File.WriteAllBytes(tempFolder + "src\\system\\assets\\less\\_custom.less", variables.BinaryContent.GetByteArray());
+                    Log.Debug("Saved " + tempFolder + "src\\system\\assets\\less\\_custom.less");
+                }
+
                 // build html design
                 ProcessStartInfo info = new ProcessStartInfo
                     {
                         FileName = "cmd.exe",
-                        Arguments = @"/c c:\progra~1\nodejs\npm.cmd test --color=false",
+                        Arguments = @"/c c:\progra~1\nodejs\npm.cmd start --color=false",
                         WorkingDirectory = tempFolder,
                         CreateNoWindow = true,
                         ErrorDialog = false,
@@ -70,32 +76,32 @@ namespace Sdl.Web.Tridion.Templates
                         StandardErrorEncoding = Encoding.UTF8,
                         StandardOutputEncoding = Encoding.UTF8
                     };
-
-                Process cmd = new Process {StartInfo = info};
-                cmd.Start();
-                using (StreamReader reader = cmd.StandardOutput)
+                using (Process cmd = new Process {StartInfo = info})
                 {
-                    string output = reader.ReadToEnd();
-                    if (!String.IsNullOrEmpty(output))
+                    cmd.Start();
+                    using (StreamReader reader = cmd.StandardOutput)
                     {
-                        Log.Info(output);
+                        string output = reader.ReadToEnd();
+                        if (!String.IsNullOrEmpty(output))
+                        {
+                            Log.Info(output);
 
-                        // TODO: check for errors in standard output and throw exception
+                            // TODO: check for errors in standard output and throw exception
+                        }
                     }
-                }
-                using (StreamReader reader = cmd.StandardError)
-                {
-                    string error = reader.ReadToEnd();
-                    if (!String.IsNullOrEmpty(error))
+                    using (StreamReader reader = cmd.StandardError)
                     {
-                        Log.Error(error);
+                        string error = reader.ReadToEnd();
+                        if (!String.IsNullOrEmpty(error))
+                        {
+                            Log.Error(error);
 
-                        // TODO: throw readable exception
-                        //throw new Exception(error);
+                            // TODO: throw readable exception
+                            //throw new Exception(error);
+                        }
                     }
+                    cmd.WaitForExit();
                 }
-                cmd.WaitForExit();
-                cmd.Close();
 
                 // publish all binaries from dist folder
                 string dist = tempFolder + "dist\\";
@@ -105,6 +111,7 @@ namespace Sdl.Web.Tridion.Templates
                     if (favicon != null)
                     {
                         File.WriteAllBytes(dist + "favicon.ico", favicon.BinaryContent.GetByteArray());
+                        Log.Debug("Saved " + dist + "favicon.ico");
                     }
 
                     string[] files = Directory.GetFiles(dist, "*.*", SearchOption.AllDirectories);
@@ -123,8 +130,10 @@ namespace Sdl.Web.Tridion.Templates
                         StructureGroup sg = engine.GetObject(publishSgWebDavUrl) as StructureGroup;
                         if (sg == null)
                         {
-                            string sgAfterSystem = publishSgWebDavUrl.Substring(publishSgWebDavUrl.IndexOf(SystemSgName, StringComparison.Ordinal) + SystemSgName.Length);
-                            CreateStructure(engine, sgAfterSystem.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries), pubSgWebDavUrl + "/" + SystemSgName);
+                            // creating structure groups requires allowWriteOperationsInTemplates to be set to: true 
+                            //string sgAfterSystem = publishSgWebDavUrl.Substring(publishSgWebDavUrl.IndexOf(SystemSgName, StringComparison.Ordinal) + SystemSgName.Length);
+                            //CreateStructure(engine, sgAfterSystem.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries), pubSgWebDavUrl + "/" + SystemSgName);
+                            throw new Exception("Missing Structure Group " + publishSgWebDavUrl);
                         }
 
                         // add binary to package and publish
@@ -139,19 +148,17 @@ namespace Sdl.Web.Tridion.Templates
                                 publishedFiles.Append(",");
                             }
                             publishedFiles.AppendFormat("\"{0}\"", binary.Url);
-                            Log.Debug("Published " + binary.Url);
-                        }
+                            Log.Info("Published " + binary.Url);
+                        }                            
                     }
                 }
                 else
                 {
-                    Log.Error("Grunt build failed, dist folder missing.");
+                    throw new Exception("Grunt build failed, dist folder is missing.");
                 }
             }
             catch (Exception ex)
             {
-                Log.Error(ex.Message);
-
                 // TODO: throw readable exception for know cases (nodejs not installed etc.)
                 throw new Exception(ex.Message, ex);
             }
@@ -159,33 +166,35 @@ namespace Sdl.Web.Tridion.Templates
             {
                 // cleanup workfolder
                 Directory.Delete(tempFolder, true);
-                Log.Debug("Removed " + tempFolder);                
+                Log.Debug("Removed " + tempFolder);             
             }
 
             // output json result
             package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(Json, publishedFiles)));
         }
 
-        private static void CreateStructure(Engine engine, IEnumerable<string> structureGroups, string webDavUrlSystemSg)
-        {
-            StringBuilder sgs = new StringBuilder();
-            StringBuilder parentUrl = new StringBuilder();
-            parentUrl.Append(webDavUrlSystemSg);
-
-            foreach (var sgName in structureGroups)
-            {
-                sgs.Append("/" + sgName);
-                StructureGroup sg = engine.GetObject(webDavUrlSystemSg + sgs) as StructureGroup;
-                if (sg == null)
-                {
-                    StructureGroup parent = (StructureGroup)engine.GetObject(parentUrl.ToString());
-                    sg = new StructureGroup(engine.GetSession(), parent.Id) { Title = sgName, Directory = sgName };
-                    sg.Save();
-                    Log.Info("Created " + webDavUrlSystemSg + sgs);
-                }
-                parentUrl.Append("/" + sgName);
-            }
-        }
+        // this method requires allowWriteOperationsInTemplates to be set to: true 
+        // see http://sdllivecontent.sdl.com/LiveContent/content/en-US/SDL_Tridion_2013/concept_547C3E9D9A684B00BB8CB498B8AF7BBD
+        //private static void CreateStructure(Engine engine, string[] path, string webDavUrlSystemSg)
+        //{
+        //    StringBuilder sgs = new StringBuilder();
+        //    StringBuilder parentUrl = new StringBuilder();
+        //    parentUrl.Append(webDavUrlSystemSg);
+        //
+        //    foreach (var name in path)
+        //    {
+        //        sgs.Append("/" + name);
+        //        StructureGroup sg = engine.GetObject(webDavUrlSystemSg + sgs) as StructureGroup;
+        //        if (sg == null)
+        //        {
+        //            StructureGroup parent = (StructureGroup)engine.GetObject(parentUrl.ToString());
+        //            sg = new StructureGroup(engine.GetSession(), parent.Id) { Title = name, Directory = name };
+        //            sg.Save();
+        //            Log.Info("Created " + webDavUrlSystemSg + sgs);
+        //        }
+        //        parentUrl.Append("/" + name);
+        //    }
+        //}
 
         private static ContentType GetContentType(string extension)
         {

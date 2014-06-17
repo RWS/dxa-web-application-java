@@ -50,6 +50,7 @@ namespace Sdl.Web.Tridion.Templates
             {
                 filesCreated.AddRange(PublishJsonData(ReadSchemaData(), coreConfigComponent, "schemas", sg));
                 filesCreated.AddRange(PublishJsonData(ReadTemplateData(), coreConfigComponent, "templates", sg));
+                filesCreated.Add(PublishJsonData(ReadPageTemplateIncludes(), coreConfigComponent, "includes", "includes", sg));
                 filesCreated.AddRange(PublishJsonData(ReadTaxonomiesData(), coreConfigComponent, "taxonomies", sg));
             }
             //Publish the boostrap list, this is used by the web application to load in all other configuration files
@@ -138,6 +139,36 @@ namespace Sdl.Web.Tridion.Templates
                             res.Add(key, new List<string>());
                         }
                         res[key].Add(String.Format("{0}:{1}", Json.Encode(Utility.GetKeyFromTemplate(template)), Json.Encode(template.Id.ItemId)));
+                    }
+                }
+            }
+            return res;
+        }
+
+        protected virtual List<string> ReadPageTemplateIncludes()
+        {
+            //Generate a list of Page Templates which have includes in the metadata
+            var res = new List<string>();
+            var templateFilter = new RepositoryItemsFilter(Engine.GetSession());
+            templateFilter.ItemTypes = new List<ItemType>{ItemType.PageTemplate};
+            templateFilter.Recursive = true;
+            foreach (XmlElement item in GetPublication().GetListItems(templateFilter).ChildNodes)
+            {
+                var id = item.GetAttribute("ID");
+                var template = (PageTemplate)Engine.GetObject(id);
+                if (template.MetadataSchema != null && template.Metadata != null)
+                {
+                    ItemFields meta = new ItemFields(template.Metadata, template.MetadataSchema);
+                    var values = meta.GetTextValues("includes");
+                    if (values != null)
+                    {
+                        var includes = new List<string>();
+                        foreach(var val in values)
+                        {
+                            includes.Add(Json.Encode(val));
+                        }
+                        var json = String.Format("\"{0}\":[{1}]", template.Id.ItemId, String.Join(",\n", includes));
+                        res.Add(json);
                     }
                 }
             }

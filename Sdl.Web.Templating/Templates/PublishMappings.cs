@@ -12,6 +12,7 @@ using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
+using Tridion.ContentManager.ContentManagement.Fields;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -58,7 +59,8 @@ namespace Sdl.Web.Tridion.Templates
             List<string> filesCreated = new List<string>();
             if (IsMasterWebPublication())
             {
-                filesCreated.AddRange(PublishJsonData(ReadMappingsData(), coreConfigComponent,"mapping", sg, true));
+                filesCreated.AddRange(PublishJsonData(ReadMappingsData(), coreConfigComponent, "mapping", sg, true));
+                filesCreated.Add(PublishJsonData(ReadPageTemplateIncludes(), coreConfigComponent, "includes", "includes", sg));
             }
             //Publish the boostrap list, this is used by the web application to load in all other mapping files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "mapping-");
@@ -416,6 +418,38 @@ namespace Sdl.Web.Tridion.Templates
 
             return semantics.ToString();
         }
+
+
+        protected virtual List<string> ReadPageTemplateIncludes()
+        {
+            //Generate a list of Page Templates which have includes in the metadata
+            var res = new List<string>();
+            var templateFilter = new RepositoryItemsFilter(Engine.GetSession());
+            templateFilter.ItemTypes = new List<ItemType> { ItemType.PageTemplate };
+            templateFilter.Recursive = true;
+            foreach (XmlElement item in GetPublication().GetListItems(templateFilter).ChildNodes)
+            {
+                var id = item.GetAttribute("ID");
+                var template = (PageTemplate)Engine.GetObject(id);
+                if (template.MetadataSchema != null && template.Metadata != null)
+                {
+                    ItemFields meta = new ItemFields(template.Metadata, template.MetadataSchema);
+                    var values = meta.GetTextValues("includes");
+                    if (values != null)
+                    {
+                        var includes = new List<string>();
+                        foreach (var val in values)
+                        {
+                            includes.Add(Json.Encode(val));
+                        }
+                        var json = String.Format("\"{0}\":[{1}]", template.Id.ItemId, String.Join(",\n", includes));
+                        res.Add(json);
+                    }
+                }
+            }
+            return res;
+        }
+
 
         private static string ExtractTypeOfAppData(ApplicationData appData)
         {

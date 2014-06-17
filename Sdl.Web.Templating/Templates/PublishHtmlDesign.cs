@@ -142,9 +142,6 @@ namespace Sdl.Web.Tridion.Templates
                         StructureGroup sg = engine.GetObject(publishSgWebDavUrl) as StructureGroup;
                         if (sg == null)
                         {
-                            // creating structure groups requires allowWriteOperationsInTemplates to be set to: true 
-                            //string sgAfterSystem = publishSgWebDavUrl.Substring(publishSgWebDavUrl.IndexOf(SystemSgName, StringComparison.Ordinal) + SystemSgName.Length);
-                            //CreateStructure(engine, sgAfterSystem.Split(new[] {'/'}, StringSplitOptions.RemoveEmptyEntries), pubSgWebDavUrl + "/" + SystemSgName);
                             throw new Exception("Missing Structure Group " + publishSgWebDavUrl);
                         }
 
@@ -169,11 +166,6 @@ namespace Sdl.Web.Tridion.Templates
                     throw new Exception("Grunt build failed, dist folder is missing.");
                 }
             }
-            //catch (Exception ex)
-            //{
-            //    // TODO: throw readable exception for know cases (nodejs not installed etc.)
-            //    throw new Exception(ex.Message, ex);
-            //}
             finally
             {
                 // cleanup workfolder
@@ -184,29 +176,6 @@ namespace Sdl.Web.Tridion.Templates
             // output json result
             package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(Json, publishedFiles)));
         }
-
-        // this method requires allowWriteOperationsInTemplates to be set to: true 
-        // see http://sdllivecontent.sdl.com/LiveContent/content/en-US/SDL_Tridion_2013/concept_547C3E9D9A684B00BB8CB498B8AF7BBD
-        //private static void CreateStructure(Engine engine, string[] path, string webDavUrlSystemSg)
-        //{
-        //    StringBuilder sgs = new StringBuilder();
-        //    StringBuilder parentUrl = new StringBuilder();
-        //    parentUrl.Append(webDavUrlSystemSg);
-        //
-        //    foreach (var name in path)
-        //    {
-        //        sgs.Append("/" + name);
-        //        StructureGroup sg = engine.GetObject(webDavUrlSystemSg + sgs) as StructureGroup;
-        //        if (sg == null)
-        //        {
-        //            StructureGroup parent = (StructureGroup)engine.GetObject(parentUrl.ToString());
-        //            sg = new StructureGroup(engine.GetSession(), parent.Id) { Title = name, Directory = name };
-        //            sg.Save();
-        //            Log.Info("Created " + webDavUrlSystemSg + sgs);
-        //        }
-        //        parentUrl.Append("/" + name);
-        //    }
-        //}
 
         private static ContentType GetContentType(string extension)
         {

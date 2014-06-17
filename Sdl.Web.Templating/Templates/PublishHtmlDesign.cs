@@ -6,6 +6,7 @@ using System.Text;
 using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
+using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
@@ -44,7 +45,7 @@ namespace Sdl.Web.Tridion.Templates
                 var fields = new ItemFields(config.Content, config.Schema);
                 var design = fields.GetMultimediaLink("design");
                 var favicon = fields.GetMultimediaLink("favicon");
-                var variables = fields.GetMultimediaLink("variables");
+                var variables = fields.GetComponentValue("variables");
 
                 // create temp folder
                 Directory.CreateDirectory(tempFolder);
@@ -58,7 +59,17 @@ namespace Sdl.Web.Tridion.Templates
                 // save less variables to disk (if available) in unpacked zip structure
                 if (variables != null)
                 {
-                    File.WriteAllBytes(tempFolder + "src\\system\\assets\\less\\_custom.less", variables.BinaryContent.GetByteArray());
+                    const string line = "@{0}: {1};";
+                    StringBuilder content = new StringBuilder();
+                    
+                    // assuming all fields are text fields with a single value
+                    var itemFields = new ItemFields(variables.Content, variables.Schema);
+                    foreach (var itemField in itemFields)
+                    {
+                        content.AppendFormat(line, itemField.Name, ((TextField)itemField).Value);
+                    }
+
+                    File.WriteAllText(tempFolder + "src\\system\\assets\\less\\_custom.less", content.ToString());
                     Log.Debug("Saved " + tempFolder + "src\\system\\assets\\less\\_custom.less");
                 }
 

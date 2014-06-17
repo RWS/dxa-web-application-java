@@ -94,13 +94,19 @@ namespace Sdl.Web.Tridion.Templates
                         string error = reader.ReadToEnd();
                         if (!String.IsNullOrEmpty(error))
                         {
+                            string user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
                             Exception ex = new Exception(error);
                             ex.Data.Add("Filename", info.FileName);
                             ex.Data.Add("Arguments", info.Arguments);
+                            ex.Data.Add("User", user);
 
                             if (error.ToLower().Contains("the system cannot find the path specified"))
                             {
-                                throw new Exception("Node.js not installed or missing from path.", ex);
+                                throw new Exception(String.Format("Node.js not installed or missing from path for user {0}.", user), ex);
+                            }
+                            else if (error.ToLower().Contains("mkdir") && error.ToLower().Contains("appdata\\roaming\\npm"))
+                            {
+                                throw new Exception(String.Format("Node.js cannot access %APPDATA% for user {0}.", user), ex);
                             }
 
                             throw ex;

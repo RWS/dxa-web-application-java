@@ -94,10 +94,16 @@ namespace Sdl.Web.Tridion.Templates
                         string error = reader.ReadToEnd();
                         if (!String.IsNullOrEmpty(error))
                         {
-                            Log.Error(error);
+                            Exception ex = new Exception(error);
+                            ex.Data.Add("Filename", info.FileName);
+                            ex.Data.Add("Arguments", info.Arguments);
 
-                            // TODO: throw readable exception
-                            //throw new Exception(error);
+                            if (error.ToLower().Contains("the system cannot find the path specified"))
+                            {
+                                throw new Exception("Node.js not installed or missing from path.", ex);
+                            }
+
+                            throw ex;
                         }
                     }
                     cmd.WaitForExit();
@@ -157,11 +163,11 @@ namespace Sdl.Web.Tridion.Templates
                     throw new Exception("Grunt build failed, dist folder is missing.");
                 }
             }
-            catch (Exception ex)
-            {
-                // TODO: throw readable exception for know cases (nodejs not installed etc.)
-                throw new Exception(ex.Message, ex);
-            }
+            //catch (Exception ex)
+            //{
+            //    // TODO: throw readable exception for know cases (nodejs not installed etc.)
+            //    throw new Exception(ex.Message, ex);
+            //}
             finally
             {
                 // cleanup workfolder

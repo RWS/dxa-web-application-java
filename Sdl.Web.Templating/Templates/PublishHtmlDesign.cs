@@ -10,6 +10,7 @@ using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
+using System.Web.Helpers;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -26,7 +27,7 @@ namespace Sdl.Web.Tridion.Templates
         private const string SystemSgName = "_System";
  
         // json content in page
-        private const string Json = "{{\"status\":\"Success\",\"files\":[{0}]}}";
+        private const string jsonOutputFormat = "{{\"status\":\"Success\",\"files\":[{0}]}}";
 
         public override void Transform(Engine engine, Package package)
         {
@@ -46,6 +47,9 @@ namespace Sdl.Web.Tridion.Templates
                 var design = fields.GetMultimediaLink("design");
                 var favicon = fields.GetMultimediaLink("favicon");
                 var variables = fields.GetComponentValue("variables");
+                var version = fields.GetTextValue("version");
+
+                PublishJson(String.Format("{{\"version\":{0}}}", Json.Encode(version)), config, GetPublication().RootStructureGroup, "version", "version");
 
                 // create temp folder
                 Directory.CreateDirectory(tempFolder);
@@ -185,7 +189,7 @@ namespace Sdl.Web.Tridion.Templates
             }
 
             // output json result
-            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(Json, publishedFiles)));
+            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(jsonOutputFormat, publishedFiles)));
         }
 
         private static ContentType GetContentType(string extension)

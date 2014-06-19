@@ -150,7 +150,8 @@ namespace Sdl.Web.Tridion.Templates
             List<string> additionalData = new List<string>
                 {
                     String.Format("\"defaultLocalization\":{0}", Json.Encode(IsMasterWebPublication())),
-                    String.Format("\"staging\":{0}", Json.Encode(IsPublishingToStaging()))
+                    String.Format("\"staging\":{0}", Json.Encode(IsPublishingToStaging())),
+                    String.Format("\"mediaRoot\":{0}", Json.Encode(GetPublication().MultimediaUrl))
                 };
             return additionalData;
         }

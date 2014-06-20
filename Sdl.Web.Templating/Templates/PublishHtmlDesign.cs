@@ -48,6 +48,7 @@ namespace Sdl.Web.Tridion.Templates
                 var favicon = fields.GetMultimediaLink("favicon");
                 var variables = fields.GetComponentValue("variables");
                 var version = fields.GetTextValue("version");
+                var codeBlock = fields.GetTextValue("code");
 
                 PublishJson(String.Format("{{\"version\":{0}}}", Json.Encode(version)), config, GetPublication().RootStructureGroup, "version", "version");
 
@@ -60,22 +61,26 @@ namespace Sdl.Web.Tridion.Templates
                 File.WriteAllBytes(zipfile, design.BinaryContent.GetByteArray());
                 ZipFile.ExtractToDirectory(zipfile, tempFolder);
 
+                const string line = "@{0}: {1};";
+                StringBuilder content = new StringBuilder();
+                
                 // save less variables to disk (if available) in unpacked zip structure
                 if (variables != null)
                 {
-                    const string line = "@{0}: {1};";
-                    StringBuilder content = new StringBuilder();
-                    
                     // assuming all fields are text fields with a single value
                     var itemFields = new ItemFields(variables.Content, variables.Schema);
                     foreach (var itemField in itemFields)
                     {
                         content.AppendFormat(line, itemField.Name, ((TextField)itemField).Value);
                     }
-
-                    File.WriteAllText(tempFolder + "src\\system\\assets\\less\\_custom.less", content.ToString());
-                    Log.Debug("Saved " + tempFolder + "src\\system\\assets\\less\\_custom.less");
                 }
+                if (codeBlock != null)
+                {
+                    content.Append(codeBlock);
+                }
+
+                File.WriteAllText(tempFolder + "src\\system\\assets\\less\\_custom.less", content.ToString());
+                Log.Debug("Saved " + tempFolder + "src\\system\\assets\\less\\_custom.less");
 
                 // build html design
                 ProcessStartInfo info = new ProcessStartInfo

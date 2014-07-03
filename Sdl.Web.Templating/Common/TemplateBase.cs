@@ -407,12 +407,19 @@ namespace Sdl.Web.Tridion.Common
             results.Add(GetModuleNameFromConfig(coreConfigComponent), coreConfigComponent);
             foreach (var item in this.GetUsingItems(coreConfigComponent.Schema, ItemType.Component))
             {
-                var comp = (Component)Engine.GetObject(Engine.LocalizeUri(item.Key));
-                var fields = new ItemFields(comp.Content, comp.Schema);
-                var moduleName = GetModuleNameFromConfig(comp).ToLower();
-                if (fields.GetTextValue("isActive").ToLower() == "yes" && !results.ContainsKey(moduleName))
+                try
                 {
-                    results.Add(moduleName, comp);
+                    var comp = (Component)Engine.GetObject(Engine.LocalizeUri(item.Key));
+                    var fields = new ItemFields(comp.Content, comp.Schema);
+                    var moduleName = GetModuleNameFromConfig(comp).ToLower();
+                    if (fields.GetTextValue("isActive").ToLower() == "yes" && !results.ContainsKey(moduleName))
+                    {
+                        results.Add(moduleName, comp);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //Do nothing, this module is available in this publication
                 }
             }
             return results;

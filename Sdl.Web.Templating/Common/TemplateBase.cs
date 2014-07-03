@@ -217,7 +217,8 @@ namespace Sdl.Web.Tridion.Common
             {
                 return true;
             }
-            return false;
+            Logger.Debug("publication url is not / publication has children? " + publication.HasChildren);
+            return publication.HasChildren;
         }
 
         #endregion

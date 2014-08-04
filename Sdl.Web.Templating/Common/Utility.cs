@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 
-namespace Sdl.Web.Tridion.Common
+namespace Sdl.Web.TridionTemplates.Common
 {
     /// <summary>
     /// Static Helper methods

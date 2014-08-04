@@ -7,10 +7,10 @@ using Tridion.ContentManager.Templating.Assembly;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Sdl.Web.Tridion.Templates")]
-[assembly: AssemblyDescription("SDL Tridion Standard Implementation Template Building Blocks")]
+[assembly: AssemblyDescription("SDL Tridion Reference Implementation Template Building Blocks")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SDL")]
-[assembly: AssemblyProduct("SDL Tridion Standard Implementation")]
+[assembly: AssemblyProduct("SDL Tridion Reference Implementation")]
 [assembly: AssemblyCopyright("Copyright ©  2000-2014 SDL Tridion Development Lab B.V.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

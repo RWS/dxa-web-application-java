@@ -5,16 +5,16 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Linq;
+using Sdl.Web.TridionTemplates.Common;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Publishing;
-using tpl = Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
-using Sdl.Web.Tridion.Common;
+using tpl = Tridion.ContentManager.Templating;
 
-namespace Sdl.Web.Tridion.Templates
+namespace Sdl.Web.TridionTemplates.Templates
 {
     /// <summary>
     /// Generates sitemap JSON. Should be used in a page template
@@ -22,14 +22,15 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Generate Sitemap")]
     public class GenerateSiteMap : TemplateBase
     {
-        private StructureGroup _startPoint;
         private const string MainRegionName = "Main";
-        protected NavigationConfig config = null;
+
+        private StructureGroup _startPoint;
+        private NavigationConfig _config;
 
         public override void Transform(tpl.Engine engine, tpl.Package package)
         {
             Initialize(engine, package);
-            config = LoadConfig(this.GetComponent());
+            _config = LoadConfig(GetComponent());
             _startPoint = GetPublication().RootStructureGroup;
 
             if (_startPoint != null)
@@ -42,10 +43,9 @@ namespace Sdl.Web.Tridion.Templates
             }
         }
 
-        private NavigationConfig LoadConfig(Component component)
+        private static NavigationConfig LoadConfig(Component component)
         {
-            NavigationConfig res = new NavigationConfig();
-            res.NavType = NavigationType.Simple;
+            NavigationConfig res = new NavigationConfig {NavType = NavigationType.Simple};
             if (component.Metadata != null)
             {
                 var meta = new ItemFields(component.Metadata, component.MetadataSchema);
@@ -166,7 +166,7 @@ namespace Sdl.Web.Tridion.Templates
         private string GetNavigationTitle(Page page)
         {
             string title = null;
-            if (config.NavType == NavigationType.Localizable)
+            if (_config.NavType == NavigationType.Localizable)
             {
                 title = GetNavTextFromPageComponents(page);
             }
@@ -198,9 +198,9 @@ namespace Sdl.Web.Tridion.Templates
             {
                 data.Add(component.Metadata);
             }
-            var meta = component.Metadata;
-            var content = component.Content;
-            foreach (var fieldname in config.NavTextFieldPaths)
+            //var meta = component.Metadata;
+            //var content = component.Content;
+            foreach (var fieldname in _config.NavTextFieldPaths)
             {
                 var title = GetNavTitleFromField(fieldname, data);
                 if (!String.IsNullOrEmpty(title))
@@ -211,7 +211,7 @@ namespace Sdl.Web.Tridion.Templates
             return null;
         }
 
-        private string GetNavTitleFromField(string fieldname, List<XmlElement> data)
+        private static string GetNavTitleFromField(string fieldname, IEnumerable<XmlElement> data)
         {
             string xpath = GetXPathFromFieldName(fieldname);
             foreach (var fieldData in data)
@@ -225,7 +225,7 @@ namespace Sdl.Web.Tridion.Templates
             return null;
         }
 
-        private string GetXPathFromFieldName(string fieldname)
+        private static string GetXPathFromFieldName(string fieldname)
         {
             var bits = fieldname.Split('/');
             return "//" + String.Join("/", bits.Select(f => String.Format("*[local-name()='{0}']", f)));
@@ -269,7 +269,7 @@ namespace Sdl.Web.Tridion.Templates
         protected string GetUrl(Page page)
         {
             String url = page.PublishLocationUrl;
-            if (config.ExternalUrlTemplate.ToLower() == page.PageTemplate.Title.ToLower() && page.Metadata != null)
+            if (_config.ExternalUrlTemplate.ToLower() == page.PageTemplate.Title.ToLower() && page.Metadata != null)
             {
                 var meta = new ItemFields(page.Metadata,page.MetadataSchema);
                 var link = meta.GetEmbeddedField("redirect");
@@ -324,23 +324,21 @@ namespace Sdl.Web.Tridion.Templates
         }
     }
 
-    public enum NavigationType
+    internal enum NavigationType
     {
         Simple,
         Localizable
     }
 
-    public class NavigationConfig
+    #region Sitemap Classes
+    internal class NavigationConfig
     {
         public List<string> NavTextFieldPaths { get; set; }
-        public NavigationType NavType {get;set;}
-        public string ExternalUrlTemplate {get;set;}
+        public NavigationType NavType { get; set; }
+        public string ExternalUrlTemplate { get; set; }
     }
 
-    #region Sitemap Classes
-
-
-    public class SitemapItem
+    internal class SitemapItem
     {
         private string _url;
 
@@ -375,8 +373,6 @@ namespace Sdl.Web.Tridion.Templates
         public DateTime PublishedDate { get; set; }
         public bool Visible { get; set; }
     }
-
-
     #endregion Sitemap Classes
 }
 

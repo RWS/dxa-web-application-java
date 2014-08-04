@@ -13,7 +13,7 @@ using Tridion.ContentManager.Publishing.Rendering;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
-namespace Sdl.Web.Tridion.Common
+namespace Sdl.Web.TridionTemplates.Common
 {
     /// <summary>
     /// Base class for common functionality used by TBBs
@@ -325,7 +325,7 @@ namespace Sdl.Web.Tridion.Common
         {
             if (settings.Count > 0)
             {
-                string json = null;
+                string json;
                 if (isArray)
                 {
                     json = String.Format("[{0}]", String.Join(",\n", settings));
@@ -370,7 +370,7 @@ namespace Sdl.Web.Tridion.Common
                     }
                     else
                     {
-                        this.Logger.Warning(String.Format("Duplicate key found: '{0}' when processing component {1}", key, comp.Id.ToString()));
+                        Logger.Warning(String.Format("Duplicate key found: '{0}' when processing component {1}", key, comp.Id));
                     }
                 }
             }
@@ -393,7 +393,7 @@ namespace Sdl.Web.Tridion.Common
 
         protected StructureGroup GetSystemStructureGroup(string subStructureGroupTitle=null)
         {
-            var webdavUrl = String.Format("{0}/_System{1}", this.GetPublication().RootStructureGroup.WebDavUrl, subStructureGroupTitle==null ? "" : "/" + subStructureGroupTitle);
+            var webdavUrl = String.Format("{0}/_System{1}", GetPublication().RootStructureGroup.WebDavUrl, subStructureGroupTitle==null ? "" : "/" + subStructureGroupTitle);
             var sg = Engine.GetObject(webdavUrl) as StructureGroup;
             if (sg == null)
             {
@@ -404,9 +404,11 @@ namespace Sdl.Web.Tridion.Common
 
         protected Dictionary<string, Component> GetActiveModules(Component coreConfigComponent)
         {
-            var results = new Dictionary<string, Component>();
-            results.Add(GetModuleNameFromConfig(coreConfigComponent), coreConfigComponent);
-            foreach (var item in this.GetUsingItems(coreConfigComponent.Schema, ItemType.Component))
+            var results = new Dictionary<string, Component>
+                {
+                    {GetModuleNameFromConfig(coreConfigComponent), coreConfigComponent}
+                };
+            foreach (var item in GetUsingItems(coreConfigComponent.Schema, ItemType.Component))
             {
                 try
                 {
@@ -418,7 +420,7 @@ namespace Sdl.Web.Tridion.Common
                         results.Add(moduleName, comp);
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     //Do nothing, this module is available in this publication
                 }

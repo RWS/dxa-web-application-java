@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Helpers;
-using Sdl.Web.Tridion.Common;
+using Sdl.Web.TridionTemplates.Common;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
-namespace Sdl.Web.Tridion.Templates
+namespace Sdl.Web.TridionTemplates.Templates
 {
     /// <summary>
     /// Publishes the _all.json file which is used to load all other JSON configuration/resource/mapping files

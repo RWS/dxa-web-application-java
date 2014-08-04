@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace Sdl.Web.Tridion.Common
+namespace Sdl.Web.TridionTemplates.Common
 {
     public static class GeneralExtensionMethods
     {

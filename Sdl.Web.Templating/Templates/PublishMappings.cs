@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web.Helpers;
 using System.Xml;
 using System.Xml.Linq;
-using Sdl.Web.Tridion.Common;
+using Sdl.Web.TridionTemplates.Common;
 using Tridion;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
@@ -14,7 +14,7 @@ using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 using Tridion.ContentManager.ContentManagement.Fields;
 
-namespace Sdl.Web.Tridion.Templates
+namespace Sdl.Web.TridionTemplates.Templates
 {
     /// <summary>
     /// Publishes schema and region mapping information in JSON format

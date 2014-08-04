@@ -4,7 +4,7 @@ using System.Linq;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 
-namespace Sdl.Web.Tridion.Common
+namespace Sdl.Web.TridionTemplates.Common
 {
     public static class ItemFieldsExtensions
     {
@@ -108,7 +108,7 @@ namespace Sdl.Web.Tridion.Common
         {
             return
                 null != fields && fields.Contains(fieldName)
-                ? (fields[fieldName] as DateField).Values.Select(d=>d==DateTime.MinValue?null:(DateTime?)d)
+                    ? (fields[fieldName] as DateField).Values.Select(d => d == DateTime.MinValue ? null : (DateTime?)d)
                     : new DateTime?[0];
         }
 

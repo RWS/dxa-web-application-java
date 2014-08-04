@@ -3,16 +3,15 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using Sdl.Web.Tridion.Common;
+using System.Web.Helpers;
+using Sdl.Web.TridionTemplates.Common;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
-using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
-using System.Web.Helpers;
 
-namespace Sdl.Web.Tridion.Templates
+namespace Sdl.Web.TridionTemplates.Templates
 {
     /// <summary>
     /// Publish HTML design by unpacking the templates and less variables and running grunt to build it.
@@ -27,7 +26,10 @@ namespace Sdl.Web.Tridion.Templates
         private const string SystemSgName = "_System";
  
         // json content in page
-        private const string jsonOutputFormat = "{{\"status\":\"Success\",\"files\":[{0}]}}";
+        private const string JsonOutputFormat = "{{\"status\":\"Success\",\"files\":[{0}]}}";
+
+        // default location of nodejs
+        private const string NodejsDefault = @"C:\Program Files\nodejs\npm.cmd";
 
         public override void Transform(Engine engine, Package package)
         {
@@ -41,7 +43,7 @@ namespace Sdl.Web.Tridion.Templates
 
             try
             {
-                // read values from component
+                // read values from Component
                 var config = GetComponent();
                 var fields = new ItemFields(config.Content, config.Schema);
                 var design = fields.GetMultimediaLink("design");
@@ -49,6 +51,13 @@ namespace Sdl.Web.Tridion.Templates
                 var variables = fields.GetComponentValue("variables");
                 var version = fields.GetTextValue("version");
                 var codeBlock = fields.GetTextValue("code");
+                var nodeJs = fields.GetTextValue("nodeJs");
+
+                // set defaults if required
+                if (String.IsNullOrEmpty(nodeJs))
+                {
+                    nodeJs = NodejsDefault;
+                }
 
                 PublishJson(String.Format("{{\"version\":{0}}}", Json.Encode(version)), config, GetPublication().RootStructureGroup, "version", "version");
 
@@ -86,7 +95,7 @@ namespace Sdl.Web.Tridion.Templates
                 ProcessStartInfo info = new ProcessStartInfo
                     {
                         FileName = "cmd.exe",
-                        Arguments = @"/c c:\progra~1\nodejs\npm.cmd start --color=false",
+                        Arguments = String.Format("/c \"{0}\" start --color=false", nodeJs),
                         WorkingDirectory = tempFolder,
                         CreateNoWindow = true,
                         ErrorDialog = false,
@@ -194,7 +203,7 @@ namespace Sdl.Web.Tridion.Templates
             }
 
             // output json result
-            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(jsonOutputFormat, publishedFiles)));
+            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(JsonOutputFormat, publishedFiles)));
         }
 
         private static ContentType GetContentType(string extension)

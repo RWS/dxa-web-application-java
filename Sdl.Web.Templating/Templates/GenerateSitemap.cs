@@ -139,28 +139,27 @@ namespace Sdl.Web.TridionTemplates.Templates
         private SitemapItem GeneratePageNode(Page page)
         {
             SitemapItem sitemapItem = new SitemapItem(GetNavigationTitle(page))
-                {
-                    Id = page.Id,
-                    Url = GetUrl(page),
-                    Type = ItemType.Page.ToString(),
-                    PublishedDate = GetPublishedDate(page, Engine.PublishingContext.PublicationTarget),
-                    Visible = IsVisible(page.Title)
-                };
-
+            {
+                Id = page.Id,
+                Url = GetUrl(page),
+                Type = ItemType.Page.ToString(),
+                PublishedDate = GetPublishedDate(page, Engine.PublishingContext.PublicationTarget),
+                Visible = IsVisible(page.Title)
+            };
             return sitemapItem;
         }
 
-        private static DateTime GetPublishedDate(Page page, PublicationTarget target )
+        private static string GetPublishedDate(Page page, PublicationTarget target )
         {
             var publishInfos = PublishEngine.GetPublishInfo(page);
             foreach (var publishInfo in publishInfos)
             {
                 if (publishInfo.PublicationTarget == target)
                 {
-                    return publishInfo.PublishedAt;
+                    return publishInfo.PublishedAt.GetIso8601Date();
                 }
             }
-            return DateTime.MinValue;
+            return "";
         }
 
         private string GetNavigationTitle(Page page)
@@ -370,7 +369,7 @@ namespace Sdl.Web.TridionTemplates.Templates
         public string Id { get; set; }
         public string Type { get; set; }
         public List<SitemapItem> Items { get; set; }
-        public DateTime PublishedDate { get; set; }
+        public string PublishedDate { get; set; }
         public bool Visible { get; set; }
     }
     #endregion Sitemap Classes

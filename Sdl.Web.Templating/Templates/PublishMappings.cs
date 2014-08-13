@@ -30,7 +30,7 @@ namespace Sdl.Web.Tridion.Templates
         private const string TypeOfAppDataId = "http://www.sdl.com/tridion/SemanticMapping/typeof";
         private const string TypeOfAppDataStartElement = "<typeof>";
         private const string TypeOfAppDataEndElement = "</typeof>";
-        private const string DefaultVocabularyPrefix = "tsi";
+        private const string DefaultVocabularyPrefix = "tri";
         private const string DefaultVocabulary = "http://www.sdl.com/web/schemas/core";
         
         // list of known namespaces that are used in our schemas

@@ -12,9 +12,8 @@ using Tridion.ContentManager.Publishing;
 using Tridion.ContentManager.Publishing.Rendering;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
-using Sdl.Web.Tridion.Common;
 
-namespace Sdl.Web.Tridion.Templates
+namespace Sdl.Web.Tridion.Common
 {
     /// <summary>
     /// Base class for common functionality used by TBBs
@@ -104,7 +103,7 @@ namespace Sdl.Web.Tridion.Templates
         public Component GetComponent()
         {
             CheckInitialized();
-            Item component = Package.GetByName("Component");
+            Item component = Package.GetByName(Package.ComponentName);
             if (component != null)
             {
                 return (Component)Engine.GetObject(component.GetAsSource().GetValue("ID"));
@@ -123,7 +122,7 @@ namespace Sdl.Web.Tridion.Templates
             Template template = Engine.PublishingContext.ResolvedItem.Template;
 
             // "if (template is ComponentTemplate)" might work instead
-            if (template.GetType().Name.Equals("ComponentTemplate"))
+            if (template.GetType().Name.Equals(Package.ComponentTemplateName))
             {
                 return (ComponentTemplate)template;
             }

@@ -16,7 +16,9 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Resolve Rich Text")]
     public class ResolveRichText : TemplateBase
     {
-        private const string YouTubeVideoElement = "<youtube xlink:href=\"{0}\" xlink:title=\"{1}\" src=\"{2}\" id=\"{3}\" headline=\"{4}\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"></youtube>";
+        private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
+        private const string XlinkNamespace = "http://www.w3.org/1999/xlink";
+        private const string YouTubeVideoElement = "<xhtml:youtube xlink:href=\"{0}\" xlink:title=\"{1}\" src=\"{2}\" id=\"{3}\" headline=\"{4}\" xmlns:xhtml=\"{5}\" xmlns:xlink=\"{6}\"></xhtml:youtube>";
 
         public override void Transform(Engine engine, Package package)
         {
@@ -61,8 +63,8 @@ namespace Sdl.Web.Tridion.Templates
         {
             XmlDocument xhtml = new XmlDocument();
             var nsmgr = new XmlNamespaceManager(xhtml.NameTable);
-            nsmgr.AddNamespace("xhtml", "http://www.w3.org/1999/xhtml");
-            nsmgr.AddNamespace("xlink", "http://www.w3.org/1999/xlink");
+            nsmgr.AddNamespace("xhtml", XhtmlNamespace);
+            nsmgr.AddNamespace("xlink", XlinkNamespace);
             xhtml.LoadXml(String.Format("<root>{0}</root>", UnEscape(input)));
 
             // locate possible youtube videos by searching for img tags with a tcmuri
@@ -83,7 +85,7 @@ namespace Sdl.Web.Tridion.Templates
                             string id = fields.GetTextValue("youTubeId");
                             string headline = fields.GetTextValue("headline");
                             string image = Escape(img.OuterXml);
-                            string video = Escape(String.Format(YouTubeVideoElement, uri, title, src, id, headline));
+                            string video = Escape(String.Format(YouTubeVideoElement, uri, title, src, id, headline, XhtmlNamespace, XlinkNamespace));
                             // replace image with youtube video in output
                             output = output.Replace(image, video);
                             Logger.Info(String.Format("Resolved img {0} to youtube video {1}", uri, id));
@@ -103,7 +105,8 @@ namespace Sdl.Web.Tridion.Templates
         private static string Escape(string input)
         {
             // escape angle brackets and remove xhtml namespace
-            return input.Replace("<", "&lt;").Replace(">", "&gt;").Replace(" xmlns=\"http://www.w3.org/1999/xhtml\"", String.Empty);
+            string xmlns = String.Format(" xmlns=\"{0}\"", XhtmlNamespace);
+            return input.Replace("<", "&lt;").Replace(">", "&gt;").Replace(xmlns, String.Empty);
         }
     }
 }

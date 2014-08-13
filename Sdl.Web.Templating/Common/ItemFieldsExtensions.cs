@@ -4,7 +4,7 @@ using System.Linq;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 
-namespace Sdl.Web.TridionTemplates.Common
+namespace Sdl.Web.Tridion.Common
 {
     public static class ItemFieldsExtensions
     {

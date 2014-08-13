@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Xml;
 using System.Xml.Linq;
-using Sdl.Web.TridionTemplates.Common;
+using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
@@ -14,7 +14,7 @@ using Tridion.ContentManager.Publishing;
 using Tridion.ContentManager.Templating.Assembly;
 using tpl = Tridion.ContentManager.Templating;
 
-namespace Sdl.Web.TridionTemplates.Templates
+namespace Sdl.Web.Tridion.Templates
 {
     /// <summary>
     /// Generates sitemap JSON. Should be used in a page template

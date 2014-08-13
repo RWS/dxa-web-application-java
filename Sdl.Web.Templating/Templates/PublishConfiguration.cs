@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Helpers;
 using System.Xml;
-using Sdl.Web.TridionTemplates.Common;
+using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
@@ -10,7 +10,7 @@ using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
-namespace Sdl.Web.TridionTemplates.Templates
+namespace Sdl.Web.Tridion.Templates
 {
     /// <summary>
     /// Publishes site configuration as JSON files. Multiple configuration components can 

@@ -4,14 +4,14 @@ using System.IO;
 using System.IO.Compression;
 using System.Text;
 using System.Web.Helpers;
-using Sdl.Web.TridionTemplates.Common;
+using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
-namespace Sdl.Web.TridionTemplates.Templates
+namespace Sdl.Web.Tridion.Templates
 {
     /// <summary>
     /// Publish HTML design by unpacking the templates and less variables and running grunt to build it.

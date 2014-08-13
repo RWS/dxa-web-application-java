@@ -1,10 +1,10 @@
-﻿using Sdl.Web.TridionTemplates.Common;
+﻿using Sdl.Web.Tridion.Common;
 using System.Text;
 using System.Text.RegularExpressions;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
-namespace Sdl.Web.TridionTemplates.Templates
+namespace Sdl.Web.Tridion.Templates
 {
     /// <summary>
     /// Renders the component presentations to the package output. Useful when there is no page layout for publishing data

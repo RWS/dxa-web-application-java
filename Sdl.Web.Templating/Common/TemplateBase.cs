@@ -12,8 +12,9 @@ using Tridion.ContentManager.Publishing;
 using Tridion.ContentManager.Publishing.Rendering;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
+using Sdl.Web.Tridion.Common;
 
-namespace Sdl.Web.TridionTemplates.Common
+namespace Sdl.Web.Tridion.Templates
 {
     /// <summary>
     /// Base class for common functionality used by TBBs

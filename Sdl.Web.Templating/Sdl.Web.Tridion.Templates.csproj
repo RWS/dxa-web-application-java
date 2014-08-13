@@ -7,7 +7,7 @@
     <ProjectGuid>{1F678CC2-4586-4F0C-8E70-3F6944BD6AAF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sdl.Web.TridionTemplates</RootNamespace>
+    <RootNamespace>Sdl.Web.Tridion.Templates</RootNamespace>
     <AssemblyName>Sdl.Web.Tridion.Templates</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

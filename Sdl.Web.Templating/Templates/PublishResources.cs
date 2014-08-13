@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sdl.Web.TridionTemplates.Common;
+using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
-namespace Sdl.Web.TridionTemplates.Templates
+namespace Sdl.Web.Tridion.Templates
 {
     /// <summary>
     /// Publish resource JSON files (one per module). A module configuration can link to 

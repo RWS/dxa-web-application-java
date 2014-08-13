@@ -16,7 +16,7 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Resolve Rich Text")]
     public class ResolveRichText : TemplateBase
     {
-        private const string YouTubeVideoElement = "<youtube xlink:href=\"{0}\" xlink:title=\"{1}\" id=\"{2}\" headline=\"{3}\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"></youtube>";
+        private const string YouTubeVideoElement = "<youtube xlink:href=\"{0}\" xlink:title=\"{1}\" src=\"{2}\" id=\"{3}\" headline=\"{4}\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"></youtube>";
 
         public override void Transform(Engine engine, Package package)
         {
@@ -70,6 +70,7 @@ namespace Sdl.Web.Tridion.Templates
             {
                 string uri = img.Attributes["xlink:href"].IfNotNull(attr => attr.Value);
                 string title = img.Attributes["xlink:title"].IfNotNull(attr => attr.Value);
+                string src = img.Attributes["src"].IfNotNull(attr => attr.Value);
                 if (!string.IsNullOrEmpty(uri))
                 {
                     Component comp = (Component)Engine.GetObject(uri);
@@ -82,7 +83,7 @@ namespace Sdl.Web.Tridion.Templates
                             string id = fields.GetTextValue("youTubeId");
                             string headline = fields.GetTextValue("headline");
                             string image = Escape(img.OuterXml);
-                            string video = Escape(String.Format(YouTubeVideoElement, uri, title, id, headline));
+                            string video = Escape(String.Format(YouTubeVideoElement, uri, title, src, id, headline));
                             // replace image with youtube video in output
                             output = output.Replace(image, video);
                             Logger.Info(String.Format("Resolved img {0} to youtube video {1}", uri, id));

@@ -212,6 +212,7 @@ namespace Sdl.Web.Tridion.Templates
             {
                 case "css":
                 case "js":
+                case "htc":
                     return ContentType.Text;
                 case "gif":
                     return ContentType.Gif;
@@ -235,6 +236,8 @@ namespace Sdl.Web.Tridion.Templates
                     return "text/css";
                 case "js":
                     return "application/x-javascript";
+                case "htc":
+                    return "text/x-component";
                 case "gif":
                     return "image/gif";
                 case "jpg":

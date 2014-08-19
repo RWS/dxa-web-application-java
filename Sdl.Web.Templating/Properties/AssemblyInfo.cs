@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("SDL Tridion Reference Implementation Template Building Blocks")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("SDL Tridion B.V.")]
-[assembly: AssemblyProduct("SDL Web Reference Implementation")]
+[assembly: AssemblyProduct("SDL Tridion Reference Implementation")]
 [assembly: AssemblyCopyright("Copyright © 2014 SDL Tridion Development Lab B.V.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

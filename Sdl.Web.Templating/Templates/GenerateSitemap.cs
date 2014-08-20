@@ -17,7 +17,8 @@ using tpl = Tridion.ContentManager.Templating;
 namespace Sdl.Web.Tridion.Templates
 {
     /// <summary>
-    /// Generates sitemap JSON. Should be used in a page template
+    /// Generates sitemap JSON. 
+    /// Should be used in a Component Template.
     /// </summary>
     [TcmTemplateTitle("Generate Sitemap")]
     public class GenerateSiteMap : TemplateBase

@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Xml;
+using System.Linq;
 using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
+using System.Collections.Generic;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -19,7 +21,8 @@ namespace Sdl.Web.Tridion.Templates
         private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
         private const string XlinkNamespace = "http://www.w3.org/1999/xlink";
         private const string YouTubeVideoElement = "<xhtml:youtube xlink:href=\"{0}\" xlink:title=\"{1}\" src=\"{2}\" id=\"{3}\" headline=\"{4}\" xmlns:xhtml=\"{5}\" xmlns:xlink=\"{6}\"></xhtml:youtube>";
-
+        private List<string> metaFieldNames = new List<string>();
+            
         public override void Transform(Engine engine, Package package)
         {
             Initialize(engine, package);
@@ -36,7 +39,7 @@ namespace Sdl.Web.Tridion.Templates
                 return;
             }
             bool updated = false;
-
+            metaFieldNames = (package.GetValue("multimediaLinkAttributes") ?? "").Split(',').Select(s => s.Trim()).ToList();
             // resolve rich text fields
             XmlDocument doc = new XmlDocument();
             string output = outputItem.GetAsString();
@@ -44,57 +47,55 @@ namespace Sdl.Web.Tridion.Templates
             var fields = doc.SelectNodes("//Field[@FieldType='Xhtml']/Values/string");
             foreach (XmlElement field in fields)
             {
-                string resolved = ResolveXhtml(field.InnerXml, output);
-                updated = !output.Equals(resolved);
-                if (updated)
-                {
-                    output = resolved;                    
-                }
+                field.InnerXml = ResolveXhtml(field.InnerXml);
             }
-
-            if (updated)
-            {
-                package.Remove(outputItem);
-                package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Xml, output));                
-            }
+            package.Remove(outputItem);
+            package.PushItem(Package.OutputName, package.CreateXmlDocumentItem(ContentType.Xml, doc)); 
         }
 
-        private string ResolveXhtml(string input, string output)
+        private string ResolveXhtml(string input)
         {
             XmlDocument xhtml = new XmlDocument();
             var nsmgr = new XmlNamespaceManager(xhtml.NameTable);
-            nsmgr.AddNamespace("xhtml", XhtmlNamespace);
             nsmgr.AddNamespace("xlink", XlinkNamespace);
             xhtml.LoadXml(String.Format("<root>{0}</root>", UnEscape(input)));
 
-            // locate possible youtube videos by searching for img tags with a tcmuri
-            foreach (XmlElement img in xhtml.SelectNodes("//xhtml:img[@xlink:href[starts-with(string(.),'tcm:')]]", nsmgr))
+            // locate linked components
+            foreach (XmlElement link in xhtml.SelectNodes("//*[@xlink:href[starts-with(string(.),'tcm:')]]", nsmgr))
             {
-                string uri = img.Attributes["xlink:href"].IfNotNull(attr => attr.Value);
-                string title = img.Attributes["xlink:title"].IfNotNull(attr => attr.Value);
-                string src = img.Attributes["src"].IfNotNull(attr => attr.Value);
+                string uri = link.Attributes["xlink:href"].IfNotNull(attr => attr.Value);
+                //string title = img.Attributes["xlink:title"].IfNotNull(attr => attr.Value);
+                //string src = img.Attributes["src"].IfNotNull(attr => attr.Value);
                 if (!string.IsNullOrEmpty(uri))
                 {
                     Component comp = (Component)Engine.GetObject(uri);
                     // resolve youtube video
-                    if (comp != null && comp.Schema.Title.ToLower().Contains("youtube"))
+                    if (comp != null)
                     {
                         ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
-                        if (fields.Contains("youTubeId"))
-                        {
-                            string id = fields.GetTextValue("youTubeId");
-                            string headline = fields.GetTextValue("headline");
-                            string image = Escape(img.OuterXml);
-                            string video = Escape(String.Format(YouTubeVideoElement, uri, title, src, id, headline, XhtmlNamespace, XlinkNamespace));
-                            // replace image with youtube video in output
-                            output = output.Replace(image, video);
-                            Logger.Info(String.Format("Resolved img {0} to youtube video {1}", uri, id));
-                        }
+                        ProcessFields(fields, link);
                     }
                 }
             }
+            return Escape(xhtml.DocumentElement.InnerXml);
+        }
 
-            return output;
+        private void ProcessFields(ItemFields fields, XmlElement link)
+        {
+            foreach(var fieldname in metaFieldNames)
+            {
+                if (fields.Contains(fieldname))
+                {
+                    link.SetAttribute(fieldname, fields.GetSingleFieldValue(fieldname));
+                }
+            }
+            foreach(var field in fields)
+            {
+                if (field is EmbeddedSchemaField)
+                {
+                    ProcessFields(((EmbeddedSchemaField)field).Value, link);
+                }
+            }
         }
 
         private static string UnEscape(string input)

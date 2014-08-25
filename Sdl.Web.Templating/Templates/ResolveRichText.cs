@@ -86,7 +86,7 @@ namespace Sdl.Web.Tridion.Templates
             {
                 if (fields.Contains(fieldname))
                 {
-                    link.SetAttribute(fieldname, fields.GetSingleFieldValue(fieldname));
+                    link.SetAttribute("data-" + fieldname, fields.GetSingleFieldValue(fieldname));
                 }
             }
             foreach(var field in fields)

@@ -16,12 +16,12 @@ namespace Sdl.Web.Tridion.Templates
     /// so these can be resolved correctly by the web application.
     /// </summary>
     [TcmTemplateTitle("Resolve Rich Text")]
+    [TcmTemplateParameterSchema("resource:Sdl.Web.Tridion.Resources.ResolveRichTextParameters.xsd")]
     public class ResolveRichText : TemplateBase
     {
         private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
         private const string XlinkNamespace = "http://www.w3.org/1999/xlink";
-        private const string YouTubeVideoElement = "<xhtml:youtube xlink:href=\"{0}\" xlink:title=\"{1}\" src=\"{2}\" id=\"{3}\" headline=\"{4}\" xmlns:xhtml=\"{5}\" xmlns:xlink=\"{6}\"></xhtml:youtube>";
-        private List<string> metaFieldNames = new List<string>();
+        private List<string> _metaFieldNames = new List<string>();
             
         public override void Transform(Engine engine, Package package)
         {
@@ -38,8 +38,7 @@ namespace Sdl.Web.Tridion.Templates
                 Logger.Error("No Output package item found (is this TBB placed at the end?)");
                 return;
             }
-            bool updated = false;
-            metaFieldNames = (package.GetValue("multimediaLinkAttributes") ?? "").Split(',').Select(s => s.Trim()).ToList();
+            _metaFieldNames = (package.GetValue("multimediaLinkAttributes") ?? String.Empty).Split(',').Select(s => s.Trim()).ToList();
             // resolve rich text fields
             XmlDocument doc = new XmlDocument();
             string output = outputItem.GetAsString();
@@ -82,7 +81,7 @@ namespace Sdl.Web.Tridion.Templates
 
         private void ProcessFields(ItemFields fields, XmlElement link)
         {
-            foreach(var fieldname in metaFieldNames)
+            foreach(var fieldname in _metaFieldNames)
             {
                 if (fields.Contains(fieldname))
                 {

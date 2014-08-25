@@ -76,7 +76,7 @@
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Templates\GenerateSitemap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-	<Compile Include="Properties\VersionInfo.cs" />
+    <Compile Include="Properties\VersionInfo.cs" />
     <Compile Include="Templates\PublishConfiguration.cs" />
     <Compile Include="Templates\PublishHtmlDesign.cs" />
     <Compile Include="Templates\PublishMappings.cs" />
@@ -85,6 +85,14 @@
     <Compile Include="Templates\RenderComponentPresentations.cs" />
     <Compile Include="Common\TemplateBase.cs" />
     <Compile Include="Templates\ResolveRichText.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\PublishHtmlDesignParameters.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ResolveRichTextParameters.xsd">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

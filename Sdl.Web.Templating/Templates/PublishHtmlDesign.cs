@@ -17,6 +17,7 @@ namespace Sdl.Web.Tridion.Templates
     /// Publish HTML design by unpacking the templates and less variables and running grunt to build it.
     /// </summary>
     [TcmTemplateTitle("Publish HTML Design")]
+    [TcmTemplateParameterSchema("resource:Sdl.Web.Tridion.Resources.PublishHtmlDesignParameters.xsd")]
     public class PublishHtmlDesign : TemplateBase
     {
         // template builder log
@@ -35,6 +36,7 @@ namespace Sdl.Web.Tridion.Templates
         {
             Initialize(engine, package);
             StringBuilder publishedFiles = new StringBuilder();
+            string cleanup = package.GetValue("cleanup") ?? String.Empty;
 
             // not using System.IO.Path.GetTempPath() because the paths in our zip are already quite long,
             // so we need a very short temp path for the extract of our zipfile to succeed
@@ -80,7 +82,11 @@ namespace Sdl.Web.Tridion.Templates
                     var itemFields = new ItemFields(variables.Content, variables.Schema);
                     foreach (var itemField in itemFields)
                     {
-                        content.AppendFormat(line, itemField.Name, ((TextField)itemField).Value);
+                        string value = ((TextField) itemField).Value;
+                        if (!String.IsNullOrEmpty(value))
+                        {
+                            content.AppendFormat(line, itemField.Name, ((TextField)itemField).Value);
+                        }
                     }
                 }
                 if (codeBlock != null)
@@ -197,9 +203,16 @@ namespace Sdl.Web.Tridion.Templates
             }
             finally
             {
-                // cleanup workfolder
-                Directory.Delete(tempFolder, true);
-                Log.Debug("Removed " + tempFolder);             
+                if (String.IsNullOrEmpty(cleanup) || !cleanup.ToLower().Equals("false"))
+                {
+                    // cleanup workfolder
+                    Directory.Delete(tempFolder, true);
+                    Log.Debug("Removed " + tempFolder);
+                }
+                else
+                {
+                    Log.Debug("Did not cleanup " + tempFolder);
+                }
             }
 
             // output json result

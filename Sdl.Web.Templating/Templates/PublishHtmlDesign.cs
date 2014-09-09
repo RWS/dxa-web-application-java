@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using System.Web.Helpers;
 using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
@@ -61,7 +60,7 @@ namespace Sdl.Web.Tridion.Templates
                     nodeJs = NodejsDefault;
                 }
 
-                PublishJson(String.Format("{{\"version\":{0}}}", Json.Encode(version)), config, GetPublication().RootStructureGroup, "version", "version");
+                PublishJson(String.Format("{{\"version\":{0}}}", JsonEncode(version)), config, GetPublication().RootStructureGroup, "version", "version");
 
                 // create temp folder
                 Directory.CreateDirectory(tempFolder);

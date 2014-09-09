@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Web.Helpers;
 using System.Xml;
 using System.Xml.Linq;
 using Sdl.Web.Tridion.Common;
@@ -79,7 +78,7 @@ namespace Sdl.Web.Tridion.Templates
                 foreach (var vocabulary in vocabulariesXml.Elements())
                 {
                     string prefix = vocabulary.Attribute("prefix").Value;
-                    res[VocabulariesConfigName].Add(String.Format("{{\"Prefix\":{0},\"Vocab\":{1}}}", Json.Encode(prefix), Json.Encode(vocabulary.Attribute("name").Value)));
+                    res[VocabulariesConfigName].Add(String.Format("{{\"Prefix\":{0},\"Vocab\":{1}}}", JsonEncode(prefix), JsonEncode(vocabulary.Attribute("name").Value)));
                     if (prefix.Equals(DefaultVocabularyPrefix))
                     {
                         containsDefaultVocabulary = true;
@@ -89,7 +88,7 @@ namespace Sdl.Web.Tridion.Templates
             // add default vocabulary if it is not there already
             if (!containsDefaultVocabulary)
             {
-                res[VocabulariesConfigName].Add(String.Format("{{\"Prefix\":{0},\"Vocab\":{1}}}", Json.Encode(DefaultVocabularyPrefix), Json.Encode(DefaultVocabulary)));
+                res[VocabulariesConfigName].Add(String.Format("{{\"Prefix\":{0},\"Vocab\":{1}}}", JsonEncode(DefaultVocabularyPrefix), JsonEncode(DefaultVocabulary)));
             }
 
             // generate a list of schema + id, separated by module
@@ -139,7 +138,7 @@ namespace Sdl.Web.Tridion.Templates
                     string path = "/" + rootElementName;
                     fields.Append(BuildSchemaFieldsJson(schema, path, typeOf, nsmgr));
 
-                    res[SchemasConfigName].Add(String.Format("{{\"Id\":{0},\"RootElement\":{1},\"Fields\":[{2}],\"Semantics\":[{3}]}}", Json.Encode(schema.Id.ItemId), Json.Encode(rootElementName), fields, schemaSemantics));
+                    res[SchemasConfigName].Add(String.Format("{{\"Id\":{0},\"RootElement\":{1},\"Fields\":[{2}],\"Semantics\":[{3}]}}", JsonEncode(schema.Id.ItemId), JsonEncode(rootElementName), fields, schemaSemantics));
                     
                 }
             }
@@ -164,7 +163,7 @@ namespace Sdl.Web.Tridion.Templates
                     }
                     allowedComponentTypes.Append(componentType);
                 }
-                res[RegionConfigName].Add(String.Format("{{\"Region\":{0},\"ComponentTypes\":[{1}]}}", Json.Encode(region.Key), allowedComponentTypes));
+                res[RegionConfigName].Add(String.Format("{{\"Region\":{0},\"ComponentTypes\":[{1}]}}", JsonEncode(region.Key), allowedComponentTypes));
             }
 
             return res;
@@ -199,7 +198,7 @@ namespace Sdl.Web.Tridion.Templates
                     {
                         allowedComponentTypes.Append(",");
                     }
-                    allowedComponentTypes.AppendFormat("{{\"Schema\":{0},\"Template\":{1}}}", Json.Encode(schema.Id.GetVersionlessUri().ToString()), Json.Encode(template.Id.GetVersionlessUri().ToString()));
+                    allowedComponentTypes.AppendFormat("{{\"Schema\":{0},\"Template\":{1}}}", JsonEncode(schema.Id.GetVersionlessUri().ToString()), JsonEncode(template.Id.GetVersionlessUri().ToString()));
                 }
 
                 // do not append empty strings (template.RelatedSchemas can be empty)
@@ -352,11 +351,11 @@ namespace Sdl.Web.Tridion.Templates
             //    // if there is no type attribute, it is not a simple type so look for <xsd:complexType> inside the element
             //}
 
-            return String.Format("{{\"Name\":{0},\"Path\":{1},\"IsMultiValue\":{2},\"Semantics\":[{3}],\"Fields\":[{4}]}}", Json.Encode(name), Json.Encode(path), Json.Encode(isMultiValue), fieldSemantics, embeddedFields);
+            return String.Format("{{\"Name\":{0},\"Path\":{1},\"IsMultiValue\":{2},\"Semantics\":[{3}],\"Fields\":[{4}]}}", JsonEncode(name), JsonEncode(path), JsonEncode(isMultiValue), fieldSemantics, embeddedFields);
         }
 
         // schema semantics: {"Prefix":"s","Entity":"Article"}
-        private static string BuildSchemaSemanticsJson(string input)
+        private string BuildSchemaSemanticsJson(string input)
         {
             StringBuilder semantics = new StringBuilder();
             if (!String.IsNullOrEmpty(input))
@@ -375,7 +374,7 @@ namespace Sdl.Web.Tridion.Templates
                         semantics.Append(",");
                     }
                     string[] parts = value.Split(':');
-                    semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1}}}", Json.Encode(parts[0]), Json.Encode(parts[1]));
+                    semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1}}}", JsonEncode(parts[0]), JsonEncode(parts[1]));
                 }
             }
 
@@ -383,7 +382,7 @@ namespace Sdl.Web.Tridion.Templates
         }
 
         // field semantics: {"Prefix":"s","Entity":"Article","Property":"headline"}
-        private static string BuildFieldSemanticsJson(string input, string entity)
+        private string BuildFieldSemanticsJson(string input, string entity)
         {
             Dictionary<string, string> entities = new Dictionary<string, string>();
             StringBuilder semantics = new StringBuilder();
@@ -411,7 +410,7 @@ namespace Sdl.Web.Tridion.Templates
                             semantics.Append(",");
                         }
                         first = false;
-                        semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1},\"Property\":{2}}}", Json.Encode(parts[0]), Json.Encode(entities[parts[0]]), Json.Encode(parts[1]));
+                        semantics.AppendFormat("{{\"Prefix\":{0},\"Entity\":{1},\"Property\":{2}}}", JsonEncode(parts[0]), JsonEncode(entities[parts[0]]), JsonEncode(parts[1]));
                     }
                 }
             }
@@ -440,7 +439,7 @@ namespace Sdl.Web.Tridion.Templates
                         var includes = new List<string>();
                         foreach (var val in values)
                         {
-                            includes.Add(Json.Encode(val));
+                            includes.Add(JsonEncode(val));
                         }
                         var json = String.Format("\"{0}\":[{1}]", template.Id.ItemId, String.Join(",\n", includes));
                         res.Add(json);

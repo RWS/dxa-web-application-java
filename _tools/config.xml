@@ -1,9 +1,7 @@
 <?xml version="1.0"?>
 <templateAssemblyUploadConfig>
   <targetURL>http://saintjohn01.ams.dev</targetURL>
-  <!-- let TcmUploadAssembly use current username rather than the administrator so we see who performed the build 
   <userName>administrator</userName>
   <password>8+0l37x6QDQbWru4Es64xg==</password>
-  -->
   <uploadPDB>true</uploadPDB>
 </templateAssemblyUploadConfig>

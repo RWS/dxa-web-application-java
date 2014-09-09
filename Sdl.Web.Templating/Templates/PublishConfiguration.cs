@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Helpers;
 using System.Xml;
 using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager;
@@ -77,7 +76,7 @@ namespace Sdl.Web.Tridion.Templates
             {
                 var id = item.GetAttribute("ID");
                 var taxonomy = (Category)Engine.GetObject(id);
-                settings.Add(String.Format("{0}:{1}", Json.Encode(Utility.GetKeyFromTaxonomy(taxonomy)), Json.Encode(taxonomy.Id.ItemId)));
+                settings.Add(String.Format("{0}:{1}", JsonEncode(Utility.GetKeyFromTaxonomy(taxonomy)), JsonEncode(taxonomy.Id.ItemId)));
             }
             res.Add("core." + TaxonomiesConfigName, settings);
             return res;
@@ -110,7 +109,7 @@ namespace Sdl.Web.Tridion.Templates
                         {
                             res.Add(key, new List<string>());
                         }
-                        res[key].Add(String.Format("{0}:{1}", Json.Encode(Utility.GetKeyFromSchema(schema)), Json.Encode(schema.Id.ItemId)));
+                        res[key].Add(String.Format("{0}:{1}", JsonEncode(Utility.GetKeyFromSchema(schema)), JsonEncode(schema.Id.ItemId)));
                     }
                 }
             }
@@ -137,7 +136,7 @@ namespace Sdl.Web.Tridion.Templates
                         {
                             res.Add(key, new List<string>());
                         }
-                        res[key].Add(String.Format("{0}:{1}", Json.Encode(Utility.GetKeyFromTemplate(template)), Json.Encode(template.Id.ItemId)));
+                        res[key].Add(String.Format("{0}:{1}", JsonEncode(Utility.GetKeyFromTemplate(template)), JsonEncode(template.Id.ItemId)));
                     }
                 }
             }
@@ -149,9 +148,9 @@ namespace Sdl.Web.Tridion.Templates
             //Some additional data required to configure the web application
             List<string> additionalData = new List<string>
                 {
-                    String.Format("\"defaultLocalization\":{0}", Json.Encode(IsMasterWebPublication())),
-                    String.Format("\"staging\":{0}", Json.Encode(IsPublishingToStaging())),
-                    String.Format("\"mediaRoot\":{0}", Json.Encode(GetPublication().MultimediaUrl))
+                    String.Format("\"defaultLocalization\":{0}", JsonEncode(IsMasterWebPublication())),
+                    String.Format("\"staging\":{0}", JsonEncode(IsPublishingToStaging())),
+                    String.Format("\"mediaRoot\":{0}", JsonEncode(GetPublication().MultimediaUrl))
                 };
             return additionalData;
         }

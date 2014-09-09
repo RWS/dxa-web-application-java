@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Web.Helpers;
+using System.Web.Script.Serialization;
 using System.Xml;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
@@ -318,7 +318,7 @@ namespace Sdl.Web.Tridion.Common
 
         protected string PublishJsonData(Dictionary<string,string> data, Component relatedComponent, string filename, string variantName, StructureGroup sg, bool isArray = false)
         {
-            return PublishJsonData(data.Select(i => String.Format("{0}:{1}", Json.Encode(i.Key), Json.Encode(i.Value))).ToList(), relatedComponent, filename, variantName, sg, isArray);
+            return PublishJsonData(data.Select(i => String.Format("{0}:{1}", JsonEncode(i.Key), JsonEncode(i.Value))).ToList(), relatedComponent, filename, variantName, sg, isArray);
         }
             
         protected string PublishJsonData(List<string> settings, Component relatedComponent, string filename, string variantName, StructureGroup sg, bool isArray = false)
@@ -350,7 +350,7 @@ namespace Sdl.Web.Tridion.Common
             Item jsonItem = Package.CreateStringItem(ContentType.Text, json);
             var binary = Engine.PublishingContext.RenderedItem.AddBinary(jsonItem.GetAsStream(), filename + JsonExtension, sg, variantName, relatedComponent, JsonMimetype);
             Package.PushItem(binary.Url, jsonItem);
-            return Json.Encode(binary.Url);
+            return JsonEncode(binary.Url);
         }
 
         protected Dictionary<string, string> ReadComponentData(Component comp)
@@ -385,6 +385,12 @@ namespace Sdl.Web.Tridion.Common
                 }
             }
             return settings;
+        }
+
+        protected string JsonEncode(object json)
+        {
+            var serializer = new JavaScriptSerializer();
+            return serializer.Serialize(json);
         }
 
         #endregion

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Web.Helpers;
 using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
@@ -34,7 +33,7 @@ namespace Sdl.Web.Tridion.Templates
             {
                 if (item.Key.EndsWith(BootstrapFilename + JsonExtension))
                 {
-                    files.Add(Json.Encode(item.Key));
+                    files.Add(JsonEncode(item.Key));
                 }
             }
             return files;

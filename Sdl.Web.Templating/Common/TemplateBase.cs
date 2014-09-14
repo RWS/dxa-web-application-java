@@ -355,33 +355,36 @@ namespace Sdl.Web.Tridion.Common
 
         protected Dictionary<string, string> ReadComponentData(Component comp)
         {
-            var fields = new ItemFields(comp.Content, comp.Schema);
             var settings = new Dictionary<string, string>();
-            var configFields = fields.GetEmbeddedFields("settings");
-            if (configFields.Any())
+            if (comp.Content!=null)
             {
-                //either schema is a generic multival embedded name/value
-                foreach (var setting in configFields)
+                var fields = new ItemFields(comp.Content, comp.Schema);
+                var configFields = fields.GetEmbeddedFields("settings");
+                if (configFields.Any())
                 {
-                    var key = setting.GetTextValue("name");
-                    if (!String.IsNullOrEmpty(key) && !settings.ContainsKey(key))
+                    //either schema is a generic multival embedded name/value
+                    foreach (var setting in configFields)
                     {
-                        settings.Add(key, setting.GetTextValue("value"));
-                    }
-                    else
-                    {
-                        Logger.Warning(String.Format("Duplicate key found: '{0}' when processing component {1}", key, comp.Id));
+                        var key = setting.GetTextValue("name");
+                        if (!String.IsNullOrEmpty(key) && !settings.ContainsKey(key))
+                        {
+                            settings.Add(key, setting.GetTextValue("value"));
+                        }
+                        else
+                        {
+                            Logger.Warning(String.Format("Duplicate key found: '{0}' when processing component {1}", key, comp.Id));
+                        }
                     }
                 }
-            }
-            else
-            {
-                //... or its a custom schema with individual fields
-                foreach (var field in fields)
+                else
                 {
-                    //TODO - do we need to be smarter about date/number type fields?
-                    var key = field.Name;
-                    settings.Add(key, fields.GetSingleFieldValue(key));
+                    //... or its a custom schema with individual fields
+                    foreach (var field in fields)
+                    {
+                        //TODO - do we need to be smarter about date/number type fields?
+                        var key = field.Name;
+                        settings.Add(key, fields.GetSingleFieldValue(key));
+                    }
                 }
             }
             return settings;
@@ -408,13 +411,11 @@ namespace Sdl.Web.Tridion.Common
             return sg;
         }
 
-        protected Dictionary<string, Component> GetActiveModules(Component coreConfigComponent)
+        protected Dictionary<string, Component> GetActiveModules(Component coreConfigComponent = null)
         {
-            var results = new Dictionary<string, Component>
-                {
-                    {GetModuleNameFromConfig(coreConfigComponent), coreConfigComponent}
-                };
-            foreach (var item in GetUsingItems(coreConfigComponent.Schema, ItemType.Component))
+            Schema moduleConfigSchema = coreConfigComponent != null ? coreConfigComponent.Schema : GetModuleConfigSchema();
+            var results = new Dictionary<string, Component>();
+            foreach (var item in GetUsingItems(moduleConfigSchema, ItemType.Component))
             {
                 try
                 {
@@ -428,10 +429,28 @@ namespace Sdl.Web.Tridion.Common
                 }
                 catch (Exception)
                 {
-                    //Do nothing, this module is available in this publication
+                    //Do nothing, this module is not available in this publication
                 }
             }
             return results;
+        }
+
+        private Schema GetModuleConfigSchema()
+        {
+            var pub = this.GetPublication();
+            var filter = new RepositoryItemsFilter(pub.Session)
+                {
+                    ItemTypes = new List<ItemType> { ItemType.Schema },
+                    Recursive = true
+                };
+            foreach (var item in XmlElementToTcmUriList(GetPublication().GetListItems(filter)))
+            {
+                if (item.Value == "Module Configuration")
+                {
+                    return (Schema)pub.Session.GetObject(item.Key); 
+                }
+            }
+            throw new Exception("Cannot find Schema named \"Module Configuration\"- please check that this has not been renamed.");
         }
 
         protected string GetModuleNameFromConfig(Component configComponent)

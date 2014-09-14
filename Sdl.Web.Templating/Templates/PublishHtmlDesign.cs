@@ -9,7 +9,9 @@ using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
-
+using Tridion.ContentManager.ContentManagement;
+using System.Collections.Generic;
+using System.Linq;
 namespace Sdl.Web.Tridion.Templates
 {
     /// <summary>
@@ -31,9 +33,15 @@ namespace Sdl.Web.Tridion.Templates
         // default location of nodejs
         private const string NodejsDefault = @"C:\Program Files\nodejs\npm.cmd";
 
+        private Dictionary<string, List<string>> mergeFileLines = new Dictionary<string, List<string>>();
+
         public override void Transform(Engine engine, Package package)
         {
             Initialize(engine, package);
+            mergeFileLines.Add("src\\system\\assets\\less\\_modules.less", new List<string>());
+            mergeFileLines.Add("src\\templates\\partials\\module-scripts-header.hbs", new List<string>());
+            mergeFileLines.Add("src\\templates\\partials\\module-scripts-footer.hbs", new List<string>());
+
             StringBuilder publishedFiles = new StringBuilder();
             string cleanup = package.GetValue("cleanup") ?? String.Empty;
 
@@ -66,11 +74,14 @@ namespace Sdl.Web.Tridion.Templates
                 Directory.CreateDirectory(tempFolder);
                 Log.Debug("Created " + tempFolder);
 
+                ProcessModules(tempFolder);
                 // save zipfile to disk and unpack
                 string zipfile = tempFolder + "html-design.zip";
                 File.WriteAllBytes(zipfile, design.BinaryContent.GetByteArray());
-                ZipFile.ExtractToDirectory(zipfile, tempFolder);
-
+                using (var archive = ZipFile.OpenRead(zipfile))
+                {
+                    archive.ExtractToDirectory(tempFolder, true);
+                }
                 const string line = "@{0}: {1};";
                 StringBuilder content = new StringBuilder();
                 
@@ -93,9 +104,17 @@ namespace Sdl.Web.Tridion.Templates
                     content.Append(codeBlock);
                 }
 
+                //overwrite _custom.less
                 File.WriteAllText(tempFolder + "src\\system\\assets\\less\\_custom.less", content.ToString());
                 Log.Debug("Saved " + tempFolder + "src\\system\\assets\\less\\_custom.less");
+                //overwrite all merged files
+                foreach (var mergeFile in mergeFileLines)
+                {
+                    File.WriteAllText(tempFolder + mergeFile.Key, String.Join(Environment.NewLine,mergeFile.Value));
+                    Log.Debug("Saved " + tempFolder + mergeFile.Key);
+                }
 
+                
                 // build html design
                 ProcessStartInfo info = new ProcessStartInfo
                     {
@@ -216,6 +235,52 @@ namespace Sdl.Web.Tridion.Templates
 
             // output json result
             package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(JsonOutputFormat, publishedFiles)));
+        }
+
+        private void ProcessModules(string tempFolder)
+        {
+            foreach (var module in GetActiveModules())
+            {
+                Component zip = GetModuleHtmlZip(module.Value);
+                var moduleName = module.Key;
+                if (zip!=null)
+                {
+                    string zipfile = tempFolder + moduleName + "-html-design.zip";
+                    File.WriteAllBytes(zipfile, zip.BinaryContent.GetByteArray());
+                    using (var archive = ZipFile.OpenRead(zipfile))
+                    {
+                        archive.ExtractToDirectory(tempFolder, true);
+                    }
+                    List<string> files = mergeFileLines.Keys.Select(s => s).ToList();
+                    foreach (var mergeFile in files)
+                    {
+                        var path = tempFolder + mergeFile;
+                        if (File.Exists(path))
+                        {
+                            foreach (var line in File.ReadAllLines(path))
+                            {
+                                if (!mergeFileLines[mergeFile].Contains(line.Trim()))
+                                {
+                                    mergeFileLines[mergeFile].Add(line.Trim());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private Component GetModuleHtmlZip(Component component)
+        {
+            ItemFields moduleConfig = new ItemFields(component.Content, component.Schema);
+            foreach(var config in moduleConfig.GetComponentValues("furtherConfiguration"))
+            {
+                if (config.BinaryContent!=null && config.BinaryContent.Filename.EndsWith(".zip"))
+                {
+                    return config;
+                }
+            }
+            return null;
         }
 
         private static ContentType GetContentType(string extension)

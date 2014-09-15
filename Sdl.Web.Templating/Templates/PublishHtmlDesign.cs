@@ -32,12 +32,17 @@ namespace Sdl.Web.Tridion.Templates
 
         // default location of nodejs
         private const string NodejsDefault = @"C:\Program Files\nodejs\npm.cmd";
-
+        
+        //set of files to merge across modules
         private Dictionary<string, List<string>> mergeFileLines = new Dictionary<string, List<string>>();
+
+        //work folder for unzipping, merging and building design files
+        private string tempFolder;
 
         public override void Transform(Engine engine, Package package)
         {
             Initialize(engine, package);
+            mergeFileLines.Add("src\\system\\assets\\less\\_custom.less", new List<string>());
             mergeFileLines.Add("src\\system\\assets\\less\\_modules.less", new List<string>());
             mergeFileLines.Add("src\\templates\\partials\\module-scripts-header.hbs", new List<string>());
             mergeFileLines.Add("src\\templates\\partials\\module-scripts-footer.hbs", new List<string>());
@@ -48,18 +53,15 @@ namespace Sdl.Web.Tridion.Templates
             // not using System.IO.Path.GetTempPath() because the paths in our zip are already quite long,
             // so we need a very short temp path for the extract of our zipfile to succeed
             // using drive from tridion cm homedir for temp folder
-            string tempFolder = ConfigurationSettings.GetTcmHomeDirectory().Substring(0, 3) + "t" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "\\";
+            tempFolder = ConfigurationSettings.GetTcmHomeDirectory().Substring(0, 3) + "t" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + "\\";
 
             try
             {
                 // read values from Component
                 var config = GetComponent();
                 var fields = new ItemFields(config.Content, config.Schema);
-                var design = fields.GetMultimediaLink("design");
                 var favicon = fields.GetMultimediaLink("favicon");
-                var variables = fields.GetComponentValue("variables");
                 var version = fields.GetTextValue("version");
-                var codeBlock = fields.GetTextValue("code");
                 var nodeJs = fields.GetTextValue("nodeJs");
 
                 // set defaults if required
@@ -73,47 +75,9 @@ namespace Sdl.Web.Tridion.Templates
                 // create temp folder
                 Directory.CreateDirectory(tempFolder);
                 Log.Debug("Created " + tempFolder);
-
-                ProcessModules(tempFolder);
-                // save zipfile to disk and unpack
-                string zipfile = tempFolder + "html-design.zip";
-                File.WriteAllBytes(zipfile, design.BinaryContent.GetByteArray());
-                using (var archive = ZipFile.OpenRead(zipfile))
-                {
-                    archive.ExtractToDirectory(tempFolder, true);
-                }
-                const string line = "@{0}: {1};";
-                StringBuilder content = new StringBuilder();
                 
-                // save less variables to disk (if available) in unpacked zip structure
-                if (variables != null)
-                {
-                    // assuming all fields are text fields with a single value
-                    var itemFields = new ItemFields(variables.Content, variables.Schema);
-                    foreach (var itemField in itemFields)
-                    {
-                        string value = ((TextField) itemField).Value;
-                        if (!String.IsNullOrEmpty(value))
-                        {
-                            content.AppendFormat(line, itemField.Name, ((TextField)itemField).Value);
-                        }
-                    }
-                }
-                if (codeBlock != null)
-                {
-                    content.Append(codeBlock);
-                }
-
-                //overwrite _custom.less
-                File.WriteAllText(tempFolder + "src\\system\\assets\\less\\_custom.less", content.ToString());
-                Log.Debug("Saved " + tempFolder + "src\\system\\assets\\less\\_custom.less");
-                //overwrite all merged files
-                foreach (var mergeFile in mergeFileLines)
-                {
-                    File.WriteAllText(tempFolder + mergeFile.Key, String.Join(Environment.NewLine,mergeFile.Value));
-                    Log.Debug("Saved " + tempFolder + mergeFile.Key);
-                }
-
+                ProcessModules();
+                
                 
                 // build html design
                 ProcessStartInfo info = new ProcessStartInfo
@@ -232,18 +196,41 @@ namespace Sdl.Web.Tridion.Templates
                     Log.Debug("Did not cleanup " + tempFolder);
                 }
             }
-
             // output json result
             package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(JsonOutputFormat, publishedFiles)));
         }
 
-        private void ProcessModules(string tempFolder)
+        protected void ProcessModules()
         {
-            foreach (var module in GetActiveModules())
+            var modules = GetActiveModules();
+            foreach (var module in modules)
             {
-                Component zip = GetModuleHtmlZip(module.Value);
                 var moduleName = module.Key;
-                if (zip!=null)
+                if (moduleName != "core")
+                {
+                    ProcessModule(moduleName,module.Value);
+                }
+            }
+            ProcessModule("core", modules["core"]);
+            //overwrite all merged files
+            foreach (var mergeFile in mergeFileLines)
+            {
+                File.WriteAllText(tempFolder + mergeFile.Key, String.Join(Environment.NewLine, mergeFile.Value));
+                Log.Debug("Saved " + tempFolder + mergeFile.Key);
+            }   
+        }
+
+        protected void ProcessModule(string moduleName, Component moduleComponent)
+        {
+            var designConfig = GetDesignConfigComponent(moduleComponent);
+            if (designConfig!=null)
+            {
+                var fields = new ItemFields(designConfig.Content, designConfig.Schema);
+                var zip = fields.GetComponentValue("design");
+                var variables = fields.GetComponentValue("variables");
+                var code = fields.GetTextValue("code");
+                var customLess = GetModuleCustomLess(variables, code);
+                if (zip != null)
                 {
                     string zipfile = tempFolder + moduleName + "-html-design.zip";
                     File.WriteAllBytes(zipfile, zip.BinaryContent.GetByteArray());
@@ -266,21 +253,44 @@ namespace Sdl.Web.Tridion.Templates
                             }
                         }
                     }
+                    if (!String.IsNullOrEmpty(customLess.Trim()))
+                    {
+                        mergeFileLines["src\\system\\assets\\less\\_custom.less"].Add(customLess);
+                    }
                 }
             }
         }
 
-        private Component GetModuleHtmlZip(Component component)
+        private Component GetDesignConfigComponent(Component moduleComponent)
         {
-            ItemFields moduleConfig = new ItemFields(component.Content, component.Schema);
-            foreach(var config in moduleConfig.GetComponentValues("furtherConfiguration"))
+            var fields = new ItemFields(moduleComponent.Content, moduleComponent.Schema);
+            return fields.GetComponentValue("designConfiguration");
+        }
+
+        private string GetModuleCustomLess(Component variables, string code)
+        {
+            const string line = "@{0}: {1};";
+            StringBuilder content = new StringBuilder();
+
+            // save less variables to disk (if available) in unpacked zip structure
+            if (variables != null)
             {
-                if (config.BinaryContent!=null && config.BinaryContent.Filename.EndsWith(".zip"))
+                // assuming all fields are text fields with a single value
+                var itemFields = new ItemFields(variables.Content, variables.Schema);
+                foreach (var itemField in itemFields)
                 {
-                    return config;
+                    string value = ((TextField)itemField).Value;
+                    if (!String.IsNullOrEmpty(value))
+                    {
+                        content.AppendFormat(line, itemField.Name, ((TextField)itemField).Value);
+                    }
                 }
             }
-            return null;
+            if (code != null)
+            {
+                content.Append(code);
+            }
+            return content.ToString();
         }
 
         private static ContentType GetContentType(string extension)

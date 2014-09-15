@@ -14,6 +14,10 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
+    <build>
+        <finalName>${project.artifactId}</finalName>
+    </build>
+
     <properties>
         <dd4t-version>1.31</dd4t-version>
     </properties>

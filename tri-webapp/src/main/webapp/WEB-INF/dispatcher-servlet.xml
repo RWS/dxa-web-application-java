@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                            http://cxf.apache.org/jaxws 
+                            http://cxf.apache.org/schemas/jaxws.xsd
+                            http://www.springframework.org/schema/context
+                            http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                            http://www.springframework.org/schema/util 
+                            http://www.springframework.org/schema/util/spring-util-3.0.xsd
+                            http://www.springframework.org/schema/aop
+           					http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <import resource="siteeditsettings.xml" />
+    <import resource="urlmapping.xml" />
+
+    <!-- Handler Mappings -->
+    <bean
+            class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+        <property name="order" value="1" />
+    </bean>
+
+    <!-- Static access to spring context through a util class -->
+    <bean id="springApplicationContext" class="com.sdl.tridion.referenceimpl.util.ApplicationContextProvider"/>
+
+    <!-- DD4T providers, note cache is NOT wired for SiteEdit use -->
+    <bean id="cacheProvider" class="org.dd4t.providers.impl.BrokerCacheProvider" />
+    <bean id="pageProvider" class="org.dd4t.providers.impl.BrokerPageProvider" />
+    <bean id="componentProvider" class="org.dd4t.providers.impl.BrokerComponentProvider" />
+
+    <!-- Factory filters -->
+    <bean id="hybridPublishingFilter"
+          class="org.dd4t.core.filters.impl.HybridPublishingFilter">
+        <property name="genericComponentFactory"><ref bean="genericComponentFactory" /></property>
+    </bean>
+
+    <bean id="richTextWithLinksResolverFilter"
+          class="org.dd4t.core.filters.impl.RichTextWithLinksResolverFilter">
+        <property name="linkResolver"><ref bean="LinkResolver" /></property>
+    </bean>
+
+    <bean id="simplePageFactory"
+          class="org.dd4t.core.factories.impl.SimplePageFactory" >
+        <property name="cacheProvider"><ref bean="cacheProvider" /></property>
+        <property name="pageProvider"><ref bean="pageProvider" /></property>
+    </bean>
+
+    <!-- Note that the factory is prepped for hybrid publishing -->
+    <bean id="genericPageFactory"
+          class="org.dd4t.core.factories.impl.GenericPageFactory">
+        <property name="cacheProvider"><ref bean="cacheProvider" /></property>
+        <property name="pageProvider"><ref bean="pageProvider" /></property>
+        <property name="filters">
+            <list>
+                <ref bean="hybridPublishingFilter" />
+                <ref bean="richTextWithLinksResolverFilter" />
+            </list>
+        </property>
+    </bean>
+
+    <bean id="genericComponentFactory"
+          class="org.dd4t.core.factories.impl.GenericComponentFactory">
+        <property name="cacheProvider"><ref bean="cacheProvider" /></property>
+        <property name="componentProvider"><ref bean="componentProvider" /></property>
+        <property name="pageFactory"><ref bean="genericPageFactory" /></property>
+    </bean>
+
+
+    <!-- viewmanagers -->
+    <bean id="pageViewManager" class="com.sdl.tridion.referenceimpl.view.impl.SimplePageViewManager">
+        <property name="handlers">
+            <list>
+                <ref bean="JSPPageViewHandler" />
+            </list>
+        </property>
+
+    </bean>
+
+    <bean id="JSPPageViewHandler" class="com.sdl.tridion.referenceimpl.view.impl.JSPPageViewHandler">
+        <property name="filePattern"><value>/WEB-INF/views/pages/%1$s.jsp</value></property>
+    </bean>
+
+
+    <bean id="componentViewManager" class="com.sdl.tridion.referenceimpl.view.impl.SimpleComponentViewManager">
+        <property name="handlers">
+            <list>
+                <ref bean="JSPComponentViewHandler" />
+            </list>
+        </property>
+    </bean>
+
+    <!-- Component-level JSP view handler -->
+    <bean id="JSPComponentViewHandler" class="com.sdl.tridion.referenceimpl.view.impl.JSPComponentViewHandler">
+        <property name="filePattern"><value>/WEB-INF/views/components/%1$s.jsp</value></property>
+    </bean>
+
+    <!--  XSLT singleton -->
+    <bean id="XSLTransformer" class="org.dd4t.core.util.XSLTransformer" />
+
+    <!-- content controller -->
+    <bean id="ContentController" class="com.sdl.tridion.referenceimpl.controller.DynamicPageContentController" >
+        <property name="componentViewManager"><ref bean="componentViewManager" /></property>
+    </bean>
+
+    <!-- Application-level JSP views are managed through spring internal viewResolver -->
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix"><value>/WEB-INF/views/</value></property>
+        <property name="suffix"><value>.jsp</value></property>
+    </bean>
+</beans>

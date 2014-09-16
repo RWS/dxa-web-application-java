@@ -15,6 +15,7 @@
         <module>dd4t/dd4t-core</module>
         <module>dd4t/dd4t-providers</module>
         <module>example-dd4t-webapp</module>
+        <module>tri-webapp</module>
     </modules>
 
     <properties>

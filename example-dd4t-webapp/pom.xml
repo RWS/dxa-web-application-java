@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <name>Tridion Reference Implementation Web Application</name>
-    <artifactId>tri-webapp</artifactId>
+    <artifactId>example-dd4t-webapp</artifactId>
     <packaging>war</packaging>
 
     <parent>

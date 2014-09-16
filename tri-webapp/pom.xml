@@ -18,6 +18,10 @@
         <dd4t-version>1.31</dd4t-version>
     </properties>
 
+    <build>
+        <finalName>${project.artifactId}</finalName>
+    </build>
+
     <dependencies>
         <!-- Spring Framework -->
         <dependency>

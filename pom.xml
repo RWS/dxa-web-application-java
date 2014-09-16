@@ -11,9 +11,9 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>dd4t-api</module>
-        <module>dd4t-core</module>
-        <module>dd4t-providers</module>
+        <module>dd4t/dd4t-api</module>
+        <module>dd4t/dd4t-core</module>
+        <module>dd4t/dd4t-providers</module>
         <module>tri-webapp</module>
     </modules>
 

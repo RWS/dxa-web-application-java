@@ -17,8 +17,6 @@ package org.dd4t.contentmodel;
 
 import java.util.Date;
 
-import org.dd4t.contentmodel.PublishedItem;
-
 
 /**
  * Interface for all components

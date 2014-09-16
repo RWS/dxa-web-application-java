@@ -20,7 +20,7 @@ import org.dd4t.core.caching.Cachable;
 
 import com.tridion.storage.ItemMeta;
 import com.tridion.util.ObjectSizeProvider;
-import org.dd4t.contentmodel.impl.BaseRepositoryLocalItem;;
+;
 
 /**
  * Base class for all items which can be published

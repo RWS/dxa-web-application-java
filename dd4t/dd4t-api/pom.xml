@@ -13,6 +13,7 @@
         <groupId>com.sdl</groupId>
         <artifactId>tridion-reference-impl</artifactId>
         <version>1.0-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <dependencies>

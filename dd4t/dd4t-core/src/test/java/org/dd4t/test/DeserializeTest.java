@@ -1,7 +1,6 @@
 package org.dd4t.test;
 
 import org.dd4t.contentmodel.GenericPage;
-import org.dd4t.contentmodel.impl.GenericPageImpl;
 import org.dd4t.core.serializers.impl.DefaultSerializer;
 
 import java.io.File;

@@ -4,9 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Tridion Reference Implementation Web Application</name>
-    <artifactId>tri-webapp</artifactId>
-    <packaging>war</packaging>
+    <name>Tridion Reference Implementation DD4T Content Provider</name>
+    <artifactId>tri-dd4t</artifactId>
 
     <parent>
         <groupId>com.sdl</groupId>
@@ -18,37 +17,29 @@
         <dd4t-version>1.31</dd4t-version>
     </properties>
 
-    <build>
-        <finalName>${project.artifactId}</finalName>
-    </build>
-
     <dependencies>
         <dependency>
             <groupId>com.sdl</groupId>
             <artifactId>tri-model</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>tri-dd4t</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
 
         <!-- Spring Framework -->
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
+            <artifactId>spring-core</artifactId>
         </dependency>
 
-        <!-- Servlet API -->
+        <!-- DD4T -->
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
+            <groupId>org.dynamicdelivery</groupId>
+            <artifactId>dd4t-api</artifactId>
+            <version>${dd4t-version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
+            <groupId>org.dynamicdelivery</groupId>
+            <artifactId>dd4t-core</artifactId>
+            <version>${dd4t-version}</version>
         </dependency>
     </dependencies>
 </project>

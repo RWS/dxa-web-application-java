@@ -6,7 +6,12 @@
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <root level="WARN">
         <appender-ref ref="STDOUT"/>
     </root>
+    <logger name="org.hibernate" level="INFO"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.dd4t" level="INFO"/>
+    <logger name="com.tridion" level="INFO"/>
+    <logger name="com.sdl.tridion.referenceimpl" level="DEBUG"/>
 </configuration>

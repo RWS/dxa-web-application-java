@@ -1,38 +1,42 @@
 package com.sdl.tridion.referenceimpl.controller;
 
-import org.dd4t.contentmodel.Page;
-import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
-import org.dd4t.contentmodel.exceptions.NotAuthenticatedException;
-import org.dd4t.contentmodel.exceptions.NotAuthorizedException;
-import org.dd4t.core.factories.PageFactory;
-import org.dd4t.core.request.impl.BasicRequestContext;
+import com.sdl.tridion.referenceimpl.model.ContentProvider;
+import com.sdl.tridion.referenceimpl.model.PageModel;
+import com.sdl.tridion.referenceimpl.model.PageNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
 public class PageController {
+    private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
 
-    // TODO: Publication id should be determined from configuration instead of being hard-coded
-    private static final int PUBLICATION_ID = 48;
+    private static final String PAGE_VIEW_PREFIX = "page/";
 
     @Autowired
-    private PageFactory pageFactory;
+    private ContentProvider contentProvider;
 
-    @RequestMapping(method = GET, value = "*.html")
-    public String handleRequest(HttpServletRequest request)
-            throws NotAuthorizedException, NotAuthenticatedException, ItemNotFoundException {
-        String uri = request.getRequestURI();
-        uri = uri.replaceFirst(request.getContextPath(), "");
+    @RequestMapping(method = RequestMethod.GET, value = "/*")
+    public String handleGetPage(HttpServletRequest request) {
+        final String uri = request.getRequestURI().replaceFirst(request.getContextPath(), "");
+        LOG.debug("handleGetPage: uri={}", uri);
 
-        final Page page = pageFactory.findPageByUrl(uri, PUBLICATION_ID, new BasicRequestContext(request));
-        request.setAttribute("pageModel", page);
+        final PageModel pageModel = getPageModel(uri);
+        request.setAttribute(JspBeanNames.PAGE_MODEL, pageModel);
 
-        return "page/GeneralPage";
+        return PAGE_VIEW_PREFIX + pageModel.getViewName();
+    }
+
+    private PageModel getPageModel(String uri) {
+        try {
+            return contentProvider.getPageModel(uri);
+        } catch (PageNotFoundException e) {
+            throw new NotFoundException("Page not found: " + uri, e);
+        }
     }
 }

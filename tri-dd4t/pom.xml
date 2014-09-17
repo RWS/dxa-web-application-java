@@ -29,6 +29,13 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
         </dependency>
+        <dependency>
+            <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2.2</version>
+            <scope>runtime</scope>
+        </dependency>
 
         <!-- DD4T -->
         <dependency>

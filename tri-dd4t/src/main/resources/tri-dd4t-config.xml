@@ -4,9 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- TODO: This DD4T-specific stuff should not be here, but in the tri-dd4t module instead. -->
-    <!-- The import for this file should also be removed from dispatcher-servlet.xml -->
-
     <bean id="cacheProvider" class="org.dd4t.providers.impl.BrokerCacheProvider"/>
     <bean id="pageProvider" class="org.dd4t.providers.impl.BrokerPageProvider"/>
     <bean id="componentProvider" class="org.dd4t.providers.impl.BrokerComponentProvider"/>

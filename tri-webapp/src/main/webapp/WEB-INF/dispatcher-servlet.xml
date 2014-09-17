@@ -14,6 +14,4 @@
         <property name="prefix" value="/WEB-INF/view/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
-
-    <import resource="dd4t-beans.xml"/>
 </beans>

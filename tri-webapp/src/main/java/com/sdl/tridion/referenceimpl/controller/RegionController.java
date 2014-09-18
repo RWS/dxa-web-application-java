@@ -3,6 +3,7 @@ package com.sdl.tridion.referenceimpl.controller;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
 import com.sdl.tridion.referenceimpl.controller.exception.BadRequestException;
+import com.sdl.tridion.referenceimpl.controller.exception.ForbiddenException;
 import com.sdl.tridion.referenceimpl.controller.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +26,7 @@ public class RegionController {
 
         final Page pageModel = (Page) request.getAttribute(JspBeanNames.PAGE_MODEL);
         if (pageModel == null) {
-            throw new BadRequestException("Missing page model");
+            throw new ForbiddenException("Access to region without page model");
         }
 
         final Region regionModel = pageModel.getRegions().get(name);

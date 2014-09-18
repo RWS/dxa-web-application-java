@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -45,11 +46,14 @@ public final class DD4TContentProvider implements ContentProvider {
     private Page buildPage(GenericPage genericPage) {
         // TODO: Error checking, fallback if metadata field not found, etc.
         String viewName = (String) genericPage.getPageTemplate().getMetadata().get("view").getValues().get(0);
+        LOG.debug("Page view name: {}", viewName);
 
-        Map<String, Region> regions = new HashMap<>();
+        Map<String, Region> regions = new LinkedHashMap<>();
 
         // TODO: This is quick and dirty. See C# version: DD4TModelBuilder.CreatePage on how to do this properly.
         for (ComponentPresentation cp : genericPage.getComponentPresentations()) {
+            LOG.debug("Component presentation: {}", cp);
+
             final ComponentTemplate componentTemplate = cp.getComponentTemplate();
             if (componentTemplate != null) {
                 final Map<String, Field> metadata = componentTemplate.getMetadata();
@@ -58,6 +62,7 @@ public final class DD4TContentProvider implements ContentProvider {
                     if (field != null) {
                         final String regionView = (String) field.getValues().get(0);
                         if (!regions.containsKey(regionView)) {
+                            LOG.debug("Creating new region view: {}", regionView);
                             regions.put(regionView, Region.newBuilder().setViewName(regionView).build());
                         }
                     }

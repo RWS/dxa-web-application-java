@@ -1,6 +1,7 @@
 package com.sdl.tridion.referenceimpl.controller;
 
 import com.sdl.tridion.referenceimpl.controller.exception.BadRequestException;
+import com.sdl.tridion.referenceimpl.controller.exception.ForbiddenException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -21,7 +22,7 @@ public class EntityController {
         LOG.debug("handleGetEntity: id={}", id);
 
         if (request.getAttribute(JspBeanNames.PAGE_MODEL) == null) {
-            throw new BadRequestException("Missing page model");
+            throw new ForbiddenException("Access to entity without page model");
         }
 
         return ENTITY_VIEW_PREFIX + id;

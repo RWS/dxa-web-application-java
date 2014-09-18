@@ -26,16 +26,18 @@ public class RegionController {
 
         final Page pageModel = (Page) request.getAttribute(JspBeanNames.PAGE_MODEL);
         if (pageModel == null) {
+            LOG.warn("Access to region without page model: {}", name);
             throw new ForbiddenException("Access to region without page model");
         }
 
-        final Region regionModel = pageModel.getRegions().get(name);
+        final Region regionModel = pageModel.getRegion(name);
         if (regionModel == null) {
+            LOG.warn("Region not found: {} for page: {}", name, pageModel.getId());
             throw new NotFoundException("Region not found: " + name + " for page: " + pageModel.getId());
         }
 
         request.setAttribute(JspBeanNames.REGION_MODEL, regionModel);
 
-        return REGION_VIEW_PREFIX + name;
+        return REGION_VIEW_PREFIX + regionModel.getViewName();
     }
 }

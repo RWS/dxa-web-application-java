@@ -36,6 +36,8 @@ public class PageController {
 
         request.setAttribute(JspBeanNames.PAGE_MODEL, pageModel);
 
+        LOG.debug("pageModel={}", pageModel);
+
         return PAGE_VIEW_PREFIX + pageModel.getViewName();
     }
 }

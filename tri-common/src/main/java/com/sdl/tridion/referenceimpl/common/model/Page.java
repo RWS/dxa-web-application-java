@@ -14,8 +14,8 @@ public final class Page {
     public static final class Builder {
         private String id;
         private String title;
-        private final ImmutableMap.Builder<String, Region> regions = new ImmutableMap.Builder<>();
         private String viewName;
+        private final ImmutableMap.Builder<String, Region> regions = new ImmutableMap.Builder<>();
 
         private Builder() {
         }
@@ -30,15 +30,15 @@ public final class Page {
             return this;
         }
 
+        public Builder setViewName(String viewName) {
+            this.viewName = viewName;
+            return this;
+        }
+
         public Builder addRegions(Iterable<Region> regions) {
             for (Region region : regions) {
                 this.regions.put(region.getViewName(), region);
             }
-            return this;
-        }
-
-        public Builder setViewName(String viewName) {
-            this.viewName = viewName;
             return this;
         }
 
@@ -53,14 +53,14 @@ public final class Page {
 
     private final String id;
     private final String title;
-    private final Map<String, Region> regions;
     private final String viewName;
+    private final Map<String, Region> regions;
 
     private Page(Builder builder) {
         this.id = builder.id;
         this.title = builder.title;
-        this.regions = builder.regions.build();
         this.viewName = builder.viewName;
+        this.regions = builder.regions.build();
     }
 
     public static Builder newBuilder() {
@@ -75,11 +75,32 @@ public final class Page {
         return title;
     }
 
+    public String getViewName() {
+        return viewName;
+    }
+
     public Map<String, Region> getRegions() {
         return regions;
     }
 
-    public String getViewName() {
-        return viewName;
+    public Region getRegion(String regionViewName) {
+        return regions.get(regionViewName);
+    }
+
+    public Entity getEntity(String entityId) {
+        for (Region region : regions.values()) {
+            for (Entity entity : region.getEntities()) {
+                if (entity.getId().equals(entityId)) {
+                    return entity;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Page { id=%s, title=%s, viewName=%s, regions=%s }", id, title, viewName, regions);
     }
 }

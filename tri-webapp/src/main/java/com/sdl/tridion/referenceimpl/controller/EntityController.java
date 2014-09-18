@@ -1,7 +1,12 @@
 package com.sdl.tridion.referenceimpl.controller;
 
+import com.sdl.tridion.referenceimpl.common.model.Entity;
+import com.sdl.tridion.referenceimpl.common.model.Page;
+import com.sdl.tridion.referenceimpl.common.model.Region;
 import com.sdl.tridion.referenceimpl.controller.exception.BadRequestException;
 import com.sdl.tridion.referenceimpl.controller.exception.ForbiddenException;
+import com.sdl.tridion.referenceimpl.controller.exception.NotFoundException;
+import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -21,10 +26,20 @@ public class EntityController {
     public String handleGetEntity(HttpServletRequest request, @PathVariable("id") String id) {
         LOG.debug("handleGetEntity: id={}", id);
 
-        if (request.getAttribute(JspBeanNames.PAGE_MODEL) == null) {
+        final Page pageModel = (Page) request.getAttribute(JspBeanNames.PAGE_MODEL);
+        if (pageModel == null) {
+            LOG.warn("Access to entity without page model: {}", id);
             throw new ForbiddenException("Access to entity without page model");
         }
 
-        return ENTITY_VIEW_PREFIX + id;
+        final Entity entityModel = pageModel.getEntity(id);
+        if (entityModel == null) {
+            LOG.warn("Entity not found: {} for page: {}", id, pageModel.getId());
+            throw new NotFoundException("Entity not found: " + id + " for page: " + pageModel.getId());
+        }
+
+        request.setAttribute(JspBeanNames.ENTITY_MODEL, entityModel);
+
+        return ENTITY_VIEW_PREFIX + entityModel.getViewName();
     }
 }

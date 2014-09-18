@@ -52,4 +52,9 @@ public final class Entity {
     public String getViewName() {
         return viewName;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Entity { id=%s, viewName=%s }", id, viewName);
+    }
 }

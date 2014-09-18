@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>tri-model</artifactId>
+            <artifactId>tri-common</artifactId>
             <version>${project.version}</version>
         </dependency>
 

@@ -14,7 +14,6 @@
         <module>dd4t/dd4t-api</module>
         <module>dd4t/dd4t-core</module>
         <module>dd4t/dd4t-providers</module>
-        <module>example-dd4t-webapp</module>
         <module>tri-common</module>
         <module>tri-webapp</module>
         <module>tri-dd4t</module>
@@ -32,6 +31,7 @@
         <spring-version>3.1.0.RELEASE</spring-version>
         <hibernate-version>4.0.1.Final</hibernate-version>
         <hibernate-jpa-2.0-version>1.0.1.Final</hibernate-jpa-2.0-version>
+        <guava-version>14.0.1</guava-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-pool-version>1.5.3</commons-pool-version>
         <easylicense-version>2.5</easylicense-version>
@@ -49,6 +49,71 @@
     <!-- Dependency management -->
     <dependencyManagement>
         <dependencies>
+            <!-- Spring Framework -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring-version}</version>
+                <exclusions>
+                    <!-- Exclude Commons Logging because we use SLF4J and Logback instead -->
+                    <!-- See: http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#overview-logging -->
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>${spring-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring-version}</version>
+            </dependency>
+
+            <!-- Hibernate -->
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.0-api</artifactId>
+                <version>${hibernate-jpa-2.0-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate-version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <!-- Servlet API -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet-api-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${jstl-version}</version>
+            </dependency>
+
+            <!-- Google Guava -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava-version}</version>
+            </dependency>
+
             <!-- Tridion Content Delivery -->
             <dependency>
                 <groupId>com.tridion</groupId>
@@ -114,64 +179,6 @@
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_wrapper</artifactId>
                 <version>${tridion-version}</version>
-            </dependency>
-
-            <!-- Spring Framework -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring-version}</version>
-                <exclusions>
-                    <!-- Exclude Commons Logging because we use SLF4J and Logback instead -->
-                    <!-- See: http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#overview-logging -->
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-
-            <!-- Hibernate -->
-            <dependency>
-                <groupId>org.hibernate.javax.persistence</groupId>
-                <artifactId>hibernate-jpa-2.0-api</artifactId>
-                <version>${hibernate-jpa-2.0-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate-version}</version>
-                <scope>runtime</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- Servlet API -->
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${servlet-api-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>${jstl-version}</version>
             </dependency>
 
             <!-- Third-party libraries used by Tridion Content Delivery -->

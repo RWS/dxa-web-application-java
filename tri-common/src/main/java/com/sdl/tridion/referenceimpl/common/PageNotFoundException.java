@@ -1,6 +1,6 @@
-package com.sdl.tridion.referenceimpl.model;
+package com.sdl.tridion.referenceimpl.common;
 
-public class PageNotFoundException extends ModelException {
+public class PageNotFoundException extends ContentProviderException {
 
     public PageNotFoundException() {
     }

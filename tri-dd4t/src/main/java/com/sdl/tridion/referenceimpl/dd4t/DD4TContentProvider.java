@@ -1,15 +1,22 @@
 package com.sdl.tridion.referenceimpl.dd4t;
 
-import com.sdl.tridion.referenceimpl.model.ContentProvider;
-import com.sdl.tridion.referenceimpl.model.PageModel;
-import com.sdl.tridion.referenceimpl.model.PageNotFoundException;
+import com.sdl.tridion.referenceimpl.common.ContentProvider;
+import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
+import com.sdl.tridion.referenceimpl.common.model.Page;
+import com.sdl.tridion.referenceimpl.common.model.Region;
+import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.GenericPage;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
-import org.dd4t.core.factories.PageFactory;
+import org.dd4t.core.factories.impl.GenericPageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
@@ -22,16 +29,47 @@ public final class DD4TContentProvider implements ContentProvider {
     private static final int PUBLICATION_ID = 48;
 
     @Autowired
-    private PageFactory pageFactory;
+    private GenericPageFactory pageFactory;
 
     @Override
-    public PageModel getPageModel(String uri) throws PageNotFoundException {
-        LOG.debug("getPageModel: uri={}", uri);
+    public Page getPage(String uri) throws PageNotFoundException {
+        LOG.debug("getPage: uri={}", uri);
 
         try {
-            return new PageModelAdapter((GenericPage) pageFactory.findPageByUrl(uri, PUBLICATION_ID));
+            return buildPage(pageFactory.findPageByUrl(uri, PUBLICATION_ID));
         } catch (ItemNotFoundException e) {
             throw new PageNotFoundException("Page not found: " + uri, e);
         }
+    }
+
+    private Page buildPage(GenericPage genericPage) {
+        // TODO: Error checking, fallback if metadata field not found, etc.
+        String viewName = (String) genericPage.getPageTemplate().getMetadata().get("view").getValues().get(0);
+
+        Map<String, Region> regions = new HashMap<>();
+
+        // TODO: This is quick and dirty. See C# version: DD4TModelBuilder.CreatePage on how to do this properly.
+        for (ComponentPresentation cp : genericPage.getComponentPresentations()) {
+            final ComponentTemplate componentTemplate = cp.getComponentTemplate();
+            if (componentTemplate != null) {
+                final Map<String, Field> metadata = componentTemplate.getMetadata();
+                if (metadata != null) {
+                    final Field field = metadata.get("regionView");
+                    if (field != null) {
+                        final String regionView = (String) field.getValues().get(0);
+                        if (!regions.containsKey(regionView)) {
+                            regions.put(regionView, Region.newBuilder().setViewName(regionView).build());
+                        }
+                    }
+                }
+            }
+        }
+
+        return Page.newBuilder()
+                .setId(genericPage.getId())
+                .setTitle(genericPage.getTitle())
+                .addRegions(regions.values())
+                .setViewName(viewName)
+                .build();
     }
 }

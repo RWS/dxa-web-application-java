@@ -3,10 +3,9 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
 <jsp:useBean id="regionModel" type="com.sdl.tridion.referenceimpl.common.model.Region" scope="request"/>
-<div>
+<div class="region">
     <h2>3-Column</h2>
     <c:forEach var="entity" items="${regionModel.entities}">
-        <p>entity: <c:out value="${entity.id}"/> - view: <c:out value="${entity.viewName}"/></p>
         <jsp:include page="/entity/${entity.id}"/>
     </c:forEach>
 </div>

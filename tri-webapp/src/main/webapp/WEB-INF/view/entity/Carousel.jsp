@@ -3,7 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
 <jsp:useBean id="entityModel" type="com.sdl.tridion.referenceimpl.common.model.Entity" scope="request"/>
-<div>
+<div class="entity">
     <h3>Carousel</h3>
     <p><c:out value="${entityModel.id}"/></p>
 </div>

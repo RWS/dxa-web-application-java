@@ -80,10 +80,14 @@ public final class DD4TContentProvider implements ContentProvider {
 
         List<Region> regions = new ArrayList<>();
         for (Map.Entry<String, List<Entity>> entry : regionData.entrySet()) {
-            regions.add(new RegionImpl(entry.getKey(), entry.getValue()));
+            regions.add(RegionImpl.newBuilder().setViewName(entry.getKey()).addEntities(entry.getValue()).build());
         }
 
-        return new PageImpl(genericPage.getId(), viewName, regions);
+        return PageImpl.newBuilder()
+                .setId(genericPage.getId())
+                .setViewName(viewName)
+                .addRegions(regions)
+                .build();
     }
 
     private Entity createEntity(ComponentPresentation cp) {
@@ -93,19 +97,23 @@ public final class DD4TContentProvider implements ContentProvider {
 
         switch (viewName) {
             case "Carousel":
-                return new ItemList(id, viewName);
+                return ItemList.newBuilder().setId(id).setViewName(viewName).build();
 
             case "TeaserMap":
-                return new Teaser(id, viewName);
+                return Teaser.newBuilder().setId(id).setViewName(viewName).build();
 
             case "List":
-                return new ContentList(id, viewName);
+                return ContentList.newBuilder().setId(id).setViewName(viewName).build();
 
             case "YouTubeVideo":
-                return new YouTubeVideo(id, viewName);
+                return YouTubeVideo.newBuilder()
+                        .setId(id)
+                        .setViewName(viewName)
+                        .setYouTubeId((String) cp.getComponent().getMetadata().get("youTubeId").getValues().get(0))
+                        .build();
 
             default:
-                return new EntityImpl(id, viewName);
+                throw new UnsupportedOperationException("Unsupported entity view: " + viewName);
         }
     }
 }

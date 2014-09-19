@@ -1,19 +1,47 @@
 package com.sdl.tridion.referenceimpl.common.model;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.sdl.tridion.referenceimpl.common.model.Entity;
-import com.sdl.tridion.referenceimpl.common.model.Region;
 
 import java.util.List;
 
-public class RegionImpl implements Region {
+public final class RegionImpl implements Region {
+
+    public static final class Builder {
+        private String viewName;
+        private final ImmutableList.Builder<Entity> entitiesBuilder = ImmutableList.builder();
+
+        private Builder() {
+        }
+
+        public Builder setViewName(String viewName) {
+            this.viewName = viewName;
+            return this;
+        }
+
+        public Builder addEntities(Iterable<? extends Entity> entities) {
+            this.entitiesBuilder.addAll(entities);
+            return this;
+        }
+
+        public RegionImpl build() {
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(viewName), "viewName is required");
+
+            return new RegionImpl(this);
+        }
+    }
 
     private final String viewName;
     private final List<Entity> entities;
 
-    public RegionImpl(String viewName, List<? extends Entity> entities) {
-        this.viewName = viewName;
-        this.entities = ImmutableList.copyOf(entities);
+    private RegionImpl(Builder builder) {
+        this.viewName = builder.viewName;
+        this.entities = builder.entitiesBuilder.build();
+    }
+
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     @Override

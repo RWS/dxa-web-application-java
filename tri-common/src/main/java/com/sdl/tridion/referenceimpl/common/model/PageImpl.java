@@ -1,14 +1,47 @@
 package com.sdl.tridion.referenceimpl.common.model;
 
+import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.sdl.tridion.referenceimpl.common.model.Entity;
-import com.sdl.tridion.referenceimpl.common.model.Page;
-import com.sdl.tridion.referenceimpl.common.model.Region;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class PageImpl implements Page {
+public final class PageImpl implements Page {
+
+    public static final class Builder {
+        private String id;
+        private String viewName;
+        private final ImmutableMap.Builder<String, Region> regionsBuilder = ImmutableMap.builder();
+
+        private Builder() {
+        }
+
+        public Builder setId(String id) {
+            this.id = id;
+            return this;
+        }
+
+        public Builder setViewName(String viewName) {
+            this.viewName = viewName;
+            return this;
+        }
+
+        public Builder addRegions(Iterable<? extends Region> regions) {
+            for (Region region : regions) {
+                this.regionsBuilder.put(region.getViewName(), region);
+            }
+
+            return this;
+        }
+
+        public PageImpl build() {
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "id is required");
+            Preconditions.checkArgument(!Strings.isNullOrEmpty(viewName), "viewName is required");
+
+            return new PageImpl(this);
+        }
+    }
 
     private final String id;
     private final String viewName;
@@ -16,15 +49,14 @@ public class PageImpl implements Page {
 
     private Map<String, Entity> entities;
 
-    public PageImpl(String id, String viewName, Iterable<? extends Region> regions) {
-        this.id = id;
-        this.viewName = viewName;
+    private PageImpl(Builder builder) {
+        this.id = builder.id;
+        this.viewName = builder.viewName;
+        this.regions = builder.regionsBuilder.build();
+    }
 
-        ImmutableMap.Builder<String, Region> regionsBuilder = ImmutableMap.builder();
-        for (Region region : regions) {
-            regionsBuilder.put(region.getViewName(), region);
-        }
-        this.regions = regionsBuilder.build();
+    public static Builder newBuilder() {
+        return new Builder();
     }
 
     @Override

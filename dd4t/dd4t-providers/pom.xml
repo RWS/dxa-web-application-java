@@ -23,6 +23,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- Spring Framework -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+
         <!-- Tridion Content Delivery -->
         <dependency>
             <groupId>com.tridion</groupId>
@@ -49,10 +55,10 @@
             <artifactId>cd_model</artifactId>
         </dependency>
 
-        <!-- Spring Framework -->
+        <!-- Hibernate - Necessary to make IntelliJ stop warning about missing classes -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
     </dependencies>
 </project>

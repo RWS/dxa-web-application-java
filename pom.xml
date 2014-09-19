@@ -79,13 +79,11 @@
                 <groupId>org.hibernate.javax.persistence</groupId>
                 <artifactId>hibernate-jpa-2.0-api</artifactId>
                 <version>${hibernate-jpa-2.0-version}</version>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-entitymanager</artifactId>
                 <version>${hibernate-version}</version>
-                <scope>runtime</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>xml-apis</groupId>

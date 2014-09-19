@@ -32,5 +32,11 @@
             <groupId>com.tridion</groupId>
             <artifactId>cd_model</artifactId>
         </dependency>
+
+        <!-- Hibernate - Necessary to make IntelliJ stop warning about missing classes -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+        </dependency>
     </dependencies>
 </project>

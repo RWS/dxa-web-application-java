@@ -5,6 +5,9 @@ import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
 import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
+import com.sdl.tridion.referenceimpl.common.model.impl.EntityImpl;
+import com.sdl.tridion.referenceimpl.common.model.impl.PageImpl;
+import com.sdl.tridion.referenceimpl.common.model.impl.RegionImpl;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Field;
@@ -47,7 +50,7 @@ public final class DD4TContentProvider implements ContentProvider {
         String viewName = (String) genericPage.getPageTemplate().getMetadata().get("view").getValues().get(0);
         LOG.debug("Page view name: {}", viewName);
 
-        Map<String, Region.Builder> regionBuilders = new LinkedHashMap<>();
+        Map<String, List<Entity>> regionData = new LinkedHashMap<>();
 
         // TODO: This is quick and dirty. See C# version: DD4TModelBuilder.CreatePage on how to do this properly.
         for (ComponentPresentation cp : genericPage.getComponentPresentations()) {
@@ -60,34 +63,25 @@ public final class DD4TContentProvider implements ContentProvider {
                     final Field field = metadata.get("regionView");
                     if (field != null) {
                         final String regionView = (String) field.getValues().get(0);
-                        if (!regionBuilders.containsKey(regionView)) {
+                        if (!regionData.containsKey(regionView)) {
                             LOG.debug("Creating new region view: {}", regionView);
-                            regionBuilders.put(regionView, Region.newBuilder().setViewName(regionView));
+                            regionData.put(regionView, new ArrayList<Entity>());
                         }
 
                         String entityView = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
                         LOG.debug("entityView={}", entityView);
 
-                        regionBuilders.get(regionView).addEntity(
-                                Entity.newBuilder()
-                                        .setId(cp.getComponent().getId())
-                                        .setViewName(entityView)
-                                        .build());
+                        regionData.get(regionView).add(new EntityImpl(cp.getComponent().getId(), entityView));
                     }
                 }
             }
         }
 
         List<Region> regions = new ArrayList<>();
-        for (Region.Builder regionBuilder : regionBuilders.values()) {
-            regions.add(regionBuilder.build());
+        for (Map.Entry<String, List<Entity>> entry : regionData.entrySet()) {
+            regions.add(new RegionImpl(entry.getKey(), entry.getValue()));
         }
 
-        return Page.newBuilder()
-                .setId(genericPage.getId())
-                .setTitle(genericPage.getTitle())
-                .setViewName(viewName)
-                .addRegions(regions)
-                .build();
+        return new PageImpl(genericPage.getId(), viewName, regions);
     }
 }

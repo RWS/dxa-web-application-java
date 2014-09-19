@@ -5,7 +5,7 @@
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
 <html>
 <head>
-    <title><c:out value="${pageModel.title}"/></title>
+    <title>Hello World</title>
     <link rel="stylesheet" href="assets/css/main.css" type="text/css"/>
 </head>
 <body>

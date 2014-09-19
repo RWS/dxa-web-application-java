@@ -1,106 +1,19 @@
 package com.sdl.tridion.referenceimpl.common.model;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
-
+import java.util.List;
 import java.util.Map;
 
-/**
- * View model object that represents a page.
- */
-public final class Page {
+public interface Page {
 
-    public static final class Builder {
-        private String id;
-        private String title;
-        private String viewName;
-        private final ImmutableMap.Builder<String, Region> regions = new ImmutableMap.Builder<>();
+    String getId();
 
-        private Builder() {
-        }
+    String getViewName();
 
-        public Builder setId(String id) {
-            this.id = id;
-            return this;
-        }
+    Map<String, Region> getRegions();
 
-        public Builder setTitle(String title) {
-            this.title = title;
-            return this;
-        }
+    Region getRegion(String regionViewName);
 
-        public Builder setViewName(String viewName) {
-            this.viewName = viewName;
-            return this;
-        }
+    Map<String, Entity> getEntities();
 
-        public Builder addRegions(Iterable<Region> regions) {
-            for (Region region : regions) {
-                this.regions.put(region.getViewName(), region);
-            }
-            return this;
-        }
-
-        public Page build() {
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(id), "id is required");
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(title), "title is required");
-            Preconditions.checkArgument(!Strings.isNullOrEmpty(viewName), "viewName is required");
-
-            return new Page(this);
-        }
-    }
-
-    private final String id;
-    private final String title;
-    private final String viewName;
-    private final Map<String, Region> regions;
-
-    private Page(Builder builder) {
-        this.id = builder.id;
-        this.title = builder.title;
-        this.viewName = builder.viewName;
-        this.regions = builder.regions.build();
-    }
-
-    public static Builder newBuilder() {
-        return new Builder();
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getViewName() {
-        return viewName;
-    }
-
-    public Map<String, Region> getRegions() {
-        return regions;
-    }
-
-    public Region getRegion(String regionViewName) {
-        return regions.get(regionViewName);
-    }
-
-    public Entity getEntity(String entityId) {
-        for (Region region : regions.values()) {
-            for (Entity entity : region.getEntities()) {
-                if (entity.getId().equals(entityId)) {
-                    return entity;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("Page { id=%s, title=%s, viewName=%s, regions=%s }", id, title, viewName, regions);
-    }
+    Entity getEntity(String entityId);
 }

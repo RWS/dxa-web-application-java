@@ -36,23 +36,24 @@ public class BinaryFilter implements Filter {
         final String url = URLDecoder.decode(httpServletRequest.getRequestURI().replace(httpServletRequest.getContextPath(), ""), "UTF-8");
         if (!url.endsWith(".html")) {
             try {
-                handleRequest(url);
+                if (!handleRequest(url, response)) {
+                    LOG.debug("Continuing handler chain");
+                    chain.doFilter(request, response);
+                }
             } catch (StorageException e) {
                 throw new ServletException("Error while handling request: " + url, e);
             }
         }
-
-        chain.doFilter(request, response);
     }
 
-    private void handleRequest(String url) throws StorageException, IOException {
+    private boolean handleRequest(String url, ServletResponse response) throws StorageException, IOException {
         LOG.debug("handleRequest: {}", url);
 
         final List<BinaryVariant> binaryVariants = ((BinaryVariantDAO) StorageManagerFactory.getDAO(PUBLICATION_ID,
                 StorageTypeMapping.BINARY_VARIANT)).findByURL(url);
         if (binaryVariants == null || binaryVariants.isEmpty()) {
             LOG.debug("No binary variants found for: {}", url);
-            return;
+            return false;
         }
 
         final BinaryVariant binaryVariant = binaryVariants.get(0);
@@ -84,6 +85,10 @@ public class BinaryFilter implements Filter {
         } else {
             LOG.debug("File does not need to be refreshed: {}", file);
         }
+
+        LOG.debug("Sending response with content of file: {}", file);
+        Files.copy(file.toPath(), response.getOutputStream());
+        return true;
     }
 
     @Override

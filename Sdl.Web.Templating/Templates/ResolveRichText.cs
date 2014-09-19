@@ -81,18 +81,21 @@ namespace Sdl.Web.Tridion.Templates
 
         private void ProcessFields(ItemFields fields, XmlElement link)
         {
-            foreach(var fieldname in _metaFieldNames)
+            if (fields!=null)
             {
-                if (fields.Contains(fieldname))
+                foreach (var fieldname in _metaFieldNames)
                 {
-                    link.SetAttribute("data-" + fieldname, fields.GetSingleFieldValue(fieldname));
+                    if (fields.Contains(fieldname))
+                    {
+                        link.SetAttribute("data-" + fieldname, fields.GetSingleFieldValue(fieldname));
+                    }
                 }
-            }
-            foreach(var field in fields)
-            {
-                if (field is EmbeddedSchemaField)
+                foreach (var field in fields)
                 {
-                    ProcessFields(((EmbeddedSchemaField)field).Value, link);
+                    if (field is EmbeddedSchemaField)
+                    {
+                        ProcessFields(((EmbeddedSchemaField)field).Value, link);
+                    }
                 }
             }
         }

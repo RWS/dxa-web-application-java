@@ -11,7 +11,13 @@
     </filter>
     <filter-mapping>
         <filter-name>binaryFilter</filter-name>
-        <url-pattern>/assets/*</url-pattern>
+        <url-pattern>/favicon.ico</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>binaryFilter</filter-name>
+        <url-pattern>/system/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>

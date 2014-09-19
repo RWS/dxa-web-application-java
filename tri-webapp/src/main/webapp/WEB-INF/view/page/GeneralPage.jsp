@@ -6,7 +6,7 @@
 <html>
 <head>
     <title>Hello World</title>
-    <link rel="stylesheet" href="assets/css/main.css" type="text/css"/>
+    <link rel="stylesheet" href="system/assets/css/main.css" type="text/css"/>
 </head>
 <body>
 <h1>GeneralPage</h1>

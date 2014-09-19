@@ -25,6 +25,11 @@ public class PageController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/{name}")
     public String handleGetPage(HttpServletRequest request, @PathVariable("name") String name) {
+        if (request.getRequestURI().replace(request.getContextPath(), "").equals("/favicon.ico")) {
+            LOG.debug("Skipping request for /favicon.ico");
+            return null;
+        }
+
         LOG.debug("handleGetPage: name={}", name);
 
         final Page pageModel;

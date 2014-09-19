@@ -5,9 +5,13 @@ import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
 import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
-import com.sdl.tridion.referenceimpl.common.model.impl.EntityImpl;
-import com.sdl.tridion.referenceimpl.common.model.impl.PageImpl;
-import com.sdl.tridion.referenceimpl.common.model.impl.RegionImpl;
+import com.sdl.tridion.referenceimpl.common.model.EntityImpl;
+import com.sdl.tridion.referenceimpl.common.model.PageImpl;
+import com.sdl.tridion.referenceimpl.common.model.RegionImpl;
+import com.sdl.tridion.referenceimpl.common.model.entity.ContentList;
+import com.sdl.tridion.referenceimpl.common.model.entity.ItemList;
+import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
+import com.sdl.tridion.referenceimpl.common.model.entity.YouTubeVideo;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Field;
@@ -39,13 +43,13 @@ public final class DD4TContentProvider implements ContentProvider {
         LOG.debug("getPage: uri={}", uri);
 
         try {
-            return buildPage(pageFactory.findPageByUrl(uri, PUBLICATION_ID));
+            return createPage(pageFactory.findPageByUrl(uri, PUBLICATION_ID));
         } catch (ItemNotFoundException e) {
             throw new PageNotFoundException("Page not found: " + uri, e);
         }
     }
 
-    private Page buildPage(GenericPage genericPage) {
+    private Page createPage(GenericPage genericPage) {
         // TODO: Error checking, fallback if metadata field not found, etc.
         String viewName = (String) genericPage.getPageTemplate().getMetadata().get("view").getValues().get(0);
         LOG.debug("Page view name: {}", viewName);
@@ -68,10 +72,7 @@ public final class DD4TContentProvider implements ContentProvider {
                             regionData.put(regionView, new ArrayList<Entity>());
                         }
 
-                        String entityView = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
-                        LOG.debug("entityView={}", entityView);
-
-                        regionData.get(regionView).add(new EntityImpl(cp.getComponent().getId(), entityView));
+                        regionData.get(regionView).add(createEntity(cp));
                     }
                 }
             }
@@ -83,5 +84,28 @@ public final class DD4TContentProvider implements ContentProvider {
         }
 
         return new PageImpl(genericPage.getId(), viewName, regions);
+    }
+
+    private Entity createEntity(ComponentPresentation cp) {
+        // TODO: This is quick and dirty!
+        String id = cp.getComponent().getId();
+        String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
+
+        switch (viewName) {
+            case "Carousel":
+                return new ItemList(id, viewName);
+
+            case "TeaserMap":
+                return new Teaser(id, viewName);
+
+            case "List":
+                return new ContentList(id, viewName);
+
+            case "YouTubeVideo":
+                return new YouTubeVideo(id, viewName);
+
+            default:
+                return new EntityImpl(id, viewName);
+        }
     }
 }

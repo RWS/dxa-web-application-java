@@ -1,4 +1,4 @@
-package com.sdl.tridion.referenceimpl.common.model.impl;
+package com.sdl.tridion.referenceimpl.common.model;
 
 import com.sdl.tridion.referenceimpl.common.model.Entity;
 

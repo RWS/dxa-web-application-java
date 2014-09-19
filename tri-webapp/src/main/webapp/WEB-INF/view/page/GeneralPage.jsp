@@ -6,7 +6,7 @@
 <html>
 <head>
     <title><c:out value="${pageModel.title}"/></title>
-    <link rel="stylesheet" href="/assets/css/main.css" type="text/css"/>
+    <link rel="stylesheet" href="assets/css/main.css" type="text/css"/>
 </head>
 <body>
 <h1>GeneralPage</h1>

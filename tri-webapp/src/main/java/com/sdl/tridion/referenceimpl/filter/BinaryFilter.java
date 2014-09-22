@@ -51,6 +51,11 @@ public class BinaryFilter implements Filter {
         LOG.debug("handleRequest: {}", url);
 
         final BinaryVariant binaryVariant = findBinaryVariant(PUBLICATION_ID, url);
+        if (binaryVariant == null) {
+            LOG.debug("No binary variant found for: {}", url);
+            return false;
+        }
+
         final BinaryMeta binaryMeta = binaryVariant.getBinaryMeta();
         final ItemMeta itemMeta = findItemMeta(binaryMeta.getPublicationId(), binaryMeta.getItemId());
 
@@ -88,7 +93,6 @@ public class BinaryFilter implements Filter {
                 StorageTypeMapping.BINARY_VARIANT);
         final List<BinaryVariant> binaryVariants = dao.findByURL(url);
         if (binaryVariants == null || binaryVariants.isEmpty()) {
-            LOG.debug("No binary variants found for: {}", url);
             return null;
         }
 

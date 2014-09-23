@@ -20,6 +20,11 @@ public final class RegionImpl implements Region {
             return this;
         }
 
+        public Builder addEntity(Entity entity) {
+            this.entitiesBuilder.add(entity);
+            return this;
+        }
+
         public Builder addEntities(Iterable<? extends Entity> entities) {
             this.entitiesBuilder.addAll(entities);
             return this;

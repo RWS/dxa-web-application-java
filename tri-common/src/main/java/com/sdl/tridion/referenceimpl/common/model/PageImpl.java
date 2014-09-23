@@ -33,9 +33,14 @@ public final class PageImpl implements Page {
             return this;
         }
 
+        public Builder addRegion(Region region) {
+            this.regionsBuilder.put(region.getViewName(), region);
+            return this;
+        }
+
         public Builder addRegions(Iterable<? extends Region> regions) {
             for (Region region : regions) {
-                this.regionsBuilder.put(region.getViewName(), region);
+                addRegion(region);
             }
 
             return this;

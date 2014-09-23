@@ -3,8 +3,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
 <jsp:useBean id="regionModel" type="com.sdl.tridion.referenceimpl.common.model.Region" scope="request"/>
-<div class="region">
-    <h2>Hero</h2>
+<div typeof="Region" resource="<%= regionModel.getViewName() %>">
     <c:forEach var="entity" items="${regionModel.entities}">
         <jsp:include page="/entity/${entity.id}"/>
     </c:forEach>

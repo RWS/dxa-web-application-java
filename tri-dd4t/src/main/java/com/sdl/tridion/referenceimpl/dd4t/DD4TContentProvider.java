@@ -2,20 +2,13 @@ package com.sdl.tridion.referenceimpl.dd4t;
 
 import com.sdl.tridion.referenceimpl.common.ContentProvider;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
-import com.sdl.tridion.referenceimpl.common.model.Entity;
+import com.sdl.tridion.referenceimpl.common.model.*;
 import com.sdl.tridion.referenceimpl.common.model.Page;
-import com.sdl.tridion.referenceimpl.common.model.Region;
-import com.sdl.tridion.referenceimpl.common.model.EntityImpl;
-import com.sdl.tridion.referenceimpl.common.model.PageImpl;
-import com.sdl.tridion.referenceimpl.common.model.RegionImpl;
 import com.sdl.tridion.referenceimpl.common.model.entity.ContentList;
 import com.sdl.tridion.referenceimpl.common.model.entity.ItemList;
 import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
 import com.sdl.tridion.referenceimpl.common.model.entity.YouTubeVideo;
-import org.dd4t.contentmodel.ComponentPresentation;
-import org.dd4t.contentmodel.ComponentTemplate;
-import org.dd4t.contentmodel.Field;
-import org.dd4t.contentmodel.GenericPage;
+import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.GenericPageFactory;
 import org.slf4j.Logger;
@@ -23,10 +16,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
+ *
+ * TODO: Currently this is a quick-and-dirty implementation. Will be implemented for real in a future sprint.
  */
 @Component
 public final class DD4TContentProvider implements ContentProvider {
@@ -50,13 +48,11 @@ public final class DD4TContentProvider implements ContentProvider {
     }
 
     private Page createPage(GenericPage genericPage) {
-        // TODO: Error checking, fallback if metadata field not found, etc.
         String viewName = (String) genericPage.getPageTemplate().getMetadata().get("view").getValues().get(0);
         LOG.debug("Page view name: {}", viewName);
 
         Map<String, List<Entity>> regionData = new LinkedHashMap<>();
 
-        // TODO: This is quick and dirty. See C# version: DD4TModelBuilder.CreatePage on how to do this properly.
         for (ComponentPresentation cp : genericPage.getComponentPresentations()) {
             LOG.debug("Component presentation: {}", cp);
 
@@ -91,29 +87,106 @@ public final class DD4TContentProvider implements ContentProvider {
     }
 
     private Entity createEntity(ComponentPresentation cp) {
-        // TODO: This is quick and dirty!
-        String id = cp.getComponent().getId();
-        String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
+        final String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
 
         switch (viewName) {
             case "Carousel":
-                return ItemList.newBuilder().setId(id).setViewName(viewName).build();
+                return buildCarousel(cp);
 
             case "TeaserMap":
-                return Teaser.newBuilder().setId(id).setViewName(viewName).build();
+                return buildTeaserMap(cp);
 
             case "List":
-                return ContentList.newBuilder().setId(id).setViewName(viewName).build();
+                return buildContentList(cp);
 
             case "YouTubeVideo":
-                return YouTubeVideo.newBuilder()
-                        .setId(id)
-                        .setViewName(viewName)
-                        .setYouTubeId((String) cp.getComponent().getMetadata().get("youTubeId").getValues().get(0))
-                        .build();
+                return buildYouTubeVideo(cp);
 
             default:
                 throw new UnsupportedOperationException("Unsupported entity view: " + viewName);
         }
+    }
+
+    private ItemList buildCarousel(ComponentPresentation cp) {
+        final String id = cp.getComponent().getId();
+        final String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
+
+        return ItemList.newBuilder().setId(id).setViewName(viewName).build();
+    }
+
+    private Teaser buildTeaserMap(ComponentPresentation cp) {
+        final String id = cp.getComponent().getId();
+        final String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
+
+        return Teaser.newBuilder()
+                .setId(id)
+                .setViewName(viewName)
+                .setHeadline(getFieldValue(cp, "name"))
+                .build();
+    }
+
+    private ContentList<Teaser> buildContentList(ComponentPresentation cp) {
+        final String id = cp.getComponent().getId();
+        final String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
+
+        return ContentList.<Teaser>newBuilder()
+                .setId(id)
+                .setViewName(viewName)
+                .setHeadline(getFieldValue(cp, "headline"))
+                .build();
+    }
+
+    private YouTubeVideo buildYouTubeVideo(ComponentPresentation cp) {
+        final String id = cp.getComponent().getId();
+        final String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
+
+        return YouTubeVideo.newBuilder()
+                .setId(id)
+                .setViewName(viewName)
+                .setYouTubeId((String) cp.getComponent().getMetadata().get("youTubeId").getValues().get(0))
+                .setHeadline(getMetadataFieldValue(cp, "headline"))
+                .build();
+    }
+
+    private String getFieldValue(ComponentPresentation cp, String fieldName) {
+        final GenericComponent component = cp.getComponent();
+        if (component != null) {
+            final Map<String, Field> content = component.getContent();
+            if (content != null) {
+                final Field headlineField = content.get(fieldName);
+                if (headlineField != null) {
+                    final List<Object> values = headlineField.getValues();
+                    if (values != null && values.size() > 0) {
+                        final Object value = values.get(0);
+                        if (value instanceof String) {
+                            return (String) value;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private String getMetadataFieldValue(ComponentPresentation cp, String fieldName) {
+        final GenericComponent component = cp.getComponent();
+        if (component != null) {
+            final Map<String, Field> metadata = component.getMetadata();
+            if (metadata != null) {
+                final Field headlineField = metadata.get(fieldName);
+                if (headlineField != null) {
+                    final List<Object> values = headlineField.getValues();
+                    if (values != null && values.size() > 0) {
+                        final Object value = values.get(0);
+                        if (value instanceof String) {
+                            return (String) value;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 }

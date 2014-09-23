@@ -2,8 +2,17 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
-<jsp:useBean id="entityModel" type="com.sdl.tridion.referenceimpl.common.model.entity.ContentList" scope="request"/>
-<div class="entity">
-    <h3>List</h3>
-    <p><c:out value="${entityModel.id}"/></p>
+<jsp:useBean id="entityModel" type="com.sdl.tridion.referenceimpl.common.model.entity.ContentList<com.sdl.tridion.referenceimpl.common.model.entity.Teaser>" scope="request"/>
+<div>
+<%
+    String headline = entityModel.getHeadline();
+    if (headline != null && !headline.isEmpty()) {
+        out.print("<h3>" + headline + "</h3>");
+    }
+%>
+<ul>
+    <c:forEach var="item" items="${entityModel.itemListElements}">
+        <li><c:out value="${item.headline}"/></li>
+    </c:forEach>
+</ul>
 </div>

@@ -1,6 +1,6 @@
-<%@ page import="com.sdl.tridion.referenceimpl.common.model.Region" %>
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="com.sdl.tridion.referenceimpl.common.model.Region" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
@@ -21,6 +21,7 @@
     <![endif]-->
 </head>
 <body>
+<%@include file="../../shared/Header.jsp"%>
 <main class="page-row page-row-expanded" role="main">
     <div class="container-fluid page-border">
         <%
@@ -53,6 +54,7 @@
         </div>
     </div>
 </main>
+<%@include file="../../shared/Footer.jsp"%>
 <script src="system/assets/scripts/main.js"></script>
 </body>
 </html>

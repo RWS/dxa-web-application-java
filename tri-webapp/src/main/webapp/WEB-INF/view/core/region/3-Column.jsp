@@ -3,9 +3,21 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
 <jsp:useBean id="regionModel" type="com.sdl.tridion.referenceimpl.common.model.Region" scope="request"/>
-<div class="region">
-    <h2>3-Column</h2>
-    <c:forEach var="entity" items="${regionModel.entities}">
-        <jsp:include page="/entity/${entity.id}"/>
-    </c:forEach>
+<%
+    int cols = 3; // TODO: 2 or 3 depending on screen width
+%>
+<div typeof="Region" resource="<%= regionModel.getViewName() %>">
+<%
+    int entityCount = regionModel.getEntities().size();
+    int rowCount = (int) Math.ceil(entityCount / (double) cols);
+
+    for (int i = 0; i < rowCount; i++) {
+        %><div class="row"><%
+            for (int j = 0; j < cols && (cols * i + j < entityCount); j++) {
+                final String entityId = regionModel.getEntities().get(cols * i + j).getId();
+                %><div class="col-sm-6 col-md-4"><% pageContext.include("/entity/" + entityId); %></div><%
+            }
+        %></div><%
+    }
+%>
 </div>

@@ -16,8 +16,8 @@ public class ItemList extends EntityImpl {
             return this;
         }
 
-        public Builder addItemListElements(Iterable<? extends Teaser> itemListElements) {
-            this.itemListElementsBuilder.addAll(itemListElements);
+        public Builder addItemListElement(Teaser itemListElement) {
+            this.itemListElementsBuilder.add(itemListElement);
             return this;
         }
 

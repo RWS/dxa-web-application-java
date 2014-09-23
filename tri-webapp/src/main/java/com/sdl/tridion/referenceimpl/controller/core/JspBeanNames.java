@@ -1,4 +1,4 @@
-package com.sdl.tridion.referenceimpl.controller;
+package com.sdl.tridion.referenceimpl.controller.core;
 
 public final class JspBeanNames {
 

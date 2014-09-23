@@ -1,4 +1,4 @@
-package com.sdl.tridion.referenceimpl.controller;
+package com.sdl.tridion.referenceimpl.controller.core;
 
 import com.sdl.tridion.referenceimpl.common.ContentProvider;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -17,22 +18,17 @@ import javax.servlet.http.HttpServletRequest;
 public class PageController {
     private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
 
-    private static final String PAGE_VIEW_PREFIX = "page/";
+    private static final String PAGE_VIEW_PREFIX = "core/page/";
+
+    private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     @Autowired
     private ContentProvider contentProvider;
 
     @RequestMapping(method = RequestMethod.GET)
     public String handleGetPage(HttpServletRequest request) {
-        String url = request.getRequestURI().replace(request.getContextPath(), "");
+        String url = getPageUrl(request);
         LOG.debug("handleGetPage: url={}", url);
-
-        if (!url.startsWith("/")) {
-            url = "/" + url;
-        }
-        if (!url.endsWith(".html")) {
-            url = url + ".html";
-        }
 
         final Page pageModel;
         try {
@@ -46,5 +42,18 @@ public class PageController {
         LOG.debug("pageModel={}", pageModel);
 
         return PAGE_VIEW_PREFIX + pageModel.getViewName();
+    }
+
+    private String getPageUrl(HttpServletRequest request) {
+        String url = URL_PATH_HELPER.getRequestUri(request).replace(URL_PATH_HELPER.getContextPath(request), "");
+
+        if (!url.startsWith("/")) {
+            url = "/" + url;
+        }
+        if (!url.endsWith(".html")) {
+            url = url + ".html";
+        }
+
+        return url;
     }
 }

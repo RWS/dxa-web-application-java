@@ -1,8 +1,7 @@
-package com.sdl.tridion.referenceimpl.controller;
+package com.sdl.tridion.referenceimpl.controller.core;
 
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
-import com.sdl.tridion.referenceimpl.controller.exception.BadRequestException;
 import com.sdl.tridion.referenceimpl.controller.exception.ForbiddenException;
 import com.sdl.tridion.referenceimpl.controller.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -18,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 public class RegionController {
     private static final Logger LOG = LoggerFactory.getLogger(RegionController.class);
 
-    private static final String REGION_VIEW_PREFIX = "region/";
+    private static final String REGION_VIEW_PREFIX = "core/region/";
 
     @RequestMapping(method = RequestMethod.GET, value = "/region/{name}")
     public String handleGetRegion(HttpServletRequest request, @PathVariable("name") String name) {

@@ -1,12 +1,9 @@
-package com.sdl.tridion.referenceimpl.controller;
+package com.sdl.tridion.referenceimpl.controller.core;
 
 import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.Page;
-import com.sdl.tridion.referenceimpl.common.model.Region;
-import com.sdl.tridion.referenceimpl.controller.exception.BadRequestException;
 import com.sdl.tridion.referenceimpl.controller.exception.ForbiddenException;
 import com.sdl.tridion.referenceimpl.controller.exception.NotFoundException;
-import org.omg.CosNaming.NamingContextPackage.NotFound;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -20,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 public class EntityController {
     private static final Logger LOG = LoggerFactory.getLogger(EntityController.class);
 
-    private static final String ENTITY_VIEW_PREFIX = "entity/";
+    private static final String ENTITY_VIEW_PREFIX = "core/entity/";
 
     @RequestMapping(method = RequestMethod.GET, value = "/entity/{id}")
     public String handleGetEntity(HttpServletRequest request, @PathVariable("id") String id) {

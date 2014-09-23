@@ -11,6 +11,7 @@ public final class PageImpl implements Page {
 
     public static final class Builder {
         private String id;
+        private String title;
         private String viewName;
         private final ImmutableMap.Builder<String, Region> regionsBuilder = ImmutableMap.builder();
 
@@ -19,6 +20,11 @@ public final class PageImpl implements Page {
 
         public Builder setId(String id) {
             this.id = id;
+            return this;
+        }
+
+        public Builder setTitle(String title) {
+            this.title = title;
             return this;
         }
 
@@ -44,6 +50,7 @@ public final class PageImpl implements Page {
     }
 
     private final String id;
+    private final String title;
     private final String viewName;
     private final Map<String, Region> regions;
 
@@ -51,6 +58,7 @@ public final class PageImpl implements Page {
 
     private PageImpl(Builder builder) {
         this.id = builder.id;
+        this.title = builder.title;
         this.viewName = builder.viewName;
         this.regions = builder.regionsBuilder.build();
     }
@@ -62,6 +70,11 @@ public final class PageImpl implements Page {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
     }
 
     @Override
@@ -104,6 +117,7 @@ public final class PageImpl implements Page {
 
     @Override
     public String toString() {
-        return String.format("PageImpl { id=%s, viewName=%s, regions=%s }", id, viewName, regions.values());
+        return String.format("PageImpl { id=%s, title=%s, viewName=%s, regions=%s }",
+                id, title, viewName, regions.values());
     }
 }

@@ -6,6 +6,8 @@ public interface Page {
 
     String getId();
 
+    String getTitle();
+
     String getViewName();
 
     Map<String, Region> getRegions();

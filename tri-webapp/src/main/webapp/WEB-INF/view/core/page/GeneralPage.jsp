@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.sdl.tridion.referenceimpl.common.model.Region" %>
+<%@ page import="com.sdl.tridion.referenceimpl.controller.core.JspBeanNames" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
@@ -13,7 +14,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><c:out value="${pageModel.title}"/></title>
+    <title>Hello World</title>
     <link rel="stylesheet" href="system/assets/css/main.css" type="text/css"/>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -29,7 +30,8 @@
             int mainContainerSize = hasLeftBar ? 9 : 12;
 
             if (pageModel.getRegions().containsKey("Hero")) {
-                pageContext.include("/region/Hero");
+                request.setAttribute(JspBeanNames.REGION_MODEL, pageModel.getRegions().get("Hero"));
+                pageContext.include("/region");
             }
         %>
     <div class="row">
@@ -37,7 +39,8 @@
             if (hasLeftBar) {
                 %><div class="col-sm-12 col-md-3"><%
                     if (pageModel.getRegions().containsKey("Left")) {
-                        pageContext.include("/region/Left");
+                        request.setAttribute(JspBeanNames.REGION_MODEL, pageModel.getRegions().get("Left"));
+                        pageContext.include("/region");
                     }
                 %></div><%
             }
@@ -47,7 +50,8 @@
                 for (Region region : pageModel.getRegions().values()) {
                     String viewName = region.getViewName();
                     if (!viewName.equals("Hero") && !viewName.equals("Left")) {
-                        pageContext.include("/region/" + viewName);
+                        request.setAttribute(JspBeanNames.REGION_MODEL, pageModel.getRegions().get(viewName));
+                        pageContext.include("/region");
                     }
                 }
             %>

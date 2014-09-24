@@ -27,7 +27,7 @@
         <!-- Spring Framework -->
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
+            <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
             <!-- Necessary for Spring 3 to process @Configuration annotated classes -->

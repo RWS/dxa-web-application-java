@@ -7,5 +7,5 @@ import com.sdl.tridion.referenceimpl.common.model.Page;
  */
 public interface ContentProvider {
 
-    Page getPage(String uri) throws PageNotFoundException;
+    Page getPage(String url) throws ContentProviderException;
 }

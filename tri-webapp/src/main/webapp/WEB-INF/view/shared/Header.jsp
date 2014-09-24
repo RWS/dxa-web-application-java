@@ -11,7 +11,7 @@
                     <div><!-- Start Component Presentation: {"ComponentID" : "tcm:8-1488", "ComponentModified" : "2014-08-26T15:44:03", "ComponentTemplateID" : "tcm:8-188-32", "ComponentTemplateModified" : "2014-07-31T16:31:42", "IsRepositoryPublished" : false} -->
                         <a class="navbar-logo" href="http://saintjohn01.ams.dev:82/index">
             <span><!-- Start Component Field: {"XPath":"tcm:Content/custom:Teaser/custom:media[1]"} -->
-                <img src="/media/logo_tcm8-1482.png" height="80">
+                <img src="media/logo_tcm8-1482.png" height="80">
             </span>
                         </a>
                     </div>                </div>

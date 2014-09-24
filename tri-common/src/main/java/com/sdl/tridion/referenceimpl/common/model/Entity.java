@@ -1,8 +1,12 @@
 package com.sdl.tridion.referenceimpl.common.model;
 
-public interface Entity {
+import java.util.Map;
+
+public interface Entity extends ViewModel {
 
     String getId();
 
-    String getViewName();
+    Map<String, String> getPropertyData();
+
+    Map<String, String> getEntityData();
 }

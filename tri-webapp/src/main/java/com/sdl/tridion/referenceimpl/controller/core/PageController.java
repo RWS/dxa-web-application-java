@@ -1,8 +1,10 @@
 package com.sdl.tridion.referenceimpl.controller.core;
 
 import com.sdl.tridion.referenceimpl.common.ContentProvider;
+import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
 import com.sdl.tridion.referenceimpl.common.model.Page;
+import com.sdl.tridion.referenceimpl.controller.exception.InternalServerErrorException;
 import com.sdl.tridion.referenceimpl.controller.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,30 +20,22 @@ import javax.servlet.http.HttpServletRequest;
 public class PageController {
     private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
 
-    private static final String PAGE_VIEW_PREFIX = "core/page/";
-
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     @Autowired
     private ContentProvider contentProvider;
 
-    @RequestMapping(method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET, value = "/*")
     public String handleGetPage(HttpServletRequest request) {
-        String url = getPageUrl(request);
+        final String url = getPageUrl(request);
         LOG.debug("handleGetPage: url={}", url);
 
-        final Page pageModel;
-        try {
-            pageModel = contentProvider.getPage(url);
-        } catch (PageNotFoundException e) {
-            throw new NotFoundException("Page not found: " + url, e);
-        }
+        final Page page = getPage(url);
+        LOG.debug("handleGetPage: page={}", page);
 
-        request.setAttribute(JspBeanNames.PAGE_MODEL, pageModel);
+        request.setAttribute(JspBeanNames.PAGE_MODEL, page);
 
-        LOG.debug("pageModel={}", pageModel);
-
-        return PAGE_VIEW_PREFIX + pageModel.getViewName();
+        return page.getViewName();
     }
 
     private String getPageUrl(HttpServletRequest request) {
@@ -55,5 +49,17 @@ public class PageController {
         }
 
         return url;
+    }
+
+    private Page getPage(String url) {
+        try {
+            return contentProvider.getPage(url);
+        } catch (PageNotFoundException e) {
+            LOG.error("Page not found: {}", url, e);
+            throw new NotFoundException("Page not found: " + url, e);
+        } catch (ContentProviderException e) {
+            LOG.error("An unexpected error occurred", e);
+            throw new InternalServerErrorException("An unexpected error occurred", e);
+        }
     }
 }

@@ -1,13 +1,16 @@
 package com.sdl.tridion.referenceimpl.dd4t;
 
+import com.google.common.base.Strings;
 import com.sdl.tridion.referenceimpl.common.ContentProvider;
+import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
-import com.sdl.tridion.referenceimpl.common.model.*;
+import com.sdl.tridion.referenceimpl.common.config.ViewModelRegistry;
+import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.Page;
-import com.sdl.tridion.referenceimpl.common.model.entity.ContentList;
-import com.sdl.tridion.referenceimpl.common.model.entity.ItemList;
-import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
-import com.sdl.tridion.referenceimpl.common.model.entity.YouTubeVideo;
+import com.sdl.tridion.referenceimpl.common.model.Region;
+import com.sdl.tridion.referenceimpl.common.model.entity.EntityBase;
+import com.sdl.tridion.referenceimpl.common.model.page.PageImpl;
+import com.sdl.tridion.referenceimpl.common.model.region.RegionImpl;
 import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.GenericPageFactory;
@@ -16,14 +19,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
- *
+ * <p/>
  * TODO: Currently this is a quick-and-dirty implementation. Will be implemented for real in a future sprint.
  */
 @Component
@@ -33,156 +35,133 @@ public final class DD4TContentProvider implements ContentProvider {
     // TODO: Publication id should be determined from configuration instead of being hard-coded
     private static final int PUBLICATION_ID = 48;
 
+    private static final String PAGE_VIEW_PREFIX = "core/page/";
+    private static final String REGION_VIEW_PREFIX = "core/region/";
+    private static final String ENTITY_VIEW_PREFIX = "core/entity/";
+
     @Autowired
     private GenericPageFactory pageFactory;
 
-    @Override
-    public Page getPage(String uri) throws PageNotFoundException {
-        LOG.debug("getPage: uri={}", uri);
+    @Autowired
+    private ViewModelRegistry viewModelRegistry;
 
+    @Override
+    public Page getPage(String url) throws ContentProviderException {
+        final GenericPage genericPage;
         try {
-            return createPage(pageFactory.findPageByUrl(uri, PUBLICATION_ID));
+            genericPage = pageFactory.findPageByUrl(url, PUBLICATION_ID);
         } catch (ItemNotFoundException e) {
-            throw new PageNotFoundException("Page not found: " + uri, e);
+            throw new PageNotFoundException("Page not found: " + url, e);
         }
+
+        return createPage(genericPage);
     }
 
-    private Page createPage(GenericPage genericPage) {
-        String viewName = (String) genericPage.getPageTemplate().getMetadata().get("view").getValues().get(0);
-        LOG.debug("Page view name: {}", viewName);
+    private Page createPage(GenericPage genericPage) throws ContentProviderException {
+        PageImpl page = new PageImpl();
 
-        Map<String, List<Entity>> regionData = new LinkedHashMap<>();
+        page.setId(genericPage.getId());
+
+        Map<String, RegionImpl> regions = new HashMap<>();
+        Map<String, Entity> entities = new HashMap<>();
 
         for (ComponentPresentation cp : genericPage.getComponentPresentations()) {
-            LOG.debug("Component presentation: {}", cp);
+            final GenericComponent component = cp.getComponent();
+            final String componentId = component.getId();
+            LOG.debug("componentId={}", componentId);
 
-            final ComponentTemplate componentTemplate = cp.getComponentTemplate();
-            if (componentTemplate != null) {
-                final Map<String, Field> metadata = componentTemplate.getMetadata();
-                if (metadata != null) {
-                    final Field field = metadata.get("regionView");
-                    if (field != null) {
-                        final String regionView = (String) field.getValues().get(0);
-                        if (!regionData.containsKey(regionView)) {
-                            LOG.debug("Creating new region view: {}", regionView);
-                            regionData.put(regionView, new ArrayList<Entity>());
-                        }
+            Entity entity = entities.get(componentId);
+            if (entity == null) {
+                entity = createEntity(cp);
+                if (entity == null) {
+                    LOG.warn("Failed to create entity for component: {}", componentId);
+                    continue;
+                }
 
-                        regionData.get(regionView).add(createEntity(cp));
+                entities.put(componentId, entity);
+            } else {
+                LOG.warn("Duplicate entity found: {}", componentId);
+            }
+
+            final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
+            if (templateMeta != null) {
+                final String regionViewName = getFieldStringValue(templateMeta, "regionView");
+                if (!Strings.isNullOrEmpty(regionViewName)) {
+                    RegionImpl region = regions.get(regionViewName);
+                    if (region == null) {
+                        LOG.debug("Creating new RegionImpl: {}", regionViewName);
+                        region = new RegionImpl();
+                        region.setViewName(REGION_VIEW_PREFIX + regionViewName);
+
+                        regions.put(regionViewName, region);
                     }
+
+                    region.getEntities().add(entity);
                 }
             }
         }
 
-        List<Region> regions = new ArrayList<>();
-        for (Map.Entry<String, List<Entity>> entry : regionData.entrySet()) {
-            regions.add(RegionImpl.newBuilder().setViewName(entry.getKey()).addEntities(entry.getValue()).build());
-        }
+        Map<String, Region> regionMap = new HashMap<>();
+        regionMap.putAll(regions);
+        page.setRegions(regionMap);
 
-        return PageImpl.newBuilder()
-                .setId(genericPage.getId())
-                .setViewName(viewName)
-                .addRegions(regions)
-                .build();
+        page.setEntities(entities);
+
+        // TODO: Page data
+        page.setPageData(new HashMap<String, String>());
+
+        page.setViewName(PAGE_VIEW_PREFIX + getPageViewName(genericPage));
+
+        return page;
     }
 
-    private Entity createEntity(ComponentPresentation cp) {
-        final String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
+    private Entity createEntity(ComponentPresentation cp) throws ContentProviderException {
+        final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
+        if (templateMeta != null) {
+            final String viewName = getFieldStringValue(templateMeta, "view");
+            LOG.debug("viewName={}", viewName);
 
-        switch (viewName) {
-            case "Carousel":
-                return buildCarousel(cp);
-
-            case "TeaserMap":
-                return buildTeaserMap(cp);
-
-            case "List":
-                return buildContentList(cp);
-
-            case "YouTubeVideo":
-                return buildYouTubeVideo(cp);
-
-            default:
-                throw new UnsupportedOperationException("Unsupported entity view: " + viewName);
-        }
-    }
-
-    private ItemList buildCarousel(ComponentPresentation cp) {
-        final String id = cp.getComponent().getId();
-        final String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
-
-        return ItemList.newBuilder().setId(id).setViewName(viewName).build();
-    }
-
-    private Teaser buildTeaserMap(ComponentPresentation cp) {
-        final String id = cp.getComponent().getId();
-        final String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
-
-        return Teaser.newBuilder()
-                .setId(id)
-                .setViewName(viewName)
-                .setHeadline(getFieldValue(cp, "name"))
-                .build();
-    }
-
-    private ContentList<Teaser> buildContentList(ComponentPresentation cp) {
-        final String id = cp.getComponent().getId();
-        final String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
-
-        return ContentList.<Teaser>newBuilder()
-                .setId(id)
-                .setViewName(viewName)
-                .setHeadline(getFieldValue(cp, "headline"))
-                .build();
-    }
-
-    private YouTubeVideo buildYouTubeVideo(ComponentPresentation cp) {
-        final String id = cp.getComponent().getId();
-        final String viewName = (String) cp.getComponentTemplate().getMetadata().get("view").getValues().get(0);
-
-        return YouTubeVideo.newBuilder()
-                .setId(id)
-                .setViewName(viewName)
-                .setYouTubeId((String) cp.getComponent().getMetadata().get("youTubeId").getValues().get(0))
-                .setHeadline(getMetadataFieldValue(cp, "headline"))
-                .build();
-    }
-
-    private String getFieldValue(ComponentPresentation cp, String fieldName) {
-        final GenericComponent component = cp.getComponent();
-        if (component != null) {
-            final Map<String, Field> content = component.getContent();
-            if (content != null) {
-                final Field headlineField = content.get(fieldName);
-                if (headlineField != null) {
-                    final List<Object> values = headlineField.getValues();
-                    if (values != null && values.size() > 0) {
-                        final Object value = values.get(0);
-                        if (value instanceof String) {
-                            return (String) value;
-                        }
-                    }
-                }
+            final Class<? extends Entity> entityType = viewModelRegistry.getEntityViewModelType(viewName);
+            if (entityType == null) {
+                throw new ContentProviderException("Cannot determine entity type for view name: " + viewName);
             }
+
+            final Entity entity;
+            try {
+                LOG.debug("Creating entity of type: {}", entityType.getName());
+                entity = entityType.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new ContentProviderException("Error while creating instance of entity of type: " +
+                        entityType.getName(), e);
+            }
+
+            // TODO: Fill entity fields via reflection (mapping from XML to entity fields)
+
+            ((EntityBase) entity).setId(cp.getComponent().getId());
+            ((EntityBase) entity).setViewName(ENTITY_VIEW_PREFIX + viewName);
+
+            return entity;
         }
 
         return null;
     }
 
-    private String getMetadataFieldValue(ComponentPresentation cp, String fieldName) {
-        final GenericComponent component = cp.getComponent();
-        if (component != null) {
-            final Map<String, Field> metadata = component.getMetadata();
-            if (metadata != null) {
-                final Field headlineField = metadata.get(fieldName);
-                if (headlineField != null) {
-                    final List<Object> values = headlineField.getValues();
-                    if (values != null && values.size() > 0) {
-                        final Object value = values.get(0);
-                        if (value instanceof String) {
-                            return (String) value;
-                        }
-                    }
+    private String getPageViewName(GenericPage genericPage) {
+        final PageTemplate pageTemplate = genericPage.getPageTemplate();
+        if (pageTemplate != null) {
+            return getFieldStringValue(pageTemplate.getMetadata(), "view");
+        }
+
+        return null;
+    }
+
+    private String getFieldStringValue(Map<String, Field> fields, String name) {
+        if (fields != null) {
+            final Field field = fields.get(name);
+            if (field != null) {
+                final List<Object> values = field.getValues();
+                if (values != null && !values.isEmpty()) {
+                    return (String) values.get(0);
                 }
             }
         }

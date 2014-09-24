@@ -9,6 +9,7 @@ import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
 import com.sdl.tridion.referenceimpl.common.model.entity.EntityBase;
+import com.sdl.tridion.referenceimpl.common.model.entity.MediaItem;
 import com.sdl.tridion.referenceimpl.common.model.page.PageImpl;
 import com.sdl.tridion.referenceimpl.common.model.region.RegionImpl;
 import org.dd4t.contentmodel.*;
@@ -86,18 +87,18 @@ public final class DD4TContentProvider implements ContentProvider {
 
             final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
             if (templateMeta != null) {
-                final String regionViewName = getFieldStringValue(templateMeta, "regionView");
-                if (!Strings.isNullOrEmpty(regionViewName)) {
-                    RegionImpl region = regions.get(regionViewName);
+                final String regionName = getFieldStringValue(templateMeta, "regionView");
+                if (!Strings.isNullOrEmpty(regionName)) {
+                    RegionImpl region = regions.get(regionName);
                     if (region == null) {
-                        LOG.debug("Creating region: {}", regionViewName);
+                        LOG.debug("Creating region: {}", regionName);
                         region = new RegionImpl();
 
-                        region.setName(regionViewName);
+                        region.setName(regionName);
                         region.setModule("core");
-                        region.setViewName(REGION_VIEW_PREFIX + regionViewName);
+                        region.setViewName(REGION_VIEW_PREFIX + regionName);
 
-                        regions.put(regionViewName, region);
+                        regions.put(regionName, region);
                     }
 
                     region.getEntities().add(entity);
@@ -117,20 +118,22 @@ public final class DD4TContentProvider implements ContentProvider {
     }
 
     private Entity createEntity(ComponentPresentation cp) throws ContentProviderException {
+        final GenericComponent component = cp.getComponent();
+
         final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
         if (templateMeta != null) {
             final String viewName = getFieldStringValue(templateMeta, "view");
-            LOG.debug("View for component {}: {} ", cp.getComponent().getId(), viewName);
+            LOG.debug("View for component {}: {} ", component.getId(), viewName);
 
             final Class<? extends Entity> entityType = viewModelRegistry.getEntityViewModelType(viewName);
             if (entityType == null) {
                 throw new ContentProviderException("Cannot determine entity type for view name: " + viewName);
             }
 
-            final Entity entity;
+            final EntityBase entity;
             try {
                 LOG.debug("Creating entity of type: {}", entityType.getName());
-                entity = entityType.newInstance();
+                entity = (EntityBase) entityType.newInstance();
             } catch (InstantiationException | IllegalAccessException e) {
                 throw new ContentProviderException("Error while creating instance of entity of type: " +
                         entityType.getName(), e);
@@ -145,8 +148,19 @@ public final class DD4TContentProvider implements ContentProvider {
                 }
             });
 
-            ((EntityBase) entity).setId(cp.getComponent().getId());
-            ((EntityBase) entity).setViewName(ENTITY_VIEW_PREFIX + viewName);
+            String entityId = component.getId().split("-")[1];
+            entity.setId(entityId);
+
+            final Multimedia multimedia = component.getMultimedia();
+            if (entity instanceof MediaItem && multimedia != null && multimedia.getUrl() != null) {
+                MediaItem mediaItem = (MediaItem) entity;
+                mediaItem.setUrl(multimedia.getUrl());
+                mediaItem.setFileName(multimedia.getFileName());
+                mediaItem.setFileSize(multimedia.getSize());
+                mediaItem.setMimeType(multimedia.getMimeType());
+            }
+
+            entity.setViewName(ENTITY_VIEW_PREFIX + viewName);
 
             return entity;
         }

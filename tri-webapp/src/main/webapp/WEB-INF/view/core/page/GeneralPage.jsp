@@ -48,9 +48,9 @@
         <div class="col-sm-12 col-md-<%= mainContainerSize %>">
             <%
                 for (Region region : pageModel.getRegions().values()) {
-                    String viewName = region.getViewName();
-                    if (!viewName.equals("Hero") && !viewName.equals("Left")) {
-                        request.setAttribute(JspBeanNames.REGION_MODEL, pageModel.getRegions().get(viewName));
+                    String regionName = region.getName();
+                    if (!regionName.equals("Hero") && !regionName.equals("Left")) {
+                        request.setAttribute(JspBeanNames.REGION_MODEL, pageModel.getRegions().get(regionName));
                         pageContext.include("/region");
                     }
                 }

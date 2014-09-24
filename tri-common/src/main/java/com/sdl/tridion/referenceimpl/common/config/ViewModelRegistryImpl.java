@@ -7,6 +7,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+/**
+ * Implementation of {@code ViewModelRegistry}.
+ */
 @Component
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 

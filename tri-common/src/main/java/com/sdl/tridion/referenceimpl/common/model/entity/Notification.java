@@ -1,5 +1,9 @@
 package com.sdl.tridion.referenceimpl.common.model.entity;
 
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticEntity;
+import com.sdl.tridion.referenceimpl.common.model.Entity;
+
+@SemanticEntity(entityName = "NotificationBar", vocab = Entity.CORE_VOCABULARY, prefix = "nb")
 public class Notification extends EntityBase {
 
     private String headline;

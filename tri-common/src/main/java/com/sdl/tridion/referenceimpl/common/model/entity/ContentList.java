@@ -1,18 +1,32 @@
 package com.sdl.tridion.referenceimpl.common.model.entity;
 
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticEntity;
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@SemanticEntity(entityName = "ItemList", vocab = "http://schema.org", prefix = "s", pub = true)
 public class ContentList<T> extends EntityBase {
 
+    @SemanticProperty("s:headline")
     private String headline;
+
     private Link link;
+
     private int pageSize;
+
     private Tag contentType;
+
     private Tag sort;
+
     private int start;
+
     private int currentPage = 1;
+
     private boolean hasMore;
+
+    @SemanticProperty("s:itemListElement")
     private List<T> itemListElements = new ArrayList<>();
 
     public String getHeadline() {

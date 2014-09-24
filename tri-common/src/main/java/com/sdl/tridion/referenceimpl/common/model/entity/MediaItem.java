@@ -1,10 +1,19 @@
 package com.sdl.tridion.referenceimpl.common.model.entity;
 
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticEntity;
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticProperty;
+
+@SemanticEntity(entityName = "MediaObject", vocab = "http://schema.org", prefix = "s", pub = true)
 public abstract class MediaItem extends EntityBase {
 
+    @SemanticProperty("s:contentUrl")
     private String url;
+
     private String fileName;
+
+    @SemanticProperty("s:contentSize")
     private int fileSize;
+
     private String mimeType;
 
     public String getUrl() {

@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.ReflectionUtils;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +26,7 @@ import java.util.Map;
 
 /**
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
- * <p/>
+ *
  * TODO: Currently this is a quick-and-dirty implementation. Will be implemented for real in a future sprint.
  */
 @Component
@@ -89,8 +90,11 @@ public final class DD4TContentProvider implements ContentProvider {
                 if (!Strings.isNullOrEmpty(regionViewName)) {
                     RegionImpl region = regions.get(regionViewName);
                     if (region == null) {
-                        LOG.debug("Creating new RegionImpl: {}", regionViewName);
+                        LOG.debug("Creating region: {}", regionViewName);
                         region = new RegionImpl();
+
+                        region.setName(regionViewName);
+                        region.setModule("core");
                         region.setViewName(REGION_VIEW_PREFIX + regionViewName);
 
                         regions.put(regionViewName, region);
@@ -107,9 +111,6 @@ public final class DD4TContentProvider implements ContentProvider {
 
         page.setEntities(entities);
 
-        // TODO: Page data
-        page.setPageData(new HashMap<String, String>());
-
         page.setViewName(PAGE_VIEW_PREFIX + getPageViewName(genericPage));
 
         return page;
@@ -119,7 +120,7 @@ public final class DD4TContentProvider implements ContentProvider {
         final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
         if (templateMeta != null) {
             final String viewName = getFieldStringValue(templateMeta, "view");
-            LOG.debug("viewName={}", viewName);
+            LOG.debug("View for component {}: {} ", cp.getComponent().getId(), viewName);
 
             final Class<? extends Entity> entityType = viewModelRegistry.getEntityViewModelType(viewName);
             if (entityType == null) {
@@ -136,6 +137,13 @@ public final class DD4TContentProvider implements ContentProvider {
             }
 
             // TODO: Fill entity fields via reflection (mapping from XML to entity fields)
+
+            ReflectionUtils.doWithFields(entityType, new ReflectionUtils.FieldCallback() {
+                @Override
+                public void doWith(java.lang.reflect.Field field) throws IllegalArgumentException, IllegalAccessException {
+                    LOG.debug("field={}", field.getName());
+                }
+            });
 
             ((EntityBase) entity).setId(cp.getComponent().getId());
             ((EntityBase) entity).setViewName(ENTITY_VIEW_PREFIX + viewName);

@@ -3,7 +3,7 @@ package com.sdl.tridion.referenceimpl.common.model.entity;
 import com.sdl.tridion.referenceimpl.common.mapping.SemanticProperties;
 import com.sdl.tridion.referenceimpl.common.mapping.SemanticProperty;
 
-public class Link extends EntityBase {
+public class TagLink extends EntityBase {
 
     @SemanticProperties({
             @SemanticProperty("internalLink"),
@@ -11,9 +11,7 @@ public class Link extends EntityBase {
     })
     private String url;
 
-    private String linkText;
-
-    private String alternateText;
+    private Tag tag;
 
     public String getUrl() {
         return url;
@@ -23,19 +21,11 @@ public class Link extends EntityBase {
         this.url = url;
     }
 
-    public String getLinkText() {
-        return linkText;
+    public Tag getTag() {
+        return tag;
     }
 
-    public void setLinkText(String linkText) {
-        this.linkText = linkText;
-    }
-
-    public String getAlternateText() {
-        return alternateText;
-    }
-
-    public void setAlternateText(String alternateText) {
-        this.alternateText = alternateText;
+    public void setTag(Tag tag) {
+        this.tag = tag;
     }
 }

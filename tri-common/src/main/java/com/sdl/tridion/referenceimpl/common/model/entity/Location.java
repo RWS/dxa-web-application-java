@@ -1,9 +1,17 @@
 package com.sdl.tridion.referenceimpl.common.model.entity;
 
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticEntity;
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticProperty;
+
+@SemanticEntity(entityName = "GeoCoordinates", vocab = "http://schema.org", prefix = "s", pub = true)
 public class Location extends EntityBase {
 
+    @SemanticProperty("s:longitude")
     private double longitude;
+
+    @SemanticProperty("s:latitude")
     private double latitude;
+
     private String query;
 
     public double getLongitude() {

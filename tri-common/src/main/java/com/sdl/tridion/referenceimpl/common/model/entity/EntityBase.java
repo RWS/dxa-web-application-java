@@ -1,14 +1,22 @@
 package com.sdl.tridion.referenceimpl.common.model.entity;
 
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticProperty;
 import com.sdl.tridion.referenceimpl.common.model.Entity;
 
 import java.util.Map;
 
 public abstract class EntityBase implements Entity {
 
+    @SemanticProperty(ignoreMapping = true)
     private String id;
+
+    @SemanticProperty(ignoreMapping = true)
     private Map<String, String> propertyData;
+
+    @SemanticProperty(ignoreMapping = true)
     private Map<String, String> entityData;
+
+    @SemanticProperty(ignoreMapping = true)
     private String viewName;
 
     @Override

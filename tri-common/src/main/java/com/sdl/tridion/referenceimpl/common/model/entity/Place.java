@@ -1,13 +1,30 @@
 package com.sdl.tridion.referenceimpl.common.model.entity;
 
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticEntity;
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticProperty;
+
+@SemanticEntity(entityName = "Place", vocab = "http://schema.org", prefix = "s", pub = true)
 public class Place extends EntityBase {
 
+    @SemanticProperty("s:name")
     private String name;
+
+    @SemanticProperty("s:image")
     private Image image;
+
+    @SemanticProperty("s:address")
     private String address;
+
+    @SemanticProperty("s:telephone")
     private String telephone;
+
+    @SemanticProperty("s:faxNumber")
     private String faxNumber;
+
+    @SemanticProperty("s:email")
     private String email;
+
+    @SemanticProperty("s:geo")
     private Location location;
 
     public String getName() {

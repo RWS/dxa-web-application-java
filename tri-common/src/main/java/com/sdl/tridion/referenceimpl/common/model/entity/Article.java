@@ -1,14 +1,27 @@
 package com.sdl.tridion.referenceimpl.common.model.entity;
 
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticEntity;
+import com.sdl.tridion.referenceimpl.common.mapping.SemanticProperty;
+
 import java.util.Date;
 import java.util.List;
 
+@SemanticEntity(entityName = "Article", vocab = "http://schema.org", prefix = "s", pub = true)
 public class Article extends EntityBase {
 
+    @SemanticProperty("s:headline")
     private String headline;
+
+    @SemanticProperty("s:image")
     private Image image;
+
+    @SemanticProperty("s:dateCreated")
     private Date date;
+
+    @SemanticProperty("s:about")
     private String description;
+
+    @SemanticProperty("s:articleBody")
     private List<Paragraph> articleBody;
 
     public String getHeadline() {

@@ -137,13 +137,8 @@ public final class DD4TContentProvider implements ContentProvider {
                 throw new ContentProviderException("Cannot determine entity type for view name: " + viewName);
             }
 
-            final EntityFactory entityFactory = entityFactoryRegistry.getFactoryFor(entityType);
-            if (entityFactory == null) {
-                throw new ContentProviderException("No factory available to create entity of type: " + entityType.getName());
-            }
-
             LOG.debug("{}: Creating entity of type: {}", componentId, entityType.getName());
-            EntityBase entity = (EntityBase) entityFactory.createEntity(cp, entityType);
+            EntityBase entity = (EntityBase) entityFactoryRegistry.getFactoryFor(entityType).createEntity(cp, entityType);
 
             entity.setId(componentId.split("-")[1]);
             entity.setViewName(ENTITY_VIEW_PREFIX + viewName);

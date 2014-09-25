@@ -4,7 +4,11 @@ import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
 import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.GenericComponent;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 @Component
 public class TeaserFactory implements EntityFactory {
@@ -19,7 +23,17 @@ public class TeaserFactory implements EntityFactory {
     @Override
     public Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityType)
             throws ContentProviderException {
-        // TODO
-        return new Teaser();
+        final Teaser teaser = new Teaser();
+
+        final GenericComponent component = componentPresentation.getComponent();
+        final Map<String, Field> content = component.getContent();
+
+        // TODO: link, headline, media, text, date, location
+
+        teaser.setHeadline(FieldUtil.getFieldStringValue(content, "name"));
+
+
+
+        return teaser;
     }
 }

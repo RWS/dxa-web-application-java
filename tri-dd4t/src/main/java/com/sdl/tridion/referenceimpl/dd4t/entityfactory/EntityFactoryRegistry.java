@@ -10,6 +10,7 @@ public interface EntityFactoryRegistry {
      *
      * @param entityType The entity type.
      * @return An {@code EntityFactory} for entities of the specified type.
+     * @throws UnsupportedEntityTypeException If there is no factory that can create entities of the specified type.
      */
-    EntityFactory getFactoryFor(Class<?> entityType);
+    EntityFactory getFactoryFor(Class<?> entityType) throws UnsupportedEntityTypeException;
 }

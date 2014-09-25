@@ -143,7 +143,7 @@ public final class DD4TContentProvider implements ContentProvider {
             }
 
             LOG.debug("{}: Creating entity of type: {}", componentId, entityType.getName());
-            EntityBase entity = (EntityBase) entityFactory.createEntity(cp);
+            EntityBase entity = (EntityBase) entityFactory.createEntity(cp, entityType);
 
             entity.setId(componentId.split("-")[1]);
             entity.setViewName(ENTITY_VIEW_PREFIX + viewName);

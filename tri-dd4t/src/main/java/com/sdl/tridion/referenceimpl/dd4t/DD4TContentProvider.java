@@ -9,9 +9,11 @@ import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
 import com.sdl.tridion.referenceimpl.common.model.entity.EntityBase;
-import com.sdl.tridion.referenceimpl.common.model.entity.MediaItem;
 import com.sdl.tridion.referenceimpl.common.model.page.PageImpl;
 import com.sdl.tridion.referenceimpl.common.model.region.RegionImpl;
+import com.sdl.tridion.referenceimpl.dd4t.entityfactory.EntityFactory;
+import com.sdl.tridion.referenceimpl.dd4t.entityfactory.EntityFactoryRegistry;
+import com.sdl.tridion.referenceimpl.dd4t.entityfactory.EntityFactoryRegistryImpl;
 import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.GenericPageFactory;
@@ -19,11 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.ReflectionUtils;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+
+import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getFieldStringValue;
 
 /**
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
@@ -46,6 +48,9 @@ public final class DD4TContentProvider implements ContentProvider {
 
     @Autowired
     private ViewModelRegistry viewModelRegistry;
+
+    @Autowired
+    private EntityFactoryRegistry entityFactoryRegistry;
 
     @Override
     public Page getPage(String url) throws ContentProviderException {
@@ -122,44 +127,25 @@ public final class DD4TContentProvider implements ContentProvider {
 
         final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
         if (templateMeta != null) {
+            final String componentId = component.getId();
+
             final String viewName = getFieldStringValue(templateMeta, "view");
-            LOG.debug("View for component {}: {} ", component.getId(), viewName);
+            LOG.debug("{}: viewName: {}", componentId, viewName);
 
             final Class<? extends Entity> entityType = viewModelRegistry.getEntityViewModelType(viewName);
             if (entityType == null) {
                 throw new ContentProviderException("Cannot determine entity type for view name: " + viewName);
             }
 
-            final EntityBase entity;
-            try {
-                LOG.debug("Creating entity of type: {}", entityType.getName());
-                entity = (EntityBase) entityType.newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
-                throw new ContentProviderException("Error while creating instance of entity of type: " +
-                        entityType.getName(), e);
+            final EntityFactory entityFactory = entityFactoryRegistry.getFactoryFor(entityType);
+            if (entityFactory == null) {
+                throw new ContentProviderException("No factory available to create entity of type: " + entityType.getName());
             }
 
-            // TODO: Fill entity fields via reflection (mapping from XML to entity fields)
+            LOG.debug("{}: Creating entity of type: {}", componentId, entityType.getName());
+            EntityBase entity = (EntityBase) entityFactory.createEntity(cp);
 
-            ReflectionUtils.doWithFields(entityType, new ReflectionUtils.FieldCallback() {
-                @Override
-                public void doWith(java.lang.reflect.Field field) throws IllegalArgumentException, IllegalAccessException {
-                    LOG.debug("field={}", field.getName());
-                }
-            });
-
-            String entityId = component.getId().split("-")[1];
-            entity.setId(entityId);
-
-            final Multimedia multimedia = component.getMultimedia();
-            if (entity instanceof MediaItem && multimedia != null && multimedia.getUrl() != null) {
-                MediaItem mediaItem = (MediaItem) entity;
-                mediaItem.setUrl(multimedia.getUrl());
-                mediaItem.setFileName(multimedia.getFileName());
-                mediaItem.setFileSize(multimedia.getSize());
-                mediaItem.setMimeType(multimedia.getMimeType());
-            }
-
+            entity.setId(componentId.split("-")[1]);
             entity.setViewName(ENTITY_VIEW_PREFIX + viewName);
 
             return entity;
@@ -172,20 +158,6 @@ public final class DD4TContentProvider implements ContentProvider {
         final PageTemplate pageTemplate = genericPage.getPageTemplate();
         if (pageTemplate != null) {
             return getFieldStringValue(pageTemplate.getMetadata(), "view");
-        }
-
-        return null;
-    }
-
-    private String getFieldStringValue(Map<String, Field> fields, String name) {
-        if (fields != null) {
-            final Field field = fields.get(name);
-            if (field != null) {
-                final List<Object> values = field.getValues();
-                if (values != null && !values.isEmpty()) {
-                    return (String) values.get(0);
-                }
-            }
         }
 
         return null;

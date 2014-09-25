@@ -2,10 +2,13 @@ package com.sdl.tridion.referenceimpl.common.model.entity;
 
 public class YouTubeVideo extends MediaItem {
 
+    private static final int DEFAULT_WIDTH = 640;
+    private static final int DEFAULT_HEIGHT = 390;
+
     private String headline;
     private String youTubeId;
-    private int width;
-    private int height;
+    private int width = DEFAULT_WIDTH;
+    private int height = DEFAULT_HEIGHT;
 
     public String getHeadline() {
         return headline;

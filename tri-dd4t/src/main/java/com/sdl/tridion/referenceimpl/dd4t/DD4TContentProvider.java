@@ -11,9 +11,7 @@ import com.sdl.tridion.referenceimpl.common.model.Region;
 import com.sdl.tridion.referenceimpl.common.model.entity.EntityBase;
 import com.sdl.tridion.referenceimpl.common.model.page.PageImpl;
 import com.sdl.tridion.referenceimpl.common.model.region.RegionImpl;
-import com.sdl.tridion.referenceimpl.dd4t.entityfactory.EntityFactory;
 import com.sdl.tridion.referenceimpl.dd4t.entityfactory.EntityFactoryRegistry;
-import com.sdl.tridion.referenceimpl.dd4t.entityfactory.EntityFactoryRegistryImpl;
 import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.GenericPageFactory;
@@ -25,7 +23,7 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getFieldStringValue;
+import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getStringValue;
 
 /**
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
@@ -92,7 +90,7 @@ public final class DD4TContentProvider implements ContentProvider {
 
             final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
             if (templateMeta != null) {
-                final String regionName = getFieldStringValue(templateMeta, "regionView");
+                final String regionName = getStringValue(templateMeta, "regionView");
                 if (!Strings.isNullOrEmpty(regionName)) {
                     RegionImpl region = regions.get(regionName);
                     if (region == null) {
@@ -129,7 +127,7 @@ public final class DD4TContentProvider implements ContentProvider {
         if (templateMeta != null) {
             final String componentId = component.getId();
 
-            final String viewName = getFieldStringValue(templateMeta, "view");
+            final String viewName = getStringValue(templateMeta, "view");
             LOG.debug("{}: viewName: {}", componentId, viewName);
 
             final Class<? extends Entity> entityType = viewModelRegistry.getEntityViewModelType(viewName);
@@ -152,7 +150,7 @@ public final class DD4TContentProvider implements ContentProvider {
     private String getPageViewName(GenericPage genericPage) {
         final PageTemplate pageTemplate = genericPage.getPageTemplate();
         if (pageTemplate != null) {
-            return getFieldStringValue(pageTemplate.getMetadata(), "view");
+            return getStringValue(pageTemplate.getMetadata(), "view");
         }
 
         return null;

@@ -10,6 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getStringValue;
+
 @Component
 public class TeaserFactory implements EntityFactory {
 
@@ -30,7 +32,7 @@ public class TeaserFactory implements EntityFactory {
 
         // TODO: link, headline, media, text, date, location
 
-        teaser.setHeadline(FieldUtil.getFieldStringValue(content, "name"));
+        teaser.setHeadline(getStringValue(content, "name"));
 
 
 

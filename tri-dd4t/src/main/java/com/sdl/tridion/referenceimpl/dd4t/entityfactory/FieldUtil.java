@@ -1,49 +1,62 @@
 package com.sdl.tridion.referenceimpl.dd4t.entityfactory;
 
 import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.FieldSet;
+import org.dd4t.contentmodel.impl.EmbeddedField;
 import org.dd4t.contentmodel.impl.NumericField;
 import org.dd4t.contentmodel.impl.TextField;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import static org.dd4t.contentmodel.Field.FieldType;
 
 public final class FieldUtil {
 
     private FieldUtil() {
     }
 
-    public static String getFieldStringValue(Map<String, Field> fields, String name) {
+    public static List<String> getStringValues(Map<String, Field> fields, String name) {
         if (fields != null) {
             final Field field = fields.get(name);
-            if (field != null && field.getFieldType() == FieldType.Text) {
-                final List<String> values = ((TextField) field).getTextValues();
-                if (values != null && !values.isEmpty()) {
-                    return values.get(0);
-                }
+            if (field != null && field instanceof TextField) {
+                return ((TextField) field).getTextValues();
             }
         }
-
-        return null;
+        return Collections.emptyList();
     }
 
-    public static Integer getFieldIntegerValue(Map<String, Field> fields, String name) {
+    public static String getStringValue(Map<String, Field> fields, String name) {
+        List<String> values = getStringValues(fields, name);
+        return values != null && !values.isEmpty() ? values.get(0) : null;
+    }
+
+    public static List<Double> getNumericValues(Map<String, Field> fields, String name) {
         if (fields != null) {
             final Field field = fields.get(name);
-            if (field != null && field.getFieldType() == FieldType.Number) {
-                final List<Double> values = ((NumericField) field).getNumericValues();
-                if (values != null && !values.isEmpty()) {
-                    return values.get(0).intValue();
-                }
+            if (field != null && field instanceof NumericField) {
+                return ((NumericField) field).getNumericValues();
             }
         }
-
-        return null;
+        return Collections.emptyList();
     }
 
-    public static int getFieldIntValue(Map<String, Field> fields, String name, int defaultValue) {
-        final Integer value = getFieldIntegerValue(fields, name);
-        return value != null ? value : defaultValue;
+    public static Double getNumericValue(Map<String, Field> fields, String name) {
+        List<Double> values = getNumericValues(fields, name);
+        return values != null && !values.isEmpty() ? values.get(0) : null;
+    }
+
+    public static int getIntValue(Map<String, Field> fields, String name, int defaultValue) {
+        final Double value = getNumericValue(fields, name);
+        return value != null ? value.intValue() : defaultValue;
+    }
+
+    public static List<FieldSet> getEmbeddedValues(Map<String, Field> fields, String name) {
+        if (fields != null) {
+            final Field field = fields.get(name);
+            if (field != null && field instanceof EmbeddedField) {
+                return ((EmbeddedField) field).getEmbeddedValues();
+            }
+        }
+        return Collections.emptyList();
     }
 }

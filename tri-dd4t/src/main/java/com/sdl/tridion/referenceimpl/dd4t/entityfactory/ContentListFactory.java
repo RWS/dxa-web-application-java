@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getFieldIntValue;
-import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getFieldStringValue;
+import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getIntValue;
+import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getStringValue;
 
 @Component
 public class ContentListFactory implements EntityFactory {
@@ -32,10 +32,10 @@ public class ContentListFactory implements EntityFactory {
         final Map<String, Field> content = component.getContent();
         final Map<String, Field> metadata = component.getMetadata();
 
-        contentList.setHeadline(getFieldStringValue(content, "headline"));
+        contentList.setHeadline(getStringValue(content, "headline"));
         // TODO: link, pageSize, contentType, sort, start, currentPage, hasMore, itemListElements
 
-        contentList.setPageSize(getFieldIntValue(metadata, "pageSize", 0));
+        contentList.setPageSize(getIntValue(metadata, "pageSize", 0));
 
         return contentList;
     }

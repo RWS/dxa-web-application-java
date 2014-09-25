@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getFieldStringValue;
+import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getStringValue;
 
 @Component
 public class YouTubeVideoFactory extends MediaItemFactory {
@@ -30,8 +30,8 @@ public class YouTubeVideoFactory extends MediaItemFactory {
         final GenericComponent component = componentPresentation.getComponent();
         final Map<String, Field> componentMetadata = component.getMetadata();
 
-        youTubeVideo.setHeadline(getFieldStringValue(componentMetadata, "headline"));
-        youTubeVideo.setYouTubeId(getFieldStringValue(componentMetadata, "youTubeId"));
+        youTubeVideo.setHeadline(getStringValue(componentMetadata, "headline"));
+        youTubeVideo.setYouTubeId(getStringValue(componentMetadata, "youTubeId"));
 
         return createBaseEntity(componentPresentation, youTubeVideo);
     }

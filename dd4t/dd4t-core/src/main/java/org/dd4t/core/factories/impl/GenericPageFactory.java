@@ -15,9 +15,9 @@
  */
 package org.dd4t.core.factories.impl;
 
-import java.io.IOException;
-import java.text.ParseException;
-
+import com.tridion.broker.StorageException;
+import com.tridion.storage.PageMeta;
+import com.tridion.util.TCMURI;
 import org.dd4t.contentmodel.GenericPage;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.contentmodel.exceptions.NotAuthenticatedException;
@@ -34,9 +34,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
 
-import com.tridion.broker.StorageException;
-import com.tridion.storage.PageMeta;
-import com.tridion.util.TCMURI;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.text.ParseException;
+import java.util.UUID;
 
 public class GenericPageFactory extends BaseFactory implements PageFactory {
 
@@ -306,7 +309,13 @@ public class GenericPageFactory extends BaseFactory implements PageFactory {
 	 */
 	private GenericPage getPageFromMeta(PageMeta pageMeta) throws StorageException, IOException, ItemNotFoundException{
 		String source = getPageProvider().getPageXMLByMeta(pageMeta);
-		
+
+        final File dir = new File("D:\\Temp\\pages");
+        if (dir.exists()) {
+            Files.copy(new ByteArrayInputStream(source.getBytes("UTF-8")),
+                    new File(dir, UUID.randomUUID().toString() + ".xml").toPath());
+        }
+
 		if(source == null)
 			throw new ItemNotFoundException("Unable find source for given page");
 		

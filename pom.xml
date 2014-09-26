@@ -15,8 +15,8 @@
         <module>dd4t/dd4t-core</module>
         <module>dd4t/dd4t-providers</module>
         <module>tri-common</module>
-        <module>tri-webapp</module>
         <module>tri-dd4t</module>
+        <module>tri-webapp</module>
     </modules>
 
     <properties>
@@ -291,6 +291,14 @@
                 <configuration>
                     <source>${java-version}</source>
                     <target>${java-version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
         </plugins>

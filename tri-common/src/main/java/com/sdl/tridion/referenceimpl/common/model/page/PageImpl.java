@@ -10,6 +10,8 @@ import java.util.Map;
 public class PageImpl implements Page {
 
     private String id;
+    private String title;
+    private Map<String, Page> includes = new HashMap<>();
     private Map<String, Region> regions = new HashMap<>();
     private Map<String, Entity> entities = new HashMap<>();
     private Map<String, String> pageData = new HashMap<>();
@@ -22,6 +24,24 @@ public class PageImpl implements Page {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    @Override
+    public Map<String, Page> getIncludes() {
+        return includes;
+    }
+
+    public void setIncludes(Map<String, Page> includes) {
+        this.includes = includes;
     }
 
     @Override

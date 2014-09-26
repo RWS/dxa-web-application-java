@@ -66,6 +66,11 @@ public final class DD4TContentProvider implements ContentProvider {
         PageImpl page = new PageImpl();
 
         page.setId(genericPage.getId());
+        page.setTitle(genericPage.getTitle());
+
+        // TODO: Replace these dummy includes with real code
+        page.getIncludes().put("Header", new PageImpl());
+        page.getIncludes().put("Footer", new PageImpl());
 
         Map<String, RegionImpl> regions = new HashMap<>();
         Map<String, Entity> entities = new HashMap<>();

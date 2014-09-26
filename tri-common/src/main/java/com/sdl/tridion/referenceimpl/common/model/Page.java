@@ -6,6 +6,10 @@ public interface Page extends ViewModel {
 
     String getId();
 
+    String getTitle();
+
+    Map<String, Page> getIncludes();
+
     Map<String, Region> getRegions();
 
     Map<String, Entity> getEntities();

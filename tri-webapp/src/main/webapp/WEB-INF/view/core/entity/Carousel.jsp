@@ -37,7 +37,8 @@
                 final MediaItem media = teaser.getMedia();
                 if (media != null) {
                     out.write("<span>");
-                    // TODO
+                    // TODO: See HtmlHelperExtensions.Media (C# version)
+                    out.write("<img src=\"" + media.getUrl() + "\" width=\"100%\" data-aspect=\"3.3\">");
                     out.write("</span>");
                 }
 

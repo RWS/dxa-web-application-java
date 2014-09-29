@@ -2,20 +2,17 @@ package com.sdl.tridion.referenceimpl.dd4t.entityfactory;
 
 import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.model.Entity;
+import com.sdl.tridion.referenceimpl.common.model.entity.Image;
 import com.sdl.tridion.referenceimpl.common.model.entity.ItemList;
 import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
-import org.dd4t.contentmodel.ComponentPresentation;
-import org.dd4t.contentmodel.Field;
-import org.dd4t.contentmodel.FieldSet;
-import org.dd4t.contentmodel.GenericComponent;
+import org.dd4t.contentmodel.*;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getEmbeddedValues;
-import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getStringValue;
+import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.*;
 
 @Component
 public class ItemListFactory implements EntityFactory {
@@ -53,6 +50,18 @@ public class ItemListFactory implements EntityFactory {
 
         teaser.setHeadline(getStringValue(content, "subheading"));
         teaser.setText(getStringValue(content, "content"));
+
+        final GenericComponent linkedComponent = getComponentValue(content, "media");
+        final Multimedia multimedia = linkedComponent.getMultimedia();
+        if (multimedia != null) {
+            final Image image = new Image();
+            image.setUrl(multimedia.getUrl());
+            image.setFileName(multimedia.getFileName());
+            image.setFileSize(multimedia.getSize());
+            image.setMimeType(multimedia.getMimeType());
+
+            teaser.setMedia(image);
+        }
 
         // TODO: more fields
 

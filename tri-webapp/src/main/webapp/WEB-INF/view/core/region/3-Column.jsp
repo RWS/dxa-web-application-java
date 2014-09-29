@@ -4,15 +4,14 @@
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
 <jsp:useBean id="regionModel" type="com.sdl.tridion.referenceimpl.common.model.Region" scope="request"/>
-<%
-    int cols = 3; // TODO: 2 or 3 depending on screen width
-%>
 <div typeof="Region" resource="<%= regionModel.getViewName() %>">
 <%
     int entityCount = regionModel.getEntities().size();
-    int rowCount = (int) Math.ceil(entityCount / (double) cols);
 
-    for (int i = 0; i < rowCount; i++) {
+    int cols = 3; // TODO: 2 or 3 depending on screen width
+    int rows = (int) Math.ceil(entityCount / (double) cols);
+
+    for (int i = 0; i < rows; i++) {
         %><div class="row"><%
             for (int j = 0; j < cols && (cols * i + j < entityCount); j++) {
                 String entityId = regionModel.getEntities().get(cols * i + j).getId();

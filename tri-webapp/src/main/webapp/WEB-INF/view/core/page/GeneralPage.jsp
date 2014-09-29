@@ -29,7 +29,7 @@
     <div class="container-fluid page-border">
         <tri:region name="Hero"/>
         <div class="row">
-            <div class="col-sm-12 col-md-3"><tri:region name="Left"/></div>
+            <% if (hasLeftBar) { %><div class="col-sm-12 col-md-3"><tri:region name="Left"/></div><% } %>
             <div class="col-sm-12 col-md-<%= mainContainerSize %>"><tri:regions exclude="Hero,Left"/></div>
         </div>
     </div>

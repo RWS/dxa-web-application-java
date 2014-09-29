@@ -8,7 +8,6 @@
 <!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->
 <!--[if IE 8]><html class="no-js lt-ie9"><![endif]-->
 <!--[if gt IE 8]><!--><html class="no-js"><!--<![endif]-->
-<html>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -33,6 +32,7 @@
             <div class="col-sm-12 col-md-3"><tri:region name="Left"/></div>
             <div class="col-sm-12 col-md-<%= mainContainerSize %>"><tri:regions exclude="Hero,Left"/></div>
         </div>
+    </div>
 </main>
 <%@include file="../../shared/Footer.jsp" %>
 <script src="system/assets/scripts/main.js"></script>

@@ -30,10 +30,10 @@ public class PageController {
         final String url = getPageUrl(request);
         LOG.debug("handleGetPage: url={}", url);
 
-        final Page page = getPage(url);
+        final Page page = getPageFromContentProvider(url);
         LOG.debug("handleGetPage: page={}", page);
 
-        request.setAttribute(JspBeanNames.PAGE_MODEL, page);
+        request.setAttribute(ViewAttributeNames.PAGE_MODEL, page);
 
         return page.getViewName();
     }
@@ -51,7 +51,7 @@ public class PageController {
         return url;
     }
 
-    private Page getPage(String url) {
+    private Page getPageFromContentProvider(String url) {
         try {
             return contentProvider.getPage(url);
         } catch (PageNotFoundException e) {

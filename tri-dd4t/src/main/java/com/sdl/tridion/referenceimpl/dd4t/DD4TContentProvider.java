@@ -80,7 +80,8 @@ public final class DD4TContentProvider implements ContentProvider {
             final String componentId = component.getId();
             LOG.debug("componentId={}", componentId);
 
-            Entity entity = entities.get(componentId);
+            String entityId = getEntityIdFromComponentId(componentId);
+            Entity entity = entities.get(entityId);
             if (entity == null) {
                 entity = createEntity(cp);
                 if (entity == null) {
@@ -88,9 +89,9 @@ public final class DD4TContentProvider implements ContentProvider {
                     continue;
                 }
 
-                entities.put(componentId, entity);
+                entities.put(entityId, entity);
             } else {
-                LOG.warn("Duplicate entity found: {}", componentId);
+                LOG.warn("Duplicate entity found: {}", entityId);
             }
 
             final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
@@ -125,6 +126,10 @@ public final class DD4TContentProvider implements ContentProvider {
         return page;
     }
 
+    private String getEntityIdFromComponentId(String componentId) {
+        return componentId.split("-")[1];
+    }
+
     private Entity createEntity(ComponentPresentation cp) throws ContentProviderException {
         final GenericComponent component = cp.getComponent();
 
@@ -143,7 +148,7 @@ public final class DD4TContentProvider implements ContentProvider {
             LOG.debug("{}: Creating entity of type: {}", componentId, entityType.getName());
             EntityBase entity = (EntityBase) entityFactoryRegistry.getFactoryFor(entityType).createEntity(cp, entityType);
 
-            entity.setId(componentId.split("-")[1]);
+            entity.setId(getEntityIdFromComponentId(componentId));
             entity.setViewName(ENTITY_VIEW_PREFIX + viewName);
 
             return entity;

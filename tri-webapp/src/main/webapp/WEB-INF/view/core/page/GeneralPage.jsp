@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.sdl.tridion.referenceimpl.common.model.Region" %>
-<%@ page import="com.sdl.tridion.referenceimpl.controller.core.JspBeanNames" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
@@ -30,8 +29,7 @@
             int mainContainerSize = hasLeftBar ? 9 : 12;
 
             if (pageModel.getRegions().containsKey("Hero")) {
-                request.setAttribute(JspBeanNames.REGION_MODEL, pageModel.getRegions().get("Hero"));
-                pageContext.include("/region");
+                pageContext.include("/region/Hero");
             }
         %>
     <div class="row">
@@ -39,8 +37,7 @@
             if (hasLeftBar) {
                 %><div class="col-sm-12 col-md-3"><%
                     if (pageModel.getRegions().containsKey("Left")) {
-                        request.setAttribute(JspBeanNames.REGION_MODEL, pageModel.getRegions().get("Left"));
-                        pageContext.include("/region");
+                        pageContext.include("/region/Left");
                     }
                 %></div><%
             }
@@ -50,8 +47,7 @@
                 for (Region region : pageModel.getRegions().values()) {
                     String regionName = region.getName();
                     if (!regionName.equals("Hero") && !regionName.equals("Left")) {
-                        request.setAttribute(JspBeanNames.REGION_MODEL, pageModel.getRegions().get(regionName));
-                        pageContext.include("/region");
+                        pageContext.include("/region/" + regionName);
                     }
                 }
             %>

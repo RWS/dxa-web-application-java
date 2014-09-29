@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="com.sdl.tridion.referenceimpl.common.model.Region" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
 <!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
 <!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->
@@ -21,40 +21,20 @@
     <![endif]-->
 </head>
 <body>
-<%@include file="../../shared/Header.jsp"%>
+<%@include file="../../shared/Header.jsp" %>
+<%
+    boolean hasLeftBar = pageModel.getRegions().containsKey("Left");
+    int mainContainerSize = hasLeftBar ? 9 : 12;
+%>
 <main class="page-row page-row-expanded" role="main">
     <div class="container-fluid page-border">
-        <%
-            boolean hasLeftBar = pageModel.getRegions().containsKey("Left");
-            int mainContainerSize = hasLeftBar ? 9 : 12;
-
-            if (pageModel.getRegions().containsKey("Hero")) {
-                pageContext.include("/region/Hero");
-            }
-        %>
-    <div class="row">
-        <%
-            if (hasLeftBar) {
-                %><div class="col-sm-12 col-md-3"><%
-                    if (pageModel.getRegions().containsKey("Left")) {
-                        pageContext.include("/region/Left");
-                    }
-                %></div><%
-            }
-        %>
-        <div class="col-sm-12 col-md-<%= mainContainerSize %>">
-            <%
-                for (Region region : pageModel.getRegions().values()) {
-                    String regionName = region.getName();
-                    if (!regionName.equals("Hero") && !regionName.equals("Left")) {
-                        pageContext.include("/region/" + regionName);
-                    }
-                }
-            %>
+        <tri:region name="Hero"/>
+        <div class="row">
+            <div class="col-sm-12 col-md-3"><tri:region name="Left"/></div>
+            <div class="col-sm-12 col-md-<%= mainContainerSize %>"><tri:regions exclude="Hero,Left"/></div>
         </div>
-    </div>
 </main>
-<%@include file="../../shared/Footer.jsp"%>
+<%@include file="../../shared/Footer.jsp" %>
 <script src="system/assets/scripts/main.js"></script>
 </body>
 </html>

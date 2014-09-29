@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.1">
+
+    <tlib-version>1.0</tlib-version>
+    <short-name>tridion-reference-impl</short-name>
+    <uri>http://www.sdl.com/tridion-reference-impl</uri>
+
+    <!-- Include a specific region -->
+    <tag>
+        <name>region</name>
+        <tag-class>com.sdl.tridion.referenceimpl.taglib.RegionTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Include all regions on the page, except excluded ones -->
+    <tag>
+        <name>regions</name>
+        <tag-class>com.sdl.tridion.referenceimpl.taglib.RegionsTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>exclude</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Include a specific entity -->
+    <tag>
+        <name>entity</name>
+        <tag-class>com.sdl.tridion.referenceimpl.taglib.EntityTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>id</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Include all entities in a region -->
+    <tag>
+        <name>entities</name>
+        <tag-class>com.sdl.tridion.referenceimpl.taglib.EntitiesTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>region</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+</taglib>

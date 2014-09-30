@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 using System.Xml;
+using System.Xml.Linq;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
@@ -197,11 +199,36 @@ namespace Sdl.Web.Tridion.Common
 
         protected bool IsPublishingToStaging()
         {
+            bool isEnabled = false;
+
+            // TODO: change for 8.0 to use API (as there will be no Publication Targets anymore)
             if (Engine.PublishingContext != null && Engine.PublishingContext.PublicationTarget != null)
             {
-                return Engine.PublishingContext.PublicationTarget != null && Engine.PublishingContext.PublicationTarget.Title.ToLower().Contains("staging");
+                PublicationTarget pubTarget = Engine.PublishingContext.PublicationTarget;
+                if (pubTarget != null)
+                {
+                    ApplicationData appData = pubTarget.LoadApplicationData("SiteEdit");
+                    if (appData != null)
+                    {
+                        // appdata is expected to be a utf-8 encoded string
+                        string xmlData = Encoding.UTF8.GetString(appData.Data);
+                        XDocument doc = XDocument.Parse(xmlData);
+
+                        //<configuration xmlns="http://www.sdltridion.com/2011/SiteEdit">
+                        //  <PublicationTarget xmlns="http://www.sdltridion.com/2011/SiteEdit">
+                        //    <EnableSiteEdit>true</EnableSiteEdit>
+                        //    ...
+                        //  </PublicationTarget>
+                        //</configuration>
+                        XNamespace nsSiteEdit = "http://www.sdltridion.com/2011/SiteEdit";
+                        isEnabled = Boolean.Parse(doc.Element(nsSiteEdit + "configuration").Element(nsSiteEdit + "PublicationTarget").Element(nsSiteEdit + "EnableSiteEdit").Value);
+                        
+                        Logger.Debug(String.Format("Publication Target {0} ({1}) enabled for inline editing: {2}", pubTarget.Title, pubTarget.Id, isEnabled));
+                    }
+                }
             }
-            return false;
+
+            return isEnabled;
         }
 
         protected bool IsPreviewMode()

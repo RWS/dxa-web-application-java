@@ -202,7 +202,7 @@ namespace Sdl.Web.Tridion.Common
             bool isEnabled = false;
 
             // TODO: change for 8.0 to use API (as there will be no Publication Targets anymore)
-            if (Engine.PublishingContext != null && Engine.PublishingContext.PublicationTarget != null)
+            if (Engine.PublishingContext != null)
             {
                 PublicationTarget pubTarget = Engine.PublishingContext.PublicationTarget;
                 if (pubTarget != null)

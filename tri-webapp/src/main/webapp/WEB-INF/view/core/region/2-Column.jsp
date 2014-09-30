@@ -10,7 +10,7 @@
     for (int i = 0; i < rows; i++) {
         %><div class="row"><%
             for (int j = 0; j < 2 && (2 * i + j < entityCount); j++) {
-                %><div class="col-sm-6"><tri:entity region="<%= regionModel.getName() %>" index="<%= 2 * i + j %>"/></div><%
+                %><div class="col-sm-6"><tri:entity region="2-Column" index="<%= 2 * i + j %>"/></div><%
             }
         %></div><%
     }

@@ -3,6 +3,7 @@ package com.sdl.tridion.referenceimpl.controller.core;
 import com.sdl.tridion.referenceimpl.common.ContentProvider;
 import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
+import com.sdl.tridion.referenceimpl.common.config.ScreenWidth;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.controller.exception.InternalServerErrorException;
 import com.sdl.tridion.referenceimpl.controller.exception.NotFoundException;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.View;
 
 @Controller
 public class PageController {
@@ -34,6 +36,9 @@ public class PageController {
         LOG.debug("handleGetPage: page={}", page);
 
         request.setAttribute(ViewAttributeNames.PAGE_MODEL, page);
+
+        // TODO: Set this with real data instead of hard-coded constant value
+        request.setAttribute(ViewAttributeNames.SCREEN_WIDTH, ScreenWidth.MEDIUM);
 
         return page.getViewName();
     }

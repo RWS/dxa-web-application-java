@@ -10,14 +10,14 @@
 <%
     int entityCount = regionModel.getEntities().size();
 
-    int cols = request.getAttribute(ViewAttributeNames.SCREEN_WIDTH) == ScreenWidth.SMALL ? 2 : 3;
+    int cols = request.getAttribute(ViewAttributeNames.SCREEN_WIDTH) == ScreenWidth.SMALL ? 2 : 4;
     int rows = (int) Math.ceil(entityCount / (double) cols);
 
     for (int i = 0; i < rows; i++) {
         %><div class="row"><%
             for (int j = 0; j < cols && (cols * i + j < entityCount); j++) {
                 String entityId = regionModel.getEntities().get(cols * i + j).getId();
-                %><div class="col-sm-6 col-md-4"><tri:entity id="<%= entityId %>"/></div><%
+                %><div class="col-sm-6 col-md-3"><tri:entity id="<%= entityId %>"/></div><%
             }
         %></div><%
     }

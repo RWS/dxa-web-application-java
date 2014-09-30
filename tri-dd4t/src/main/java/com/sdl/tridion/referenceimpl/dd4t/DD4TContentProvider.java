@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getStringValue;
@@ -72,8 +73,8 @@ public final class DD4TContentProvider implements ContentProvider {
         page.getIncludes().put("Header", new PageImpl());
         page.getIncludes().put("Footer", new PageImpl());
 
-        Map<String, RegionImpl> regions = new HashMap<>();
-        Map<String, Entity> entities = new HashMap<>();
+        Map<String, RegionImpl> regions = new LinkedHashMap<>();
+        Map<String, Entity> entities = new LinkedHashMap<>();
 
         for (ComponentPresentation cp : genericPage.getComponentPresentations()) {
             final GenericComponent component = cp.getComponent();

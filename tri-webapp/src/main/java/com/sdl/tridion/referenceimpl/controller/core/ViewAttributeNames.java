@@ -6,6 +6,8 @@ public final class ViewAttributeNames {
     public static final String REGION_MODEL = "regionModel";
     public static final String ENTITY_MODEL = "entityModel";
 
+    public static final String SCREEN_WIDTH = "screenWidth";
+
     private ViewAttributeNames() {
     }
 }

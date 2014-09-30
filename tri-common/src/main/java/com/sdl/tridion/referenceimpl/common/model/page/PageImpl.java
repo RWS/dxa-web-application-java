@@ -1,6 +1,5 @@
 package com.sdl.tridion.referenceimpl.common.model.page;
 
-import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
 
@@ -13,7 +12,6 @@ public class PageImpl implements Page {
     private String title;
     private Map<String, Page> includes = new HashMap<>();
     private Map<String, Region> regions = new HashMap<>();
-    private Map<String, Entity> entities = new HashMap<>();
     private Map<String, String> pageData = new HashMap<>();
     private String viewName;
 
@@ -54,15 +52,6 @@ public class PageImpl implements Page {
     }
 
     @Override
-    public Map<String, Entity> getEntities() {
-        return entities;
-    }
-
-    public void setEntities(Map<String, Entity> entities) {
-        this.entities = entities;
-    }
-
-    @Override
     public Map<String, String> getPageData() {
         return pageData;
     }
@@ -85,7 +74,6 @@ public class PageImpl implements Page {
         return "PageImpl{" +
                 "id='" + id + '\'' +
                 ", regions=" + regions.keySet() +
-                ", entities=" + entities.values() +
                 ", viewName='" + viewName + '\'' +
                 '}';
     }

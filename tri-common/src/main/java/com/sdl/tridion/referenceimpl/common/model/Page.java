@@ -12,7 +12,5 @@ public interface Page extends ViewModel {
 
     Map<String, Region> getRegions();
 
-    Map<String, Entity> getEntities();
-
     Map<String, String> getPageData();
 }

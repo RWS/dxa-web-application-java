@@ -1,6 +1,5 @@
 package com.sdl.tridion.referenceimpl.taglib;
 
-import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
 import com.sdl.tridion.referenceimpl.controller.core.ViewAttributeNames;
@@ -15,10 +14,10 @@ import java.io.IOException;
 public class EntitiesTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(EntitiesTag.class);
 
-    private String region;
+    private String regionName;
 
-    public void setRegion(String region) {
-        this.region = region;
+    public void setRegion(String regionName) {
+        this.regionName = regionName;
     }
 
     @Override
@@ -29,19 +28,18 @@ public class EntitiesTag extends TagSupport {
             return SKIP_BODY;
         }
 
-        final Region reg = page.getRegions().get(region);
-        if (reg == null) {
-            LOG.debug("Region not found: {}", region);
+        final Region region = page.getRegions().get(regionName);
+        if (region == null) {
+            LOG.debug("Region not found: {}", regionName);
             return SKIP_BODY;
         }
 
-        for (Entity entity : reg.getEntities()) {
-            final String entityId = entity.getId();
-            LOG.debug("Including entity: {}", entityId);
+        int count = region.getEntities().size();
+        for (int index = 0; index < count; index++) {
             try {
-                pageContext.include("/entity/" + entityId);
+                pageContext.include(String.format("/entity/%s/%d", regionName, index));
             } catch (ServletException | IOException e) {
-                throw new JspException("Error while processing entities tag", e);
+                throw new JspException("Error while processing entity tag", e);
             }
         }
 

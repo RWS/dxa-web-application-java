@@ -74,26 +74,9 @@ public final class DD4TContentProvider implements ContentProvider {
         page.getIncludes().put("Footer", new PageImpl());
 
         Map<String, RegionImpl> regions = new LinkedHashMap<>();
-        Map<String, Entity> entities = new LinkedHashMap<>();
 
         for (ComponentPresentation cp : genericPage.getComponentPresentations()) {
-            final GenericComponent component = cp.getComponent();
-            final String componentId = component.getId();
-            LOG.debug("componentId={}", componentId);
-
-            String entityId = getEntityIdFromComponentId(componentId);
-            Entity entity = entities.get(entityId);
-            if (entity == null) {
-                entity = createEntity(cp);
-                if (entity == null) {
-                    LOG.warn("Failed to create entity for component: {}", componentId);
-                    continue;
-                }
-
-                entities.put(entityId, entity);
-            } else {
-                LOG.warn("Duplicate entity found: {}", entityId);
-            }
+            final Entity entity = createEntity(cp);
 
             final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
             if (templateMeta != null) {
@@ -119,8 +102,6 @@ public final class DD4TContentProvider implements ContentProvider {
         Map<String, Region> regionMap = new HashMap<>();
         regionMap.putAll(regions);
         page.setRegions(regionMap);
-
-        page.setEntities(entities);
 
         page.setViewName(PAGE_VIEW_PREFIX + getPageViewName(genericPage));
 

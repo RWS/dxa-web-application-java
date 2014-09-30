@@ -1,7 +1,6 @@
 package com.sdl.tridion.referenceimpl.controller.core;
 
 import com.sdl.tridion.referenceimpl.common.model.Entity;
-import com.sdl.tridion.referenceimpl.controller.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -15,15 +14,12 @@ import javax.servlet.http.HttpServletRequest;
 public class EntityController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(EntityController.class);
 
-    @RequestMapping(method = RequestMethod.GET, value = "/entity/{id}")
-    public String handleGetEntity(HttpServletRequest request, @PathVariable("id") String id) {
-        LOG.debug("handleGetEntity: id={}", id);
+    @RequestMapping(method = RequestMethod.GET, value = "/entity/{regionName}/{index}")
+    public String handleGetEntity(HttpServletRequest request, @PathVariable("regionName") String regionName,
+                                  @PathVariable("index") int index) {
+        LOG.debug("handleGetEntity: regionName={}, index={}", regionName, index);
 
-        final Entity entity = getPageFromRequest(request).getEntities().get(id);
-        if (entity == null) {
-            LOG.error("Entity not found: {}", id);
-            throw new NotFoundException("Entity not found: " + id);
-        }
+        final Entity entity = getRegionFromRequest(request, regionName).getEntities().get(index);
 
         request.setAttribute(ViewAttributeNames.ENTITY_MODEL, entity);
 

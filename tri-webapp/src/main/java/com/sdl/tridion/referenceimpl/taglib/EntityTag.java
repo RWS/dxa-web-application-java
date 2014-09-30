@@ -13,6 +13,18 @@ import java.io.IOException;
 public class EntityTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(EntityTag.class);
 
+    private String regionName;
+
+    private int index;
+
+    public void setRegion(String regionName) {
+        this.regionName = regionName;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
     @Override
     public int doStartTag() throws JspException {
         final Page page = (Page) pageContext.getRequest().getAttribute(ViewAttributeNames.PAGE_MODEL);
@@ -21,15 +33,10 @@ public class EntityTag extends TagSupport {
             return SKIP_BODY;
         }
 
-        if (page.getEntities().containsKey(id)) {
-            LOG.debug("Including entity: {}", id);
-            try {
-                pageContext.include("/entity/" + id);
-            } catch (ServletException | IOException e) {
-                throw new JspException("Error while processing entity tag", e);
-            }
-        } else {
-            LOG.debug("Entity not found: {}", id);
+        try {
+            pageContext.include(String.format("/entity/%s/%d", regionName, index));
+        } catch (ServletException | IOException e) {
+            throw new JspException("Error while processing entity tag", e);
         }
 
         return SKIP_BODY;

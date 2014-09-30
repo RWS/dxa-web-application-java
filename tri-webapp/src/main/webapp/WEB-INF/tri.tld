@@ -38,9 +38,15 @@
         <tag-class>com.sdl.tridion.referenceimpl.taglib.EntityTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
-            <name>id</name>
+            <name>region</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>index</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
         </attribute>
     </tag>
 

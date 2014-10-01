@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="com.sdl.tridion.referenceimpl.controller.core.ViewAttributeNames" %>
+<%@ page import="com.sdl.tridion.referenceimpl.webapp.controller.core.ViewAttributeNames" %>
 <%@ page import="com.sdl.tridion.referenceimpl.common.config.ScreenWidth" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <jsp:useBean id="regionModel" type="com.sdl.tridion.referenceimpl.common.model.Region" scope="request"/>

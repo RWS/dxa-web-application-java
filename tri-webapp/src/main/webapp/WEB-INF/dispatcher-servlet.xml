@@ -11,7 +11,7 @@
                            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="com.sdl.tridion.referenceimpl"/>
+    <context:component-scan base-package="com.sdl.tridion.referenceimpl.webapp"/>
 
     <mvc:annotation-driven/>
     <mvc:default-servlet-handler/>
@@ -22,6 +22,4 @@
         <property name="prefix" value="/WEB-INF/view/"/>
         <property name="suffix" value=".jsp"/>
     </bean>
-
-    <import resource="classpath*:/META-INF/spring-context.xml"/>
 </beans>

@@ -1,9 +1,9 @@
-package com.sdl.tridion.referenceimpl.controller.core;
+package com.sdl.tridion.referenceimpl.webapp.controller.core;
 
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
-import com.sdl.tridion.referenceimpl.controller.exception.BadRequestException;
-import com.sdl.tridion.referenceimpl.controller.exception.NotFoundException;
+import com.sdl.tridion.referenceimpl.webapp.controller.exception.BadRequestException;
+import com.sdl.tridion.referenceimpl.webapp.controller.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -4,9 +4,17 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath*:/META-INF/spring-context.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
     <filter>
         <filter-name>binaryFilter</filter-name>
-        <filter-class>com.sdl.tridion.referenceimpl.filter.BinaryFilter</filter-class>
+        <filter-class>com.sdl.tridion.referenceimpl.webapp.filter.BinaryFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>binaryFilter</filter-name>

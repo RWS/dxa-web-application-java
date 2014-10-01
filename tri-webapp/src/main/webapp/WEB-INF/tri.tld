@@ -11,7 +11,7 @@
     <!-- Include a specific region -->
     <tag>
         <name>region</name>
-        <tag-class>com.sdl.tridion.referenceimpl.taglib.RegionTag</tag-class>
+        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.RegionTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -23,7 +23,7 @@
     <!-- Include all regions on the page, except excluded ones -->
     <tag>
         <name>regions</name>
-        <tag-class>com.sdl.tridion.referenceimpl.taglib.RegionsTag</tag-class>
+        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.RegionsTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>exclude</name>
@@ -35,7 +35,7 @@
     <!-- Include a specific entity -->
     <tag>
         <name>entity</name>
-        <tag-class>com.sdl.tridion.referenceimpl.taglib.EntityTag</tag-class>
+        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.EntityTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>region</name>
@@ -53,7 +53,7 @@
     <!-- Include all entities in a region -->
     <tag>
         <name>entities</name>
-        <tag-class>com.sdl.tridion.referenceimpl.taglib.EntitiesTag</tag-class>
+        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.EntitiesTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>region</name>

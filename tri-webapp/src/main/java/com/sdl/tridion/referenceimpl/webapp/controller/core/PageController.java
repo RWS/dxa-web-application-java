@@ -1,12 +1,12 @@
-package com.sdl.tridion.referenceimpl.controller.core;
+package com.sdl.tridion.referenceimpl.webapp.controller.core;
 
 import com.sdl.tridion.referenceimpl.common.ContentProvider;
 import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
 import com.sdl.tridion.referenceimpl.common.config.ScreenWidth;
 import com.sdl.tridion.referenceimpl.common.model.Page;
-import com.sdl.tridion.referenceimpl.controller.exception.InternalServerErrorException;
-import com.sdl.tridion.referenceimpl.controller.exception.NotFoundException;
+import com.sdl.tridion.referenceimpl.webapp.controller.exception.InternalServerErrorException;
+import com.sdl.tridion.referenceimpl.webapp.controller.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.swing.text.View;
 
 @Controller
 public class PageController {

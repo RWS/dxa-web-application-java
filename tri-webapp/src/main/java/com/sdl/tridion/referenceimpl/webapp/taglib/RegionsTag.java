@@ -1,9 +1,9 @@
-package com.sdl.tridion.referenceimpl.taglib;
+package com.sdl.tridion.referenceimpl.webapp.taglib;
 
 import com.google.common.base.Strings;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
-import com.sdl.tridion.referenceimpl.controller.core.ViewAttributeNames;
+import com.sdl.tridion.referenceimpl.webapp.controller.core.ViewAttributeNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

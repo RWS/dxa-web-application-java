@@ -1,4 +1,4 @@
-package com.sdl.tridion.referenceimpl.filter;
+package com.sdl.tridion.referenceimpl.webapp.filter;
 
 import com.tridion.broker.StorageException;
 import com.tridion.storage.*;
@@ -13,9 +13,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLDecoder;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.util.List;
 
 /**

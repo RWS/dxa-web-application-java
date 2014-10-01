@@ -8,6 +8,8 @@ import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.webapp.ViewAttributeNames;
 import com.sdl.tridion.referenceimpl.webapp.controller.exception.InternalServerErrorException;
 import com.sdl.tridion.referenceimpl.webapp.controller.exception.NotFoundException;
+import com.tridion.ambientdata.claimstore.ClaimStore;
+import com.tridion.ambientdata.web.WebContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URI;
+import java.util.Map;
 
 @Controller
 public class PageController {
@@ -39,6 +43,12 @@ public class PageController {
 
         // TODO: Set this with real data instead of hard-coded constant value
         request.setAttribute(ViewAttributeNames.SCREEN_WIDTH, ScreenWidth.LARGE);
+
+        // TODO: For testing if the ADF works only! Remove this!
+        final ClaimStore currentClaimStore = WebContext.getCurrentClaimStore();
+        for (Map.Entry<URI, Object> entry : currentClaimStore.getAll().entrySet()) {
+            LOG.debug("Claim: {} = {}", entry.getKey(), entry.getValue());
+        }
 
         return page.getViewName();
     }

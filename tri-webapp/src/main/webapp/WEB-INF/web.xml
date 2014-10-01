@@ -4,6 +4,7 @@
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
          version="3.1">
 
+    <!-- Spring ContextLoaderListener -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath*:/META-INF/spring-context.xml</param-value>
@@ -12,6 +13,18 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+    <!-- Filter for Ambient Data Framework -->
+    <filter>
+        <filter-name>ambientDataServletFilter</filter-name>
+        <filter-class>com.tridion.ambientdata.web.AmbientDataServletFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>ambientDataServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <!-- Filter for images and other static resources (everything under /system and /media) -->
     <filter>
         <filter-name>binaryFilter</filter-name>
         <filter-class>com.sdl.tridion.referenceimpl.webapp.filter.BinaryFilter</filter-class>
@@ -35,6 +48,7 @@
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
 
+    <!-- CWD image transformer servlet -->
     <servlet>
         <servlet-name>imageTransformer</servlet-name>
         <servlet-class>com.sdl.context.image.servlet.ImageTransformerServlet</servlet-class>
@@ -44,6 +58,7 @@
         <url-pattern>/cid/*</url-pattern>
     </servlet-mapping>
 
+    <!-- Spring dispatcher servlet -->
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

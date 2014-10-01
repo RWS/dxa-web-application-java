@@ -5,6 +5,7 @@ import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
 import com.sdl.tridion.referenceimpl.common.config.ScreenWidth;
 import com.sdl.tridion.referenceimpl.common.model.Page;
+import com.sdl.tridion.referenceimpl.webapp.ViewAttributeNames;
 import com.sdl.tridion.referenceimpl.webapp.controller.exception.InternalServerErrorException;
 import com.sdl.tridion.referenceimpl.webapp.controller.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -37,7 +38,7 @@ public class PageController {
         request.setAttribute(ViewAttributeNames.PAGE_MODEL, page);
 
         // TODO: Set this with real data instead of hard-coded constant value
-        request.setAttribute(ViewAttributeNames.SCREEN_WIDTH, ScreenWidth.MEDIUM);
+        request.setAttribute(ViewAttributeNames.SCREEN_WIDTH, ScreenWidth.LARGE);
 
         return page.getViewName();
     }

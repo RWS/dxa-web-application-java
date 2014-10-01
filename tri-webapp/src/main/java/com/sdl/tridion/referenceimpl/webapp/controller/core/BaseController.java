@@ -2,6 +2,7 @@ package com.sdl.tridion.referenceimpl.webapp.controller.core;
 
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
+import com.sdl.tridion.referenceimpl.webapp.ViewAttributeNames;
 import com.sdl.tridion.referenceimpl.webapp.controller.exception.BadRequestException;
 import com.sdl.tridion.referenceimpl.webapp.controller.exception.NotFoundException;
 import org.slf4j.Logger;

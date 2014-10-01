@@ -25,16 +25,23 @@
 
         <java-version>1.7</java-version>
 
-        <tridion-version>7.1.0</tridion-version>
+        <tridion-cd-version>7.1.0</tridion-cd-version>
+        <tridion-cwd-version>7.1.0</tridion-cwd-version>
 
         <!-- Third-party libraries - versions match what Tridion uses -->
         <spring-version>3.1.0.RELEASE</spring-version>
         <hibernate-version>4.0.1.Final</hibernate-version>
         <hibernate-jpa-2.0-version>1.0.1.Final</hibernate-jpa-2.0-version>
         <guava-version>14.0.1</guava-version>
+        <commons-beanutils-version>1.8.3</commons-beanutils-version>
+        <commons-codec-version>1.4</commons-codec-version>
+        <commons-configuration-version>1.9</commons-configuration-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-pool-version>1.5.3</commons-pool-version>
+        <ua-parser-version>1.2.2</ua-parser-version>
         <easylicense-version>2.5</easylicense-version>
+        <httpcomponents-client-version>4.1.3</httpcomponents-client-version>
+        <httpcomponents-core-version>4.1.4</httpcomponents-core-version>
         <xalan-version>2.7.1</xalan-version>
         <sqljdbc4-version>4.0</sqljdbc4-version>
         <slf4j-version>1.6.4</slf4j-version>
@@ -125,71 +132,71 @@
                 <version>${guava-version}</version>
             </dependency>
 
-            <!-- Tridion Content Delivery -->
+            <!-- Tridion Content Delivery (CD) -->
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_ambient</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_broker</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_cache</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_core</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_datalayer</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_dynamic</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_linking</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_model</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_preview_ambient</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_session</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_tcdl</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_wai</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_wrapper</artifactId>
-                <version>${tridion-version}</version>
+                <version>${tridion-cd-version}</version>
             </dependency>
 
             <!-- Third-party libraries used by Tridion Content Delivery -->
@@ -228,6 +235,65 @@
                 <artifactId>sqljdbc4</artifactId>
                 <version>${sqljdbc4-version}</version>
                 <scope>runtime</scope>
+            </dependency>
+
+            <!-- Tridion Contextual Web Delivery (CWD) -->
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cwd_cartridge</artifactId>
+                <version>${tridion-cwd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cwd_engine</artifactId>
+                <version>${tridion-cwd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cwd_image</artifactId>
+                <version>${tridion-cwd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cwd_resource</artifactId>
+                <version>${tridion-cwd-version}</version>
+            </dependency>
+
+            <!-- Third-party libraries used by Tridion Contextual Web Delivery -->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${commons-configuration-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpcomponents-client-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcomponents-core-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>ua_parser</groupId>
+                <version>${ua-parser-version}</version>
+                <scope>runtime</scope>
+                <artifactId>ua-parser</artifactId>
             </dependency>
 
             <!-- Logging: SLF4J and Logback -->

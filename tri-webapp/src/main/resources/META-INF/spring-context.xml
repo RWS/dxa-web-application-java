@@ -4,4 +4,6 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <!-- Import Spring configuration for CWD -->
+    <import resource="classpath:com/sdl/context/engine/repository/beans-sdl-context-engine.xml"/>
 </beans>

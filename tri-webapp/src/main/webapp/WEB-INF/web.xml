@@ -36,6 +36,15 @@
     </filter-mapping>
 
     <servlet>
+        <servlet-name>imageTransformer</servlet-name>
+        <servlet-class>com.sdl.context.image.servlet.ImageTransformerServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>imageTransformer</servlet-name>
+        <url-pattern>/cid/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <load-on-startup>1</load-on-startup>

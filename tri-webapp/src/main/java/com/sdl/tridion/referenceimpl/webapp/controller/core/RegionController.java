@@ -1,6 +1,7 @@
 package com.sdl.tridion.referenceimpl.webapp.controller.core;
 
 import com.sdl.tridion.referenceimpl.common.model.Region;
+import com.sdl.tridion.referenceimpl.webapp.ViewAttributeNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

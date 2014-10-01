@@ -65,6 +65,50 @@
             <artifactId>cd_model</artifactId>
         </dependency>
 
+        <!-- Tridion Contextual Web Delivery (CWD) -->
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cwd_cartridge</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cwd_engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cwd_image</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cwd_resource</artifactId>
+        </dependency>
+
+        <!-- Third-party libraries used by Tridion Contextual Web Delivery -->
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>ua_parser</groupId>
+            <artifactId>ua-parser</artifactId>
+        </dependency>
+
         <!-- Hibernate - Necessary to make IntelliJ stop warning about missing classes -->
         <dependency>
             <groupId>org.hibernate</groupId>

@@ -1,4 +1,4 @@
-package com.sdl.tridion.referenceimpl.webapp.controller.core;
+package com.sdl.tridion.referenceimpl.webapp;
 
 public final class ViewAttributeNames {
 

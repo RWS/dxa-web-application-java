@@ -16,8 +16,15 @@ mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_tcdl          
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_wai             -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_wai-7.1.0.jar
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_wrapper         -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_wrapper-7.1.0.jar
 
+echo Installing Tridion Contextual Web Delivery libraries into the local Maven repository...
+mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cwd_cartridge      -Dversion=7.1.0 -Dpackaging=jar -Dfile=cwd_cartridge-7.1.0.jar
+mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cwd_engine         -Dversion=7.1.0 -Dpackaging=jar -Dfile=cwd_engine-7.1.0.jar
+mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cwd_image          -Dversion=7.1.0 -Dpackaging=jar -Dfile=cwd_image-7.1.0.jar
+mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cwd_resource       -Dversion=7.1.0 -Dpackaging=jar -Dfile=cwd_resource-7.1.0.jar
+
 echo Installing third-party libraries into the local Maven repository...
 mvn -q install:install-file -DgroupId=com.vs.ezlicrun -DartifactId=easylicense -Dversion=2.5 -Dpackaging=jar -Dfile=easylicense-2.5.jar
 mvn -q install:install-file -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0 -Dpackaging=jar -Dfile=sqljdbc4-4.0.jar
+mvn -q install:install-file -DgroupId=ua_parser -DartifactId=ua-parser -Dversion=1.2.2 -Dpackaging=jar -Dfile=ua-parser-1.2.2.jar
 
 echo Finished

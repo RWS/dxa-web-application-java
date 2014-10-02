@@ -20,6 +20,7 @@
         <finalName>${project.artifactId}</finalName>
     </build>
 
+    <!-- Dependencies -->
     <dependencies>
         <dependency>
             <groupId>com.sdl</groupId>
@@ -59,15 +60,14 @@
             <artifactId>jstl</artifactId>
         </dependency>
 
-        <!-- Tridion Content Delivery -->
+        <!-- Tridion Ambient Data Framework -->
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_ambient</artifactId>
         </dependency>
 
-        <!-- Third-party libraries used by Tridion Content Delivery -->
+        <!-- Third-party libraries used by Tridion Ambient Data Framework -->
         <dependency>
-            <!-- This one is necessary specifically for cd_ambient -->
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
         </dependency>

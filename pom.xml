@@ -28,6 +28,7 @@
 
         <java-version>1.7</java-version>
 
+        <!-- Tridion Content Delivery (CD) -->
         <tridion-cd-version>7.1.0</tridion-cd-version>
 
         <!-- Third-party libraries - versions match what Tridion uses -->

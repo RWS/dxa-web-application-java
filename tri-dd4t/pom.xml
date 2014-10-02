@@ -19,6 +19,7 @@
         <dd4t-version>1.31</dd4t-version>
     </properties>
 
+    <!-- Dependencies -->
     <dependencies>
         <dependency>
             <groupId>com.sdl</groupId>

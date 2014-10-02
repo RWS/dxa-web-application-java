@@ -64,21 +64,10 @@
             <groupId>com.tridion</groupId>
             <artifactId>cd_ambient</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_datalayer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_model</artifactId>
-        </dependency>
 
         <!-- Third-party libraries used by Tridion Content Delivery -->
         <dependency>
+            <!-- This one is necessary specifically for cd_ambient -->
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
         </dependency>

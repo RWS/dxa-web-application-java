@@ -29,14 +29,13 @@
         <!-- Spring Framework -->
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <artifactId>spring-web</artifactId>
         </dependency>
+
+        <!-- Servlet API -->
         <dependency>
-            <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
-            <groupId>cglib</groupId>
-            <artifactId>cglib</artifactId>
-            <version>2.2.2</version>
-            <scope>runtime</scope>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
         <!-- DD4T -->

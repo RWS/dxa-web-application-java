@@ -1,4 +1,4 @@
-package com.sdl.tridion.referenceimpl.webapp.filter;
+package com.sdl.tridion.referenceimpl.dd4t;
 
 import com.tridion.broker.StorageException;
 import com.tridion.storage.*;
@@ -7,6 +7,7 @@ import com.tridion.storage.dao.BinaryVariantDAO;
 import com.tridion.storage.dao.ItemDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.*;
@@ -18,9 +19,14 @@ import java.util.List;
 
 /**
  * TODO: Documentation.
+ *
+ * TODO: This should be modified to use DD4T instead of directly using the broker API.
+ * It should also handle the "If-Modified-Since" header and return 304 Not Modified if appropriate.
+ * See BinaryDistributionModule and BinaryFileManager in the .NET version.
  */
-public class BinaryFilter implements Filter {
-    private static final Logger LOG = LoggerFactory.getLogger(BinaryFilter.class);
+@Component("dd4tBinaryFilter")
+public class DD4TBinaryFilter implements Filter {
+    private static final Logger LOG = LoggerFactory.getLogger(DD4TBinaryFilter.class);
 
     // TODO: Publication id should be determined from configuration instead of being hard-coded
     private static final int PUBLICATION_ID = 48;
@@ -35,8 +41,7 @@ public class BinaryFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         final HttpServletRequest req = (HttpServletRequest) request;
         final String url = URL_PATH_HELPER.getRequestUri(req).replace(URL_PATH_HELPER.getContextPath(req), "");
 

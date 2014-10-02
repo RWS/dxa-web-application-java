@@ -112,6 +112,7 @@
         </dependencies>
     </dependencyManagement>
 
+    <!-- Dependencies -->
     <dependencies>
         <dependency>
             <groupId>com.sdl</groupId>

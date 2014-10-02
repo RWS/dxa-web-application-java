@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory;
 public abstract class BaseMediaHelper implements MediaHelper {
     private static final Logger LOG = LoggerFactory.getLogger(BaseMediaHelper.class);
 
-    protected static final int[] IMAGE_WIDTHS = { 160, 320, 640, 1024, 2048 };
+    private static final int[] IMAGE_WIDTHS = { 160, 320, 640, 1024, 2048 };
 
     @Override
     public int getResponsiveWidth(String widthFactor, int containerSize) {
@@ -97,5 +97,18 @@ public abstract class BaseMediaHelper implements MediaHelper {
     public String getDefaultMediaFill() {
         // TODO: Get this from configuration?
         return "100%";
+    }
+
+    protected int roundWidth(int width) {
+        // Round the width to the nearest set limit point - important as we do not want to swamp the cache
+        // with lots of different sized versions of the same image
+        for (int i = 0; i < IMAGE_WIDTHS.length; i++) {
+            if (width <= IMAGE_WIDTHS[i] || i == IMAGE_WIDTHS.length - 1) {
+                return IMAGE_WIDTHS[i];
+            }
+        }
+
+        // Note that this point will never be reached in practice
+        return width;
     }
 }

@@ -4,8 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Tridion Reference Implementation DD4T Content Provider</name>
     <artifactId>tri-dd4t</artifactId>
+
+    <name>Tridion Reference Implementation DD4T Content Provider</name>
+    <description>Implementation of ContentProvider and other common interfaces of the Tridion Reference Implementation that uses DD4T to get content from Tridion.</description>
 
     <parent>
         <groupId>com.sdl</groupId>

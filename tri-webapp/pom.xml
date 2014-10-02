@@ -4,9 +4,11 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Tridion Reference Implementation Web Application</name>
     <artifactId>tri-webapp</artifactId>
     <packaging>war</packaging>
+
+    <name>Tridion Reference Implementation Web Application</name>
+    <description>Spring MVC web application of the Tridion Reference Implementation.</description>
 
     <parent>
         <groupId>com.sdl</groupId>
@@ -23,6 +25,12 @@
             <groupId>com.sdl</groupId>
             <artifactId>tri-common</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl</groupId>
+            <artifactId>tri-cid</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.sdl</groupId>
@@ -73,62 +81,6 @@
         <dependency>
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
-        </dependency>
-
-        <!-- Tridion Contextual Web Delivery (CWD) -->
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd_cartridge</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd_engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd_image</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd_resource</artifactId>
-        </dependency>
-
-        <!-- Third-party libraries used by Tridion Contextual Web Delivery -->
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-configuration</groupId>
-            <artifactId>commons-configuration</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-jexl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ua_parser</groupId>
-            <artifactId>ua-parser</artifactId>
         </dependency>
 
         <!-- Hibernate - Necessary to make IntelliJ stop warning about missing classes -->

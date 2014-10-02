@@ -61,4 +61,41 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+    <tag>
+        <name>image</name>
+        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.ImageTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>url</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>alt</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>widthFactor</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>aspect</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>double</type>
+        </attribute>
+        <attribute>
+            <name>cssClass</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>containerSize</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+    </tag>
 </taglib>

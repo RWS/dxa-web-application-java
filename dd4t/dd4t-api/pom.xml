@@ -4,10 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <name>Dynamic Delivery for Tridion API</name>
     <groupId>org.dynamicdelivery</groupId>
     <artifactId>dd4t-api</artifactId>
     <version>1.31</version>
+
+    <name>Dynamic Delivery for Tridion API</name>
+    <description>API of the Dynamic Delivery for Tridion (DD4T) library.</description>
 
     <parent>
         <groupId>com.sdl</groupId>

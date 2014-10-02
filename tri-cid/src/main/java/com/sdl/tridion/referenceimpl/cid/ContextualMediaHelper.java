@@ -1,29 +1,27 @@
 package com.sdl.tridion.referenceimpl.cid;
 
-import com.sdl.tridion.referenceimpl.common.MediaHelper;
+import com.sdl.tridion.referenceimpl.common.BaseMediaHelper;
 import org.springframework.stereotype.Component;
 
-// TODO: Put this in a separate module? (For example tri-cid) so that you can leave it out if you don't have a license
-// for CID (only that module should have dependencies on CWD libs)
-
-@Component
-public class ContextualMediaHelper implements MediaHelper {
-
-    @Override
-    public int getResponsiveWidth(String widthFactor, int containerSize) {
-        // TODO: Implement method
-        return 0;
-    }
-
-    @Override
-    public int getResponsiveHeight(String widthFactor, double aspect, int containerSize) {
-        // TODO: Implement method
-        return 0;
-    }
+@Component("contextualMediaHelper")
+public class ContextualMediaHelper extends BaseMediaHelper {
 
     @Override
     public String getResponsiveImageUrl(String url, String widthFactor, double aspect, int containerSize) {
-        // TODO: Implement method
-        return null;
+        int width = getResponsiveWidth(widthFactor, containerSize);
+
+        // Round the width to the nearest set limit point - important as we do not want to swamp the cache
+        // with lots of different sized versions of the same image
+        for (int i = 0; i < IMAGE_WIDTHS.length; i++) {
+            if (width <= IMAGE_WIDTHS[i] || i == IMAGE_WIDTHS.length - 1) {
+                width = IMAGE_WIDTHS[i];
+                break;
+            }
+        }
+
+        // Height is calculated from the aspect ratio (0 means preserve aspect ratio)
+        final String height = aspect == 0.0 ? "" : Integer.toString((int) Math.ceil(width / aspect));
+
+        return String.format("/cid/scale/%dx%s/source/site%s", width, height, url);
     }
 }

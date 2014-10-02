@@ -1,17 +1,23 @@
 package com.sdl.tridion.referenceimpl.webapp.taglib;
 
+import com.google.common.base.Strings;
 import com.sdl.tridion.referenceimpl.common.MediaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
+import java.util.Locale;
+import java.util.Map;
 
 public class ImageTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ImageTag.class);
+
+    private static final String CONTEXTUAL_MEDIA_HELPER = "contextualMediaHelper";
 
     private String url;
     private String altText;
@@ -46,19 +52,53 @@ public class ImageTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        final MediaHelper mediaHelper = WebApplicationContextUtils.getRequiredWebApplicationContext(
-                pageContext.getServletContext()).getBean(MediaHelper.class);
+        final MediaHelper mediaHelper = getMediaHelper();
 
-        // TODO: Use MediaHelper to get the correct image URL
+        final String responsiveImageUrl = mediaHelper.getResponsiveImageUrl(url, widthFactor, aspect, containerSize);
+
+        String imgWidth = widthFactor;
+        if (Strings.isNullOrEmpty(widthFactor)) {
+            imgWidth = mediaHelper.getDefaultMediaFill();
+        }
 
         final JspWriter out = pageContext.getOut();
         try {
-            // TODO: Output <img> tag with the relevant attributes
-            out.print("<img src=\"...\" alt=\"...\">");
+            out.write("<img");
+            out.write(" src=\"" + responsiveImageUrl + "\"");
+
+            if (!Strings.isNullOrEmpty(imgWidth)) {
+                out.write(" width=\"" + imgWidth + "\"");
+            }
+
+            if (!Strings.isNullOrEmpty(altText)) {
+                out.write(" alt=\"" + altText + "\"");
+            }
+
+            out.write(" data-aspect=\"" + String.format(Locale.US, "%.2f", aspect) + "\"");
+
+            if (!Strings.isNullOrEmpty(cssClass)) {
+                out.write(" class=\"" + cssClass + "\"");
+            }
+
+            out.write(">");
         } catch (IOException e) {
             throw new JspException(e);
         }
 
         return SKIP_BODY;
+    }
+
+    private MediaHelper getMediaHelper() {
+        final WebApplicationContext springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
+                pageContext.getServletContext());
+
+        // Try to get contextualMediaHelper if it exists
+        final Map<String, MediaHelper> map = springContext.getBeansOfType(MediaHelper.class);
+        if (map.containsKey(CONTEXTUAL_MEDIA_HELPER)) {
+            return map.get(CONTEXTUAL_MEDIA_HELPER);
+        }
+
+        // Otherwise it is expected that there is exactly one MediaHelper; get it
+        return springContext.getBean(MediaHelper.class);
     }
 }

@@ -6,6 +6,7 @@
 <%@ page import="com.sdl.tridion.referenceimpl.common.model.entity.MediaItem" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
 <jsp:useBean id="entityModel" type="com.sdl.tridion.referenceimpl.common.model.entity.ItemList" scope="request"/>
 <%
@@ -38,7 +39,10 @@
                 if (media != null) {
                     out.write("<span>");
                     // TODO: See HtmlHelperExtensions.Media (C# version)
-                    out.write("<img src=\"" + media.getUrl() + "\" width=\"100%\" data-aspect=\"3.3\">");
+
+                    %><tri:image url="<%= media.getUrl() %>" aspect="3.3"/><%
+//                    out.write("<img src=\"" + media.getUrl() + "\" width=\"100%\" data-aspect=\"3.3\">");
+
                     out.write("</span>");
                 }
 

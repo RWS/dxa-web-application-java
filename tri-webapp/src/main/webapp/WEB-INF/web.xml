@@ -48,7 +48,7 @@
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
 
-    <!-- CWD image transformer servlet -->
+    <!-- CWD image transformer servlet - Remove this is you are not using CID -->
     <servlet>
         <servlet-name>imageTransformer</servlet-name>
         <servlet-class>com.sdl.context.image.servlet.ImageTransformerServlet</servlet-class>

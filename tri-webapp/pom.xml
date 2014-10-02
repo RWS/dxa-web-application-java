@@ -29,13 +29,15 @@
         </dependency>
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>tri-cid</artifactId>
+            <artifactId>tri-dd4t</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Tridion Contextual Image Delivery - Remove this is you are not using CID -->
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>tri-dd4t</artifactId>
+            <artifactId>tri-cid</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>

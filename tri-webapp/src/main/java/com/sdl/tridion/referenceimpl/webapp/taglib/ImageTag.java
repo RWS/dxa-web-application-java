@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.springframework.web.util.UrlPathHelper;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -18,6 +20,8 @@ public class ImageTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ImageTag.class);
 
     private static final String CONTEXTUAL_MEDIA_HELPER = "contextualMediaHelper";
+
+    private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     private String url;
     private String altText;
@@ -54,7 +58,9 @@ public class ImageTag extends TagSupport {
     public int doStartTag() throws JspException {
         final MediaHelper mediaHelper = getMediaHelper();
 
-        final String responsiveImageUrl = mediaHelper.getResponsiveImageUrl(url, widthFactor, aspect, containerSize);
+        final String contextPath = URL_PATH_HELPER.getContextPath((HttpServletRequest) pageContext.getRequest());
+        final String imageUrl = contextPath + mediaHelper.getResponsiveImageUrl(url, widthFactor, aspect, containerSize);
+        LOG.debug("imageUrl={}", imageUrl);
 
         String imgWidth = widthFactor;
         if (Strings.isNullOrEmpty(widthFactor)) {
@@ -64,7 +70,7 @@ public class ImageTag extends TagSupport {
         final JspWriter out = pageContext.getOut();
         try {
             out.write("<img");
-            out.write(" src=\"" + responsiveImageUrl + "\"");
+            out.write(" src=\"" + imageUrl + "\"");
 
             if (!Strings.isNullOrEmpty(imgWidth)) {
                 out.write(" width=\"" + imgWidth + "\"");

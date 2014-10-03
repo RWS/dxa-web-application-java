@@ -25,16 +25,14 @@ public abstract class BaseStaticFileManager implements StaticFileManager {
         LOG.debug("getJsonConfig: baseDirectory={}, url={}", baseDirectory, url);
 
         final File file = new File(baseDirectory, url);
-        getStaticContent(url, file);
-
-        final ObjectMapper objectMapper = new ObjectMapper();
-        final JsonNode rootNode = objectMapper.readTree(file);
-        final JsonNode filesNode = rootNode.get("files");
-        if (filesNode != null && filesNode.getNodeType() == JsonNodeType.ARRAY) {
-            for (int i = 0; i < filesNode.size(); i++) {
-                final String subFilePath = filesNode.get(i).asText();
-                if (!Strings.isNullOrEmpty(subFilePath)) {
-                    getJsonConfig(baseDirectory, subFilePath);
+        if (getStaticContent(url, file)) {
+            final JsonNode filesNode = new ObjectMapper().readTree(file).get("files");
+            if (filesNode != null && filesNode.getNodeType() == JsonNodeType.ARRAY) {
+                for (int i = 0; i < filesNode.size(); i++) {
+                    final String subFilePath = filesNode.get(i).asText();
+                    if (!Strings.isNullOrEmpty(subFilePath)) {
+                        getJsonConfig(baseDirectory, subFilePath);
+                    }
                 }
             }
         }

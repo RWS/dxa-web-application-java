@@ -6,7 +6,7 @@
 
     <artifactId>tri-common</artifactId>
 
-    <name>Tridion Reference Implementation Model</name>
+    <name>Tridion Reference Implementation Common</name>
     <description>Common interfaces and data model classes of the Tridion Reference Implementation.</description>
 
     <parent>
@@ -29,6 +29,12 @@
             <artifactId>cglib</artifactId>
             <version>2.2.2</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- Google Guava -->

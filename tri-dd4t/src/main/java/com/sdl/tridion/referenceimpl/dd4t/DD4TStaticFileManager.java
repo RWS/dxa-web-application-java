@@ -24,6 +24,8 @@ public class DD4TStaticFileManager extends BaseStaticFileManager {
 
     @Override
     public boolean getStaticContent(String url, File destinationFile) throws IOException {
+        LOG.debug("getStaticContent: url={}, destinationFile={}", url, destinationFile);
+
         try {
             final BinaryVariant binaryVariant = findBinaryVariant(PUBLICATION_ID, url);
             if (binaryVariant == null) {

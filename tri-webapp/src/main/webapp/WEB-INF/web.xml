@@ -24,17 +24,6 @@
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>
 
-    <!-- Filter to make Ambient Data claim store available in the Spring application context -->
-    <filter>
-        <filter-name>ambientDataSpringFilter</filter-name>
-        <filter-class>com.sdl.tridion.referenceimpl.webapp.filter.AmbientDataSpringFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>ambientDataSpringFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-    </filter-mapping>
-
     <!-- Filter for images and other static resources (everything under /system and /media) -->
     <filter>
         <filter-name>binaryFilter</filter-name>

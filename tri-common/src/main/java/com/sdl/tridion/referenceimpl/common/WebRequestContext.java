@@ -1,12 +1,17 @@
 package com.sdl.tridion.referenceimpl.common;
 
 import com.sdl.tridion.referenceimpl.common.config.ScreenWidth;
+import com.tridion.ambientdata.web.WebContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
+/**
+ * Component that provides information about the current client configuration, such as the size of the client's
+ * screen, pixel ratio etc.
+ */
 @Component
 public class WebRequestContext {
 
@@ -17,9 +22,6 @@ public class WebRequestContext {
 
     @Autowired
     private ApplicationContext springContext;
-
-    @Autowired
-    private AmbientDataSpringWrapper ambientDataSpringWrapper;
 
     public ScreenWidth getScreenWidth() {
         final MediaHelper mediaHelper = BaseMediaHelper.getMediaHelper(springContext);
@@ -37,11 +39,11 @@ public class WebRequestContext {
     }
 
     public int getDisplayWidth() {
-        return (int) ambientDataSpringWrapper.getClaimStore().get(URI_BROWSER_DISPLAY_WIDTH);
+        return (int) WebContext.getCurrentClaimStore().get(URI_BROWSER_DISPLAY_WIDTH);
     }
 
     public double getPixelRatio() {
-        return (double) ambientDataSpringWrapper.getClaimStore().get(URI_DEVICE_PIXEL_RATIO);
+        return (double) WebContext.getCurrentClaimStore().get(URI_DEVICE_PIXEL_RATIO);
     }
 
     public int getMaxMediaWidth() {

@@ -1,14 +1,33 @@
 package com.sdl.tridion.referenceimpl.common;
 
 import com.google.common.base.Strings;
-import com.sdl.tridion.referenceimpl.common.config.ScreenWidth;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+
+import java.util.Map;
 
 public abstract class BaseMediaHelper implements MediaHelper {
     private static final Logger LOG = LoggerFactory.getLogger(BaseMediaHelper.class);
 
+    private static final String CONTEXTUAL_MEDIA_HELPER = "contextualMediaHelper";
+
     private static final int[] IMAGE_WIDTHS = { 160, 320, 640, 1024, 2048 };
+
+    @Autowired
+    private WebRequestContext webRequestContext;
+
+    public static MediaHelper getMediaHelper(ApplicationContext springContext) {
+        // Try to get contextualMediaHelper if it exists
+        final Map<String, MediaHelper> map = springContext.getBeansOfType(MediaHelper.class);
+        if (map.containsKey(CONTEXTUAL_MEDIA_HELPER)) {
+            return map.get(CONTEXTUAL_MEDIA_HELPER);
+        }
+
+        // Otherwise it is expected that there is exactly one MediaHelper; get it
+        return springContext.getBean(MediaHelper.class);
+    }
 
     @Override
     public int getResponsiveWidth(String widthFactor, int containerSize) {
@@ -27,8 +46,7 @@ public abstract class BaseMediaHelper implements MediaHelper {
 
         if (!widthFactor.endsWith("%")) {
             try {
-                // TODO: Get pixel ratio
-                final double pixelRatio = 1.0;
+                final double pixelRatio = webRequestContext.getPixelRatio();
 
                 width = Double.parseDouble(widthFactor) * pixelRatio;
             } catch (NumberFormatException e) {
@@ -50,9 +68,7 @@ public abstract class BaseMediaHelper implements MediaHelper {
             }
 
             // Adjust container size for extra small and small screens
-            // TODO: Get screen width
-            final ScreenWidth screenWidth = ScreenWidth.LARGE;
-            switch (screenWidth) {
+            switch (webRequestContext.getScreenWidth()) {
                 case EXTRA_SMALL:
                     // Extra small screens are only one column
                     containerSize = gridSize;
@@ -67,10 +83,7 @@ public abstract class BaseMediaHelper implements MediaHelper {
             int cols = gridSize / containerSize;
             int padding = (cols - 1) * 30;
 
-            // TODO: Get max media width
-            int maxMediaWidth = 2048;
-
-            width = (fillFactor * containerSize * maxMediaWidth / (gridSize * 100)) - padding;
+            width = (fillFactor * containerSize * webRequestContext.getMaxMediaWidth() / (gridSize * 100)) - padding;
         }
 
         return (int) Math.ceil(width);
@@ -85,6 +98,21 @@ public abstract class BaseMediaHelper implements MediaHelper {
     public int getGridSize() {
         // TODO: Get this from configuration?
         return 12;
+    }
+
+    @Override
+    public int getSmallScreenBreakpoint() {
+        return 480;
+    }
+
+    @Override
+    public int getMediumScreenBreakpoint() {
+        return 940;
+    }
+
+    @Override
+    public int getLargeScreenBreakpoint() {
+        return 1140;
     }
 
     @Override

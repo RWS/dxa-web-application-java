@@ -13,6 +13,12 @@ public interface MediaHelper {
 
     int getGridSize();
 
+    int getSmallScreenBreakpoint();
+
+    int getMediumScreenBreakpoint();
+
+    int getLargeScreenBreakpoint();
+
     double getDefaultMediaAspect();
 
     String getDefaultMediaFill();

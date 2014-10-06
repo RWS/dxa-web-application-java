@@ -13,7 +13,6 @@ import java.util.Map;
 @Component
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
-    // TODO: Configuration must be loaded from configuration file instead of being hard-coded
     private static final Map<String, Class<? extends Entity>> ENTITY_VIEW_MODEL_MAP =
             ImmutableMap.<String, Class<? extends Entity>>builder()
                     .put("Article", Article.class)

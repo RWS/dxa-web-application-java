@@ -1,10 +1,10 @@
 package com.sdl.tridion.referenceimpl.webapp.taglib;
 
 import com.google.common.base.Strings;
+import com.sdl.tridion.referenceimpl.common.BaseMediaHelper;
 import com.sdl.tridion.referenceimpl.common.MediaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -14,12 +14,9 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.Map;
 
 public class ImageTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(ImageTag.class);
-
-    private static final String CONTEXTUAL_MEDIA_HELPER = "contextualMediaHelper";
 
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
@@ -95,16 +92,7 @@ public class ImageTag extends TagSupport {
     }
 
     private MediaHelper getMediaHelper() {
-        final WebApplicationContext springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
-                pageContext.getServletContext());
-
-        // Try to get contextualMediaHelper if it exists
-        final Map<String, MediaHelper> map = springContext.getBeansOfType(MediaHelper.class);
-        if (map.containsKey(CONTEXTUAL_MEDIA_HELPER)) {
-            return map.get(CONTEXTUAL_MEDIA_HELPER);
-        }
-
-        // Otherwise it is expected that there is exactly one MediaHelper; get it
-        return springContext.getBean(MediaHelper.class);
+        return BaseMediaHelper.getMediaHelper(
+                WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext()));
     }
 }

@@ -30,14 +30,11 @@ namespace Sdl.Web.Tridion.Templates
  
         // json content in page
         private const string JsonOutputFormat = "{{\"status\":\"Success\",\"files\":[{0}]}}";
-
-        // default location of nodejs
-        private const string NodejsDefault = @"C:\Program Files\nodejs\npm.cmd";
         
-        //set of files to merge across modules
+        // set of files to merge across modules
         private readonly Dictionary<string, List<string>> _mergeFileLines = new Dictionary<string, List<string>>();
 
-        //work folder for unzipping, merging and building design files
+        // work folder for unzipping, merging and building design files
         private string _tempFolder;
 
         public override void Transform(Engine engine, Package package)
@@ -64,13 +61,6 @@ namespace Sdl.Web.Tridion.Templates
                 var fields = new ItemFields(config.Content, config.Schema);
                 var favicon = fields.GetMultimediaLink("favicon");
                 var version = fields.GetTextValue("version");
-                var nodeJs = fields.GetTextValue("nodeJs");
-
-                // set defaults if required
-                if (String.IsNullOrEmpty(nodeJs))
-                {
-                    nodeJs = NodejsDefault;
-                }
 
                 PublishJson(String.Format("{{\"version\":{0}}}", JsonEncode(version)), config, GetPublication().RootStructureGroup, "version", "version");
 
@@ -78,13 +68,15 @@ namespace Sdl.Web.Tridion.Templates
                 Directory.CreateDirectory(_tempFolder);
                 Log.Debug("Created " + _tempFolder);
                 
+                // unzip and merge files
                 ProcessModules();                
                 
                 // build html design
+                string user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
                 ProcessStartInfo info = new ProcessStartInfo
                     {
                         FileName = "cmd.exe",
-                        Arguments = String.Format("/c \"{0}\" start --color=false", nodeJs),
+                        Arguments = "/c npm start --color=false",
                         WorkingDirectory = _tempFolder,
                         CreateNoWindow = true,
                         ErrorDialog = false,
@@ -94,7 +86,7 @@ namespace Sdl.Web.Tridion.Templates
                         StandardErrorEncoding = Encoding.UTF8,
                         StandardOutputEncoding = Encoding.UTF8
                     };
-                using (Process cmd = new Process {StartInfo = info})
+                using (Process cmd = new Process { StartInfo = info })
                 {
                     cmd.Start();
                     using (StreamReader reader = cmd.StandardOutput)
@@ -112,20 +104,16 @@ namespace Sdl.Web.Tridion.Templates
                         string error = reader.ReadToEnd();
                         if (!String.IsNullOrEmpty(error))
                         {
-                            string user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
                             Exception ex = new Exception(error);
                             ex.Data.Add("Filename", info.FileName);
                             ex.Data.Add("Arguments", info.Arguments);
                             ex.Data.Add("User", user);
 
-                            if (error.ToLower().Contains("the system cannot find the path specified"))
-                            {
-                                throw new Exception(String.Format("Node.js not installed or missing from path for user {0}.", user), ex);
-                            }
-                            else if (error.ToLower().Contains("mkdir") && error.ToLower().Contains("appdata\\roaming\\npm"))
-                            {
-                                throw new Exception(String.Format("Node.js cannot access %APPDATA% for user {0}.", user), ex);
-                            }
+                            // TODO: check for known errors and throw exception with a user friendly message
+                            //if (error.ToLower().Contains("something"))
+                            //{
+                            //    throw new Exception(String.Format("Something went wrong for user {0}.", user), ex);
+                            //}
 
                             throw ex;
                         }
@@ -217,7 +205,7 @@ namespace Sdl.Web.Tridion.Templates
             }
             ProcessModule("core", modules["core"]);
 
-            //overwrite all merged files
+            // overwrite all merged files
             foreach (var mergeFile in _mergeFileLines)
             {
                 string file = Path.Combine(_tempFolder, mergeFile.Key);
@@ -238,17 +226,20 @@ namespace Sdl.Web.Tridion.Templates
                 var customLess = GetModuleCustomLess(variables, code);
                 if (zip != null)
                 {
-
+                    // write binary contents as zipfile to disk
                     string zipfile = Path.Combine(_tempFolder, moduleName + "-html-design.zip");
                     File.WriteAllBytes(zipfile, zip.BinaryContent.GetByteArray());
+
+                    // unzip
                     using (var archive = ZipFile.OpenRead(zipfile))
                     {
                         archive.ExtractToDirectory(_tempFolder, true);
                     }
+
+                    // add content from merge files if available
                     List<string> files = _mergeFileLines.Keys.Select(s => s).ToList();
                     foreach (var mergeFile in files)
                     {
-                        //var path = _tempFolder + mergeFile;
                         var path = Path.Combine(_tempFolder, mergeFile);
                         if (File.Exists(path))
                         {
@@ -261,6 +252,8 @@ namespace Sdl.Web.Tridion.Templates
                             }
                         }
                     }
+
+                    // add custom less code block
                     if (!String.IsNullOrEmpty(customLess.Trim()))
                     {
                         _mergeFileLines["src\\system\\assets\\less\\_custom.less"].Add(customLess);
@@ -269,6 +262,7 @@ namespace Sdl.Web.Tridion.Templates
 
                 if (moduleName.Equals("core"))
                 {
+                    // unzip build files (nodejs, npm and grunt etc.)
                     var buildFiles = fields.GetComponentValue("build");
                     if (buildFiles != null)
                     {
@@ -280,8 +274,11 @@ namespace Sdl.Web.Tridion.Templates
 
         protected void ProcessBuildFiles(Component zip)
         {
+            // write binary contents as zipfile to disk
             string zipfile = Path.Combine(_tempFolder, "build-files.zip");
             File.WriteAllBytes(zipfile, zip.BinaryContent.GetByteArray());
+
+            // unzip
             using (var archive = ZipFile.OpenRead(zipfile))
             {
                 archive.ExtractToDirectory(_tempFolder, true);

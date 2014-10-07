@@ -49,6 +49,7 @@
     </filter-mapping>
 
     <!-- Filter for images and other static resources (everything under /system and /media) -->
+    <!-- TODO: Must be mapped to /* and filter itself must match against URL pattern in configuration -->
     <filter>
         <filter-name>binaryFilter</filter-name>
         <filter-class>com.sdl.tridion.referenceimpl.webapp.filter.BinaryFilter</filter-class>

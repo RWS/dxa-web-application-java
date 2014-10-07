@@ -28,9 +28,6 @@ public class PageController {
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     @Autowired
-    private TridionConfiguration tridionConfiguration;
-
-    @Autowired
     private ContentProvider contentProvider;
 
     @Autowired
@@ -46,12 +43,6 @@ public class PageController {
 
         request.setAttribute(ViewAttributeNames.PAGE_MODEL, page);
         request.setAttribute(ViewAttributeNames.SCREEN_WIDTH, webRequestContext.getScreenWidth());
-
-        // TODO: Test code, remove this
-        final Map<Integer, Localization> localizations = tridionConfiguration.getLocalizations();
-        for (Localization loc : localizations.values()) {
-            LOG.debug("{}", loc);
-        }
 
         return page.getViewName();
     }

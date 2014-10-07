@@ -5,6 +5,7 @@ import com.sdl.tridion.referenceimpl.common.ContentProvider;
 import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
 import com.sdl.tridion.referenceimpl.common.config.ViewModelRegistry;
+import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
@@ -35,9 +36,6 @@ import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getStri
 public final class DD4TContentProvider implements ContentProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DD4TContentProvider.class);
 
-    // TODO: Publication id should be determined from configuration instead of being hard-coded
-    private static final int PUBLICATION_ID = 48;
-
     private static final String PAGE_VIEW_PREFIX = "core/page/";
     private static final String REGION_VIEW_PREFIX = "core/region/";
     private static final String ENTITY_VIEW_PREFIX = "core/entity/";
@@ -51,11 +49,16 @@ public final class DD4TContentProvider implements ContentProvider {
     @Autowired
     private EntityFactoryRegistry entityFactoryRegistry;
 
+    @Autowired
+    private WebRequestContext webRequestContext;
+
     @Override
     public Page getPage(String url) throws ContentProviderException {
+        final int publicationId = webRequestContext.getLocalization().getLocalizationId();
+
         final GenericPage genericPage;
         try {
-            genericPage = pageFactory.findPageByUrl(url, PUBLICATION_ID);
+            genericPage = pageFactory.findPageByUrl(url, publicationId);
         } catch (ItemNotFoundException e) {
             throw new PageNotFoundException("Page not found: " + url, e);
         }

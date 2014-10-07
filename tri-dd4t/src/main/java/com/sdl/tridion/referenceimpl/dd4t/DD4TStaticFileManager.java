@@ -1,6 +1,7 @@
 package com.sdl.tridion.referenceimpl.dd4t;
 
 import com.sdl.tridion.referenceimpl.common.BaseStaticFileManager;
+import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import com.tridion.broker.StorageException;
 import com.tridion.storage.*;
 import com.tridion.storage.dao.BinaryContentDAO;
@@ -8,6 +9,7 @@ import com.tridion.storage.dao.BinaryVariantDAO;
 import com.tridion.storage.dao.ItemDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -19,15 +21,17 @@ import java.util.List;
 public class DD4TStaticFileManager extends BaseStaticFileManager {
     private static final Logger LOG = LoggerFactory.getLogger(DD4TStaticFileManager.class);
 
-    // TODO: Publication id should be determined from configuration instead of being hard-coded
-    private static final int PUBLICATION_ID = 48;
+    @Autowired
+    private WebRequestContext webRequestContext;
 
     @Override
     public boolean getStaticContent(String url, File destinationFile) throws IOException {
         LOG.debug("getStaticContent: url={}, destinationFile={}", url, destinationFile);
 
+        final int publicationId = webRequestContext.getLocalization().getLocalizationId();
+
         try {
-            final BinaryVariant binaryVariant = findBinaryVariant(PUBLICATION_ID, url);
+            final BinaryVariant binaryVariant = findBinaryVariant(publicationId, url);
             if (binaryVariant == null) {
                 LOG.debug("No binary variant found for: {}", url);
                 return false;
@@ -77,12 +81,12 @@ public class DD4TStaticFileManager extends BaseStaticFileManager {
     }
 
     private ItemMeta findItemMeta(int publicationId, int itemId) throws StorageException {
-        final ItemDAO dao = (ItemDAO) StorageManagerFactory.getDAO(PUBLICATION_ID, StorageTypeMapping.ITEM_META);
+        final ItemDAO dao = (ItemDAO) StorageManagerFactory.getDAO(publicationId, StorageTypeMapping.ITEM_META);
         return dao.findByPrimaryKey(publicationId, itemId);
     }
 
     private BinaryContent findBinaryContent(int publicationId, int itemId, String variantId) throws StorageException {
-        final BinaryContentDAO dao = (BinaryContentDAO) StorageManagerFactory.getDAO(PUBLICATION_ID,
+        final BinaryContentDAO dao = (BinaryContentDAO) StorageManagerFactory.getDAO(publicationId,
                 StorageTypeMapping.BINARY_CONTENT);
         return dao.findByPrimaryKey(publicationId, itemId, variantId);
     }

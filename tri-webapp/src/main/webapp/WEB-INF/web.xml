@@ -13,6 +13,19 @@
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+    <!-- Spring RequestContextFilter, necessary to support request-scoped beans (such as WebRequestContext) -->
+    <!-- Normally DispatcherServlet already provides the functionality that this filter provides, but
+         we need to access request-scoped beans in filters that are executed before DispatcherServlet is called. -->
+    <filter>
+        <filter-name>requestContextFilter</filter-name>
+        <filter-class>org.springframework.web.filter.RequestContextFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>requestContextFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
     <!-- Filter for Ambient Data Framework -->
     <filter>
         <filter-name>ambientDataServletFilter</filter-name>
@@ -20,6 +33,17 @@
     </filter>
     <filter-mapping>
         <filter-name>ambientDataServletFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <!-- Filter that detects localization and stores it in the WebRequestContext -->
+    <filter>
+        <filter-name>localizationFilter</filter-name>
+        <filter-class>com.sdl.tridion.referenceimpl.webapp.filter.LocalizationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>localizationFilter</filter-name>
         <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
     </filter-mapping>

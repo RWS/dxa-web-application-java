@@ -1,12 +1,11 @@
 package com.sdl.tridion.referenceimpl.common.config;
 
-import com.sdl.tridion.referenceimpl.common.BaseMediaHelper;
 import com.sdl.tridion.referenceimpl.common.MediaHelper;
 import com.sdl.tridion.referenceimpl.common.MediaHelperProvider;
-import com.sdl.tridion.referenceimpl.common.config.ScreenWidth;
 import com.tridion.ambientdata.web.WebContext;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
@@ -16,6 +15,7 @@ import java.net.URI;
  * screen, pixel ratio etc.
  */
 @Component
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class WebRequestContext {
 
     private static final URI URI_BROWSER_DISPLAY_WIDTH = URI.create("taf:claim:context:browser:displayWidth");
@@ -25,6 +25,8 @@ public class WebRequestContext {
 
     @Autowired
     private MediaHelperProvider mediaHelperProvider;
+
+    private Localization localization;
 
     public ScreenWidth getScreenWidth() {
         final MediaHelper mediaHelper = mediaHelperProvider.getMediaHelper();
@@ -51,5 +53,13 @@ public class WebRequestContext {
 
     public int getMaxMediaWidth() {
         return (int) (Math.max(1.0, getPixelRatio()) * Math.min(getDisplayWidth(), MAX_WIDTH));
+    }
+
+    public Localization getLocalization() {
+        return localization;
+    }
+
+    public void setLocalization(Localization localization) {
+        this.localization = localization;
     }
 }

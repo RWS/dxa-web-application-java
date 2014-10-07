@@ -2,17 +2,14 @@ package com.sdl.tridion.referenceimpl.common.config;
 
 import com.google.common.base.Strings;
 
-import java.util.Locale;
-
 public final class Localization {
 
     public static final class Builder {
         private int localizationId;
-        private String domain;
-        private Integer port;
-        private String path;
         private String protocol;
-        private Locale locale;
+        private String domain;
+        private String port;
+        private String path;
 
         private Builder() {
         }
@@ -22,12 +19,17 @@ public final class Localization {
             return this;
         }
 
+        public Builder setProtocol(String protocol) {
+            this.protocol = protocol;
+            return this;
+        }
+
         public Builder setDomain(String domain) {
             this.domain = domain;
             return this;
         }
 
-        public Builder setPort(Integer port) {
+        public Builder setPort(String port) {
             this.port = port;
             return this;
         }
@@ -37,35 +39,23 @@ public final class Localization {
             return this;
         }
 
-        public Builder setProtocol(String protocol) {
-            this.protocol = protocol;
-            return this;
-        }
-
-        public Builder setLocale(Locale locale) {
-            this.locale = locale;
-            return this;
-        }
-
         public Localization build() {
             return new Localization(this);
         }
     }
 
     private final int localizationId;
-    private final String domain;
-    private final Integer port;
-    private final String path;
     private final String protocol;
-    private final Locale locale;
+    private final String domain;
+    private final String port;
+    private final String path;
 
     private Localization(Builder builder) {
         this.localizationId = builder.localizationId;
+        this.protocol = builder.protocol;
         this.domain = builder.domain;
         this.port = builder.port;
         this.path = builder.path;
-        this.protocol = builder.protocol;
-        this.locale = builder.locale;
     }
 
     public static Builder newBuilder() {
@@ -76,11 +66,15 @@ public final class Localization {
         return localizationId;
     }
 
+    public String getProtocol() {
+        return protocol;
+    }
+
     public String getDomain() {
         return domain;
     }
 
-    public Integer getPort() {
+    public String getPort() {
         return port;
     }
 
@@ -88,20 +82,12 @@ public final class Localization {
         return path;
     }
 
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public Locale getLocale() {
-        return locale;
-    }
-
     public String getBaseUrl() {
         StringBuilder sb = new StringBuilder();
 
         sb.append(protocol).append("://").append(domain);
 
-        if (port != null) {
+        if (!Strings.isNullOrEmpty(port)) {
             sb.append(':').append(port);
         }
 
@@ -118,12 +104,11 @@ public final class Localization {
     @Override
     public String toString() {
         return "Localization{" +
-                "localizationId='" + localizationId + '\'' +
+                "localizationId=" + localizationId +
+                ", protocol='" + protocol + '\'' +
                 ", domain='" + domain + '\'' +
                 ", port='" + port + '\'' +
                 ", path='" + path + '\'' +
-                ", protocol='" + protocol + '\'' +
-                ", locale='" + locale + '\'' +
                 '}';
     }
 }

@@ -3,8 +3,6 @@ package com.sdl.tridion.referenceimpl.webapp.controller.core;
 import com.sdl.tridion.referenceimpl.common.ContentProvider;
 import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
-import com.sdl.tridion.referenceimpl.common.config.Localization;
-import com.sdl.tridion.referenceimpl.common.config.TridionConfiguration;
 import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.webapp.ViewAttributeNames;
@@ -19,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Map;
 
 @Controller
 public class PageController {

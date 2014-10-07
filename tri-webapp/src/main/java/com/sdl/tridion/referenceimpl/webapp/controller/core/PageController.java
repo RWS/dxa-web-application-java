@@ -3,7 +3,9 @@ package com.sdl.tridion.referenceimpl.webapp.controller.core;
 import com.sdl.tridion.referenceimpl.common.ContentProvider;
 import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
-import com.sdl.tridion.referenceimpl.common.WebRequestContext;
+import com.sdl.tridion.referenceimpl.common.config.Localization;
+import com.sdl.tridion.referenceimpl.common.config.TridionConfiguration;
+import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.webapp.ViewAttributeNames;
 import com.sdl.tridion.referenceimpl.webapp.controller.exception.InternalServerErrorException;
@@ -17,12 +19,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 @Controller
 public class PageController {
     private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
 
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
+
+    @Autowired
+    private TridionConfiguration tridionConfiguration;
 
     @Autowired
     private ContentProvider contentProvider;
@@ -40,6 +46,12 @@ public class PageController {
 
         request.setAttribute(ViewAttributeNames.PAGE_MODEL, page);
         request.setAttribute(ViewAttributeNames.SCREEN_WIDTH, webRequestContext.getScreenWidth());
+
+        // TODO: Test code, remove this
+        final Map<Integer, Localization> localizations = tridionConfiguration.getLocalizations();
+        for (Localization loc : localizations.values()) {
+            LOG.debug("{}", loc);
+        }
 
         return page.getViewName();
     }

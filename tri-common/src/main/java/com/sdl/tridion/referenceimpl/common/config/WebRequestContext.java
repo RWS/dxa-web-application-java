@@ -1,5 +1,8 @@
-package com.sdl.tridion.referenceimpl.common;
+package com.sdl.tridion.referenceimpl.common.config;
 
+import com.sdl.tridion.referenceimpl.common.BaseMediaHelper;
+import com.sdl.tridion.referenceimpl.common.MediaHelper;
+import com.sdl.tridion.referenceimpl.common.MediaHelperProvider;
 import com.sdl.tridion.referenceimpl.common.config.ScreenWidth;
 import com.tridion.ambientdata.web.WebContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,10 +24,10 @@ public class WebRequestContext {
     private static final int MAX_WIDTH = 1024;
 
     @Autowired
-    private ApplicationContext springContext;
+    private MediaHelperProvider mediaHelperProvider;
 
     public ScreenWidth getScreenWidth() {
-        final MediaHelper mediaHelper = BaseMediaHelper.getMediaHelper(springContext);
+        final MediaHelper mediaHelper = mediaHelperProvider.getMediaHelper();
 
         final int displayWidth = getDisplayWidth();
         if (displayWidth < mediaHelper.getSmallScreenBreakpoint()) {

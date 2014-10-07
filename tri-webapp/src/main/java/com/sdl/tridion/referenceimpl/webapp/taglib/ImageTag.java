@@ -1,8 +1,8 @@
 package com.sdl.tridion.referenceimpl.webapp.taglib;
 
 import com.google.common.base.Strings;
-import com.sdl.tridion.referenceimpl.common.BaseMediaHelper;
 import com.sdl.tridion.referenceimpl.common.MediaHelper;
+import com.sdl.tridion.referenceimpl.common.MediaHelperProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -53,7 +53,8 @@ public class ImageTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        final MediaHelper mediaHelper = getMediaHelper();
+        final MediaHelper mediaHelper = WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
+                .getBean(MediaHelperProvider.class).getMediaHelper();
 
         final String contextPath = URL_PATH_HELPER.getContextPath((HttpServletRequest) pageContext.getRequest());
         final String imageUrl = contextPath + mediaHelper.getResponsiveImageUrl(url, widthFactor, aspect, containerSize);
@@ -89,10 +90,5 @@ public class ImageTag extends TagSupport {
         }
 
         return SKIP_BODY;
-    }
-
-    private MediaHelper getMediaHelper() {
-        return BaseMediaHelper.getMediaHelper(
-                WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext()));
     }
 }

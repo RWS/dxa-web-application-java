@@ -1,12 +1,10 @@
 package com.sdl.tridion.referenceimpl.common;
 
 import com.google.common.base.Strings;
+import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-
-import java.util.Map;
 
 public abstract class BaseMediaHelper implements MediaHelper {
     private static final Logger LOG = LoggerFactory.getLogger(BaseMediaHelper.class);
@@ -17,17 +15,6 @@ public abstract class BaseMediaHelper implements MediaHelper {
 
     @Autowired
     private WebRequestContext webRequestContext;
-
-    public static MediaHelper getMediaHelper(ApplicationContext springContext) {
-        // Try to get contextualMediaHelper if it exists
-        final Map<String, MediaHelper> map = springContext.getBeansOfType(MediaHelper.class);
-        if (map.containsKey(CONTEXTUAL_MEDIA_HELPER)) {
-            return map.get(CONTEXTUAL_MEDIA_HELPER);
-        }
-
-        // Otherwise it is expected that there is exactly one MediaHelper; get it
-        return springContext.getBean(MediaHelper.class);
-    }
 
     @Override
     public int getResponsiveWidth(String widthFactor, int containerSize) {

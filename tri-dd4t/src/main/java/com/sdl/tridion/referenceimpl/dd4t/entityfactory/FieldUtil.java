@@ -84,5 +84,4 @@ public final class FieldUtil {
         final List<GenericComponent> values = getComponentValues(fields, name);
         return values != null && !values.isEmpty() ? values.get(0) : null;
     }
-
 }

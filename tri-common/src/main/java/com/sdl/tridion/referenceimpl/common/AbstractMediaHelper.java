@@ -12,6 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 public abstract class AbstractMediaHelper implements MediaHelper {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMediaHelper.class);
 
+    private static final int GRID_SIZE = 12;
+
+    private static final int SMALL_SCREEN_BREAKPOINT = 480;
+    private static final int MEDIUM_SCREEN_BREAKPOINT = 940;
+    private static final int LARGE_SCREEN_BREAKPOINT = 1140;
+
+    // Default media aspect is the golden ratio
+    private static final double DEFAULT_MEDIA_ASPECT = 1.62;
+
+    private static final String DEFAULT_MEDIA_FILL = "100%";
+
     private static final int[] IMAGE_WIDTHS = { 160, 320, 640, 1024, 2048 };
 
     @Autowired
@@ -84,35 +95,32 @@ public abstract class AbstractMediaHelper implements MediaHelper {
 
     @Override
     public int getGridSize() {
-        // TODO: Get this from configuration?
-        return 12;
+        return GRID_SIZE;
     }
 
     @Override
     public int getSmallScreenBreakpoint() {
-        return 480;
+        return SMALL_SCREEN_BREAKPOINT;
     }
 
     @Override
     public int getMediumScreenBreakpoint() {
-        return 940;
+        return MEDIUM_SCREEN_BREAKPOINT;
     }
 
     @Override
     public int getLargeScreenBreakpoint() {
-        return 1140;
+        return LARGE_SCREEN_BREAKPOINT;
     }
 
     @Override
     public double getDefaultMediaAspect() {
-        // TODO: Get this from configuration?
-        return 1.62;
+        return DEFAULT_MEDIA_ASPECT;
     }
 
     @Override
     public String getDefaultMediaFill() {
-        // TODO: Get this from configuration?
-        return "100%";
+        return DEFAULT_MEDIA_FILL;
     }
 
     protected int roundWidth(int width) {

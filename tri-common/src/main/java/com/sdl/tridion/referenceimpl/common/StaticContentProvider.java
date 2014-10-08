@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Provider for static content.
+ * Static content provider.
  */
 public interface StaticContentProvider {
 

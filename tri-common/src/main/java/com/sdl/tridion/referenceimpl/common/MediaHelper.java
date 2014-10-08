@@ -1,7 +1,7 @@
 package com.sdl.tridion.referenceimpl.common;
 
 /**
- * TODO: Documentation.
+ * Media helper.
  */
 public interface MediaHelper {
 

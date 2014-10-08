@@ -2,6 +2,9 @@ package com.sdl.tridion.referenceimpl.common.config;
 
 import com.google.common.base.Strings;
 
+/**
+ * Information about a localization.
+ */
 public class Localization {
 
     private static final String FAVICON_PATH = "/favicon.ico";
@@ -35,7 +38,7 @@ public class Localization {
         return path;
     }
 
-    public boolean isMediaUrl(String url) {
+    public boolean isStaticResourceUrl(String url) {
         if (!url.startsWith(path)) {
             return false;
         }

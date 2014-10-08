@@ -47,7 +47,7 @@ public class BinaryFilter implements Filter {
 
         final String url = URL_PATH_HELPER.getRequestUri(request).replace(URL_PATH_HELPER.getContextPath(request), "");
         final Localization localization = webRequestContext.getLocalization();
-        if (localization.isMediaUrl(url)) {
+        if (localization.isStaticResourceUrl(url)) {
             handleRequest(url, localization, new ServletServerHttpRequest(request), new ServletServerHttpResponse(response));
         } else {
             chain.doFilter(servletRequest, servletResponse);

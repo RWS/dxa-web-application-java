@@ -18,6 +18,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implementation of {@code LocalizationProvider} that gets information from the Tridion configuration.
+ * It uses the CD API to get configuration information from {@code cd_dynamic_conf.xml}.
+ */
 @Component
 public class TridionLocalizationProvider implements LocalizationProvider {
     private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationProvider.class);
@@ -51,8 +55,8 @@ public class TridionLocalizationProvider implements LocalizationProvider {
 
         LOG.debug("Creating localization for publication: {}", publicationId);
         final String localizationPath = publicationMapping.getPath();
-
         final File baseDir = new File(webAppContext.getStaticsPath(), localizationPath);
+
         getJsonConfig(ROOT_CONFIG_URL, baseDir, publicationId);
 
         final JsonNode configRootNode = new ObjectMapper().readTree(new File(baseDir, MAIN_CONFIG_URL));
@@ -71,6 +75,7 @@ public class TridionLocalizationProvider implements LocalizationProvider {
             throw new FileNotFoundException("Configuration file not found: " + url);
         }
 
+        // Recursively get referenced configuration files
         final JsonNode filesNode = new ObjectMapper().readTree(file).get(FILES_NODE_NAME);
         if (filesNode != null && filesNode.getNodeType() == JsonNodeType.ARRAY) {
             for (int i = 0; i < filesNode.size(); i++) {

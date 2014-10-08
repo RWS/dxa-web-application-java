@@ -1,7 +1,6 @@
 package com.sdl.tridion.referenceimpl.dd4t;
 
 import com.sdl.tridion.referenceimpl.common.BaseStaticFileManager;
-import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import com.tridion.broker.StorageException;
 import com.tridion.storage.*;
 import com.tridion.storage.dao.BinaryContentDAO;
@@ -9,7 +8,6 @@ import com.tridion.storage.dao.BinaryVariantDAO;
 import com.tridion.storage.dao.ItemDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
@@ -24,14 +22,10 @@ import java.util.List;
 public class DD4TStaticFileManager extends BaseStaticFileManager {
     private static final Logger LOG = LoggerFactory.getLogger(DD4TStaticFileManager.class);
 
-    @Autowired
-    private WebRequestContext webRequestContext;
-
     @Override
-    public boolean getStaticContent(String url, File destinationFile) throws IOException {
-        LOG.debug("getStaticContent: url={}, destinationFile={}", url, destinationFile);
-
-        final int publicationId = webRequestContext.getPublicationId();
+    public boolean getStaticContent(String url, File destinationFile, int publicationId) throws IOException {
+        LOG.debug("getStaticContent: url={}, destinationFile={}, publicationId={}",
+                new Object[]{ url, destinationFile, publicationId });
 
         try {
             final BinaryVariant binaryVariant = findBinaryVariant(publicationId, url);

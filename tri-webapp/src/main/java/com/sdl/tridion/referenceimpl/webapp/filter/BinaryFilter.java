@@ -1,6 +1,8 @@
 package com.sdl.tridion.referenceimpl.webapp.filter;
 
 import com.sdl.tridion.referenceimpl.common.StaticFileManager;
+import com.sdl.tridion.referenceimpl.common.config.Localization;
+import com.sdl.tridion.referenceimpl.common.config.SiteConfiguration;
 import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,39 +25,41 @@ public class BinaryFilter implements Filter {
 
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
-    private ServletContext servletContext;
-
+    private SiteConfiguration siteConfiguration;
     private WebRequestContext webRequestContext;
     private StaticFileManager staticFileManager;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        servletContext = filterConfig.getServletContext();
+        final WebApplicationContext springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
+                filterConfig.getServletContext());
 
-        final WebApplicationContext springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(servletContext);
+        siteConfiguration = springContext.getBean(SiteConfiguration.class);
         webRequestContext = springContext.getBean(WebRequestContext.class);
         staticFileManager = springContext.getBean(StaticFileManager.class);
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        final HttpServletRequest req = (HttpServletRequest) request;
-        final String url = URL_PATH_HELPER.getRequestUri(req).replace(URL_PATH_HELPER.getContextPath(req), "");
+    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain chain)
+            throws IOException, ServletException {
+        final HttpServletRequest request = (HttpServletRequest) servletRequest;
+        final HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        if (webRequestContext.getLocalization().isMediaUrl(url)) {
-            handleRequest(url, new ServletServerHttpRequest((HttpServletRequest) request),
-                    new ServletServerHttpResponse((HttpServletResponse) response));
+        final String url = URL_PATH_HELPER.getRequestUri(request).replace(URL_PATH_HELPER.getContextPath(request), "");
+        final Localization localization = webRequestContext.getLocalization();
+        if (localization.isMediaUrl(url)) {
+            handleRequest(url, localization, new ServletServerHttpRequest(request), new ServletServerHttpResponse(response));
         } else {
-            chain.doFilter(request, response);
+            chain.doFilter(servletRequest, servletResponse);
         }
     }
 
-    private void handleRequest(String url, ServletServerHttpRequest request, ServletServerHttpResponse response) throws IOException, ServletException {
-        LOG.debug("handleRequest: {}", url);
+    private void handleRequest(String url, Localization localization, ServletServerHttpRequest request, ServletServerHttpResponse response)
+            throws IOException, ServletException {
+        final File file = new File(new File(siteConfiguration.getStaticsPath(), localization.getPath()), url);
+        LOG.debug("handleRequest: {}, file: {}", url, file);
 
-        final File file = new File(servletContext.getRealPath(url));
-
-        HttpStatus responseCode;
+        final HttpStatus responseCode;
         if (staticFileManager.getStaticContent(url, file)) {
             // NOTE: Unfortunately, in this version of Spring the method getIfNotModifiedSince() has the wrong name
             long ifModifiedSince = request.getHeaders().getIfNotModifiedSince();
@@ -63,6 +67,8 @@ public class BinaryFilter implements Filter {
                 responseCode = HttpStatus.NOT_MODIFIED;
             } else {
                 responseCode = HttpStatus.OK;
+
+                // Send file content as the request body
                 Files.copy(file.toPath(), response.getBody());
             }
         } else {

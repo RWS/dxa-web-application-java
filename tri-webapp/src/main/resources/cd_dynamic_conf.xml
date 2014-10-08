@@ -6,7 +6,7 @@
         <StaticMappings>
             <Publications>
                 <Publication Id="48">
-                    <Host Protocol="http" Domain="localhost" Port="8080" Path="/tri-webapp"/>
+                    <Host Protocol="http" Domain="localhost" Port="8080" Path=""/>
                 </Publication>
             </Publications>
         </StaticMappings>

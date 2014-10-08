@@ -42,7 +42,7 @@ public class WebRequestContext {
     }
 
     public int getPublicationId() {
-        return localization.getLocalizationId();
+        return localization.getPublicationId();
     }
 
     public ScreenWidth getScreenWidth() {

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -60,9 +61,9 @@ public class TridionLocalizationProvider implements LocalizationProvider {
         getJsonConfig(ROOT_CONFIG_URL, baseDir, publicationId);
 
         final JsonNode configRootNode = new ObjectMapper().readTree(new File(baseDir, MAIN_CONFIG_URL));
-        final String mediaRoot = configRootNode.get(MEDIA_ROOT_NODE_NAME).asText();
 
-        final Localization localization = new Localization(publicationId, localizationPath, mediaRoot);
+        final Localization localization = new Localization(publicationId, localizationPath,
+                configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(), parseJsonConfig(configRootNode, baseDir));
         LOG.debug("Created: {}", localization);
 
         localizations.put(publicationId, localization);
@@ -85,5 +86,29 @@ public class TridionLocalizationProvider implements LocalizationProvider {
                 }
             }
         }
+    }
+
+    private Map<String, String> parseJsonConfig(JsonNode configRootNode, File baseDir) throws IOException {
+        final Map<String, String> configuration = new HashMap<>();
+
+        final JsonNode filesNode = configRootNode.get(FILES_NODE_NAME);
+        if (filesNode != null && filesNode.getNodeType() == JsonNodeType.ARRAY) {
+            for (int i = 0; i < filesNode.size(); i++) {
+                final String subFileUrl = filesNode.get(i).asText();
+                if (!Strings.isNullOrEmpty(subFileUrl)) {
+                    final String prefix = subFileUrl.substring(subFileUrl.lastIndexOf('/') + 1,
+                            subFileUrl.lastIndexOf('.') + 1);
+
+                    final JsonNode rootNode = new ObjectMapper().readTree(new File(baseDir, subFileUrl));
+                    final Iterator<Map.Entry<String, JsonNode>> iterator = rootNode.fields();
+                    while (iterator.hasNext()) {
+                        Map.Entry<String, JsonNode> entry = iterator.next();
+                        configuration.put(prefix + entry.getKey(), entry.getValue().asText());
+                    }
+                }
+            }
+        }
+
+        return configuration;
     }
 }

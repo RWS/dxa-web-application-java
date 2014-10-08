@@ -2,6 +2,8 @@ package com.sdl.tridion.referenceimpl.common.config;
 
 import com.google.common.base.Strings;
 
+import java.util.Map;
+
 /**
  * Information about a localization.
  */
@@ -14,7 +16,9 @@ public class Localization {
     private final String path;
     private final String mediaRoot;
 
-    public Localization(int publicationId, String path, String mediaRoot) {
+    private final Map<String, String> configuration;
+
+    public Localization(int publicationId, String path, String mediaRoot, Map<String, String> configuration) {
         this.publicationId = publicationId;
 
         // Make sure path starts with and does not end with a slash
@@ -28,6 +32,7 @@ public class Localization {
         this.path = path;
 
         this.mediaRoot = mediaRoot;
+        this.configuration = configuration;
     }
 
     public int getPublicationId() {
@@ -47,12 +52,17 @@ public class Localization {
         return p.equals(FAVICON_PATH) || p.startsWith(SYSTEM_ASSETS_PATH) || p.startsWith(mediaRoot);
     }
 
+    public String getConfigValue(String key) {
+        return configuration.get(key);
+    }
+
     @Override
     public String toString() {
         return "Localization{" +
                 "publicationId=" + publicationId +
                 ", path='" + path + '\'' +
                 ", mediaRoot='" + mediaRoot + '\'' +
+                ", configuration=" + configuration +
                 '}';
     }
 }

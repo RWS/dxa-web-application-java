@@ -2,7 +2,7 @@ package com.sdl.tridion.referenceimpl.webapp.filter;
 
 import com.sdl.tridion.referenceimpl.common.StaticFileManager;
 import com.sdl.tridion.referenceimpl.common.config.Localization;
-import com.sdl.tridion.referenceimpl.common.config.SiteConfiguration;
+import com.sdl.tridion.referenceimpl.common.config.WebAppContext;
 import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +25,7 @@ public class BinaryFilter implements Filter {
 
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
-    private SiteConfiguration siteConfiguration;
+    private WebAppContext webAppContext;
     private WebRequestContext webRequestContext;
     private StaticFileManager staticFileManager;
 
@@ -34,7 +34,7 @@ public class BinaryFilter implements Filter {
         final WebApplicationContext springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
                 filterConfig.getServletContext());
 
-        siteConfiguration = springContext.getBean(SiteConfiguration.class);
+        webAppContext = springContext.getBean(WebAppContext.class);
         webRequestContext = springContext.getBean(WebRequestContext.class);
         staticFileManager = springContext.getBean(StaticFileManager.class);
     }
@@ -56,7 +56,7 @@ public class BinaryFilter implements Filter {
 
     private void handleRequest(String url, Localization localization, ServletServerHttpRequest request, ServletServerHttpResponse response)
             throws IOException, ServletException {
-        final File file = new File(new File(siteConfiguration.getStaticsPath(), localization.getPath()), url);
+        final File file = new File(new File(webAppContext.getStaticsPath(), localization.getPath()), url);
         LOG.debug("handleRequest: {}, file: {}", url, file);
 
         final HttpStatus responseCode;

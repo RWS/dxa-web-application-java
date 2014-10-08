@@ -11,8 +11,8 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 
 /**
- * Component that provides information about the current client configuration, such as the size of the client's
- * screen, pixel ratio etc.
+ * Request-scoped component that provides information about the current client configuration, such as the size of the
+ * client's screen, pixel ratio etc.
  */
 @Component
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)

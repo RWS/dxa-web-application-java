@@ -4,8 +4,11 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 
+/**
+ * Application-scoped component that provides information about the context that the web app is running in.
+ */
 @Component
-public class SiteConfiguration {
+public class WebAppContext {
 
     private static final String STATICS_DIR = "BinaryData";
 

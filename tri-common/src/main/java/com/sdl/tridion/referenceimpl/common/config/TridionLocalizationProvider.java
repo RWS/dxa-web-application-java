@@ -29,7 +29,7 @@ public class TridionLocalizationProvider implements LocalizationProvider {
     private static final String MEDIA_ROOT_NODE_NAME = "mediaRoot";
 
     @Autowired
-    private SiteConfiguration siteConfiguration;
+    private WebAppContext webAppContext;
 
     @Autowired
     private StaticFileManager staticFileManager;
@@ -52,7 +52,7 @@ public class TridionLocalizationProvider implements LocalizationProvider {
         LOG.debug("Creating localization for publication: {}", publicationId);
         final String localizationPath = publicationMapping.getPath();
 
-        final File baseDir = new File(siteConfiguration.getStaticsPath(), localizationPath);
+        final File baseDir = new File(webAppContext.getStaticsPath(), localizationPath);
         getJsonConfig(ROOT_CONFIG_URL, baseDir, publicationId);
 
         final JsonNode configRootNode = new ObjectMapper().readTree(new File(baseDir, MAIN_CONFIG_URL));

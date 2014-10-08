@@ -2,7 +2,7 @@ package com.sdl.tridion.referenceimpl.webapp.filter;
 
 import com.sdl.tridion.referenceimpl.common.config.Localization;
 import com.sdl.tridion.referenceimpl.common.config.LocalizationProvider;
-import com.sdl.tridion.referenceimpl.common.config.SiteConfiguration;
+import com.sdl.tridion.referenceimpl.common.config.WebAppContext;
 import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ public class LocalizationFilter implements Filter {
         webRequestContext = springContext.getBean(WebRequestContext.class);
 
         final File webAppRootPath = new File(servletContext.getRealPath("/"));
-        springContext.getBean(SiteConfiguration.class).setWebAppRootPath(webAppRootPath);
+        springContext.getBean(WebAppContext.class).setWebAppRootPath(webAppRootPath);
         LOG.debug("webAppRootPath: {}", webAppRootPath.getPath());
     }
 

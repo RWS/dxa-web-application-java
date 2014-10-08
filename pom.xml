@@ -92,6 +92,12 @@
                 <artifactId>spring-webmvc</artifactId>
                 <version>${spring-version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring-version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <!-- Hibernate -->
             <dependency>
@@ -299,10 +305,14 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
 
-        <!-- JUnit for unit testing -->
+        <!-- JUnit and Spring Test for unit testing -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
         </dependency>
     </dependencies>
 

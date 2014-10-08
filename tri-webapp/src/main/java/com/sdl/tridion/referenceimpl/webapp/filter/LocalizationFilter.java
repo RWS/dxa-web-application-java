@@ -1,7 +1,7 @@
 package com.sdl.tridion.referenceimpl.webapp.filter;
 
 import com.sdl.tridion.referenceimpl.common.config.Localization;
-import com.sdl.tridion.referenceimpl.common.config.TridionConfiguration;
+import com.sdl.tridion.referenceimpl.common.config.LocalizationProvider;
 import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,17 +18,13 @@ import java.io.IOException;
 public class LocalizationFilter implements Filter {
     private static final Logger LOG = LoggerFactory.getLogger(Localization.class);
 
-    private TridionConfiguration tridionConfiguration;
-
+    private LocalizationProvider localizationProvider;
     private WebRequestContext webRequestContext;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        final WebApplicationContext springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
-                filterConfig.getServletContext());
-
-        tridionConfiguration = springContext.getBean(TridionConfiguration.class);
-
+        final WebApplicationContext springContext = WebApplicationContextUtils.getRequiredWebApplicationContext(filterConfig.getServletContext());
+        localizationProvider = springContext.getBean(LocalizationProvider.class);
         webRequestContext = springContext.getBean(WebRequestContext.class);
     }
 
@@ -37,7 +33,7 @@ public class LocalizationFilter implements Filter {
         // Note: The full URL (including protocol, domain, port etc.) is necessary here
         String url = ((HttpServletRequest) request).getRequestURL().toString();
 
-        final Localization localization = tridionConfiguration.getLocalization(url);
+        final Localization localization = localizationProvider.getLocalization(url);
         if (localization != null) {
             webRequestContext.setLocalization(localization);
         } else {

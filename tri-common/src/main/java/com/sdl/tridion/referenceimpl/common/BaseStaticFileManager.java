@@ -13,14 +13,8 @@ import java.io.IOException;
 public abstract class BaseStaticFileManager implements StaticFileManager {
     private static final Logger LOG = LoggerFactory.getLogger(BaseStaticFileManager.class);
 
-    private static final String JSON_CONFIG_ROOT = "/system/_all.json";
-
-    @Override
-    public String createStaticAssets(File baseDirectory) throws IOException {
-        getJsonConfig(baseDirectory, JSON_CONFIG_ROOT);
-        return "v1.00";
-    }
-
+    // TODO: What to do with the "createStaticAssets" method?
+    // TODO: This getJsonConfig method doesn't really belong here.
     private void getJsonConfig(File baseDirectory, String url) throws IOException {
         LOG.debug("getJsonConfig: baseDirectory={}, url={}", baseDirectory, url);
 

@@ -41,6 +41,10 @@ public class WebRequestContext {
         this.localization = localization;
     }
 
+    public int getPublicationId() {
+        return localization.getLocalizationId();
+    }
+
     public ScreenWidth getScreenWidth() {
         if (screenWidth == null) {
             final MediaHelper mediaHelper = mediaHelperProvider.getMediaHelper();

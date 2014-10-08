@@ -54,7 +54,7 @@ public final class DD4TContentProvider implements ContentProvider {
 
     @Override
     public Page getPage(String url) throws ContentProviderException {
-        final int publicationId = webRequestContext.getLocalization().getLocalizationId();
+        final int publicationId = webRequestContext.getPublicationId();
 
         final GenericPage genericPage;
         try {

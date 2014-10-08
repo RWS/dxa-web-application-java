@@ -101,6 +101,12 @@ public final class Localization {
         return sb.toString();
     }
 
+    public boolean isMediaUrl(String url) {
+        // TODO: Implement this
+        // The pattern has to be loaded from configuration for this specific localization.
+        return url.equals("/favicon.ico") || url.startsWith("/media") || url.startsWith("/system");
+    }
+
     @Override
     public String toString() {
         return "Localization{" +

@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
+/**
+ * TODO: This should use the DD4T BinaryFactory instead of directly using the Broker API.
+ */
 @Component
 public class DD4TStaticFileManager extends BaseStaticFileManager {
     private static final Logger LOG = LoggerFactory.getLogger(DD4TStaticFileManager.class);
@@ -28,7 +31,7 @@ public class DD4TStaticFileManager extends BaseStaticFileManager {
     public boolean getStaticContent(String url, File destinationFile) throws IOException {
         LOG.debug("getStaticContent: url={}, destinationFile={}", url, destinationFile);
 
-        final int publicationId = webRequestContext.getLocalization().getLocalizationId();
+        final int publicationId = webRequestContext.getPublicationId();
 
         try {
             final BinaryVariant binaryVariant = findBinaryVariant(publicationId, url);
@@ -66,7 +69,6 @@ public class DD4TStaticFileManager extends BaseStaticFileManager {
         } catch (StorageException e) {
             throw new IOException("Error while getting static content: " + url, e);
         }
-
     }
 
     private BinaryVariant findBinaryVariant(int publicationId, String url) throws StorageException {

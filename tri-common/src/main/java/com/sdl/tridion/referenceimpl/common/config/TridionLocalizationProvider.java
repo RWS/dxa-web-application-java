@@ -10,11 +10,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-public class TridionConfiguration {
-    private static final Logger LOG = LoggerFactory.getLogger(TridionConfiguration.class);
+public class TridionLocalizationProvider implements LocalizationProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationProvider.class);
 
     private Map<Integer, Localization> localizations = new HashMap<>();
 
+    @Override
     public Localization getLocalization(String url) {
         final PublicationMapping publicationMapping = DynamicContent.getInstance().getMappingsResolver()
                 .getPublicationMappingFromUrl(url);

@@ -56,11 +56,9 @@ namespace Sdl.Web.Tridion.Templates
             //Get all the active modules
             //Dictionary<string, Component> moduleComponents = GetActiveModules(coreConfigComponent);
             List<string> filesCreated = new List<string>();
-            if (IsMasterWebPublication())
-            {
-                filesCreated.AddRange(PublishJsonData(ReadMappingsData(), coreConfigComponent, "mapping", sg, true));
-                filesCreated.Add(PublishJsonData(ReadPageTemplateIncludes(), coreConfigComponent, "includes", "includes", sg));
-            }
+            filesCreated.AddRange(PublishJsonData(ReadMappingsData(), coreConfigComponent, "mapping", sg, true));
+            filesCreated.Add(PublishJsonData(ReadPageTemplateIncludes(), coreConfigComponent, "includes", "includes", sg));
+            
             //Publish the boostrap list, this is used by the web application to load in all other mapping files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "mapping-");
         }

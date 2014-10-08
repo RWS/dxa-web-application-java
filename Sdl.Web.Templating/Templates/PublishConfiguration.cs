@@ -44,13 +44,9 @@ namespace Sdl.Web.Tridion.Templates
             {
                 filesCreated.Add(ProcessModule(module.Key, module.Value, sg));
             }
-            //template, schema and taxonomy config is only published from the master web publication/default localization
-            if (IsMasterWebPublication())
-            {
-                filesCreated.AddRange(PublishJsonData(ReadSchemaData(), coreConfigComponent, "schemas", sg));
-                filesCreated.AddRange(PublishJsonData(ReadTemplateData(), coreConfigComponent, "templates", sg));
-                filesCreated.AddRange(PublishJsonData(ReadTaxonomiesData(), coreConfigComponent, "taxonomies", sg));
-            }
+            filesCreated.AddRange(PublishJsonData(ReadSchemaData(), coreConfigComponent, "schemas", sg));
+            filesCreated.AddRange(PublishJsonData(ReadTemplateData(), coreConfigComponent, "templates", sg));
+            filesCreated.AddRange(PublishJsonData(ReadTaxonomiesData(), coreConfigComponent, "taxonomies", sg));
             //Publish the boostrap list, this is used by the web application to load in all other configuration files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "config-", BuildAdditionalData());
         }

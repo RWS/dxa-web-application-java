@@ -49,26 +49,13 @@
     </filter-mapping>
 
     <!-- Filter for images and other static resources (everything under /system and /media) -->
-    <!-- TODO: Must be mapped to /* and filter itself must match against URL pattern in configuration -->
     <filter>
-        <filter-name>binaryFilter</filter-name>
-        <filter-class>com.sdl.tridion.referenceimpl.webapp.filter.BinaryFilter</filter-class>
+        <filter-name>staticContentFilter</filter-name>
+        <filter-class>com.sdl.tridion.referenceimpl.webapp.filter.StaticContentFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>binaryFilter</filter-name>
-        <url-pattern>/favicon.ico</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>binaryFilter</filter-name>
-        <url-pattern>/system/*</url-pattern>
-        <dispatcher>REQUEST</dispatcher>
-        <dispatcher>INCLUDE</dispatcher>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>binaryFilter</filter-name>
-        <url-pattern>/media/*</url-pattern>
+        <filter-name>staticContentFilter</filter-name>
+        <url-pattern>/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>

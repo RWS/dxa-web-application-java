@@ -1,6 +1,6 @@
 package com.sdl.tridion.referenceimpl.dd4t;
 
-import com.sdl.tridion.referenceimpl.common.BaseStaticFileManager;
+import com.sdl.tridion.referenceimpl.common.AbstractStaticContentProvider;
 import com.tridion.broker.StorageException;
 import com.tridion.storage.*;
 import com.tridion.storage.dao.BinaryContentDAO;
@@ -19,8 +19,8 @@ import java.util.List;
  * TODO: This should use the DD4T BinaryFactory instead of directly using the Broker API.
  */
 @Component
-public class DD4TStaticFileManager extends BaseStaticFileManager {
-    private static final Logger LOG = LoggerFactory.getLogger(DD4TStaticFileManager.class);
+public class DD4TStaticContentProvider extends AbstractStaticContentProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(DD4TStaticContentProvider.class);
 
     @Override
     public boolean getStaticContent(String url, File destinationFile, int publicationId) throws IOException {

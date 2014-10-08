@@ -10,8 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
-public abstract class BaseController {
-    private static final Logger LOG = LoggerFactory.getLogger(BaseController.class);
+public abstract class ControllerBase {
+    private static final Logger LOG = LoggerFactory.getLogger(ControllerBase.class);
 
     protected Page getPageFromRequest(HttpServletRequest request) {
         final Page page = (Page) request.getAttribute(ViewAttributeNames.PAGE_MODEL);

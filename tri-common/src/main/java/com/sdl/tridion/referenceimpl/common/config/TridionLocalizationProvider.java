@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.base.Strings;
-import com.sdl.tridion.referenceimpl.common.StaticFileManager;
+import com.sdl.tridion.referenceimpl.common.StaticContentProvider;
 import com.tridion.dynamiccontent.DynamicContent;
 import com.tridion.dynamiccontent.publication.PublicationMapping;
 import org.slf4j.Logger;
@@ -36,7 +36,7 @@ public class TridionLocalizationProvider implements LocalizationProvider {
     private WebAppContext webAppContext;
 
     @Autowired
-    private StaticFileManager staticFileManager;
+    private StaticContentProvider staticContentProvider;
 
     private Map<Integer, Localization> localizations = new HashMap<>();
 
@@ -71,7 +71,7 @@ public class TridionLocalizationProvider implements LocalizationProvider {
 
     private void getJsonConfig(String url, File baseDir, int publicationId) throws IOException {
         final File file = new File(baseDir, url);
-        if (!staticFileManager.getStaticContent(url, file, publicationId)) {
+        if (!staticContentProvider.getStaticContent(url, file, publicationId)) {
             throw new FileNotFoundException("Configuration file not found: " + url);
         }
 

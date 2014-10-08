@@ -6,8 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class BaseMediaHelper implements MediaHelper {
-    private static final Logger LOG = LoggerFactory.getLogger(BaseMediaHelper.class);
+/**
+ * Abstract implementation of {@code MediaHelper} with common functionality.
+ */
+public abstract class AbstractMediaHelper implements MediaHelper {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractMediaHelper.class);
 
     private static final int[] IMAGE_WIDTHS = { 160, 320, 640, 1024, 2048 };
 

@@ -1,6 +1,6 @@
 package com.sdl.tridion.referenceimpl.webapp.filter;
 
-import com.sdl.tridion.referenceimpl.common.StaticFileManager;
+import com.sdl.tridion.referenceimpl.common.StaticContentProvider;
 import com.sdl.tridion.referenceimpl.common.config.Localization;
 import com.sdl.tridion.referenceimpl.common.config.WebAppContext;
 import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
@@ -20,14 +20,14 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class BinaryFilter implements Filter {
-    private static final Logger LOG = LoggerFactory.getLogger(BinaryFilter.class);
+public class StaticContentFilter implements Filter {
+    private static final Logger LOG = LoggerFactory.getLogger(StaticContentFilter.class);
 
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     private WebAppContext webAppContext;
     private WebRequestContext webRequestContext;
-    private StaticFileManager staticFileManager;
+    private StaticContentProvider staticContentProvider;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -36,7 +36,7 @@ public class BinaryFilter implements Filter {
 
         webAppContext = springContext.getBean(WebAppContext.class);
         webRequestContext = springContext.getBean(WebRequestContext.class);
-        staticFileManager = springContext.getBean(StaticFileManager.class);
+        staticContentProvider = springContext.getBean(StaticContentProvider.class);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class BinaryFilter implements Filter {
         LOG.debug("handleRequest: {}, file: {}", url, file);
 
         final HttpStatus responseCode;
-        if (staticFileManager.getStaticContent(url, file)) {
+        if (staticContentProvider.getStaticContent(url, file)) {
             // NOTE: Unfortunately, in this version of Spring the method getIfNotModifiedSince() has the wrong name
             long ifModifiedSince = request.getHeaders().getIfNotModifiedSince();
             if (ifModifiedSince > 0L && file.lastModified() - ifModifiedSince < 1000L) {

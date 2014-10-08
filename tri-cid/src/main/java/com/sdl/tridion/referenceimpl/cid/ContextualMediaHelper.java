@@ -1,10 +1,10 @@
 package com.sdl.tridion.referenceimpl.cid;
 
-import com.sdl.tridion.referenceimpl.common.BaseMediaHelper;
+import com.sdl.tridion.referenceimpl.common.AbstractMediaHelper;
 import org.springframework.stereotype.Component;
 
 @Component("contextualMediaHelper")
-public class ContextualMediaHelper extends BaseMediaHelper {
+public class ContextualMediaHelper extends AbstractMediaHelper {
 
     @Override
     public String getResponsiveImageUrl(String url, String widthFactor, double aspect, int containerSize) {

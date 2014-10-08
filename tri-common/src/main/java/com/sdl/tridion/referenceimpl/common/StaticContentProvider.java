@@ -4,9 +4,9 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * TODO: Documentation.
+ * Provider for static content.
  */
-public interface StaticFileManager {
+public interface StaticContentProvider {
 
     /**
      * Gets static content for the specified URL and stores it in the specified file.

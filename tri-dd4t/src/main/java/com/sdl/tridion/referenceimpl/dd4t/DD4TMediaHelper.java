@@ -1,10 +1,10 @@
 package com.sdl.tridion.referenceimpl.dd4t;
 
-import com.sdl.tridion.referenceimpl.common.BaseMediaHelper;
+import com.sdl.tridion.referenceimpl.common.AbstractMediaHelper;
 import org.springframework.stereotype.Component;
 
 @Component("dd4tMediaHelper")
-public class DD4TMediaHelper extends BaseMediaHelper {
+public class DD4TMediaHelper extends AbstractMediaHelper {
 
     @Override
     public String getResponsiveImageUrl(String url, String widthFactor, double aspect, int containerSize) {

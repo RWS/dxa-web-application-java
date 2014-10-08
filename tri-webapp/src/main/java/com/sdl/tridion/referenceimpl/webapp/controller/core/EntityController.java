@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class EntityController extends BaseController {
+public class EntityController extends ControllerBase {
     private static final Logger LOG = LoggerFactory.getLogger(EntityController.class);
 
     @RequestMapping(method = RequestMethod.GET, value = "/entity/{regionName}/{index}")

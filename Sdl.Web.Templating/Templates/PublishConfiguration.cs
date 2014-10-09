@@ -146,10 +146,34 @@ namespace Sdl.Web.Tridion.Templates
                 {
                     String.Format("\"defaultLocalization\":{0}", JsonEncode(IsMasterWebPublication())),
                     String.Format("\"staging\":{0}", JsonEncode(IsPublishingToStaging())),
-                    String.Format("\"mediaRoot\":{0}", JsonEncode(GetPublication().MultimediaUrl))
+                    String.Format("\"mediaRoot\":{0}", JsonEncode(GetPublication().MultimediaUrl)),
+                    String.Format("\"siteLocalizations\":{0}", JsonEncode(this.GetPublication()))
                 };
             return additionalData;
         }
 
+        private List<string> GetSitePublications(Repository startPublication)
+        {
+            List<string> pubIds = new List<string>{startPublication.Id.ItemId.ToString()};
+            if (startPublication.HasChildren)
+            {
+                var filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };
+                foreach (XmlElement item in GetPublication().GetListUsingItems(filter).ChildNodes)
+                {
+                    pubIds.Add(item.GetAttribute("Id"));
+                }
+            }
+            else
+            {
+                foreach (var parent in startPublication.Parents)
+                {
+                    if (((Publication)parent).PublicationType.ToLower() == "web")
+                    {
+                        return GetSitePublications(parent);
+                    }
+                }
+            }
+            return pubIds;
+        }
     }
 }

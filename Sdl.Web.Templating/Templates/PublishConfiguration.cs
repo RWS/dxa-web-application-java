@@ -160,7 +160,7 @@ namespace Sdl.Web.Tridion.Templates
                 var filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };
                 foreach (XmlElement item in GetPublication().GetListUsingItems(filter).ChildNodes)
                 {
-                    pubIds.Add(item.GetAttribute("Id"));
+                    pubIds.Add(item.GetAttribute("ID"));
                 }
             }
             else

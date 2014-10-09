@@ -46,7 +46,8 @@ public class LocalizationFilter implements Filter {
         if (localization != null) {
             webRequestContext.setLocalization(localization);
         } else {
-            LOG.warn("Could not determine localization for url: {}", url);
+            throw new ServletException("Cannot determine localization for url: " + url +
+                    "\nMake sure that you have the proper configuration in cd_dynamic_conf.xml");
         }
 
         chain.doFilter(request, response);

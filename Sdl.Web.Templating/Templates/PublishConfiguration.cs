@@ -147,7 +147,7 @@ namespace Sdl.Web.Tridion.Templates
                     String.Format("\"defaultLocalization\":{0}", JsonEncode(IsMasterWebPublication())),
                     String.Format("\"staging\":{0}", JsonEncode(IsPublishingToStaging())),
                     String.Format("\"mediaRoot\":{0}", JsonEncode(GetPublication().MultimediaUrl)),
-                    String.Format("\"siteLocalizations\":{0}", JsonEncode(this.GetPublication()))
+                    String.Format("\"siteLocalizations\":{0}", JsonEncode(GetSitePublications(this.GetPublication())))
                 };
             return additionalData;
         }

@@ -61,6 +61,8 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
+
+    <!-- Insert an image -->
     <tag>
         <name>image</name>
         <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.ImageTag</tag-class>
@@ -96,6 +98,18 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>int</type>
+        </attribute>
+    </tag>
+
+    <!-- Insert a resource text -->
+    <tag>
+        <name>resource</name>
+        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.ResourceTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
 </taglib>

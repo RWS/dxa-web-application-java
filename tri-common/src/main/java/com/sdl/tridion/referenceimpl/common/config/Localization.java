@@ -17,8 +17,10 @@ public class Localization {
     private final String mediaRoot;
 
     private final Map<String, String> configuration;
+    private final Map<String, String> resources;
 
-    public Localization(int publicationId, String path, String mediaRoot, Map<String, String> configuration) {
+    public Localization(int publicationId, String path, String mediaRoot, Map<String, String> configuration,
+                        Map<String, String> resources) {
         this.publicationId = publicationId;
 
         // Make sure path starts with and does not end with a slash
@@ -33,6 +35,7 @@ public class Localization {
 
         this.mediaRoot = mediaRoot;
         this.configuration = configuration;
+        this.resources = resources;
     }
 
     public int getPublicationId() {
@@ -52,8 +55,12 @@ public class Localization {
         return p.equals(FAVICON_PATH) || p.startsWith(SYSTEM_ASSETS_PATH) || p.startsWith(mediaRoot);
     }
 
-    public String getConfigValue(String key) {
+    public String getConfifuration(String key) {
         return configuration.get(key);
+    }
+
+    public String getResource(String key) {
+        return resources.get(key);
     }
 
     @Override
@@ -63,6 +70,7 @@ public class Localization {
                 ", path='" + path + '\'' +
                 ", mediaRoot='" + mediaRoot + '\'' +
                 ", configuration=" + configuration +
+                ", resources=" + resources +
                 '}';
     }
 }

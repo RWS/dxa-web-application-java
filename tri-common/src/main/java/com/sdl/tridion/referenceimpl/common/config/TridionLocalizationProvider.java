@@ -27,8 +27,9 @@ import java.util.Map;
 public class TridionLocalizationProvider implements LocalizationProvider {
     private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationProvider.class);
 
-    private static final String ROOT_CONFIG_URL = "/system/_all.json";
+    private static final String BOOTSTRAP_JSON_URL = "/system/_all.json";
     private static final String MAIN_CONFIG_URL = "/system/config/_all.json";
+    private static final String MAIN_RESOURCES_URL = "/system/resources/_all.json";
 
     private static final String FILES_NODE_NAME = "files";
     private static final String MEDIA_ROOT_NODE_NAME = "mediaRoot";
@@ -50,46 +51,55 @@ public class TridionLocalizationProvider implements LocalizationProvider {
 
     private synchronized Localization getLocalization(PublicationMapping publicationMapping) throws IOException {
         final int publicationId = publicationMapping.getPublicationId();
-        if (localizations.containsKey(publicationId)) {
-            return localizations.get(publicationId);
+        if (!localizations.containsKey(publicationId)) {
+            localizations.put(publicationId, createLocalization(publicationMapping));
         }
 
+        return localizations.get(publicationId);
+    }
+
+    private Localization createLocalization(PublicationMapping publicationMapping) throws IOException {
+        final int publicationId = publicationMapping.getPublicationId();
         LOG.debug("Creating localization for publication: {}", publicationId);
+
         final String localizationPath = publicationMapping.getPath();
         final File baseDir = new File(webAppContext.getStaticsPath(), localizationPath);
 
-        getJsonConfig(ROOT_CONFIG_URL, baseDir, publicationId);
+        fetchJsonFiles(BOOTSTRAP_JSON_URL, baseDir, publicationId);
 
-        final JsonNode configRootNode = new ObjectMapper().readTree(new File(baseDir, MAIN_CONFIG_URL));
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final JsonNode configRootNode = objectMapper.readTree(new File(baseDir, MAIN_CONFIG_URL));
+        final JsonNode resourcesRootNode = objectMapper.readTree(new File(baseDir, MAIN_RESOURCES_URL));
 
         final Localization localization = new Localization(publicationId, localizationPath,
-                configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(), parseJsonConfig(configRootNode, baseDir));
+                configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(),
+                parseJsonFiles(configRootNode, baseDir),
+                parseJsonFiles(resourcesRootNode, baseDir));
         LOG.debug("Created: {}", localization);
 
-        localizations.put(publicationId, localization);
         return localization;
     }
 
-    private void getJsonConfig(String url, File baseDir, int publicationId) throws IOException {
+    private void fetchJsonFiles(String url, File baseDir, int publicationId) throws IOException {
         final File file = new File(baseDir, url);
         if (!staticContentProvider.getStaticContent(url, file, publicationId)) {
             throw new FileNotFoundException("Configuration file not found: " + url);
         }
 
-        // Recursively get referenced configuration files
+        // Recursively fetch referenced configuration files
         final JsonNode filesNode = new ObjectMapper().readTree(file).get(FILES_NODE_NAME);
         if (filesNode != null && filesNode.getNodeType() == JsonNodeType.ARRAY) {
             for (int i = 0; i < filesNode.size(); i++) {
                 final String subFileUrl = filesNode.get(i).asText();
                 if (!Strings.isNullOrEmpty(subFileUrl)) {
-                    getJsonConfig(subFileUrl, baseDir, publicationId);
+                    fetchJsonFiles(subFileUrl, baseDir, publicationId);
                 }
             }
         }
     }
 
-    private Map<String, String> parseJsonConfig(JsonNode configRootNode, File baseDir) throws IOException {
-        final Map<String, String> configuration = new HashMap<>();
+    private Map<String, String> parseJsonFiles(JsonNode configRootNode, File baseDir) throws IOException {
+        final Map<String, String> properties = new HashMap<>();
 
         final JsonNode filesNode = configRootNode.get(FILES_NODE_NAME);
         if (filesNode != null && filesNode.getNodeType() == JsonNodeType.ARRAY) {
@@ -103,12 +113,12 @@ public class TridionLocalizationProvider implements LocalizationProvider {
                     final Iterator<Map.Entry<String, JsonNode>> iterator = rootNode.fields();
                     while (iterator.hasNext()) {
                         Map.Entry<String, JsonNode> entry = iterator.next();
-                        configuration.put(prefix + entry.getKey(), entry.getValue().asText());
+                        properties.put(prefix + entry.getKey(), entry.getValue().asText());
                     }
                 }
             }
         }
 
-        return configuration;
+        return properties;
     }
 }

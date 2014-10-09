@@ -152,13 +152,13 @@ namespace Sdl.Web.Tridion.Templates
             return additionalData;
         }
 
-        private List<string> GetSitePublications(Repository startPublication)
+        private List<string> GetSitePublications(Publication startPublication)
         {
-            List<string> pubIds = new List<string>{startPublication.Id.ItemId.ToString()};
+            List<string> pubIds = new List<string> { startPublication.Id.ItemId.ToString() };
             if (startPublication.HasChildren)
             {
                 var filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };
-                foreach (XmlElement item in GetPublication().GetListUsingItems(filter).ChildNodes)
+                foreach (XmlElement item in startPublication.GetListUsingItems(filter).ChildNodes)
                 {
                     var id = new TcmUri(item.GetAttribute("ID"));
                     pubIds.Add(id.ItemId.ToString());
@@ -172,7 +172,7 @@ namespace Sdl.Web.Tridion.Templates
                     Logger.Debug("parent publication has type: " + type);
                     if (type == "web")
                     {
-                        return GetSitePublications(parent);
+                        return GetSitePublications((Publication)parent);
                     }
                 }
             }

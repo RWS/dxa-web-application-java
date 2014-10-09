@@ -167,7 +167,9 @@ namespace Sdl.Web.Tridion.Templates
             {
                 foreach (var parent in startPublication.Parents)
                 {
-                    if (((Publication)parent).PublicationType.ToLower() == "web")
+                    var type = ((Publication)parent).PublicationType.ToLower();
+                    Logger.Debug("parent publication has type: " + type);
+                    if (type == "web")
                     {
                         return GetSitePublications(parent);
                     }

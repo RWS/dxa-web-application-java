@@ -56,7 +56,8 @@ public class StaticContentFilter implements Filter {
 
     private void handleRequest(String url, Localization localization, ServletServerHttpRequest request, ServletServerHttpResponse response)
             throws IOException, ServletException {
-        final File file = new File(new File(webAppContext.getStaticsPath(), localization.getPath()), url);
+        final File file = new File(new File(new File(webAppContext.getStaticsPath(),
+                Integer.toString(localization.getPublicationId())), localization.getPath()), url);
         LOG.debug("handleRequest: {}, file: {}", url, file);
 
         final HttpStatus responseCode;

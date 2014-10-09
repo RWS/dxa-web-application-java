@@ -63,7 +63,7 @@ public class TridionLocalizationProvider implements LocalizationProvider {
         LOG.debug("Creating localization for publication: {}", publicationId);
 
         final String localizationPath = publicationMapping.getPath();
-        final File baseDir = new File(webAppContext.getStaticsPath(), localizationPath);
+        final File baseDir = new File(new File(webAppContext.getStaticsPath(), Integer.toString(publicationId)), localizationPath);
 
         fetchJsonFiles(BOOTSTRAP_JSON_URL, baseDir, publicationId);
 

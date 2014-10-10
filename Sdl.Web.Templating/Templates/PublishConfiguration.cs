@@ -141,42 +141,111 @@ namespace Sdl.Web.Tridion.Templates
 
         protected List<string> BuildAdditionalData()
         {
-            //Some additional data required to configure the web application
             List<string> additionalData = new List<string>
                 {
                     String.Format("\"defaultLocalization\":{0}", JsonEncode(IsMasterWebPublication())),
                     String.Format("\"staging\":{0}", JsonEncode(IsPublishingToStaging())),
                     String.Format("\"mediaRoot\":{0}", JsonEncode(GetPublication().MultimediaUrl)),
-                    String.Format("\"siteLocalizations\":{0}", JsonEncode(GetSitePublications(this.GetPublication())))
+                    String.Format("\"siteLocalizations\":{0}", JsonEncode(LoadSitePublications(GetPublication())))
                 };
             return additionalData;
         }
 
-        private List<string> GetSitePublications(Publication startPublication)
+        private Publication GetMasterPublication(Publication contextPublication, ref string siteId)
         {
-            List<string> pubIds = new List<string> { startPublication.Id.ItemId.ToString() };
-            if (startPublication.HasChildren)
+            if (IsCandidateMaster(contextPublication, siteId))
             {
-                var filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };
-                foreach (XmlElement item in startPublication.GetListUsingItems(filter).ChildNodes)
+                siteId = GetSiteIdFromPublication(contextPublication) ?? siteId;
+                List<Publication> validParents = new List<Publication>();
+                foreach (var item in contextPublication.Parents)
                 {
-                    var id = new TcmUri(item.GetAttribute("ID"));
-                    pubIds.Add(id.ItemId.ToString());
+                    Publication parent = (Publication)item;
+                    if (IsCandidateMaster(parent, siteId))
+                    {
+                        validParents.Add(parent);
+                    }
                 }
+                if (validParents.Count == 0)
+                {
+                    return contextPublication;
+                }
+                else
+                {
+                    if (validParents.Count>1)
+                    {
+                        Logger.Error(String.Format("Publication {0} has more than one web publication parent with the same (or empty) siteId {1}. Cannot determine site grouping, so picking the first parent: {2}.", contextPublication.Title, siteId, validParents[0].Title));
+                    }
+                    return GetMasterPublication(validParents[0], ref siteId);
+                }
+            }
+            return null;
+        }
+
+        private bool IsCandidateMaster(Publication pub, string siteId)
+        {
+            //a publication is a valid master if it is of type "web"
+            //and there is either no child siteId passed, or the parent siteId is null or equal to the child siteId
+            var parentType = ((Publication)pub).PublicationType.ToLower();
+            if (parentType!="web")
+            {
+                return false;
             }
             else
             {
-                foreach (var parent in startPublication.Parents)
+                var parentSiteId = GetSiteIdFromPublication(pub);
+                if (siteId!=null && siteId!=parentSiteId)
                 {
-                    var type = ((Publication)parent).PublicationType.ToLower();
-                    Logger.Debug("parent publication has type: " + type);
-                    if (type == "web")
+                    return false;
+                }
+            }
+            return true;
+        }
+
+
+        private List<string> LoadSitePublications(Publication contextPublication)
+        {
+            string siteId = null;
+            var master = GetMasterPublication(contextPublication, ref siteId);
+            Logger.Debug(String.Format("Master publication is : {0}, siteId is {1}", master.Title, siteId));
+            List<string> pubIds = new List<string> { master.Id.ItemId.ToString() };
+            pubIds.AddRange(GetChildPublicationIds(master, siteId));
+            return pubIds;
+        }
+
+        private List<string> GetChildPublicationIds(Publication master, string siteId)
+        {
+            List<string> pubIds = new List<string>();
+            var filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };
+            foreach (XmlElement item in master.GetListUsingItems(filter).ChildNodes)
+            {
+                var id = item.GetAttribute("ID");
+                var child = (Publication)Engine.GetObject(id);
+                var childSiteId = GetSiteIdFromPublication(child);
+                if (childSiteId == null || childSiteId == siteId)
+                {
+                    Logger.Debug(String.Format("Found valid descendent {0} with site ID {1} ", child.Title, childSiteId));
+                    pubIds.Add(child.Id.ItemId.ToString());
+                    if (child.HasChildren)
                     {
-                        return GetSitePublications((Publication)parent);
+                        pubIds.AddRange(GetChildPublicationIds(child, siteId));
                     }
+                }
+                else
+                {
+                    Logger.Debug(String.Format("Descendent {0} has invalid site ID {1} - ignoring ",child.Title,childSiteId));
                 }
             }
             return pubIds;
+        }
+
+        private string GetSiteIdFromPublication(Publication startPublication)
+        {
+            if (startPublication.Metadata!=null)
+            {
+                var meta = new ItemFields(startPublication.Metadata, startPublication.MetadataSchema);
+                return meta.GetTextValue("siteId");
+            }
+            return null;
         }
     }
 }

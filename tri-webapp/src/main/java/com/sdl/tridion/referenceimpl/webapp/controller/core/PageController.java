@@ -19,7 +19,7 @@ import org.springframework.web.util.UrlPathHelper;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class PageController {
+public class PageController extends ControllerBase {
     private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
 
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();

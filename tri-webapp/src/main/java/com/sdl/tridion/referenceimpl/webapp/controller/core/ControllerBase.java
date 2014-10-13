@@ -7,11 +7,15 @@ import com.sdl.tridion.referenceimpl.webapp.controller.exception.BadRequestExcep
 import com.sdl.tridion.referenceimpl.webapp.controller.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
 public abstract class ControllerBase {
     private static final Logger LOG = LoggerFactory.getLogger(ControllerBase.class);
+
+    protected static final String ERROR_VIEW = "shared/Error";
 
     protected Page getPageFromRequest(HttpServletRequest request) {
         final Page page = (Page) request.getAttribute(ViewAttributeNames.PAGE_MODEL);
@@ -30,5 +34,11 @@ public abstract class ControllerBase {
             throw new NotFoundException("Region not found: " + regionName);
         }
         return region;
+    }
+
+    @ExceptionHandler(Exception.class)
+    public String handleException(HttpServletRequest request, Exception exception) {
+        LOG.error("Exception while processing request for: {}", request.getRequestURL(), exception);
+        return ERROR_VIEW;
     }
 }

@@ -153,10 +153,10 @@ namespace Sdl.Web.Tridion.Templates
 
         private Publication GetMasterPublication(Publication contextPublication, ref string siteId)
         {
-            if (IsCandidateMaster(contextPublication, siteId))
+            siteId = GetSiteIdFromPublication(contextPublication) ?? siteId;
+            List<Publication> validParents = new List<Publication>();
+            if (siteId != null)
             {
-                siteId = GetSiteIdFromPublication(contextPublication) ?? siteId;
-                List<Publication> validParents = new List<Publication>();
                 foreach (var item in contextPublication.Parents)
                 {
                     Publication parent = (Publication)item;
@@ -165,38 +165,22 @@ namespace Sdl.Web.Tridion.Templates
                         validParents.Add(parent);
                     }
                 }
-                if (validParents.Count == 0)
-                {
-                    return contextPublication;
-                }
-                else
-                {
-                    if (validParents.Count>1)
-                    {
-                        Logger.Error(String.Format("Publication {0} has more than one web publication parent with the same (or empty) siteId {1}. Cannot determine site grouping, so picking the first parent: {2}.", contextPublication.Title, siteId, validParents[0].Title));
-                    }
-                    return GetMasterPublication(validParents[0], ref siteId);
-                }
             }
-            return null;
+            if (validParents.Count > 1)
+            {
+                Logger.Error(String.Format("Publication {0} has more than one parent with the same (or empty) siteId {1}. Cannot determine site grouping, so picking the first parent: {2}.", contextPublication.Title, siteId, validParents[0].Title));
+            }
+            return validParents.Count==0 ? contextPublication : GetMasterPublication(validParents[0], ref siteId);
         }
 
         private bool IsCandidateMaster(Publication pub, string siteId)
         {
-            //a publication is a valid master if it is of type "web"
-            //and there is either no child siteId passed, or the parent siteId is null or equal to the child siteId
-            var parentType = ((Publication)pub).PublicationType.ToLower();
-            if (parentType!="web")
+            //A publication is a valid master its siteId matches the passed siteId
+            //Or the passed siteId is null
+            var parentSiteId = GetSiteIdFromPublication(pub);
+            if (siteId!=null && siteId!=parentSiteId)
             {
                 return false;
-            }
-            else
-            {
-                var parentSiteId = GetSiteIdFromPublication(pub);
-                if (siteId!=null && siteId!=parentSiteId)
-                {
-                    return false;
-                }
             }
             return true;
         }
@@ -208,7 +192,10 @@ namespace Sdl.Web.Tridion.Templates
             var master = GetMasterPublication(contextPublication, ref siteId);
             Logger.Debug(String.Format("Master publication is : {0}, siteId is {1}", master.Title, siteId));
             List<string> pubIds = new List<string> { master.Id.ItemId.ToString() };
-            pubIds.AddRange(GetChildPublicationIds(master, siteId));
+            if (siteId!=null)
+            {
+                pubIds.AddRange(GetChildPublicationIds(master, siteId));
+            }
             return pubIds;
         }
 
@@ -221,7 +208,7 @@ namespace Sdl.Web.Tridion.Templates
                 var id = item.GetAttribute("ID");
                 var child = (Publication)Engine.GetObject(id);
                 var childSiteId = GetSiteIdFromPublication(child);
-                if (childSiteId == null || childSiteId == siteId)
+                if (childSiteId == siteId)
                 {
                     Logger.Debug(String.Format("Found valid descendent {0} with site ID {1} ", child.Title, childSiteId));
                     pubIds.Add(child.Id.ItemId.ToString());

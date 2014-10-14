@@ -173,16 +173,13 @@ namespace Sdl.Web.Tridion.Templates
             return validParents.Count==0 ? contextPublication : GetMasterPublication(validParents[0], ref siteId);
         }
 
-        private bool IsCandidateMaster(Publication pub, string siteId)
+        private bool IsCandidateMaster(Publication pub, string childId)
         {
-            //A publication is a valid master its siteId matches the passed siteId
-            //Or the passed siteId is null
-            var parentSiteId = GetSiteIdFromPublication(pub);
-            if (siteId!=null && siteId!=parentSiteId)
-            {
-                return false;
-            }
-            return true;
+            //A publication is a valid master if:
+            //a) Its siteId is "multisite-master" or
+            //b) Its siteId matches the passed (child) siteId
+            var siteId = GetSiteIdFromPublication(pub);
+            return siteId=="multisite-master" ? true : childId==siteId;
         }
 
 

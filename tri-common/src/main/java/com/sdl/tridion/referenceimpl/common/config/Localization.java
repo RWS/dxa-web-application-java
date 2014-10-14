@@ -55,7 +55,7 @@ public class Localization {
         return p.equals(FAVICON_PATH) || p.startsWith(SYSTEM_ASSETS_PATH) || p.startsWith(mediaRoot);
     }
 
-    public String getConfifuration(String key) {
+    public String getConfiguration(String key) {
         return configuration.get(key);
     }
 

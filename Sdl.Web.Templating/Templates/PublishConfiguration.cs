@@ -8,6 +8,7 @@ using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
+using System.Linq;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -151,11 +152,11 @@ namespace Sdl.Web.Tridion.Templates
             return additionalData;
         }
 
-        private Publication GetMasterPublication(Publication contextPublication, ref string siteId)
+        private Publication GetMasterPublication(Publication contextPublication)
         {
-            siteId = GetSiteIdFromPublication(contextPublication) ?? siteId;
+            var siteId = GetSiteIdFromPublication(contextPublication);
             List<Publication> validParents = new List<Publication>();
-            if (siteId != null)
+            if (siteId != null && siteId!="multisite-master")
             {
                 foreach (var item in contextPublication.Parents)
                 {
@@ -170,7 +171,7 @@ namespace Sdl.Web.Tridion.Templates
             {
                 Logger.Error(String.Format("Publication {0} has more than one parent with the same (or empty) siteId {1}. Cannot determine site grouping, so picking the first parent: {2}.", contextPublication.Title, siteId, validParents[0].Title));
             }
-            return validParents.Count==0 ? contextPublication : GetMasterPublication(validParents[0], ref siteId);
+            return validParents.Count==0 ? contextPublication : GetMasterPublication(validParents[0]);
         }
 
         private bool IsCandidateMaster(Publication pub, string childId)
@@ -185,8 +186,8 @@ namespace Sdl.Web.Tridion.Templates
 
         private List<string> LoadSitePublications(Publication contextPublication)
         {
-            string siteId = null;
-            var master = GetMasterPublication(contextPublication, ref siteId);
+            string siteId = GetSiteIdFromPublication(contextPublication);
+            var master = GetMasterPublication(contextPublication);
             Logger.Debug(String.Format("Master publication is : {0}, siteId is {1}", master.Title, siteId));
             List<string> pubIds = new List<string> { master.Id.ItemId.ToString() };
             if (siteId!=null)
@@ -209,10 +210,6 @@ namespace Sdl.Web.Tridion.Templates
                 {
                     Logger.Debug(String.Format("Found valid descendent {0} with site ID {1} ", child.Title, childSiteId));
                     pubIds.Add(child.Id.ItemId.ToString());
-                    if (child.HasChildren)
-                    {
-                        pubIds.AddRange(GetChildPublicationIds(child, siteId));
-                    }
                 }
                 else
                 {

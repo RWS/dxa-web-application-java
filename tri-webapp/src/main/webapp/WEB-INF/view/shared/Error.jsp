@@ -1,7 +1,7 @@
 <%@ page import="java.io.StringWriter" %>
 <%@ page import="java.io.PrintWriter" %>
 <%@ page isErrorPage="true" %>
-<div style="background-color: #ff8888; border: 5px solid red;">
+<div style="background-color: #ff9999; border: 5px solid red; padding: 5px;">
 <p>Error: <%= exception.getMessage() %></p>
 <!--
 <%

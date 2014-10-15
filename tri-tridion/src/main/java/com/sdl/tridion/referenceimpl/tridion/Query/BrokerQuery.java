@@ -1,6 +1,9 @@
 package com.sdl.tridion.referenceimpl.tridion.Query;
 
+<<<<<<< HEAD
 import com.sdl.tridion.referenceimpl.common.model.entity.Link;
+=======
+>>>>>>> b66c89e4a01bbccd51d5faf420c9dd690c4b49bf
 import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
 import com.tridion.broker.querying.criteria.Criteria;
 import com.tridion.broker.querying.Query;

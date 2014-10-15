@@ -27,8 +27,6 @@ import java.util.Map;
 /**
  * Implementation of {@code LocalizationProvider} that gets information from the Tridion configuration.
  * It uses the CD API to get configuration information from {@code cd_dynamic_conf.xml}.
- *
- * TODO: Must be moved to tri-tridion module
  */
 @Component
 public class TridionLocalizationProvider implements LocalizationProvider {

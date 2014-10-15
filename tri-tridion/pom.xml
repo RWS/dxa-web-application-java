@@ -50,7 +50,15 @@
         <!-- Tridion Content Delivery -->
         <dependency>
             <groupId>com.tridion</groupId>
+            <artifactId>cd_ambient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_broker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_dynamic</artifactId>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>

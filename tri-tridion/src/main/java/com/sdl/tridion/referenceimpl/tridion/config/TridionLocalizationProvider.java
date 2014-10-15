@@ -1,4 +1,4 @@
-package com.sdl.tridion.referenceimpl.common.config;
+package com.sdl.tridion.referenceimpl.tridion.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,6 +7,9 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.sdl.tridion.referenceimpl.common.StaticContentProvider;
+import com.sdl.tridion.referenceimpl.common.config.Localization;
+import com.sdl.tridion.referenceimpl.common.config.LocalizationProvider;
+import com.sdl.tridion.referenceimpl.common.config.WebAppContext;
 import com.tridion.dynamiccontent.DynamicContent;
 import com.tridion.dynamiccontent.publication.PublicationMapping;
 import org.slf4j.Logger;

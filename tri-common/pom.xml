@@ -43,15 +43,10 @@
             <artifactId>guava</artifactId>
         </dependency>
 
-        <!-- TODO: These dependencies should not be here, Tridion-specific code must be in tri-tridion -->
         <!-- Tridion Content Delivery -->
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_ambient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_dynamic</artifactId>
         </dependency>
 
         <!-- Third-party libraries used by Tridion Content Delivery -->

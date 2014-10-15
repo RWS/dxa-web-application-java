@@ -26,6 +26,11 @@
             <artifactId>tri-common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.sdl</groupId>
+            <artifactId>tri-tridion</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <!-- DD4T -->
         <dependency>

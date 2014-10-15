@@ -1,5 +1,6 @@
 package com.sdl.tridion.referenceimpl.tridion.Query;
 
+import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
 import com.tridion.broker.querying.criteria.Criteria;
 import com.tridion.broker.querying.Query;
 import com.tridion.broker.querying.sorting.SortColumn;

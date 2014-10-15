@@ -19,6 +19,7 @@
         <module>tri-cid</module>
         <module>tri-common</module>
         <module>tri-dd4t</module>
+        <module>tri-tridion</module>
         <module>tri-webapp</module>
     </modules>
 

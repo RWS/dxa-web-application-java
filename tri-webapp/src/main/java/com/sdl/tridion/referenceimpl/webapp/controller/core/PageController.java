@@ -5,7 +5,6 @@ import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
 import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import com.sdl.tridion.referenceimpl.common.model.Page;
-import com.sdl.tridion.referenceimpl.webapp.ViewAttributeNames;
 import com.sdl.tridion.referenceimpl.webapp.controller.exception.InternalServerErrorException;
 import com.sdl.tridion.referenceimpl.webapp.controller.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -17,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
+
+import static com.sdl.tridion.referenceimpl.webapp.WebAppConstants.PAGE_MODEL;
+import static com.sdl.tridion.referenceimpl.webapp.WebAppConstants.SCREEN_WIDTH;
 
 @Controller
 public class PageController extends ControllerBase {
@@ -30,7 +32,7 @@ public class PageController extends ControllerBase {
     @Autowired
     private WebRequestContext webRequestContext;
 
-    @RequestMapping(method = RequestMethod.GET, value = "/*")
+    @RequestMapping(method = RequestMethod.GET, value = "/**")
     public String handleGetPage(HttpServletRequest request) {
         final String url = getPageUrl(request);
         LOG.debug("handleGetPage: url={}", url);
@@ -38,23 +40,14 @@ public class PageController extends ControllerBase {
         final Page page = getPageFromContentProvider(url);
         LOG.debug("handleGetPage: page={}", page);
 
-        request.setAttribute(ViewAttributeNames.PAGE_MODEL, page);
-        request.setAttribute(ViewAttributeNames.SCREEN_WIDTH, webRequestContext.getScreenWidth());
+        request.setAttribute(PAGE_MODEL, page);
+        request.setAttribute(SCREEN_WIDTH, webRequestContext.getScreenWidth());
 
         return page.getViewName();
     }
 
     private String getPageUrl(HttpServletRequest request) {
-        String url = URL_PATH_HELPER.getRequestUri(request).replace(URL_PATH_HELPER.getContextPath(request), "");
-
-        if (!url.startsWith("/")) {
-            url = "/" + url;
-        }
-        if (!url.endsWith(".html")) {
-            url = url + ".html";
-        }
-
-        return url;
+        return URL_PATH_HELPER.getRequestUri(request).replace(URL_PATH_HELPER.getContextPath(request), "");
     }
 
     private Page getPageFromContentProvider(String url) {

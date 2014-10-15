@@ -1,8 +1,8 @@
 <%@ page import="java.io.StringWriter" %>
 <%@ page import="java.io.PrintWriter" %>
 <%@ page isErrorPage="true" %>
-<div style="border: 5px solid red;">
-<p>Error</p>
+<div style="background-color: #ff8888; border: 5px solid red;">
+<p>Error: <%= exception.getMessage() %></p>
 <!--
 <%
 final StringWriter sw = new StringWriter();

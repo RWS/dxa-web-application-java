@@ -1,13 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="com.sdl.tridion.referenceimpl.webapp.ViewAttributeNames" %>
 <%@ page import="com.sdl.tridion.referenceimpl.common.config.ScreenWidth" %>
+<%@ page import="com.sdl.tridion.referenceimpl.webapp.WebAppConstants" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <jsp:useBean id="regionModel" type="com.sdl.tridion.referenceimpl.common.model.Region" scope="request"/>
 <div typeof="Region" resource="3-Column">
 <%
     int entityCount = regionModel.getEntities().size();
 
-    int cols = request.getAttribute(ViewAttributeNames.SCREEN_WIDTH) == ScreenWidth.SMALL ? 2 : 3;
+    int cols = request.getAttribute(WebAppConstants.SCREEN_WIDTH) == ScreenWidth.SMALL ? 2 : 3;
     int rows = (int) Math.ceil(entityCount / (double) cols);
 
     for (int i = 0; i < rows; i++) {

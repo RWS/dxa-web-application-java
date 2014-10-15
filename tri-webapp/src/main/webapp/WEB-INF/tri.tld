@@ -8,6 +8,18 @@
     <short-name>tridion-reference-impl</short-name>
     <uri>http://www.sdl.com/tridion-reference-impl</uri>
 
+    <!-- Include a page -->
+    <tag>
+        <name>include</name>
+        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.IncludeTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
     <!-- Include a specific region -->
     <tag>
         <name>region</name>

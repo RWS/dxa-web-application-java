@@ -1,10 +1,15 @@
-package com.sdl.tridion.referenceimpl.common.config;
+package com.sdl.tridion.referenceimpl.tridion.config;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.google.common.base.Strings;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.sdl.tridion.referenceimpl.common.StaticContentProvider;
+import com.sdl.tridion.referenceimpl.common.config.Localization;
+import com.sdl.tridion.referenceimpl.common.config.LocalizationProvider;
+import com.sdl.tridion.referenceimpl.common.config.WebAppContext;
 import com.tridion.dynamiccontent.DynamicContent;
 import com.tridion.dynamiccontent.publication.PublicationMapping;
 import org.slf4j.Logger;
@@ -22,6 +27,8 @@ import java.util.Map;
 /**
  * Implementation of {@code LocalizationProvider} that gets information from the Tridion configuration.
  * It uses the CD API to get configuration information from {@code cd_dynamic_conf.xml}.
+ *
+ * TODO: Must be moved to tri-tridion module
  */
 @Component
 public class TridionLocalizationProvider implements LocalizationProvider {
@@ -30,6 +37,7 @@ public class TridionLocalizationProvider implements LocalizationProvider {
     private static final String BOOTSTRAP_JSON_URL = "/system/_all.json";
     private static final String MAIN_CONFIG_URL = "/system/config/_all.json";
     private static final String MAIN_RESOURCES_URL = "/system/resources/_all.json";
+    private static final String INCLUDES_URL = "/system/mappings/includes.json";
 
     private static final String FILES_NODE_NAME = "files";
     private static final String MEDIA_ROOT_NODE_NAME = "mediaRoot";
@@ -70,11 +78,13 @@ public class TridionLocalizationProvider implements LocalizationProvider {
         final ObjectMapper objectMapper = new ObjectMapper();
         final JsonNode configRootNode = objectMapper.readTree(new File(baseDir, MAIN_CONFIG_URL));
         final JsonNode resourcesRootNode = objectMapper.readTree(new File(baseDir, MAIN_RESOURCES_URL));
+        final JsonNode includesRootNode = objectMapper.readTree(new File(baseDir, INCLUDES_URL));
 
         final Localization localization = new Localization(publicationId, localizationPath,
                 configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(),
                 parseJsonFiles(configRootNode, baseDir),
-                parseJsonFiles(resourcesRootNode, baseDir));
+                parseJsonFiles(resourcesRootNode, baseDir),
+                parseJsonIncludes(includesRootNode));
         LOG.debug("Created: {}", localization);
 
         return localization;
@@ -89,8 +99,8 @@ public class TridionLocalizationProvider implements LocalizationProvider {
         // Recursively fetch referenced configuration files
         final JsonNode filesNode = new ObjectMapper().readTree(file).get(FILES_NODE_NAME);
         if (filesNode != null && filesNode.getNodeType() == JsonNodeType.ARRAY) {
-            for (int i = 0; i < filesNode.size(); i++) {
-                final String subFileUrl = filesNode.get(i).asText();
+            for (JsonNode subFileNode : filesNode) {
+                final String subFileUrl = subFileNode.asText();
                 if (!Strings.isNullOrEmpty(subFileUrl)) {
                     fetchJsonFiles(subFileUrl, baseDir, publicationId);
                 }
@@ -103,8 +113,8 @@ public class TridionLocalizationProvider implements LocalizationProvider {
 
         final JsonNode filesNode = configRootNode.get(FILES_NODE_NAME);
         if (filesNode != null && filesNode.getNodeType() == JsonNodeType.ARRAY) {
-            for (int i = 0; i < filesNode.size(); i++) {
-                final String subFileUrl = filesNode.get(i).asText();
+            for (JsonNode subFileNode : filesNode) {
+                final String subFileUrl = subFileNode.asText();
                 if (!Strings.isNullOrEmpty(subFileUrl)) {
                     final String prefix = subFileUrl.substring(subFileUrl.lastIndexOf('/') + 1,
                             subFileUrl.lastIndexOf('.') + 1);
@@ -120,5 +130,20 @@ public class TridionLocalizationProvider implements LocalizationProvider {
         }
 
         return properties;
+    }
+
+    private ListMultimap<String, String> parseJsonIncludes(JsonNode includesRootNode) throws IOException {
+        ListMultimap<String, String> includes = ArrayListMultimap.create();
+
+        final Iterator<Map.Entry<String, JsonNode>> iterator = includesRootNode.fields();
+        while (iterator.hasNext()) {
+            Map.Entry<String, JsonNode> entry = iterator.next();
+            final String pageTypeId = entry.getKey();
+            for (JsonNode value : entry.getValue()) {
+                includes.put(pageTypeId, value.asText());
+            }
+        }
+
+        return includes;
     }
 }

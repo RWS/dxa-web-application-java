@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.sdl.tridion.referenceimpl.common.ContentProvider;
 import com.sdl.tridion.referenceimpl.common.ContentProviderException;
 import com.sdl.tridion.referenceimpl.common.PageNotFoundException;
+import com.sdl.tridion.referenceimpl.common.config.Localization;
 import com.sdl.tridion.referenceimpl.common.config.ViewModelRegistry;
 import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import com.sdl.tridion.referenceimpl.common.model.Entity;
@@ -29,8 +30,6 @@ import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getStri
 
 /**
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
- *
- * TODO: Currently this is a quick-and-dirty implementation. Will be implemented for real in a future sprint.
  */
 @Component
 public final class DD4TContentProvider implements ContentProvider {
@@ -39,6 +38,9 @@ public final class DD4TContentProvider implements ContentProvider {
     private static final String PAGE_VIEW_PREFIX = "core/page/";
     private static final String REGION_VIEW_PREFIX = "core/region/";
     private static final String ENTITY_VIEW_PREFIX = "core/entity/";
+
+    private static final String DEFAULT_PAGE_NAME = "index.html";
+    private static final String DEFAULT_PAGE_EXTENSION = ".html";
 
     @Autowired
     private GenericPageFactory pageFactory;
@@ -54,16 +56,43 @@ public final class DD4TContentProvider implements ContentProvider {
 
     @Override
     public Page getPage(String url) throws ContentProviderException {
-        final int publicationId = webRequestContext.getPublicationId();
-
-        final GenericPage genericPage;
-        try {
-            genericPage = pageFactory.findPageByUrl(url, publicationId);
-        } catch (ItemNotFoundException e) {
-            throw new PageNotFoundException("Page not found: " + url, e);
+        String processedUrl = processUrl(url);
+        GenericPage genericPage = tryFindPageByUrl(processedUrl, webRequestContext.getPublicationId());
+        if (genericPage == null && !url.endsWith("/") && url.lastIndexOf('.') <= url.lastIndexOf('/')) {
+            processedUrl = processUrl(url + "/");
+            genericPage = tryFindPageByUrl(processedUrl, webRequestContext.getPublicationId());
+            if (genericPage == null) {
+                throw new PageNotFoundException("Page not found: " + url);
+            }
         }
 
         return createPage(genericPage);
+    }
+
+    private String processUrl(String url) {
+        if (Strings.isNullOrEmpty(url)) {
+            return DEFAULT_PAGE_NAME;
+        }
+
+        if (url.endsWith("/")) {
+            url = url + DEFAULT_PAGE_NAME;
+        }
+
+        // If the URL has no extension, then add the default extension
+        if (url.lastIndexOf('.') <= url.lastIndexOf('/')) {
+            url = url + DEFAULT_PAGE_EXTENSION;
+        }
+
+        return url;
+    }
+
+    private GenericPage tryFindPageByUrl(String url, int publicationId) {
+        try {
+            LOG.debug("tryFindPageByUrl: url={}, publicationId = {}", url, publicationId);
+            return pageFactory.findPageByUrl(url, publicationId);
+        } catch (ItemNotFoundException e) {
+            return null;
+        }
     }
 
     private Page createPage(GenericPage genericPage) throws ContentProviderException {
@@ -72,9 +101,14 @@ public final class DD4TContentProvider implements ContentProvider {
         page.setId(genericPage.getId());
         page.setTitle(genericPage.getTitle());
 
-        // TODO: Replace these dummy includes with real code
-        page.getIncludes().put("Header", new PageImpl());
-        page.getIncludes().put("Footer", new PageImpl());
+        // Get and add includes
+        final String pageTypeId = genericPage.getPageTemplate().getId().split("-")[1];
+        final Localization localization = webRequestContext.getLocalization();
+        for (String include : localization.getIncludes(pageTypeId)) {
+            final String includeUrl = localization.getPath() + "/" + include;
+            final Page includePage = getPage(includeUrl);
+            page.getIncludes().put(includePage.getTitle(), includePage);
+        }
 
         Map<String, RegionImpl> regions = new LinkedHashMap<>();
 
@@ -106,7 +140,8 @@ public final class DD4TContentProvider implements ContentProvider {
         regionMap.putAll(regions);
         page.setRegions(regionMap);
 
-        page.setViewName(PAGE_VIEW_PREFIX + getPageViewName(genericPage));
+        final String pageViewName = getPageViewName(genericPage);
+        page.setViewName(PAGE_VIEW_PREFIX + pageViewName);
 
         return page;
     }
@@ -127,7 +162,8 @@ public final class DD4TContentProvider implements ContentProvider {
 
             final Class<? extends Entity> entityType = viewModelRegistry.getEntityViewModelType(viewName);
             if (entityType == null) {
-                throw new ContentProviderException("Cannot determine entity type for view name: " + viewName);
+                throw new ContentProviderException("Cannot determine entity type for view name: " + viewName +
+                        "\nPlease make sure that an entry is registered for this view name in the ViewModelRegistry.");
             }
 
             LOG.debug("{}: Creating entity of type: {}", componentId, entityType.getName());

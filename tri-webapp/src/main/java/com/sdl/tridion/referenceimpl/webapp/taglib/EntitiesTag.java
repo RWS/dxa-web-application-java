@@ -2,7 +2,6 @@ package com.sdl.tridion.referenceimpl.webapp.taglib;
 
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
-import com.sdl.tridion.referenceimpl.webapp.ViewAttributeNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +9,9 @@ import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
+
+import static com.sdl.tridion.referenceimpl.webapp.WebAppConstants.ENTITY_PATH_PREFIX;
+import static com.sdl.tridion.referenceimpl.webapp.WebAppConstants.PAGE_MODEL;
 
 public class EntitiesTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(EntitiesTag.class);
@@ -22,7 +24,7 @@ public class EntitiesTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        final Page page = (Page) pageContext.getRequest().getAttribute(ViewAttributeNames.PAGE_MODEL);
+        final Page page = (Page) pageContext.getRequest().getAttribute(PAGE_MODEL);
         if (page == null) {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
@@ -37,7 +39,7 @@ public class EntitiesTag extends TagSupport {
         int count = region.getEntities().size();
         for (int index = 0; index < count; index++) {
             try {
-                pageContext.include(String.format("/entity/%s/%d", regionName, index));
+                pageContext.include(String.format("%s%s/%d", ENTITY_PATH_PREFIX, regionName, index));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);
             }

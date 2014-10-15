@@ -9,11 +9,11 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
+import static com.sdl.tridion.referenceimpl.webapp.WebAppConstants.INCLUDE_PAGE_PATH_PREFIX;
 import static com.sdl.tridion.referenceimpl.webapp.WebAppConstants.PAGE_MODEL;
-import static com.sdl.tridion.referenceimpl.webapp.WebAppConstants.REGION_PATH_PREFIX;
 
-public class RegionTag extends TagSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(RegionTag.class);
+public class IncludeTag extends TagSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(IncludeTag.class);
 
     private String name;
 
@@ -29,15 +29,18 @@ public class RegionTag extends TagSupport {
             return SKIP_BODY;
         }
 
-        if (page.getRegions().containsKey(name)) {
-            LOG.debug("Including region: {}", name);
+        if (page.getIncludes().containsKey(name)) {
+            LOG.debug("Including page: {}", name);
             try {
-                pageContext.include(REGION_PATH_PREFIX + name);
+                pageContext.include(INCLUDE_PAGE_PATH_PREFIX + name);
             } catch (ServletException | IOException e) {
-                throw new JspException("Error while processing region tag: " + name, e);
+                throw new JspException("Error while processing include tag: " + name, e);
+            } finally {
+                // Restore request attribute to original page model
+                pageContext.getRequest().setAttribute(PAGE_MODEL, page);
             }
         } else {
-            LOG.debug("Region not found: {}", name);
+            LOG.debug("Include page not found: {}", name);
         }
 
         return SKIP_BODY;

@@ -1,7 +1,9 @@
 package com.sdl.tridion.referenceimpl.common.config;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ListMultimap;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,9 +20,10 @@ public class Localization {
 
     private final Map<String, String> configuration;
     private final Map<String, String> resources;
+    private final ListMultimap<String, String> includes;
 
     public Localization(int publicationId, String path, String mediaRoot, Map<String, String> configuration,
-                        Map<String, String> resources) {
+                        Map<String, String> resources, ListMultimap<String, String> includes) {
         this.publicationId = publicationId;
 
         // Make sure path starts with and does not end with a slash
@@ -36,6 +39,7 @@ public class Localization {
         this.mediaRoot = mediaRoot;
         this.configuration = configuration;
         this.resources = resources;
+        this.includes = includes;
     }
 
     public int getPublicationId() {
@@ -61,6 +65,10 @@ public class Localization {
 
     public String getResource(String key) {
         return resources.get(key);
+    }
+
+    public List<String> getIncludes(String pageTypeId) {
+        return includes.get(pageTypeId);
     }
 
     @Override

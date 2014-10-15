@@ -16,9 +16,21 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     private static final Map<String, Class<? extends Entity>> ENTITY_VIEW_MODEL_MAP =
             ImmutableMap.<String, Class<? extends Entity>>builder()
                     .put("Article", Article.class)
+                    .put("Breadcrumb", NavigationLinks.class)
                     .put("Carousel", ItemList.class)
+                    .put("CookieNotificationBar", Notification.class)
+                    .put("FooterLinkGroup", LinkList.class)
+                    .put("FooterLinks", LinkList.class)
+                    .put("HeaderLinks", LinkList.class)
+                    .put("HeaderLogo", Teaser.class)
+                    .put("LeftNavigation", NavigationLinks.class)
+                    .put("LanguageSelector", Configuration.class)
                     .put("List", ContentList.class)
+                    .put("OldBrowserNotificationBar", Notification.class)
+                    .put("SocialLinks", LinkList.class)
+                    .put("SocialSharing", LinkList.class)
                     .put("TeaserMap", Teaser.class)
+                    .put("TopNavigation", NavigationLinks.class)
                     .put("YouTubeVideo", YouTubeVideo.class)
                     .build();
 

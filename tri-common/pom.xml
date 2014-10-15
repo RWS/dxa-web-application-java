@@ -48,10 +48,6 @@
             <groupId>com.tridion</groupId>
             <artifactId>cd_ambient</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_dynamic</artifactId>
-        </dependency>
 
         <!-- Third-party libraries used by Tridion Content Delivery -->
         <dependency>

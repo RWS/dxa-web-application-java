@@ -12,7 +12,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <c:set var="url">${pageContext.request.requestURL}</c:set>
+    <c:set var="url" scope="request">${pageContext.request.requestURL}</c:set>
     <base href="${fn:substring(url, 0, fn:length(url) - fn:length(pageContext.request.requestURI))}${pageContext.request.contextPath}/" />
     <title>Hello World</title>
     <link rel="stylesheet" href="system/assets/css/main.css" type="text/css"/>
@@ -22,7 +22,7 @@
     <![endif]-->
 </head>
 <body>
-<%@include file="../../shared/Header.jsp" %>
+<tri:include name="Header"/>
 <%
     boolean hasLeftBar = pageModel.getRegions().containsKey("Left");
     int mainContainerSize = hasLeftBar ? 9 : 12;
@@ -36,7 +36,6 @@
         </div>
     </div>
 </main>
-<%@include file="../../shared/Footer.jsp" %>
-<script src="system/assets/scripts/main.js"></script>
+<tri:include name="Footer"/>
 </body>
 </html>

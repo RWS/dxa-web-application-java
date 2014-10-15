@@ -12,6 +12,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <c:set var="url">${pageContext.request.requestURL}</c:set>
+    <base href="${fn:substring(url, 0, fn:length(url) - fn:length(pageContext.request.requestURI))}${pageContext.request.contextPath}/" />
     <title>Hello World</title>
     <link rel="stylesheet" href="system/assets/css/main.css" type="text/css"/>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

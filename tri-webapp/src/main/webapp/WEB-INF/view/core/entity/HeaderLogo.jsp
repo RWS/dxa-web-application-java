@@ -12,7 +12,7 @@
         <!-- TODO Media item has no altText? -->
         <c:if test="${not empty entityModel.media}">
             <span>
-                <img src="${entityModel.media.url}" alt="${entityModel.media.fileName}" height="80">
+                <tri:image url="${entityModel.media.url}" />
             </span>
         </c:if>
     </a>

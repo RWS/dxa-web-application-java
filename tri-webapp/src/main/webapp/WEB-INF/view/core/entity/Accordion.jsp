@@ -34,7 +34,7 @@
 
                                 <c:if test="${not empty teaser.media}">
                                     <figure>
-                                        <!-- Todo: @Html.Media(element.Media) -->
+                                        <tri:image url="${teaser.media.url}" />
                                     </figure>
                                 </c:if>
 

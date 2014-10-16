@@ -10,29 +10,33 @@
     <context:annotation-config/>
     <context:component-scan base-package="com.sdl.tridion.referenceimpl.dd4t"/>
 
-    <bean id="cacheProvider" class="org.dd4t.providers.impl.BrokerCacheProvider"/>
+    <bean id="linkProvider" class="org.dd4t.providers.impl.BrokerLinkProvider"/>
+    <bean id="cacheProvider" class="org.dd4t.core.caching.impl.EHCacheProvider"/>
     <bean id="pageProvider" class="org.dd4t.providers.impl.BrokerPageProvider"/>
     <bean id="componentProvider" class="org.dd4t.providers.impl.BrokerComponentProvider"/>
 
-    <bean id="genericComponentFactory" class="org.dd4t.core.factories.impl.GenericComponentFactory">
+    <bean id="serializer" class="org.dd4t.core.serializers.impl.xml.XmlSerializer"/>
+    <bean class="org.dd4t.core.serializers.impl.SerializerFactory">
+        <constructor-arg name="serializerInstance" ref="serializer"/>
+    </bean>
+
+    <bean id="genericComponentFactory" class="org.dd4t.core.factories.impl.ComponentFactoryImpl">
         <property name="cacheProvider" ref="cacheProvider"/>
         <property name="componentProvider" ref="componentProvider"/>
-        <property name="pageFactory" ref="genericPageFactory"/>
     </bean>
 
     <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver">
         <property name="contextPath" value="/tridion-reference-impl"/>
+        <property name="linkProvider" ref="linkProvider"/>
     </bean>
 
-    <bean id="hybridPublishingFilter" class="org.dd4t.core.filters.impl.HybridPublishingFilter">
-        <property name="genericComponentFactory" ref="genericComponentFactory"/>
-    </bean>
+    <bean id="hybridPublishingFilter" class="org.dd4t.core.filters.impl.HybridPublishingFilter" />
 
     <bean id="richTextWithLinksResolverFilter" class="org.dd4t.core.filters.impl.RichTextWithLinksResolverFilter">
         <property name="linkResolver" ref="linkResolver"/>
     </bean>
 
-    <bean id="genericPageFactory" class="org.dd4t.core.factories.impl.GenericPageFactory">
+    <bean id="genericPageFactory" class="org.dd4t.core.factories.impl.PageFactoryImpl">
         <property name="cacheProvider" ref="cacheProvider"/>
         <property name="pageProvider" ref="pageProvider"/>
         <property name="filters">

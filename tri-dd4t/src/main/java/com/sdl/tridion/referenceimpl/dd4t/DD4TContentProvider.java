@@ -12,20 +12,22 @@ import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
 import com.sdl.tridion.referenceimpl.common.model.entity.ContentList;
 import com.sdl.tridion.referenceimpl.common.model.entity.EntityBase;
-import com.sdl.tridion.referenceimpl.common.model.entity.Link;
 import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
 import com.sdl.tridion.referenceimpl.common.model.page.PageImpl;
 import com.sdl.tridion.referenceimpl.common.model.region.RegionImpl;
 import com.sdl.tridion.referenceimpl.dd4t.entityfactory.EntityFactoryRegistry;
-import com.sdl.tridion.referenceimpl.tridion.Query.BrokerQuery;
 import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
-import org.dd4t.core.factories.impl.GenericPageFactory;
+import org.dd4t.contentmodel.exceptions.SerializationException;
+import org.dd4t.core.factories.PageFactory;
+import org.dd4t.core.filters.FilterException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -49,7 +51,7 @@ public final class DD4TContentProvider implements ContentProvider {
     private static final String DEFAULT_PAGE_EXTENSION = ".html";
 
     @Autowired
-    private GenericPageFactory pageFactory;
+    private PageFactory pageFactory;
 
     @Autowired
     private ViewModelRegistry viewModelRegistry;
@@ -68,7 +70,7 @@ public final class DD4TContentProvider implements ContentProvider {
             processedUrl = processUrl(url + "/");
             genericPage = tryFindPageByUrl(processedUrl, webRequestContext.getPublicationId());
             if (genericPage == null) {
-                throw new PageNotFoundException("Page not found: " + url);
+                throw new PageNotFoundException("Page not found: " + processedUrl);
             }
         }
 
@@ -95,8 +97,9 @@ public final class DD4TContentProvider implements ContentProvider {
     private GenericPage tryFindPageByUrl(String url, int publicationId) {
         try {
             LOG.debug("tryFindPageByUrl: url={}, publicationId = {}", url, publicationId);
-            return pageFactory.findPageByUrl(url, publicationId);
-        } catch (ItemNotFoundException e) {
+            return (GenericPage)pageFactory.findPageByUrl(url, publicationId);
+        } catch (FilterException| SerializationException | ParseException | ItemNotFoundException | IOException e) {
+	        LOG.error(e.getMessage(),e);
             return null;
         }
     }
@@ -194,25 +197,25 @@ public final class DD4TContentProvider implements ContentProvider {
     }
 
     public void populateDynamicList(ContentList<Teaser> list) {
-        BrokerQuery brokerQuery = new BrokerQuery();
-
-        brokerQuery.setStart(list.getStart());
-        brokerQuery.setPublicationId(webRequestContext.getLocalization().getPublicationId());
-        brokerQuery.setPageSize(list.getPageSize());
-        brokerQuery.setSchemaId(mapSchema(list.getContentType().getKey()));
-        brokerQuery.setSort(list.getSort().getKey());
-
-        list.setItemListElements(brokerQuery.executeQuery());
-        list.setHasMore(brokerQuery.isHasMore());
-
-        for (Teaser teaser : list.getItemListElements()) {
-            String url = teaser.getLink().getUrl(); //TODO modified to include ContentResolver.ResolveLink();
-
-            Link link = teaser.getLink();
-            link.setUrl(url);
-
-            teaser.setLink(link);
-        }
+//        BrokerQuery brokerQuery = new BrokerQuery();
+//
+//        brokerQuery.setStart(list.getStart());
+//        brokerQuery.setPublicationId(webRequestContext.getLocalization().getPublicationId());
+//        brokerQuery.setPageSize(list.getPageSize());
+//        brokerQuery.setSchemaId(mapSchema(list.getContentType().getKey()));
+//        brokerQuery.setSort(list.getSort().getKey());
+//
+//        list.setItemListElements(brokerQuery.executeQuery());
+//        list.setHasMore(brokerQuery.isHasMore());
+//
+//        for (Teaser teaser : list.getItemListElements()) {
+//            String url = teaser.getLink().getUrl(); //TODO modified to include ContentResolver.ResolveLink();
+//
+//            Link link = teaser.getLink();
+//            link.setUrl(url);
+//
+//            teaser.setLink(link);
+//        }
     }
 
     protected int mapSchema(String schemaKey) {

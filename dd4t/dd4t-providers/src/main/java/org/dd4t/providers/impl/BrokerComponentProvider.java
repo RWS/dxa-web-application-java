@@ -1,31 +1,128 @@
 package org.dd4t.providers.impl;
 
-import java.text.ParseException;
-
+import com.tridion.dcp.ComponentPresentation;
+import com.tridion.dcp.ComponentPresentationFactory;
+import com.tridion.util.TCMURI;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.providers.ComponentProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tridion.broker.StorageException;
-import com.tridion.dcp.ComponentPresentation;
-import com.tridion.dcp.ComponentPresentationFactory;
-import com.tridion.storage.ComponentMeta;
-import com.tridion.storage.StorageManagerFactory;
-import com.tridion.storage.StorageTypeMapping;
-import com.tridion.storage.dao.ItemDAO;
-import com.tridion.util.TCMURI;
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Provides access to Dynamic Component Presentations stored in the Content Delivery database. It uses CD API to retrieve
+ * raw DCP content from the database. Access to these objects is not cached, and as such must be cached externally.
+ * TODO: build in caching
+ * TODO: we shouldn't throw exceptions if a DCP is not found?
+ */
 public class BrokerComponentProvider implements ComponentProvider {
-	protected static Logger logger = LoggerFactory.getLogger(BrokerComponentProvider.class);
 
-	// default CT to use when finding CP
-	private String defaultComponentTemplateUri;
+	private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentProvider.class);
 
-	// default output to use when finding CP
+	// default Component Template to use when looking up CP
+	private int defaultTemplateId;
+
+	// default Output Format to use when looking up CP
 	private String defaultOutputFormat;
 
-	
+	private Map<Integer, ComponentPresentationFactory> factoryCache = new HashMap<>();
+
+	/**
+	 * Retrieves content of a Dynamic Component Presentation by looking up its componentId and publicationId.
+	 * A templateId is not provided, so the DCP with the highest linking priority is retrieved.
+	 *
+	 * <b>Note: This method performs significantly slower than getDynamicComponentPresentation(int, int, int)!
+	 * Do provide a templateId!</b>
+	 *
+	 * @param componentId   int representing the Component item id
+	 * @param publicationId int representing the Publication id of the DCP
+	 * @return String representing the content of the DCP
+	 * @throws ItemNotFoundException if the requested DCP cannot be found
+	 */
+	@Override
+	public String getDynamicComponentPresentation(int componentId, int publicationId) throws ItemNotFoundException {
+		return getDynamicComponentPresentation(componentId, 0, publicationId);
+	}
+
+	/**
+	 * Retrieves content of a Dynamic Component Presentation by looking up its componentId, templateId and publicationId.
+	 *
+	 * @param componentId   int representing the Component item id
+	 * @param templateId    int representing the Component Template item id
+	 * @param publicationId int representing the Publication id of the DCP
+	 * @return String representing the content of the DCP
+	 * @throws ItemNotFoundException if the requested DCP cannot be found
+	 */
+	@Override
+	public String getDynamicComponentPresentation(int componentId, int templateId, int publicationId) throws ItemNotFoundException {
+		ComponentPresentationFactory factory = factoryCache.get(publicationId);
+		if (factory == null) {
+			factory = new ComponentPresentationFactory(publicationId);
+			factoryCache.put(publicationId, factory);
+		}
+
+		ComponentPresentation result;
+
+		if (templateId != 0) {
+			result = factory.getComponentPresentation(componentId, templateId);
+
+			if (result == null) {
+				String message = String.format("Component Presentation not found for componentId: %d, templateId: %d and publicationId: %d",
+						componentId, templateId, publicationId);
+				LOG.info(message);
+				throw new ItemNotFoundException(message);
+			}
+
+			return result.getContent();
+		}
+
+		// option 1: use defaultTemplateId
+		if (defaultTemplateId != 0) {
+			LOG.debug("DefaultComponentTemplate is specified as " + defaultTemplateId);
+			result = factory.getComponentPresentation(componentId, defaultTemplateId);
+
+			if (result == null) {
+				String message = String.format("Component Presentation not found for componentId: %d, templateId: %d and publicationId: %d",
+						componentId, defaultTemplateId, publicationId);
+				LOG.info(message);
+				throw new ItemNotFoundException(message);
+			}
+
+			return result.getContent();
+		}
+
+		// option 2: use defaultOutputFormat
+		if (defaultOutputFormat != null && defaultOutputFormat.length() != 0) {
+			LOG.debug("DefaultOutputFormat is specified as " + defaultOutputFormat);
+			result = factory.getComponentPresentationWithOutputFormat(componentId, defaultOutputFormat);
+
+			if (result == null) {
+				String message = String.format("Component Presentation not found for componentId: %d, publicationId: %d and outputFormat: %s",
+						componentId, publicationId, defaultOutputFormat);
+				LOG.info(message);
+				throw new ItemNotFoundException(message);
+			}
+
+			return result.getContent();
+		}
+
+		// option 3: use priority
+		LOG.debug("Find Component Presentation with highest priority");
+		result = factory.getComponentPresentationWithHighestPriority(componentId);
+
+		if (result == null) {
+			String message = String.format("Component Presentation not found for componentId: %d and publicationId: %d",
+					componentId, publicationId);
+			LOG.info(message);
+			throw new ItemNotFoundException(message);
+		}
+
+		return result.getContent();
+	}
+
 	public String getDefaultOutputFormat() {
 		return defaultOutputFormat;
 	}
@@ -34,108 +131,15 @@ public class BrokerComponentProvider implements ComponentProvider {
 		this.defaultOutputFormat = defaultOutputFormat;
 	}
 
-	public String getDefaultComponentTemplateUri() {
-		return defaultComponentTemplateUri;
+	public int getDefaultComponentTemplate() {
+		return defaultTemplateId;
 	}
 
-	public void setDefaultComponentTemplateUri(String defaultComponentTemplateUri) {
-		this.defaultComponentTemplateUri = defaultComponentTemplateUri;
-	}
-	
-	@Override
-	public String getComponentXML(int componentId, int publicationId) throws StorageException, ItemNotFoundException{
-		return getComponentXMLByTemplate(componentId, 0, publicationId);
+	public void setDefaultComponentTemplate(String templateURI) throws ParseException {
+		this.defaultTemplateId = new TCMURI(templateURI).getItemId();
 	}
 
-	@Override
-	public String getComponentXMLByTemplate(int componentId, int templateId,
-			int publicationId) throws StorageException, ItemNotFoundException{			
-		
-		ComponentPresentation cp = getDynamicComponentPresentation(componentId, templateId, publicationId);
-		return cp.getContent();
-	}
-
-	@Override
-	public ComponentMeta getComponentMeta(int componentId, int publicationId)
-			throws StorageException {
-		   ItemDAO itemDAO = (ItemDAO) StorageManagerFactory.getDAO(publicationId, StorageTypeMapping.COMPONENT_META);
-           return (ComponentMeta) itemDAO.findByPrimaryKey(publicationId, componentId);
-	}
-
-	@Override
-	public ComponentPresentation getDynamicComponentPresentation(
-			int componentId, int publicationId) throws StorageException, ItemNotFoundException{
-		
-		return getDynamicComponentPresentation(componentId, 0, publicationId);		
-	}	
-	
-	@Override
-	public ComponentPresentation getDynamicComponentPresentation(
-			int componentId, int templateId, int publicationId)
-			throws StorageException, ItemNotFoundException {
-		
-		ComponentPresentationFactory factory = new ComponentPresentationFactory(publicationId);
-		ComponentPresentation cp = null;
-
-		if (templateId != 0) {
-			logger.debug("templateId requested");
-				cp = factory.getComponentPresentation(
-						componentId, templateId);
-		
-			if (cp == null) {
-				logger.debug("component presentation NOT found by template");
-
-				// no cp found, and they asked for a template, means we have to throw an exception
-				throw new ItemNotFoundException("Unable to find DCP by template for pub "+publicationId+", item "+componentId+" and template "+templateId);	
-			}
-			
-			logger.debug("component presentation found by template. ");
-				
-			return cp;
-		}
-
-		// option 1: use defaultComponentTemplateUri (if given)
-		String defCT = this.getDefaultComponentTemplateUri();
-		if (defCT != null && !defCT.equals("")) {
-			logger.debug("defaultComponentTemplateUri is specified as "
-					+ defCT);
-			TCMURI defCTUri;
-			try {
-				defCTUri = new TCMURI(this.defaultComponentTemplateUri);
-				cp = factory.getComponentPresentation(componentId, defCTUri.getItemId());				
-			} catch (ParseException e) {
-				logger.warn(
-						"malformed defaultComponentTemplateUri in configuration",
-						e);
-			}
-		}
-
-		// option 2: use outputFormat (if given)
-		if (cp == null) {
-			// still no cp, try option 2:
-			// use OutputFormat
-			String defOF = this.getDefaultOutputFormat();
-			if (defOF != null && !defOF.equals("")) {
-				logger.debug("defaultOutputFormat is specified as " + defOF);
-
-				cp = factory.getComponentPresentationWithOutputFormat(
-						componentId, defOF);
-			}
-		}
-
-		// option 3: nothing specified, just use priority
-		if(cp == null){
-			logger.debug("attempting to find component presentation on priority");
-
-		    // then lets check priority
-		    cp = factory.getComponentPresentationWithHighestPriority(componentId);
-		}
-
-		if (cp != null) {
-			logger.debug("component presentation found");
-			return cp;
-		}		
-
-		throw new ItemNotFoundException("Unable to find DCP for pub "+publicationId+", item "+componentId+" and template "+templateId);	
+	public void setDefaultComponentTemplate(int templateId) {
+		this.defaultTemplateId = templateId;
 	}
 }

@@ -6,7 +6,7 @@
 
     <groupId>org.dynamicdelivery</groupId>
     <artifactId>dd4t-providers</artifactId>
-    <version>1.31</version>
+    <version>1.31.2</version>
 
     <name>Dynamic Delivery for Tridion Providers</name>
     <description>Implementation of providers of the Dynamic Delivery for Tridion (DD4T) library.</description>
@@ -23,7 +23,7 @@
         <dependency>
             <groupId>org.dynamicdelivery</groupId>
             <artifactId>dd4t-api</artifactId>
-            <version>${project.version}</version>
+            <version>1.31.2</version>
         </dependency>
 
         <!-- Spring Framework -->

@@ -1,133 +1,141 @@
-/**  
- *  Copyright 2011 Capgemini & SDL
- * 
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- * 
- *        http://www.apache.org/licenses/LICENSE-2.0
- * 
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
 package org.dd4t.contentmodel.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.dd4t.contentmodel.BinaryData;
+import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Multimedia;
-import org.simpleframework.xml.Element;
 
-import com.tridion.data.BinaryData;
+import java.util.LinkedList;
+import java.util.List;
 
-public class MultimediaImpl implements Multimedia {
+public class MultimediaImpl extends BaseField implements Multimedia {
 
-	private BinaryData binaryData;
-	@Element(name = "height", required = false)
-	private int height;
-	@Element(name = "width", required = false)
-	private int width;
-	@Element(name = "size", required = false)
-	private int size;
-	@Element(name = "alt", required = false)
-	private String alt;
-	@Element(name = "url", required = false)
-	private String url;
-	@Element(name = "mimeType", required = false)
-	private String mimeType;
-	@Element(name = "fileExtension", required = false)
-	private String fileExtension;
-	@Element(name = "fileName", required = false)
-	private String fileName;
+    private BinaryData binaryData;
 
-	@Override
-	public BinaryData getBinaryData() {
-		return this.binaryData;
-	}
+    @JsonProperty("Height")
+    private int height;
 
-	@Override
-	public void setBinaryData(BinaryData binaryData) {
-		this.binaryData = binaryData;
-	}
+    @JsonProperty("Width")
+    private int width;
 
-	@Override
-	public int getHeight() {
-		return height;
-	}
+    @JsonProperty("Size")
+    private int size;
 
-	@Override
-	public void setHeight(int height) {
-		this.height = height;
-	}
+    @JsonProperty("Alt")
+    private String alt;
 
-	@Override
-	public int getWidth() {
-		return width;
-	}
+    @JsonProperty("Url")
+    private String url;
 
-	@Override
-	public void setWidth(int width) {
-		this.width = width;
-	}
+    @JsonProperty("MimeType")
+    private String mimeType;
 
-	@Override
-	public int getSize() {
-		return size;
-	}
+    @JsonProperty("FileExtension")
+    private String fileExtension;
 
-	@Override
-	public void setSize(int size) {
-		this.size = size;
-	}
+    @JsonProperty("FileName")
+    private String fileName;
 
-	@Override
-	public String getAlt() {
-		return alt;
-	}
+    @Override
+    public BinaryData getBinaryData() {
+        return this.binaryData;
+    }
 
-	@Override
-	public void setAlt(String alt) {
-		this.alt = alt;
-	}
+    @Override
+    public void setBinaryData(BinaryData binaryData) {
+        this.binaryData = binaryData;
+    }
 
-	@Override
-	public String getUrl() {
-		return url;
-	}
+    @Override
+    public int getHeight() {
+        return height;
+    }
 
-	@Override
-	public void setUrl(String url) {
-		this.url = url;
-	}
+    @Override
+    public void setHeight(int height) {
+        this.height = height;
+    }
 
-	@Override
-	public String getMimeType() {
-		return mimeType;
-	}
+    @Override
+    public int getWidth() {
+        return width;
+    }
 
-	@Override
-	public void setMimeType(String mimeType) {
-		this.mimeType = mimeType;
-	}
+    @Override
+    public void setWidth(int width) {
+        this.width = width;
+    }
 
-	@Override
-	public String getFileExtension() {
-		return fileExtension;
-	}
+    @Override
+    public int getSize() {
+        return size;
+    }
 
-	@Override
-	public void setFileExtension(String fileExtension) {
-		this.fileExtension = fileExtension;
-	}
+    @Override
+    public void setSize(int size) {
+        this.size = size;
+    }
 
-	@Override
-	public String getFileName() {
-		return fileName;
-	}
+    @Override
+    public String getAlt() {
+        return alt;
+    }
 
-	@Override
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    @Override
+    public void setAlt(String alt) {
+        this.alt = alt;
+    }
 
+    @Override
+    public String getUrl() {
+        return url;
+    }
+
+    @Override
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @Override
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    @Override
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    @Override
+    public String getFileExtension() {
+        return fileExtension;
+    }
+
+    @Override
+    public void setFileExtension(String fileExtension) {
+        this.fileExtension = fileExtension;
+    }
+
+    @Override
+    public String getFileName() {
+        return fileName;
+    }
+
+    @Override
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    @Override
+    public List<Object> getValues() {
+        // TODO: we should just give back the single binary bytes or something.
+        List<Component> compValues = getLinkedComponentValues();
+        List<Object> l = new LinkedList<Object>();
+
+        for (Component c : compValues) {
+            l.add(c);
+        }
+
+        return l;
+    }
 }

@@ -16,7 +16,7 @@
     </parent>
 
     <properties>
-        <dd4t-version>1.31</dd4t-version>
+        <dd4t-version>1.31.2</dd4t-version>
     </properties>
 
     <!-- Dependencies -->
@@ -43,5 +43,41 @@
             <artifactId>dd4t-core</artifactId>
             <version>${dd4t-version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.dynamicdelivery</groupId>
+            <artifactId>dd4t-providers</artifactId>
+            <version>${dd4t-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_broker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_datalayer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_session</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_wrapper</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vs.ezlicrun</groupId>
+            <artifactId>easylicense</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+        </dependency>
+
     </dependencies>
 </project>

@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.dynamicdelivery</groupId>
+        <artifactId>dd4t-remote-providers</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.dynamicdelivery</groupId>
+	<artifactId>dd4t-api</artifactId>
+	<packaging>jar</packaging>
+
+    <version>${dd4t.version}</version>
+
+	<name>Dynamic Delivery for Tridion API</name>
+
+    <properties>
+        <spring.version>3.1.0.RELEASE</spring.version>
+        <tridion.version>2013SP1</tridion.version>
+        <hibernate.version>4.0.1.Final</hibernate.version>
+    </properties>
+
+	<dependencies>
+
+		<!-- servlet api -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Tridion classes referenced from CacheAgent -->
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_model</artifactId>
+			<version>${tridion.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- Storage Exception -->
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_core</artifactId>
+			<version>${tridion.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- no compiling with without these two, they are referenced from Tridion 
+			jars -->
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.4.0.GA</version>
+			<scope>provided</scope>
+		</dependency>
+  </dependencies>
+
+</project>

@@ -1,102 +1,150 @@
-/**  
- *  Copyright 2011 Capgemini & SDL
- * 
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- * 
- *        http://www.apache.org/licenses/LICENSE-2.0
- * 
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
 package org.dd4t.contentmodel.impl;
 
-import java.util.HashMap;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.Keyword;
+import org.dd4t.core.util.TCMURI;
+
+import java.util.List;
 import java.util.Map;
 
-import org.dd4t.contentmodel.Field;
-import org.dd4t.contentmodel.HasMetadata;
-import org.dd4t.contentmodel.Keyword;
-import org.simpleframework.xml.Attribute;
-import org.simpleframework.xml.ElementMap;
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
+public class KeywordImpl extends BaseItem implements Keyword {
 
+    @JsonProperty("ChildKeywords")
+    @JsonDeserialize(contentAs = KeywordImpl.class)
+    private List<Keyword> childKeywords;
 
-public class KeywordImpl extends BaseItem implements Keyword, HasMetadata {
-	@Attribute(name = "key", required = false)
-	private String key;
+    @JsonProperty("ClassifiedItems")
+    private List<TCMURI> classifiedItems;
 
-	@Attribute(name = "description", required = false)
-	private String description;
+    @JsonProperty("Description")
+    private String description;
 
-	@Attribute(name = "taxonomyId")
-	private String taxonomyId;
-	
-	@Attribute(name = "path")
-	private String path;
+    @JsonProperty("Key")
+    private String key;
 
-	@ElementMap(name = "metadata", keyType = String.class, valueType = Field.class, entry = "item", required = false)
-	private Map<String, Field> metadata;
+    @JsonProperty("MetadataFields")
+    @JsonDeserialize(contentAs = BaseField.class)
+    private Map<String, Field> metadata;
 
-	@Override
-	public String getDescription() {
-		return description;
-	}
+    @JsonProperty("ParentKeywords")
+    @JsonDeserialize(contentAs = KeywordImpl.class)
+    private List<Keyword> parentKeywords;
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	@Override
-	public String getTaxonomyId() {
-		return taxonomyId;
-	}
+    @JsonProperty("Path")
+    private String path;
 
-	@Override
-	public void setTaxonomyId(String taxonomyId) {
-		this.taxonomyId = taxonomyId;
-	}
+    @JsonProperty("RelatedKeywords")
+    private List<TCMURI> relatedKeywords;
 
-	
-	@Override
-	public String getPath() {
-		return path;
-	}
+    @JsonProperty("TaxonomyId")
+    private String taxonomyId;
 
-	@Override
-	public void setPath(String path) {
-		this.path = path;
-	}
+    @Override
+    public String getDescription() {
+        return description;
+    }
 
-	@Override	
-	public String getKey() {
-		return key;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    @Override
+    public String getKey() {
+        return key;
+    }
 
-	/**
-	 * Set the metadata
-	 */
-	@Override
-	public void setMetadata(Map<String, Field> metadata) {
-		this.metadata = metadata;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	/**
-	 * Get the metadata as a map of fields
-	 */
-	@Override
-	public Map<String, Field> getMetadata() {
-		if(metadata == null){
-			metadata = new HashMap<String, Field>();
-		}
-		return metadata;
-	}
+    @Override
+    public List<Keyword> getChildKeywords() {
+        return childKeywords;
+    }
 
+    public void setChildKeywords(List<Keyword> childKeywords) {
+        this.childKeywords = childKeywords;
+    }
+
+    @Override
+    public boolean hasChildren() {
+        return childKeywords != null && !childKeywords.isEmpty();
+    }
+
+    @Override
+    public List<Keyword> getParentKeywords() {
+        return parentKeywords;
+    }
+
+    public void setParentKeywords(List<Keyword> parentKeywords) {
+        this.parentKeywords = parentKeywords;
+    }
+
+    @Override
+    public boolean hasParents() {
+        return parentKeywords != null && !parentKeywords.isEmpty();
+    }
+
+    @Override
+    public List<TCMURI> getRelatedKeywords() {
+        return relatedKeywords;
+    }
+
+    public void setRelatedKeywords(List<TCMURI> relatedKeywords) {
+        this.relatedKeywords = relatedKeywords;
+    }
+
+    @Override
+    public boolean hasRelatedKeywords() {
+        return relatedKeywords != null && !relatedKeywords.isEmpty();
+    }
+
+    @Override
+    public String getPath() {
+        return path;
+    }
+
+    @Override
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    @Override
+    public List<TCMURI> getClassifiedItems() {
+        return classifiedItems;
+    }
+
+    public void setClassifiedItems(List<TCMURI> classifiedItems) {
+        this.classifiedItems = classifiedItems;
+    }
+
+    @Override
+    public boolean hasClassifiedItems() {
+        return classifiedItems != null && !classifiedItems.isEmpty();
+    }
+
+    @Override
+    public String getTaxonomyId() {
+        return taxonomyId;
+    }
+
+    @Override
+    public void setTaxonomyId(String taxonomyId) {
+        this.taxonomyId = taxonomyId;
+    }
+
+    @Override
+    public Map<String, Field> getMetadata() {
+        return metadata;
+    }
+
+    @Override
+    public void setMetadata(Map<String, Field> metadata) {
+        this.metadata = metadata;
+    }
 }

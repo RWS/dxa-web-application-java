@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+                             http://maven.apache.org/maven-v4_0_0.xsd">
+    <parent>
+        <groupId>org.dynamicdelivery</groupId>
+        <artifactId>dd4t-remote-providers</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.dynamicdelivery</groupId>
+	<artifactId>dd4t-core</artifactId>
+	<packaging>jar</packaging>
+
+    <version>${dd4t.version}</version>
+
+	<name>Dynamic Delivery for Tridion Core Module</name>
+
+    <properties>
+        <spring.version>3.1.0.RELEASE</spring.version>
+        <tridion.version>2013SP1</tridion.version>
+        <hibernate.version>4.0.1.Final</hibernate.version>
+    </properties>
+
+	<dependencies>
+		<!-- servlet api -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>7.0</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- StorageManagerFactory & DAO  references (won't compile without ehm) -->
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_datalayer</artifactId>
+			<version>${tridion.version}</version>
+			<scope>provided</scope>
+		</dependency>
+			
+		<!-- ItemMeta declarations -->
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_model</artifactId>
+			<version>${tridion.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<!-- TCMURI class -->
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_core</artifactId>
+			<version>${tridion.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- link resolving in componentFactory; should be refactored to use link provider -->
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_linking</artifactId>
+			<version>${tridion.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
+		<!-- metafactories (security filter) & DCP (homeUtils) -->
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_broker</artifactId>
+			<version>${tridion.version}</version>
+			<scope>provided</scope>
+		</dependency>		
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.simpleframework</groupId>
+			<artifactId>simple</artifactId>
+			<version>4.1.21</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.simpleframework</groupId>
+			<artifactId>simple-xml</artifactId>
+			<version>2.3.6</version>
+			<type>jar</type>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.dynamicdelivery</groupId>
+			<artifactId>dd4t-providers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dynamicdelivery</groupId>
+			<artifactId>dd4t-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<!-- no compiling with without these two, they are referenced from Tridion 
+			jars -->
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>persistence-api</artifactId>
+			<version>1.0</version>
+			<scope>provided</scope>
+		</dependency>		
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-annotations</artifactId>
+			<version>3.4.0.GA</version>
+			<scope>provided</scope>
+		</dependency>		
+	</dependencies>
+</project>

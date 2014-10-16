@@ -5,7 +5,7 @@
     <URLMappings>
         <StaticMappings>
             <Publications>
-                <Publication Id="48">
+                <Publication Id="8">
                     <Host Protocol="http" Domain="localhost" Port="8080" Path=""/>
                 </Publication>
             </Publications>

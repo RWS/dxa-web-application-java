@@ -17,7 +17,7 @@ import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
 import com.sdl.tridion.referenceimpl.common.model.page.PageImpl;
 import com.sdl.tridion.referenceimpl.common.model.region.RegionImpl;
 import com.sdl.tridion.referenceimpl.dd4t.entityfactory.EntityFactoryRegistry;
-import com.sdl.tridion.referenceimpl.tridion.Query.BrokerQuery;
+import com.sdl.tridion.referenceimpl.tridion.query.BrokerQuery;
 import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.GenericPageFactory;

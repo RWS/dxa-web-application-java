@@ -6,10 +6,8 @@
 
     <artifactId>tri-cid</artifactId>
 
-    <name>Tridion Reference Implementation Contextual Image Delivery</name>
-    <description>Optional module of the Tridion Reference Implementation that adds support for Contextual Image
-        Delivery.
-    </description>
+    <name>Tridion Ref Impl - Contextual Image Delivery</name>
+    <description>Optional module of the Tridion Reference Implementation that adds support for Contextual Image Delivery.</description>
 
     <parent>
         <artifactId>tridion-reference-impl</artifactId>
@@ -18,8 +16,8 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <!-- Dependencies -->
     <dependencies>
+        <!-- Tridion Reference Implementation Common -->
         <dependency>
             <groupId>com.sdl</groupId>
             <artifactId>tri-common</artifactId>
@@ -44,7 +42,19 @@
             <artifactId>cwd_resource</artifactId>
         </dependency>
 
-        <!-- Third-party libraries used by Tridion Contextual Web Delivery -->
+        <!-- Spring Framework -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
+
+        <!-- Ehcache -->
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+        </dependency>
+
+        <!-- Apache Commons -->
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
@@ -65,10 +75,8 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-jexl</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-        </dependency>
+
+        <!-- Apache HttpComponents -->
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -77,25 +85,17 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
         </dependency>
+
+        <!-- SnakeYAML -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
         </dependency>
+
+        <!-- User agent string parser -->
         <dependency>
             <groupId>ua_parser</groupId>
             <artifactId>ua-parser</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-        </dependency>
-<!--
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
-        </dependency>
--->
-
     </dependencies>
 </project>

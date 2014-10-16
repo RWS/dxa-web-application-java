@@ -6,7 +6,7 @@
 
     <artifactId>tri-common</artifactId>
 
-    <name>Tridion Reference Implementation Common</name>
+    <name>Tridion Ref Impl - Common</name>
     <description>Common interfaces and data model classes of the Tridion Reference Implementation.</description>
 
     <parent>
@@ -16,8 +16,13 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <!-- Dependencies -->
     <dependencies>
+        <!-- Tridion Content Delivery -->
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_ambient</artifactId>
+        </dependency>
+
         <!-- Spring Framework -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -31,22 +36,16 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Jackson -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-
         <!-- Google Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
 
-        <!-- Tridion Content Delivery -->
+        <!-- Jackson -->
         <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_ambient</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
 
         <!-- Third-party libraries used by Tridion Content Delivery -->

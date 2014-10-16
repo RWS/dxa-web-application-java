@@ -6,7 +6,7 @@
 
     <artifactId>tri-tridion</artifactId>
 
-    <name>Tridion Reference Implementation Tridion</name>
+    <name>Tridion Ref Impl - Tridion</name>
     <description>Tridion-specific code for the Tridion Reference Implementation.</description>
 
     <parent>

@@ -10,10 +10,14 @@ import com.sdl.tridion.referenceimpl.common.config.WebRequestContext;
 import com.sdl.tridion.referenceimpl.common.model.Entity;
 import com.sdl.tridion.referenceimpl.common.model.Page;
 import com.sdl.tridion.referenceimpl.common.model.Region;
+import com.sdl.tridion.referenceimpl.common.model.entity.ContentList;
 import com.sdl.tridion.referenceimpl.common.model.entity.EntityBase;
+import com.sdl.tridion.referenceimpl.common.model.entity.Link;
+import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
 import com.sdl.tridion.referenceimpl.common.model.page.PageImpl;
 import com.sdl.tridion.referenceimpl.common.model.region.RegionImpl;
 import com.sdl.tridion.referenceimpl.dd4t.entityfactory.EntityFactoryRegistry;
+import com.sdl.tridion.referenceimpl.tridion.Query.BrokerQuery;
 import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.GenericPageFactory;
@@ -38,6 +42,8 @@ public final class DD4TContentProvider implements ContentProvider {
     private static final String PAGE_VIEW_PREFIX = "core/page/";
     private static final String REGION_VIEW_PREFIX = "core/region/";
     private static final String ENTITY_VIEW_PREFIX = "core/entity/";
+
+    private static final String CORE_MODULE_NAME = "core";
 
     private static final String DEFAULT_PAGE_NAME = "index.html";
     private static final String DEFAULT_PAGE_EXTENSION = ".html";
@@ -185,5 +191,45 @@ public final class DD4TContentProvider implements ContentProvider {
         }
 
         return null;
+    }
+
+    public void populateDynamicList(ContentList<Teaser> list) {
+        BrokerQuery brokerQuery = new BrokerQuery();
+
+        brokerQuery.setStart(list.getStart());
+        brokerQuery.setPublicationId(webRequestContext.getLocalization().getPublicationId());
+        brokerQuery.setPageSize(list.getPageSize());
+        brokerQuery.setSchemaId(mapSchema(list.getContentType().getKey()));
+        brokerQuery.setSort(list.getSort().getKey());
+
+        list.setItemListElements(brokerQuery.executeQuery());
+        list.setHasMore(brokerQuery.isHasMore());
+
+        for (Teaser teaser : list.getItemListElements()) {
+            String url = teaser.getLink().getUrl(); //TODO modified to include ContentResolver.ResolveLink();
+
+            Link link = teaser.getLink();
+            link.setUrl(url);
+
+            teaser.setLink(link);
+        }
+    }
+
+    protected int mapSchema(String schemaKey) {
+        String[] bits = schemaKey.split(".");
+
+        String moduleName = bits.length > 1 ? bits[0] : CORE_MODULE_NAME;
+        schemaKey = bits.length > 1 ? bits[1] : bits[0];
+
+        int res;
+        String schemaId = webRequestContext.getLocalization().getConfiguration(String.format("{0}.schemas.{1}",moduleName, schemaKey));
+
+        try {
+            res = Integer.parseInt(schemaId);
+        } catch (NumberFormatException nfe) {
+            res = 0; //.Net does a TryParse() which returns fall is failed, we return 0 as fallback.
+        }
+
+        return res;
     }
 }

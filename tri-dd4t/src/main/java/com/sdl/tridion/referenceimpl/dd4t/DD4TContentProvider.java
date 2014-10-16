@@ -41,11 +41,11 @@ import static com.sdl.tridion.referenceimpl.dd4t.entityfactory.FieldUtil.getStri
 public final class DD4TContentProvider implements ContentProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DD4TContentProvider.class);
 
-    private static final String PAGE_VIEW_PREFIX = "core/page/";
-    private static final String REGION_VIEW_PREFIX = "core/region/";
-    private static final String ENTITY_VIEW_PREFIX = "core/entity/";
-
     private static final String CORE_MODULE_NAME = "core";
+
+    private static final String PAGE_VIEW_PREFIX = CORE_MODULE_NAME + "/page/";
+    private static final String REGION_VIEW_PREFIX = CORE_MODULE_NAME + "/region/";
+    private static final String ENTITY_VIEW_PREFIX = CORE_MODULE_NAME + "/entity/";
 
     private static final String DEFAULT_PAGE_NAME = "index.html";
     private static final String DEFAULT_PAGE_EXTENSION = ".html";
@@ -134,7 +134,7 @@ public final class DD4TContentProvider implements ContentProvider {
                         region = new RegionImpl();
 
                         region.setName(regionName);
-                        region.setModule("core");
+                        region.setModule(CORE_MODULE_NAME);
                         region.setViewName(REGION_VIEW_PREFIX + regionName);
 
                         regions.put(regionName, region);

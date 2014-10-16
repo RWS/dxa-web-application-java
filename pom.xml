@@ -32,7 +32,7 @@
         <!-- Tridion Content Delivery (CD) -->
         <tridion-cd-version>7.1.0</tridion-cd-version>
 
-        <!-- Third-party libraries - versions match what Tridion uses -->
+        <!-- Third-party libraries - versions match with what Tridion and Contextual Image Delivery use -->
         <spring-version>3.1.0.RELEASE</spring-version>
         <hibernate-version>4.0.1.Final</hibernate-version>
         <hibernate-jpa-2.0-version>1.0.1.Final</hibernate-jpa-2.0-version>
@@ -79,6 +79,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
+                <version>${spring-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
                 <version>${spring-version}</version>
             </dependency>
             <dependency>

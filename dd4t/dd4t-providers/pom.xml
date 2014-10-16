@@ -7,9 +7,10 @@
     <groupId>org.dynamicdelivery</groupId>
     <artifactId>dd4t-providers</artifactId>
     <version>1.31.2</version>
+    <packaging>jar</packaging>
 
-    <name>Dynamic Delivery for Tridion Providers</name>
-    <description>Implementation of providers of the Dynamic Delivery for Tridion (DD4T) library.</description>
+    <name>DD4T Providers</name>
+    <description>Providers module for Dynamic Delivery for Tridion.</description>
 
     <parent>
         <groupId>com.sdl</groupId>
@@ -23,7 +24,7 @@
         <dependency>
             <groupId>org.dynamicdelivery</groupId>
             <artifactId>dd4t-api</artifactId>
-            <version>1.31.2</version>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Spring Framework -->

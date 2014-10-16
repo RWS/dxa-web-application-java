@@ -1,9 +1,12 @@
-package com.sdl.tridion.referenceimpl.tridion.Query;
+package com.sdl.tridion.referenceimpl.tridion.query;
 
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.sdl.tridion.referenceimpl.common.model.entity.Link;
 import com.sdl.tridion.referenceimpl.common.model.entity.Teaser;
-import com.tridion.broker.querying.criteria.Criteria;
+import com.tridion.broker.querying.MetadataType;
 import com.tridion.broker.querying.Query;
+import com.tridion.broker.querying.criteria.Criteria;
 import com.tridion.broker.querying.criteria.content.ItemSchemaCriteria;
 import com.tridion.broker.querying.criteria.content.ItemTypeCriteria;
 import com.tridion.broker.querying.criteria.content.PublicationCriteria;
@@ -15,8 +18,6 @@ import com.tridion.broker.querying.sorting.SortColumn;
 import com.tridion.broker.querying.sorting.SortDirection;
 import com.tridion.broker.querying.sorting.SortParameter;
 import com.tridion.broker.querying.sorting.column.CustomMetaKeyColumn;
-
-import com.tridion.broker.querying.MetadataType;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.CustomMeta;
@@ -24,9 +25,10 @@ import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class BrokerQuery {
     private static final Logger LOG = LoggerFactory.getLogger(BrokerQuery.class);
@@ -37,7 +39,7 @@ public class BrokerQuery {
     private String sort;
     private int start;
     private int pageSize;
-    private  ListMultimap<String, String> keywordFilters;
+    private ListMultimap<String, String> keywordFilters;
     private boolean hasMore;
 
     public int getSchemaId() {
@@ -104,52 +106,41 @@ public class BrokerQuery {
         this.hasMore = hasMore;
     }
 
-    public List<Teaser> executeQuery()
-    {
+    public List<Teaser> executeQuery() {
         Criteria criteria = buildCriteria();
         Query query = new Query(criteria);
 
         if (!sort.isEmpty() && !sort.toLowerCase().equals("none")) {
             query.addSorting(getSortParameter());
         }
-        if (maxResults > 0)
-        {
+        if (maxResults > 0) {
             query.setResultFilter(new LimitFilter(maxResults));
         }
-        if (pageSize > 0)
-        {
+        if (pageSize > 0) {
             //We set the page size to one more than what we need, to see if there are more pages to come...
             query.setResultFilter(new PagingFilter(start, pageSize + 1));
         }
 
-        try
-        {
+        try {
             ComponentMetaFactory cmf = new ComponentMetaFactory(publicationId);
             List<Teaser> results = new ArrayList<>();
             String[] ids = query.executeQuery();
             hasMore = ids.length > pageSize;
             int count = 0;
 
-            for (String compId : ids)
-            {
-                if (count < pageSize)
-                {
+            for (String compId : ids) {
+                if (count < pageSize) {
                     ComponentMeta compMeta = cmf.getMeta(compId);
-                    if (compMeta != null)
-                    {
+                    if (compMeta != null) {
                         results.add(getTeaserFromMeta(compMeta));
                     }
                     count++;
-                }
-                else
-                {
+                } else {
                     break;
                 }
             }
             return results;
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             LOG.error(String.format("Error running Broker query: {0}", ex.getMessage()), ex);
         }
 
@@ -161,20 +152,15 @@ public class BrokerQuery {
 
         criterias.add(new ItemTypeCriteria(16));
 
-        if (schemaId > 0)
-        {
+        if (schemaId > 0) {
             criterias.add(new ItemSchemaCriteria(schemaId));
         }
-        if (publicationId > 0)
-        {
+        if (publicationId > 0) {
             criterias.add(new PublicationCriteria(publicationId));
         }
-        if (keywordFilters != null)
-        {
-            for (String taxonomy : keywordFilters.keySet())
-            {
-                for (String keyword : keywordFilters.get(taxonomy))
-                {
+        if (keywordFilters != null) {
+            for (String taxonomy : keywordFilters.keySet()) {
+                for (String keyword : keywordFilters.get(taxonomy)) {
                     criterias.add(new TaxonomyKeywordCriteria(taxonomy, keyword, true));
                 }
             }
@@ -183,8 +169,7 @@ public class BrokerQuery {
         return new AndCriteria(criterias.toArray(new Criteria[criterias.size()]));
     }
 
-    private static Teaser getTeaserFromMeta(ComponentMeta compMeta)
-    {
+    private static Teaser getTeaserFromMeta(ComponentMeta compMeta) {
         Link link = new Link();
         link.setUrl(String.format("tcm:{0}-{1}", compMeta.getPublicationId(), compMeta.getId()));
 
@@ -202,85 +187,69 @@ public class BrokerQuery {
         return teaser;
     }
 
-    private static String getTextFromCustomMeta(CustomMeta meta, String fieldname)
-    {
-        if (meta.getName().contains(fieldname))
-        {
+    private static String getTextFromCustomMeta(CustomMeta meta, String fieldname) {
+        if (meta.getName().contains(fieldname)) {
             return meta.getValue(fieldname).toString();
         }
         return null;
     }
 
-    private static Date getDateFromCustomMeta(CustomMeta meta, String fieldname)
-    {
-        if (meta.getName().contains(fieldname))
-        {
-            return (Date)meta.getValue(fieldname);
+    private static Date getDateFromCustomMeta(CustomMeta meta, String fieldname) {
+        if (meta.getName().contains(fieldname)) {
+            return (Date) meta.getValue(fieldname);
         }
         return null;
     }
 
-    public void setKeywordFilters(List<String> keywordUris)
-    {
+    public void setKeywordFilters(List<String> keywordUris) {
         TaxonomyFactory taxonomyFactory = new TaxonomyFactory();
         List<Keyword> keywords = new ArrayList<Keyword>();
 
-        for (String kwUri : keywordUris)
-        {
+        for (String kwUri : keywordUris) {
             Keyword kw = taxonomyFactory.getTaxonomyKeyword(kwUri);
-            if (kw != null)
-            {
+            if (kw != null) {
                 keywords.add(kw);
             }
         }
 
-        if (keywordFilters == null)
-        {
+        if (keywordFilters == null) {
             keywordFilters = ArrayListMultimap.create();
         }
 
-        for (Keyword kw : keywords)
-        {
+        for (Keyword kw : keywords) {
             keywordFilters.put(kw.getTaxonomyURI(), kw.getKeywordURI());
         }
     }
 
-    public static Keyword LoadKeyword(String keywordUri)
-    {
+    public static Keyword loadKeyword(String keywordUri) {
         TaxonomyFactory taxonomyFactory = new TaxonomyFactory();
         return taxonomyFactory.getTaxonomyKeyword(keywordUri);
     }
 
-    public static List<Keyword> LoadKeywords(List<String> keywordUris)
-    {
+    public static List<Keyword> loadKeywords(List<String> keywordUris) {
         List<Keyword> res = new ArrayList<Keyword>();
         TaxonomyFactory taxonomyFactory = new TaxonomyFactory();
 
-        for (String uri : keywordUris)
-        {
+        for (String uri : keywordUris) {
             Keyword kw = taxonomyFactory.getTaxonomyKeyword(uri);
-            if (kw != null)
-            {
+            if (kw != null) {
                 res.add(kw);
             }
         }
         return res;
     }
 
-    private SortParameter getSortParameter()
-    {
-        SortDirection sortDirection= (sort.toLowerCase().endsWith("asc")) ? SortParameter.ASCENDING : SortParameter.DESCENDING;
+    private SortParameter getSortParameter() {
+        SortDirection sortDirection = (sort.toLowerCase().endsWith("asc")) ? SortParameter.ASCENDING : SortParameter.DESCENDING;
         return new SortParameter(getSortColumn(), sortDirection);
     }
 
-    private SortColumn getSortColumn()
-    {
+    private SortColumn getSortColumn() {
         //TODO add more options if required
         int pos = sort.trim().indexOf(" ");
 
         String sorting = pos > 0 ? sort.trim().substring(0, pos) : sort.trim();
-        switch (sorting.toLowerCase())
-        {
+        switch (sorting.toLowerCase()) {
             case "title":
                 return SortParameter.ITEMS_TITLE;
             case "pubdate":

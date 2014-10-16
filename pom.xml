@@ -27,36 +27,77 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <!-- Java -->
         <java-version>1.7</java-version>
 
         <!-- Tridion Content Delivery (CD) -->
         <tridion-cd-version>7.1.0</tridion-cd-version>
 
-        <!-- Third-party libraries - versions match with what Tridion and Contextual Image Delivery use -->
+        <!-- Tridion Contextual Web Delivery (CWD) -->
+        <tridion-cwd-version>7.1.0</tridion-cwd-version>
+
+        <!-- Spring Framework -->
         <spring-version>3.1.0.RELEASE</spring-version>
+
+        <!-- Hibernate -->
         <hibernate-version>4.0.1.Final</hibernate-version>
         <hibernate-jpa-2.0-version>1.0.1.Final</hibernate-jpa-2.0-version>
-        <guava-version>14.0.1</guava-version>
+
+        <!-- Ehcache -->
+        <ehcache-version>2.8.2</ehcache-version>
+
+        <!-- Apache Commons -->
+        <commons-beanutils-version>1.8.3</commons-beanutils-version>
+        <commons-codec-version>1.8</commons-codec-version>
+        <commons-configuration-version>1.9</commons-configuration-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
+        <commons-io-version>2.4</commons-io-version>
+        <commons-jexl-version>2.1.1</commons-jexl-version>
         <commons-pool-version>1.5.3</commons-pool-version>
+
+        <!-- Apache HttpComponents -->
+        <httpcomponents-client-version>4.1.3</httpcomponents-client-version>
+        <httpcomponents-core-version>4.1.4</httpcomponents-core-version>
+
+        <!-- Miscellaneous libraries used by Tridion CD -->
         <easylicense-version>2.5</easylicense-version>
         <json-smart-version>1.1.1</json-smart-version>
         <xalan-version>2.7.1</xalan-version>
-        <sqljdbc4-version>4.0</sqljdbc4-version>
-        <slf4j-version>1.6.4</slf4j-version>
-        <logback-version>1.0.0</logback-version>
 
+        <!-- Microsoft SQL Server JDBC driver -->
+        <sqljdbc4-version>4.0</sqljdbc4-version>
+
+        <!-- Google Guava -->
+        <guava-version>14.0.1</guava-version>
+
+        <!-- Joda Time -->
+        <joda-time-version>2.5</joda-time-version>
+
+        <!-- Jackson and related libraries -->
         <jackson-version>2.3.3</jackson-version>
         <woodstox-version>4.4.1</woodstox-version>
 
-        <joda-time-version>2.5</joda-time-version>
+        <!-- SnakeYAML -->
+        <snakeyaml-version>1.12</snakeyaml-version>
+
+        <!-- User agent string parser -->
+        <ua-parser-version>1.2.2</ua-parser-version>
+
+        <!-- SLF4J and Logback -->
+        <slf4j-version>1.6.4</slf4j-version>
+        <logback-version>1.0.0</logback-version>
 
         <!-- Servlet and JSP APIs -->
         <servlet-api-version>3.1.0</servlet-api-version>
         <jsp-api-version>2.3.1</jsp-api-version>
         <jstl-version>1.2</jstl-version>
 
+        <!-- JMS API -->
+        <jms-api-version>1.1-rev-1</jms-api-version>
+
+        <!-- JUnit and other test libraries -->
         <junit-version>4.11</junit-version>
+        <reflections-version>0.9.9-RC2</reflections-version>
     </properties>
 
     <!-- Dependency management -->
@@ -301,6 +342,31 @@
                 <scope>runtime</scope>
             </dependency>
 
+            <!-- Third-party libraries used by Tridion Contextual Web Delivery -->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${commons-configuration-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-jexl</artifactId>
+                <version>${commons-jexl-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
             <!-- Logging: SLF4J and Logback -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -318,6 +384,13 @@
                 <artifactId>logback-classic</artifactId>
                 <version>${logback-version}</version>
                 <scope>runtime</scope>
+            </dependency>
+
+            <!-- Third-party libraries used by DD4T -->
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io-version}</version>
             </dependency>
 
             <!-- JUnit for unit testing -->

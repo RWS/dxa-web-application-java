@@ -18,22 +18,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <properties>
-        <!-- Tridion Contextual Web Delivery (CWD) -->
-        <tridion-cwd-version>7.1.0</tridion-cwd-version>
-
-        <!-- Third-party libraries used by Tridion Contextual Web Delivery -->
-        <commons-beanutils-version>1.8.3</commons-beanutils-version>
-        <commons-codec-version>1.4</commons-codec-version>
-        <commons-configuration-version>1.9</commons-configuration-version>
-        <commons-jexl-version>2.1.1</commons-jexl-version>
-        <ehcache-version>2.7.0</ehcache-version>
-        <httpcomponents-client-version>4.1.3</httpcomponents-client-version>
-        <httpcomponents-core-version>4.1.4</httpcomponents-core-version>
-        <snakeyaml-version>1.12</snakeyaml-version>
-        <ua-parser-version>1.2.2</ua-parser-version>
-    </properties>
-
     <!-- Dependency management -->
     <dependencyManagement>
         <dependencies>
@@ -60,30 +44,6 @@
             </dependency>
 
             <!-- Third-party libraries used by Tridion Contextual Web Delivery -->
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>${commons-beanutils-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons-codec-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-configuration</groupId>
-                <artifactId>commons-configuration</artifactId>
-                <version>${commons-configuration-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-jexl</artifactId>
-                <version>${commons-jexl-version}</version>
-                <scope>runtime</scope>
-            </dependency>
             <dependency>
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache</artifactId>

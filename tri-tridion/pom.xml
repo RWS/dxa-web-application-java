@@ -58,6 +58,10 @@
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
+            <artifactId>cd_core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_dynamic</artifactId>
         </dependency>
         <dependency>

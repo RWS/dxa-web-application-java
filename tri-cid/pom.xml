@@ -18,65 +18,6 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <!-- Dependency management -->
-    <dependencyManagement>
-        <dependencies>
-            <!-- Tridion Contextual Web Delivery (CWD) -->
-            <dependency>
-                <groupId>com.tridion</groupId>
-                <artifactId>cwd_cartridge</artifactId>
-                <version>${tridion-cwd-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tridion</groupId>
-                <artifactId>cwd_engine</artifactId>
-                <version>${tridion-cwd-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tridion</groupId>
-                <artifactId>cwd_image</artifactId>
-                <version>${tridion-cwd-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tridion</groupId>
-                <artifactId>cwd_resource</artifactId>
-                <version>${tridion-cwd-version}</version>
-            </dependency>
-
-            <!-- Third-party libraries used by Tridion Contextual Web Delivery -->
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>${ehcache-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>${httpcomponents-client-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>${httpcomponents-core-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${snakeyaml-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>ua_parser</groupId>
-                <artifactId>ua-parser</artifactId>
-                <version>${ua-parser-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <!-- Dependencies -->
     <dependencies>
         <dependency>

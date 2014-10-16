@@ -54,6 +54,11 @@
             <artifactId>spring-webmvc</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
         <!-- Servlet and JSP APIs -->
         <dependency>
             <groupId>javax.servlet</groupId>

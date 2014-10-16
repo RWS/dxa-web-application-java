@@ -7,7 +7,6 @@
     <groupId>org.dynamicdelivery</groupId>
     <artifactId>dd4t-providers</artifactId>
     <version>1.31.2</version>
-    <packaging>jar</packaging>
 
     <name>DD4T Providers</name>
     <description>Providers module for Dynamic Delivery for Tridion.</description>
@@ -19,8 +18,8 @@
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <!-- Dependencies -->
     <dependencies>
+        <!-- DD4T API -->
         <dependency>
             <groupId>org.dynamicdelivery</groupId>
             <artifactId>dd4t-api</artifactId>

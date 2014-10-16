@@ -7,7 +7,6 @@
     <groupId>org.dynamicdelivery</groupId>
     <artifactId>dd4t-api</artifactId>
     <version>1.31.2</version>
-    <packaging>jar</packaging>
 
     <name>DD4T API</name>
     <description>API module for Dynamic Delivery for Tridion.</description>
@@ -20,17 +19,16 @@
     </parent>
 
     <dependencies>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
+        <!-- Joda Time -->
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
+
+        <!-- Servlet API -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
     </dependencies>
 </project>

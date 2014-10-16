@@ -2,7 +2,8 @@ package com.sdl.tridion.referenceimpl.common.config;
 
 import com.sdl.tridion.referenceimpl.common.MediaHelper;
 import com.sdl.tridion.referenceimpl.common.MediaHelperProvider;
-import com.tridion.ambientdata.web.WebContext;
+import com.tridion.ambientdata.AmbientDataContext;
+import com.tridion.ambientdata.claimstore.ClaimStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -66,14 +67,15 @@ public class WebRequestContext {
 
     public int getDisplayWidth() {
         if (displayWidth == null) {
-            displayWidth = (int) WebContext.getCurrentClaimStore().get(URI_BROWSER_DISPLAY_WIDTH);
+            final ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
+            displayWidth = (int) currentClaimStore.get(URI_BROWSER_DISPLAY_WIDTH);
         }
         return displayWidth;
     }
 
     public double getPixelRatio() {
         if (pixelRatio == null) {
-            pixelRatio = (double) WebContext.getCurrentClaimStore().get(URI_DEVICE_PIXEL_RATIO);
+            pixelRatio = (double) AmbientDataContext.getCurrentClaimStore().get(URI_DEVICE_PIXEL_RATIO);
         }
         return pixelRatio;
     }

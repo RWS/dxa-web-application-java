@@ -10,7 +10,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:/spring-test-context.xml")
+@ContextConfiguration(classes = { DD4TMediaHelperTestConfig.class })
 public class DD4TMediaHelperTest {
 
     @Autowired

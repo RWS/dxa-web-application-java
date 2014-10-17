@@ -97,6 +97,7 @@
 
         <!-- JUnit and other test libraries -->
         <junit-version>4.11</junit-version>
+        <mockito-version>1.10.8</mockito-version>
         <reflections-version>0.9.9-RC2</reflections-version>
     </properties>
 
@@ -458,6 +459,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
                 <version>${reflections-version}</version>
@@ -486,6 +493,10 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>

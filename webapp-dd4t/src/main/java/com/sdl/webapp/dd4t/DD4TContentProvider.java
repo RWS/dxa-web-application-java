@@ -78,12 +78,6 @@ public final class DD4TContentProvider implements ContentProvider {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
-    @Override
-    public StaticContentItem getStaticContent(String url, Localization localization) throws ContentProviderException {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
     private String processUrl(String url) {
         if (Strings.isNullOrEmpty(url)) {
             return DEFAULT_PAGE_NAME;

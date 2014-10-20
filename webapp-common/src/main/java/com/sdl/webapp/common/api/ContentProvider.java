@@ -28,14 +28,4 @@ public interface ContentProvider {
      * @throws ContentProviderException If an error occurred so that the content of the page could be retrieved.
      */
     InputStream getPageContent(String url, Localization localization) throws ContentProviderException;
-
-    /**
-     * Gets a static content item by URL for a specific localization.
-     *
-     * @param url The URL of the static content item.
-     * @param localization The localization.
-     * @return The {@code StaticContentItem}.
-     * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
-     */
-    StaticContentItem getStaticContent(String url, Localization localization) throws ContentProviderException;
 }

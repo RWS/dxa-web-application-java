@@ -37,7 +37,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     private Map<String, Localization> localizations = new HashMap<>();
 
     @Autowired
-    private ContentProvider contentProvider;
+    private StaticContentProvider contentProvider;
 
     @Override
     public Localization getLocalization(String url) throws LocalizationResolverException {
@@ -96,7 +96,8 @@ public class TridionLocalizationResolver implements LocalizationResolver {
         }
     }
 
-    private Map<String, String> parseJsonSubFiles(JsonNode rootNode, Localization localization) throws LocalizationResolverException {
+    private Map<String, String> parseJsonSubFiles(JsonNode rootNode, Localization localization)
+            throws LocalizationResolverException {
         final Map<String, String> map = new HashMap<>();
 
         final JsonNode filesNode = rootNode.get(FILES_NODE_NAME);

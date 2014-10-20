@@ -1,6 +1,8 @@
 package com.sdl.webapp.main.interceptor;
 
-import com.sdl.webapp.common.api.*;
+import com.sdl.webapp.common.api.Localization;
+import com.sdl.webapp.common.api.StaticContentItem;
+import com.sdl.webapp.common.api.StaticContentProvider;
 import com.sdl.webapp.main.RequestAttributeNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +29,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     @Autowired
-    private ContentProvider contentProvider;
+    private StaticContentProvider contentProvider;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

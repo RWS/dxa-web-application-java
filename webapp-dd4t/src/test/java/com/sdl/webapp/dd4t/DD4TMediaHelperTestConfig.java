@@ -1,8 +1,7 @@
 package com.sdl.webapp.dd4t;
 
-import com.sdl.webapp.common.MediaHelperProvider;
-import com.sdl.webapp.common.config.WebRequestContext;
-import com.sdl.webapp.dd4t.DD4TMediaHelper;
+import com.sdl.webapp.common.api.MediaHelperProvider;
+import com.sdl.webapp.common.impl.WebRequestContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

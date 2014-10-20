@@ -1,20 +1,16 @@
 package com.sdl.webapp.dd4t;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.ContentProvider;
-import com.sdl.webapp.common.ContentProviderException;
-import com.sdl.webapp.common.PageNotFoundException;
-import com.sdl.webapp.common.config.Localization;
-import com.sdl.webapp.common.config.ViewModelRegistry;
-import com.sdl.webapp.common.config.WebRequestContext;
-import com.sdl.webapp.common.model.Entity;
-import com.sdl.webapp.common.model.Page;
-import com.sdl.webapp.common.model.Region;
-import com.sdl.webapp.common.model.entity.ContentList;
-import com.sdl.webapp.common.model.entity.EntityBase;
-import com.sdl.webapp.common.model.entity.Teaser;
-import com.sdl.webapp.common.model.page.PageImpl;
-import com.sdl.webapp.common.model.region.RegionImpl;
+import com.sdl.webapp.common.api.*;
+import com.sdl.webapp.common.impl.WebRequestContext;
+import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.entity.ContentList;
+import com.sdl.webapp.common.api.model.entity.EntityBase;
+import com.sdl.webapp.common.api.model.entity.Teaser;
+import com.sdl.webapp.common.api.model.page.PageImpl;
+import com.sdl.webapp.common.api.model.region.RegionImpl;
 import com.sdl.webapp.dd4t.entityfactory.EntityFactoryRegistry;
 import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
@@ -27,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -59,22 +56,32 @@ public final class DD4TContentProvider implements ContentProvider {
     @Autowired
     private EntityFactoryRegistry entityFactoryRegistry;
 
-    @Autowired
-    private WebRequestContext webRequestContext;
-
     @Override
-    public Page getPage(String url) throws ContentProviderException {
+    public Page getPageModel(String url, Localization localization) throws ContentProviderException {
         String processedUrl = processUrl(url);
-        GenericPage genericPage = tryFindPageByUrl(processedUrl, webRequestContext.getPublicationId());
+        int publicationId = Integer.parseInt(localization.getId());
+        GenericPage genericPage = tryFindPageByUrl(processedUrl, publicationId);
         if (genericPage == null && !url.endsWith("/") && url.lastIndexOf('.') <= url.lastIndexOf('/')) {
             processedUrl = processUrl(url + "/");
-            genericPage = tryFindPageByUrl(processedUrl, webRequestContext.getPublicationId());
+            genericPage = tryFindPageByUrl(processedUrl, publicationId);
             if (genericPage == null) {
                 throw new PageNotFoundException("Page not found: " + processedUrl);
             }
         }
 
-        return createPage(genericPage);
+        return createPage(genericPage, localization);
+    }
+
+    @Override
+    public InputStream getPageContent(String url, Localization localization) throws ContentProviderException {
+        // TODO: Implement this method
+        throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public StaticContentItem getStaticContent(String url, Localization localization) throws ContentProviderException {
+        // TODO: Implement this method
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 
     private String processUrl(String url) {
@@ -104,7 +111,7 @@ public final class DD4TContentProvider implements ContentProvider {
         }
     }
 
-    private Page createPage(GenericPage genericPage) throws ContentProviderException {
+    private Page createPage(GenericPage genericPage, Localization localization) throws ContentProviderException {
         PageImpl page = new PageImpl();
 
         page.setId(genericPage.getId());
@@ -112,10 +119,9 @@ public final class DD4TContentProvider implements ContentProvider {
 
         // Get and add includes
         final String pageTypeId = genericPage.getPageTemplate().getId().split("-")[1];
-        final Localization localization = webRequestContext.getLocalization();
         for (String include : localization.getIncludes(pageTypeId)) {
             final String includeUrl = localization.getPath() + "/" + include;
-            final Page includePage = getPage(includeUrl);
+            final Page includePage = getPageModel(includeUrl, localization);
             page.getIncludes().put(includePage.getTitle(), includePage);
         }
 
@@ -218,21 +224,21 @@ public final class DD4TContentProvider implements ContentProvider {
 //        }
     }
 
-    protected int mapSchema(String schemaKey) {
-        String[] bits = schemaKey.split(".");
-
-        String moduleName = bits.length > 1 ? bits[0] : CORE_MODULE_NAME;
-        schemaKey = bits.length > 1 ? bits[1] : bits[0];
-
-        int res;
-        String schemaId = webRequestContext.getLocalization().getConfiguration(String.format("{0}.schemas.{1}",moduleName, schemaKey));
-
-        try {
-            res = Integer.parseInt(schemaId);
-        } catch (NumberFormatException nfe) {
-            res = 0; //.Net does a TryParse() which returns fall is failed, we return 0 as fallback.
-        }
-
-        return res;
-    }
+//    protected int mapSchema(String schemaKey, Localization localization) {
+//        String[] bits = schemaKey.split(".");
+//
+//        String moduleName = bits.length > 1 ? bits[0] : CORE_MODULE_NAME;
+//        schemaKey = bits.length > 1 ? bits[1] : bits[0];
+//
+//        int res;
+//        String schemaId = localization.getConfiguration(String.format("{0}.schemas.{1}", moduleName, schemaKey));
+//
+//        try {
+//            res = Integer.parseInt(schemaId);
+//        } catch (NumberFormatException nfe) {
+//            res = 0; //.Net does a TryParse() which returns fall is failed, we return 0 as fallback.
+//        }
+//
+//        return res;
+//    }
 }

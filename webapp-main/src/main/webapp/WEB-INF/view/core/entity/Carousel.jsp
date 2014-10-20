@@ -1,14 +1,14 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="com.google.common.base.Strings" %>
-<%@ page import="com.sdl.webapp.common.model.entity.Teaser" %>
+<%@ page import="com.sdl.webapp.common.api.model.entity.Teaser" %>
 <%@ page import="java.util.UUID" %>
-<%@ page import="com.sdl.webapp.common.model.entity.Link" %>
-<%@ page import="com.sdl.webapp.common.model.entity.MediaItem" %>
+<%@ page import="com.sdl.webapp.common.api.model.entity.Link" %>
+<%@ page import="com.sdl.webapp.common.api.model.entity.MediaItem" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
-<jsp:useBean id="pageModel" type="com.sdl.webapp.common.model.Page" scope="request"/>
-<jsp:useBean id="entityModel" type="com.sdl.webapp.common.model.entity.ItemList" scope="request"/>
+<jsp:useBean id="pageModel" type="com.sdl.webapp.common.api.model.Page" scope="request"/>
+<jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.ItemList" scope="request"/>
 <%
     String carouselId = UUID.randomUUID().toString();
 %>

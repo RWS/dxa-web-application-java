@@ -1,9 +1,9 @@
 package com.sdl.webapp.dd4t.entityfactory;
 
-import com.sdl.webapp.common.ContentProviderException;
-import com.sdl.webapp.common.model.Entity;
-import com.sdl.webapp.common.model.entity.Article;
-import com.sdl.webapp.common.model.entity.Paragraph;
+import com.sdl.webapp.common.api.ContentProviderException;
+import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.entity.Article;
+import com.sdl.webapp.common.api.model.entity.Paragraph;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;

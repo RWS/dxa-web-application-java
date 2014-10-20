@@ -1,6 +1,7 @@
 package com.sdl.webapp.common;
 
-import com.sdl.webapp.common.config.ScreenWidth;
+import com.sdl.webapp.common.api.ScreenWidth;
+import com.sdl.webapp.common.impl.AbstractMediaHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

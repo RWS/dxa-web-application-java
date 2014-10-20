@@ -1,7 +1,7 @@
 package com.sdl.webapp.dd4t.entityfactory;
 
-import com.sdl.webapp.common.model.Entity;
-import com.sdl.webapp.common.model.entity.MediaItem;
+import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.entity.MediaItem;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.GenericComponent;
 import org.dd4t.contentmodel.Multimedia;

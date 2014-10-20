@@ -1,5 +1,7 @@
 package com.sdl.webapp.common;
 
+import com.sdl.webapp.common.api.MediaHelperProvider;
+import com.sdl.webapp.common.impl.AbstractMediaHelper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

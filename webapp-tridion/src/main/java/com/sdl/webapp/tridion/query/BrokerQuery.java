@@ -2,8 +2,8 @@ package com.sdl.webapp.tridion.query;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.sdl.webapp.common.model.entity.Link;
-import com.sdl.webapp.common.model.entity.Teaser;
+import com.sdl.webapp.common.api.model.entity.Link;
+import com.sdl.webapp.common.api.model.entity.Teaser;
 import com.tridion.broker.querying.MetadataType;
 import com.tridion.broker.querying.Query;
 import com.tridion.broker.querying.criteria.Criteria;

@@ -1,8 +1,8 @@
 package com.sdl.webapp.dd4t.entityfactory;
 
-import com.sdl.webapp.common.ContentProviderException;
-import com.sdl.webapp.common.model.Entity;
-import com.sdl.webapp.common.model.entity.YouTubeVideo;
+import com.sdl.webapp.common.api.ContentProviderException;
+import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.entity.YouTubeVideo;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.GenericComponent;

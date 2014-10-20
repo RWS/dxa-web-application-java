@@ -2,8 +2,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<jsp:useBean id="pageModel" type="com.sdl.webapp.common.model.Page" scope="request"/>
-<jsp:useBean id="entityModel" type="com.sdl.webapp.common.model.entity.Article" scope="request"/>
+<jsp:useBean id="pageModel" type="com.sdl.webapp.common.api.model.Page" scope="request"/>
+<jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.Article" scope="request"/>
 
 <article class="rich-text">
     <c:choose>

@@ -27,10 +27,10 @@ public class WebAppInitializer implements WebApplicationInitializer {
     private static final String IMAGE_TRANSFORMER_SERVLET_NAME = "ImageTransformerServlet";
     private static final String IMAGE_TRANSFORMER_SERVLET_CLASS_NAME =
             "com.sdl.context.image.servlet.ImageTransformerServlet";
-
     private static final String IMAGE_TRANSFORMER_SERVLET_MAPPING = "/cid/*";
 
     private static final String DISPATCHER_SERVLET_NAME = "DispatcherServlet";
+    private static final String DISPATCHER_SERVLET_MAPPING = "/";
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
@@ -76,6 +76,6 @@ public class WebAppInitializer implements WebApplicationInitializer {
         ServletRegistration.Dynamic registration = servletContext.addServlet(DISPATCHER_SERVLET_NAME,
                 new DispatcherServlet(servletAppContext));
         registration.setLoadOnStartup(1);
-        registration.addMapping("/");
+        registration.addMapping(DISPATCHER_SERVLET_MAPPING);
     }
 }

@@ -1,6 +1,6 @@
 package com.sdl.webapp.main.controller.core;
 
-import com.sdl.webapp.common.model.Region;
+import com.sdl.webapp.common.api.model.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;

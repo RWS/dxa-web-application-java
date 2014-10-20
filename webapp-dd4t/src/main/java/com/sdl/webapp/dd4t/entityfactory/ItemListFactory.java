@@ -1,10 +1,10 @@
 package com.sdl.webapp.dd4t.entityfactory;
 
-import com.sdl.webapp.common.ContentProviderException;
-import com.sdl.webapp.common.model.Entity;
-import com.sdl.webapp.common.model.entity.Image;
-import com.sdl.webapp.common.model.entity.ItemList;
-import com.sdl.webapp.common.model.entity.Teaser;
+import com.sdl.webapp.common.api.ContentProviderException;
+import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.entity.Image;
+import com.sdl.webapp.common.api.model.entity.ItemList;
+import com.sdl.webapp.common.api.model.entity.Teaser;
 import org.dd4t.contentmodel.*;
 import org.springframework.stereotype.Component;
 

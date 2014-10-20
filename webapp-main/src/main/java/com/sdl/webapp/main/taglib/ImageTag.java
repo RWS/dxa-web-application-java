@@ -1,8 +1,8 @@
 package com.sdl.webapp.main.taglib;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.MediaHelper;
-import com.sdl.webapp.common.MediaHelperProvider;
+import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.common.api.MediaHelperProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;

@@ -1,7 +1,7 @@
 package com.sdl.webapp.common;
 
-import com.sdl.webapp.common.config.ScreenWidth;
-import com.sdl.webapp.common.config.WebRequestContext;
+import com.sdl.webapp.common.api.ScreenWidth;
+import com.sdl.webapp.common.impl.WebRequestContext;
 import org.springframework.stereotype.Component;
 
 @Component

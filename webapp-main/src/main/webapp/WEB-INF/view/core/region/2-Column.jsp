@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
-<jsp:useBean id="regionModel" type="com.sdl.webapp.common.model.Region" scope="request"/>
+<jsp:useBean id="regionModel" type="com.sdl.webapp.common.api.model.Region" scope="request"/>
 <div typeof="Region" resource="2-Column">
 <%
     int entityCount = regionModel.getEntities().size();

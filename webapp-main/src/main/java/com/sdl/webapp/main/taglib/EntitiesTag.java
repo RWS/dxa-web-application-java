@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.taglib;
 
-import com.sdl.webapp.common.model.Page;
-import com.sdl.webapp.common.model.Region;
+import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

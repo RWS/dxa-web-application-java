@@ -1,8 +1,9 @@
 package com.sdl.webapp.main.taglib;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.config.Localization;
-import com.sdl.webapp.common.config.WebRequestContext;
+import com.sdl.webapp.common.api.Localization;
+import com.sdl.webapp.common.impl.WebRequestContext;
+import com.sdl.webapp.main.RequestAttributeNames;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.jsp.JspException;
@@ -20,8 +21,11 @@ public class ResourceTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        final Localization localization = WebApplicationContextUtils.getRequiredWebApplicationContext(
-                pageContext.getServletContext()).getBean(WebRequestContext.class).getLocalization();
+        final Localization localization = (Localization) pageContext.getRequest().getAttribute(RequestAttributeNames.LOCALIZATION);
+        if (localization == null) {
+            throw new IllegalStateException("Localization is not available. Please make sure that the " +
+                    "LocalizationResolverInterceptor is registered.");
+        }
 
         final String resource = localization.getResource(key);
         if (!Strings.isNullOrEmpty(resource)) {

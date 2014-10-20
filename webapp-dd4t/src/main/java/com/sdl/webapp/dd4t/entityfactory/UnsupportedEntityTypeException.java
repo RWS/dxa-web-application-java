@@ -1,6 +1,6 @@
 package com.sdl.webapp.dd4t.entityfactory;
 
-import com.sdl.webapp.common.ContentProviderException;
+import com.sdl.webapp.common.api.ContentProviderException;
 
 public class UnsupportedEntityTypeException extends ContentProviderException {
 

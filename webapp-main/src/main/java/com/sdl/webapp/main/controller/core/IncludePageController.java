@@ -1,6 +1,6 @@
 package com.sdl.webapp.main.controller.core;
 
-import com.sdl.webapp.common.model.Page;
+import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.main.controller.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

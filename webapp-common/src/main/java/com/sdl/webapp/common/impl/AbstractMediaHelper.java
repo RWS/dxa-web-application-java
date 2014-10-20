@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstract implementation of {@code MediaHelper} with common functionality.
+ * TODO: Check for refactoring.
  */
 public abstract class AbstractMediaHelper implements MediaHelper {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMediaHelper.class);

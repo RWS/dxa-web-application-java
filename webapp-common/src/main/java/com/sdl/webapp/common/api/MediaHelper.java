@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api;
 
 /**
  * Media helper.
+ * TODO: Check for refactoring.
  */
 public interface MediaHelper {
 

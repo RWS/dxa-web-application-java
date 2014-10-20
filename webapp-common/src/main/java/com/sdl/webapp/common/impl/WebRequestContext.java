@@ -15,6 +15,7 @@ import java.net.URI;
 /**
  * Request-scoped component that provides information about the current client configuration, such as the size of the
  * client's screen, pixel ratio etc.
+ * TODO: Check for refactoring.
  */
 @Component
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)

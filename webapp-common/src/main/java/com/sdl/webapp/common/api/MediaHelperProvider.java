@@ -6,6 +6,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
+/**
+ * TODO: Check for refactoring. Replace by MediaHelperFactoryBean: remove @Component annotations from MediaHelper
+ * and create a @Component class MediaHelperFactoryBean extends AbstractFactoryBean which creates the appropriate
+ * MediaHelper bean instance.
+ */
 @Component
 public class MediaHelperProvider {
 

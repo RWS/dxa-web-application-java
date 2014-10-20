@@ -11,7 +11,7 @@
                            http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="com.sdl.tridion.referenceimpl.webapp"/>
+    <context:component-scan base-package="com.sdl.webapp.main"/>
 
     <mvc:annotation-driven/>
     <mvc:default-servlet-handler/>

@@ -1,8 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="com.sdl.tridion.referenceimpl.common.config.ScreenWidth" %>
-<%@ page import="com.sdl.tridion.referenceimpl.webapp.WebAppConstants" %>
+<%@ page import="com.sdl.webapp.common.config.ScreenWidth" %>
+<%@ page import="com.sdl.webapp.main.WebAppConstants" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
-<jsp:useBean id="regionModel" type="com.sdl.tridion.referenceimpl.common.model.Region" scope="request"/>
+<jsp:useBean id="regionModel" type="com.sdl.webapp.common.model.Region" scope="request"/>
 <div typeof="Region" resource="4-Column">
 <%
     int entityCount = regionModel.getEntities().size();

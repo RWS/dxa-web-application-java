@@ -2,8 +2,8 @@
 <%@ page import="java.util.UUID" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
-<jsp:useBean id="entityModel" type="com.sdl.tridion.referenceimpl.common.model.entity.YouTubeVideo" scope="request"/>
+<jsp:useBean id="pageModel" type="com.sdl.webapp.common.model.Page" scope="request"/>
+<jsp:useBean id="entityModel" type="com.sdl.webapp.common.model.entity.YouTubeVideo" scope="request"/>
 
 <div class="video">
     <c:if test="${not empty entityModel.headline}">

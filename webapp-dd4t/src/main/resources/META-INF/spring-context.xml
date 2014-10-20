@@ -8,7 +8,7 @@
                            http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="com.sdl.tridion.referenceimpl.dd4t"/>
+    <context:component-scan base-package="com.sdl.webapp.dd4t"/>
 
     <bean id="linkProvider" class="org.dd4t.providers.impl.BrokerLinkProvider"/>
     <bean id="cacheProvider" class="org.dd4t.core.caching.impl.EHCacheProvider"/>

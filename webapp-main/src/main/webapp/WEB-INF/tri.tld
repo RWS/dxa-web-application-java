@@ -11,7 +11,7 @@
     <!-- Include a page -->
     <tag>
         <name>include</name>
-        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.IncludeTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.IncludeTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -23,7 +23,7 @@
     <!-- Include a specific region -->
     <tag>
         <name>region</name>
-        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.RegionTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.RegionTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -35,7 +35,7 @@
     <!-- Include all regions on the page, except excluded ones -->
     <tag>
         <name>regions</name>
-        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.RegionsTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.RegionsTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>exclude</name>
@@ -47,7 +47,7 @@
     <!-- Include a specific entity -->
     <tag>
         <name>entity</name>
-        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.EntityTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.EntityTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>region</name>
@@ -65,7 +65,7 @@
     <!-- Include all entities in a region -->
     <tag>
         <name>entities</name>
-        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.EntitiesTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.EntitiesTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>region</name>
@@ -77,7 +77,7 @@
     <!-- Insert an image -->
     <tag>
         <name>image</name>
-        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.ImageTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.ImageTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>url</name>
@@ -116,7 +116,7 @@
     <!-- Insert a resource text -->
     <tag>
         <name>resource</name>
-        <tag-class>com.sdl.tridion.referenceimpl.webapp.taglib.ResourceTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.ResourceTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>key</name>

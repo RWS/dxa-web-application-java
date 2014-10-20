@@ -40,7 +40,7 @@
     <!-- Filter that detects localization and stores it in the WebRequestContext -->
     <filter>
         <filter-name>localizationFilter</filter-name>
-        <filter-class>com.sdl.tridion.referenceimpl.webapp.filter.LocalizationFilter</filter-class>
+        <filter-class>com.sdl.webapp.main.filter.LocalizationFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>localizationFilter</filter-name>
@@ -51,7 +51,7 @@
     <!-- Filter for images and other static resources (everything under /system and /media) -->
     <filter>
         <filter-name>staticContentFilter</filter-name>
-        <filter-class>com.sdl.tridion.referenceimpl.webapp.filter.StaticContentFilter</filter-class>
+        <filter-class>com.sdl.webapp.main.filter.StaticContentFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>staticContentFilter</filter-name>

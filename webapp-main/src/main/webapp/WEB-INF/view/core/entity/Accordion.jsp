@@ -3,8 +3,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
-<jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request"/>
-<jsp:useBean id="entityModel" type="com.sdl.tridion.referenceimpl.common.model.entity.ItemList" scope="request"/>
+<jsp:useBean id="pageModel" type="com.sdl.webapp.common.model.Page" scope="request"/>
+<jsp:useBean id="entityModel" type="com.sdl.webapp.common.model.entity.ItemList" scope="request"/>
 
 <article class="rich-text">
     <div class="content">

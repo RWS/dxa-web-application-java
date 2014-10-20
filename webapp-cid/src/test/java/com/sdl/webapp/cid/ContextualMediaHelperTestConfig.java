@@ -1,17 +1,11 @@
 package com.sdl.webapp.cid;
 
-import com.sdl.webapp.common.api.MediaHelperProvider;
 import com.sdl.webapp.common.impl.WebRequestContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ContextualMediaHelperTestConfig {
-
-    @Bean
-    public MediaHelperProvider mediaHelperProvider() {
-        return new MediaHelperProvider();
-    }
 
     @Bean
     public ContextualMediaHelper mediaHelper() {

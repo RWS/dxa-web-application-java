@@ -1,9 +1,7 @@
 package com.sdl.webapp.cid;
 
 import com.sdl.webapp.common.impl.AbstractMediaHelper;
-import org.springframework.stereotype.Component;
 
-@Component("contextualMediaHelper")
 public class ContextualMediaHelper extends AbstractMediaHelper {
 
     @Override

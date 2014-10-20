@@ -88,7 +88,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     }
 
     private JsonNode parseJsonFile(String path, Localization localization) throws LocalizationResolverException {
-        try (final InputStream in = contentProvider.getStaticContent(CONFIG_BOOTSTRAP_PATH, localization).getContent()) {
+        try (final InputStream in = contentProvider.getStaticContent(path, localization).getContent()) {
             return new ObjectMapper().readTree(in);
         } catch (ContentProviderException | IOException e) {
             throw new LocalizationResolverException("Exception while reading configuration of localization: " +

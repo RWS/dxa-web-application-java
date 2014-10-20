@@ -79,10 +79,11 @@ public class TridionLocalization implements Localization {
 
     @Override
     public String toString() {
-        if (Strings.isNullOrEmpty(path)) {
-            return id;
-        } else {
-            return id + ", " + path;
+        final StringBuilder sb = new StringBuilder();
+        sb.append('[').append(id).append(']');
+        if (!Strings.isNullOrEmpty(path)) {
+            sb.append(' ').append(path);
         }
+        return sb.toString();
     }
 }

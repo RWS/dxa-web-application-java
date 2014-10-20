@@ -1,7 +1,6 @@
 package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.MediaHelper;
-import com.sdl.webapp.common.api.MediaHelperProvider;
 import com.sdl.webapp.common.api.ScreenWidth;
 import com.tridion.ambientdata.AmbientDataContext;
 import com.tridion.ambientdata.claimstore.ClaimStore;
@@ -27,7 +26,7 @@ public class WebRequestContext {
     private static final int MAX_WIDTH = 1024;
 
     @Autowired
-    private MediaHelperProvider mediaHelperProvider;
+    private MediaHelper mediaHelper;
 
     private ScreenWidth screenWidth;
     private Integer displayWidth;
@@ -36,8 +35,6 @@ public class WebRequestContext {
 
     public ScreenWidth getScreenWidth() {
         if (screenWidth == null) {
-            final MediaHelper mediaHelper = mediaHelperProvider.getMediaHelper();
-
             final int displayWidth = getDisplayWidth();
             if (displayWidth < mediaHelper.getSmallScreenBreakpoint()) {
                 screenWidth = ScreenWidth.EXTRA_SMALL;

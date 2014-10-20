@@ -1,9 +1,7 @@
 package com.sdl.webapp.dd4t;
 
 import com.sdl.webapp.common.impl.AbstractMediaHelper;
-import org.springframework.stereotype.Component;
 
-@Component("dd4tMediaHelper")
 public class DD4TMediaHelper extends AbstractMediaHelper {
 
     @Override

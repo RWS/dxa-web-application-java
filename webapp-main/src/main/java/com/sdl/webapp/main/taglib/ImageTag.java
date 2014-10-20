@@ -2,7 +2,6 @@ package com.sdl.webapp.main.taglib;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
-import com.sdl.webapp.common.api.MediaHelperProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -53,8 +52,8 @@ public class ImageTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        final MediaHelper mediaHelper = WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
-                .getBean(MediaHelperProvider.class).getMediaHelper();
+        final MediaHelper mediaHelper = WebApplicationContextUtils.getRequiredWebApplicationContext(
+                pageContext.getServletContext()).getBean(MediaHelper.class);
 
         final String contextPath = URL_PATH_HELPER.getContextPath((HttpServletRequest) pageContext.getRequest());
         final String imageUrl = contextPath + mediaHelper.getResponsiveImageUrl(url, widthFactor, aspect, containerSize);

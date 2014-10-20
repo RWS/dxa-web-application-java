@@ -12,7 +12,7 @@
 
     <logger name="org.hibernate" level="WARN"/>
     <logger name="org.springframework" level="INFO"/>
-    <logger name="org.springframework.web" level="DEBUG"/>
+    <!--<logger name="org.springframework.web" level="DEBUG"/>-->
     <logger name="org.dd4t" level="INFO"/>
     <logger name="com.tridion" level="WARN"/>
     <logger name="com.sdl.webapp" level="DEBUG"/>

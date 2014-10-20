@@ -1,17 +1,11 @@
 package com.sdl.webapp.common;
 
-import com.sdl.webapp.common.api.MediaHelperProvider;
 import com.sdl.webapp.common.impl.AbstractMediaHelper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AbstractMediaHelperTestConfig {
-
-    @Bean
-    public MediaHelperProvider mediaHelperProvider() {
-        return new MediaHelperProvider();
-    }
 
     @Bean
     public AbstractMediaHelper mediaHelper() {

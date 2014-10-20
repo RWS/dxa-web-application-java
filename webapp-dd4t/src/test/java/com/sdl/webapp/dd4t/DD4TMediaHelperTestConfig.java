@@ -1,6 +1,7 @@
 package com.sdl.webapp.dd4t;
 
-import com.sdl.webapp.common.impl.WebRequestContext;
+import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.impl.WebRequestContextImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,7 +15,7 @@ public class DD4TMediaHelperTestConfig {
 
     @Bean
     public WebRequestContext webRequestContext() {
-        return new WebRequestContext() {
+        return new WebRequestContextImpl() {
             @Override
             public int getDisplayWidth() {
                 return 1920;

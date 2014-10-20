@@ -1,12 +1,7 @@
 package com.sdl.webapp.main.controller.core;
 
-import com.sdl.webapp.common.api.ContentProvider;
-import com.sdl.webapp.common.api.ContentProviderException;
-import com.sdl.webapp.common.api.Localization;
-import com.sdl.webapp.common.api.PageNotFoundException;
-import com.sdl.webapp.common.impl.WebRequestContext;
+import com.sdl.webapp.common.api.*;
 import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.main.RequestAttributeNames;
 import com.sdl.webapp.main.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.main.controller.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -39,9 +34,7 @@ public class PageController extends ControllerBase {
         final String url = getPageUrl(request);
         LOG.debug("handleGetPage: url={}", url);
 
-        final Localization localization = (Localization) request.getAttribute(RequestAttributeNames.LOCALIZATION);
-
-        final Page page = getPageFromContentProvider(url, localization);
+        final Page page = getPageFromContentProvider(url, webRequestContext.getLocalization());
         LOG.debug("handleGetPage: page={}", page);
 
         request.setAttribute(PAGE_MODEL, page);

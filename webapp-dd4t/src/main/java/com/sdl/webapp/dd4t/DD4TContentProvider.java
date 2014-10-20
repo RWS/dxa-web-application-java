@@ -2,7 +2,6 @@ package com.sdl.webapp.dd4t;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.*;
-import com.sdl.webapp.common.impl.WebRequestContext;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;

@@ -1,11 +1,11 @@
 package com.sdl.webapp.common;
 
 import com.sdl.webapp.common.api.ScreenWidth;
-import com.sdl.webapp.common.impl.WebRequestContext;
+import com.sdl.webapp.common.impl.WebRequestContextImpl;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TestWebRequestContext extends WebRequestContext {
+public class TestWebRequestContext extends WebRequestContextImpl {
 
     private ScreenWidth screenWidth;
     private int displayWidth;

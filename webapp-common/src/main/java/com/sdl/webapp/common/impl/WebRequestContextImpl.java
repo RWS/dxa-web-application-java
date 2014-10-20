@@ -1,5 +1,7 @@
 package com.sdl.webapp.common.impl;
 
+import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.Localization;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.ScreenWidth;
 import com.tridion.ambientdata.AmbientDataContext;
@@ -14,11 +16,10 @@ import java.net.URI;
 /**
  * Request-scoped component that provides information about the current client configuration, such as the size of the
  * client's screen, pixel ratio etc.
- * TODO: Check for refactoring.
  */
 @Component
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class WebRequestContext {
+public class WebRequestContextImpl implements WebRequestContext {
 
     private static final URI URI_BROWSER_DISPLAY_WIDTH = URI.create("taf:claim:context:browser:displayWidth");
     private static final URI URI_DEVICE_PIXEL_RATIO = URI.create("taf:claim:context:device:pixelRatio");
@@ -28,10 +29,22 @@ public class WebRequestContext {
     @Autowired
     private MediaHelper mediaHelper;
 
+    private Localization localization;
+
     private ScreenWidth screenWidth;
     private Integer displayWidth;
     private Double pixelRatio;
     private Integer maxMediaWidth;
+
+    @Override
+    public Localization getLocalization() {
+        return localization;
+    }
+
+    @Override
+    public void setLocalization(Localization localization) {
+        this.localization = localization;
+    }
 
     public ScreenWidth getScreenWidth() {
         if (screenWidth == null) {

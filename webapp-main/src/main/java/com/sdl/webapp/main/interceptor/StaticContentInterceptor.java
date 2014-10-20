@@ -3,7 +3,7 @@ package com.sdl.webapp.main.interceptor;
 import com.sdl.webapp.common.api.Localization;
 import com.sdl.webapp.common.api.StaticContentItem;
 import com.sdl.webapp.common.api.StaticContentProvider;
-import com.sdl.webapp.main.RequestAttributeNames;
+import com.sdl.webapp.common.api.WebRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,11 +31,14 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     private StaticContentProvider contentProvider;
 
+    @Autowired
+    private WebRequestContext webRequestContext;
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         final String url = urlPathHelper.getRequestUri(request).replace(urlPathHelper.getContextPath(request), "");
 
-        final Localization localization = (Localization) request.getAttribute(RequestAttributeNames.LOCALIZATION);
+        final Localization localization = webRequestContext.getLocalization();
         if (localization == null) {
             throw new IllegalStateException("Localization is not available. Please make sure that the " +
                     "LocalizationResolverInterceptor is registered and executed before the StaticContentInterceptor.");

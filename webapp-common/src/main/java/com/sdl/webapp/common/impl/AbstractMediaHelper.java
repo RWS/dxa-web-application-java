@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.impl;
 
 import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.MediaHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstract implementation of {@code MediaHelper} with common functionality.
- * TODO: Check for refactoring.
  */
 public abstract class AbstractMediaHelper implements MediaHelper {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMediaHelper.class);

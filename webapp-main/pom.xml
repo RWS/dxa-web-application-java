@@ -4,15 +4,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tri-webapp</artifactId>
+    <artifactId>webapp-main</artifactId>
     <packaging>war</packaging>
-
-    <name>Tridion Ref Impl - Web Application</name>
-    <description>Spring MVC web application of the Tridion Reference Implementation.</description>
 
     <parent>
         <groupId>com.sdl</groupId>
-        <artifactId>tridion-reference-impl</artifactId>
+        <artifactId>webapp-reference-impl</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
@@ -24,18 +21,18 @@
     <dependencies>
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>tri-common</artifactId>
+            <artifactId>webapp-common</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>tri-dd4t</artifactId>
+            <artifactId>webapp-dd4t</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>tri-tridion</artifactId>
+            <artifactId>webapp-tridion</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>
@@ -43,7 +40,7 @@
         <!-- Tridion Contextual Image Delivery - Remove this is you are not using CID -->
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>tri-cid</artifactId>
+            <artifactId>webapp-cid</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
         </dependency>

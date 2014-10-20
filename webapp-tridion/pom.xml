@@ -4,23 +4,19 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tri-common</artifactId>
-
-    <name>Tridion Ref Impl - Common</name>
-    <description>Common interfaces and data model classes of the Tridion Reference Implementation.</description>
+    <artifactId>webapp-tridion</artifactId>
 
     <parent>
+        <artifactId>webapp-reference-impl</artifactId>
         <groupId>com.sdl</groupId>
-        <artifactId>tridion-reference-impl</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <dependencies>
-        <!-- Tridion Content Delivery -->
         <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_ambient</artifactId>
+            <groupId>com.sdl</groupId>
+            <artifactId>webapp-common</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <!-- Spring Framework -->
@@ -36,16 +32,38 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
         <!-- Google Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
 
-        <!-- Jackson -->
+        <!-- Tridion Content Delivery -->
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_ambient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_broker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_dynamic</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_model</artifactId>
         </dependency>
 
         <!-- Third-party libraries used by Tridion Content Delivery -->

@@ -26,7 +26,7 @@
     </bean>
 
     <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver">
-        <property name="contextPath" value="/tridion-reference-impl"/>
+        <property name="contextPath" value=""/>
         <property name="linkProvider" ref="linkProvider"/>
     </bean>
 

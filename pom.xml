@@ -5,22 +5,19 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.sdl</groupId>
-    <artifactId>tridion-reference-impl</artifactId>
+    <artifactId>webapp-reference-impl</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-    <name>Tridion Reference Implementation</name>
-    <description>Tridion Reference Implementation parent project.</description>
 
     <modules>
         <module>dd4t/dd4t-api</module>
         <module>dd4t/dd4t-core</module>
         <module>dd4t/dd4t-providers</module>
-        <module>tri-cid</module>
-        <module>tri-common</module>
-        <module>tri-dd4t</module>
-        <module>tri-tridion</module>
-        <module>tri-webapp</module>
+        <module>webapp-cid</module>
+        <module>webapp-common</module>
+        <module>webapp-dd4t</module>
+        <module>webapp-tridion</module>
+        <module>webapp-main</module>
     </modules>
 
     <properties>

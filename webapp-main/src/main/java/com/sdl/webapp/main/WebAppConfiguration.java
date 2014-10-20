@@ -5,6 +5,7 @@ import com.sdl.webapp.main.interceptor.StaticContentInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -22,8 +23,18 @@ public class WebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LocalizationResolverInterceptor());
-        registry.addInterceptor(new StaticContentInterceptor());
+        registry.addInterceptor(localizationResolverInterceptor());
+        registry.addInterceptor(staticContentInterceptor());
+    }
+
+    @Bean
+    public HandlerInterceptor localizationResolverInterceptor() {
+        return new LocalizationResolverInterceptor();
+    }
+
+    @Bean
+    public HandlerInterceptor staticContentInterceptor() {
+        return new StaticContentInterceptor();
     }
 
     @Bean

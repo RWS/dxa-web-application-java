@@ -26,6 +26,8 @@ public class EntityController extends ControllerBase {
 
         request.setAttribute(ENTITY_MODEL, entity);
 
-        return entity.getViewName();
+        final String viewName = entity.getViewName();
+        LOG.debug("viewName: {}", viewName);
+        return viewName;
     }
 }

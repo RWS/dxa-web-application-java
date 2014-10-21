@@ -40,7 +40,9 @@ public class PageController extends ControllerBase {
         request.setAttribute(PAGE_MODEL, page);
         request.setAttribute(SCREEN_WIDTH, webRequestContext.getScreenWidth());
 
-        return page.getViewName();
+        final String viewName = page.getViewName();
+        LOG.debug("viewName: {}", viewName);
+        return viewName;
     }
 
     private String getPageUrl(HttpServletRequest request) {

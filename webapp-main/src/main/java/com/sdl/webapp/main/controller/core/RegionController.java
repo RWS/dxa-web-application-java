@@ -26,6 +26,8 @@ public class RegionController extends ControllerBase {
 
         request.setAttribute(REGION_MODEL, region);
 
-        return region.getViewName();
+        final String viewName = region.getViewName();
+        LOG.debug("viewName: {}", viewName);
+        return viewName;
     }
 }

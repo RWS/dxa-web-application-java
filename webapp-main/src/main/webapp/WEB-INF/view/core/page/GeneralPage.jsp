@@ -14,7 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <c:set var="url" scope="request">${pageContext.request.requestURL}</c:set>
     <base href="${fn:substring(url, 0, fn:length(url) - fn:length(pageContext.request.requestURI))}${pageContext.request.contextPath}/" />
-    <title>Hello World</title>
+    <title>${pageModel.title}</title>
     <link rel="stylesheet" href="system/assets/css/main.css" type="text/css"/>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -22,20 +22,23 @@
     <![endif]-->
 </head>
 <body>
-<tri:include name="Header"/>
-<%
-    boolean hasLeftBar = pageModel.getRegions().containsKey("Left");
-    int mainContainerSize = hasLeftBar ? 9 : 12;
-%>
+<tri:page name="Header"/>
 <main class="page-row page-row-expanded" role="main">
     <div class="container-fluid page-border">
+        <%
+            boolean hasLeftBar = pageModel.getRegions().containsKey("Left");
+            int mainContainerSize = hasLeftBar ? 9 : 12;
+        %>
         <tri:region name="Hero"/>
+        <!-- TODO: Content Tools -->
         <div class="row">
+            <!-- TODO: Left Navigation -->
             <% if (hasLeftBar) { %><div class="col-sm-12 col-md-3"><tri:region name="Left"/></div><% } %>
             <div class="col-sm-12 col-md-<%= mainContainerSize %>"><tri:regions exclude="Hero,Left"/></div>
         </div>
     </div>
 </main>
-<tri:include name="Footer"/>
+<tri:page name="Footer"/>
+<script src="system/assets/scripts/main.js"></script>
 </body>
 </html>

@@ -32,6 +32,8 @@ public class IncludePageController extends ControllerBase {
 
         request.setAttribute(PAGE_MODEL, includePage);
 
-        return includePage.getViewName();
+        final String viewName = includePage.getViewName();
+        LOG.debug("viewName: {}", viewName);
+        return viewName;
     }
 }

@@ -10,8 +10,8 @@
 
     <!-- Include a page -->
     <tag>
-        <name>include</name>
-        <tag-class>com.sdl.webapp.main.taglib.IncludeTag</tag-class>
+        <name>page</name>
+        <tag-class>com.sdl.webapp.main.taglib.PageTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>

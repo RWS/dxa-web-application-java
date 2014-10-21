@@ -35,6 +35,7 @@ public class EntityTag extends TagSupport {
             return SKIP_BODY;
         }
 
+        LOG.debug("Including entity: {}/{}", regionName, index);
         try {
             pageContext.include(String.format("%s/%s/%d", ENTITY_PATH_PREFIX, regionName, index));
         } catch (ServletException | IOException e) {

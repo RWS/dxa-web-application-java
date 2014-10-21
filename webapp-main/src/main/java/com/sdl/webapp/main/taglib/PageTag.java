@@ -12,8 +12,8 @@ import java.io.IOException;
 import static com.sdl.webapp.main.WebAppConstants.PAGE_PATH_PREFIX;
 import static com.sdl.webapp.main.WebAppConstants.PAGE_MODEL;
 
-public class IncludeTag extends TagSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(IncludeTag.class);
+public class PageTag extends TagSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(PageTag.class);
 
     private String name;
 

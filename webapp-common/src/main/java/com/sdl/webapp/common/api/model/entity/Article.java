@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import com.sdl.webapp.common.api.mapping.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.Vocabularies;
 
 import java.util.Date;

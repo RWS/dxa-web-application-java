@@ -1,6 +1,10 @@
 package com.sdl.webapp.common.api;
 
+import com.sdl.webapp.common.api.mapping.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.SemanticVocabulary;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * Localization.
@@ -58,6 +62,10 @@ public interface Localization {
      * @return The resource string or {@code null} if there is no resource with this key.
      */
     String getResource(String key);
+
+    Map<Long, SemanticSchema> getSemanticSchemas();
+
+    List<SemanticVocabulary> getSemanticVocabularies();
 
     /**
      * Gets the includes for the specified page type.

@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import com.sdl.webapp.common.api.mapping.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.model.Entity;
 
 import java.util.Map;

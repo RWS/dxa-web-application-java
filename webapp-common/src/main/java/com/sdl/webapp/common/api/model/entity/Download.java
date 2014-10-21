@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import com.sdl.webapp.common.api.mapping.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.SemanticProperties;
-import com.sdl.webapp.common.api.mapping.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.Vocabularies;
 
 @SemanticEntity(entityName = "MediaObject", vocab = Vocabularies.SCHEMA_ORG, prefix = "s")

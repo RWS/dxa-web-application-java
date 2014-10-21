@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api.mapping;
+package com.sdl.webapp.common.api.mapping.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -7,13 +7,7 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface SemanticEntity {
+public @interface SemanticEntities {
 
-    String entityName() default "";
-
-    String vocab() default "";
-
-    String prefix() default "";
-
-    boolean pub() default false;
+    SemanticEntity[] value() default {};
 }

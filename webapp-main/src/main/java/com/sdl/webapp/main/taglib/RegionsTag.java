@@ -49,7 +49,7 @@ public class RegionsTag extends TagSupport {
             if (page.getRegions().containsKey(name)) {
                 LOG.debug("Including region: {}", name);
                 try {
-                    pageContext.include(REGION_PATH_PREFIX + name);
+                    pageContext.include(REGION_PATH_PREFIX + "/" + name);
                 } catch (ServletException | IOException e) {
                     throw new JspException("Error while processing regions tag", e);
                 }

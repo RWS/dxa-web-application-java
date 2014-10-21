@@ -50,10 +50,15 @@ public class PageFactoryImpl implements PageFactory {
         page.setId(genericPage.getId());
         page.setTitle(genericPage.getTitle());
 
+        String localizationPath = localization.getPath();
+        if (!localizationPath.endsWith("/")) {
+            localizationPath = localizationPath + "/";
+        }
+
         // Get and add includes
         final String pageTypeId = genericPage.getPageTemplate().getId().split("-")[1];
         for (String include : localization.getIncludes(pageTypeId)) {
-            final String includeUrl = localization.getPath() + "/" + include;
+            final String includeUrl = localizationPath + include;
             final Page includePage = contentProvider.getPageModel(includeUrl, localization);
             page.getIncludes().put(includePage.getTitle(), includePage);
         }

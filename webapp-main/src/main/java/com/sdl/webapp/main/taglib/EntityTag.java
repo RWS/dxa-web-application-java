@@ -36,7 +36,7 @@ public class EntityTag extends TagSupport {
         }
 
         try {
-            pageContext.include(String.format("%s%s/%d", ENTITY_PATH_PREFIX, regionName, index));
+            pageContext.include(String.format("%s/%s/%d", ENTITY_PATH_PREFIX, regionName, index));
         } catch (ServletException | IOException e) {
             throw new JspException("Error while processing entity tag", e);
         }

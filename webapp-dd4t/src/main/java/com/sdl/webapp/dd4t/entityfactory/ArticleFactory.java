@@ -39,13 +39,13 @@ public class ArticleFactory implements EntityFactory {
 
         // TODO: image, date, description
 
-        final List<Paragraph> articleBody = new ArrayList<>();
-        for (FieldSet fieldSet : getEmbeddedValues(content, "articleBody")) {
-            if (fieldSet.getSchema().getRootElement().equals("Paragraph")) {
-                articleBody.add(createParagraph(fieldSet));
-            }
-        }
-        article.setArticleBody(articleBody);
+//        final List<Paragraph> articleBody = new ArrayList<>();
+//        for (FieldSet fieldSet : getEmbeddedValues(content, "articleBody")) {
+//            if (fieldSet.getSchema().getRootElement().equals("Paragraph")) {
+//                articleBody.add(createParagraph(fieldSet));
+//            }
+//        }
+//        article.setArticleBody(articleBody);
 
         return article;
     }

@@ -32,7 +32,7 @@ public class IncludeTag extends TagSupport {
         if (page.getIncludes().containsKey(name)) {
             LOG.debug("Including page: {}", name);
             try {
-                pageContext.include(PAGE_PATH_PREFIX + name);
+                pageContext.include(PAGE_PATH_PREFIX + "/" + name);
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing include tag: " + name, e);
             } finally {

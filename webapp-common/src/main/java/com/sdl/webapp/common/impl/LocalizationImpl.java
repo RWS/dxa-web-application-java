@@ -61,7 +61,7 @@ public class LocalizationImpl implements Localization {
             return false;
         }
 
-        final String p = url.substring(path.length());
+        final String p = path.equals("/") ? url : url.substring(path.length());
         return p.equals(FAVICON_PATH) || p.startsWith(SYSTEM_ASSETS_PATH) || p.startsWith(mediaRoot);
     }
 

@@ -54,6 +54,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     private Localization createLocalization(PublicationMapping publicationMapping) throws LocalizationResolverException {
         final LocalizationImpl localization = new LocalizationImpl(
                 Integer.toString(publicationMapping.getPublicationId()), getPublicationMappingPath(publicationMapping));
+        LOG.debug("Created localization: {}", localization);
 
         try {
             localizationConfigurationLoader.loadConfiguration(localization);

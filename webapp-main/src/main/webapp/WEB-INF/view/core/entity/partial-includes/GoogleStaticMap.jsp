@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <!-- jsp:useBean id="pageModel" type="com.sdl.tridion.referenceimpl.common.model.Page" scope="request" -->
-<!-- jsp:useBean id="entityModel" type="com.sdl.tridion.referenceimpl.common.model.entity.Location" scope="request" -->
+<!-- jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.Location" scope="request" -->
 
 <div id="1" class="static-map" style="height:${param.height}">
     <ol>

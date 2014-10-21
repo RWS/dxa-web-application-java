@@ -2,6 +2,7 @@ package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +27,8 @@ public class FieldSetImpl implements FieldSet {
     private static final ObjectMapper mapper = new ObjectMapper();
 
     private Map<String, Object> rawContent = new HashMap<>();
+
+    @JsonIgnore
     private Map<String, Field> content = new HashMap<>();
 
     @JsonProperty("Schema")

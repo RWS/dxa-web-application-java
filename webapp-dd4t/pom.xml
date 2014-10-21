@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>webapp-dd4t</artifactId>
+
+    <parent>
+        <groupId>com.sdl</groupId>
+        <artifactId>webapp-reference-impl</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <dd4t-version>1.31.2</dd4t-version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.sdl</groupId>
+            <artifactId>webapp-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl</groupId>
+            <artifactId>webapp-tridion</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring Framework -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Servlet API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+
+        <!-- DD4T -->
+        <dependency>
+            <groupId>org.dynamicdelivery</groupId>
+            <artifactId>dd4t-api</artifactId>
+            <version>${dd4t-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dynamicdelivery</groupId>
+            <artifactId>dd4t-core</artifactId>
+            <version>${dd4t-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dynamicdelivery</groupId>
+            <artifactId>dd4t-providers</artifactId>
+            <version>${dd4t-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_broker</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_datalayer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_session</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_wrapper</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.vs.ezlicrun</groupId>
+            <artifactId>easylicense</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+        </dependency>
+
+    </dependencies>
+</project>

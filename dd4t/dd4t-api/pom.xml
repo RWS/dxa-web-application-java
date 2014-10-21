@@ -6,40 +6,26 @@
 
     <groupId>org.dynamicdelivery</groupId>
     <artifactId>dd4t-api</artifactId>
-    <version>1.31</version>
-
-    <name>Dynamic Delivery for Tridion API</name>
-    <description>API of the Dynamic Delivery for Tridion (DD4T) library.</description>
+    <version>1.31.2</version>
 
     <parent>
         <groupId>com.sdl</groupId>
-        <artifactId>tridion-reference-impl</artifactId>
+        <artifactId>webapp-reference-impl</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <!-- Dependencies -->
     <dependencies>
+        <!-- Joda Time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
         <!-- Servlet API -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-
-        <!-- Tridion Content Delivery -->
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_model</artifactId>
-        </dependency>
-
-        <!-- Hibernate - Necessary to make IntelliJ stop warning about missing classes -->
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
         </dependency>
     </dependencies>
 </project>

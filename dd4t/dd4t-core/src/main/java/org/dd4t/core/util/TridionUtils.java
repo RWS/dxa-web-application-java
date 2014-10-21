@@ -1,36 +1,70 @@
-/**  
- *  Copyright 2011 Capgemini & SDL
- * 
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- * 
- *        http://www.apache.org/licenses/LICENSE-2.0
- * 
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
 package org.dd4t.core.util;
 
-import com.tridion.storage.ItemMeta;
-import com.tridion.util.TCMURI;
+import org.dd4t.core.request.RequestContext;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 
 public class TridionUtils {
-	
-	public static final String TCM_REGEX = "(tcm:[0-9]+-[0-9]+(-[0-9]+)?)";
-	
-	public static TCMURI createUri(ItemMeta item) {
-		return new TCMURI(item.getPublicationId(), item.getItemId(), item.getItemType(), 0);		
-	}
-	
-	public static String getPublicationUri(int id){
-		return getPublicationUri(String.valueOf(id));
-	}
-	
-	public static String getPublicationUri(String id){
-		return "tcm:0-"+id+"-1";
-	}
+
+    public static final String TCM_REGEX = "(tcm:[0-9]+-[0-9]+(-[0-9]+)?)";
+    public static final String PREVIEW_SESSION_TOKEN = "preview-session-token";
+
+    public static int extractPublicationIdFromTcmUri(String tcmUri) throws ParseException {
+        TCMURI fullTcmUri = new TCMURI(tcmUri);
+        return fullTcmUri.getItemId();
+    }
+
+    public static String constructFullTcmPublicationUri(int id) {
+        return constructFullTcmPublicationUri(String.valueOf(id));
+    }
+
+    public static String constructFullTcmPublicationUri(String id) {
+        return String.format("tcm:0-%s-1",id);
+    }
+
+    /*
+    Looks up the Preview Session token from the cookie in the request
+    */
+    public static String getSessionPreviewToken() {
+        return getSessionPreviewToken(getCurrentRequest());
+    }
+
+    /*
+    Looks up the Preview Session token from the cookie in the request
+     */
+    public static String getSessionPreviewToken(RequestContext context) {
+        if (context == null) {
+            return null;
+        }
+
+        return getSessionPreviewToken(context.getServletRequest());
+    }
+
+    /*
+    Looks up the Preview Session token from the cookie in the request
+     */
+    public static String getSessionPreviewToken(HttpServletRequest request) {
+        if (request == null) {
+            return null;
+        }
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (PREVIEW_SESSION_TOKEN.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+
+        return null;
+    }
+
+    public static HttpServletRequest getCurrentRequest() {
+        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+    }
 }

@@ -6,28 +6,20 @@
 
     <groupId>org.dynamicdelivery</groupId>
     <artifactId>dd4t-core</artifactId>
-    <version>1.31</version>
-
-    <name>Dynamic Delivery for Tridion Core</name>
-    <description>Core implementation of the Dynamic Delivery for Tridion (DD4T) library.</description>
+    <version>1.31.2</version>
 
     <parent>
         <groupId>com.sdl</groupId>
-        <artifactId>tridion-reference-impl</artifactId>
+        <artifactId>webapp-reference-impl</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <!-- Dependencies -->
     <dependencies>
+        <!-- DD4T API -->
         <dependency>
             <groupId>org.dynamicdelivery</groupId>
             <artifactId>dd4t-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.dynamicdelivery</groupId>
-            <artifactId>dd4t-providers</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -36,6 +28,56 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <!-- Ehcache -->
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+        </dependency>
+
+        <!-- Apache Commons -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <!-- Jackson and related libraries -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+        </dependency>
 
         <!-- Servlet API -->
         <dependency>
@@ -43,75 +85,22 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
-        <!-- Simple Framework XML -->
+        <!-- JMS API -->
         <dependency>
-            <groupId>org.simpleframework</groupId>
-            <artifactId>simple-xml</artifactId>
-            <version>2.3.6</version>
+            <groupId>javax.jms</groupId>
+            <artifactId>jms-api</artifactId>
         </dependency>
 
-        <!-- Tridion Content Delivery -->
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_ambient</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_broker</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_datalayer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_session</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_wrapper</artifactId>
-        </dependency>
-
-        <!-- Third-party libraries used by Tridion Content Delivery -->
-        <dependency>
-            <groupId>commons-dbcp</groupId>
-            <artifactId>commons-dbcp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-pool</groupId>
-            <artifactId>commons-pool</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.vs.ezlicrun</groupId>
-            <artifactId>easylicense</artifactId>
-        </dependency>
+        <!-- Xalan -->
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
         </dependency>
+
+        <!-- Reflections (used for testing) -->
         <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>sqljdbc4</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate.javax.persistence</groupId>
-            <artifactId>hibernate-jpa-2.0-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-entitymanager</artifactId>
+            <groupId>org.reflections</groupId>
+            <artifactId>reflections</artifactId>
         </dependency>
     </dependencies>
 </project>

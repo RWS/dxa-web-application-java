@@ -6,20 +6,17 @@
 
     <groupId>org.dynamicdelivery</groupId>
     <artifactId>dd4t-providers</artifactId>
-    <version>1.31</version>
-
-    <name>Dynamic Delivery for Tridion Providers</name>
-    <description>Implementation of providers of the Dynamic Delivery for Tridion (DD4T) library.</description>
+    <version>1.31.2</version>
 
     <parent>
         <groupId>com.sdl</groupId>
-        <artifactId>tridion-reference-impl</artifactId>
+        <artifactId>webapp-reference-impl</artifactId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <!-- Dependencies -->
     <dependencies>
+        <!-- DD4T API -->
         <dependency>
             <groupId>org.dynamicdelivery</groupId>
             <artifactId>dd4t-api</artifactId>

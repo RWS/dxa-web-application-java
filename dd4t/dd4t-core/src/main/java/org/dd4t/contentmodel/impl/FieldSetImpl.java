@@ -1,57 +1,76 @@
-/**  
- *  Copyright 2011 Capgemini & SDL
- * 
- *    Licensed under the Apache License, Version 2.0 (the "License");
- *    you may not use this file except in compliance with the License.
- *    You may obtain a copy of the License at
- * 
- *        http://www.apache.org/licenses/LICENSE-2.0
- * 
- *    Unless required by applicable law or agreed to in writing, software
- *    distributed under the License is distributed on an "AS IS" BASIS,
- *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *    See the License for the specific language governing permissions and
- *    limitations under the License.
- */
 package org.dd4t.contentmodel.impl;
 
-import java.util.Map;
-
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Schema;
-import org.simpleframework.xml.Element;
-import org.simpleframework.xml.ElementMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Embedded fields basically are an array of
+ * ambiguous and unknown keynames, with multiple Fields in them
+ */
 public class FieldSetImpl implements FieldSet {
-    @ElementMap(name = "fields", keyType = String.class, valueType = Field.class, entry = "item", required = false)
-    private Map<String, Field> content;
-    
-    @Element(name = "schema", required = true)
+
+    private static final Logger LOG = LoggerFactory.getLogger(FieldSetImpl.class);
+    // TODO: see if this doesn't eat up too much objects (and memory)
+    private static final ObjectMapper mapper = new ObjectMapper();
+
+    private Map<String, Object> rawContent = new HashMap<>();
+    private Map<String, Field> content = new HashMap<>();
+
+    @JsonProperty("Schema")
     private Schema schema;
+
+    public Schema getSchema() {
+        return schema;
+    }
 
     public void setSchema(Schema schema) {
         this.schema = schema;
     }
-    
-    public Schema getSchema() {
-            return schema;
+
+    @JsonAnyGetter
+    public Map<String, Object> getRawContent() {
+        return rawContent;
     }
-    
-    /**
-     * Set the content
-     */
-    public void setContent(Map<String, Field> content) {
-            this.content = content;
+
+    @JsonAnySetter
+    public void set(String fieldKey, JsonNode embeddedField) {
+
+        try {
+            // The basefield annotations will map the fields to concrete types
+            BaseField b = mapper.readValue(embeddedField.toString(), BaseField.class);
+            content.put(fieldKey, b);
+        } catch (IOException e) {
+            LOG.error("Error deserializing FieldSet.", e);
+        }
+
+        rawContent.put(fieldKey, embeddedField);
     }
 
     /**
      * Get the content
-     * 
+     *
      * @return a map of field objects representing the content
      */
     public Map<String, Field> getContent() {
-            return content;
+        return content;
+    }
+
+    /**
+     * Set the content
+     */
+    public void setContent(Map<String, Field> content) {
+        this.content = content;
     }
 }

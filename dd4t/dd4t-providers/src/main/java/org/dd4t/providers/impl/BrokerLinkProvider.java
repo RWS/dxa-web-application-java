@@ -1,57 +1,67 @@
 package org.dd4t.providers.impl;
 
+import com.tridion.linking.ComponentLink;
+import com.tridion.linking.Link;
+import com.tridion.util.TCMURI;
+import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
+import org.dd4t.contentmodel.exceptions.SerializationException;
 import org.dd4t.providers.LinkProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tridion.linking.ComponentLink;
-import com.tridion.linking.Link;
-import com.tridion.util.TCMURI;
-
 /**
  * Provider implementation to wrap around the ComponentLinker.
- * 
- * @author rooudsho
  *
+ * @author rooudsho, Mihai Cadariu
  */
 public class BrokerLinkProvider implements LinkProvider {
-	private static Logger logger = LoggerFactory.getLogger(BrokerLinkProvider.class);
 
+	private static final Logger LOG = LoggerFactory.getLogger(BrokerLinkProvider.class);
+
+	/**
+	 * Returns a link URL to the given Component TcmUri, if exists. Otherwise, returns null.
+	 *
+	 * @param targetComponentURI String representing the TcmUri of the Component to resolve a link to
+	 * @return String representing the URL of the link; or null, if the Component is not linked to
+	 */
 	@Override
-	public String resolveComponent(String componentId) {
+	public String resolveComponent(String targetComponentURI) {
 		try {
-			TCMURI tcmUri = new TCMURI(componentId);
-			ComponentLink clink = new ComponentLink(tcmUri.getPublicationId());
-			Link link = clink.getLink(tcmUri.getItemId()); 
-
-			if (link.isResolved()) {
-				return link.getURL();
-			}		
-		} catch (Exception ex) {
-			logger.error("Unable to resolve link "+ex.getMessage(), ex);
-		}
-	
-		return null;
-	}
-
-	@Override
-	public String resolveComponentFromPage(String componentId, String pageId) {
-		TCMURI tcmUri;
-		try {
-			tcmUri = new TCMURI(componentId);
-			
-			ComponentLink clink = new ComponentLink(tcmUri.getPublicationId());
-			
-			Link link = clink.getLink(pageId, componentId, "tcm:0-0-0", "", "", true, false); 
+			TCMURI componentURI = new TCMURI(targetComponentURI);
+			ComponentLink componentLink = new ComponentLink(componentURI.getPublicationId());
+			Link link = componentLink.getLink(componentURI.getItemId());
 
 			if (link.isResolved()) {
 				return link.getURL();
 			}
 		} catch (Exception ex) {
-			logger.error("Unable to resolve link "+ex.getMessage(), ex);
+			LOG.error("Unable to resolve link to " + targetComponentURI + ": " + ex.getMessage(), ex);
 		}
-		
+
 		return null;
 	}
 
+	/**
+	 * Returns a link URL to the given Component TcmUri, when also specifying the source Page TcmUri.
+	 *
+	 * @param targetComponentURI String representing the TcmUri of the Component to resolve a link to
+	 * @param sourcePageURI      String representing the TcmUri of the source Page (the current page)
+	 * @return String representing the URL of the link; or null, if the Component is not linked to
+	 */
+	@Override
+	public String resolveComponentFromPage(String targetComponentURI, String sourcePageURI) {
+		try {
+			TCMURI componentURI = new TCMURI(targetComponentURI);
+			ComponentLink componentLink = new ComponentLink(componentURI.getPublicationId());
+			Link link = componentLink.getLink(sourcePageURI, targetComponentURI, "tcm:0-0-0", "", "", true, false);
+
+			if (link.isResolved()) {
+				return link.getURL();
+			}
+		} catch (Exception ex) {
+			LOG.error("Unable to resolve link to " + targetComponentURI + ": " + ex.getMessage(), ex);
+		}
+
+		return null;
+	}
 }

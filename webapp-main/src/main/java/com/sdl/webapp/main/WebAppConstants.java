@@ -1,11 +1,10 @@
 package com.sdl.webapp.main;
 
-// TODO: Rename this interface? Merge with ViewAttributeNames?
 public interface WebAppConstants {
 
-    String REGION_PATH_PREFIX = "/system/region/";
-    String ENTITY_PATH_PREFIX = "/system/entity/";
-    String INCLUDE_PAGE_PATH_PREFIX = "/system/include/";
+    String PAGE_PATH_PREFIX = "/system/_page/";
+    String REGION_PATH_PREFIX = "/system/_region/";
+    String ENTITY_PATH_PREFIX = "/system/_entity/";
 
     String PAGE_MODEL = "pageModel";
     String REGION_MODEL = "regionModel";

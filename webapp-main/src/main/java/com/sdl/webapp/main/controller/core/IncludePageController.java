@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.sdl.webapp.main.WebAppConstants.INCLUDE_PAGE_PATH_PREFIX;
+import static com.sdl.webapp.main.WebAppConstants.PAGE_PATH_PREFIX;
 import static com.sdl.webapp.main.WebAppConstants.PAGE_MODEL;
 
 @Controller
-@RequestMapping(INCLUDE_PAGE_PATH_PREFIX)
+@RequestMapping(PAGE_PATH_PREFIX)
 public class IncludePageController extends ControllerBase {
     private static final Logger LOG = LoggerFactory.getLogger(IncludePageController.class);
 

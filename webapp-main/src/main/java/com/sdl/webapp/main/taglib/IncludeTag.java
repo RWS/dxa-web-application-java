@@ -9,7 +9,7 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
-import static com.sdl.webapp.main.WebAppConstants.INCLUDE_PAGE_PATH_PREFIX;
+import static com.sdl.webapp.main.WebAppConstants.PAGE_PATH_PREFIX;
 import static com.sdl.webapp.main.WebAppConstants.PAGE_MODEL;
 
 public class IncludeTag extends TagSupport {
@@ -32,7 +32,7 @@ public class IncludeTag extends TagSupport {
         if (page.getIncludes().containsKey(name)) {
             LOG.debug("Including page: {}", name);
             try {
-                pageContext.include(INCLUDE_PAGE_PATH_PREFIX + name);
+                pageContext.include(PAGE_PATH_PREFIX + name);
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing include tag: " + name, e);
             } finally {

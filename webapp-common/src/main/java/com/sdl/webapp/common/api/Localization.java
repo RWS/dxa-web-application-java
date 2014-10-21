@@ -30,6 +30,20 @@ public interface Localization {
     boolean isStaticContent(String url);
 
     /**
+     * Returns {@code true} when this is the default localization, {@code false} otherwise.
+     *
+     * @return {@code true} when this is the default localization, {@code false} otherwise.
+     */
+    boolean isDefault();
+
+    /**
+     * Returns {@code true} if this localization is in staging mode, {@code false} otherwise.
+     *
+     * @return {@code true} if this localization is in staging mode, {@code false} otherwise.
+     */
+    boolean isStaging();
+
+    /**
      * Gets a configuration item.
      *
      * @param key The key of the configuration item.

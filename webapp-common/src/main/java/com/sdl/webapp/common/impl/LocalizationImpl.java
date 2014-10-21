@@ -20,6 +20,9 @@ public class LocalizationImpl implements Localization {
 
     private String mediaRoot;
 
+    private boolean default_;
+    private boolean staging;
+
     private Map<String, String> configuration;
     private Map<String, String> resources;
     private ListMultimap<String, String> includes;
@@ -47,6 +50,24 @@ public class LocalizationImpl implements Localization {
 
         final String p = url.substring(path.length());
         return p.equals(FAVICON_PATH) || p.startsWith(SYSTEM_ASSETS_PATH) || p.startsWith(mediaRoot);
+    }
+
+    @Override
+    public boolean isDefault() {
+        return default_;
+    }
+
+    public void setDefault(boolean default_) {
+        this.default_ = default_;
+    }
+
+    @Override
+    public boolean isStaging() {
+        return staging;
+    }
+
+    public void setStaging(boolean staging) {
+        this.staging = staging;
     }
 
     @Override

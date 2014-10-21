@@ -35,6 +35,8 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     private static final String INCLUDES_PATH = "/system/mappings/includes.json";
 
     private static final String MEDIA_ROOT_NODE_NAME = "mediaRoot";
+    private static final String DEFAULT_LOCALIZATION_NODE_NAME = "defaultLocalization";
+    private static final String STAGING_NODE_NAME = "staging";
     private static final String FILES_NODE_NAME = "files";
 
     private final Map<String, Localization> localizations = new HashMap<>();
@@ -72,6 +74,8 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
         final JsonNode configRootNode = parseJsonFile(CONFIG_BOOTSTRAP_PATH, localization);
         localization.setMediaRoot(configRootNode.get(MEDIA_ROOT_NODE_NAME).asText());
+        localization.setDefault(configRootNode.get(DEFAULT_LOCALIZATION_NODE_NAME).asBoolean(false));
+        localization.setStaging(configRootNode.get(STAGING_NODE_NAME).asBoolean(false));
         localization.setConfiguration(parseJsonSubFiles(configRootNode, localization));
 
         final JsonNode resourcesRootNode = parseJsonFile(RESOURCES_BOOTSTRAP_PATH, localization);

@@ -12,50 +12,50 @@
             <h1>${entityModel.headline}</h1>
         </c:if>
 
-    @if (Model.ItemListElements.Count > 0)
-    {
-        <c:set var="accordionId" value="${NewGuid}" />
+        <c:if test="${not empty entityModel.itemListElements}">
+            <c:set var="accordionId" value="${NewGuid}" />
 
-        <div class="panel-group responsive-accordion" id="@accordionId">
-            <c:forEach var="teaser" items="${entityModel.itemListElements}">
-                <c:set var="collapseId" value="${NewGuid}" />
+            <div class="panel-group responsive-accordion" id="@accordionId">
+                <c:forEach var="teaser" items="${entityModel.itemListElements}">
+                    <c:set var="collapseId" value="${NewGuid}" />
 
-                <div class="panel panel-default">
-                    <div class="panel-heading" data-toggle="collapse" data-target="#${collapseId}" data-parent="#${accordionId}">
-                        <h4 class="panel-title">${teaser.headline}</h4>
-                    </div>
-
-                    <div id="${collapseId}" class="panel-collapse collapse @(i==1?"in":"")">
-                        <div class="panel-body">
-                            <c:if test="${not empty teaser.text}">
-                                <div>
-                                    ${teaser.text}
-                                </div>
-                            </c:if>
-
-                            <c:if test="${not empty teaser.media}">
-                                <figure>
-                                    <!-- Todo: @Html.Media(element.Media) -->
-                                </figure>
-                            </c:if>
-
-                            <c:if test="${not empty teaser.link.url}">
-                                <p>
-                                    <a href="${teaser.link.url}" title="${teaser.link.alternateText}" class="btn btn-primary">
-                                        <c:choose>
-                                            <c:when test="${not empty teaser.link.linkText}">
-                                                ${entityModel.link.linkText}
-                                            </c:when>
-                                            <c:otherwise>
-                                                <tri:resource key="core.readMoreLinkText" />
-                                            </c:otherwise>
-                                        </c:choose>
-                                    </a>
-                                </p>
-                            </c:if>
+                    <div class="panel panel-default">
+                        <div class="panel-heading" data-toggle="collapse" data-target="#${collapseId}" data-parent="#${accordionId}">
+                            <h4 class="panel-title">${teaser.headline}</h4>
                         </div>
-                    </div>
-            </c:forEach>
-        </div>
+
+                        <div id="${collapseId}" class="panel-collapse collapse @(i==1?"in":"")">
+                            <div class="panel-body">
+                                <c:if test="${not empty teaser.text}">
+                                    <div>
+                                        ${teaser.text}
+                                    </div>
+                                </c:if>
+
+                                <c:if test="${not empty teaser.media}">
+                                    <figure>
+                                        <tri:image url="${teaser.media.url}" />
+                                    </figure>
+                                </c:if>
+
+                                <c:if test="${not empty teaser.link.url}">
+                                    <p>
+                                        <a href="${teaser.link.url}" title="${teaser.link.alternateText}" class="btn btn-primary">
+                                            <c:choose>
+                                                <c:when test="${not empty teaser.link.linkText}">
+                                                    ${entityModel.link.linkText}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <tri:resource key="core.readMoreLinkText" />
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </a>
+                                    </p>
+                                </c:if>
+                            </div>
+                        </div>
+                </c:forEach>
+            </div>
+        </c:if>
     </div>
 </article>

@@ -6,6 +6,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.*;
+import com.sdl.webapp.common.impl.LocalizationImpl;
 import com.tridion.dynamiccontent.DynamicContent;
 import com.tridion.dynamiccontent.publication.PublicationMapping;
 import org.slf4j.Logger;
@@ -22,6 +23,9 @@ import java.util.Map;
 import static com.sdl.webapp.tridion.PublicationMappingUtil.getPublicationMappingBaseUrl;
 import static com.sdl.webapp.tridion.PublicationMappingUtil.getPublicationMappingPath;
 
+/**
+ * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
+ */
 @Component
 public class TridionLocalizationResolver implements LocalizationResolver {
     private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationResolver.class);
@@ -33,8 +37,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     private static final String MEDIA_ROOT_NODE_NAME = "mediaRoot";
     private static final String FILES_NODE_NAME = "files";
 
-
-    private Map<String, Localization> localizations = new HashMap<>();
+    private final Map<String, Localization> localizations = new HashMap<>();
 
     @Autowired
     private StaticContentProvider contentProvider;
@@ -53,16 +56,18 @@ public class TridionLocalizationResolver implements LocalizationResolver {
         final String key = String.format("%d@[%s]", publicationMapping.getPublicationId(),
                 getPublicationMappingBaseUrl(publicationMapping));
 
-        if (!localizations.containsKey(key)) {
-            LOG.debug("Creating localization: {}", key);
-            localizations.put(key, createLocalization(publicationMapping));
+        synchronized (localizations) {
+            if (!localizations.containsKey(key)) {
+                LOG.debug("Creating localization: {}", key);
+                localizations.put(key, createLocalization(publicationMapping));
+            }
         }
 
         return localizations.get(key);
     }
 
     private Localization createLocalization(PublicationMapping publicationMapping) throws LocalizationResolverException {
-        final TridionLocalization localization = new TridionLocalization(
+        final LocalizationImpl localization = new LocalizationImpl(
                 Integer.toString(publicationMapping.getPublicationId()), getPublicationMappingPath(publicationMapping));
 
         final JsonNode configRootNode = parseJsonFile(CONFIG_BOOTSTRAP_PATH, localization);

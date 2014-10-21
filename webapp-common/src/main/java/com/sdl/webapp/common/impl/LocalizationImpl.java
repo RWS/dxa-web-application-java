@@ -1,4 +1,4 @@
-package com.sdl.webapp.tridion;
+package com.sdl.webapp.common.impl;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ListMultimap;
@@ -7,7 +7,10 @@ import com.sdl.webapp.common.api.Localization;
 import java.util.List;
 import java.util.Map;
 
-public class TridionLocalization implements Localization {
+/**
+ * Default implementation of {@code Localization}.
+ */
+public class LocalizationImpl implements Localization {
 
     private static final String FAVICON_PATH = "/favicon.ico";
     private static final String SYSTEM_ASSETS_PATH = "/system/assets";
@@ -21,7 +24,7 @@ public class TridionLocalization implements Localization {
     private Map<String, String> resources;
     private ListMultimap<String, String> includes;
 
-    public TridionLocalization(String id, String path) {
+    public LocalizationImpl(String id, String path) {
         this.id = id;
         this.path = path;
     }

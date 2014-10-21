@@ -21,8 +21,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -59,10 +61,10 @@ public final class DD4TContentProvider implements ContentProvider {
     public Page getPageModel(String url, Localization localization) throws ContentProviderException {
         String processedUrl = processUrl(url);
         int publicationId = Integer.parseInt(localization.getId());
-        GenericPage genericPage = tryFindPageByUrl(processedUrl, publicationId);
+        GenericPage genericPage = tryFindPageModelByUrl(processedUrl, publicationId);
         if (genericPage == null && !url.endsWith("/") && url.lastIndexOf('.') <= url.lastIndexOf('/')) {
             processedUrl = processUrl(url + "/");
-            genericPage = tryFindPageByUrl(processedUrl, publicationId);
+            genericPage = tryFindPageModelByUrl(processedUrl, publicationId);
             if (genericPage == null) {
                 throw new PageNotFoundException("Page not found: " + processedUrl);
             }
@@ -73,8 +75,19 @@ public final class DD4TContentProvider implements ContentProvider {
 
     @Override
     public InputStream getPageContent(String url, Localization localization) throws ContentProviderException {
-        // TODO: Implement this method
-        throw new UnsupportedOperationException("Not yet implemented");
+        String processedUrl = processUrl(url);
+        int publicationId = Integer.parseInt(localization.getId());
+        String pageContent = tryFindPageContentByUrl(processedUrl, publicationId);
+        if (pageContent == null && !url.endsWith("/") && url.lastIndexOf('.') <= url.lastIndexOf('/')) {
+            processedUrl = processUrl(url + "/");
+            pageContent = tryFindPageContentByUrl(processedUrl, publicationId);
+            if (pageContent == null) {
+                throw new PageNotFoundException("Page not found: " + processedUrl);
+            }
+        }
+
+        // NOTE: This assumes page content is always in UTF-8 encoding
+        return new ByteArrayInputStream(pageContent.getBytes(StandardCharsets.UTF_8));
     }
 
     private String processUrl(String url) {
@@ -94,12 +107,24 @@ public final class DD4TContentProvider implements ContentProvider {
         return url;
     }
 
-    private GenericPage tryFindPageByUrl(String url, int publicationId) {
+    private GenericPage tryFindPageModelByUrl(String url, int publicationId) {
         try {
-            LOG.debug("tryFindPageByUrl: url={}, publicationId = {}", url, publicationId);
-            return (GenericPage)pageFactory.findPageByUrl(url, publicationId);
-        } catch (FilterException| SerializationException | ParseException | ItemNotFoundException | IOException e) {
-	        LOG.error(e.getMessage(),e);
+            LOG.debug("tryFindPageModelByUrl: url={}, publicationId={}", url, publicationId);
+            return (GenericPage) pageFactory.findPageByUrl(url, publicationId);
+        } catch (FilterException | SerializationException | ParseException | ItemNotFoundException | IOException e) {
+            LOG.debug("Failed to get page model: url={}, publication={}", new Object[] { url, publicationId, e });
+            return null;
+        }
+    }
+
+    private String tryFindPageContentByUrl(String url, int publicationId) {
+        try {
+            LOG.debug("tryFindPageContentByUrl: url={}, publicationId={}", url, publicationId);
+
+            // NOTE: The method is called 'findXMLPageByUrl' but it does actually not have anything to do with XML
+            return pageFactory.findXMLPageByUrl(url, publicationId);
+        } catch (FilterException | SerializationException | ParseException | ItemNotFoundException | IOException e) {
+            LOG.debug("Failed to get page content: url={}, publication={}", new Object[] { url, publicationId, e });
             return null;
         }
     }

@@ -19,6 +19,11 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.List;
 
+/**
+ * Static content provider that uses DD4T to get static content.
+ *
+ * TODO: Should use DD4T BinaryFactory instead of calling the Tridion broker API directly.
+ */
 @Component
 public class DD4TStaticContentProvider implements StaticContentProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DD4TStaticContentProvider.class);

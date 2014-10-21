@@ -14,8 +14,9 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 
 /**
- * Request-scoped component that provides information about the current client configuration, such as the size of the
- * client's screen, pixel ratio etc.
+ * Implementation of {@code WebRequestContext}.
+ *
+ * This implementation gets information about the display width etc. from the Ambient Data Framework.
  */
 @Component
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)

@@ -9,6 +9,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface SemanticProperty {
 
+    String propertyName() default "";
+
     String value() default "";
 
     boolean ignoreMapping() default false;

@@ -2,8 +2,9 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.mapping.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.Vocabularies;
 
-@SemanticEntity(entityName = "MediaObject", vocab = "http://schema.org", prefix = "s", pub = true)
+@SemanticEntity(entityName = "MediaObject", vocab = Vocabularies.SCHEMA_ORG, prefix = "s", pub = true)
 public abstract class MediaItem extends EntityBase {
 
     @SemanticProperty("s:contentUrl")

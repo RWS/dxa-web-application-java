@@ -3,8 +3,11 @@ package com.sdl.webapp.common.api.model.entity;
 public class Paragraph extends EntityBase {
 
     private String subheading;
+
     private String content;
+
     private MediaItem media;
+
     private String caption;
 
     public String getSubheading() {

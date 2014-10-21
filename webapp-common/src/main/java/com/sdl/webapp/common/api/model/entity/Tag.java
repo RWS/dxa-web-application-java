@@ -3,7 +3,9 @@ package com.sdl.webapp.common.api.model.entity;
 public class Tag {
 
     private String displayText;
+
     private String key;
+
     private String tagCategory;
 
     public String getDisplayText() {

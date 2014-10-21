@@ -2,11 +2,12 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.mapping.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.Vocabularies;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@SemanticEntity(entityName = "ItemList", vocab = "http://schema.org", prefix = "s", pub = true)
+@SemanticEntity(entityName = "ItemList", vocab = Vocabularies.SCHEMA_ORG, prefix = "s", pub = true)
 public class ContentList<T> extends EntityBase {
 
     @SemanticProperty("s:headline")

@@ -1,18 +1,15 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import com.sdl.webapp.common.api.mapping.SemanticEntities;
-import com.sdl.webapp.common.api.mapping.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.SemanticProperties;
-import com.sdl.webapp.common.api.mapping.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.*;
 import com.sdl.webapp.common.api.model.Entity;
 
 import java.util.Date;
 
 @SemanticEntities({
-        @SemanticEntity(entityName = "Teaser", vocab = Entity.CORE_VOCABULARY, prefix = "t"),
-        @SemanticEntity(entityName = "Image", vocab = Entity.CORE_VOCABULARY, prefix = "i"),
-        @SemanticEntity(entityName = "Article", vocab = Entity.CORE_VOCABULARY, prefix = "a"),
-        @SemanticEntity(entityName = "Place", vocab = Entity.CORE_VOCABULARY, prefix = "p")
+        @SemanticEntity(entityName = "Teaser", vocab = Vocabularies.SDL_CORE, prefix = "t"),
+        @SemanticEntity(entityName = "Image", vocab = Vocabularies.SDL_CORE, prefix = "i"),
+        @SemanticEntity(entityName = "Article", vocab = Vocabularies.SDL_CORE, prefix = "a"),
+        @SemanticEntity(entityName = "Place", vocab = Vocabularies.SDL_CORE, prefix = "p")
 })
 public class Teaser extends EntityBase {
 

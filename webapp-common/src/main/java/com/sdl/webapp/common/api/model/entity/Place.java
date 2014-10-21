@@ -2,8 +2,9 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.mapping.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.Vocabularies;
 
-@SemanticEntity(entityName = "Place", vocab = "http://schema.org", prefix = "s", pub = true)
+@SemanticEntity(entityName = "Place", vocab = Vocabularies.SCHEMA_ORG, prefix = "s", pub = true)
 public class Place extends EntityBase {
 
     @SemanticProperty("s:name")

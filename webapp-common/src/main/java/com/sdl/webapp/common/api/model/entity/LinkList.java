@@ -5,6 +5,7 @@ import java.util.List;
 public class LinkList<T> extends EntityBase {
 
     private String headline;
+
     private List<T> links;
 
     public String getHeadline() {

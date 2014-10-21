@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 public @interface SemanticEntity {
 
-    String entityName();
+    String entityName() default "";
 
     String vocab() default "";
 

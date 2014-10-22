@@ -7,7 +7,7 @@ import com.sdl.webapp.common.api.mapping.Vocabularies;
 import java.util.Date;
 import java.util.List;
 
-@SemanticEntity(entityName = "Article", vocab = Vocabularies.SCHEMA_ORG, prefix = "s", pub = true)
+@SemanticEntity(entityName = "Article", vocabulary = Vocabularies.SCHEMA_ORG, prefix = "s", public_ = true)
 public class Article extends EntityBase {
 
     @SemanticProperty("s:headline")

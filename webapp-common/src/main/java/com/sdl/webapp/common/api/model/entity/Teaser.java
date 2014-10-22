@@ -9,10 +9,10 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import java.util.Date;
 
 @SemanticEntities({
-        @SemanticEntity(entityName = "Teaser", vocab = Vocabularies.SDL_CORE, prefix = "t"),
-        @SemanticEntity(entityName = "Image", vocab = Vocabularies.SDL_CORE, prefix = "i"),
-        @SemanticEntity(entityName = "Article", vocab = Vocabularies.SDL_CORE, prefix = "a"),
-        @SemanticEntity(entityName = "Place", vocab = Vocabularies.SDL_CORE, prefix = "p")
+        @SemanticEntity(entityName = "Teaser", vocabulary = Vocabularies.SDL_CORE, prefix = "t"),
+        @SemanticEntity(entityName = "Image", vocabulary = Vocabularies.SDL_CORE, prefix = "i"),
+        @SemanticEntity(entityName = "Article", vocabulary = Vocabularies.SDL_CORE, prefix = "a"),
+        @SemanticEntity(entityName = "Place", vocabulary = Vocabularies.SDL_CORE, prefix = "p")
 })
 public class Teaser extends EntityBase {
 

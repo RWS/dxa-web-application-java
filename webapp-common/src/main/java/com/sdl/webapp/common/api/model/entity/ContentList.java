@@ -7,7 +7,7 @@ import com.sdl.webapp.common.api.mapping.Vocabularies;
 import java.util.ArrayList;
 import java.util.List;
 
-@SemanticEntity(entityName = "ItemList", vocab = Vocabularies.SCHEMA_ORG, prefix = "s", pub = true)
+@SemanticEntity(entityName = "ItemList", vocabulary = Vocabularies.SCHEMA_ORG, prefix = "s", public_ = true)
 public class ContentList<T> extends EntityBase {
 
     @SemanticProperty("s:headline")

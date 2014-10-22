@@ -3,7 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.Vocabularies;
 
-@SemanticEntity(entityName = "NotificationBar", vocab = Vocabularies.SDL_CORE, prefix = "nb")
+@SemanticEntity(entityName = "NotificationBar", vocabulary = Vocabularies.SDL_CORE, prefix = "nb")
 public class Notification extends EntityBase {
 
     private String headline;

@@ -5,7 +5,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.Vocabularies;
 
-@SemanticEntity(entityName = "MediaObject", vocab = Vocabularies.SCHEMA_ORG, prefix = "s")
+@SemanticEntity(entityName = "MediaObject", vocabulary = Vocabularies.SCHEMA_ORG, prefix = "s")
 public class Download extends MediaItem {
 
     @SemanticProperties({

@@ -4,7 +4,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.Vocabularies;
 
-@SemanticEntity(entityName = "GeoCoordinates", vocab = Vocabularies.SCHEMA_ORG, prefix = "s", pub = true)
+@SemanticEntity(entityName = "GeoCoordinates", vocabulary = Vocabularies.SCHEMA_ORG, prefix = "s", public_ = true)
 public class Location extends EntityBase {
 
     @SemanticProperty("s:longitude")

@@ -6,7 +6,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SemanticEntityInfo {
+class SemanticEntityInfo {
 
     private final String entityName;
     private final String vocabulary;

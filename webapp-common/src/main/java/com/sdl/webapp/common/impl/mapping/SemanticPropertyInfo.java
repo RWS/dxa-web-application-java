@@ -5,7 +5,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
 import java.lang.reflect.Field;
 
-public class SemanticPropertyInfo {
+class SemanticPropertyInfo {
 
     private final String prefix;
     private final String propertyName;

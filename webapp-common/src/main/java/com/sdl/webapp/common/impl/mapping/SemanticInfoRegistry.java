@@ -17,7 +17,10 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 
-public class SemanticInfoRegistry {
+/**
+ * Semantic information registry.
+ */
+class SemanticInfoRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticInfoRegistry.class);
 
     private static final String DEFAULT_VOCABULARY = Vocabularies.SDL_CORE;

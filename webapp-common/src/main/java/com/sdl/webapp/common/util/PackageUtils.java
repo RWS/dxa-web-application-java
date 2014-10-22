@@ -15,14 +15,15 @@ import java.io.IOException;
 public class PackageUtils {
     private static final Logger LOG = LoggerFactory.getLogger(PackageUtils.class);
 
-    public static interface ClassCallback {
-        void doWith(MetadataReader metadataReader);
+    public static interface ClassCallback<E extends Throwable> {
+        void doWith(MetadataReader metadataReader) throws E;
     }
 
     private PackageUtils() {
     }
 
-    public static void doWithClasses(String basePackage, ClassCallback callback) throws IOException {
+    public static <E extends Throwable> void doWithClasses(String basePackage, ClassCallback<E> callback)
+            throws IOException, E {
         // Inspired by Spring's ClassPathScanningCandidateComponentProvider.findCandidateComponents(String basePackage)
         // and Spring's ReflectionUtils
 

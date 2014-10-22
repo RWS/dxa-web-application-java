@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl.mapping;
 
+import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.model.Entity;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -14,7 +15,7 @@ public class SemanticInfoRegistryTest {
     // TODO: Implement unit tests
 
     @Test
-    public void test() throws IOException {
+    public void test() throws SemanticMappingException {
         // TODO: Remove this, this is not a real test, just for debugging
 
         final SemanticInfoRegistry registry = new SemanticInfoRegistry();

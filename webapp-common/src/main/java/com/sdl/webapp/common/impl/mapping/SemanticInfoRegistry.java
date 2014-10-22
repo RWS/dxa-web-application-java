@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl.mapping;
 
+import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.Vocabularies;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
@@ -11,11 +12,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
-import org.springframework.util.ReflectionUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Semantic information registry.
@@ -28,31 +31,36 @@ class SemanticInfoRegistry {
 
     private final Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> entityInfo = new HashMap<>();
 
-    public void registerEntities(String basePackage) throws IOException {
+    public void registerEntities(String basePackage) throws SemanticMappingException {
         LOG.debug("Registering entity classes in package: {}", basePackage);
 
-        PackageUtils.doWithClasses(basePackage, new PackageUtils.ClassCallback() {
-            @Override
-            public void doWith(MetadataReader metadataReader) {
-                final ClassMetadata classMetadata = metadataReader.getClassMetadata();
-                if (classMetadata.isConcrete()) {
-                    final String className = classMetadata.getClassName();
-                    try {
-                        Class<?> cls = Class.forName(className);
-                        if (Entity.class.isAssignableFrom(cls)) {
-                            registerEntity(cls.asSubclass(Entity.class));
+        try {
+            PackageUtils.doWithClasses(basePackage, new PackageUtils.ClassCallback<SemanticMappingException>() {
+                @Override
+                public void doWith(MetadataReader metadataReader) throws SemanticMappingException {
+                    final ClassMetadata classMetadata = metadataReader.getClassMetadata();
+                    if (!classMetadata.isInterface()) {
+                        final String className = classMetadata.getClassName();
+                        final Class<?> class_;
+                        try {
+                            class_ = Class.forName(className);
+                        } catch (ClassNotFoundException e) {
+                            throw new SemanticMappingException("Exception while loading class: " + className, e);
                         }
-                    } catch (ClassNotFoundException e) {
-                        LOG.error("Exception while loading class: {}", className, e);
+                        if (Entity.class.isAssignableFrom(class_)) {
+                            registerEntity(class_.asSubclass(Entity.class));
+                        }
                     }
                 }
-            }
-        });
+            });
+        } catch (IOException e) {
+            throw new SemanticMappingException("Exception while registering entities in package: " + basePackage, e);
+        }
     }
 
-    public void registerEntity(final Class<? extends Entity> entityClass) {
+    public void registerEntity(Class<? extends Entity> entityClass) throws SemanticMappingException {
         LOG.debug("Registering entity class: {}", entityClass.getName());
-        final Map<String, SemanticEntityInfo> semanticEntityInfo = createAllSemanticEntityInfo(entityClass);
+        final Map<String, SemanticEntityInfo> semanticEntityInfo = createSemanticEntityInfo(entityClass);
 
         // Add default information if not present for the default prefix
         if (!semanticEntityInfo.containsKey(DEFAULT_PREFIX)) {
@@ -60,87 +68,70 @@ class SemanticInfoRegistry {
         }
 
         // Add information about properties
-        ReflectionUtils.doWithFields(entityClass, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                for (SemanticPropertyInfo propertyInfo : createSemanticPropertyInfo(field)) {
-                    final SemanticEntityInfo matchingEntityInfo = semanticEntityInfo.get(propertyInfo.getPrefix());
-                    if (matchingEntityInfo != null) {
-                        matchingEntityInfo.addPropertyInfo(propertyInfo);
-                    }
+        for (Field field : entityClass.getDeclaredFields()) {
+            for (SemanticPropertyInfo propertyInfo : createSemanticPropertyInfo(field)) {
+                final SemanticEntityInfo matchingEntityInfo = semanticEntityInfo.get(propertyInfo.getPrefix());
+                if (matchingEntityInfo != null) {
+                    matchingEntityInfo.addPropertyInfo(propertyInfo);
+                } else {
+                    throw new SemanticMappingException("Semantic property information for the field '" +
+                            propertyInfo.getField() + "' cannot be registered because it uses a prefix for which " +
+                            "there is no semantic entity information. Make sure that the prefix is correct or that " +
+                            "the class has a @SemanticEntity annotation for the prefix '" + propertyInfo.getPrefix() +
+                            "'.");
                 }
             }
-        });
+        }
 
         entityInfo.put(entityClass, semanticEntityInfo);
     }
 
-    private Map<String, SemanticEntityInfo> createAllSemanticEntityInfo(Class<?> class_) {
+    private Map<String, SemanticEntityInfo> createSemanticEntityInfo(Class<? extends Entity> entityClass) {
         final Map<String, SemanticEntityInfo> result = new HashMap<>();
 
-        Class<?> cls = class_;
-        while (cls != Object.class) {
-            final Map<String, SemanticEntityInfo> semanticEntityInfo = createSemanticEntityInfo(cls);
-
-            // Only add information if it is not yet defined for this prefix - definitions in subclasses must override
-            // definitions in superclasses
-            for (Map.Entry<String, SemanticEntityInfo> entry : semanticEntityInfo.entrySet()) {
-                final String prefix = entry.getKey();
-                if (!result.containsKey(prefix)) {
-                    result.put(prefix, entry.getValue());
-                } else {
-                    LOG.warn("Semantic entity information in class {} with prefix '{}' is overridden in a subclass " +
-                            "in the hierarchy of class {}", new Object[] { cls.getName(), prefix, class_.getName() });
-                }
-            }
-
-            cls = cls.getSuperclass();
-        }
-        return result;
-    }
-
-    private Map<String, SemanticEntityInfo> createSemanticEntityInfo(Class<?> class_) {
-        final SemanticEntities semanticEntities = class_.getAnnotation(SemanticEntities.class);
+        final SemanticEntities semanticEntities = entityClass.getAnnotation(SemanticEntities.class);
         if (semanticEntities != null) {
-            final Map<String, SemanticEntityInfo> result = new HashMap<>();
             for (SemanticEntity semanticEntity : semanticEntities.value()) {
                 result.put(semanticEntity.prefix(), new SemanticEntityInfo(semanticEntity));
             }
-            return result;
         } else {
-            final SemanticEntity semanticEntity = class_.getAnnotation(SemanticEntity.class);
+            final SemanticEntity semanticEntity = entityClass.getAnnotation(SemanticEntity.class);
             if (semanticEntity != null) {
-                return Collections.singletonMap(semanticEntity.prefix(), new SemanticEntityInfo(semanticEntity));
-            } else {
-                return Collections.emptyMap();
+                result.put(semanticEntity.prefix(), new SemanticEntityInfo(semanticEntity));
             }
         }
+
+        return result;
     }
 
     private List<SemanticPropertyInfo> createSemanticPropertyInfo(Field field) {
+        final List<SemanticPropertyInfo> result = new ArrayList<>();
+
         final SemanticProperties semanticProperties = field.getAnnotation(SemanticProperties.class);
         if (semanticProperties != null) {
-            final List<SemanticPropertyInfo> result = new ArrayList<>();
             for (SemanticProperty semanticProperty : semanticProperties.value()) {
                 if (!semanticProperty.ignoreMapping()) {
                     result.add(new SemanticPropertyInfo(semanticProperty, field));
+                } else {
+                    LOG.debug("Skipping field because it is set to ignored: {}", field);
                 }
             }
-            return result;
         } else {
             final SemanticProperty semanticProperty = field.getAnnotation(SemanticProperty.class);
             if (semanticProperty != null) {
                 if (!semanticProperty.ignoreMapping()) {
-                    return Collections.singletonList(new SemanticPropertyInfo(semanticProperty, field));
+                    result.add(new SemanticPropertyInfo(semanticProperty, field));
                 } else {
-                    return Collections.emptyList();
+                    LOG.debug("Skipping field because it is set to ignored: {}", field);
                 }
             } else {
                 final SemanticPropertyInfo propertyInfo = new SemanticPropertyInfo(DEFAULT_PREFIX, field.getName(), field);
                 LOG.debug("Field {} has no semantic property annotation, creating from defaults: {}", field, propertyInfo);
-                return Collections.singletonList(propertyInfo);
+                result.add(propertyInfo);
             }
         }
+
+        return result;
     }
 
     public Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> getEntityInfo() {

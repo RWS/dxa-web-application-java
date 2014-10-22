@@ -26,8 +26,8 @@ import java.util.Map;
 class SemanticInfoRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticInfoRegistry.class);
 
-    private static final String DEFAULT_VOCABULARY = Vocabularies.SDL_CORE;
-    private static final String DEFAULT_PREFIX = "";
+    public static final String DEFAULT_VOCABULARY = Vocabularies.SDL_CORE;
+    public static final String DEFAULT_PREFIX = "";
 
     private final Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> entityInfo = new HashMap<>();
 
@@ -64,7 +64,8 @@ class SemanticInfoRegistry {
 
         // Add default information if not present for the default prefix
         if (!semanticEntityInfo.containsKey(DEFAULT_PREFIX)) {
-            semanticEntityInfo.put(DEFAULT_PREFIX, new SemanticEntityInfo("", DEFAULT_VOCABULARY, DEFAULT_PREFIX, false));
+            semanticEntityInfo.put(DEFAULT_PREFIX, new SemanticEntityInfo(entityClass.getSimpleName(),
+                    DEFAULT_VOCABULARY, DEFAULT_PREFIX, false));
         }
 
         // Add information about properties
@@ -86,18 +87,24 @@ class SemanticInfoRegistry {
         entityInfo.put(entityClass, semanticEntityInfo);
     }
 
-    private Map<String, SemanticEntityInfo> createSemanticEntityInfo(Class<? extends Entity> entityClass) {
+    private Map<String, SemanticEntityInfo> createSemanticEntityInfo(Class<? extends Entity> entityClass)
+            throws SemanticMappingException {
         final Map<String, SemanticEntityInfo> result = new HashMap<>();
 
         final SemanticEntities semanticEntities = entityClass.getAnnotation(SemanticEntities.class);
         if (semanticEntities != null) {
             for (SemanticEntity semanticEntity : semanticEntities.value()) {
-                result.put(semanticEntity.prefix(), new SemanticEntityInfo(semanticEntity));
+                final String prefix = semanticEntity.prefix();
+                if (!result.containsKey(prefix)) {
+                    result.put(prefix, new SemanticEntityInfo(semanticEntity, entityClass));
+                } else {
+                    throw new SemanticMappingException("");
+                }
             }
         } else {
             final SemanticEntity semanticEntity = entityClass.getAnnotation(SemanticEntity.class);
             if (semanticEntity != null) {
-                result.put(semanticEntity.prefix(), new SemanticEntityInfo(semanticEntity));
+                result.put(semanticEntity.prefix(), new SemanticEntityInfo(semanticEntity, entityClass));
             }
         }
 

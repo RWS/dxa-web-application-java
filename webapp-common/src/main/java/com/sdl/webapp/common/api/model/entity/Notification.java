@@ -4,7 +4,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.Vocabularies;
 
 @SemanticEntity(entityName = "NotificationBar", vocabulary = Vocabularies.SDL_CORE, prefix = "nb")
-public class Notification extends EntityBase {
+public class Notification extends AbstractEntity {
 
     private String headline;
 

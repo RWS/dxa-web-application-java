@@ -3,7 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
-public class TagLink extends EntityBase {
+public class TagLink extends AbstractEntity {
 
     @SemanticProperties({
             @SemanticProperty("internalLink"),

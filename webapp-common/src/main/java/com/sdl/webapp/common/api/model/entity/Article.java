@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.List;
 
 @SemanticEntity(entityName = "Article", vocabulary = Vocabularies.SCHEMA_ORG, prefix = "s", public_ = true)
-public class Article extends EntityBase {
+public class Article extends AbstractEntity {
 
     @SemanticProperty("s:headline")
     private String headline;

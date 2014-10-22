@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SemanticEntity(entityName = "ItemList", vocabulary = Vocabularies.SCHEMA_ORG, prefix = "s", public_ = true)
-public class ContentList<T> extends EntityBase {
+public class ContentList<T> extends AbstractEntity {
 
     @SemanticProperty("s:headline")
     private String headline;

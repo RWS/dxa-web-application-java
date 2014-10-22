@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
-public class Paragraph extends EntityBase {
+public class Paragraph extends AbstractEntity {
 
     private String subheading;
 

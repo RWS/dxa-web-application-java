@@ -2,7 +2,7 @@ package com.sdl.webapp.common.api.model.entity;
 
 import java.util.List;
 
-public class NavigationLinks extends EntityBase {
+public class NavigationLinks extends AbstractEntity {
 
     private List<Link> items;
 

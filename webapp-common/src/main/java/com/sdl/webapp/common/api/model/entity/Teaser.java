@@ -14,7 +14,7 @@ import java.util.Date;
         @SemanticEntity(entityName = "Article", vocabulary = Vocabularies.SDL_CORE, prefix = "a"),
         @SemanticEntity(entityName = "Place", vocabulary = Vocabularies.SDL_CORE, prefix = "p")
 })
-public class Teaser extends EntityBase {
+public class Teaser extends AbstractEntity {
 
     @SemanticProperties({
             @SemanticProperty("a:_self"),

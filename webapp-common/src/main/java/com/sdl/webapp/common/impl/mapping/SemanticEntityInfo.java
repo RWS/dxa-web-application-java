@@ -2,9 +2,13 @@ package com.sdl.webapp.common.impl.mapping;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.model.Entity;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_PREFIX;
+import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_VOCABULARY;
 
 class SemanticEntityInfo {
 
@@ -22,15 +26,28 @@ class SemanticEntityInfo {
         this.public_ = public_;
     }
 
-    public SemanticEntityInfo(SemanticEntity annotation) {
+    public SemanticEntityInfo(SemanticEntity annotation, Class<? extends Entity> entityClass) {
         String s = annotation.entityName();
         if (Strings.isNullOrEmpty(s)) {
             s = Strings.nullToEmpty(annotation.value());
         }
+        if (Strings.isNullOrEmpty(s)) {
+            s = entityClass.getSimpleName();
+        }
+
+        String v = annotation.vocabulary();
+        if (Strings.isNullOrEmpty(v)) {
+            v = DEFAULT_VOCABULARY;
+        }
+
+        String p = annotation.prefix();
+        if (Strings.isNullOrEmpty(p)) {
+            p = DEFAULT_PREFIX;
+        }
 
         this.entityName = s;
-        this.vocabulary = annotation.vocabulary();
-        this.prefix = annotation.prefix();
+        this.vocabulary = v;
+        this.prefix = p;
         this.public_ = annotation.public_();
     }
 

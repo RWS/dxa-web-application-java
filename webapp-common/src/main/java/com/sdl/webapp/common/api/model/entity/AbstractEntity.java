@@ -5,7 +5,7 @@ import com.sdl.webapp.common.api.model.Entity;
 
 import java.util.Map;
 
-public abstract class EntityBase implements Entity {
+public abstract class AbstractEntity implements Entity {
 
     @SemanticProperty(ignoreMapping = true)
     private String id;

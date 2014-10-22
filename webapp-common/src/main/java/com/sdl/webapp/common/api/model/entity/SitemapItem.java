@@ -2,7 +2,7 @@ package com.sdl.webapp.common.api.model.entity;
 
 import java.util.List;
 
-public class SitemapItem extends EntityBase {
+public class SitemapItem extends AbstractEntity {
 
     private String title;
 

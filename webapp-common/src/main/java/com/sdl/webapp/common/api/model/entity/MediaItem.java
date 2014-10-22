@@ -5,7 +5,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.Vocabularies;
 
 @SemanticEntity(entityName = "MediaObject", vocabulary = Vocabularies.SCHEMA_ORG, prefix = "s", public_ = true)
-public abstract class MediaItem extends EntityBase {
+public abstract class MediaItem extends AbstractEntity {
 
     @SemanticProperty("s:contentUrl")
     private String url;

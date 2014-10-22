@@ -5,6 +5,8 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
 import java.lang.reflect.Field;
 
+import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_PREFIX;
+
 class SemanticPropertyInfo {
 
     private final String prefix;
@@ -18,16 +20,25 @@ class SemanticPropertyInfo {
     }
 
     public SemanticPropertyInfo(SemanticProperty annotation, Field field) {
-        this.field = field;
         String s = annotation.propertyName();
         if (Strings.isNullOrEmpty(s)) {
             s = Strings.nullToEmpty(annotation.value());
         }
+        if (Strings.isNullOrEmpty(s)) {
+            s = field.getName();
+        }
 
         final int i = s.indexOf(':');
 
-        this.prefix = i > 0 ? s.substring(0, i) : "";
-        this.propertyName = i > 0 && s.length() > i + 1 ? s.substring(i + 1) : (i < 0 ? s : "");
+        if (i >= 0) {
+            this.prefix = s.substring(0, i);
+            this.propertyName = s.length() > i + 1 ? s.substring(i + 1) : field.getName();
+        } else {
+            this.prefix = DEFAULT_PREFIX;
+            this.propertyName = s;
+        }
+
+        this.field = field;
     }
 
     public String getPrefix() {

@@ -8,7 +8,7 @@ import com.sdl.webapp.common.api.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;
-import com.sdl.webapp.common.api.model.entity.EntityBase;
+import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import com.sdl.webapp.common.api.model.page.PageImpl;
 import com.sdl.webapp.common.api.model.region.RegionImpl;
 import com.sdl.webapp.dd4t.entityfactory.EntityFactoryRegistry;
@@ -123,7 +123,7 @@ public class PageFactoryImpl implements PageFactory {
             }
 
             LOG.debug("{}: Creating entity of type: {}", componentId, entityType.getName());
-            EntityBase entity = (EntityBase) entityFactoryRegistry.getFactoryFor(entityType).createEntity(cp, entityType);
+            AbstractEntity entity = (AbstractEntity) entityFactoryRegistry.getFactoryFor(entityType).createEntity(cp, entityType);
 
             entity.setId(getEntityIdFromComponentId(componentId));
             entity.setViewName(ENTITY_VIEW_PREFIX + viewName);

@@ -44,11 +44,13 @@ namespace Sdl.Web.Tridion.Templates
             package.Remove(outputItem); 
             if (output.StartsWith("<"))
             {
+                Logger.Debug("Content is XML");
                 //XML - only for backwards compatibility
                 package.PushItem(Package.OutputName, package.CreateXmlDocumentItem(ContentType.Xml, ResolveXmlContent(output)));
             }
             else
             {
+                Logger.Debug("Content is JSON");
                 //JSON
                 package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, ResolveJsonContent(output)));
             }

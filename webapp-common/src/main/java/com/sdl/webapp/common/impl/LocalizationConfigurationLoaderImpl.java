@@ -8,8 +8,8 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.*;
-import com.sdl.webapp.common.api.mapping.SemanticSchema;
-import com.sdl.webapp.common.api.mapping.SemanticVocabulary;
+import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

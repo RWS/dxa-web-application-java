@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api;
 
-import com.sdl.webapp.common.api.mapping.SemanticSchema;
-import com.sdl.webapp.common.api.mapping.SemanticVocabulary;
+import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api.mapping;
+package com.sdl.webapp.common.api.mapping.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

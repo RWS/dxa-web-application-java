@@ -1,7 +1,8 @@
 # Tridion and third-party libraries
 
-This directory contains the Tridion Content Delivery and Contextual Web Delivery libraries that are used by the
-Tridion Reference Implementation and the easylicense library and the Microsoft SQL Server JDBC driver.
+This directory contains the Tridion Content Delivery and Contextual Web Delivery libraries and third-party libraries
+that are not available in the Maven Central repository. These libraries need to be installed in your local Maven
+repository to be able to compile the Tridion Reference Implementation project.
 
-The batch file `mvn-install.bat` installs the libraries into your local Maven repository, which is needed to compile
-the project with Maven.
+Make sure you have a JDK and Maven installed and then run `mvn-install.bat` (on Windows) or `mvn-install.sh` (on Linux)
+to install these libraries in your local Maven repository. You need to do this only once.

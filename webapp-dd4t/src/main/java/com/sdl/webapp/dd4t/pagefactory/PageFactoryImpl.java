@@ -24,6 +24,9 @@ import java.util.Map;
 
 import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.getStringValue;
 
+/**
+ * TODO: Must be modified to work with semantic mapping instead of simple mapping.
+ */
 @Component
 public class PageFactoryImpl implements PageFactory {
     private static final Logger LOG = LoggerFactory.getLogger(PageFactoryImpl.class);

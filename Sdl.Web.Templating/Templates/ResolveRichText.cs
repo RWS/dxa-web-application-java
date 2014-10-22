@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Xml;
 using System.Linq;
 using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager.ContentManagement;
@@ -7,6 +6,9 @@ using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using System.Text;
+using System.Xml;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -19,8 +21,6 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateParameterSchema("resource:Sdl.Web.Tridion.Resources.ResolveRichTextParameters.xsd")]
     public class ResolveRichText : TemplateBase
     {
-        private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
-        private const string XlinkNamespace = "http://www.w3.org/1999/xlink";
         private List<string> _metaFieldNames = new List<string>();
             
         public override void Transform(Engine engine, Package package)
@@ -40,17 +40,94 @@ namespace Sdl.Web.Tridion.Templates
             }
             _metaFieldNames = (package.GetValue("multimediaLinkAttributes") ?? String.Empty).Split(',').Select(s => s.Trim()).ToList();
             // resolve rich text fields
-            XmlDocument doc = new XmlDocument();
             string output = outputItem.GetAsString();
-            doc.LoadXml(output);
+            package.Remove(outputItem); 
+            if (output.StartsWith("<"))
+            {
+                //XML - only for backwards compatibility
+                package.PushItem(Package.OutputName, package.CreateXmlDocumentItem(ContentType.Xml, ResolveXmlContent(output)));
+            }
+            else
+            {
+                //JSON
+                package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, ResolveJsonContent(output)));
+            }
+        }
+
+        private static string LINK_PATTERN = @"xlink:href=\\""(tcm\:\d+\-\d+)\\""";
+        private static string XHTML_PATTERN = " xmlns=\\\"http://www.w3.org/1999/xhtml\\\"";
+        
+        private string ResolveJsonContent(string content)
+        {
+            //remove XHTML namespace
+            content = content.Replace(XHTML_PATTERN, "");
+            //add data attributes to component links
+            content = Regex.Replace(content, LINK_PATTERN, delegate(Match match)
+            {
+                Logger.Debug("Found RTF link match: " + match.Value);
+                string compId = match.Groups[1].Value;
+                string replaced = match.Value;
+                Component comp = (Component)Engine.GetObject(compId);
+                // resolve metadata into additional data-attributes
+                if (comp != null)
+                {
+                    ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
+                    var attributes = ProcessFields(fields);
+                    if (!String.IsNullOrEmpty(attributes))
+                    {
+                        attributes = JsonEncode(attributes).Substring(1);
+                        attributes = attributes.Substring(0, attributes.Length - 1);
+                    }
+                    replaced = replaced + attributes;
+                }
+                return replaced;
+            });
+            return content;
+        }
+
+        private string ProcessFields(ItemFields fields)
+        {
+            String attributeString = "";
+            if (fields!=null)
+            {
+                Logger.Debug(String.Join(", ",_metaFieldNames));
+                foreach (var fieldname in _metaFieldNames)
+                {
+                    Logger.Debug("Processing field: " + fieldname);
+                    if (fields.Contains(fieldname))
+                    {
+                        var attribute = String.Format(" data-{0}=\"{1}\"", fieldname, System.Net.WebUtility.HtmlEncode(fields.GetSingleFieldValue(fieldname)));
+                        Logger.Debug("Attribute:" + attribute);
+                        //TODO XML encode the value
+                        attributeString+=attribute;
+                    }
+                }
+                foreach (var field in fields)
+                {
+                    if (field is EmbeddedSchemaField)
+                    {
+                        attributeString+=ProcessFields(((EmbeddedSchemaField)field).Value);
+                    }
+                }
+            }
+            Logger.Debug("attributes:" + attributeString);
+            return attributeString;
+        }
+
+        private XmlDocument ResolveXmlContent(string content)
+        {
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(content);
             var fields = doc.SelectNodes("//Field[@FieldType='Xhtml']/Values/string");
             foreach (XmlElement field in fields)
             {
                 field.InnerXml = ResolveXhtml(field.InnerXml);
             }
-            package.Remove(outputItem);
-            package.PushItem(Package.OutputName, package.CreateXmlDocumentItem(ContentType.Xml, doc)); 
+            return doc;
         }
+
+        private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
+        private const string XlinkNamespace = "http://www.w3.org/1999/xlink";
 
         private string ResolveXhtml(string input)
         {
@@ -81,22 +158,33 @@ namespace Sdl.Web.Tridion.Templates
 
         private void ProcessFields(ItemFields fields, XmlElement link)
         {
-            if (fields!=null)
+            if (fields != null)
             {
+
                 foreach (var fieldname in _metaFieldNames)
                 {
+
                     if (fields.Contains(fieldname))
                     {
+
                         link.SetAttribute("data-" + fieldname, fields.GetSingleFieldValue(fieldname));
+
                     }
+
                 }
+
                 foreach (var field in fields)
                 {
+
                     if (field is EmbeddedSchemaField)
                     {
+
                         ProcessFields(((EmbeddedSchemaField)field).Value, link);
+
                     }
+
                 }
+
             }
         }
 

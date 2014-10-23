@@ -2,6 +2,9 @@ package com.sdl.webapp.cid;
 
 import com.sdl.webapp.common.impl.AbstractMediaHelper;
 
+/**
+ * Implementation of {@code MediaHelper} for when Contextual Image Delivery is used.
+ */
 public class ContextualMediaHelper extends AbstractMediaHelper {
 
     @Override

@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t;
+package com.sdl.webapp.common.impl;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,14 +10,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
 /**
- * Unit tests for {@code DD4TMediaHelper}.
+ * Unit tests for {@code DefaultMediaHelper}.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { DD4TMediaHelperTestConfig.class })
-public class DD4TMediaHelperTest {
+@ContextConfiguration(classes = { DefaultMediaHelperTestConfig.class })
+public class DefaultMediaHelperTest {
 
     @Autowired
-    private DD4TMediaHelper mediaHelper;
+    private DefaultMediaHelper mediaHelper;
 
     @Test
     public void testGetResponsiveImageUrl() throws Exception {

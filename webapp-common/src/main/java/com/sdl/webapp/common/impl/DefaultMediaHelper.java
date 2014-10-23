@@ -1,8 +1,9 @@
-package com.sdl.webapp.dd4t;
+package com.sdl.webapp.common.impl;
 
-import com.sdl.webapp.common.impl.AbstractMediaHelper;
-
-public class DD4TMediaHelper extends AbstractMediaHelper {
+/**
+ * Default implementation of {@code MediaHelper}.
+ */
+public class DefaultMediaHelper extends AbstractMediaHelper {
 
     @Override
     public String getResponsiveImageUrl(String url, String widthFactor, double aspect, int containerSize) {

@@ -10,14 +10,15 @@ import org.springframework.util.ClassUtils;
 import java.util.Arrays;
 
 /**
- * Media helper factory.
+ * Media helper factory. This factory bean will select and create the appropriate implementation of {@code MediaHelper}.
  */
 @Component
 public class MediaHelperFactory extends AbstractFactoryBean<MediaHelper> {
 
+    // Class names of candidate implementations to try, ordered by priority (highest priority first)
     private static final String[] MEDIA_HELPER_CLASS_NAMES = {
             "com.sdl.webapp.cid.ContextualMediaHelper",
-            "com.sdl.webapp.dd4t.DD4TMediaHelper"
+            "com.sdl.webapp.common.impl.DefaultMediaHelper"
     };
 
     @Override

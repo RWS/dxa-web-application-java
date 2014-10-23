@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -40,13 +41,8 @@ class SemanticInfoRegistry {
                 public void doWith(MetadataReader metadataReader) throws SemanticMappingException {
                     final ClassMetadata classMetadata = metadataReader.getClassMetadata();
                     if (!classMetadata.isInterface()) {
-                        final String className = classMetadata.getClassName();
-                        final Class<?> class_;
-                        try {
-                            class_ = Class.forName(className);
-                        } catch (ClassNotFoundException e) {
-                            throw new SemanticMappingException("Exception while loading class: " + className, e);
-                        }
+                        final Class<?> class_ = ClassUtils.resolveClassName(classMetadata.getClassName(),
+                                ClassUtils.getDefaultClassLoader());
                         if (Entity.class.isAssignableFrom(class_)) {
                             registerEntity(class_.asSubclass(Entity.class));
                         }

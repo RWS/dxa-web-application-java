@@ -1,19 +1,18 @@
-package com.sdl.webapp.dd4t;
+package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.impl.WebRequestContextImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Spring configuration for {@code DD4TMediaHelperTest}.
+ * Spring configuration for {@code DefaultMediaHelperTest}.
  */
 @Configuration
-public class DD4TMediaHelperTestConfig {
+public class DefaultMediaHelperTestConfig {
 
     @Bean
-    public DD4TMediaHelper mediaHelper() {
-        return new DD4TMediaHelper();
+    public DefaultMediaHelper mediaHelper() {
+        return new DefaultMediaHelper();
     }
 
     @Bean

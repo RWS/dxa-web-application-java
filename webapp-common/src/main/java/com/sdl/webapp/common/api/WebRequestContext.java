@@ -1,5 +1,7 @@
 package com.sdl.webapp.common.api;
 
+import com.sdl.webapp.common.api.localization.Localization;
+
 /**
  * Provides information relevant for the current request.
  */

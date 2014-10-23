@@ -36,6 +36,10 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
     @Override
     public StaticContentItem getStaticContent(String url, String localizationId, String localizationPath)
             throws ContentProviderException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("getStaticContent: {} [{}] {}", new Object[] { url, localizationId, localizationPath });
+        }
+
         final File file = getStaticContentFile(url, localizationId, localizationPath);
 
         return new StaticContentItem() {
@@ -56,6 +60,7 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
         final File file = new File(new File(new File(new File(new File(
                 webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localizationId),
                 localizationPath), url);
+        LOG.trace("getStaticContentFile: {}", file);
 
         final int publicationId = Integer.parseInt(localizationId);
         try {

@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.taglib;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.Localization;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.WebRequestContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 

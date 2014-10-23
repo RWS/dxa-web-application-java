@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.Localization;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.ScreenWidth;
 import com.tridion.ambientdata.AmbientDataContext;

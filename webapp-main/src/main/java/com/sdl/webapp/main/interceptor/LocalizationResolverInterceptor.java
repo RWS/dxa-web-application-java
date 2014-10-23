@@ -1,6 +1,6 @@
 package com.sdl.webapp.main.interceptor;
 
-import com.sdl.webapp.common.api.LocalizationResolver;
+import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.api.WebRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

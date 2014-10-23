@@ -1,6 +1,6 @@
 package com.sdl.webapp.main.interceptor;
 
-import com.sdl.webapp.common.api.Localization;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.StaticContentItem;
 import com.sdl.webapp.common.api.StaticContentProvider;
 import com.sdl.webapp.common.api.WebRequestContext;

@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api;
 
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Page;
 
 import java.io.InputStream;

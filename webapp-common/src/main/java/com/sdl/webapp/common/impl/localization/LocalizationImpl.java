@@ -1,11 +1,11 @@
-package com.sdl.webapp.common.impl;
+package com.sdl.webapp.common.impl.localization;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
-import com.sdl.webapp.common.api.Localization;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 

@@ -3,7 +3,7 @@ package com.sdl.webapp.dd4t.pagefactory;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.ContentProvider;
 import com.sdl.webapp.common.api.ContentProviderException;
-import com.sdl.webapp.common.api.Localization;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Page;

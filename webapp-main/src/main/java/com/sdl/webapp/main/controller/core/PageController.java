@@ -1,6 +1,7 @@
 package com.sdl.webapp.main.controller.core;
 
 import com.sdl.webapp.common.api.*;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.main.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.main.controller.exception.NotFoundException;

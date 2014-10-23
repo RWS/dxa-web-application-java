@@ -15,5 +15,5 @@
     <logger name="org.springframework.web" level="DEBUG"/>
     <logger name="org.dd4t" level="INFO"/>
     <logger name="com.tridion" level="WARN"/>
-    <logger name="com.sdl.webapp" level="DEBUG"/>
+    <logger name="com.sdl.webapp" level="TRACE"/>
 </configuration>

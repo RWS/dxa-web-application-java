@@ -1,7 +1,7 @@
 package com.sdl.webapp.dd4t.pagefactory;
 
 import com.sdl.webapp.common.api.ContentProviderException;
-import com.sdl.webapp.common.api.Localization;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Page;
 import org.dd4t.contentmodel.GenericPage;
 

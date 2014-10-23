@@ -1,6 +1,6 @@
 package com.sdl.webapp.tridion;
 
-import com.sdl.webapp.common.api.LocalizationResolverException;
+import com.sdl.webapp.common.api.localization.LocalizationResolverException;
 
 public class PublicationMappingNotFoundException extends LocalizationResolverException {
 

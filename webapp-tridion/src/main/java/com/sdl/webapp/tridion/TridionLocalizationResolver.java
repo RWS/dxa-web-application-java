@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion;
 
-import com.sdl.webapp.common.api.*;
-import com.sdl.webapp.common.impl.LocalizationImpl;
+import com.sdl.webapp.common.api.localization.*;
 import com.tridion.dynamiccontent.DynamicContent;
 import com.tridion.dynamiccontent.publication.PublicationMapping;
 import org.slf4j.Logger;
@@ -25,10 +24,12 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     private final Map<String, Localization> localizations = new HashMap<>();
 
     @Autowired
-    private LocalizationConfigurationLoader localizationConfigurationLoader;
+    private LocalizationFactory localizationFactory;
 
     @Override
     public Localization getLocalization(String url) throws LocalizationResolverException {
+        LOG.trace("getLocalization: {}", url);
+
         final PublicationMapping publicationMapping = DynamicContent.getInstance().getMappingsResolver()
                 .getPublicationMappingFromUrl(url);
         if (publicationMapping == null) {
@@ -43,7 +44,6 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
         synchronized (localizations) {
             if (!localizations.containsKey(key)) {
-                LOG.debug("Creating localization: {}", key);
                 localizations.put(key, createLocalization(publicationMapping));
             }
         }
@@ -52,17 +52,13 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     }
 
     private Localization createLocalization(PublicationMapping publicationMapping) throws LocalizationResolverException {
-        final LocalizationImpl localization = new LocalizationImpl(
-                Integer.toString(publicationMapping.getPublicationId()), getPublicationMappingPath(publicationMapping));
-        LOG.debug("Created localization: {}", localization);
+        final String id = Integer.toString(publicationMapping.getPublicationId());
+        final String path = getPublicationMappingPath(publicationMapping);
 
         try {
-            localizationConfigurationLoader.loadConfiguration(localization);
-        } catch (LocalizationConfigurationLoaderException e) {
-            throw new LocalizationResolverException("Exception while reading configuration of localization: " +
-                    localization, e);
+            return localizationFactory.createLocalization(id, path);
+        } catch (LocalizationFactoryException e) {
+            throw new LocalizationResolverException("Exception while creating localization: [" + id + "] " + path, e);
         }
-
-        return localization;
     }
 }

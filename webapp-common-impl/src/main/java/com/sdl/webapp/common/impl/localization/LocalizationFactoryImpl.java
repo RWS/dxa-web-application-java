@@ -71,10 +71,10 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     private void loadMainConfiguration(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
         final JsonNode configRootNode = parseJsonFile(CONFIG_BOOTSTRAP_PATH, id, path);
-        builder.setMediaRoot(configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(DEFAULT_MEDIA_ROOT));
-        builder.setDefault(configRootNode.get(DEFAULT_LOCALIZATION_NODE_NAME).asBoolean(false));
-        builder.setStaging(configRootNode.get(STAGING_NODE_NAME).asBoolean(false));
-        builder.addConfiguration(parseJsonSubFiles(configRootNode, id, path));
+        builder.setMediaRoot(configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(DEFAULT_MEDIA_ROOT))
+                .setDefault(configRootNode.get(DEFAULT_LOCALIZATION_NODE_NAME).asBoolean(false))
+                .setStaging(configRootNode.get(STAGING_NODE_NAME).asBoolean(false))
+                .addConfiguration(parseJsonSubFiles(configRootNode, id, path));
     }
 
     private void loadResources(String id, String path, LocalizationImpl.Builder builder)

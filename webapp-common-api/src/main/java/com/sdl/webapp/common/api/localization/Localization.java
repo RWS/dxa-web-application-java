@@ -63,9 +63,19 @@ public interface Localization {
      */
     String getResource(String key);
 
+    /**
+     * TODO: Documentation.
+     *
+     * @return TODO: Documentation.
+     */
     Map<Long, SemanticSchema> getSemanticSchemas();
 
-    List<SemanticVocabulary> getSemanticVocabularies();
+    /**
+     * TODO: Documentation.
+     *
+     * @return TODO: Documentation.
+     */
+    Map<String, SemanticVocabulary> getSemanticVocabularies();
 
     /**
      * Gets the includes for the specified page type.

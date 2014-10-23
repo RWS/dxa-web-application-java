@@ -26,7 +26,7 @@ public class LocalizationImpl implements Localization {
         private final ImmutableMap.Builder<String, String> configurationBuilder = ImmutableMap.builder();
         private final ImmutableMap.Builder<String, String> resourcesBuilder = ImmutableMap.builder();
         private final ImmutableMap.Builder<Long, SemanticSchema> semanticSchemasBuilder = ImmutableMap.builder();
-        private final ImmutableList.Builder<SemanticVocabulary> semanticVocabulariesBuilder = ImmutableList.builder();
+        private final ImmutableMap.Builder<String, SemanticVocabulary> semanticVocabulariesBuilder = ImmutableMap.builder();
         private final ImmutableListMultimap.Builder<String, String> includesBuilder = ImmutableListMultimap.builder();
 
         private Builder() {
@@ -79,8 +79,15 @@ public class LocalizationImpl implements Localization {
             return this;
         }
 
+        public Builder addSemanticVocabulary(SemanticVocabulary semanticVocabulary) {
+            this.semanticVocabulariesBuilder.put(semanticVocabulary.getPrefix(), semanticVocabulary);
+            return this;
+        }
+
         public Builder addSemanticVocabularies(Iterable<SemanticVocabulary> semanticVocabularies) {
-            this.semanticVocabulariesBuilder.addAll(semanticVocabularies);
+            for (SemanticVocabulary semanticVocabulary : semanticVocabularies) {
+                addSemanticVocabulary(semanticVocabulary);
+            }
             return this;
         }
 
@@ -106,7 +113,7 @@ public class LocalizationImpl implements Localization {
     private final Map<String, String> configuration;
     private final Map<String, String> resources;
     private final Map<Long, SemanticSchema> semanticSchemas;
-    private final List<SemanticVocabulary> semanticVocabularies;
+    private final Map<String, SemanticVocabulary> semanticVocabularies;
     private final ListMultimap<String, String> includes;
 
     private LocalizationImpl(Builder builder) {
@@ -172,7 +179,7 @@ public class LocalizationImpl implements Localization {
     }
 
     @Override
-    public List<SemanticVocabulary> getSemanticVocabularies() {
+    public Map<String, SemanticVocabulary> getSemanticVocabularies() {
         return semanticVocabularies;
     }
 

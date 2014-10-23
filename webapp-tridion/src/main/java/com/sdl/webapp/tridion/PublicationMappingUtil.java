@@ -6,7 +6,7 @@ import com.tridion.dynamiccontent.publication.PublicationMapping;
 /**
  * Utility methods for working with publication mappings.
  */
-public final class PublicationMappingUtil {
+final class PublicationMappingUtil {
 
     private static final String DEFAULT_PORT = "80";
 

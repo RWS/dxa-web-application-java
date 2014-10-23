@@ -24,9 +24,6 @@ public class PackageUtils {
 
     public static <E extends Throwable> void doWithClasses(String basePackage, ClassCallback<E> callback)
             throws IOException, E {
-        // Inspired by Spring's ClassPathScanningCandidateComponentProvider.findCandidateComponents(String basePackage)
-        // and Spring's ReflectionUtils
-
         final String packageSearchPath = ResourcePatternResolver.CLASSPATH_ALL_URL_PREFIX +
                 ClassUtils.convertClassNameToResourcePath(basePackage) + "/**/*.class";
         LOG.debug("packageSearchPath: {}", packageSearchPath);

@@ -12,7 +12,7 @@ import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
 
-public class PackageUtils {
+public final class PackageUtils {
     private static final Logger LOG = LoggerFactory.getLogger(PackageUtils.class);
 
     public static interface ClassCallback<E extends Throwable> {

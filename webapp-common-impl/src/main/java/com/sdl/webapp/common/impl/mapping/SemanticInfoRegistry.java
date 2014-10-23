@@ -15,14 +15,13 @@ import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
- * Semantic information registry.
+ * Semantic information registry. This holds information about semantic mapping determined from semantic mapping
+ * annotations used on entity classes.
  */
 class SemanticInfoRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticInfoRegistry.class);
@@ -32,6 +31,13 @@ class SemanticInfoRegistry {
 
     private final Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> entityInfo = new HashMap<>();
 
+    /**
+     * Register the entity classes in the specified package.
+     *
+     * @param basePackage The package to search for entity classes.
+     * @throws SemanticMappingException If an error occurs while inspecting the classes, for example because the
+     *      semantic mapping defined on a class is incorrect.
+     */
     public void registerEntities(String basePackage) throws SemanticMappingException {
         LOG.debug("Registering entity classes in package: {}", basePackage);
 
@@ -54,6 +60,13 @@ class SemanticInfoRegistry {
         }
     }
 
+    /**
+     * Register an entity class.
+     *
+     * @param entityClass The entity class to register.
+     * @throws SemanticMappingException If an error occurs while inspecting the class, for example because the semantic
+     *      mapping defined on the class is incorrect.
+     */
     public void registerEntity(Class<? extends Entity> entityClass) throws SemanticMappingException {
         LOG.debug("Registering entity class: {}", entityClass.getName());
         final Map<String, SemanticEntityInfo> semanticEntityInfo = createSemanticEntityInfo(entityClass);
@@ -83,36 +96,56 @@ class SemanticInfoRegistry {
         entityInfo.put(entityClass, semanticEntityInfo);
     }
 
+    /**
+     * Creates semantic entity information for the specified class.
+     *
+     * @param entityClass The entity class.
+     * @return A {@code Map} containing {@code SemanticEntityInfo} objects by prefix.
+     * @throws SemanticMappingException If an error occurs while inspecting the class, for example because the semantic
+     *      mapping defined on the class is incorrect.
+     */
     private Map<String, SemanticEntityInfo> createSemanticEntityInfo(Class<? extends Entity> entityClass)
             throws SemanticMappingException {
         final Map<String, SemanticEntityInfo> result = new HashMap<>();
-
-        final SemanticEntities semanticEntities = entityClass.getAnnotation(SemanticEntities.class);
-        if (semanticEntities != null) {
-            for (SemanticEntity semanticEntity : semanticEntities.value()) {
-                final String prefix = semanticEntity.prefix();
-                if (!result.containsKey(prefix)) {
-                    result.put(prefix, new SemanticEntityInfo(semanticEntity, entityClass));
-                } else {
-                    throw new SemanticMappingException("");
-                }
-            }
-        } else {
-            final SemanticEntity semanticEntity = entityClass.getAnnotation(SemanticEntity.class);
-            if (semanticEntity != null) {
-                result.put(semanticEntity.prefix(), new SemanticEntityInfo(semanticEntity, entityClass));
+        for (SemanticEntity semanticEntity : getSemanticEntityAnnotations(entityClass)) {
+            final String prefix = semanticEntity.prefix();
+            if (!result.containsKey(prefix)) {
+                result.put(prefix, new SemanticEntityInfo(semanticEntity, entityClass));
+            } else {
+                throw new SemanticMappingException("There are multiple @SemanticEntity annotations on the class '" +
+                        entityClass.getName() + "' with the same prefix '" + prefix + "'. Make sure that the " +
+                        "prefixes are unique for each @SemanticEntity annotation on this class.");
             }
         }
 
         return result;
     }
 
+    private List<SemanticEntity> getSemanticEntityAnnotations(AnnotatedElement annotatedElement) {
+        final SemanticEntities wrapper = annotatedElement.getAnnotation(SemanticEntities.class);
+        if (wrapper != null) {
+            return Arrays.asList(wrapper.value());
+        } else {
+            final SemanticEntity annotation = annotatedElement.getAnnotation(SemanticEntity.class);
+            if (annotation != null) {
+                return Collections.singletonList(annotation);
+            } else {
+                return Collections.emptyList();
+            }
+        }
+    }
+
+    /**
+     * Creates semantic property information for the specified field.
+     *
+     * @param field The field.
+     * @return A list of {@code SemanticPropertyInfo} objects for the field.
+     */
     private List<SemanticPropertyInfo> createSemanticPropertyInfo(Field field) {
         final List<SemanticPropertyInfo> result = new ArrayList<>();
-
-        final SemanticProperties semanticProperties = field.getAnnotation(SemanticProperties.class);
-        if (semanticProperties != null) {
-            for (SemanticProperty semanticProperty : semanticProperties.value()) {
+        final List<SemanticProperty> semanticProperties = getSemanticPropertyAnnotations(field);
+        if (!semanticProperties.isEmpty()) {
+            for (SemanticProperty semanticProperty : semanticProperties) {
                 if (!semanticProperty.ignoreMapping()) {
                     result.add(new SemanticPropertyInfo(semanticProperty, field));
                 } else {
@@ -120,21 +153,26 @@ class SemanticInfoRegistry {
                 }
             }
         } else {
-            final SemanticProperty semanticProperty = field.getAnnotation(SemanticProperty.class);
-            if (semanticProperty != null) {
-                if (!semanticProperty.ignoreMapping()) {
-                    result.add(new SemanticPropertyInfo(semanticProperty, field));
-                } else {
-                    LOG.debug("Skipping field because it is set to ignored: {}", field);
-                }
-            } else {
-                final SemanticPropertyInfo propertyInfo = new SemanticPropertyInfo(DEFAULT_PREFIX, field.getName(), field);
-                LOG.debug("Field {} has no semantic property annotation, creating from defaults: {}", field, propertyInfo);
-                result.add(propertyInfo);
-            }
+            final SemanticPropertyInfo propertyInfo = new SemanticPropertyInfo(DEFAULT_PREFIX, field.getName(), field);
+            LOG.debug("Field {} has no semantic property annotation, creating from defaults: {}", field, propertyInfo);
+            result.add(propertyInfo);
         }
 
         return result;
+    }
+
+    private List<SemanticProperty> getSemanticPropertyAnnotations(AnnotatedElement annotatedElement) {
+        final SemanticProperties wrapper = annotatedElement.getAnnotation(SemanticProperties.class);
+        if (wrapper != null) {
+            return Arrays.asList(wrapper.value());
+        } else {
+            final SemanticProperty annotation = annotatedElement.getAnnotation(SemanticProperty.class);
+            if (annotation != null) {
+                return Collections.singletonList(annotation);
+            } else {
+                return Collections.emptyList();
+            }
+        }
     }
 
     public Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> getEntityInfo() {

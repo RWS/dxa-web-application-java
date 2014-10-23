@@ -20,6 +20,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+/**
+ * Static content interceptor. This interceptor checks if the request is for static content, and if it is, it sends
+ * an appropriate response to the client; in that case the request will not be processed further by Spring's
+ * {@code DispatcherServlet} (it will not reach any of the controllers).
+ *
+ * This should be configured to be called after the {@code LocalizationResolverInterceptor} for requests that are
+ * being handled by the Spring {@code DispatcherServlet}.
+ */
 @Component
 public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);
@@ -36,7 +44,9 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        // Strip the protocol, domain, port and context path off of the URL
         final String url = urlPathHelper.getRequestUri(request).replace(urlPathHelper.getContextPath(request), "");
+        LOG.trace("preHandle: {}", url);
 
         final Localization localization = webRequestContext.getLocalization();
         if (localization == null) {

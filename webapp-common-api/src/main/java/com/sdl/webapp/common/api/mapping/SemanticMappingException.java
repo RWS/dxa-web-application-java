@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.api.mapping;
 
+/**
+ * Thrown when a semantic mapping error occurs.
+ */
 public class SemanticMappingException extends Exception {
 
     public SemanticMappingException() {

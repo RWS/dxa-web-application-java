@@ -13,6 +13,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
+/**
+ * Configuration for the Spring servlet application context.
+ */
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackages = { "com.sdl.webapp.main" })

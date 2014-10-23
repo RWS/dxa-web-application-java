@@ -9,8 +9,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
-import static com.sdl.webapp.main.WebAppConstants.PAGE_MODEL;
-import static com.sdl.webapp.main.WebAppConstants.REGION_PATH_PREFIX;
+import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
+import static com.sdl.webapp.main.controller.core.AbstractController.REGION_PATH_PREFIX;
 
 public class RegionTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(RegionTag.class);

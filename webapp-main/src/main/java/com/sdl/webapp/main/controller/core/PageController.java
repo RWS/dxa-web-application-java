@@ -18,14 +18,14 @@ import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.sdl.webapp.main.WebAppConstants.PAGE_MODEL;
-import static com.sdl.webapp.main.WebAppConstants.SCREEN_WIDTH;
+import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
+import static com.sdl.webapp.main.RequestAttributeNames.SCREEN_WIDTH;
 
 @Controller
-public class PageController extends ControllerBase {
+public class PageController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
 
-    private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
+    private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     @Autowired
     private ContentProvider contentProvider;
@@ -35,22 +35,19 @@ public class PageController extends ControllerBase {
 
     @RequestMapping(method = RequestMethod.GET, value = "/**")
     public String handleGetPage(HttpServletRequest request) {
-        final String url = getPageUrl(request);
-        LOG.debug("handleGetPage: url={}", url);
+        // Strip the protocol, domain, port and context path off of the URL
+        final String url = urlPathHelper.getRequestUri(request).replace(urlPathHelper.getContextPath(request), "");
+        LOG.trace("handleGetPage: url={}", url);
 
         final Page page = getPageFromContentProvider(url, webRequestContext.getLocalization());
-        LOG.debug("handleGetPage: page={}", page);
+        LOG.trace("handleGetPage: page={}", page);
 
         request.setAttribute(PAGE_MODEL, page);
         request.setAttribute(SCREEN_WIDTH, webRequestContext.getScreenWidth());
 
         final String viewName = page.getViewName();
-        LOG.debug("viewName: {}", viewName);
+        LOG.trace("viewName: {}", viewName);
         return viewName;
-    }
-
-    private String getPageUrl(HttpServletRequest request) {
-        return URL_PATH_HELPER.getRequestUri(request).replace(URL_PATH_HELPER.getContextPath(request), "");
     }
 
     private Page getPageFromContentProvider(String url, Localization localization) {

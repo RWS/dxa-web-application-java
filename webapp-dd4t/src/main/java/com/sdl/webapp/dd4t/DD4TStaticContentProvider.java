@@ -23,7 +23,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 /**
- * Static content provider that uses DD4T to get static content.
+ * Implementation of {@code StaticContentProvider} that uses DD4T to provide static content.
  *
  * TODO: Should use DD4T BinaryFactory instead of calling the Tridion broker API directly.
  */

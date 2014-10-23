@@ -23,7 +23,7 @@ import java.util.*;
  * Semantic information registry. This holds information about semantic mapping determined from semantic mapping
  * annotations used on entity classes.
  */
-class SemanticInfoRegistry {
+final class SemanticInfoRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticInfoRegistry.class);
 
     public static final String DEFAULT_VOCABULARY = Vocabularies.SDL_CORE;
@@ -100,7 +100,7 @@ class SemanticInfoRegistry {
      * Creates semantic entity information for the specified class.
      *
      * @param entityClass The entity class.
-     * @return A {@code Map} containing {@code SemanticEntityInfo} objects by prefix.
+     * @return A {@code Map} containing {@code SemanticEntityInfo} objects by vocabulary prefix.
      * @throws SemanticMappingException If an error occurs while inspecting the class, for example because the semantic
      *      mapping defined on the class is incorrect.
      */
@@ -175,14 +175,35 @@ class SemanticInfoRegistry {
         }
     }
 
+    /**
+     * Returns all semantic mapping information in the registry.
+     *
+     * @return A {@code Map} in which the keys are entity classes and the values are {@code Map}s; in the value maps,
+     *      the keys are vocabulary prefixes and the values are {@code SemanticEntityInfo} objects.
+     */
     public Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> getEntityInfo() {
         return entityInfo;
     }
 
+    /**
+     * Returns all semantic mapping information for the specified entity class.
+     *
+     * @param entityClass The entity class.
+     * @return A {@code Map} in which the keys are vocabulary prefixes and the values are {@code SemanticEntityInfo}
+     *      objects, or {@code null} if there is no semantic mapping information for the specified entity class.
+     */
     public Map<String, SemanticEntityInfo> getEntityInfo(Class<? extends Entity> entityClass) {
         return getEntityInfo().get(entityClass);
     }
 
+    /**
+     * Returns semantic mapping information for the specified entity class and vocabulary prefix.
+     *
+     * @param entityClass The entity class.
+     * @param prefix The vocabulary prefix.
+     * @return A {@code SemanticEntityInfo} object or {@code null} if there is no semantic mapping information for the
+     *      specified entity class and prefix.
+     */
     public SemanticEntityInfo getEntityInfo(Class<? extends Entity> entityClass, String prefix) {
         final Map<String, SemanticEntityInfo> map = getEntityInfo(entityClass);
         return map != null ? map.get(prefix) : null;

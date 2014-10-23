@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.api.localization;
 
+/**
+ * Thrown when an error occurs in a localization resolver when resolving a localization.
+ */
 public class LocalizationResolverException extends Exception {
 
     public LocalizationResolverException() {

@@ -24,6 +24,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of {@code LocalizationFactory}.
+ */
 @Component
 public class LocalizationFactoryImpl implements LocalizationFactory {
     private static final Logger LOG = LoggerFactory.getLogger(LocalizationFactoryImpl.class);

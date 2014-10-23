@@ -11,9 +11,9 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Default implementation of {@code Localization}.
+ * Implementation of {@code Localization}.
  */
-public class LocalizationImpl implements Localization {
+class LocalizationImpl implements Localization {
 
     public static final class Builder {
         private String id;

@@ -14,8 +14,8 @@ import javax.servlet.*;
 import java.util.EnumSet;
 
 /**
- * Web application initializer which configures the web application by registering servlets such as the Spring
- * {@code DispatcherServlet}.
+ * Web application initializer which configures the web application by registering listeners, filters and servlets such
+ * as the Spring {@code DispatcherServlet}.
  */
 public class WebAppInitializer implements WebApplicationInitializer {
     private static final Logger LOG = LoggerFactory.getLogger(WebAppInitializer.class);
@@ -38,6 +38,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
         registerAmbientDataServletFilter(servletContext);
         registerImageTransformerServlet(servletContext);
         registerDispatcherServlet(servletContext);
+        LOG.info("Web application initialization complete.");
     }
 
     private void registerContextLoaderListener(ServletContext servletContext) {

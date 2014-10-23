@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static com.sdl.webapp.main.WebAppConstants.PAGE_MODEL;
-import static com.sdl.webapp.main.WebAppConstants.REGION_PATH_PREFIX;
+import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
+import static com.sdl.webapp.main.controller.core.AbstractController.REGION_PATH_PREFIX;
 
 public class RegionsTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(RegionsTag.class);

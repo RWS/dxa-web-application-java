@@ -10,7 +10,10 @@ import java.util.List;
 import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_PREFIX;
 import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_VOCABULARY;
 
-class SemanticEntityInfo {
+/**
+ * Semantic information for an entity class.
+ */
+final class SemanticEntityInfo {
 
     private final String entityName;
     private final String vocabulary;

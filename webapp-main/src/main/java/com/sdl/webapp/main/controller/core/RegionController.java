@@ -10,24 +10,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.sdl.webapp.main.WebAppConstants.REGION_MODEL;
-import static com.sdl.webapp.main.WebAppConstants.REGION_PATH_PREFIX;
+import static com.sdl.webapp.main.RequestAttributeNames.REGION_MODEL;
+import static com.sdl.webapp.main.controller.core.AbstractController.REGION_PATH_PREFIX;
 
 @Controller
 @RequestMapping(REGION_PATH_PREFIX)
-public class RegionController extends ControllerBase {
+public class RegionController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(RegionController.class);
 
     @RequestMapping(method = RequestMethod.GET, value = "{regionName}")
     public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName) {
-        LOG.debug("handleGetRegion: regionName={}", regionName);
+        LOG.trace("handleGetRegion: regionName={}", regionName);
 
         final Region region = getRegionFromRequest(request, regionName);
 
         request.setAttribute(REGION_MODEL, region);
 
         final String viewName = region.getViewName();
-        LOG.debug("viewName: {}", viewName);
+        LOG.trace("viewName: {}", viewName);
         return viewName;
     }
 }

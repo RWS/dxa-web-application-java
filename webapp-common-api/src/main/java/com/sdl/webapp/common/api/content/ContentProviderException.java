@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.api.content;
 
+/**
+ * Thrown when an error occurs related to a content provider.
+ */
 public class ContentProviderException extends Exception {
 
     public ContentProviderException() {

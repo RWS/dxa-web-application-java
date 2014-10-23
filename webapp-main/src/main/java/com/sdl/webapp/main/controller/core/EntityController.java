@@ -10,24 +10,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.sdl.webapp.main.WebAppConstants.ENTITY_MODEL;
-import static com.sdl.webapp.main.WebAppConstants.ENTITY_PATH_PREFIX;
+import static com.sdl.webapp.main.RequestAttributeNames.ENTITY_MODEL;
+import static com.sdl.webapp.main.controller.core.AbstractController.ENTITY_PATH_PREFIX;
 
 @Controller
 @RequestMapping(ENTITY_PATH_PREFIX)
-public class EntityController extends ControllerBase {
+public class EntityController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(EntityController.class);
 
     @RequestMapping(method = RequestMethod.GET, value = "{regionName}/{index}")
     public String handleGetEntity(HttpServletRequest request, @PathVariable String regionName, @PathVariable int index) {
-        LOG.debug("handleGetEntity: regionName={}, index={}", regionName, index);
+        LOG.trace("handleGetEntity: regionName={}, index={}", regionName, index);
 
         final Entity entity = getRegionFromRequest(request, regionName).getEntities().get(index);
 
         request.setAttribute(ENTITY_MODEL, entity);
 
         final String viewName = entity.getViewName();
-        LOG.debug("viewName: {}", viewName);
+        LOG.trace("viewName: {}", viewName);
         return viewName;
     }
 }

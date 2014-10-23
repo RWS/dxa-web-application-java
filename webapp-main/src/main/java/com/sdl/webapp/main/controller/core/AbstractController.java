@@ -10,10 +10,14 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.sdl.webapp.main.WebAppConstants.PAGE_MODEL;
+import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
 
-public abstract class ControllerBase {
-    private static final Logger LOG = LoggerFactory.getLogger(ControllerBase.class);
+public abstract class AbstractController {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractController.class);
+
+    public static final String PAGE_PATH_PREFIX = "/system/_page";
+    public static final String REGION_PATH_PREFIX = "/system/_region";
+    public static final String ENTITY_PATH_PREFIX = "/system/_entity";
 
     protected static final String ERROR_VIEW = "shared/Error";
 

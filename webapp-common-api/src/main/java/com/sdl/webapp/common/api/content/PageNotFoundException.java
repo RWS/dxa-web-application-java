@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.api.content;
 
+/**
+ * Thrown when a content provider cannot find the requested page.
+ */
 public class PageNotFoundException extends ContentProviderException {
 
     public PageNotFoundException() {

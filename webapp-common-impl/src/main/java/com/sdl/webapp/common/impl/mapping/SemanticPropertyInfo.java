@@ -7,7 +7,10 @@ import java.lang.reflect.Field;
 
 import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_PREFIX;
 
-class SemanticPropertyInfo {
+/**
+ * Semantic information for a field of an entity class.
+ */
+final class SemanticPropertyInfo {
 
     private final String prefix;
     private final String propertyName;

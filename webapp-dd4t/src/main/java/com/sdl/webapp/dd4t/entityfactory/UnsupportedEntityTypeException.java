@@ -2,6 +2,9 @@ package com.sdl.webapp.dd4t.entityfactory;
 
 import com.sdl.webapp.common.api.content.ContentProviderException;
 
+/**
+ * Thrown when a requested entity type is not supported.
+ */
 public class UnsupportedEntityTypeException extends ContentProviderException {
 
     public UnsupportedEntityTypeException() {

@@ -9,8 +9,8 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
-import static com.sdl.webapp.main.WebAppConstants.ENTITY_PATH_PREFIX;
-import static com.sdl.webapp.main.WebAppConstants.PAGE_MODEL;
+import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
+import static com.sdl.webapp.main.controller.core.AbstractController.ENTITY_PATH_PREFIX;
 
 public class EntityTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(EntityTag.class);

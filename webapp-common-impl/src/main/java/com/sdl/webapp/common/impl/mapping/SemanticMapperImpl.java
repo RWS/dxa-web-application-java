@@ -1,7 +1,12 @@
 package com.sdl.webapp.common.impl.mapping;
 
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
+import org.springframework.stereotype.Component;
 
+/**
+ * Implementation of {@code SemanticMapper}.
+ */
+@Component
 public class SemanticMapperImpl implements SemanticMapper {
 
     // TODO: Implement this class.

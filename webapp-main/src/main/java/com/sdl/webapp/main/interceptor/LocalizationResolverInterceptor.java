@@ -30,14 +30,16 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     private WebRequestContext webRequestContext;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
+            throws Exception {
         // NOTE: The full URL (including protocol, domain, port etc.) must be passed here
         final String url = request.getRequestURL().toString();
         LOG.trace("preHandle: {}", url);
 
         final Localization localization = localizationResolver.getLocalization(url);
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Localization for {} is: [{}] {}", new Object[] { url, localization.getId(), localization.getPath() });
+            LOG.trace("Localization for {} is: [{}] {}",
+                    new Object[] { url, localization.getId(), localization.getPath() });
         }
         webRequestContext.setLocalization(localization);
 
@@ -45,7 +47,8 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
         LOG.trace("afterCompletion: {}", request.getRequestURL().toString());
     }
 }

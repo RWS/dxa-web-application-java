@@ -14,8 +14,12 @@ import javax.servlet.*;
 import java.util.EnumSet;
 
 /**
- * Web application initializer which configures the web application by registering listeners, filters and servlets such
- * as the Spring {@code DispatcherServlet}.
+ * Web application initializer which configures the web application by registering listeners, filters and servlets.
+ *
+ * Initialization and configuration for this web application is done purely in code, and not with a {@code web.xml}
+ * deployment descriptor. Doing it in code provides more flexibility; for example, this enables the web application
+ * to automatically detect and register the Contextual Image Delivery {@code ImageTransformerServlet} if it is present
+ * on the classpath.
  */
 public class WebAppInitializer implements WebApplicationInitializer {
     private static final Logger LOG = LoggerFactory.getLogger(WebAppInitializer.class);

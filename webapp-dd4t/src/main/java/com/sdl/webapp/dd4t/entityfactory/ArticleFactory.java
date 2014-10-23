@@ -1,6 +1,6 @@
 package com.sdl.webapp.dd4t.entityfactory;
 
-import com.sdl.webapp.common.api.ContentProviderException;
+import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.entity.Article;
 import com.sdl.webapp.common.api.model.entity.Paragraph;
@@ -10,11 +10,8 @@ import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.GenericComponent;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
-import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.getEmbeddedValues;
 import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.getStringValue;
 
 @Component

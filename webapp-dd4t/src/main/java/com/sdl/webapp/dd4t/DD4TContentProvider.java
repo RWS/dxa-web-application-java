@@ -1,10 +1,10 @@
 package com.sdl.webapp.dd4t;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.ContentProvider;
-import com.sdl.webapp.common.api.ContentProviderException;
+import com.sdl.webapp.common.api.content.ContentProvider;
+import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.PageNotFoundException;
+import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.dd4t.pagefactory.PageFactory;
 import org.dd4t.contentmodel.GenericPage;

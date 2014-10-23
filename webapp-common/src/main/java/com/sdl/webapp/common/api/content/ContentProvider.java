@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api;
+package com.sdl.webapp.common.api.content;
 
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Page;

@@ -1,6 +1,6 @@
 package com.sdl.webapp.dd4t.entityfactory;
 
-import com.sdl.webapp.common.api.ContentProviderException;
+import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.entity.LinkList;
 import org.dd4t.contentmodel.ComponentPresentation;

@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api;
+package com.sdl.webapp.common.api.content;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,6 +1,9 @@
 package com.sdl.webapp.dd4t;
 
-import com.sdl.webapp.common.api.*;
+import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.api.content.StaticContentItem;
+import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
+import com.sdl.webapp.common.api.content.StaticContentProvider;
 import com.tridion.broker.StorageException;
 import com.tridion.storage.*;
 import com.tridion.storage.dao.BinaryContentDAO;

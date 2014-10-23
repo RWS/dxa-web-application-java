@@ -9,6 +9,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
+/**
+ * Unit tests for {@code DD4TMediaHelper}.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { DD4TMediaHelperTestConfig.class })
 public class DD4TMediaHelperTest {

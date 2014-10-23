@@ -10,6 +10,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+/**
+ * Unit tests for {@code AbstractMediaHelper}.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AbstractMediaHelperTestConfig.class })
 public class AbstractMediaHelperTest {
@@ -18,7 +21,7 @@ public class AbstractMediaHelperTest {
     private AbstractMediaHelper mediaHelper;
 
     @Autowired
-    private TestWebRequestContext webRequestContext;
+    private MockWebRequestContext webRequestContext;
 
     @Test
     public void testGetResponsiveWidthAbsoluteWidthFactor() {

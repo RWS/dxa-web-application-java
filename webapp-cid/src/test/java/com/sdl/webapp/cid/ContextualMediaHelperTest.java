@@ -9,6 +9,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
+/**
+ * Unit tests for {@code ContextualMediaHelper}.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { ContextualMediaHelperTestConfig.class })
 public class ContextualMediaHelperTest {

@@ -5,6 +5,9 @@ import com.sdl.webapp.common.impl.WebRequestContextImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Spring configuration for {@code ContextualMediaHelperTest}.
+ */
 @Configuration
 public class ContextualMediaHelperTestConfig {
 

@@ -3,8 +3,11 @@ package com.sdl.webapp.common.impl;
 import com.sdl.webapp.common.api.ScreenWidth;
 import org.springframework.stereotype.Component;
 
+/**
+ * Mock implementation of {@code WebRequestContext} for testing.
+ */
 @Component
-public class TestWebRequestContext extends WebRequestContextImpl {
+public class MockWebRequestContext extends WebRequestContextImpl {
 
     private ScreenWidth screenWidth;
     private int displayWidth;

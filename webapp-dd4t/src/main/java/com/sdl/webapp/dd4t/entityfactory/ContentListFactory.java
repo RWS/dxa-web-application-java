@@ -24,7 +24,7 @@ public class ContentListFactory implements EntityFactory {
     }
 
     @Override
-    public Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityType)
+    public Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityClass)
             throws ContentProviderException {
         final ContentList contentList = new ContentList();
 

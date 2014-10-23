@@ -17,7 +17,7 @@ public class LinkListFactory implements EntityFactory {
     }
 
     @Override
-    public Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityType) throws ContentProviderException {
+    public Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityClass) throws ContentProviderException {
         // TODO: Implement this
         return new LinkList<>();
     }

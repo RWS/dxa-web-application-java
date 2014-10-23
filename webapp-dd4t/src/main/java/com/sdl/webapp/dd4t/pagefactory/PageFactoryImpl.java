@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.ViewModelRegistry;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;
@@ -116,14 +116,14 @@ public class PageFactoryImpl implements PageFactory {
             final String viewName = getStringValue(templateMeta, "view");
             LOG.debug("{}: viewName: {}", componentId, viewName);
 
-            final Class<? extends Entity> entityType = viewModelRegistry.getEntityViewModelType(viewName);
-            if (entityType == null) {
+            final Class<? extends Entity> entityClass = viewModelRegistry.getViewEntityClass(viewName);
+            if (entityClass == null) {
                 throw new ContentProviderException("Cannot determine entity type for view name: " + viewName +
                         "\nPlease make sure that an entry is registered for this view name in the ViewModelRegistry.");
             }
 
-            LOG.debug("{}: Creating entity of type: {}", componentId, entityType.getName());
-            AbstractEntity entity = (AbstractEntity) entityFactoryRegistry.getFactoryFor(entityType).createEntity(cp, entityType);
+            LOG.debug("{}: Creating entity of type: {}", componentId, entityClass.getName());
+            AbstractEntity entity = (AbstractEntity) entityFactoryRegistry.getFactoryFor(entityClass).createEntity(cp, entityClass);
 
             entity.setId(getEntityIdFromComponentId(componentId));
             entity.setViewName(ENTITY_VIEW_PREFIX + viewName);

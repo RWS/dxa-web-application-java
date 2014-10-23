@@ -23,7 +23,7 @@ public class TeaserFactory implements EntityFactory {
     }
 
     @Override
-    public Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityType)
+    public Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityClass)
             throws ContentProviderException {
         final Teaser teaser = new Teaser();
 

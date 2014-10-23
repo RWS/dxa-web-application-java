@@ -1,7 +1,7 @@
-package com.sdl.webapp.common.impl;
+package com.sdl.webapp.common.impl.model;
 
 import com.google.common.collect.ImmutableMap;
-import com.sdl.webapp.common.api.ViewModelRegistry;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.entity.*;
 import org.springframework.stereotype.Component;
@@ -14,7 +14,7 @@ import java.util.Map;
 @Component
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
-    private static final Map<String, Class<? extends Entity>> ENTITY_VIEW_MODEL_MAP =
+    private static final Map<String, Class<? extends Entity>> VIEW_ENTITY_CLASS_MAP =
             ImmutableMap.<String, Class<? extends Entity>>builder()
                     .put("Accordion", ItemList.class)
                     .put("Article", Article.class)
@@ -48,7 +48,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     .build();
 
     @Override
-    public Class<? extends Entity> getEntityViewModelType(String viewName) {
-        return ENTITY_VIEW_MODEL_MAP.get(viewName);
+    public Class<? extends Entity> getViewEntityClass(String viewName) {
+        return VIEW_ENTITY_CLASS_MAP.get(viewName);
     }
 }

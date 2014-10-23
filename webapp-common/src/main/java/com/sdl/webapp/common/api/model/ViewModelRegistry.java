@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api;
+package com.sdl.webapp.common.api.model;
 
 import com.sdl.webapp.common.api.model.Entity;
 
@@ -13,5 +13,5 @@ public interface ViewModelRegistry {
      * @param viewName The name of the entity view.
      * @return The type of the entity that this entity view needs.
      */
-    Class<? extends Entity> getEntityViewModelType(String viewName);
+    Class<? extends Entity> getViewEntityClass(String viewName);
 }

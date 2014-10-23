@@ -20,9 +20,9 @@ public interface EntityFactory {
      * Creates an entity of the specified type from a component presentation.
      *
      * @param componentPresentation The component presentation.
-     * @param entityType The type of the entity to create.
+     * @param entityClass The type of the entity to create.
      * @return The new entity.
      * @throws ContentProviderException If an error occurs and the entity cannot be created.
      */
-    Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityType) throws ContentProviderException;
+    Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityClass) throws ContentProviderException;
 }

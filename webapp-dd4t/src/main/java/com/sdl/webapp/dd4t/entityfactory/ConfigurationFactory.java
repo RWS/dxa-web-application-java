@@ -17,7 +17,7 @@ public class ConfigurationFactory implements EntityFactory {
     }
 
     @Override
-    public Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityType) throws ContentProviderException {
+    public Entity createEntity(ComponentPresentation componentPresentation, Class<?> entityClass) throws ContentProviderException {
         // TODO: Implement this
         return new Configuration();
     }

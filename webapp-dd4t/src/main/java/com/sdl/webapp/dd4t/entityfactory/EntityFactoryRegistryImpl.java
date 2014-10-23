@@ -25,10 +25,10 @@ public class EntityFactoryRegistryImpl implements EntityFactoryRegistry {
     }
 
     @Override
-    public EntityFactory getFactoryFor(Class<?> entityType) throws UnsupportedEntityTypeException {
-        final EntityFactory factory = entityFactoryMap.get(entityType);
+    public EntityFactory getFactoryFor(Class<?> entityClass) throws UnsupportedEntityTypeException {
+        final EntityFactory factory = entityFactoryMap.get(entityClass);
         if (factory == null) {
-            throw new UnsupportedEntityTypeException("No factory for creating entity of type: " + entityType.getName());
+            throw new UnsupportedEntityTypeException("No factory for creating entity of type: " + entityClass.getName());
         }
 
         return factory;

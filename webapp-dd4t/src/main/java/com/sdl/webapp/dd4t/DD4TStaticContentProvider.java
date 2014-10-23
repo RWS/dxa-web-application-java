@@ -34,8 +34,9 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
     private WebApplicationContext webApplicationContext;
 
     @Override
-    public StaticContentItem getStaticContent(String url, Localization localization) throws ContentProviderException {
-        final File file = getStaticContentFile(url, localization);
+    public StaticContentItem getStaticContent(String url, String localizationId, String localizationPath)
+            throws ContentProviderException {
+        final File file = getStaticContentFile(url, localizationId, localizationPath);
 
         return new StaticContentItem() {
             @Override
@@ -50,12 +51,13 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
         };
     }
 
-    private File getStaticContentFile(String url, Localization localization) throws ContentProviderException {
+    private File getStaticContentFile(String url, String localizationId, String localizationPath)
+            throws ContentProviderException {
         final File file = new File(new File(new File(new File(new File(
-                webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localization.getId()),
-                localization.getPath()), url);
+                webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localizationId),
+                localizationPath), url);
 
-        final int publicationId = Integer.parseInt(localization.getId());
+        final int publicationId = Integer.parseInt(localizationId);
         try {
             final BinaryVariant binaryVariant = findBinaryVariant(publicationId, url);
             if (binaryVariant == null) {

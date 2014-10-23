@@ -46,15 +46,16 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
         if (localization.isStaticContent(url)) {
             LOG.debug("Handling static content: {}", url);
-            final StaticContentItem item = contentProvider.getStaticContent(url, localization);
+            final StaticContentItem staticContentItem = contentProvider.getStaticContent(url, localization.getId(),
+                    localization.getPath());
 
             final ServletServerHttpRequest req = new ServletServerHttpRequest(request);
             final ServletServerHttpResponse res = new ServletServerHttpResponse(response);
 
             // NOTE: In this version of Spring, the method 'getIfNotModifiedSince' is named incorrectly
-            if (item.getLastModified() > req.getHeaders().getIfNotModifiedSince() - 1000L) {
+            if (staticContentItem.getLastModified() > req.getHeaders().getIfNotModifiedSince() - 1000L) {
                 res.setStatusCode(HttpStatus.OK);
-                writeResponseBody(item, res);
+                writeResponseBody(staticContentItem, res);
             } else {
                 res.setStatusCode(HttpStatus.NOT_MODIFIED);
             }

@@ -65,9 +65,13 @@ public class LocalizationConfigurationLoaderImpl implements LocalizationConfigur
 
     private void loadSemanticSchemas(LocalizationImpl localization) throws LocalizationConfigurationLoaderException {
         try {
-            final List<SemanticSchema> schemas = objectMapper.readValue(
-                    contentProvider.getStaticContent(SEMANTIC_SCHEMAS_PATH, localization).getContent(),
-                    new TypeReference<List<SemanticSchema>>() { });
+            final StaticContentItem schemasItem = contentProvider.getStaticContent(SEMANTIC_SCHEMAS_PATH,
+                    localization.getId(), localization.getPath());
+
+            final List<SemanticSchema> schemas;
+            try (final InputStream in = schemasItem.getContent()) {
+                schemas = objectMapper.readValue(in, new TypeReference<List<SemanticSchema>>() { });
+            }
 
             final ImmutableMap.Builder<Long, SemanticSchema> builder = ImmutableMap.builder();
             for (SemanticSchema schema : schemas) {
@@ -83,10 +87,13 @@ public class LocalizationConfigurationLoaderImpl implements LocalizationConfigur
 
     private void loadSemanticVocabularies(LocalizationImpl localization) throws LocalizationConfigurationLoaderException {
         try {
-            final List<SemanticVocabulary> vocabularies = objectMapper.readValue(
-                    contentProvider.getStaticContent(SEMANTIC_VOCABULARIES_PATH, localization).getContent(),
-                    new TypeReference<List<SemanticVocabulary>>() {
-                    });
+            final StaticContentItem vocabulariesItem = contentProvider.getStaticContent(SEMANTIC_VOCABULARIES_PATH,
+                    localization.getId(), localization.getPath());
+
+            final List<SemanticVocabulary> vocabularies;
+            try (final InputStream in = vocabulariesItem.getContent()) {
+                vocabularies = objectMapper.readValue(in, new TypeReference<List<SemanticVocabulary>>() { });
+            }
 
             localization.setSemanticVocabularies(vocabularies);
         } catch (ContentProviderException | IOException e) {
@@ -109,12 +116,15 @@ public class LocalizationConfigurationLoaderImpl implements LocalizationConfigur
         localization.setIncludes(includes);
     }
 
-
-
     private JsonNode parseJsonFile(String path, Localization localization)
             throws LocalizationConfigurationLoaderException {
-        try (final InputStream in = contentProvider.getStaticContent(path, localization).getContent()) {
-            return objectMapper.readTree(in);
+        try {
+            final StaticContentItem staticContentItem = contentProvider.getStaticContent(path,
+                    localization.getId(), localization.getPath());
+
+            try (final InputStream in = staticContentItem.getContent()) {
+                return objectMapper.readTree(in);
+            }
         } catch (ContentProviderException | IOException e) {
             throw new LocalizationConfigurationLoaderException("Exception while reading configuration of " +
                     "localization: " + localization, e);

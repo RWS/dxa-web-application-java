@@ -26,7 +26,7 @@ namespace Sdl.Web.Tridion.Templates
         private const string TaxonomiesConfigName = "taxonomies";
 
         private string _moduleRoot = String.Empty;
-
+        private Component _localizationConfigurationComponent = null;
         public override void Transform(Engine engine, Package package)
         {
             Initialize(engine, package);
@@ -59,6 +59,10 @@ namespace Sdl.Web.Tridion.Templates
             foreach (var configComp in fields.GetComponentValues("furtherConfiguration"))
             {
                 data = MergeData(data, ReadComponentData(configComp));
+                if (configComp.Title == "Localization Configuration")
+                {
+                    _localizationConfigurationComponent = configComp;
+                }
             }
             return PublishJsonData(data, module, moduleName, "config", sg);
         }
@@ -142,6 +146,10 @@ namespace Sdl.Web.Tridion.Templates
 
         protected List<string> BuildAdditionalData()
         {
+            if (_localizationConfigurationComponent == null)
+            {
+                Logger.Warning("Could not find 'Localization Configuration' component, cannot publish language data");
+            }
             List<string> additionalData = new List<string>
                 {
                     String.Format("\"defaultLocalization\":{0}", JsonEncode(IsMasterWebPublication())),
@@ -184,22 +192,45 @@ namespace Sdl.Web.Tridion.Templates
         }
 
 
-        private List<string> LoadSitePublications(Publication contextPublication)
+        private List<PublicationDetails> LoadSitePublications(Publication contextPublication)
         {
             string siteId = GetSiteIdFromPublication(contextPublication);
             var master = GetMasterPublication(contextPublication);
             Logger.Debug(String.Format("Master publication is : {0}, siteId is {1}", master.Title, siteId));
-            List<string> pubIds = new List<string> { master.Id.ItemId.ToString() };
+            List<PublicationDetails> pubs = new List<PublicationDetails> { GetPublicationDetails(master) };
             if (siteId!=null)
             {
-                pubIds.AddRange(GetChildPublicationIds(master, siteId));
+                pubs.AddRange(GetChildPublicationIds(master, siteId));
             }
-            return pubIds;
+            return pubs;
         }
 
-        private List<string> GetChildPublicationIds(Publication master, string siteId)
+        private PublicationDetails GetPublicationDetails(Publication pub)
         {
-            List<string> pubIds = new List<string>();
+            var pubData = new PublicationDetails { id = pub.Id.ItemId.ToString(), path = pub.PublicationUrl};
+            if (_localizationConfigurationComponent != null)
+            {
+                var localUri = new TcmUri(_localizationConfigurationComponent.Id.ItemId,ItemType.Component,pub.Id.ItemId);
+                var locComp = (Component)Engine.GetObject(localUri);
+                if (locComp != null)
+                {
+                    ItemFields fields = new ItemFields(locComp.Content, locComp.Schema);
+                    foreach (var field in fields.GetEmbeddedFields("settings"))
+                    {
+                        if (field.GetTextValue("name") == "language")
+                        {
+                            pubData.language = field.GetTextValue("value");
+                            break;
+                        }
+                    }
+                }
+            }
+            return pubData;
+        }
+
+        private List<PublicationDetails> GetChildPublicationIds(Publication master, string siteId)
+        {
+            List<PublicationDetails> pubs = new List<PublicationDetails>();
             var filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };
             foreach (XmlElement item in master.GetListUsingItems(filter).ChildNodes)
             {
@@ -209,14 +240,14 @@ namespace Sdl.Web.Tridion.Templates
                 if (childSiteId == siteId)
                 {
                     Logger.Debug(String.Format("Found valid descendent {0} with site ID {1} ", child.Title, childSiteId));
-                    pubIds.Add(child.Id.ItemId.ToString());
+                    pubs.Add(GetPublicationDetails(child));
                 }
                 else
                 {
                     Logger.Debug(String.Format("Descendent {0} has invalid site ID {1} - ignoring ",child.Title,childSiteId));
                 }
             }
-            return pubIds;
+            return pubs;
         }
 
         private string GetSiteIdFromPublication(Publication startPublication)
@@ -228,5 +259,12 @@ namespace Sdl.Web.Tridion.Templates
             }
             return null;
         }
+    }
+
+    internal class PublicationDetails
+    {
+        public string id { get; set; }
+        public string path { get; set; }
+        public string language { get; set; }
     }
 }

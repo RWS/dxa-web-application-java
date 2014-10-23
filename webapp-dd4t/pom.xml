@@ -19,12 +19,7 @@
     <dependencies>
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>webapp-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>webapp-common-impl</artifactId>
+            <artifactId>webapp-common-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -45,6 +40,12 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+
+        <!-- Google Guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
 
         <!-- DD4T -->

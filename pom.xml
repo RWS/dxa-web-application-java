@@ -14,7 +14,7 @@
         <module>dd4t/dd4t-core</module>
         <module>dd4t/dd4t-providers</module>
         <module>webapp-cid</module>
-        <module>webapp-common</module>
+        <module>webapp-common-api</module>
         <module>webapp-common-impl</module>
         <module>webapp-dd4t</module>
         <module>webapp-tridion</module>

@@ -15,7 +15,7 @@
     <dependencies>
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>webapp-common</artifactId>
+            <artifactId>webapp-common-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 

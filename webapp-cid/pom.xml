@@ -17,11 +17,6 @@
         <!-- Tridion Reference Implementation Common -->
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>webapp-common</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
             <artifactId>webapp-common-impl</artifactId>
             <version>${project.version}</version>
         </dependency>

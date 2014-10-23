@@ -4,9 +4,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.ContentProviderException;
 import com.sdl.webapp.common.api.StaticContentItem;
 import com.sdl.webapp.common.api.StaticContentProvider;
@@ -55,99 +52,100 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     public Localization createLocalization(String id, String path) throws LocalizationFactoryException {
         LOG.debug("createLocalization: [{}] {}", id, path);
 
-        final LocalizationImpl localization = new LocalizationImpl(id, path);
+        final LocalizationImpl.Builder builder = LocalizationImpl.newBuilder()
+                .setId(id)
+                .setPath(path);
 
-        loadMainConfiguration(localization);
-        loadResources(localization);
-        loadSemanticSchemas(localization);
-        loadSemanticVocabularies(localization);
-        loadIncludes(localization);
+        loadMainConfiguration(id, path, builder);
+        loadResources(id, path, builder);
+        loadSemanticSchemas(id, path, builder);
+        loadSemanticVocabularies(id, path, builder);
+        loadIncludes(id, path, builder);
+
+        final Localization localization = builder.build();
+        LOG.trace("Created localization: {}", localization);
 
         return localization;
     }
 
-    private void loadMainConfiguration(LocalizationImpl localization) throws LocalizationFactoryException {
-        final JsonNode configRootNode = parseJsonFile(CONFIG_BOOTSTRAP_PATH, localization);
-        localization.setMediaRoot(configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(DEFAULT_MEDIA_ROOT));
-        localization.setDefault(configRootNode.get(DEFAULT_LOCALIZATION_NODE_NAME).asBoolean(false));
-        localization.setStaging(configRootNode.get(STAGING_NODE_NAME).asBoolean(false));
-        localization.setConfiguration(parseJsonSubFiles(configRootNode, localization));
+    private void loadMainConfiguration(String id, String path, LocalizationImpl.Builder builder)
+            throws LocalizationFactoryException {
+        final JsonNode configRootNode = parseJsonFile(CONFIG_BOOTSTRAP_PATH, id, path);
+        builder.setMediaRoot(configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(DEFAULT_MEDIA_ROOT));
+        builder.setDefault(configRootNode.get(DEFAULT_LOCALIZATION_NODE_NAME).asBoolean(false));
+        builder.setStaging(configRootNode.get(STAGING_NODE_NAME).asBoolean(false));
+        builder.addConfiguration(parseJsonSubFiles(configRootNode, id, path));
     }
 
-    private void loadResources(LocalizationImpl localization) throws LocalizationFactoryException {
-        final JsonNode resourcesRootNode = parseJsonFile(RESOURCES_BOOTSTRAP_PATH, localization);
-        localization.setResources(parseJsonSubFiles(resourcesRootNode, localization));
+    private void loadResources(String id, String path, LocalizationImpl.Builder builder)
+            throws LocalizationFactoryException {
+        final JsonNode resourcesRootNode = parseJsonFile(RESOURCES_BOOTSTRAP_PATH, id, path);
+        builder.addResources(parseJsonSubFiles(resourcesRootNode, id, path));
     }
 
-    private void loadSemanticSchemas(LocalizationImpl localization) throws LocalizationFactoryException {
+    private void loadSemanticSchemas(String id, String path, LocalizationImpl.Builder builder)
+            throws LocalizationFactoryException {
         try {
-            final StaticContentItem schemasItem = contentProvider.getStaticContent(SEMANTIC_SCHEMAS_PATH,
-                    localization.getId(), localization.getPath());
+            final StaticContentItem item = contentProvider.getStaticContent(SEMANTIC_SCHEMAS_PATH, id, path);
 
-            final List<SemanticSchema> schemas;
-            try (final InputStream in = schemasItem.getContent()) {
-                schemas = objectMapper.readValue(in, new TypeReference<List<SemanticSchema>>() { });
+            final List<SemanticSchema> semanticSchemas;
+            try (final InputStream in = item.getContent()) {
+                semanticSchemas = objectMapper.readValue(in, new TypeReference<List<SemanticSchema>>() { });
             }
 
-            final ImmutableMap.Builder<Long, SemanticSchema> builder = ImmutableMap.builder();
-            for (SemanticSchema schema : schemas) {
-                builder.put(schema.getId(), schema);
-            }
-
-            localization.setSemanticSchemas(builder.build());
+            builder.addSemanticSchemas(semanticSchemas);
         } catch (ContentProviderException | IOException e) {
             throw new LocalizationFactoryException("Exception while reading semantic schema configuration of " +
-                    "localization: " + localization, e);
+                    "localization: [" + id + "] " + path, e);
         }
     }
 
-    private void loadSemanticVocabularies(LocalizationImpl localization) throws LocalizationFactoryException {
+    private void loadSemanticVocabularies(String id, String path, LocalizationImpl.Builder builder)
+            throws LocalizationFactoryException {
         try {
-            final StaticContentItem vocabulariesItem = contentProvider.getStaticContent(SEMANTIC_VOCABULARIES_PATH,
-                    localization.getId(), localization.getPath());
+            final StaticContentItem item = contentProvider.getStaticContent(SEMANTIC_VOCABULARIES_PATH, id, path);
 
-            final List<SemanticVocabulary> vocabularies;
-            try (final InputStream in = vocabulariesItem.getContent()) {
-                vocabularies = objectMapper.readValue(in, new TypeReference<List<SemanticVocabulary>>() { });
+            final List<SemanticVocabulary> semanticVocabularies;
+            try (final InputStream in = item.getContent()) {
+                semanticVocabularies = objectMapper.readValue(in, new TypeReference<List<SemanticVocabulary>>() { });
             }
 
-            localization.setSemanticVocabularies(vocabularies);
+            builder.addSemanticVocabularies(semanticVocabularies);
         } catch (ContentProviderException | IOException e) {
             throw new LocalizationFactoryException("Exception while reading semantic vocabulary configuration of " +
-                    "localization: " + localization, e);
+                    "localization: [" + id + "] " + path, e);
         }
     }
 
-    private void loadIncludes(LocalizationImpl localization) throws LocalizationFactoryException {
-        final JsonNode includesRootNode = parseJsonFile(INCLUDES_PATH, localization);
-        final ListMultimap<String, String> includes = ArrayListMultimap.create();
+    private void loadIncludes(String id, String path, LocalizationImpl.Builder builder)
+            throws LocalizationFactoryException {
+        final JsonNode includesRootNode = parseJsonFile(INCLUDES_PATH, id, path);
         final Iterator<Map.Entry<String, JsonNode>> i = includesRootNode.fields();
         while (i.hasNext()) {
             final Map.Entry<String, JsonNode> entry = i.next();
             final String pageTypeId = entry.getKey();
             for (JsonNode value : entry.getValue()) {
-                includes.put(pageTypeId, value.asText());
+                builder.addInclude(pageTypeId, value.asText());
             }
         }
-
-        localization.setIncludes(includes);
     }
 
-    private JsonNode parseJsonFile(String path, Localization localization) throws LocalizationFactoryException {
+    private JsonNode parseJsonFile(String filePath, String localizationId, String localizationPath)
+            throws LocalizationFactoryException {
         try {
-            final StaticContentItem staticContentItem = contentProvider.getStaticContent(path,
-                    localization.getId(), localization.getPath());
+            final StaticContentItem staticContentItem = contentProvider.getStaticContent(filePath, localizationId,
+                    localizationPath);
 
             try (final InputStream in = staticContentItem.getContent()) {
                 return objectMapper.readTree(in);
             }
         } catch (ContentProviderException | IOException e) {
-            throw new LocalizationFactoryException("Exception while reading configuration of localization: " +
-                    localization, e);
+            throw new LocalizationFactoryException("Exception while reading configuration of localization: [" +
+                    localizationId + "] " + localizationPath, e);
         }
     }
 
-    private Map<String, String> parseJsonSubFiles(JsonNode rootNode, Localization localization)
+    private Map<String, String> parseJsonSubFiles(JsonNode rootNode, String localizationId, String localizationPath)
             throws LocalizationFactoryException {
         final Map<String, String> map = new HashMap<>();
 
@@ -159,7 +157,8 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                     final String prefix = subFilePath.substring(subFilePath.lastIndexOf('/') + 1,
                             subFilePath.lastIndexOf('.') + 1);
 
-                    final Iterator<Map.Entry<String, JsonNode>> i = parseJsonFile(subFilePath, localization).fields();
+                    final Iterator<Map.Entry<String, JsonNode>> i = parseJsonFile(subFilePath, localizationId,
+                            localizationPath).fields();
                     while (i.hasNext()) {
                         final Map.Entry<String, JsonNode> entry = i.next();
                         map.put(prefix + entry.getKey(), entry.getValue().asText());

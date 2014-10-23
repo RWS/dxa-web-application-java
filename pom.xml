@@ -15,6 +15,7 @@
         <module>dd4t/dd4t-providers</module>
         <module>webapp-cid</module>
         <module>webapp-common</module>
+        <module>webapp-common-impl</module>
         <module>webapp-dd4t</module>
         <module>webapp-tridion</module>
         <module>webapp-main</module>
@@ -428,6 +429,7 @@
                 <groupId>net.minidev</groupId>
                 <artifactId>json-smart</artifactId>
                 <version>${json-smart-version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>xalan</groupId>

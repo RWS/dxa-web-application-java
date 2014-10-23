@@ -24,7 +24,7 @@
         </dependency>
         <dependency>
             <groupId>com.sdl</groupId>
-            <artifactId>webapp-tridion</artifactId>
+            <artifactId>webapp-common-impl</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -93,6 +93,5 @@
             <groupId>com.microsoft.sqlserver</groupId>
             <artifactId>sqljdbc4</artifactId>
         </dependency>
-
     </dependencies>
 </project>

@@ -26,6 +26,12 @@
         </dependency>
         <dependency>
             <groupId>com.sdl</groupId>
+            <artifactId>webapp-common-impl</artifactId>
+            <version>${project.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl</groupId>
             <artifactId>webapp-dd4t</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
@@ -35,6 +41,18 @@
             <artifactId>webapp-tridion</artifactId>
             <version>${project.version}</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- Tridion Content Delivery -->
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_ambient</artifactId>
+        </dependency>
+
+        <!-- Third-party libraries used by Tridion Content Delivery -->
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
         </dependency>
 
         <!-- Tridion Contextual Image Delivery - Remove this is you are not using CID -->

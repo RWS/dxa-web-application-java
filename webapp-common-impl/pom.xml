@@ -4,20 +4,26 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>webapp-common</artifactId>
+    <artifactId>webapp-common-impl</artifactId>
 
     <parent>
-        <groupId>com.sdl</groupId>
         <artifactId>webapp-reference-impl</artifactId>
+        <groupId>com.sdl</groupId>
         <version>1.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <dependencies>
+        <dependency>
+            <groupId>com.sdl</groupId>
+            <artifactId>webapp-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spring Framework -->
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
+            <artifactId>spring-web</artifactId>
         </dependency>
         <dependency>
             <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
@@ -27,10 +33,28 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Google Guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- Tridion Content Delivery -->
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_ambient</artifactId>
+        </dependency>
+
+        <!-- Third-party libraries used by Tridion Content Delivery -->
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
         </dependency>
     </dependencies>
 </project>

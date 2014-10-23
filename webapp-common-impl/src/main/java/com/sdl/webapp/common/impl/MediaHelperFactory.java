@@ -18,7 +18,7 @@ public class MediaHelperFactory extends AbstractFactoryBean<MediaHelper> {
     // Class names of candidate implementations to try, ordered by priority (highest priority first)
     private static final String[] MEDIA_HELPER_CLASS_NAMES = {
             "com.sdl.webapp.cid.ContextualMediaHelper",
-            "com.sdl.webapp.common.impl.DefaultMediaHelper"
+            "DefaultMediaHelper"
     };
 
     @Override

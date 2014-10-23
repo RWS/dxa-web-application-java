@@ -11,16 +11,22 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_PREFIX;
 import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_VOCABULARY;
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertFalse;
+import static org.hamcrest.Matchers.hasKey;
+import static org.junit.Assert.*;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
+/**
+ * Unit tests for {@code SemanticInfoRegistry}.
+ */
 public class SemanticInfoRegistryTest {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticInfoRegistryTest.class);
 
@@ -87,22 +93,14 @@ public class SemanticInfoRegistryTest {
 
         final Map<String, SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity1.class);
         assertThat(testEntityInfo.size(), is(1));
-        assertTrue("Info for test entity class must be registered under the default prefix",
-                testEntityInfo.containsKey(DEFAULT_PREFIX));
+        assertThat(testEntityInfo, hasKey(DEFAULT_PREFIX));
 
         final SemanticEntityInfo defaultPrefixEntityInfo = testEntityInfo.get(DEFAULT_PREFIX);
-        assertThat(defaultPrefixEntityInfo.getEntityName(), is(TestEntity1.class.getSimpleName()));
-        assertThat(defaultPrefixEntityInfo.getVocabulary(), is(DEFAULT_VOCABULARY));
-        assertThat(defaultPrefixEntityInfo.getPrefix(), is(DEFAULT_PREFIX));
-        assertFalse(defaultPrefixEntityInfo.isPublic());
+        checkEntityInfo(TestEntity1.class.getSimpleName(), DEFAULT_VOCABULARY, DEFAULT_PREFIX, false, defaultPrefixEntityInfo);
 
         final List<SemanticPropertyInfo> propertyInfo = defaultPrefixEntityInfo.getPropertyInfo();
         assertThat(propertyInfo.size(), is(1));
-
-        SemanticPropertyInfo field1Info = propertyInfo.get(0);
-        assertThat(field1Info.getPrefix(), is(DEFAULT_PREFIX));
-        assertThat(field1Info.getPropertyName(), is("field1"));
-        assertThat(field1Info.getField(), is(TestEntity1.class.getDeclaredField("field1")));
+        checkPropertyInfo(DEFAULT_PREFIX, "field1", TestEntity1.class.getDeclaredField("field1"), propertyInfo.get(0));
     }
 
     @Test
@@ -116,38 +114,73 @@ public class SemanticInfoRegistryTest {
 
         final Map<String, SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity2.class);
         assertThat(testEntityInfo.size(), is(1));
-        assertTrue("Info for test entity class must be registered under the default prefix",
-                testEntityInfo.containsKey(DEFAULT_PREFIX));
+        assertThat(testEntityInfo, hasKey(DEFAULT_PREFIX));
 
         final SemanticEntityInfo defaultPrefixEntityInfo = testEntityInfo.get(DEFAULT_PREFIX);
-        assertThat(defaultPrefixEntityInfo.getEntityName(), is("TestEntity"));
-        assertThat(defaultPrefixEntityInfo.getVocabulary(), is(DEFAULT_VOCABULARY));
-        assertThat(defaultPrefixEntityInfo.getPrefix(), is(DEFAULT_PREFIX));
-        assertFalse(defaultPrefixEntityInfo.isPublic());
+        checkEntityInfo("TestEntity", DEFAULT_VOCABULARY, DEFAULT_PREFIX, false, defaultPrefixEntityInfo);
 
         final List<SemanticPropertyInfo> propertyInfo = defaultPrefixEntityInfo.getPropertyInfo();
         assertThat(propertyInfo.size(), is(1));
-
-        SemanticPropertyInfo field1Info = propertyInfo.get(0);
-        assertThat(field1Info.getPrefix(), is(DEFAULT_PREFIX));
-        assertThat(field1Info.getPropertyName(), is("TestField"));
-        assertThat(field1Info.getField(), is(TestEntity2.class.getDeclaredField("field1")));
+        checkPropertyInfo(DEFAULT_PREFIX, "TestField", TestEntity2.class.getDeclaredField("field1"), propertyInfo.get(0));
     }
 
     @Test
-    public void testRegisterEntity3() throws SemanticMappingException {
+    public void testRegisterEntity3() throws SemanticMappingException, NoSuchFieldException {
         final SemanticInfoRegistry registry = new SemanticInfoRegistry();
         registry.registerEntity(TestEntity3.class);
 
-        // TODO
+        final Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> allEntityInfo = registry.getEntityInfo();
+        assertThat(allEntityInfo.size(), is(1));
+        assertTrue("Registry must contain info for test entity class", allEntityInfo.containsKey(TestEntity3.class));
+
+        final Map<String, SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity3.class);
+        assertThat(testEntityInfo.size(), is(2));
+        assertThat(testEntityInfo, hasKey("x"));
+        assertThat(testEntityInfo, hasKey(DEFAULT_PREFIX));
+
+        final SemanticEntityInfo xEntityInfo = testEntityInfo.get("x");
+        checkEntityInfo("TestEntity", TEST_VOCABULARY, "x", false, xEntityInfo);
+
+        final List<SemanticPropertyInfo> xPropertyInfo = xEntityInfo.getPropertyInfo();
+        assertThat(xPropertyInfo.size(), is(2));
+        checkPropertyInfoContains("x", "Field1", TestEntity3.class.getDeclaredField("field1"), xPropertyInfo);
+        checkPropertyInfoContains("x", "field3", TestEntity3.class.getDeclaredField("field3"), xPropertyInfo);
+
+        final SemanticEntityInfo defaultPrefixEntityInfo = testEntityInfo.get(DEFAULT_PREFIX);
+        checkEntityInfo(TestEntity3.class.getSimpleName(), DEFAULT_VOCABULARY, DEFAULT_PREFIX, false, defaultPrefixEntityInfo);
+
+        final List<SemanticPropertyInfo> defaultPrefixPropertyInfo = defaultPrefixEntityInfo.getPropertyInfo();
+        assertThat(defaultPrefixPropertyInfo.size(), is(1));
+        checkPropertyInfo(DEFAULT_PREFIX, "Field2", TestEntity3.class.getDeclaredField("field2"), defaultPrefixPropertyInfo.get(0));
     }
 
     @Test
-    public void testRegisterEntity4() throws SemanticMappingException {
+    public void testRegisterEntity4() throws SemanticMappingException, NoSuchFieldException {
         final SemanticInfoRegistry registry = new SemanticInfoRegistry();
         registry.registerEntity(TestEntity4.class);
 
-        // TODO
+        final Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> allEntityInfo = registry.getEntityInfo();
+        assertThat(allEntityInfo.size(), is(1));
+        assertTrue("Registry must contain info for test entity class", allEntityInfo.containsKey(TestEntity4.class));
+
+        final Map<String, SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity4.class);
+        assertThat(testEntityInfo.size(), is(2));
+        assertThat(testEntityInfo, hasKey(DEFAULT_PREFIX));
+        assertThat(testEntityInfo, hasKey("x"));
+
+        final SemanticEntityInfo defaultPrefixEntityInfo = testEntityInfo.get(DEFAULT_PREFIX);
+        checkEntityInfo("TestEntityA", DEFAULT_VOCABULARY, DEFAULT_PREFIX, true, defaultPrefixEntityInfo);
+
+        final List<SemanticPropertyInfo> defaultPrefixPropertyInfo = defaultPrefixEntityInfo.getPropertyInfo();
+        assertThat(defaultPrefixPropertyInfo.size(), is(1));
+        checkPropertyInfo(DEFAULT_PREFIX, "field1", TestEntity4.class.getDeclaredField("field1"), defaultPrefixPropertyInfo.get(0));
+
+        final SemanticEntityInfo xEntityInfo = testEntityInfo.get("x");
+        checkEntityInfo("TestEntityB", TEST_VOCABULARY, "x", false, xEntityInfo);
+
+        final List<SemanticPropertyInfo> xPropertyInfo = xEntityInfo.getPropertyInfo();
+        assertThat(xPropertyInfo.size(), is(1));
+        checkPropertyInfo("x", "FieldOne", TestEntity4.class.getDeclaredField("field1"), xPropertyInfo.get(0));
     }
 
     @Test(expected = SemanticMappingException.class)
@@ -158,5 +191,25 @@ public class SemanticInfoRegistryTest {
     @Test(expected = SemanticMappingException.class)
     public void testRegisterErrorEntity2() throws SemanticMappingException {
         new SemanticInfoRegistry().registerEntity(TestErrorEntity2.class);
+    }
+
+    private void checkEntityInfo(String expectedEntityName, String expectedVocabulary, String expectedPrefix,
+                                 boolean expectedPublic, SemanticEntityInfo actual) {
+        assertThat(actual.getEntityName(), is(expectedEntityName));
+        assertThat(actual.getVocabulary(), is(expectedVocabulary));
+        assertThat(actual.getPrefix(), is(expectedPrefix));
+        assertThat(actual.isPublic(), is(expectedPublic));
+    }
+
+    private void checkPropertyInfo(String expectedPrefix, String expectedPropertyName, Field expectedField,
+                                   SemanticPropertyInfo actual) {
+        assertThat(actual.getPrefix(), is(expectedPrefix));
+        assertThat(actual.getPropertyName(), is(expectedPropertyName));
+        assertThat(actual.getField(), is(expectedField));
+    }
+
+    private void checkPropertyInfoContains(String expectedPrefix, String expectedPropertyName, Field expectedField,
+                                           Collection<SemanticPropertyInfo> actualCollection) {
+        assertThat(actualCollection, hasItem(new SemanticPropertyInfo(expectedPrefix, expectedPropertyName, expectedField)));
     }
 }

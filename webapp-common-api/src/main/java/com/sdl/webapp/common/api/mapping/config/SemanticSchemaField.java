@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * Semantic schema field.
+ */
 public class SemanticSchemaField {
 
     @JsonProperty("Name")

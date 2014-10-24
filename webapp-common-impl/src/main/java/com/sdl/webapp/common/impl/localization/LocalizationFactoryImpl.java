@@ -26,6 +26,10 @@ import java.util.Map;
 
 /**
  * Implementation of {@code LocalizationFactory}.
+ *
+ * This factory creates {@code Localization} instances and loads configuration information for each localization.
+ * The configuration of a localization is stored in a number of JSON files that are retrieved via the static content
+ * provider.
  */
 @Component
 public class LocalizationFactoryImpl implements LocalizationFactory {

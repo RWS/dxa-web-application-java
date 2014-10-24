@@ -2,6 +2,9 @@ package com.sdl.webapp.common.api.mapping.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Field semantics.
+ */
 public class FieldSemantics {
 
     @JsonProperty("Prefix")

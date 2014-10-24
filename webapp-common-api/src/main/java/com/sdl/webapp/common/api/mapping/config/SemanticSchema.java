@@ -1,13 +1,19 @@
 package com.sdl.webapp.common.api.mapping.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.sdl.webapp.common.api.localization.Localization;
 
 import java.util.List;
-import java.util.Map;
 
+/**
+ * Semantic schema.
+ *
+ * This contains semantic mapping configuration information that comes from the content provider. This information is
+ * loaded as part of the configuration of a {@code Localization} by the {@code LocalizationFactory}.
+ *
+ * Semantic schemas are normally loaded from the configuration file: {@code /system/mappings/schemas.json}
+ */
 public class SemanticSchema {
 
     @JsonProperty("Id")
@@ -54,20 +60,30 @@ public class SemanticSchema {
         this.semantics = ImmutableList.copyOf(semantics);
     }
 
-    /**
-     * Returns a map in which the keys are vocabulary identifiers and the keys are entity names; the map contains
-     * information for all entities defined in this schema.
-     *
-     * @param localization The localization.
-     * @return A {@code Map} containing entity names by vocabulary identifiers.
-     */
-    public Map<String, String> getEntityNamesByVocabulary(Localization localization) {
-        final ImmutableMap.Builder<String, String> builder = ImmutableMap.builder();
-        for (SchemaSemantics schemaSemantics : semantics) {
-            final SemanticVocabulary v = localization.getSemanticVocabularies().get(schemaSemantics.getPrefix());
-            builder.put(v.getVocabulary(), schemaSemantics.getEntity());
-        }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-        return builder.build();
+        SemanticSchema that = (SemanticSchema) o;
+
+        if (id != that.id) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        return (int) (id ^ (id >>> 32));
+    }
+
+    @Override
+    public String toString() {
+        return "SemanticSchema{" +
+                "id=" + id +
+                ", rootElement='" + rootElement + '\'' +
+                ", fields=" + fields +
+                ", semantics=" + semantics +
+                '}';
     }
 }

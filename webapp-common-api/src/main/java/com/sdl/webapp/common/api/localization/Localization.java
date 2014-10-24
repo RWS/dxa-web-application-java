@@ -64,16 +64,16 @@ public interface Localization {
     String getResource(String key);
 
     /**
-     * TODO: Documentation.
+     * Gets the semantic schemas defined for this localization by schema ID.
      *
-     * @return TODO: Documentation.
+     * @return A {@code Map} in which the keys are schema IDs and the values are {@code SemanticSchema} objects.
      */
     Map<Long, SemanticSchema> getSemanticSchemas();
 
     /**
-     * TODO: Documentation.
+     * Gets the semantic vocabularies defined for this localization by prefix.
      *
-     * @return TODO: Documentation.
+     * @return A {@code Map} in which the keys are prefixes and the values are {@code SemanticVocabulary} objects.
      */
     Map<String, SemanticVocabulary> getSemanticVocabularies();
 

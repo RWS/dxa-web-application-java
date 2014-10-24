@@ -20,8 +20,9 @@ import java.lang.reflect.Field;
 import java.util.*;
 
 /**
- * Semantic information registry. This holds information about semantic mapping determined from semantic mapping
- * annotations used on entity classes.
+ * Semantic information registry.
+ *
+ * This holds information about semantic mapping determined from semantic mapping annotations used on entity classes.
  */
 final class SemanticInfoRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticInfoRegistry.class);

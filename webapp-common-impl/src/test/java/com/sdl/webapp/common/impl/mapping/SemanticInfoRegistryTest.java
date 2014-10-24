@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl.mapping;
 
+import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
@@ -14,15 +15,11 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
-import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_PREFIX;
 import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_VOCABULARY;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.Matchers.hasKey;
 import static org.junit.Assert.*;
-import static org.junit.Assert.assertThat;
 
 /**
  * Unit tests for {@code SemanticInfoRegistry}.
@@ -87,20 +84,19 @@ public class SemanticInfoRegistryTest {
         final SemanticInfoRegistry registry = new SemanticInfoRegistry();
         registry.registerEntity(TestEntity1.class);
 
-        final Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> allEntityInfo = registry.getEntityInfo();
+        final ListMultimap<Class<? extends Entity>, SemanticEntityInfo> allEntityInfo = registry.getEntityInfo();
         assertThat(allEntityInfo.size(), is(1));
         assertTrue("Registry must contain info for test entity class", allEntityInfo.containsKey(TestEntity1.class));
 
-        final Map<String, SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity1.class);
+        final List<SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity1.class);
         assertThat(testEntityInfo.size(), is(1));
-        assertThat(testEntityInfo, hasKey(DEFAULT_PREFIX));
 
-        final SemanticEntityInfo defaultPrefixEntityInfo = testEntityInfo.get(DEFAULT_PREFIX);
-        checkEntityInfo(TestEntity1.class.getSimpleName(), DEFAULT_VOCABULARY, DEFAULT_PREFIX, false, defaultPrefixEntityInfo);
+        final SemanticEntityInfo defaultPrefixEntityInfo = testEntityInfo.get(0);
+        checkEntityInfo(TestEntity1.class.getSimpleName(), DEFAULT_VOCABULARY, false, defaultPrefixEntityInfo);
 
         final List<SemanticPropertyInfo> propertyInfo = defaultPrefixEntityInfo.getPropertyInfo();
         assertThat(propertyInfo.size(), is(1));
-        checkPropertyInfo(DEFAULT_PREFIX, "field1", TestEntity1.class.getDeclaredField("field1"), propertyInfo.get(0));
+        checkPropertyInfo("field1", TestEntity1.class.getDeclaredField("field1"), propertyInfo.get(0));
     }
 
     @Test
@@ -108,20 +104,19 @@ public class SemanticInfoRegistryTest {
         final SemanticInfoRegistry registry = new SemanticInfoRegistry();
         registry.registerEntity(TestEntity2.class);
 
-        final Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> allEntityInfo = registry.getEntityInfo();
+        final ListMultimap<Class<? extends Entity>, SemanticEntityInfo> allEntityInfo = registry.getEntityInfo();
         assertThat(allEntityInfo.size(), is(1));
         assertTrue("Registry must contain info for test entity class", allEntityInfo.containsKey(TestEntity2.class));
 
-        final Map<String, SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity2.class);
+        final List<SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity2.class);
         assertThat(testEntityInfo.size(), is(1));
-        assertThat(testEntityInfo, hasKey(DEFAULT_PREFIX));
 
-        final SemanticEntityInfo defaultPrefixEntityInfo = testEntityInfo.get(DEFAULT_PREFIX);
-        checkEntityInfo("TestEntity", DEFAULT_VOCABULARY, DEFAULT_PREFIX, false, defaultPrefixEntityInfo);
+        final SemanticEntityInfo defaultPrefixEntityInfo = testEntityInfo.get(0);
+        checkEntityInfo("TestEntity", DEFAULT_VOCABULARY, false, defaultPrefixEntityInfo);
 
         final List<SemanticPropertyInfo> propertyInfo = defaultPrefixEntityInfo.getPropertyInfo();
         assertThat(propertyInfo.size(), is(1));
-        checkPropertyInfo(DEFAULT_PREFIX, "TestField", TestEntity2.class.getDeclaredField("field1"), propertyInfo.get(0));
+        checkPropertyInfo("TestField", TestEntity2.class.getDeclaredField("field1"), propertyInfo.get(0));
     }
 
     @Test
@@ -129,29 +124,37 @@ public class SemanticInfoRegistryTest {
         final SemanticInfoRegistry registry = new SemanticInfoRegistry();
         registry.registerEntity(TestEntity3.class);
 
-        final Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> allEntityInfo = registry.getEntityInfo();
-        assertThat(allEntityInfo.size(), is(1));
+        final ListMultimap<Class<? extends Entity>, SemanticEntityInfo> allEntityInfo = registry.getEntityInfo();
+        assertThat(allEntityInfo.size(), is(2));
         assertTrue("Registry must contain info for test entity class", allEntityInfo.containsKey(TestEntity3.class));
 
-        final Map<String, SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity3.class);
+        final List<SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity3.class);
         assertThat(testEntityInfo.size(), is(2));
-        assertThat(testEntityInfo, hasKey("x"));
-        assertThat(testEntityInfo, hasKey(DEFAULT_PREFIX));
 
-        final SemanticEntityInfo xEntityInfo = testEntityInfo.get("x");
-        checkEntityInfo("TestEntity", TEST_VOCABULARY, "x", false, xEntityInfo);
+        SemanticEntityInfo xEntityInfo = null;
+        SemanticEntityInfo defaultPrefixEntityInfo = null;
+        for (SemanticEntityInfo entityInfo : testEntityInfo) {
+            if (TEST_VOCABULARY.equals(entityInfo.getVocabulary())) {
+                xEntityInfo = entityInfo;
+            } else if (DEFAULT_VOCABULARY.equals(entityInfo.getVocabulary())) {
+                defaultPrefixEntityInfo = entityInfo;
+            }
+        }
+
+        assertNotNull("List should contain SemanticEntityInfo for test vocabulary", xEntityInfo);
+        assertNotNull("List should contain SemanticEntityInfo for default vocabulary", defaultPrefixEntityInfo);
+
+        checkEntityInfo("TestEntity", TEST_VOCABULARY, false, xEntityInfo);
+        checkEntityInfo(TestEntity3.class.getSimpleName(), DEFAULT_VOCABULARY, false, defaultPrefixEntityInfo);
 
         final List<SemanticPropertyInfo> xPropertyInfo = xEntityInfo.getPropertyInfo();
         assertThat(xPropertyInfo.size(), is(2));
-        checkPropertyInfoContains("x", "Field1", TestEntity3.class.getDeclaredField("field1"), xPropertyInfo);
-        checkPropertyInfoContains("x", "field3", TestEntity3.class.getDeclaredField("field3"), xPropertyInfo);
-
-        final SemanticEntityInfo defaultPrefixEntityInfo = testEntityInfo.get(DEFAULT_PREFIX);
-        checkEntityInfo(TestEntity3.class.getSimpleName(), DEFAULT_VOCABULARY, DEFAULT_PREFIX, false, defaultPrefixEntityInfo);
+        checkPropertyInfoContains("Field1", TestEntity3.class.getDeclaredField("field1"), xPropertyInfo);
+        checkPropertyInfoContains("field3", TestEntity3.class.getDeclaredField("field3"), xPropertyInfo);
 
         final List<SemanticPropertyInfo> defaultPrefixPropertyInfo = defaultPrefixEntityInfo.getPropertyInfo();
         assertThat(defaultPrefixPropertyInfo.size(), is(1));
-        checkPropertyInfo(DEFAULT_PREFIX, "Field2", TestEntity3.class.getDeclaredField("field2"), defaultPrefixPropertyInfo.get(0));
+        checkPropertyInfo("Field2", TestEntity3.class.getDeclaredField("field2"), defaultPrefixPropertyInfo.get(0));
     }
 
     @Test
@@ -159,28 +162,36 @@ public class SemanticInfoRegistryTest {
         final SemanticInfoRegistry registry = new SemanticInfoRegistry();
         registry.registerEntity(TestEntity4.class);
 
-        final Map<Class<? extends Entity>, Map<String, SemanticEntityInfo>> allEntityInfo = registry.getEntityInfo();
-        assertThat(allEntityInfo.size(), is(1));
+        final ListMultimap<Class<? extends Entity>, SemanticEntityInfo> allEntityInfo = registry.getEntityInfo();
+        assertThat(allEntityInfo.size(), is(2));
         assertTrue("Registry must contain info for test entity class", allEntityInfo.containsKey(TestEntity4.class));
 
-        final Map<String, SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity4.class);
+        final List<SemanticEntityInfo> testEntityInfo = allEntityInfo.get(TestEntity4.class);
         assertThat(testEntityInfo.size(), is(2));
-        assertThat(testEntityInfo, hasKey(DEFAULT_PREFIX));
-        assertThat(testEntityInfo, hasKey("x"));
 
-        final SemanticEntityInfo defaultPrefixEntityInfo = testEntityInfo.get(DEFAULT_PREFIX);
-        checkEntityInfo("TestEntityA", DEFAULT_VOCABULARY, DEFAULT_PREFIX, true, defaultPrefixEntityInfo);
+        SemanticEntityInfo xEntityInfo = null;
+        SemanticEntityInfo defaultPrefixEntityInfo = null;
+        for (SemanticEntityInfo entityInfo : testEntityInfo) {
+            if (TEST_VOCABULARY.equals(entityInfo.getVocabulary())) {
+                xEntityInfo = entityInfo;
+            } else if (DEFAULT_VOCABULARY.equals(entityInfo.getVocabulary())) {
+                defaultPrefixEntityInfo = entityInfo;
+            }
+        }
 
-        final List<SemanticPropertyInfo> defaultPrefixPropertyInfo = defaultPrefixEntityInfo.getPropertyInfo();
-        assertThat(defaultPrefixPropertyInfo.size(), is(1));
-        checkPropertyInfo(DEFAULT_PREFIX, "field1", TestEntity4.class.getDeclaredField("field1"), defaultPrefixPropertyInfo.get(0));
+        assertNotNull("List should contain SemanticEntityInfo for test vocabulary", xEntityInfo);
+        assertNotNull("List should contain SemanticEntityInfo for default vocabulary", defaultPrefixEntityInfo);
 
-        final SemanticEntityInfo xEntityInfo = testEntityInfo.get("x");
-        checkEntityInfo("TestEntityB", TEST_VOCABULARY, "x", false, xEntityInfo);
+        checkEntityInfo("TestEntityB", TEST_VOCABULARY, false, xEntityInfo);
+        checkEntityInfo("TestEntityA", DEFAULT_VOCABULARY, true, defaultPrefixEntityInfo);
 
         final List<SemanticPropertyInfo> xPropertyInfo = xEntityInfo.getPropertyInfo();
         assertThat(xPropertyInfo.size(), is(1));
-        checkPropertyInfo("x", "FieldOne", TestEntity4.class.getDeclaredField("field1"), xPropertyInfo.get(0));
+        checkPropertyInfo("FieldOne", TestEntity4.class.getDeclaredField("field1"), xPropertyInfo.get(0));
+
+        final List<SemanticPropertyInfo> defaultPrefixPropertyInfo = defaultPrefixEntityInfo.getPropertyInfo();
+        assertThat(defaultPrefixPropertyInfo.size(), is(1));
+        checkPropertyInfo("field1", TestEntity4.class.getDeclaredField("field1"), defaultPrefixPropertyInfo.get(0));
     }
 
     @Test(expected = SemanticMappingException.class)
@@ -193,23 +204,28 @@ public class SemanticInfoRegistryTest {
         new SemanticInfoRegistry().registerEntity(TestErrorEntity2.class);
     }
 
-    private void checkEntityInfo(String expectedEntityName, String expectedVocabulary, String expectedPrefix,
-                                 boolean expectedPublic, SemanticEntityInfo actual) {
+    @Test
+    public void testRegisterEntities() throws SemanticMappingException {
+        final SemanticInfoRegistry registry = new SemanticInfoRegistry();
+        registry.registerEntities("com.sdl.webapp.common.api.model.entity");
+
+        LOG.debug("{}", registry.getEntityInfo());
+    }
+
+    private void checkEntityInfo(String expectedEntityName, String expectedVocabulary, boolean expectedPublic,
+                                 SemanticEntityInfo actual) {
         assertThat(actual.getEntityName(), is(expectedEntityName));
         assertThat(actual.getVocabulary(), is(expectedVocabulary));
-        assertThat(actual.getPrefix(), is(expectedPrefix));
         assertThat(actual.isPublic(), is(expectedPublic));
     }
 
-    private void checkPropertyInfo(String expectedPrefix, String expectedPropertyName, Field expectedField,
-                                   SemanticPropertyInfo actual) {
-        assertThat(actual.getPrefix(), is(expectedPrefix));
+    private void checkPropertyInfo(String expectedPropertyName, Field expectedField, SemanticPropertyInfo actual) {
         assertThat(actual.getPropertyName(), is(expectedPropertyName));
         assertThat(actual.getField(), is(expectedField));
     }
 
-    private void checkPropertyInfoContains(String expectedPrefix, String expectedPropertyName, Field expectedField,
+    private void checkPropertyInfoContains(String expectedPropertyName, Field expectedField,
                                            Collection<SemanticPropertyInfo> actualCollection) {
-        assertThat(actualCollection, hasItem(new SemanticPropertyInfo(expectedPrefix, expectedPropertyName, expectedField)));
+        assertThat(actualCollection, hasItem(new SemanticPropertyInfo(expectedPropertyName, expectedField)));
     }
 }

@@ -7,7 +7,6 @@ import com.sdl.webapp.common.api.model.Entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_PREFIX;
 import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_VOCABULARY;
 
 /**
@@ -17,15 +16,13 @@ final class SemanticEntityInfo {
 
     private final String entityName;
     private final String vocabulary;
-    private final String prefix;
     private final boolean public_;
 
     private final List<SemanticPropertyInfo> propertyInfo = new ArrayList<>();
 
-    public SemanticEntityInfo(String entityName, String vocabulary, String prefix, boolean public_) {
+    public SemanticEntityInfo(String entityName, String vocabulary, boolean public_) {
         this.entityName = entityName;
         this.vocabulary = vocabulary;
-        this.prefix = prefix;
         this.public_ = public_;
     }
 
@@ -43,14 +40,8 @@ final class SemanticEntityInfo {
             v = DEFAULT_VOCABULARY;
         }
 
-        String p = annotation.prefix();
-        if (Strings.isNullOrEmpty(p)) {
-            p = DEFAULT_PREFIX;
-        }
-
         this.entityName = s;
         this.vocabulary = v;
-        this.prefix = p;
         this.public_ = annotation.public_();
     }
 
@@ -60,10 +51,6 @@ final class SemanticEntityInfo {
 
     public String getVocabulary() {
         return vocabulary;
-    }
-
-    public String getPrefix() {
-        return prefix;
     }
 
     public boolean isPublic() {
@@ -86,7 +73,6 @@ final class SemanticEntityInfo {
         SemanticEntityInfo that = (SemanticEntityInfo) o;
 
         if (entityName != null ? !entityName.equals(that.entityName) : that.entityName != null) return false;
-        if (prefix != null ? !prefix.equals(that.prefix) : that.prefix != null) return false;
         if (vocabulary != null ? !vocabulary.equals(that.vocabulary) : that.vocabulary != null) return false;
 
         return true;
@@ -96,7 +82,6 @@ final class SemanticEntityInfo {
     public int hashCode() {
         int result = entityName != null ? entityName.hashCode() : 0;
         result = 31 * result + (vocabulary != null ? vocabulary.hashCode() : 0);
-        result = 31 * result + (prefix != null ? prefix.hashCode() : 0);
         return result;
     }
 
@@ -105,7 +90,6 @@ final class SemanticEntityInfo {
         return "SemanticEntityInfo{" +
                 "entityName='" + entityName + '\'' +
                 ", vocabulary='" + vocabulary + '\'' +
-                ", prefix='" + prefix + '\'' +
                 ", public_=" + public_ +
                 ", propertyInfo=" + propertyInfo +
                 '}';

@@ -5,19 +5,15 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
 import java.lang.reflect.Field;
 
-import static com.sdl.webapp.common.impl.mapping.SemanticInfoRegistry.DEFAULT_PREFIX;
-
 /**
  * Semantic information for a field of an entity class.
  */
 final class SemanticPropertyInfo {
 
-    private final String prefix;
     private final String propertyName;
     private final Field field;
 
-    public SemanticPropertyInfo(String prefix, String propertyName, Field field) {
-        this.prefix = prefix;
+    public SemanticPropertyInfo(String propertyName, Field field) {
         this.propertyName = propertyName;
         this.field = field;
     }
@@ -30,22 +26,10 @@ final class SemanticPropertyInfo {
         if (Strings.isNullOrEmpty(s)) {
             s = field.getName();
         }
-
         final int i = s.indexOf(':');
 
-        if (i >= 0) {
-            this.prefix = s.substring(0, i);
-            this.propertyName = s.length() > i + 1 ? s.substring(i + 1) : field.getName();
-        } else {
-            this.prefix = DEFAULT_PREFIX;
-            this.propertyName = s;
-        }
-
+        this.propertyName = s.length() > i + 1 ? s.substring(i + 1) : field.getName();
         this.field = field;
-    }
-
-    public String getPrefix() {
-        return prefix;
     }
 
     public String getPropertyName() {
@@ -63,7 +47,6 @@ final class SemanticPropertyInfo {
 
         SemanticPropertyInfo that = (SemanticPropertyInfo) o;
 
-        if (prefix != null ? !prefix.equals(that.prefix) : that.prefix != null) return false;
         if (propertyName != null ? !propertyName.equals(that.propertyName) : that.propertyName != null) return false;
 
         return true;
@@ -71,16 +54,13 @@ final class SemanticPropertyInfo {
 
     @Override
     public int hashCode() {
-        int result = prefix != null ? prefix.hashCode() : 0;
-        result = 31 * result + (propertyName != null ? propertyName.hashCode() : 0);
-        return result;
+        return propertyName != null ? propertyName.hashCode() : 0;
     }
 
     @Override
     public String toString() {
         return "SemanticPropertyInfo{" +
-                "prefix='" + prefix + '\'' +
-                ", propertyName='" + propertyName + '\'' +
+                "propertyName='" + propertyName + '\'' +
                 ", field=" + field +
                 '}';
     }

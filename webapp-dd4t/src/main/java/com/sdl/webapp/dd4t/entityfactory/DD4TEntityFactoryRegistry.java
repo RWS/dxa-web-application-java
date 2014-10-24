@@ -3,7 +3,7 @@ package com.sdl.webapp.dd4t.entityfactory;
 /**
  * Registry for entity factories.
  */
-public interface EntityFactoryRegistry {
+public interface DD4TEntityFactoryRegistry {
 
     /**
      * Gets an {@code EntityFactory} for entities of the specified type.
@@ -12,5 +12,5 @@ public interface EntityFactoryRegistry {
      * @return An {@code EntityFactory} for entities of the specified type.
      * @throws UnsupportedEntityTypeException If there is no factory that can create entities of the specified type.
      */
-    EntityFactory getFactoryFor(Class<?> entityClass) throws UnsupportedEntityTypeException;
+    DD4TEntityFactory getFactoryFor(Class<?> entityClass) throws UnsupportedEntityTypeException;
 }

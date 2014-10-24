@@ -13,7 +13,7 @@ import java.util.Map;
 import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.getStringValue;
 
 @Component
-public class TeaserFactory implements EntityFactory {
+public class TeaserFactory implements DD4TEntityFactory {
 
     private static final Class<?>[] SUPPORTED_ENTITY_TYPES = { Teaser.class };
 

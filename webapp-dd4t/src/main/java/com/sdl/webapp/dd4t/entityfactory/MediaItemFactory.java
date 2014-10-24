@@ -6,7 +6,7 @@ import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.GenericComponent;
 import org.dd4t.contentmodel.Multimedia;
 
-public abstract class MediaItemFactory implements EntityFactory {
+public abstract class MediaItemFactory implements DD4TEntityFactory {
 
     protected Entity createBaseEntity(ComponentPresentation componentPresentation, MediaItem entity) {
         final GenericComponent component = componentPresentation.getComponent();

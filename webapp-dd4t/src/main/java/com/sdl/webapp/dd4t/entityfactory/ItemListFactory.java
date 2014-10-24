@@ -15,7 +15,7 @@ import java.util.Map;
 import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.*;
 
 @Component
-public class ItemListFactory implements EntityFactory {
+public class ItemListFactory implements DD4TEntityFactory {
 
     private static final Class<?>[] SUPPORTED_ENTITY_TYPES = { ItemList.class };
 

@@ -14,7 +14,7 @@ import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.getIntValue;
 import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.getStringValue;
 
 @Component
-public class ContentListFactory implements EntityFactory {
+public class ContentListFactory implements DD4TEntityFactory {
 
     private static final Class<?>[] SUPPORTED_ENTITY_TYPES = { ContentList.class };
 

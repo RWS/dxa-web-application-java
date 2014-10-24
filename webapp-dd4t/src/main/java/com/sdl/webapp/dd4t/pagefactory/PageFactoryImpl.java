@@ -11,7 +11,7 @@ import com.sdl.webapp.common.api.model.Region;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import com.sdl.webapp.common.api.model.page.PageImpl;
 import com.sdl.webapp.common.api.model.region.RegionImpl;
-import com.sdl.webapp.dd4t.entityfactory.EntityFactoryRegistry;
+import com.sdl.webapp.dd4t.entityfactory.DD4TEntityFactoryRegistry;
 import org.dd4t.contentmodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class PageFactoryImpl implements PageFactory {
     private ViewModelRegistry viewModelRegistry;
 
     @Autowired
-    private EntityFactoryRegistry entityFactoryRegistry;
+    private DD4TEntityFactoryRegistry entityFactoryRegistry;
 
     @Override
     public Page createPage(GenericPage genericPage, Localization localization) throws ContentProviderException {

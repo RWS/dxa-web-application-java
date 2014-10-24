@@ -15,7 +15,7 @@ import java.util.Map;
 import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.getStringValue;
 
 @Component
-public class ArticleFactory implements EntityFactory {
+public class ArticleFactory implements DD4TEntityFactory {
 
     private static final Class<?>[] SUPPORTED_ENTITY_TYPES = { Article.class };
 

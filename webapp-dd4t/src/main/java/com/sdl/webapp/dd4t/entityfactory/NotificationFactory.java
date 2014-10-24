@@ -7,7 +7,7 @@ import org.dd4t.contentmodel.ComponentPresentation;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NotificationFactory implements EntityFactory {
+public class NotificationFactory implements DD4TEntityFactory {
 
     private static final Class<?>[] SUPPORTED_ENTITY_TYPES = { Notification.class };
 

@@ -7,7 +7,7 @@ import org.dd4t.contentmodel.ComponentPresentation;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ConfigurationFactory implements EntityFactory {
+public class ConfigurationFactory implements DD4TEntityFactory {
 
     private static final Class<?>[] SUPPORTED_ENTITY_TYPES = { Configuration.class };
 

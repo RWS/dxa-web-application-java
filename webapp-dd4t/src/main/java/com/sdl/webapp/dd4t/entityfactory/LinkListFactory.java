@@ -7,7 +7,7 @@ import org.dd4t.contentmodel.ComponentPresentation;
 import org.springframework.stereotype.Component;
 
 @Component
-public class LinkListFactory implements EntityFactory {
+public class LinkListFactory implements DD4TEntityFactory {
 
     private static final Class<?>[] SUPPORTED_ENTITY_TYPES = { LinkList.class };
 

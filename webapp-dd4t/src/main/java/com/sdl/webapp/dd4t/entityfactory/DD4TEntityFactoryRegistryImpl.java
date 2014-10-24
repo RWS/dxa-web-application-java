@@ -11,13 +11,13 @@ import java.util.Map;
  * Implementation of {@code EntityFactoryRegistry}.
  */
 @Component
-public class EntityFactoryRegistryImpl implements EntityFactoryRegistry {
+public class DD4TEntityFactoryRegistryImpl implements DD4TEntityFactoryRegistry {
 
-    private final Map<Class<?>, EntityFactory> entityFactoryMap = new HashMap<>();
+    private final Map<Class<?>, DD4TEntityFactory> entityFactoryMap = new HashMap<>();
 
     @Autowired
-    public EntityFactoryRegistryImpl(List<EntityFactory> entityFactoryList) {
-        for (EntityFactory factory : entityFactoryList) {
+    public DD4TEntityFactoryRegistryImpl(List<DD4TEntityFactory> entityFactoryList) {
+        for (DD4TEntityFactory factory : entityFactoryList) {
             for (Class<?> type : factory.supportedEntityTypes()) {
                 entityFactoryMap.put(type, factory);
             }
@@ -25,8 +25,8 @@ public class EntityFactoryRegistryImpl implements EntityFactoryRegistry {
     }
 
     @Override
-    public EntityFactory getFactoryFor(Class<?> entityClass) throws UnsupportedEntityTypeException {
-        final EntityFactory factory = entityFactoryMap.get(entityClass);
+    public DD4TEntityFactory getFactoryFor(Class<?> entityClass) throws UnsupportedEntityTypeException {
+        final DD4TEntityFactory factory = entityFactoryMap.get(entityClass);
         if (factory == null) {
             throw new UnsupportedEntityTypeException("No factory for creating entity of type: " + entityClass.getName());
         }

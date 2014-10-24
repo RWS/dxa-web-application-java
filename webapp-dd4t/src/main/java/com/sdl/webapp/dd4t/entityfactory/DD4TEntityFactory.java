@@ -7,7 +7,7 @@ import org.dd4t.contentmodel.ComponentPresentation;
 /**
  * Entity factory.
  */
-public interface EntityFactory {
+public interface DD4TEntityFactory {
 
     /**
      * Returns the entity types that this factory can create.

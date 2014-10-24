@@ -7,7 +7,7 @@ import org.dd4t.contentmodel.ComponentPresentation;
 import org.springframework.stereotype.Component;
 
 @Component
-public class NavigationLinksFactory implements EntityFactory {
+public class NavigationLinksFactory implements DD4TEntityFactory {
 
     private static final Class<?>[] SUPPORTED_ENTITY_TYPES = { NavigationLinks.class };
 

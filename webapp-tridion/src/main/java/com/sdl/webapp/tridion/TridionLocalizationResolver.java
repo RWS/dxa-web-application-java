@@ -23,8 +23,12 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
     private final Map<String, Localization> localizations = new HashMap<>();
 
+    private final LocalizationFactory localizationFactory;
+
     @Autowired
-    private LocalizationFactory localizationFactory;
+    public TridionLocalizationResolver(LocalizationFactory localizationFactory) {
+        this.localizationFactory = localizationFactory;
+    }
 
     @Override
     public Localization getLocalization(String url) throws LocalizationResolverException {

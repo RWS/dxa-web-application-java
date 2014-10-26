@@ -26,6 +26,8 @@ public abstract class AbstractMediaHelper implements MediaHelper {
 
     private static final int[] IMAGE_WIDTHS = { 160, 320, 640, 1024, 2048 };
 
+    // TODO: Get rid of circular dependency between MediaHelper and WebRequestContext
+    // TODO: Use constructor injection instead of property injection; doesn't currently work because of circular dependency
     @Autowired
     private WebRequestContext webRequestContext;
 

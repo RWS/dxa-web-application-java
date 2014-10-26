@@ -1,7 +1,11 @@
 package com.sdl.webapp.main;
 
+import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.StaticContentProvider;
+import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.main.interceptor.LocalizationResolverInterceptor;
 import com.sdl.webapp.main.interceptor.StaticContentInterceptor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +28,15 @@ public class WebAppConfiguration extends WebMvcConfigurerAdapter {
     private static final String VIEW_RESOLVER_PREFIX = "/WEB-INF/view/";
     private static final String VIEW_RESOLVER_SUFFIX = ".jsp";
 
+    @Autowired
+    private LocalizationResolver localizationResolver;
+
+    @Autowired
+    private StaticContentProvider staticContentProvider;
+
+    @Autowired
+    private WebRequestContext webRequestContext;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localizationResolverInterceptor());
@@ -32,12 +45,12 @@ public class WebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptor localizationResolverInterceptor() {
-        return new LocalizationResolverInterceptor();
+        return new LocalizationResolverInterceptor(localizationResolver, webRequestContext);
     }
 
     @Bean
     public HandlerInterceptor staticContentInterceptor() {
-        return new StaticContentInterceptor();
+        return new StaticContentInterceptor(staticContentProvider, webRequestContext);
     }
 
     @Bean

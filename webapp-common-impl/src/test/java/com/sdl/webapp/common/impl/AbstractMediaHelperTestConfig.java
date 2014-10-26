@@ -11,12 +11,7 @@ public class AbstractMediaHelperTestConfig {
 
     @Bean
     public AbstractMediaHelper mediaHelper() {
-        return new AbstractMediaHelper() {
-            @Override
-            public String getResponsiveImageUrl(String url, String widthFactor, double aspect, int containerSize) {
-                return url;
-            }
-        };
+        return new MockMediaHelper();
     }
 
     @Bean

@@ -33,8 +33,12 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
 
     private static final String STATIC_FILES_DIR = "BinaryData";
 
+    private final WebApplicationContext webApplicationContext;
+
     @Autowired
-    private WebApplicationContext webApplicationContext;
+    public DD4TStaticContentProvider(WebApplicationContext webApplicationContext) {
+        this.webApplicationContext = webApplicationContext;
+    }
 
     @Override
     public StaticContentItem getStaticContent(String url, String localizationId, String localizationPath)

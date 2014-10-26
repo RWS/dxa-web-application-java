@@ -23,11 +23,15 @@ import javax.servlet.http.HttpServletResponse;
 public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(LocalizationResolverInterceptor.class);
 
-    @Autowired
-    private LocalizationResolver localizationResolver;
+    private final LocalizationResolver localizationResolver;
+
+    private final WebRequestContext webRequestContext;
 
     @Autowired
-    private WebRequestContext webRequestContext;
+    public LocalizationResolverInterceptor(LocalizationResolver localizationResolver, WebRequestContext webRequestContext) {
+        this.localizationResolver = localizationResolver;
+        this.webRequestContext = webRequestContext;
+    }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)

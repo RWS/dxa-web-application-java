@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.util.StreamUtils;
 import com.sdl.webapp.main.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.main.controller.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -32,15 +33,17 @@ import static com.sdl.webapp.main.RequestAttributeNames.SCREEN_WIDTH;
 public class PageController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
 
-    private static final int BUFFER_SIZE = 8192;
-
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
-    @Autowired
     private ContentProvider contentProvider;
 
+    private final WebRequestContext webRequestContext;
+
     @Autowired
-    private WebRequestContext webRequestContext;
+    public PageController(ContentProvider contentProvider, WebRequestContext webRequestContext) {
+        this.contentProvider = contentProvider;
+        this.webRequestContext = webRequestContext;
+    }
 
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = { "text/html" })
     public String handleGetPage(HttpServletRequest request) {
@@ -70,13 +73,9 @@ public class PageController extends AbstractController {
         res.setStatusCode(HttpStatus.OK);
         res.getHeaders().setContentType(MediaType.APPLICATION_JSON);
 
-        try (final InputStream in = getPageContent(url, webRequestContext.getLocalization());
-             final OutputStream out = res.getBody()) {
-            final byte[] buffer = new byte[BUFFER_SIZE];
-            int count;
-            while ((count = in.read(buffer)) > 0) {
-                out.write(buffer, 0, count);
-            }
+        final Localization localization = webRequestContext.getLocalization();
+        try (final InputStream in = getPageContent(url, localization); final OutputStream out = res.getBody()) {
+            StreamUtils.copy(in, out);
         }
     }
 

@@ -27,6 +27,8 @@ public class WebRequestContextImpl implements WebRequestContext {
 
     private static final int MAX_WIDTH = 1024;
 
+    // TODO: Get rid of circular dependency between MediaHelper and WebRequestContext
+    // TODO: Use constructor injection instead of property injection; doesn't currently work because of circular dependency
     @Autowired
     private MediaHelper mediaHelper;
 

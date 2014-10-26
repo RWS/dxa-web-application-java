@@ -36,11 +36,16 @@ public final class DD4TContentProvider implements ContentProvider {
         public T tryFindPage(String url, int publicationId) throws ContentProviderException;
     }
 
-    @Autowired
-    private org.dd4t.core.factories.PageFactory dd4tPageFactory;
+    private final org.dd4t.core.factories.PageFactory dd4tPageFactory;
 
+    // TODO: Get rid of circular dependency between DD4TContentProvider and PageFactoryImpl, this prevents constructor injection
     @Autowired
     private PageFactory pageFactory;
+
+    @Autowired
+    public DD4TContentProvider(org.dd4t.core.factories.PageFactory dd4tPageFactory) {
+        this.dd4tPageFactory = dd4tPageFactory;
+    }
 
     @Override
     public Page getPageModel(String url, final Localization localization) throws ContentProviderException {

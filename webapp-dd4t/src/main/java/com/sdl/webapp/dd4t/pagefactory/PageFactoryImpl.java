@@ -37,14 +37,19 @@ public class PageFactoryImpl implements PageFactory {
     private static final String REGION_VIEW_PREFIX = CORE_MODULE_NAME + "/region/";
     private static final String ENTITY_VIEW_PREFIX = CORE_MODULE_NAME + "/entity/";
 
+    // TODO: Get rid of circular dependency between DD4TContentProvider and PageFactoryImpl, this prevents constructor injection
     @Autowired
     private ContentProvider contentProvider;
 
-    @Autowired
-    private ViewModelRegistry viewModelRegistry;
+    private final ViewModelRegistry viewModelRegistry;
+
+    private final DD4TEntityFactoryRegistry entityFactoryRegistry;
 
     @Autowired
-    private DD4TEntityFactoryRegistry entityFactoryRegistry;
+    public PageFactoryImpl(ViewModelRegistry viewModelRegistry, DD4TEntityFactoryRegistry entityFactoryRegistry) {
+        this.viewModelRegistry = viewModelRegistry;
+        this.entityFactoryRegistry = entityFactoryRegistry;
+    }
 
     @Override
     public Page createPage(GenericPage genericPage, Localization localization) throws ContentProviderException {

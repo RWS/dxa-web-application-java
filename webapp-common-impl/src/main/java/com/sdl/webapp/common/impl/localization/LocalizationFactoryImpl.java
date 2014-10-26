@@ -52,8 +52,12 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    private final StaticContentProvider staticContentProvider;
+
     @Autowired
-    private StaticContentProvider contentProvider;
+    public LocalizationFactoryImpl(StaticContentProvider staticContentProvider) {
+        this.staticContentProvider = staticContentProvider;
+    }
 
     @Override
     public Localization createLocalization(String id, String path) throws LocalizationFactoryException {
@@ -93,7 +97,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     private void loadSemanticSchemas(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
         try {
-            final StaticContentItem item = contentProvider.getStaticContent(SEMANTIC_SCHEMAS_PATH, id, path);
+            final StaticContentItem item = staticContentProvider.getStaticContent(SEMANTIC_SCHEMAS_PATH, id, path);
 
             final List<SemanticSchema> semanticSchemas;
             try (final InputStream in = item.getContent()) {
@@ -110,7 +114,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     private void loadSemanticVocabularies(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
         try {
-            final StaticContentItem item = contentProvider.getStaticContent(SEMANTIC_VOCABULARIES_PATH, id, path);
+            final StaticContentItem item = staticContentProvider.getStaticContent(SEMANTIC_VOCABULARIES_PATH, id, path);
 
             final List<SemanticVocabulary> semanticVocabularies;
             try (final InputStream in = item.getContent()) {
@@ -140,7 +144,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     private JsonNode parseJsonFile(String filePath, String localizationId, String localizationPath)
             throws LocalizationFactoryException {
         try {
-            final StaticContentItem staticContentItem = contentProvider.getStaticContent(filePath, localizationId,
+            final StaticContentItem staticContentItem = staticContentProvider.getStaticContent(filePath, localizationId,
                     localizationPath);
 
             try (final InputStream in = staticContentItem.getContent()) {

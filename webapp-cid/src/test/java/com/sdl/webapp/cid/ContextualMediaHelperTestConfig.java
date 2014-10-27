@@ -13,7 +13,7 @@ public class ContextualMediaHelperTestConfig {
 
     @Bean
     public ContextualMediaHelper mediaHelper() {
-        return new ContextualMediaHelper();
+        return new ContextualMediaHelper(webRequestContext());
     }
 
     @Bean

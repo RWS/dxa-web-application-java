@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.impl;
 
-import com.sdl.webapp.common.api.ScreenWidth;
 import org.springframework.stereotype.Component;
 
 /**
@@ -9,19 +8,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class MockWebRequestContext extends WebRequestContextImpl {
 
-    private ScreenWidth screenWidth;
     private int displayWidth;
     private double pixelRatio;
     private int maxMediaWidth;
-
-    @Override
-    public ScreenWidth getScreenWidth() {
-        return screenWidth;
-    }
-
-    public void setScreenWidth(ScreenWidth screenWidth) {
-        this.screenWidth = screenWidth;
-    }
 
     @Override
     public int getDisplayWidth() {

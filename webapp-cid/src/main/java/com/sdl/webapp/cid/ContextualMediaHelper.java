@@ -1,6 +1,8 @@
 package com.sdl.webapp.cid;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.impl.AbstractMediaHelper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
@@ -10,6 +12,11 @@ import org.springframework.stereotype.Component;
 @Component
 @Primary // Makes this implementation take priority over DefaultMediaHelper
 public class ContextualMediaHelper extends AbstractMediaHelper {
+
+    @Autowired
+    public ContextualMediaHelper(WebRequestContext webRequestContext) {
+        super(webRequestContext);
+    }
 
     @Override
     public String getResponsiveImageUrl(String url, String widthFactor, double aspect, int containerSize) {

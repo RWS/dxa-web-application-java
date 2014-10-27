@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.impl;
 
-import com.sdl.webapp.common.api.ScreenWidth;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,21 +33,21 @@ public class AbstractMediaHelperTest {
 
     @Test
     public void testGetResponsiveWidthExtraSmall() {
-        webRequestContext.setScreenWidth(ScreenWidth.EXTRA_SMALL);
+        webRequestContext.setDisplayWidth(mediaHelper.getSmallScreenBreakpoint() - 1);
         webRequestContext.setMaxMediaWidth(1024);
         assertThat(mediaHelper.getResponsiveWidth("100%", 3), is(1024));
     }
 
     @Test
     public void testGetResponsiveWidthSmall() {
-        webRequestContext.setScreenWidth(ScreenWidth.SMALL);
+        webRequestContext.setDisplayWidth(mediaHelper.getMediumScreenBreakpoint() - 1);
         webRequestContext.setMaxMediaWidth(1024);
         assertThat(mediaHelper.getResponsiveWidth("100%", 3), is(482));
     }
 
     @Test
     public void testGetResponsiveWidthMedium() {
-        webRequestContext.setScreenWidth(ScreenWidth.MEDIUM);
+        webRequestContext.setDisplayWidth(mediaHelper.getLargeScreenBreakpoint() - 1);
         webRequestContext.setMaxMediaWidth(1024);
         assertThat(mediaHelper.getResponsiveWidth("100%", 3), is(166));
     }

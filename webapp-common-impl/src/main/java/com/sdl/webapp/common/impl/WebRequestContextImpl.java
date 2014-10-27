@@ -2,11 +2,8 @@ package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.MediaHelper;
-import com.sdl.webapp.common.api.ScreenWidth;
 import com.tridion.ambientdata.AmbientDataContext;
 import com.tridion.ambientdata.claimstore.ClaimStore;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
@@ -27,14 +24,8 @@ public class WebRequestContextImpl implements WebRequestContext {
 
     private static final int MAX_WIDTH = 1024;
 
-    // TODO: Get rid of circular dependency between MediaHelper and WebRequestContext
-    // TODO: Use constructor injection instead of property injection; doesn't currently work because of circular dependency
-    @Autowired
-    private MediaHelper mediaHelper;
-
     private Localization localization;
 
-    private ScreenWidth screenWidth;
     private Integer displayWidth;
     private Double pixelRatio;
     private Integer maxMediaWidth;
@@ -49,23 +40,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         this.localization = localization;
     }
 
-    public ScreenWidth getScreenWidth() {
-        if (screenWidth == null) {
-            final int displayWidth = getDisplayWidth();
-            if (displayWidth < mediaHelper.getSmallScreenBreakpoint()) {
-                screenWidth = ScreenWidth.EXTRA_SMALL;
-            } else if (displayWidth < mediaHelper.getMediumScreenBreakpoint()) {
-                screenWidth = ScreenWidth.SMALL;
-            } else if (displayWidth < mediaHelper.getLargeScreenBreakpoint()) {
-                screenWidth = ScreenWidth.MEDIUM;
-            } else {
-                screenWidth = ScreenWidth.LARGE;
-            }
-        }
-
-        return screenWidth;
-    }
-
+    @Override
     public int getDisplayWidth() {
         if (displayWidth == null) {
             final ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
@@ -74,6 +49,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         return displayWidth;
     }
 
+    @Override
     public double getPixelRatio() {
         if (pixelRatio == null) {
             pixelRatio = (double) AmbientDataContext.getCurrentClaimStore().get(URI_DEVICE_PIXEL_RATIO);
@@ -81,6 +57,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         return pixelRatio;
     }
 
+    @Override
     public int getMaxMediaWidth() {
         if (maxMediaWidth == null) {
             maxMediaWidth = (int) (Math.max(1.0, getPixelRatio()) * Math.min(getDisplayWidth(), MAX_WIDTH));

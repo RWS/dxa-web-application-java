@@ -1,5 +1,6 @@
 package com.sdl.webapp.main.controller.core;
 
+import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -37,11 +38,14 @@ public class PageController extends AbstractController {
 
     private ContentProvider contentProvider;
 
+    private final MediaHelper mediaHelper;
+
     private final WebRequestContext webRequestContext;
 
     @Autowired
-    public PageController(ContentProvider contentProvider, WebRequestContext webRequestContext) {
+    public PageController(ContentProvider contentProvider, MediaHelper mediaHelper, WebRequestContext webRequestContext) {
         this.contentProvider = contentProvider;
+        this.mediaHelper = mediaHelper;
         this.webRequestContext = webRequestContext;
     }
 
@@ -55,7 +59,7 @@ public class PageController extends AbstractController {
         LOG.trace("handleGetPage: page={}", page);
 
         request.setAttribute(PAGE_MODEL, page);
-        request.setAttribute(SCREEN_WIDTH, webRequestContext.getScreenWidth());
+        request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
 
         final String viewName = page.getViewName();
         LOG.trace("viewName: {}", viewName);

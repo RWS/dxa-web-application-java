@@ -22,13 +22,6 @@ public interface WebRequestContext {
     void setLocalization(Localization localization);
 
     /**
-     * Gets the screen width for the current request.
-     *
-     * @return The screen width for the current request.
-     */
-    ScreenWidth getScreenWidth();
-
-    /**
      * Gets the display width for the current request.
      *
      * @return The display width for the current request.

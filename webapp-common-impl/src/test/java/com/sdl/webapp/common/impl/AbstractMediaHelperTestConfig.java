@@ -11,7 +11,7 @@ public class AbstractMediaHelperTestConfig {
 
     @Bean
     public AbstractMediaHelper mediaHelper() {
-        return new MockMediaHelper();
+        return new MockMediaHelper(webRequestContext());
     }
 
     @Bean

@@ -1,11 +1,11 @@
 package com.sdl.webapp.common.impl;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.common.api.ScreenWidth;
+import com.sdl.webapp.common.api.WebRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Abstract implementation of {@code MediaHelper} with common functionality.
@@ -26,10 +26,11 @@ public abstract class AbstractMediaHelper implements MediaHelper {
 
     private static final int[] IMAGE_WIDTHS = { 160, 320, 640, 1024, 2048 };
 
-    // TODO: Get rid of circular dependency between MediaHelper and WebRequestContext
-    // TODO: Use constructor injection instead of property injection; doesn't currently work because of circular dependency
-    @Autowired
-    private WebRequestContext webRequestContext;
+    private final WebRequestContext webRequestContext;
+
+    protected AbstractMediaHelper(WebRequestContext webRequestContext) {
+        this.webRequestContext = webRequestContext;
+    }
 
     @Override
     public int getResponsiveWidth(String widthFactor, int containerSize) {
@@ -70,7 +71,7 @@ public abstract class AbstractMediaHelper implements MediaHelper {
             }
 
             // Adjust container size for extra small and small screens
-            switch (webRequestContext.getScreenWidth()) {
+            switch (getScreenWidth()) {
                 case EXTRA_SMALL:
                     // Extra small screens are only one column
                     containerSize = gridSize;
@@ -99,6 +100,20 @@ public abstract class AbstractMediaHelper implements MediaHelper {
     @Override
     public int getGridSize() {
         return GRID_SIZE;
+    }
+
+    @Override
+    public ScreenWidth getScreenWidth() {
+        final int displayWidth = webRequestContext.getDisplayWidth();
+        if (displayWidth < SMALL_SCREEN_BREAKPOINT) {
+            return ScreenWidth.EXTRA_SMALL;
+        } else if (displayWidth < MEDIUM_SCREEN_BREAKPOINT) {
+            return ScreenWidth.SMALL;
+        } else if (displayWidth < LARGE_SCREEN_BREAKPOINT) {
+            return ScreenWidth.MEDIUM;
+        } else {
+            return ScreenWidth.LARGE;
+        }
     }
 
     @Override

@@ -12,7 +12,7 @@ public class DefaultMediaHelperTestConfig {
 
     @Bean
     public DefaultMediaHelper mediaHelper() {
-        return new DefaultMediaHelper();
+        return new DefaultMediaHelper(webRequestContext());
     }
 
     @Bean

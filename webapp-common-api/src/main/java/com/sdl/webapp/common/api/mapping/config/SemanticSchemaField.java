@@ -63,4 +63,15 @@ public class SemanticSchemaField {
     public void setFields(List<SemanticSchemaField> fields) {
         this.fields = fields;
     }
+
+    @Override
+    public String toString() {
+        return "SemanticSchemaField{" +
+                "name='" + name + '\'' +
+                ", path='" + path + '\'' +
+                ", isMultiValue=" + isMultiValue +
+                ", semantics=" + semantics +
+                ", fields=" + fields +
+                '}';
+    }
 }

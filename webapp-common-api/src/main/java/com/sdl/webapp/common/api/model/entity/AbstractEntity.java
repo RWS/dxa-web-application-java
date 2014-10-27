@@ -1,22 +1,19 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.Entity;
 
 import java.util.Map;
 
+@SemanticMappingIgnore
 public abstract class AbstractEntity implements Entity {
 
-    @SemanticProperty(ignoreMapping = true)
     private String id;
 
-    @SemanticProperty(ignoreMapping = true)
     private Map<String, String> propertyData;
 
-    @SemanticProperty(ignoreMapping = true)
     private Map<String, String> entityData;
 
-    @SemanticProperty(ignoreMapping = true)
     private String viewName;
 
     @Override

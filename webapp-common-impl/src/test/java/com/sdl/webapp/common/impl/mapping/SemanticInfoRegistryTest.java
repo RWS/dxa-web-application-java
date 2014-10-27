@@ -2,10 +2,7 @@ package com.sdl.webapp.common.impl.mapping;
 
 import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.annotations.*;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import org.junit.Test;
@@ -62,7 +59,7 @@ public class SemanticInfoRegistryTest {
         })
         private String field1;
 
-        @SemanticProperty(ignoreMapping = true)
+        @SemanticMappingIgnore
         private int field2;
     }
 
@@ -153,8 +150,10 @@ public class SemanticInfoRegistryTest {
         checkPropertyInfoContains("field3", TestEntity3.class.getDeclaredField("field3"), xPropertyInfo);
 
         final List<SemanticPropertyInfo> defaultPrefixPropertyInfo = defaultPrefixEntityInfo.getPropertyInfo();
-        assertThat(defaultPrefixPropertyInfo.size(), is(1));
-        checkPropertyInfo("Field2", TestEntity3.class.getDeclaredField("field2"), defaultPrefixPropertyInfo.get(0));
+        assertThat(defaultPrefixPropertyInfo.size(), is(3));
+        checkPropertyInfoContains("field1", TestEntity3.class.getDeclaredField("field1"), defaultPrefixPropertyInfo);
+        checkPropertyInfoContains("Field2", TestEntity3.class.getDeclaredField("field2"), defaultPrefixPropertyInfo);
+        checkPropertyInfoContains("field3", TestEntity3.class.getDeclaredField("field3"), defaultPrefixPropertyInfo);
     }
 
     @Test

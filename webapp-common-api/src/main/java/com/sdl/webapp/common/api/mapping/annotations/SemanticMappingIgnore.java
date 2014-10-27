@@ -6,10 +6,6 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-public @interface SemanticProperty {
-
-    String propertyName() default "";
-
-    String value() default "";
+@Target({ ElementType.TYPE, ElementType.FIELD })
+public @interface SemanticMappingIgnore {
 }

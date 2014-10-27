@@ -5,10 +5,7 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.Vocabularies;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.annotations.*;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.util.PackageUtils;
 import org.slf4j.Logger;
@@ -33,7 +30,7 @@ final class SemanticInfoRegistry {
     public static final String DEFAULT_VOCABULARY = Vocabularies.SDL_CORE;
     public static final String DEFAULT_PREFIX = "";
 
-    private final ListMultimap<Class<? extends Entity>, SemanticEntityInfo> entityInfo = ArrayListMultimap.create();
+    private final ListMultimap<Class<? extends Entity>, SemanticEntityInfo> registry = ArrayListMultimap.create();
 
     /**
      * Register the entity classes in the specified package.
@@ -73,45 +70,50 @@ final class SemanticInfoRegistry {
      */
     public void registerEntity(Class<? extends Entity> entityClass) throws SemanticMappingException {
         LOG.debug("Registering entity class: {}", entityClass.getName());
-        final Map<String, SemanticEntityInfo> semanticEntityInfo = createSemanticEntityInfo(entityClass);
+        final Map<String, SemanticEntityInfo> entityInfoMap = createSemanticEntityInfo(entityClass);
+        if (entityInfoMap != null) {
+            // Add information about properties
+            for (Field field : entityClass.getDeclaredFields()) {
+                final ListMultimap<String, SemanticPropertyInfo> propertyInfoMap = createSemanticPropertyInfo(field);
+                if (propertyInfoMap != null) {
+                    for (Map.Entry<String, SemanticPropertyInfo> entry : propertyInfoMap.entries()) {
+                        final String prefix = entry.getKey();
+                        final SemanticPropertyInfo propertyInfo = entry.getValue();
 
-        // Add default information if not present for the default prefix
-        if (!semanticEntityInfo.containsKey(DEFAULT_PREFIX)) {
-            semanticEntityInfo.put(DEFAULT_PREFIX, new SemanticEntityInfo(entityClass.getSimpleName(),
-                    DEFAULT_VOCABULARY, false));
-        }
-
-        // Add information about properties
-        for (Field field : entityClass.getDeclaredFields()) {
-            for (Map.Entry<String, SemanticPropertyInfo> entry : createSemanticPropertyInfo(field).entries()) {
-                final String prefix = entry.getKey();
-                final SemanticPropertyInfo semanticPropertyInfo = entry.getValue();
-
-                final SemanticEntityInfo matchingEntityInfo = semanticEntityInfo.get(prefix);
-                if (matchingEntityInfo != null) {
-                    matchingEntityInfo.addPropertyInfo(semanticPropertyInfo);
-                } else {
-                    throw new SemanticMappingException("Semantic property information for the field '" +
-                            semanticPropertyInfo.getField() + "' cannot be registered because it uses a prefix for " +
-                            "which there is no semantic entity information. Make sure that the prefix is correct or " +
-                            "that the class has a @SemanticEntity annotation for the prefix '" + prefix + "'.");
+                        final SemanticEntityInfo matchingEntityInfo = entityInfoMap.get(prefix);
+                        if (matchingEntityInfo != null) {
+                            matchingEntityInfo.addPropertyInfo(propertyInfo);
+                        } else {
+                            throw new SemanticMappingException("Semantic property information for the field '" +
+                                    propertyInfo.getField() + "' cannot be registered because it uses a prefix for " +
+                                    "which there is no semantic entity information. Make sure that the prefix is " +
+                                    "correct or that the class has a @SemanticEntity annotation for the prefix '" +
+                                    prefix + "'.");
+                        }
+                    }
                 }
             }
-        }
 
-        entityInfo.putAll(entityClass, semanticEntityInfo.values());
+            registry.putAll(entityClass, entityInfoMap.values());
+        }
     }
 
     /**
      * Creates semantic entity information for the specified class.
      *
      * @param entityClass The entity class.
-     * @return A {@code Map} containing {@code SemanticEntityInfo} objects by vocabulary prefix.
+     * @return A {@code Map} containing {@code SemanticEntityInfo} objects by vocabulary prefix or {@code null} if the
+     *      entity class has a {@code @SemanticMappingIgnore} annotation.
      * @throws SemanticMappingException If an error occurs while inspecting the class, for example because the semantic
      *      mapping defined on the class is incorrect.
      */
     private Map<String, SemanticEntityInfo> createSemanticEntityInfo(Class<? extends Entity> entityClass)
             throws SemanticMappingException {
+        if (entityClass.getAnnotation(SemanticMappingIgnore.class) != null) {
+            LOG.debug("Ignoring entity class: {}", entityClass);
+            return null;
+        }
+
         final Map<String, SemanticEntityInfo> result = new HashMap<>();
 
         for (SemanticEntity semanticEntity : getSemanticEntityAnnotations(entityClass)) {
@@ -123,6 +125,11 @@ final class SemanticInfoRegistry {
                         entityClass.getName() + "' with the same prefix '" + prefix + "'. Make sure that the " +
                         "prefixes are unique for each @SemanticEntity annotation on this class.");
             }
+        }
+
+        // Add default information if no information was explicitly specified for the default prefix
+        if (!result.containsKey(DEFAULT_PREFIX)) {
+            result.put(DEFAULT_PREFIX, new SemanticEntityInfo(entityClass.getSimpleName(), DEFAULT_VOCABULARY, false));
         }
 
         return result;
@@ -146,29 +153,30 @@ final class SemanticInfoRegistry {
      * Creates semantic property information for the specified field.
      *
      * @param field The field.
-     * @return A {@code Map} containing {@code SemanticPropertyInfo} objects by vocabulary prefix.
+     * @return A {@code Map} containing {@code SemanticPropertyInfo} objects by vocabulary prefix or {@code null} if the
+     *      field has a {@code @SemanticMappingIgnore} annotation.
      */
     private ListMultimap<String, SemanticPropertyInfo> createSemanticPropertyInfo(Field field) {
+        if (field.getAnnotation(SemanticMappingIgnore.class) != null) {
+            LOG.debug("Ignoring entity field: {}", field);
+            return null;
+        }
+
         final ListMultimap<String, SemanticPropertyInfo> result = ArrayListMultimap.create();
 
-        final List<SemanticProperty> semanticProperties = getSemanticPropertyAnnotations(field);
-        if (!semanticProperties.isEmpty()) {
-            for (SemanticProperty semanticProperty : semanticProperties) {
-                if (!semanticProperty.ignoreMapping()) {
-                    String s = semanticProperty.propertyName();
-                    if (Strings.isNullOrEmpty(s)) {
-                        s = Strings.nullToEmpty(semanticProperty.value());
-                    }
-                    final int i = s.indexOf(':');
-                    final String prefix = i > 0 ? s.substring(0, i) : DEFAULT_PREFIX;
-
-                    result.put(prefix, new SemanticPropertyInfo(semanticProperty, field));
-                } else {
-                    LOG.debug("Skipping field because it is set to ignored: {}", field);
-                }
+        for (SemanticProperty semanticProperty : getSemanticPropertyAnnotations(field)) {
+            String s = semanticProperty.propertyName();
+            if (Strings.isNullOrEmpty(s)) {
+                s = Strings.nullToEmpty(semanticProperty.value());
             }
-        } else {
-            LOG.debug("Field {} has no semantic property annotation, creating default information", field);
+            final int i = s.indexOf(':');
+            final String prefix = i > 0 ? s.substring(0, i) : DEFAULT_PREFIX;
+
+            result.put(prefix, new SemanticPropertyInfo(semanticProperty, field));
+        }
+
+        // Add default information if no information was explicitly specified for the default prefix
+        if (!result.containsKey(DEFAULT_PREFIX)) {
             result.put(DEFAULT_PREFIX, new SemanticPropertyInfo(field.getName(), field));
         }
 
@@ -196,7 +204,7 @@ final class SemanticInfoRegistry {
      *      objects.
      */
     public ListMultimap<Class<? extends Entity>, SemanticEntityInfo> getEntityInfo() {
-        return entityInfo;
+        return registry;
     }
 
     /**
@@ -206,6 +214,6 @@ final class SemanticInfoRegistry {
      * @return A {@code List} of {@code SemanticEntityInfo} objects.
      */
     public List<SemanticEntityInfo> getEntityInfo(Class<? extends Entity> entityClass) {
-        return entityInfo.get(entityClass);
+        return registry.get(entityClass);
     }
 }

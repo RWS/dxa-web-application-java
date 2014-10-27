@@ -39,4 +39,13 @@ public class FieldSemantics {
     public void setProperty(String property) {
         this.property = property;
     }
+
+    @Override
+    public String toString() {
+        return "FieldSemantics{" +
+                "prefix='" + prefix + '\'' +
+                ", entity='" + entity + '\'' +
+                ", property='" + property + '\'' +
+                '}';
+    }
 }

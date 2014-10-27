@@ -28,4 +28,12 @@ public class SchemaSemantics {
     public void setEntity(String entity) {
         this.entity = entity;
     }
+
+    @Override
+    public String toString() {
+        return "SchemaSemantics{" +
+                "prefix='" + prefix + '\'' +
+                ", entity='" + entity + '\'' +
+                '}';
+    }
 }

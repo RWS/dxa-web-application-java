@@ -1,8 +1,11 @@
 package com.sdl.webapp.common.impl;
 
+import org.springframework.stereotype.Component;
+
 /**
  * Default implementation of {@code MediaHelper}.
  */
+@Component
 public class DefaultMediaHelper extends AbstractMediaHelper {
 
     @Override

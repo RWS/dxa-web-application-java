@@ -6,6 +6,9 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * TODO: Documentation.
+ */
 public final class SemanticSchema {
 
     private final long id;

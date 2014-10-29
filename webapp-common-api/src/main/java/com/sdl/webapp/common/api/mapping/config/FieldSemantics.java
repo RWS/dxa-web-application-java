@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.api.mapping.config;
 
+/**
+ * TODO: Documentation.
+ */
 public final class FieldSemantics {
 
     private final SemanticVocabulary vocabulary;
@@ -50,6 +53,10 @@ public final class FieldSemantics {
 
     @Override
     public String toString() {
-        return String.format("{ %s %s.%s }", vocabulary, entityName, propertyName);
+        return "FieldSemantics{" +
+                "vocabulary=" + vocabulary +
+                ", entityName='" + entityName + '\'' +
+                ", propertyName='" + propertyName + '\'' +
+                '}';
     }
 }

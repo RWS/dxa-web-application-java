@@ -8,11 +8,15 @@ import com.sdl.webapp.common.api.model.Entity;
 final class SemanticEntityInfo {
 
     public static final String DEFAULT_VOCABULARY = SemanticVocabulary.SDL_CORE;
+
     public static final String DEFAULT_PREFIX = "";
 
     private final String vocabulary;
+
     private final String entityName;
+
     private final String prefix;
+
     private final boolean public_;
 
     public SemanticEntityInfo(SemanticEntity annotation, Class<? extends Entity> entityClass) {

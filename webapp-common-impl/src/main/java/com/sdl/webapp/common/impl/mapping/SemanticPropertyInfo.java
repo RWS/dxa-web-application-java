@@ -8,6 +8,7 @@ import java.lang.reflect.Field;
 final class SemanticPropertyInfo {
 
     private final String prefix;
+
     private final String propertyName;
 
     public SemanticPropertyInfo(SemanticProperty annotation, Field field) {

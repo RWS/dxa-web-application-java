@@ -16,6 +16,9 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 
+/**
+ * TODO: Documentation.
+ */
 @Component
 public class SemanticMapperImpl implements SemanticMapper {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMapperImpl.class);

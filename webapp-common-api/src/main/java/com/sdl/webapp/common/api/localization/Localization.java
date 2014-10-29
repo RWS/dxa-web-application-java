@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.localization;
 
-import com.sdl.webapp.common.api.mapping2.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 
 import java.util.List;
 import java.util.Map;

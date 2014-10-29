@@ -1,12 +1,12 @@
-package com.sdl.webapp.common.impl.mapping2;
+package com.sdl.webapp.common.impl.mapping;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.sdl.webapp.common.api.mapping2.annotations.*;
-import com.sdl.webapp.common.api.mapping2.SemanticMappingException;
-import com.sdl.webapp.common.api.mapping2.config.FieldSemantics;
-import com.sdl.webapp.common.api.mapping2.config.SemanticVocabulary;
+import com.sdl.webapp.common.api.mapping.annotations.*;
+import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.util.PackageUtils;
 import org.slf4j.Logger;

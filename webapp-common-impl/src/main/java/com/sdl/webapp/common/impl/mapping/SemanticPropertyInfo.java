@@ -1,7 +1,7 @@
-package com.sdl.webapp.common.impl.mapping2;
+package com.sdl.webapp.common.impl.mapping;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.mapping2.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
 import java.lang.reflect.Field;
 

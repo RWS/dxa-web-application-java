@@ -1,6 +1,6 @@
-package com.sdl.webapp.common.api.mapping2;
+package com.sdl.webapp.common.api.mapping;
 
-import com.sdl.webapp.common.api.mapping2.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.Entity;
 
 public interface SemanticMapper {

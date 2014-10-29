@@ -10,7 +10,6 @@ import com.sdl.webapp.common.api.content.StaticContentProvider;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
-import com.sdl.webapp.common.api.mapping2.config.SemanticSchema;
 import com.sdl.webapp.common.impl.localization.semantics.JsonSchema;
 import com.sdl.webapp.common.impl.localization.semantics.JsonVocabulary;
 import com.sdl.webapp.common.impl.localization.semantics.SemanticsConverter;

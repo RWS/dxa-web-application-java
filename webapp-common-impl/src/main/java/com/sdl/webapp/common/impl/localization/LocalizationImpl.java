@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.mapping2.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 
 import java.util.List;
 import java.util.Map;

@@ -1,11 +1,11 @@
-package com.sdl.webapp.common.impl.mapping2;
+package com.sdl.webapp.common.impl.mapping;
 
-import com.sdl.webapp.common.api.mapping2.config.FieldSemantics;
-import com.sdl.webapp.common.api.mapping2.SemanticFieldDataProvider;
-import com.sdl.webapp.common.api.mapping2.SemanticMapper;
-import com.sdl.webapp.common.api.mapping2.SemanticMappingException;
-import com.sdl.webapp.common.api.mapping2.config.SemanticField;
-import com.sdl.webapp.common.api.mapping2.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
+import com.sdl.webapp.common.api.mapping.SemanticMapper;
+import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import org.slf4j.Logger;

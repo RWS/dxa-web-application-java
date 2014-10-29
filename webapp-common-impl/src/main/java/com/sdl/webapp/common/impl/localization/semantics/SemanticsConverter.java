@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.impl.localization.semantics;
 
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
-import com.sdl.webapp.common.api.mapping2.config.*;
+import com.sdl.webapp.common.api.mapping.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

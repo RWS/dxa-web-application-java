@@ -1,6 +1,6 @@
-package com.sdl.webapp.common.api.mapping2;
+package com.sdl.webapp.common.api.mapping;
 
-import com.sdl.webapp.common.api.mapping2.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import org.springframework.core.convert.TypeDescriptor;
 
 public interface SemanticFieldDataProvider {

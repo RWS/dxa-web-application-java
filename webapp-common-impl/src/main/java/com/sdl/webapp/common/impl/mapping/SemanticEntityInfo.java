@@ -1,8 +1,8 @@
-package com.sdl.webapp.common.impl.mapping2;
+package com.sdl.webapp.common.impl.mapping;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.mapping2.config.Vocabularies;
-import com.sdl.webapp.common.api.mapping2.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.config.Vocabularies;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.model.Entity;
 
 final class SemanticEntityInfo {

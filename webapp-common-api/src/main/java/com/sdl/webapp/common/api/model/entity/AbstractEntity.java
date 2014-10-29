@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import com.sdl.webapp.common.api.mapping2.annotations.SemanticMappingIgnore;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.Entity;
 
 import java.util.Map;

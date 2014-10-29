@@ -1,8 +1,7 @@
-package com.sdl.webapp.common.api.mapping2.config;
+package com.sdl.webapp.common.api.mapping.config;
 
 import com.google.common.collect.ImmutableMap;
 
-import java.util.List;
 import java.util.Map;
 
 public final class SemanticField {

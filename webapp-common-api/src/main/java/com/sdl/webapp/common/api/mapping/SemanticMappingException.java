@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api.mapping2;
+package com.sdl.webapp.common.api.mapping;
 
 public class SemanticMappingException extends Exception {
 

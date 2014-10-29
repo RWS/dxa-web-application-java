@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api.mapping2.config;
+package com.sdl.webapp.common.api.mapping.config;
 
 public final class FieldSemantics {
 

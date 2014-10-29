@@ -4,15 +4,13 @@ import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
-import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
-import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import com.sdl.webapp.common.api.model.page.PageImpl;
 import com.sdl.webapp.common.api.model.region.RegionImpl;
@@ -21,7 +19,6 @@ import org.dd4t.contentmodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -121,6 +118,7 @@ public class PageFactoryImpl implements PageFactory {
         return componentId.split("-")[1];
     }
 
+    // TODO: Old stuff
     private Entity createEntity(ComponentPresentation cp, Localization localization) throws ContentProviderException {
         final GenericComponent component = cp.getComponent();
 
@@ -161,36 +159,19 @@ public class PageFactoryImpl implements PageFactory {
 
             final Class<? extends Entity> entityClass = viewModelRegistry.getViewEntityClass(viewName);
             if (entityClass == null) {
-                throw new ContentProviderException("Cannot determine entity type for view name: " + viewName +
-                        "\nPlease make sure that an entry is registered for this view name in the ViewModelRegistry.");
+                throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
+                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
             }
 
             LOG.debug("{}: Creating entity of type: {}", componentId, entityClass.getName());
 
-            final long schemaId = Integer.parseInt(component.getSchema().getId().split("-")[1]);
-            final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(schemaId);
+            final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(
+                    Long.parseLong(component.getSchema().getId().split("-")[1]));
 
             final AbstractEntity entity;
             try {
-                entity = (AbstractEntity) semanticMapper.createEntity(entityClass, semanticSchema, new SemanticFieldDataProvider() {
-                    private int recursionLevel = 0;
-
-                    @Override
-                    public Object getFieldData(SemanticField semanticField, TypeDescriptor dataTypeDescriptor) {
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("[{}] semanticField: {}, dataTypeDescriptor: {}", new Object[] { recursionLevel,
-                                    semanticField, dataTypeDescriptor });
-                        }
-
-                        // TODO
-                        if (dataTypeDescriptor.getType().equals(String.class)) {
-                            return "hello";
-                        }
-
-                        // TODO
-                        return null;
-                    }
-                });
+                entity = (AbstractEntity) semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
+                        new DD4TSemanticFieldDataProvider(component, semanticMapper));
             } catch (SemanticMappingException e) {
                 throw new ContentProviderException(e);
             }

@@ -50,12 +50,4 @@ public abstract class AbstractEntity implements Entity {
     public void setViewName(String viewName) {
         this.viewName = viewName;
     }
-
-    @Override
-    public String toString() {
-        return "EntityBase{" +
-                "id='" + id + '\'' +
-                ", viewName='" + viewName + '\'' +
-                '}';
-    }
 }

@@ -8,5 +8,5 @@ import org.springframework.core.convert.TypeDescriptor;
  */
 public interface SemanticFieldDataProvider {
 
-    Object getFieldData(SemanticField semanticField, TypeDescriptor dataTypeDescriptor);
+    Object getFieldData(SemanticField semanticField, TypeDescriptor targetType) throws SemanticMappingException;
 }

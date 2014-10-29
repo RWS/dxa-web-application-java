@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 
 /**
  * TODO: Documentation.
@@ -30,23 +31,31 @@ public class SemanticMapperImpl implements SemanticMapper {
     }
 
     @Override
-    public Entity createEntity(Class<? extends Entity> entityClass, final SemanticSchema schema,
+    public Entity createEntity(Class<? extends Entity> entityClass,
+                               final Map<FieldSemantics, SemanticField> semanticFields,
                                final SemanticFieldDataProvider fieldDataProvider) throws SemanticMappingException {
         final Entity entity = createInstance(entityClass);
 
-        LOG.trace("schema: {}", schema.getId());
         ReflectionUtils.doWithFields(entityClass, new ReflectionUtils.FieldCallback() {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 LOG.trace("field: {}", field);
                 for (FieldSemantics fieldSemantics : registry.getFieldSemantics(field)) {
-                    final SemanticField semanticField = schema.getSemanticFields().get(fieldSemantics);
-                    LOG.trace("fieldSemantics: {}, semanticField: {}", fieldSemantics, semanticField);
+                    final SemanticField semanticField = semanticFields.get(fieldSemantics);
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("fieldSemantics: {}, semanticField: {}", fieldSemantics, semanticField);
+                    }
 
                     // TODO: Handle special semantics such as propertyName = "_self" (here or somewhere else?)
 
                     if (semanticField != null) {
-                        final Object fieldData = fieldDataProvider.getFieldData(semanticField, new TypeDescriptor(field));
+                        Object fieldData = null;
+                        try {
+                            fieldData = fieldDataProvider.getFieldData(semanticField, new TypeDescriptor(field));
+                        } catch (SemanticMappingException e) {
+                            LOG.error("Exception while getting field data for: " + field, e);
+                        }
+
                         if (fieldData != null) {
                             field.setAccessible(true);
                             field.set(entity, fieldData);
@@ -57,11 +66,14 @@ public class SemanticMapperImpl implements SemanticMapper {
             }
         });
 
+        LOG.trace("entity: {}", entity);
         return entity;
     }
 
     private Entity createInstance(Class<? extends Entity> entityClass) throws SemanticMappingException {
-        LOG.trace("entityClass: {}", entityClass);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("entityClass: {}", entityClass.getName());
+        }
         try {
             return entityClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {

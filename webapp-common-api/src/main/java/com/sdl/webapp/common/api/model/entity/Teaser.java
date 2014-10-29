@@ -21,7 +21,7 @@ public class Teaser extends AbstractEntity {
             @SemanticProperty("a:_self"),
             @SemanticProperty("p:_self")
     })
-    private Link link;
+    private EmbeddedLink link;
 
     @SemanticProperties({
             @SemanticProperty("headline"),
@@ -46,11 +46,11 @@ public class Teaser extends AbstractEntity {
 
     private Location location;
 
-    public Link getLink() {
+    public EmbeddedLink getLink() {
         return link;
     }
 
-    public void setLink(Link link) {
+    public void setLink(EmbeddedLink link) {
         this.link = link;
     }
 

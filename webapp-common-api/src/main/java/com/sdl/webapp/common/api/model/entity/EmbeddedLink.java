@@ -3,7 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
-public class Link extends AbstractEntity {
+public class EmbeddedLink extends AbstractEntity {
 
     @SemanticProperties({
             @SemanticProperty("internalLink"),
@@ -37,5 +37,14 @@ public class Link extends AbstractEntity {
 
     public void setAlternateText(String alternateText) {
         this.alternateText = alternateText;
+    }
+
+    @Override
+    public String toString() {
+        return "EmbeddedLink{" +
+                "url='" + url + '\'' +
+                ", linkText='" + linkText + '\'' +
+                ", alternateText='" + alternateText + '\'' +
+                '}';
     }
 }

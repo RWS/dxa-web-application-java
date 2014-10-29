@@ -14,7 +14,7 @@ public class ContentList<T> extends AbstractEntity {
     @SemanticProperty("s:headline")
     private String headline;
 
-    private Link link;
+    private EmbeddedLink link;
 
     private int pageSize;
 
@@ -39,11 +39,11 @@ public class ContentList<T> extends AbstractEntity {
         this.headline = headline;
     }
 
-    public Link getLink() {
+    public EmbeddedLink getLink() {
         return link;
     }
 
-    public void setLink(Link link) {
+    public void setLink(EmbeddedLink link) {
         this.link = link;
     }
 

@@ -1,13 +1,13 @@
 package com.sdl.webapp.common.impl.mapping;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.mapping.config.Vocabularies;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.Entity;
 
 final class SemanticEntityInfo {
 
-    public static final String DEFAULT_VOCABULARY = Vocabularies.SDL_CORE;
+    public static final String DEFAULT_VOCABULARY = SemanticVocabulary.SDL_CORE;
     public static final String DEFAULT_PREFIX = "";
 
     private final String vocabulary;

@@ -4,15 +4,16 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
-import com.sdl.webapp.common.api.mapping.config.Vocabularies;
 
 import java.util.Date;
 
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
+
 @SemanticEntities({
-        @SemanticEntity(entityName = "Teaser", vocabulary = Vocabularies.SDL_CORE, prefix = "t"),
-        @SemanticEntity(entityName = "Image", vocabulary = Vocabularies.SDL_CORE, prefix = "i"),
-        @SemanticEntity(entityName = "Article", vocabulary = Vocabularies.SDL_CORE, prefix = "a"),
-        @SemanticEntity(entityName = "Place", vocabulary = Vocabularies.SDL_CORE, prefix = "p")
+        @SemanticEntity(entityName = "Teaser", vocabulary = SDL_CORE, prefix = "t"),
+        @SemanticEntity(entityName = "Image", vocabulary = SDL_CORE, prefix = "i"),
+        @SemanticEntity(entityName = "Article", vocabulary = SDL_CORE, prefix = "a"),
+        @SemanticEntity(entityName = "Place", vocabulary = SDL_CORE, prefix = "p")
 })
 public class Teaser extends AbstractEntity {
 

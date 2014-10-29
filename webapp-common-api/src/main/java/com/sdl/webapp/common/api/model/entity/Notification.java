@@ -1,9 +1,10 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.config.Vocabularies;
 
-@SemanticEntity(entityName = "NotificationBar", vocabulary = Vocabularies.SDL_CORE, prefix = "nb")
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
+
+@SemanticEntity(entityName = "NotificationBar", vocabulary = SDL_CORE, prefix = "nb")
 public class Notification extends AbstractEntity {
 
     private String headline;

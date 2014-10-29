@@ -12,7 +12,6 @@ import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.impl.localization.semantics.JsonSchema;
 import com.sdl.webapp.common.impl.localization.semantics.JsonVocabulary;
-import com.sdl.webapp.common.impl.localization.semantics.SemanticsConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +23,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
+import static com.sdl.webapp.common.impl.localization.semantics.SemanticsConverter.convertSemantics;
 
 /**
  * Implementation of {@code LocalizationFactory}.
@@ -71,8 +72,13 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         loadMainConfiguration(id, path, builder);
         loadResources(id, path, builder);
 
-        builder.addSemanticSchemas(SemanticsConverter.convertSemantics(loadSemanticSchemas(id, path),
-                loadSemanticVocabularies(id, path)));
+        final List<JsonSchema> semanticSchemas = parseJsonFileObject(SEMANTIC_SCHEMAS_PATH, id, path,
+                new TypeReference<List<JsonSchema>>() { });
+
+        final List<JsonVocabulary> semanticVocabularies = parseJsonFileObject(SEMANTIC_VOCABULARIES_PATH, id, path,
+                new TypeReference<List<JsonVocabulary>>() { });
+
+        builder.addSemanticSchemas(convertSemantics(semanticSchemas, semanticVocabularies));
 
         loadIncludes(id, path, builder);
 
@@ -84,7 +90,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private void loadMainConfiguration(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
-        final JsonNode configRootNode = parseJsonFile(CONFIG_BOOTSTRAP_PATH, id, path);
+        final JsonNode configRootNode = parseJsonFileTree(CONFIG_BOOTSTRAP_PATH, id, path);
         builder.setMediaRoot(configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(DEFAULT_MEDIA_ROOT))
                 .setDefault(configRootNode.get(DEFAULT_LOCALIZATION_NODE_NAME).asBoolean(false))
                 .setStaging(configRootNode.get(STAGING_NODE_NAME).asBoolean(false))
@@ -93,39 +99,13 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private void loadResources(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
-        final JsonNode resourcesRootNode = parseJsonFile(RESOURCES_BOOTSTRAP_PATH, id, path);
+        final JsonNode resourcesRootNode = parseJsonFileTree(RESOURCES_BOOTSTRAP_PATH, id, path);
         builder.addResources(parseJsonSubFiles(resourcesRootNode, id, path));
-    }
-
-    private List<JsonSchema> loadSemanticSchemas(String id, String path) throws LocalizationFactoryException {
-        try {
-            final StaticContentItem item = staticContentProvider.getStaticContent(SEMANTIC_SCHEMAS_PATH, id, path);
-
-            try (final InputStream in = item.getContent()) {
-                return objectMapper.readValue(in, new TypeReference<List<JsonSchema>>() { });
-            }
-        } catch (ContentProviderException | IOException e) {
-            throw new LocalizationFactoryException("Exception while reading semantic schema configuration of " +
-                    "localization: [" + id + "] " + path, e);
-        }
-    }
-
-    private List<JsonVocabulary> loadSemanticVocabularies(String id, String path) throws LocalizationFactoryException {
-        try {
-            final StaticContentItem item = staticContentProvider.getStaticContent(SEMANTIC_VOCABULARIES_PATH, id, path);
-
-            try (final InputStream in = item.getContent()) {
-                return objectMapper.readValue(in, new TypeReference<List<JsonVocabulary>>() { });
-            }
-        } catch (ContentProviderException | IOException e) {
-            throw new LocalizationFactoryException("Exception while reading semantic vocabulary configuration of " +
-                    "localization: [" + id + "] " + path, e);
-        }
     }
 
     private void loadIncludes(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
-        final JsonNode includesRootNode = parseJsonFile(INCLUDES_PATH, id, path);
+        final JsonNode includesRootNode = parseJsonFileTree(INCLUDES_PATH, id, path);
         final Iterator<Map.Entry<String, JsonNode>> i = includesRootNode.fields();
         while (i.hasNext()) {
             final Map.Entry<String, JsonNode> entry = i.next();
@@ -136,18 +116,28 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         }
     }
 
-    private JsonNode parseJsonFile(String filePath, String localizationId, String localizationPath)
+    private <T> T parseJsonFileObject(String filePath, String locId, String locPath, TypeReference<T> resultType)
             throws LocalizationFactoryException {
         try {
-            final StaticContentItem staticContentItem = staticContentProvider.getStaticContent(filePath, localizationId,
-                    localizationPath);
+            final StaticContentItem item = staticContentProvider.getStaticContent(filePath, locId, locPath);
+            try (final InputStream in = item.getContent()) {
+                return objectMapper.readValue(in, resultType);
+            }
+        } catch (ContentProviderException | IOException e) {
+            throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + locId +
+                    "] " + locPath, e);
+        }
+    }
 
-            try (final InputStream in = staticContentItem.getContent()) {
+    private JsonNode parseJsonFileTree(String filePath, String locId, String locPath) throws LocalizationFactoryException {
+        try {
+            final StaticContentItem item = staticContentProvider.getStaticContent(filePath, locId, locPath);
+            try (final InputStream in = item.getContent()) {
                 return objectMapper.readTree(in);
             }
         } catch (ContentProviderException | IOException e) {
-            throw new LocalizationFactoryException("Exception while reading configuration of localization: [" +
-                    localizationId + "] " + localizationPath, e);
+            throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + locId +
+                    "] " + locPath, e);
         }
     }
 
@@ -163,7 +153,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                     final String prefix = subFilePath.substring(subFilePath.lastIndexOf('/') + 1,
                             subFilePath.lastIndexOf('.') + 1);
 
-                    final Iterator<Map.Entry<String, JsonNode>> i = parseJsonFile(subFilePath, localizationId,
+                    final Iterator<Map.Entry<String, JsonNode>> i = parseJsonFileTree(subFilePath, localizationId,
                             localizationPath).fields();
                     while (i.hasNext()) {
                         final Map.Entry<String, JsonNode> entry = i.next();

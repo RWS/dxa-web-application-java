@@ -3,7 +3,7 @@ package com.sdl.webapp.common.impl.mapping2;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.sdl.webapp.common.api.mapping.annotations.*;
+import com.sdl.webapp.common.api.mapping2.annotations.*;
 import com.sdl.webapp.common.api.mapping2.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping2.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping2.config.SemanticVocabulary;

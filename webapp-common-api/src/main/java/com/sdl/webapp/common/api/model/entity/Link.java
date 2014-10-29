@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.mapping2.annotations.SemanticProperties;
+import com.sdl.webapp.common.api.mapping2.annotations.SemanticProperty;
 
 public class Link extends AbstractEntity {
 

@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
-import com.sdl.webapp.common.api.mapping.Vocabularies;
+import com.sdl.webapp.common.api.mapping2.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping2.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.mapping2.config.Vocabularies;
 
 @SemanticEntity(entityName = "Place", vocabulary = Vocabularies.SCHEMA_ORG, prefix = "s", public_ = true)
 public class Place extends AbstractEntity {

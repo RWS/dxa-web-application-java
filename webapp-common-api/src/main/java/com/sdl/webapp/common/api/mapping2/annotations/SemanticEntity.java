@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api.mapping.annotations;
+package com.sdl.webapp.common.api.mapping2.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

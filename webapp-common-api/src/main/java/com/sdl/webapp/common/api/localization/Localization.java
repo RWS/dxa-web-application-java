@@ -1,7 +1,6 @@
 package com.sdl.webapp.common.api.localization;
 
-import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
-import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
+import com.sdl.webapp.common.api.mapping2.config.SemanticSchema;
 
 import java.util.List;
 import java.util.Map;
@@ -69,13 +68,6 @@ public interface Localization {
      * @return A {@code Map} in which the keys are schema IDs and the values are {@code SemanticSchema} objects.
      */
     Map<Long, SemanticSchema> getSemanticSchemas();
-
-    /**
-     * Gets the semantic vocabularies defined for this localization by prefix.
-     *
-     * @return A {@code Map} in which the keys are prefixes and the values are {@code SemanticVocabulary} objects.
-     */
-    Map<String, SemanticVocabulary> getSemanticVocabularies();
 
     /**
      * Gets the includes for the specified page type.

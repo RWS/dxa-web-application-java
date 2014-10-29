@@ -11,10 +11,10 @@ public class FieldSemantics {
     private String prefix;
 
     @JsonProperty("Entity")
-    private String entity;
+    private String entityName;
 
     @JsonProperty("Property")
-    private String property;
+    private String propertyName;
 
     public String getPrefix() {
         return prefix;
@@ -24,28 +24,28 @@ public class FieldSemantics {
         this.prefix = prefix;
     }
 
-    public String getEntity() {
-        return entity;
+    public String getEntityName() {
+        return entityName;
     }
 
-    public void setEntity(String entity) {
-        this.entity = entity;
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
     }
 
-    public String getProperty() {
-        return property;
+    public String getPropertyName() {
+        return propertyName;
     }
 
-    public void setProperty(String property) {
-        this.property = property;
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
     }
 
     @Override
     public String toString() {
         return "FieldSemantics{" +
                 "prefix='" + prefix + '\'' +
-                ", entity='" + entity + '\'' +
-                ", property='" + property + '\'' +
+                ", entityName='" + entityName + '\'' +
+                ", propertyName='" + propertyName + '\'' +
                 '}';
     }
 }

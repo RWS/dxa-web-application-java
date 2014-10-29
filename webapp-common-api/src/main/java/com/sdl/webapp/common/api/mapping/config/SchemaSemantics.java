@@ -11,7 +11,7 @@ public class SchemaSemantics {
     private String prefix;
 
     @JsonProperty("Entity")
-    private String entity;
+    private String entityName;
 
     public String getPrefix() {
         return prefix;
@@ -21,19 +21,19 @@ public class SchemaSemantics {
         this.prefix = prefix;
     }
 
-    public String getEntity() {
-        return entity;
+    public String getEntityName() {
+        return entityName;
     }
 
-    public void setEntity(String entity) {
-        this.entity = entity;
+    public void setEntityName(String entityName) {
+        this.entityName = entityName;
     }
 
     @Override
     public String toString() {
         return "SchemaSemantics{" +
                 "prefix='" + prefix + '\'' +
-                ", entity='" + entity + '\'' +
+                ", entityName='" + entityName + '\'' +
                 '}';
     }
 }

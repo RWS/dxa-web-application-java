@@ -10,8 +10,10 @@ import com.sdl.webapp.common.api.content.StaticContentProvider;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
-import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
-import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
+import com.sdl.webapp.common.api.mapping2.config.SemanticSchema;
+import com.sdl.webapp.common.impl.localization.semantics.JsonSchema;
+import com.sdl.webapp.common.impl.localization.semantics.JsonVocabulary;
+import com.sdl.webapp.common.impl.localization.semantics.SemanticsConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +71,10 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
         loadMainConfiguration(id, path, builder);
         loadResources(id, path, builder);
-        loadSemanticSchemas(id, path, builder);
-        loadSemanticVocabularies(id, path, builder);
+
+        builder.addSemanticSchemas(SemanticsConverter.convertSemantics(loadSemanticSchemas(id, path),
+                loadSemanticVocabularies(id, path)));
+
         loadIncludes(id, path, builder);
 
         final Localization localization = builder.build();
@@ -94,34 +98,26 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         builder.addResources(parseJsonSubFiles(resourcesRootNode, id, path));
     }
 
-    private void loadSemanticSchemas(String id, String path, LocalizationImpl.Builder builder)
-            throws LocalizationFactoryException {
+    private List<JsonSchema> loadSemanticSchemas(String id, String path) throws LocalizationFactoryException {
         try {
             final StaticContentItem item = staticContentProvider.getStaticContent(SEMANTIC_SCHEMAS_PATH, id, path);
 
-            final List<SemanticSchema> semanticSchemas;
             try (final InputStream in = item.getContent()) {
-                semanticSchemas = objectMapper.readValue(in, new TypeReference<List<SemanticSchema>>() { });
+                return objectMapper.readValue(in, new TypeReference<List<JsonSchema>>() { });
             }
-
-            builder.addSemanticSchemas(semanticSchemas);
         } catch (ContentProviderException | IOException e) {
             throw new LocalizationFactoryException("Exception while reading semantic schema configuration of " +
                     "localization: [" + id + "] " + path, e);
         }
     }
 
-    private void loadSemanticVocabularies(String id, String path, LocalizationImpl.Builder builder)
-            throws LocalizationFactoryException {
+    private List<JsonVocabulary> loadSemanticVocabularies(String id, String path) throws LocalizationFactoryException {
         try {
             final StaticContentItem item = staticContentProvider.getStaticContent(SEMANTIC_VOCABULARIES_PATH, id, path);
 
-            final List<SemanticVocabulary> semanticVocabularies;
             try (final InputStream in = item.getContent()) {
-                semanticVocabularies = objectMapper.readValue(in, new TypeReference<List<SemanticVocabulary>>() { });
+                return objectMapper.readValue(in, new TypeReference<List<JsonVocabulary>>() { });
             }
-
-            builder.addSemanticVocabularies(semanticVocabularies);
         } catch (ContentProviderException | IOException e) {
             throw new LocalizationFactoryException("Exception while reading semantic vocabulary configuration of " +
                     "localization: [" + id + "] " + path, e);

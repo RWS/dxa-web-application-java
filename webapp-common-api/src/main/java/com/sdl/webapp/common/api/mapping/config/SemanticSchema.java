@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.api.mapping.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.sdl.webapp.common.api.localization.Localization;
 
 import java.util.List;
 
@@ -58,6 +58,33 @@ public class SemanticSchema {
 
     public void setSemantics(List<SchemaSemantics> semantics) {
         this.semantics = ImmutableList.copyOf(semantics);
+    }
+
+    public boolean hasSchemaSemantics(String vocabulary, String entityName, Localization localization) {
+//        final Map<String, SemanticVocabulary> semanticVocabularies = localization.getSemanticVocabularies();
+//        for (SchemaSemantics schemaSemantics : semantics) {
+//            if (vocabulary.equals(semanticVocabularies.get(schemaSemantics.getPrefix()).getVocabulary()) &&
+//                    entityName.equals(schemaSemantics.getEntityName())) {
+//                return true;
+//            }
+//        }
+
+        return false;
+    }
+
+    public SemanticSchemaField findFieldBySemantics(String vocabulary, String entityName, String propertyName, Localization localization) {
+//        final Map<String, SemanticVocabulary> semanticVocabularies = localization.getSemanticVocabularies();
+//        for (SemanticSchemaField field : fields) {
+//            for (FieldSemantics fieldSemantics : field.getSemantics()) {
+//                if (vocabulary.equals(semanticVocabularies.get(fieldSemantics.getPrefix()).getVocabulary()) &&
+//                        entityName.equals(fieldSemantics.getEntityName()) &&
+//                        propertyName.equals(fieldSemantics.getPropertyName())) {
+//                    return field;
+//                }
+//            }
+//        }
+
+        return null;
     }
 
     @Override

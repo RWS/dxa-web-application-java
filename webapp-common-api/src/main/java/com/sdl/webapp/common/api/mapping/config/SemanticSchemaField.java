@@ -22,7 +22,7 @@ public class SemanticSchemaField {
     private List<FieldSemantics> semantics;
 
     @JsonProperty("Fields")
-    private List<SemanticSchemaField> fields;
+    private List<SemanticSchemaField> embeddedFields;
 
     public String getName() {
         return name;
@@ -56,12 +56,12 @@ public class SemanticSchemaField {
         this.semantics = semantics;
     }
 
-    public List<SemanticSchemaField> getFields() {
-        return fields;
+    public List<SemanticSchemaField> getEmbeddedFields() {
+        return embeddedFields;
     }
 
-    public void setFields(List<SemanticSchemaField> fields) {
-        this.fields = fields;
+    public void setEmbeddedFields(List<SemanticSchemaField> embeddedFields) {
+        this.embeddedFields = embeddedFields;
     }
 
     @Override
@@ -71,7 +71,7 @@ public class SemanticSchemaField {
                 ", path='" + path + '\'' +
                 ", isMultiValue=" + isMultiValue +
                 ", semantics=" + semantics +
-                ", fields=" + fields +
+                ", embeddedFields=" + embeddedFields +
                 '}';
     }
 }

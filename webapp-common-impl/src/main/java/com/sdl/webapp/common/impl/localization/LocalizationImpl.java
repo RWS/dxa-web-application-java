@@ -4,8 +4,7 @@ import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
-import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
+import com.sdl.webapp.common.api.mapping2.config.SemanticSchema;
 
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,6 @@ class LocalizationImpl implements Localization {
         private final ImmutableMap.Builder<String, String> configurationBuilder = ImmutableMap.builder();
         private final ImmutableMap.Builder<String, String> resourcesBuilder = ImmutableMap.builder();
         private final ImmutableMap.Builder<Long, SemanticSchema> semanticSchemasBuilder = ImmutableMap.builder();
-        private final ImmutableMap.Builder<String, SemanticVocabulary> semanticVocabulariesBuilder = ImmutableMap.builder();
         private final ImmutableListMultimap.Builder<String, String> includesBuilder = ImmutableListMultimap.builder();
 
         private Builder() {
@@ -78,18 +76,6 @@ class LocalizationImpl implements Localization {
             return this;
         }
 
-        public Builder addSemanticVocabulary(SemanticVocabulary semanticVocabulary) {
-            this.semanticVocabulariesBuilder.put(semanticVocabulary.getPrefix(), semanticVocabulary);
-            return this;
-        }
-
-        public Builder addSemanticVocabularies(Iterable<SemanticVocabulary> semanticVocabularies) {
-            for (SemanticVocabulary semanticVocabulary : semanticVocabularies) {
-                addSemanticVocabulary(semanticVocabulary);
-            }
-            return this;
-        }
-
         public Builder addInclude(String pageTypeId, String include) {
             this.includesBuilder.put(pageTypeId, include);
             return this;
@@ -112,7 +98,6 @@ class LocalizationImpl implements Localization {
     private final Map<String, String> configuration;
     private final Map<String, String> resources;
     private final Map<Long, SemanticSchema> semanticSchemas;
-    private final Map<String, SemanticVocabulary> semanticVocabularies;
     private final ListMultimap<String, String> includes;
 
     private LocalizationImpl(Builder builder) {
@@ -124,7 +109,6 @@ class LocalizationImpl implements Localization {
         this.configuration = builder.configurationBuilder.build();
         this.resources = builder.resourcesBuilder.build();
         this.semanticSchemas = builder.semanticSchemasBuilder.build();
-        this.semanticVocabularies = builder.semanticVocabulariesBuilder.build();
         this.includes = builder.includesBuilder.build();
     }
 
@@ -178,11 +162,6 @@ class LocalizationImpl implements Localization {
     }
 
     @Override
-    public Map<String, SemanticVocabulary> getSemanticVocabularies() {
-        return semanticVocabularies;
-    }
-
-    @Override
     public List<String> getIncludes(String pageTypeId) {
         return includes.get(pageTypeId);
     }
@@ -218,7 +197,6 @@ class LocalizationImpl implements Localization {
                 ", configuration=" + configuration +
                 ", resources=" + resources +
                 ", semanticSchemas=" + semanticSchemas +
-                ", semanticVocabularies=" + semanticVocabularies +
                 ", includes=" + includes +
                 '}';
     }

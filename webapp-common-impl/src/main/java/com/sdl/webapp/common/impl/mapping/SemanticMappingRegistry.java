@@ -23,6 +23,12 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Semantic mapping registry.
+ *
+ * The semantic mapping registry contains information about the entity classes, gathered from the semantic mapping
+ * annotations declared on the classes and the fields of the classes.
+ */
 final class SemanticMappingRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMappingRegistry.class);
 
@@ -32,6 +38,12 @@ final class SemanticMappingRegistry {
         return registry.get(field);
     }
 
+    /**
+     * Registers the entity classes in the specified package and subpackages.
+     *
+     * @param basePackage The base package - this package and its subpackages are scanned for entity classes.
+     * @throws SemanticMappingException If an error occurs while registering the entity classes.
+     */
     public void registerEntities(String basePackage) throws SemanticMappingException {
         LOG.debug("Registering entity classes in package: {}", basePackage);
 
@@ -54,6 +66,12 @@ final class SemanticMappingRegistry {
         }
     }
 
+    /**
+     * Registers the specified entity class.
+     *
+     * @param entityClass The entity class.
+     * @throws SemanticMappingException If an error occurs while registering the entity class.
+     */
     public void registerEntity(Class<? extends Entity> entityClass) throws SemanticMappingException {
         // Ignore classes that have a @SemanticMappingIgnore annotation
         if (entityClass.getAnnotation(SemanticMappingIgnore.class) != null) {
@@ -70,6 +88,7 @@ final class SemanticMappingRegistry {
             final ListMultimap<String, SemanticPropertyInfo> propertyInfoMap = getSemanticPropertyInfo(field);
 
             for (Map.Entry<String, SemanticPropertyInfo> entry : propertyInfoMap.entries()) {
+                // Get the corresponding semantic entity info
                 final String prefix = entry.getKey();
                 final SemanticEntityInfo entityInfo = entityInfoMap.get(prefix);
                 if (entityInfo == null) {
@@ -78,11 +97,13 @@ final class SemanticMappingRegistry {
                             "with this prefix.");
                 }
 
+                // Get the vocabulary id; create the vocabulary for this id if it is not yet created
                 final String vocabularyId = entityInfo.getVocabulary();
                 if (!vocabularies.containsKey(vocabularyId)) {
                     vocabularies.put(vocabularyId, new SemanticVocabulary(vocabularyId));
                 }
 
+                // Create the field semantics and store it
                 final FieldSemantics fieldSemantics = new FieldSemantics(vocabularies.get(vocabularyId),
                         entityInfo.getEntityName(), entry.getValue().getPropertyName());
                 LOG.trace("FieldSemantics: {} -> {}", field, fieldSemantics);
@@ -91,6 +112,14 @@ final class SemanticMappingRegistry {
         }
     }
 
+    /**
+     * Gets semantic entity information for an entity class from the semantic annotations on the class.
+     *
+     * @param entityClass The entity class.
+     * @return A map with {@code SemanticEntityInfo} objects by vocabulary prefix.
+     * @throws SemanticMappingException If there are errors in the configuration, for example if there are multiple
+     *      {@code @SemanticEntity} annotations with the same prefix.
+     */
     private Map<String, SemanticEntityInfo> getSemanticEntityInfo(Class<? extends Entity> entityClass)
             throws SemanticMappingException {
         // NOTE: LinkedHashMap because order of entries is important
@@ -125,6 +154,12 @@ final class SemanticMappingRegistry {
         return result;
     }
 
+    /**
+     * Gets semantic property information for a field from the semantic annotations on the field.
+     *
+     * @param field The field.
+     * @return A map with {@code SemanticPropertyInfo} objects by vocabulary prefix.
+     */
     private ListMultimap<String, SemanticPropertyInfo> getSemanticPropertyInfo(Field field) {
         // Ignore fields that have a @SemanticMappingIgnore annotation and static fields
         if (field.getAnnotation(SemanticMappingIgnore.class) != null || Modifier.isStatic(field.getModifiers())) {

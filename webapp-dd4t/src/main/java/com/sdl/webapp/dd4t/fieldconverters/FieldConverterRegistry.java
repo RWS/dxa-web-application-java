@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t.fieldconv;
+package com.sdl.webapp.dd4t.fieldconverters;
 
 import org.dd4t.contentmodel.FieldType;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t.fieldconv;
+package com.sdl.webapp.dd4t.fieldconverters;
 
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import org.dd4t.contentmodel.FieldType;
@@ -7,9 +7,9 @@ import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExternalLinkFieldConverter extends AbstractFieldConverter {
+public class XhtmlFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.ExternalLink };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.Xhtml };
 
     @Override
     public FieldType[] supportedFieldTypes() {

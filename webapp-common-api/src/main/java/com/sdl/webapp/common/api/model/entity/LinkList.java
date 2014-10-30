@@ -23,4 +23,12 @@ public class LinkList<T> extends AbstractEntity {
     public void setLinks(List<T> links) {
         this.links = links;
     }
+
+    @Override
+    public String toString() {
+        return "LinkList{" +
+                "headline='" + headline + '\'' +
+                ", links=" + links +
+                '}';
+    }
 }

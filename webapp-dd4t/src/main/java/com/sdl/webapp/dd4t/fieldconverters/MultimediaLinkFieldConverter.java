@@ -1,11 +1,10 @@
-package com.sdl.webapp.dd4t.fieldconv;
+package com.sdl.webapp.dd4t.fieldconverters;
 
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Download;
 import com.sdl.webapp.common.api.model.entity.Image;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.api.model.entity.YouTubeVideo;
-import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.GenericComponent;
 import org.dd4t.contentmodel.Multimedia;

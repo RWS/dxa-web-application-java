@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t.fieldconv;
+package com.sdl.webapp.dd4t.fieldconverters;
 
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import org.dd4t.contentmodel.FieldType;

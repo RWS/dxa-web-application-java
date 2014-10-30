@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t.fieldconv;
+package com.sdl.webapp.dd4t.fieldconverters;
 
 public class FieldConverterException extends Exception {
 

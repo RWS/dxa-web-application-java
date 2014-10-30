@@ -6,7 +6,6 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.dd4t.pagefactory.PageFactory;
 import org.dd4t.contentmodel.GenericPage;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.contentmodel.exceptions.SerializationException;

@@ -36,7 +36,7 @@ public class PageController extends AbstractController {
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
-    private ContentProvider contentProvider;
+    private final ContentProvider contentProvider;
 
     private final MediaHelper mediaHelper;
 

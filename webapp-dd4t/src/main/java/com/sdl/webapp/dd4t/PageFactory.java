@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t.pagefactory;
+package com.sdl.webapp.dd4t;
 
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;

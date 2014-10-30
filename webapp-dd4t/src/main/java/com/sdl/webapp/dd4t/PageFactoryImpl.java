@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t.pagefactory;
+package com.sdl.webapp.dd4t;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -15,6 +15,7 @@ import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import com.sdl.webapp.common.api.model.page.PageImpl;
 import com.sdl.webapp.common.api.model.region.RegionImpl;
 import com.sdl.webapp.dd4t.entityfactory.DD4TEntityFactoryRegistry;
+import com.sdl.webapp.dd4t.fieldconv.FieldConverterRegistry;
 import org.dd4t.contentmodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,16 +47,16 @@ public class PageFactoryImpl implements PageFactory {
 
     private final ViewModelRegistry viewModelRegistry;
 
-    private final DD4TEntityFactoryRegistry entityFactoryRegistry;
-
     private final SemanticMapper semanticMapper;
 
+    private final FieldConverterRegistry fieldConverterRegistry;
+
     @Autowired
-    public PageFactoryImpl(ViewModelRegistry viewModelRegistry, DD4TEntityFactoryRegistry entityFactoryRegistry,
-                           SemanticMapper semanticMapper) {
+    public PageFactoryImpl(ViewModelRegistry viewModelRegistry, SemanticMapper semanticMapper,
+                           FieldConverterRegistry fieldConverterRegistry) {
         this.viewModelRegistry = viewModelRegistry;
-        this.entityFactoryRegistry = entityFactoryRegistry;
         this.semanticMapper = semanticMapper;
+        this.fieldConverterRegistry = fieldConverterRegistry;
     }
 
     @Override
@@ -81,7 +82,7 @@ public class PageFactoryImpl implements PageFactory {
         Map<String, RegionImpl> regions = new LinkedHashMap<>();
 
         for (ComponentPresentation cp : genericPage.getComponentPresentations()) {
-            final Entity entity = createEntityNew(cp, localization);
+            final Entity entity = createEntity(cp, localization);
 
             final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
             if (templateMeta != null) {
@@ -118,36 +119,7 @@ public class PageFactoryImpl implements PageFactory {
         return componentId.split("-")[1];
     }
 
-    // TODO: Old stuff
     private Entity createEntity(ComponentPresentation cp, Localization localization) throws ContentProviderException {
-        final GenericComponent component = cp.getComponent();
-
-        final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
-        if (templateMeta != null) {
-            final String componentId = component.getId();
-
-            final String viewName = getStringValue(templateMeta, "view");
-            LOG.debug("{}: viewName: {}", componentId, viewName);
-
-            final Class<? extends Entity> entityClass = viewModelRegistry.getViewEntityClass(viewName);
-            if (entityClass == null) {
-                throw new ContentProviderException("Cannot determine entity type for view name: " + viewName +
-                        "\nPlease make sure that an entry is registered for this view name in the ViewModelRegistry.");
-            }
-
-            LOG.debug("{}: Creating entity of type: {}", componentId, entityClass.getName());
-            AbstractEntity entity = (AbstractEntity) entityFactoryRegistry.getFactoryFor(entityClass).createEntity(cp, entityClass);
-
-            entity.setId(getEntityIdFromComponentId(componentId));
-            entity.setViewName(ENTITY_VIEW_PREFIX + viewName);
-
-            return entity;
-        }
-
-        return null;
-    }
-
-    private Entity createEntityNew(ComponentPresentation cp, Localization localization) throws ContentProviderException {
         final GenericComponent component = cp.getComponent();
 
         final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
@@ -171,7 +143,7 @@ public class PageFactoryImpl implements PageFactory {
             final AbstractEntity entity;
             try {
                 entity = (AbstractEntity) semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
-                        new DD4TSemanticFieldDataProvider(component, semanticMapper));
+                        new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry));
             } catch (SemanticMappingException e) {
                 throw new ContentProviderException(e);
             }

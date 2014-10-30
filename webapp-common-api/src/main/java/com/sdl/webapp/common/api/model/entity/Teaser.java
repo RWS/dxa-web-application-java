@@ -93,4 +93,16 @@ public class Teaser extends AbstractEntity {
     public void setLocation(Location location) {
         this.location = location;
     }
+
+    @Override
+    public String toString() {
+        return "Teaser{" +
+                "link=" + link +
+                ", headline='" + headline + '\'' +
+                ", media=" + media +
+                ", text='" + text + '\'' +
+                ", date=" + date +
+                ", location=" + location +
+                '}';
+    }
 }

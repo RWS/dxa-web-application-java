@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.mapping.config;
 
 /**
- * TODO: Documentation.
+ * Semantic vocabulary.
  */
 public final class SemanticVocabulary {
 

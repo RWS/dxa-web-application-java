@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.mapping.config;
 
 /**
- * TODO: Documentation.
+ * Entity semantics.
  */
 public final class EntitySemantics {
 

@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 
 /**
- * TODO: Documentation.
+ * Semantic field.
  */
 public final class SemanticField {
 

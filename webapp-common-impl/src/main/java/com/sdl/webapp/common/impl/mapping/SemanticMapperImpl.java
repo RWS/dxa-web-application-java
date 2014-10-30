@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO: Documentation.
+ * Implementation of {@code SemanticMapper}.
  */
 @Component
 public class SemanticMapperImpl implements SemanticMapper {
@@ -36,15 +36,19 @@ public class SemanticMapperImpl implements SemanticMapper {
                                final SemanticFieldDataProvider fieldDataProvider) throws SemanticMappingException {
         final Entity entity = createInstance(entityClass);
 
+        // Map all the fields (including fields inherited from superclasses) of the entity
         ReflectionUtils.doWithFields(entityClass, new ReflectionUtils.FieldCallback() {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
+                // Find the semantics for this field
                 final List<FieldSemantics> allFieldSemantics = registry.getFieldSemantics(field);
                 if (LOG.isTraceEnabled() && !allFieldSemantics.isEmpty()) {
                     LOG.trace("field: {}", field);
                 }
 
+                // Try getting data using each of the field semantics in order
                 for (FieldSemantics fieldSemantics : allFieldSemantics) {
+                    // Find the matching semantic field
                     final SemanticField semanticField = semanticFields.get(fieldSemantics);
                     if (LOG.isTraceEnabled() && semanticField != null) {
                         LOG.trace("fieldSemantics: {}, semanticField: {}", fieldSemantics, semanticField);

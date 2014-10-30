@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.mapping.config;
 
 /**
- * TODO: Documentation.
+ * Field semantics.
  */
 public final class FieldSemantics {
 

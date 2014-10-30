@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * TODO: Documentation.
+ * Semantic schema.
  */
 public final class SemanticSchema {
 

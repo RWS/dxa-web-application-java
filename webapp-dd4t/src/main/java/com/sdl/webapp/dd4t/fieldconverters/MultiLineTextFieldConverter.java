@@ -18,7 +18,6 @@ public class MultiLineTextFieldConverter extends AbstractFieldConverter {
 
     @Override
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
-        // TODO: Implement this method
-        return null;
+        return field.getTextValues();
     }
 }

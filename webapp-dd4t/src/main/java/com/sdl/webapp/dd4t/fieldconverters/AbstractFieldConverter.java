@@ -5,7 +5,6 @@ import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.springframework.core.convert.TypeDescriptor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractFieldConverter implements FieldConverter {
@@ -16,7 +15,8 @@ public abstract class AbstractFieldConverter implements FieldConverter {
         final List<?> fieldValues = getFieldValues(field, targetType.isCollection() ?
                 targetType.getElementTypeDescriptor().getObjectType() : targetType.getObjectType());
 
-        return semanticField.isMultiValue() ? fieldValues : (fieldValues.isEmpty() ? null : fieldValues.get(0));
+        return semanticField.isMultiValue() ? fieldValues :
+                (fieldValues != null && !fieldValues.isEmpty() ? fieldValues.get(0) : null);
     }
 
     protected abstract List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException;

@@ -4,7 +4,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <jsp:useBean id="pageModel" type="com.sdl.webapp.common.api.model.Page" scope="request"/>
-<jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.LinkList<com.sdl.webapp.common.api.model.entity.TagLink>" scope="request"/>
+<jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.TagLinkList" scope="request"/>
 
 <div class="icon-list">
     <c:forEach var="link" items="${entityModel.links}">

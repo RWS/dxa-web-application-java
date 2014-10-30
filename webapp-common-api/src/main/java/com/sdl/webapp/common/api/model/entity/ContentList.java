@@ -9,7 +9,7 @@ import java.util.List;
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
 @SemanticEntity(entityName = "ItemList", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
-public class ContentList<T> extends AbstractEntity {
+public class ContentList extends AbstractEntity {
 
     @SemanticProperty("s:headline")
     private String headline;
@@ -29,7 +29,7 @@ public class ContentList<T> extends AbstractEntity {
     private boolean hasMore;
 
     @SemanticProperty("s:itemListElement")
-    private List<T> itemListElements = new ArrayList<>();
+    private List<Teaser> itemListElements = new ArrayList<>();
 
     public String getHeadline() {
         return headline;
@@ -95,11 +95,11 @@ public class ContentList<T> extends AbstractEntity {
         this.hasMore = hasMore;
     }
 
-    public List<T> getItemListElements() {
+    public List<Teaser> getItemListElements() {
         return itemListElements;
     }
 
-    public void setItemListElements(List<T> itemListElements) {
+    public void setItemListElements(List<Teaser> itemListElements) {
         this.itemListElements = itemListElements;
     }
 }

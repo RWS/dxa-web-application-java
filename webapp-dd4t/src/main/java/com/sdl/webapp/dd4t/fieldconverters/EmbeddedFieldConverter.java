@@ -66,7 +66,9 @@ public class EmbeddedFieldConverter implements FieldConverter {
                     "is wrong.");
         }
 
-        // TODO: Something is wrong here, because fieldSet is not used. How does this get the correct data?
+        // TODO: Something is wrong here, because fieldSet is not used.
+        // Probably multi-value embedded fields don't work because of this. Note that DD4TSemanticFieldDataProvider
+        // in findField() always gets the first embedded value.
 
         try {
             return semanticMapper.createEntity(targetClass.asSubclass(Entity.class), semanticField.getEmbeddedFields(),

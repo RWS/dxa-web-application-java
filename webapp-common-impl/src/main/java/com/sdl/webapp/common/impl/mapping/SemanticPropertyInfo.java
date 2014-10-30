@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
 import java.lang.reflect.Field;
+import java.util.List;
 
 final class SemanticPropertyInfo {
 
@@ -37,8 +38,15 @@ final class SemanticPropertyInfo {
     }
 
     private static String getDefaultPropertyName(Field field) {
-        // TODO: Special magic, remove 's' from the end, see [C#] BaseModelBuilder.GetDefaultPropertySemantics
-        return field.getName();
+        String propertyName = field.getName();
+
+        // Special handling: when the field is a List and the name ends with "s", then remove the "s"
+        // (so that for example "paragraphs" becomes "paragraph")
+        if (List.class.isAssignableFrom(field.getType()) && propertyName.endsWith("s")) {
+            propertyName = propertyName.substring(0, propertyName.length() - 1);
+        }
+
+        return propertyName;
     }
 
     public String getPrefix() {

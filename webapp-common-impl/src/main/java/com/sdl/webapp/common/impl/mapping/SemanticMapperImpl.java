@@ -54,7 +54,9 @@ public class SemanticMapperImpl implements SemanticMapper {
                         LOG.trace("fieldSemantics: {}, semanticField: {}", fieldSemantics, semanticField);
                     }
 
-                    // TODO: Handle special semantics such as propertyName = "_self" (here or somewhere else?)
+                    // TODO: Set propertyData in entity
+                    // TODO: Handle special semantics such as propertyName = "_self" or "_all" (here or somewhere else?)
+                    // See [C#] DD4TModelBuilder.CreateModelFromMapData
 
                     if (semanticField != null) {
                         Object fieldData = null;

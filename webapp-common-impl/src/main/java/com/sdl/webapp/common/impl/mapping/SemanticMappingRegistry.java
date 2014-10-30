@@ -17,6 +17,7 @@ import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -54,6 +55,7 @@ final class SemanticMappingRegistry {
     }
 
     public void registerEntity(Class<? extends Entity> entityClass) throws SemanticMappingException {
+        // Ignore classes that have a @SemanticMappingIgnore annotation
         if (entityClass.getAnnotation(SemanticMappingIgnore.class) != null) {
             LOG.debug("Ignoring entity class: {}", entityClass);
             return;
@@ -124,6 +126,12 @@ final class SemanticMappingRegistry {
     }
 
     private ListMultimap<String, SemanticPropertyInfo> getSemanticPropertyInfo(Field field) {
+        // Ignore fields that have a @SemanticMappingIgnore annotation and static fields
+        if (field.getAnnotation(SemanticMappingIgnore.class) != null || Modifier.isStatic(field.getModifiers())) {
+            LOG.debug("Ignoring field: {}", field);
+            return LinkedListMultimap.create();
+        }
+
         // NOTE: LinkedListMultimap because order of entries is important
         final ListMultimap<String, SemanticPropertyInfo> result = LinkedListMultimap.create();
 

@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.entity.Image;
 import com.sdl.webapp.common.api.model.entity.ItemList;
 import com.sdl.webapp.common.api.model.entity.Teaser;
+import com.sdl.webapp.dd4t.fieldconv.FieldUtils;
 import org.dd4t.contentmodel.*;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.*;
+import static com.sdl.webapp.dd4t.fieldconv.FieldUtils.*;
 
 @Component
 public class ItemListFactory implements DD4TEntityFactory {
@@ -32,7 +33,7 @@ public class ItemListFactory implements DD4TEntityFactory {
         final GenericComponent component = componentPresentation.getComponent();
         final Map<String, Field> content = component.getContent();
 
-        itemList.setHeadline(FieldUtil.getStringValue(content, "headline"));
+        itemList.setHeadline(FieldUtils.getStringValue(content, "headline"));
 
         List<Teaser> itemListElements = new ArrayList<>();
         for (FieldSet fieldSet : getEmbeddedValues(content, "itemListElement")) {

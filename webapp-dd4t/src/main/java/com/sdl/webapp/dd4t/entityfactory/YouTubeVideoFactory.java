@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.getStringValue;
+import static com.sdl.webapp.dd4t.fieldconv.FieldUtils.getStringValue;
 
 @Component
 public class YouTubeVideoFactory extends MediaItemFactory {

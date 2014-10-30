@@ -38,7 +38,7 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
         final String pathHead = parts[0];
         final String pathTail = parts[1];
 
-        final Map<String, Field> fields = pathHead.equals("/Metadata") ? component.getMetadata() : component.getContent();
+        final Map<String, Field> fields = pathHead.equals("Metadata") ? component.getMetadata() : component.getContent();
 
         final Field field = findField(pathTail, fields);
         if (field == null) {

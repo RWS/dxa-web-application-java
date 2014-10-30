@@ -59,9 +59,10 @@ public class EmbeddedFieldConverter implements FieldConverter {
                                  SemanticFieldDataProvider semanticFieldDataProvider) throws FieldConverterException {
         final Class<?> targetClass = targetType.getType();
         if (!Entity.class.isAssignableFrom(targetClass)) {
-            throw new FieldConverterException("The target field type for an embedded field must implement interface " +
-                    Entity.class.getName() + ", but something else was found instead: " + targetClass.getName() +
-                    " - This most likely means the field type in the containing entity class is wrong.");
+            throw new UnsupportedTargetTypeException("The target field type for an embedded field must implement " +
+                    "interface " + Entity.class.getName() + ", but something else was found instead: " +
+                    targetClass.getName() + " - This most likely means the field type in the containing entity class " +
+                    "is wrong.");
         }
 
         // TODO: Something is wrong here, because fieldSet is not used. How does this get the correct data?
@@ -70,7 +71,8 @@ public class EmbeddedFieldConverter implements FieldConverter {
             return semanticMapper.createEntity(targetClass.asSubclass(Entity.class), semanticField.getEmbeddedFields(),
                     semanticFieldDataProvider);
         } catch (SemanticMappingException e) {
-            throw new FieldConverterException(e);
+            throw new FieldConverterException("Exception while creating entity for embedded field: " +
+                    semanticField.getPath(), e);
         }
     }
 }

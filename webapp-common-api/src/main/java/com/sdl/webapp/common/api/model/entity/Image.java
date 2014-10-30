@@ -18,4 +18,15 @@ public class Image extends MediaItem {
     public void setAlternateText(String alternateText) {
         this.alternateText = alternateText;
     }
+
+    @Override
+    public String toString() {
+        return "Image{" +
+                "url='" + getUrl() + '\'' +
+                ", fileName='" + getFileName() + '\'' +
+                ", fileSize=" + getFileSize() +
+                ", mimeType='" + getMimeType() + '\'' +
+                ", alternateText='" + alternateText + '\'' +
+                '}';
+    }
 }

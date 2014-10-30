@@ -22,10 +22,6 @@ public class TextFieldConverter extends AbstractFieldConverter {
     public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType)
             throws FieldConverterException {
         final List<String> textValues = field.getTextValues();
-        if (semanticField.isMultiValue()) {
-            return textValues;
-        } else {
-            return textValues.isEmpty() ? "" : textValues.get(0);
-        }
+        return semanticField.isMultiValue() ? textValues : (textValues.isEmpty() ? null : textValues.get(0));
     }
 }

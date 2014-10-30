@@ -1,11 +1,10 @@
 package com.sdl.webapp.common.impl.mapping;
 
-import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
-import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import org.slf4j.Logger;
@@ -15,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,10 +39,14 @@ public class SemanticMapperImpl implements SemanticMapper {
         ReflectionUtils.doWithFields(entityClass, new ReflectionUtils.FieldCallback() {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                LOG.trace("field: {}", field);
-                for (FieldSemantics fieldSemantics : registry.getFieldSemantics(field)) {
+                final List<FieldSemantics> allFieldSemantics = registry.getFieldSemantics(field);
+                if (LOG.isTraceEnabled() && !allFieldSemantics.isEmpty()) {
+                    LOG.trace("field: {}", field);
+                }
+
+                for (FieldSemantics fieldSemantics : allFieldSemantics) {
                     final SemanticField semanticField = semanticFields.get(fieldSemantics);
-                    if (LOG.isTraceEnabled()) {
+                    if (LOG.isTraceEnabled() && semanticField != null) {
                         LOG.trace("fieldSemantics: {}, semanticField: {}", fieldSemantics, semanticField);
                     }
 

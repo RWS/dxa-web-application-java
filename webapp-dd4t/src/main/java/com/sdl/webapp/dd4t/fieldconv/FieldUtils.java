@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t.entityfactory;
+package com.sdl.webapp.dd4t.fieldconv;
 
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Field;
@@ -14,9 +14,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public final class FieldUtil {
+public final class FieldUtils {
 
-    private FieldUtil() {
+    private FieldUtils() {
     }
 
     public static List<String> getStringValues(Map<String, Field> fields, String name) {

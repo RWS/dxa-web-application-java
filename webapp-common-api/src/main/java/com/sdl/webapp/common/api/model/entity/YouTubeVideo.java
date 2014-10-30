@@ -44,4 +44,18 @@ public class YouTubeVideo extends MediaItem {
     public void setHeight(int height) {
         this.height = height;
     }
+
+    @Override
+    public String toString() {
+        return "YouTubeVideo{" +
+                "url='" + getUrl() + '\'' +
+                ", fileName='" + getFileName() + '\'' +
+                ", fileSize=" + getFileSize() +
+                ", mimeType='" + getMimeType() + '\'' +
+                ", headline='" + headline + '\'' +
+                ", youTubeId='" + youTubeId + '\'' +
+                ", width=" + width +
+                ", height=" + height +
+                '}';
+    }
 }

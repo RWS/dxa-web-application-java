@@ -22,4 +22,15 @@ public class Download extends MediaItem {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public String toString() {
+        return "Download{" +
+                "url='" + getUrl() + '\'' +
+                ", fileName='" + getFileName() + '\'' +
+                ", fileSize=" + getFileSize() +
+                ", mimeType='" + getMimeType() + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
 }

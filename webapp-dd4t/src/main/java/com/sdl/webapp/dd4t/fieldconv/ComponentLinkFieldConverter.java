@@ -58,7 +58,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
                 return link;
             }
         } else {
-            throw new FieldConverterException("Unsupported target type for component link field: " +
+            throw new UnsupportedTargetTypeException("Unsupported target type for component link field: " +
                     targetClass.getName());
         }
     }

@@ -14,7 +14,6 @@ import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import com.sdl.webapp.common.api.model.page.PageImpl;
 import com.sdl.webapp.common.api.model.region.RegionImpl;
-import com.sdl.webapp.dd4t.entityfactory.DD4TEntityFactoryRegistry;
 import com.sdl.webapp.dd4t.fieldconv.FieldConverterRegistry;
 import org.dd4t.contentmodel.*;
 import org.slf4j.Logger;
@@ -26,7 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static com.sdl.webapp.dd4t.entityfactory.FieldUtil.getStringValue;
+import static com.sdl.webapp.dd4t.fieldconv.FieldUtils.getStringValue;
 
 /**
  * TODO: Must be modified to work with semantic mapping instead of simple mapping.

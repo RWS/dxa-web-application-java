@@ -1,10 +1,11 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
-import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class NumberFieldConverter extends AbstractFieldConverter {
@@ -17,9 +18,24 @@ public class NumberFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType)
-            throws FieldConverterException {
-        // TODO: Implement this method
-        return null;
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
+        final List<Double> numericValues = field.getNumericValues();
+
+        if (targetClass.isAssignableFrom(Double.class)) {
+            return numericValues;
+        } else if (targetClass.isAssignableFrom(Integer.class)) {
+            return getIntegerValues(numericValues);
+        } else {
+            throw new UnsupportedTargetTypeException("Unsupported target type for number field: " +
+                    targetClass.getName());
+        }
+    }
+
+    private List<Integer> getIntegerValues(List<Double> numericValues) {
+        final List<Integer> integerValues = new ArrayList<>();
+        for (Double number : numericValues) {
+            integerValues.add((int) Math.round(number));
+        }
+        return integerValues;
     }
 }

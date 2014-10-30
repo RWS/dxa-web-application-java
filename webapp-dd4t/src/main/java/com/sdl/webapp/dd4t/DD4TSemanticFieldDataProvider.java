@@ -18,8 +18,13 @@ import org.springframework.core.convert.TypeDescriptor;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of {@code SemanticFieldDataProvider} that gets field data from the DD4T model.
+ */
 public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DD4TSemanticFieldDataProvider.class);
+
+    private static final String METADATA_PATH = "Metadata";
 
     private final GenericComponent component;
 
@@ -38,9 +43,8 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
         final String pathHead = parts[0];
         final String pathTail = parts[1];
 
-        final Map<String, Field> fields = pathHead.equals("Metadata") ? component.getMetadata() : component.getContent();
-
-        final Field field = findField(pathTail, fields);
+        final Field field = findField(pathTail,
+                pathHead.equals(METADATA_PATH) ? component.getMetadata() : component.getContent());
         if (field == null) {
             LOG.debug("No DD4T field found for: {}", semanticField);
             return null;

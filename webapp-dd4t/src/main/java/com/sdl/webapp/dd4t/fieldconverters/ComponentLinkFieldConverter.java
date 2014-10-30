@@ -33,41 +33,9 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType)
-            throws FieldConverterException {
-        final List<String> urls = getUrls(field.getLinkedComponentValues());
-        if (urls.isEmpty()) {
-            return null;
-        }
-
-        final Class<?> targetClass = targetType.getType();
-        if (String.class.isAssignableFrom(targetClass)) {
-            return semanticField.isMultiValue() ? urls : urls.get(0);
-        } else if (EmbeddedLink.class.isAssignableFrom(targetClass)) {
-            if (semanticField.isMultiValue()) {
-                final List<EmbeddedLink> links = new ArrayList<>();
-                for (String url : urls) {
-                    EmbeddedLink link = new EmbeddedLink();
-                    link.setUrl(url);
-                    links.add(link);
-                }
-                return links;
-            } else {
-                EmbeddedLink link = new EmbeddedLink();
-                link.setUrl(urls.get(0));
-                return link;
-            }
-        } else {
-            throw new UnsupportedTargetTypeException("Unsupported target type for component link field: " +
-                    targetClass.getName());
-        }
-    }
-
-
-    private List<String> getUrls(List<org.dd4t.contentmodel.Component> components) throws FieldConverterException {
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
         final List<String> urls = new ArrayList<>();
-
-        for (org.dd4t.contentmodel.Component component : components) {
+        for (org.dd4t.contentmodel.Component component : field.getLinkedComponentValues()) {
             final String url;
             try {
                 url = linkResolver.resolve(component);
@@ -80,6 +48,23 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
             }
         }
 
-        return urls;
+        if (targetClass.isAssignableFrom(String.class)) {
+            return urls;
+        } else if (targetClass.isAssignableFrom(EmbeddedLink.class)) {
+            return getLinkValues(urls);
+        } else {
+            throw new UnsupportedTargetTypeException("Unsupported target type for component link field: " +
+                    targetClass.getName());
+        }
+    }
+
+    private List<EmbeddedLink> getLinkValues(List<String> urls) {
+        final List<EmbeddedLink> links = new ArrayList<>();
+        for (String url : urls) {
+            EmbeddedLink link = new EmbeddedLink();
+            link.setUrl(url);
+            links.add(link);
+        }
+        return links;
     }
 }

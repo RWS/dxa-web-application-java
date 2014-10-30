@@ -1,9 +1,7 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
-import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -19,9 +17,7 @@ public class TextFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType)
-            throws FieldConverterException {
-        final List<String> textValues = field.getTextValues();
-        return semanticField.isMultiValue() ? textValues : (textValues.isEmpty() ? null : textValues.get(0));
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
+        return field.getTextValues();
     }
 }

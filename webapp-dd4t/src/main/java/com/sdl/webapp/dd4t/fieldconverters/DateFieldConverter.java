@@ -6,6 +6,8 @@ import org.dd4t.contentmodel.impl.BaseField;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class DateFieldConverter extends AbstractFieldConverter {
 
@@ -17,9 +19,7 @@ public class DateFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType)
-            throws FieldConverterException {
-        // TODO: Implement this method
-        return null;
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
+        return field.getDateTimeValues();
     }
 }

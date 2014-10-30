@@ -1,6 +1,5 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
-import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Download;
 import com.sdl.webapp.common.api.model.entity.Image;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
@@ -9,7 +8,6 @@ import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.GenericComponent;
 import org.dd4t.contentmodel.Multimedia;
 import org.dd4t.contentmodel.impl.BaseField;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -26,36 +24,32 @@ public class MultimediaLinkFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType)
-            throws FieldConverterException {
-        final List<Object> fieldValues = new ArrayList<>();
-
-        final Class<?> targetClass = targetType.isCollection() ? targetType.getElementTypeDescriptor().getType() :
-                targetType.getType();
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
+        final List<MediaItem> mediaItems = new ArrayList<>();
 
         for (org.dd4t.contentmodel.Component component : field.getLinkedComponentValues()) {
-            final Object fieldValue;
+            final MediaItem mediaItem;
 
             // TODO: Find a better way to determine the media item type instead of looking at the schema title
             final String schemaTitle = component.getSchema().getTitle().toLowerCase();
 
             if (targetClass.isAssignableFrom(YouTubeVideo.class) && schemaTitle.contains("youtube")) {
-                fieldValue = createYouTubeEntity((GenericComponent) component);
+                mediaItem = createYouTubeEntity((GenericComponent) component);
             } else if (targetClass.isAssignableFrom(Download.class) && schemaTitle.contains("download")) {
-                fieldValue = createDownloadEntity((GenericComponent) component);
+                mediaItem = createDownloadEntity((GenericComponent) component);
             } else if (targetClass.isAssignableFrom(Image.class)) {
-                fieldValue = createImageEntity((GenericComponent) component);
+                mediaItem = createImageEntity((GenericComponent) component);
             } else {
                 throw new UnsupportedTargetTypeException("Unsupported target type for multimedia link field: " +
                         targetClass.getName());
             }
 
-            if (fieldValue != null) {
-                fieldValues.add(fieldValue);
+            if (mediaItem != null) {
+                mediaItems.add(mediaItem);
             }
         }
 
-        return semanticField.isMultiValue() ? fieldValues : (fieldValues.isEmpty() ? null : fieldValues.get(0));
+        return mediaItems;
     }
 
     private Image createImageEntity(GenericComponent component) {

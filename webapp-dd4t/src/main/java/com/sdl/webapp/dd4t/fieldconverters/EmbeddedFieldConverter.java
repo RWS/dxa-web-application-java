@@ -57,7 +57,8 @@ public class EmbeddedFieldConverter implements FieldConverter {
 
     private Object getFieldValue(SemanticField semanticField, FieldSet fieldSet, TypeDescriptor targetType,
                                  SemanticFieldDataProvider semanticFieldDataProvider) throws FieldConverterException {
-        final Class<?> targetClass = targetType.getType();
+        final Class<?> targetClass = targetType.getObjectType();
+
         if (!Entity.class.isAssignableFrom(targetClass)) {
             throw new UnsupportedTargetTypeException("The target field type for an embedded field must implement " +
                     "interface " + Entity.class.getName() + ", but something else was found instead: " +

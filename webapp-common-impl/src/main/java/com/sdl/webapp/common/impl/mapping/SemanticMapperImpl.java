@@ -24,9 +24,12 @@ import java.util.Map;
 public class SemanticMapperImpl implements SemanticMapper {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMapperImpl.class);
 
+    private static final String ALL_PROPERTY = "_all";
+    private static final String SELF_PROPERTY = "_self";
+
     private final SemanticMappingRegistry registry = new SemanticMappingRegistry();
 
-    public SemanticMapperImpl() throws SemanticMappingException {
+    public SemanticMapperImpl() {
         this.registry.registerEntities(AbstractEntity.class.getPackage().getName());
     }
 
@@ -54,10 +57,6 @@ public class SemanticMapperImpl implements SemanticMapper {
                         LOG.trace("fieldSemantics: {}, semanticField: {}", fieldSemantics, semanticField);
                     }
 
-                    // TODO: Set propertyData in entity
-                    // TODO: Handle special semantics such as propertyName = "_self" or "_all" (here or somewhere else?)
-                    // See [C#] DD4TModelBuilder.CreateModelFromMapData
-
                     if (semanticField != null) {
                         Object fieldData = null;
                         try {
@@ -69,12 +68,45 @@ public class SemanticMapperImpl implements SemanticMapper {
                         if (fieldData != null) {
                             field.setAccessible(true);
                             field.set(entity, fieldData);
-                            return;
+                            break;
+                        }
+                    }
+
+                    // Special cases
+                    final String propertyName = fieldSemantics.getPropertyName();
+                    if (propertyName.equals(SELF_PROPERTY)) {
+                        Object fieldData = null;
+                        try {
+                            fieldData = fieldDataProvider.getSelfPropertyData(new TypeDescriptor(field));
+                        } catch (SemanticMappingException e) {
+                            LOG.error("Exception while getting self property data for: " + field, e);
+                        }
+
+                        if (fieldData != null) {
+                            field.setAccessible(true);
+                            field.set(entity, fieldData);
+                            break;
+                        }
+                    } else if (propertyName.equals(ALL_PROPERTY)) {
+                        Map<String, ?> fieldData = null;
+                        try {
+                            fieldData = fieldDataProvider.getAllPropertyData();
+                        } catch (SemanticMappingException e) {
+                            LOG.error("Exception while getting all property data for: " + field, e);
+                        }
+
+                        if (fieldData != null) {
+                            field.setAccessible(true);
+                            field.set(entity, fieldData);
+                            break;
                         }
                     }
                 }
             }
         });
+
+        // TODO: Set propertyData in entity
+        // See [C#] DD4TModelBuilder.CreateModelFromMapData
 
         LOG.trace("entity: {}", entity);
         return entity;

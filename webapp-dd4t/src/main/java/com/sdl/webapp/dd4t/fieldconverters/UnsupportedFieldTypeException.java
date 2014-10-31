@@ -1,23 +1,13 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
+import org.dd4t.contentmodel.FieldType;
+
+/**
+ * Thrown by {@code FieldConverterRegistry} when there is no {@code FieldConverter} for the specified field type.
+ */
 public class UnsupportedFieldTypeException extends FieldConverterException {
 
-    public UnsupportedFieldTypeException() {
-    }
-
-    public UnsupportedFieldTypeException(String message) {
-        super(message);
-    }
-
-    public UnsupportedFieldTypeException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public UnsupportedFieldTypeException(Throwable cause) {
-        super(cause);
-    }
-
-    public UnsupportedFieldTypeException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-        super(message, cause, enableSuppression, writableStackTrace);
+    public UnsupportedFieldTypeException(FieldType fieldType) {
+        super("No field converter available for field type: " + fieldType);
     }
 }

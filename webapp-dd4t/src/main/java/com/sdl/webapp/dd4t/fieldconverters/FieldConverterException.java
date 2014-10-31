@@ -1,6 +1,8 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
-public class FieldConverterException extends Exception {
+import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+
+public class FieldConverterException extends SemanticMappingException {
 
     public FieldConverterException() {
     }

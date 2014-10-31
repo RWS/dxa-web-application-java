@@ -3,6 +3,8 @@ package com.sdl.webapp.common.api.mapping;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import org.springframework.core.convert.TypeDescriptor;
 
+import java.util.Map;
+
 /**
  * Semantic field data provider.
  *
@@ -20,4 +22,8 @@ public interface SemanticFieldDataProvider {
      * @throws SemanticMappingException If an error occurs and the data for the field cannot be retrieved.
      */
     Object getFieldData(SemanticField semanticField, TypeDescriptor targetType) throws SemanticMappingException;
+
+    Object getSelfPropertyData(TypeDescriptor targetType) throws SemanticMappingException;
+
+    Map<String, ?> getAllPropertyData() throws SemanticMappingException;
 }

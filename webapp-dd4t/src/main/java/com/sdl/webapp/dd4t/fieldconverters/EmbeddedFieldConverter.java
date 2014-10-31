@@ -59,23 +59,20 @@ public class EmbeddedFieldConverter implements FieldConverter {
                                  SemanticFieldDataProvider semanticFieldDataProvider) throws FieldConverterException {
         final Class<?> targetClass = targetType.getObjectType();
 
-        if (!Entity.class.isAssignableFrom(targetClass)) {
-            throw new UnsupportedTargetTypeException("The target field type for an embedded field must implement " +
-                    "interface " + Entity.class.getName() + ", but something else was found instead: " +
-                    targetClass.getName() + " - This most likely means the field type in the containing entity class " +
-                    "is wrong.");
-        }
+        if (Entity.class.isAssignableFrom(targetClass)) {
+            // TODO: Something is wrong here, because fieldSet is not used.
+            // Probably multi-value embedded fields don't work because of this. Note that DD4TSemanticFieldDataProvider
+            // in findField() always gets the first embedded value.
 
-        // TODO: Something is wrong here, because fieldSet is not used.
-        // Probably multi-value embedded fields don't work because of this. Note that DD4TSemanticFieldDataProvider
-        // in findField() always gets the first embedded value.
-
-        try {
-            return semanticMapper.createEntity(targetClass.asSubclass(Entity.class), semanticField.getEmbeddedFields(),
-                    semanticFieldDataProvider);
-        } catch (SemanticMappingException e) {
-            throw new FieldConverterException("Exception while creating entity for embedded field: " +
-                    semanticField.getPath(), e);
+            try {
+                return semanticMapper.createEntity(targetClass.asSubclass(Entity.class),
+                        semanticField.getEmbeddedFields(), semanticFieldDataProvider);
+            } catch (SemanticMappingException e) {
+                throw new FieldConverterException("Exception while creating entity for embedded field: " +
+                        semanticField.getPath(), e);
+            }
+        } else {
+            throw new UnsupportedTargetTypeException(targetType);
         }
     }
 }

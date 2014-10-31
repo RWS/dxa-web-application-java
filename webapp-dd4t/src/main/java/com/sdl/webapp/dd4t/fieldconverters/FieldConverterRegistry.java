@@ -25,7 +25,7 @@ public class FieldConverterRegistry {
     public FieldConverter getFieldConverterFor(FieldType fieldType) throws UnsupportedFieldTypeException {
         final FieldConverter fieldConverter = fieldConverters.get(fieldType);
         if (fieldConverter == null) {
-            throw new UnsupportedFieldTypeException("No converter for field type: " + fieldType);
+            throw new UnsupportedFieldTypeException(fieldType);
         }
 
         return fieldConverter;

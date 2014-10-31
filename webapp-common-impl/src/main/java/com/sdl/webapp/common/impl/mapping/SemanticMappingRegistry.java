@@ -4,7 +4,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.mapping.annotations.*;
-import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.Entity;
@@ -40,15 +39,14 @@ final class SemanticMappingRegistry {
      * Registers the entity classes in the specified package and subpackages.
      *
      * @param basePackage The base package - this package and its subpackages are scanned for entity classes.
-     * @throws SemanticMappingException If an error occurs while registering the entity classes.
      */
-    public void registerEntities(String basePackage) throws SemanticMappingException {
+    public void registerEntities(String basePackage) {
         LOG.debug("Registering entity classes in package: {}", basePackage);
 
         try {
-            PackageUtils.doWithClasses(basePackage, new PackageUtils.ClassCallback<SemanticMappingException>() {
+            PackageUtils.doWithClasses(basePackage, new PackageUtils.ClassCallback() {
                 @Override
-                public void doWith(MetadataReader metadataReader) throws SemanticMappingException {
+                public void doWith(MetadataReader metadataReader) {
                     final ClassMetadata classMetadata = metadataReader.getClassMetadata();
                     if (!classMetadata.isInterface()) {
                         final Class<?> class_ = ClassUtils.resolveClassName(classMetadata.getClassName(),
@@ -60,7 +58,8 @@ final class SemanticMappingRegistry {
                 }
             });
         } catch (IOException e) {
-            throw new SemanticMappingException("Exception while registering entities in package: " + basePackage, e);
+            // This means a class file could not be read; this should normally never happen
+            throw new IllegalStateException("Exception while registering entities in package: " + basePackage, e);
         }
     }
 
@@ -68,9 +67,8 @@ final class SemanticMappingRegistry {
      * Registers the specified entity class.
      *
      * @param entityClass The entity class.
-     * @throws SemanticMappingException If an error occurs while registering the entity class.
      */
-    public void registerEntity(Class<? extends Entity> entityClass) throws SemanticMappingException {
+    public void registerEntity(Class<? extends Entity> entityClass) {
         // Ignore classes that have a @SemanticMappingIgnore annotation
         if (entityClass.getAnnotation(SemanticMappingIgnore.class) != null) {
             LOG.debug("Ignoring entity class: {}", entityClass);
@@ -90,9 +88,9 @@ final class SemanticMappingRegistry {
                 final String prefix = entry.getKey();
                 final SemanticEntityInfo entityInfo = entityInfoMap.get(prefix);
                 if (entityInfo == null) {
-                    throw new SemanticMappingException("The field " + field + " has a @SemanticProperty annotation " +
-                            "with prefix '" + prefix + "', but the entity class has no @SemanticEntity annotation " +
-                            "with this prefix.");
+                    throw new SemanticAnnotationException("The field " + field + " has a @SemanticProperty " +
+                            "annotation with prefix '" + prefix + "', but the entity class has no @SemanticEntity " +
+                            "annotation with this prefix.");
                 }
 
                 // Get the vocabulary id; create the vocabulary for this id if it is not yet created
@@ -115,11 +113,8 @@ final class SemanticMappingRegistry {
      *
      * @param entityClass The entity class.
      * @return A map with {@code SemanticEntityInfo} objects by vocabulary prefix.
-     * @throws SemanticMappingException If there are errors in the configuration, for example if there are multiple
-     *      {@code @SemanticEntity} annotations with the same prefix.
      */
-    private Map<String, SemanticEntityInfo> getSemanticEntityInfo(Class<? extends Entity> entityClass)
-            throws SemanticMappingException {
+    private Map<String, SemanticEntityInfo> getSemanticEntityInfo(Class<? extends Entity> entityClass) {
         // NOTE: LinkedHashMap because order of entries is important
         final Map<String, SemanticEntityInfo> result = new LinkedHashMap<>();
 
@@ -129,8 +124,8 @@ final class SemanticMappingRegistry {
                 final SemanticEntityInfo entityInfo = new SemanticEntityInfo(annotation, entityClass);
                 final String prefix = entityInfo.getPrefix();
                 if (result.containsKey(prefix)) {
-                    throw new SemanticMappingException("The entity class " + entityClass.getName() + " has multiple " +
-                            "@SemanticEntity annotations with the same prefix '" + prefix + "'.");
+                    throw new SemanticAnnotationException("The entity class " + entityClass.getName() +
+                            " has multiple @SemanticEntity annotations with the same prefix '" + prefix + "'.");
                 }
 
                 result.put(prefix, entityInfo);

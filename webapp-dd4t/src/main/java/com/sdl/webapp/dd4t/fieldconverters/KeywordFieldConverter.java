@@ -31,8 +31,7 @@ public class KeywordFieldConverter extends AbstractFieldConverter {
         } else if (targetClass.isAssignableFrom(String.class)) {
             return getStringValues(keywordValues);
         } else {
-            throw new UnsupportedTargetTypeException("Unsupported target type for keyword field: " +
-                    targetClass.getName());
+            throw new UnsupportedTargetTypeException(targetClass);
         }
     }
 

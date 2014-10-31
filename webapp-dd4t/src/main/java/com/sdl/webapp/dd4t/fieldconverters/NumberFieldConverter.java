@@ -26,8 +26,7 @@ public class NumberFieldConverter extends AbstractFieldConverter {
         } else if (targetClass.isAssignableFrom(Integer.class)) {
             return getIntegerValues(numericValues);
         } else {
-            throw new UnsupportedTargetTypeException("Unsupported target type for number field: " +
-                    targetClass.getName());
+            throw new UnsupportedTargetTypeException(targetClass);
         }
     }
 

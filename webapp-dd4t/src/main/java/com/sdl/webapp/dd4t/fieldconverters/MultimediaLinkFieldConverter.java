@@ -28,22 +28,7 @@ public class MultimediaLinkFieldConverter extends AbstractFieldConverter {
         final List<MediaItem> mediaItems = new ArrayList<>();
 
         for (org.dd4t.contentmodel.Component component : field.getLinkedComponentValues()) {
-            final MediaItem mediaItem;
-
-            // TODO: Find a better way to determine the media item type instead of looking at the schema title
-            final String schemaTitle = component.getSchema().getTitle().toLowerCase();
-
-            if (targetClass.isAssignableFrom(YouTubeVideo.class) && schemaTitle.contains("youtube")) {
-                mediaItem = createYouTubeEntity((GenericComponent) component);
-            } else if (targetClass.isAssignableFrom(Download.class) && schemaTitle.contains("download")) {
-                mediaItem = createDownloadEntity((GenericComponent) component);
-            } else if (targetClass.isAssignableFrom(Image.class)) {
-                mediaItem = createImageEntity((GenericComponent) component);
-            } else {
-                throw new UnsupportedTargetTypeException("Unsupported target type for multimedia link field: " +
-                        targetClass.getName());
-            }
-
+            final MediaItem mediaItem = createMediaItem((GenericComponent) component, targetClass);
             if (mediaItem != null) {
                 mediaItems.add(mediaItem);
             }
@@ -52,21 +37,44 @@ public class MultimediaLinkFieldConverter extends AbstractFieldConverter {
         return mediaItems;
     }
 
-    private Image createImageEntity(GenericComponent component) {
+    public MediaItem createMediaItem(GenericComponent component, Class<?> targetClass) throws FieldConverterException {
+        if (component.getMultimedia() == null) {
+            return null;
+        }
+
+        final MediaItem mediaItem;
+
+        // TODO: Find a better way to determine the media item type instead of looking at the schema title
+        final String schemaTitle = component.getSchema().getTitle().toLowerCase();
+
+        if (targetClass.isAssignableFrom(YouTubeVideo.class) && schemaTitle.contains("youtube")) {
+            mediaItem = createYouTubeVideo(component);
+        } else if (targetClass.isAssignableFrom(Download.class) && schemaTitle.contains("download")) {
+            mediaItem = createDownload(component);
+        } else if (targetClass.isAssignableFrom(Image.class)) {
+            mediaItem = createImage(component);
+        } else {
+            throw new UnsupportedTargetTypeException(targetClass);
+        }
+
+        return mediaItem;
+    }
+
+    private Image createImage(GenericComponent component) {
         final Image image = new Image();
         fillMediaItemFields(component, image);
         image.setAlternateText(component.getMultimedia().getAlt());
         return image;
     }
 
-    private Download createDownloadEntity(GenericComponent component) {
+    private Download createDownload(GenericComponent component) {
         final Download download = new Download();
         fillMediaItemFields(component, download);
         download.setDescription(FieldUtils.getStringValue(component.getMetadata(), "description"));
         return download;
     }
 
-    private YouTubeVideo createYouTubeEntity(GenericComponent component) {
+    private YouTubeVideo createYouTubeVideo(GenericComponent component) {
         YouTubeVideo youTubeVideo = new YouTubeVideo();
         fillMediaItemFields(component, youTubeVideo);
         youTubeVideo.setYouTubeId(FieldUtils.getStringValue(component.getMetadata(), "youTubeId"));

@@ -4,8 +4,9 @@ import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
-import com.sdl.webapp.dd4t.fieldconverters.FieldConverterException;
-import com.sdl.webapp.dd4t.fieldconverters.FieldConverterRegistry;
+import com.sdl.webapp.common.api.model.entity.EmbeddedLink;
+import com.sdl.webapp.common.api.model.entity.MediaItem;
+import com.sdl.webapp.dd4t.fieldconverters.*;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
@@ -51,12 +52,29 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
         }
         LOG.trace("Found DD4T field: [{}] {}", field.getFieldType(), field.getName());
 
-        try {
-            return fieldConverterRegistry.getFieldConverterFor(field.getFieldType())
-                    .getFieldValue(semanticField, (BaseField) field, targetType, this);
-        } catch (FieldConverterException e) {
-            throw new SemanticMappingException(e);
+        return fieldConverterRegistry.getFieldConverterFor(field.getFieldType()).getFieldValue(semanticField,
+                (BaseField) field, targetType, this);
+    }
+
+    @Override
+    public Object getSelfPropertyData(TypeDescriptor targetType) throws SemanticMappingException {
+        final Class<?> targetClass = targetType.getObjectType();
+
+        if (MediaItem.class.isAssignableFrom(targetClass)) {
+            return ((MultimediaLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
+                    FieldType.MultimediaLink)).createMediaItem(component, targetClass);
+        } else if (EmbeddedLink.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
+            return ((ComponentLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
+                    FieldType.ComponentLink)).createComponentLink(component, targetClass);
+        } else {
+            throw new UnsupportedTargetTypeException(targetType);
         }
+    }
+
+    @Override
+    public Map<String, ?> getAllPropertyData() throws SemanticMappingException {
+        // TODO: Implement this method
+        throw new SemanticMappingException("Not yet implemented");
     }
 
     private Field findField(String path, Map<String, Field> fields) {

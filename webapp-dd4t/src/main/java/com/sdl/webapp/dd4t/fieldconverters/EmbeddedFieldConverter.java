@@ -1,10 +1,10 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
-import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.dd4t.DD4TSemanticFieldDataProvider;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
@@ -34,7 +34,7 @@ public class EmbeddedFieldConverter implements FieldConverter {
 
     @Override
     public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType,
-                                SemanticFieldDataProvider semanticFieldDataProvider) throws FieldConverterException {
+                                DD4TSemanticFieldDataProvider semanticFieldDataProvider) throws FieldConverterException {
         final List<FieldSet> embeddedValues = field.getEmbeddedValues();
 
         if (semanticField.isMultiValue()) {
@@ -56,20 +56,20 @@ public class EmbeddedFieldConverter implements FieldConverter {
     }
 
     private Object getFieldValue(SemanticField semanticField, FieldSet fieldSet, TypeDescriptor targetType,
-                                 SemanticFieldDataProvider semanticFieldDataProvider) throws FieldConverterException {
+                                 DD4TSemanticFieldDataProvider semanticFieldDataProvider) throws FieldConverterException {
         final Class<?> targetClass = targetType.getObjectType();
 
         if (Entity.class.isAssignableFrom(targetClass)) {
-            // TODO: Something is wrong here, because fieldSet is not used.
-            // Probably multi-value embedded fields don't work because of this. Note that DD4TSemanticFieldDataProvider
-            // in findField() always gets the first embedded value.
-
             try {
+                semanticFieldDataProvider.pushEmbeddingLevel(fieldSet.getContent());
+
                 return semanticMapper.createEntity(targetClass.asSubclass(Entity.class),
                         semanticField.getEmbeddedFields(), semanticFieldDataProvider);
             } catch (SemanticMappingException e) {
                 throw new FieldConverterException("Exception while creating entity for embedded field: " +
                         semanticField.getPath(), e);
+            } finally {
+                semanticFieldDataProvider.popEmbeddingLevel();
             }
         } else {
             throw new UnsupportedTargetTypeException(targetType);

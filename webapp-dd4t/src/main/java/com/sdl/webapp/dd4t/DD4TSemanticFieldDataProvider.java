@@ -3,6 +3,7 @@ package com.sdl.webapp.dd4t;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.config.FieldPath;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.EmbeddedLink;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
@@ -40,20 +41,17 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
     public Object getFieldData(SemanticField semanticField, TypeDescriptor targetType) throws SemanticMappingException {
         LOG.trace("semanticField: {}, targetType: {}", semanticField, targetType);
 
-        final String[] parts = splitPath(semanticField.getPath());
-        final String pathHead = parts[0];
-        final String pathTail = parts[1];
-
-        final Field field = findField(pathTail,
-                pathHead.equals(METADATA_PATH) ? component.getMetadata() : component.getContent());
+        final FieldPath path = semanticField.getPath();
+        final Field field = findField(path.getTail(),
+                path.getHead().equals(METADATA_PATH) ? component.getMetadata() : component.getContent());
         if (field == null) {
             LOG.debug("No DD4T field found for: {}", semanticField);
             return null;
         }
         LOG.trace("Found DD4T field: [{}] {}", field.getFieldType(), field.getName());
 
-        return fieldConverterRegistry.getFieldConverterFor(field.getFieldType()).getFieldValue(semanticField,
-                (BaseField) field, targetType, this);
+        return fieldConverterRegistry.getFieldConverterFor(field.getFieldType())
+                .getFieldValue(semanticField, (BaseField) field, targetType, this);
     }
 
     @Override
@@ -77,44 +75,25 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
         throw new SemanticMappingException("Not yet implemented");
     }
 
-    private Field findField(String path, Map<String, Field> fields) {
-        final String[] parts = splitPath(path);
-
-        final Field field = fields.get(parts[0]);
-        if (field == null) {
+    private Field findField(FieldPath path, Map<String, Field> fields) {
+        if (path == null) {
             return null;
         }
 
-        if (Strings.isNullOrEmpty(parts[1])) {
+        final Field field = fields.get(path.getHead());
+        if (!path.hasTail() || field == null) {
             return field;
-        } else {
-            if (field.getFieldType() == FieldType.Embedded) {
-                final List<FieldSet> embeddedValues = ((BaseField) field).getEmbeddedValues();
-                if (embeddedValues != null && !embeddedValues.isEmpty()) {
-                    return findField(parts[1], embeddedValues.get(0).getContent());
-                } else {
-                    return null;
-                }
+        }
+
+        if (field.getFieldType() == FieldType.Embedded) {
+            final List<FieldSet> embeddedValues = ((BaseField) field).getEmbeddedValues();
+            if (embeddedValues != null && !embeddedValues.isEmpty()) {
+                return findField(path.getTail(), embeddedValues.get(0).getContent()); // TODO: altijd de eerste is niet goed!
             } else {
                 return null;
             }
-        }
-    }
-
-    private String[] splitPath(String path) {
-        if (Strings.isNullOrEmpty(path)) {
-            return new String[] { "", "" };
-        }
-
-        if (path.startsWith("/")) {
-            path = path.substring(1);
-        }
-
-        final int i = path.indexOf('/');
-        if (i < 0) {
-            return new String[] { path, "" };
         } else {
-            return new String[] { path.substring(0, i), path.substring(i) };
+            return null;
         }
     }
 }

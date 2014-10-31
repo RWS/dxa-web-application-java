@@ -11,7 +11,7 @@ public final class SemanticField {
 
     private final String name;
 
-    private final String path;
+    private final FieldPath path;
 
     private final boolean multiValue;
 
@@ -20,7 +20,7 @@ public final class SemanticField {
     public SemanticField(String name, String path, boolean multiValue,
                          Map<FieldSemantics, SemanticField> embeddedFields) {
         this.name = name;
-        this.path = path;
+        this.path = new FieldPath(path);
         this.multiValue = multiValue;
         this.embeddedFields = ImmutableMap.copyOf(embeddedFields);
     }
@@ -29,7 +29,7 @@ public final class SemanticField {
         return name;
     }
 
-    public String getPath() {
+    public FieldPath getPath() {
         return path;
     }
 

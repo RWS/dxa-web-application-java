@@ -36,13 +36,13 @@ public class EmbeddedFieldConverter implements FieldConverter {
     public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType,
                                 SemanticFieldDataProvider semanticFieldDataProvider) throws FieldConverterException {
         final List<FieldSet> embeddedValues = field.getEmbeddedValues();
+
         if (semanticField.isMultiValue()) {
             final TypeDescriptor elementType = targetType.getElementTypeDescriptor();
 
             final List<Object> fieldValues = new ArrayList<>();
             for (FieldSet fieldSet : embeddedValues) {
-                final Object fieldValue = getFieldValue(semanticField, fieldSet, elementType,
-                        semanticFieldDataProvider);
+                final Object fieldValue = getFieldValue(semanticField, fieldSet, elementType, semanticFieldDataProvider);
                 if (fieldValue != null) {
                     fieldValues.add(fieldValue);
                 }

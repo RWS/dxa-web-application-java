@@ -23,7 +23,20 @@ public interface SemanticFieldDataProvider {
      */
     Object getFieldData(SemanticField semanticField, TypeDescriptor targetType) throws SemanticMappingException;
 
-    Object getSelfPropertyData(TypeDescriptor targetType) throws SemanticMappingException;
+    /**
+     * TODO: Documentation.
+     *
+     * @param targetType
+     * @return
+     * @throws SemanticMappingException
+     */
+    Object getSelfFieldData(TypeDescriptor targetType) throws SemanticMappingException;
 
-    Map<String, ?> getAllPropertyData() throws SemanticMappingException;
+    /**
+     * TODO: Documentation.
+     *
+     * @return
+     * @throws SemanticMappingException
+     */
+    Map<String, String> getAllFieldData() throws SemanticMappingException;
 }

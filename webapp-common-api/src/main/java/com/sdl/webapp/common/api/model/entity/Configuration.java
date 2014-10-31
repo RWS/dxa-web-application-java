@@ -17,4 +17,11 @@ public class Configuration extends AbstractEntity {
     public void setSettings(Map<String, String> settings) {
         this.settings = settings;
     }
+
+    @Override
+    public String toString() {
+        return "Configuration{" +
+                "settings=" + settings +
+                '}';
+    }
 }

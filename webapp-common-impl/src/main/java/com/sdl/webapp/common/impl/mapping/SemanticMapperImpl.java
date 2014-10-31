@@ -77,7 +77,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                     if (propertyName.equals(SELF_PROPERTY)) {
                         Object fieldData = null;
                         try {
-                            fieldData = fieldDataProvider.getSelfPropertyData(new TypeDescriptor(field));
+                            fieldData = fieldDataProvider.getSelfFieldData(new TypeDescriptor(field));
                         } catch (SemanticMappingException e) {
                             LOG.error("Exception while getting self property data for: " + field, e);
                         }
@@ -88,9 +88,9 @@ public class SemanticMapperImpl implements SemanticMapper {
                             break;
                         }
                     } else if (propertyName.equals(ALL_PROPERTY)) {
-                        Map<String, ?> fieldData = null;
+                        Map<String, String> fieldData = null;
                         try {
-                            fieldData = fieldDataProvider.getAllPropertyData();
+                            fieldData = fieldDataProvider.getAllFieldData();
                         } catch (SemanticMappingException e) {
                             LOG.error("Exception while getting all property data for: " + field, e);
                         }

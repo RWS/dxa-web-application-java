@@ -1,18 +1,27 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
 
 @SemanticEntity(entityName = "NotificationBar", vocabulary = SDL_CORE, prefix = "nb")
 public class Notification extends AbstractEntity {
 
+    @SemanticProperty("nb:headline")
     private String headline;
 
+    @SemanticProperty("nb:text")
     private String text;
 
+    @SemanticProperties({
+            @SemanticProperty("nb:continue"),
+            @SemanticProperty("continue")
+    })
     private String continue_;
 
+    @SemanticProperty("nb:link")
     private EmbeddedLink link;
 
     public String getHeadline() {
@@ -45,5 +54,15 @@ public class Notification extends AbstractEntity {
 
     public void setLink(EmbeddedLink link) {
         this.link = link;
+    }
+
+    @Override
+    public String toString() {
+        return "Notification{" +
+                "headline='" + headline + '\'' +
+                ", text='" + text + '\'' +
+                ", continue_='" + continue_ + '\'' +
+                ", link=" + link +
+                '}';
     }
 }

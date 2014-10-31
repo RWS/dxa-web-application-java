@@ -58,18 +58,18 @@ public final class SemanticsConverter {
     /**
      * Creates a set of {@code EntitySemantics} for the schema semantics in the configuration data.
      *
-     * @param jsonSchemaSemanticses Schema semantics from the configuration data.
+     * @param jsonSchemaSemanticsList Schema semantics from the configuration data.
      * @param vocabularies The map of vocabularies by prefix.
      * @return A set of {@code EntitySemantics}.
      * @throws LocalizationFactoryException If there are schema semantics which use a prefix for which there is no
      *      vocabulary.
      */
-    private static Set<EntitySemantics> createEntitySemantics(List<JsonSchemaSemantics> jsonSchemaSemanticses,
+    private static Set<EntitySemantics> createEntitySemantics(List<JsonSchemaSemantics> jsonSchemaSemanticsList,
                                                               Map<String, SemanticVocabulary> vocabularies)
             throws LocalizationFactoryException {
         final Set<EntitySemantics> result = new HashSet<>();
 
-        for (JsonSchemaSemantics jsonSchemaSemantics : jsonSchemaSemanticses) {
+        for (JsonSchemaSemantics jsonSchemaSemantics : jsonSchemaSemanticsList) {
             final String prefix = jsonSchemaSemantics.getPrefix();
             final SemanticVocabulary vocabulary = vocabularies.get(prefix);
             if (vocabulary == null) {

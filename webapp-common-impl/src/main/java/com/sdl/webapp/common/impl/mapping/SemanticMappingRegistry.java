@@ -18,10 +18,7 @@ import org.springframework.util.ClassUtils;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Semantic mapping registry.
@@ -35,7 +32,8 @@ final class SemanticMappingRegistry {
     private final ListMultimap<Field, FieldSemantics> registry = ArrayListMultimap.create();
 
     public List<FieldSemantics> getFieldSemantics(Field field) {
-        return registry.get(field);
+        final List<FieldSemantics> fieldSemanticsList = registry.get(field);
+        return fieldSemanticsList != null ? fieldSemanticsList : Collections.<FieldSemantics>emptyList();
     }
 
     /**

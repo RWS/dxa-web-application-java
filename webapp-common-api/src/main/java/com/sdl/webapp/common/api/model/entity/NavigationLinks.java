@@ -13,4 +13,11 @@ public class NavigationLinks extends AbstractEntity {
     public void setItems(List<EmbeddedLink> items) {
         this.items = items;
     }
+
+    @Override
+    public String toString() {
+        return "NavigationLinks{" +
+                "items=" + items +
+                '}';
+    }
 }

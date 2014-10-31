@@ -41,13 +41,13 @@ public class SemanticMapperImpl implements SemanticMapper {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 // Find the semantics for this field
-                final List<FieldSemantics> allFieldSemantics = registry.getFieldSemantics(field);
-                if (LOG.isTraceEnabled() && !allFieldSemantics.isEmpty()) {
+                final List<FieldSemantics> fieldSemanticsList = registry.getFieldSemantics(field);
+                if (LOG.isTraceEnabled() && !fieldSemanticsList.isEmpty()) {
                     LOG.trace("field: {}", field);
                 }
 
                 // Try getting data using each of the field semantics in order
-                for (FieldSemantics fieldSemantics : allFieldSemantics) {
+                for (FieldSemantics fieldSemantics : fieldSemanticsList) {
                     // Find the matching semantic field
                     final SemanticField semanticField = semanticFields.get(fieldSemantics);
                     if (LOG.isTraceEnabled() && semanticField != null) {

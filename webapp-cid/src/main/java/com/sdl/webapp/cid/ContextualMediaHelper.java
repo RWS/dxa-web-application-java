@@ -2,18 +2,12 @@ package com.sdl.webapp.cid;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.impl.AbstractMediaHelper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Component;
 
 /**
  * Implementation of {@code MediaHelper} for when Contextual Image Delivery is used.
  */
-@Component
-@Primary // Makes this implementation take priority over DefaultMediaHelper
 public class ContextualMediaHelper extends AbstractMediaHelper {
 
-    @Autowired
     public ContextualMediaHelper(WebRequestContext webRequestContext) {
         super(webRequestContext);
     }

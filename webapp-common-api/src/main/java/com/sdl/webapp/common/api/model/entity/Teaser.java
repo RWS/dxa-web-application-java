@@ -13,7 +13,8 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
         @SemanticEntity(entityName = "Teaser", vocabulary = SDL_CORE, prefix = "t"),
         @SemanticEntity(entityName = "Image", vocabulary = SDL_CORE, prefix = "i"),
         @SemanticEntity(entityName = "Article", vocabulary = SDL_CORE, prefix = "a"),
-        @SemanticEntity(entityName = "Place", vocabulary = SDL_CORE, prefix = "p")
+        @SemanticEntity(entityName = "Place", vocabulary = SDL_CORE, prefix = "p"),
+        @SemanticEntity("LinkedContent") // TODO: Added to make carousel work, but might not be OK for everything
 })
 public class Teaser extends AbstractEntity {
 

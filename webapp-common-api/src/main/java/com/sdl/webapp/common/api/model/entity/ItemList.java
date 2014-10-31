@@ -31,4 +31,12 @@ public class ItemList extends AbstractEntity {
     public void setItemListElements(List<Teaser> itemListElements) {
         this.itemListElements = itemListElements;
     }
+
+    @Override
+    public String toString() {
+        return "ItemList{" +
+                "headline='" + headline + '\'' +
+                ", itemListElements=" + itemListElements +
+                '}';
+    }
 }

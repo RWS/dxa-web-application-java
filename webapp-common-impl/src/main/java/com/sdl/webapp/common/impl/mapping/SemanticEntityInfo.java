@@ -20,7 +20,11 @@ final class SemanticEntityInfo {
     private final boolean public_;
 
     public SemanticEntityInfo(SemanticEntity annotation, Class<? extends Entity> entityClass) {
-        this.vocabulary = annotation.vocabulary();
+        String v = annotation.vocabulary();
+        if (Strings.isNullOrEmpty(v)) {
+            v = DEFAULT_VOCABULARY;
+        }
+        this.vocabulary = v;
 
         String n = annotation.entityName();
         if (Strings.isNullOrEmpty(n)) {

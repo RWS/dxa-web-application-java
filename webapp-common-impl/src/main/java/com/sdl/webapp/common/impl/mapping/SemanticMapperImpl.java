@@ -53,8 +53,12 @@ public class SemanticMapperImpl implements SemanticMapper {
                 for (FieldSemantics fieldSemantics : fieldSemanticsList) {
                     // Find the matching semantic field
                     final SemanticField semanticField = semanticFields.get(fieldSemantics);
-                    if (LOG.isTraceEnabled() && semanticField != null) {
-                        LOG.trace("fieldSemantics: {}, semanticField: {}", fieldSemantics, semanticField);
+                    if (LOG.isDebugEnabled()) {
+                        if (semanticField != null) {
+                            LOG.trace("fieldSemantics: {}, semanticField: {}", fieldSemantics, semanticField);
+                        } else {
+                            LOG.debug("Could not find semantic fields for: {} in: {}", fieldSemantics, semanticFields);
+                        }
                     }
 
                     if (semanticField != null) {

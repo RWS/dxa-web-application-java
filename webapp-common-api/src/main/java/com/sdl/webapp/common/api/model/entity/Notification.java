@@ -22,7 +22,7 @@ public class Notification extends AbstractEntity {
     private String continue_;
 
     @SemanticProperty("nb:link")
-    private EmbeddedLink link;
+    private Link link;
 
     public String getHeadline() {
         return headline;
@@ -48,11 +48,11 @@ public class Notification extends AbstractEntity {
         this.continue_ = continue_;
     }
 
-    public EmbeddedLink getLink() {
+    public Link getLink() {
         return link;
     }
 
-    public void setLink(EmbeddedLink link) {
+    public void setLink(Link link) {
         this.link = link;
     }
 

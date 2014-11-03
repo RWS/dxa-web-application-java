@@ -5,7 +5,7 @@ import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.FieldPath;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
-import com.sdl.webapp.common.api.model.entity.EmbeddedLink;
+import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.dd4t.fieldconverters.*;
 import org.dd4t.contentmodel.Field;
@@ -90,7 +90,7 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
         if (MediaItem.class.isAssignableFrom(targetClass)) {
             return ((MultimediaLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
                     FieldType.MultimediaLink)).createMediaItem(component, targetClass);
-        } else if (EmbeddedLink.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
+        } else if (Link.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
             return ((ComponentLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
                     FieldType.ComponentLink)).createComponentLink(component, targetClass);
         } else {

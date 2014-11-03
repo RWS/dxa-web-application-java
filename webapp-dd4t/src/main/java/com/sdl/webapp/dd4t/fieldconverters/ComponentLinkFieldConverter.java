@@ -1,6 +1,6 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
-import com.sdl.webapp.common.api.model.entity.EmbeddedLink;
+import com.sdl.webapp.common.api.model.entity.Link;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.contentmodel.exceptions.SerializationException;
@@ -54,8 +54,8 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
         if (targetClass.isAssignableFrom(String.class)) {
             return url;
-        } else if (targetClass.isAssignableFrom(EmbeddedLink.class)) {
-            final EmbeddedLink link = new EmbeddedLink();
+        } else if (targetClass.isAssignableFrom(Link.class)) {
+            final Link link = new Link();
             link.setUrl(url);
             return link;
         } else {

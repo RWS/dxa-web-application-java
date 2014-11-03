@@ -2,7 +2,7 @@ package com.sdl.webapp.tridion.query;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
-import com.sdl.webapp.common.api.model.entity.EmbeddedLink;
+import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.Teaser;
 import com.tridion.broker.querying.MetadataType;
 import com.tridion.broker.querying.Query;
@@ -170,7 +170,7 @@ public class BrokerQuery {
     }
 
     private static Teaser getTeaserFromMeta(ComponentMeta compMeta) {
-        EmbeddedLink link = new EmbeddedLink();
+        Link link = new Link();
         link.setUrl(String.format("tcm:{0}-{1}", compMeta.getPublicationId(), compMeta.getId()));
 
         Teaser teaser = new Teaser();

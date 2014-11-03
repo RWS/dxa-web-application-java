@@ -1,17 +1,12 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
-
 import java.util.List;
 
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
-
-@SemanticEntity(entityName = "LinkList", vocabulary = SDL_CORE)
-public class EmbeddedLinkList extends AbstractEntity {
+public class LinkList extends AbstractEntity {
 
     private String headline;
 
-    private List<EmbeddedLink> links;
+    private List<Link> links;
 
     public String getHeadline() {
         return headline;
@@ -21,11 +16,11 @@ public class EmbeddedLinkList extends AbstractEntity {
         this.headline = headline;
     }
 
-    public List<EmbeddedLink> getLinks() {
+    public List<Link> getLinks() {
         return links;
     }
 
-    public void setLinks(List<EmbeddedLink> links) {
+    public void setLinks(List<Link> links) {
         this.links = links;
     }
 

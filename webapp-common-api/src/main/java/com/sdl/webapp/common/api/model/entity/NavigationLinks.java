@@ -4,13 +4,13 @@ import java.util.List;
 
 public class NavigationLinks extends AbstractEntity {
 
-    private List<EmbeddedLink> items;
+    private List<Link> items;
 
-    public List<EmbeddedLink> getItems() {
+    public List<Link> getItems() {
         return items;
     }
 
-    public void setItems(List<EmbeddedLink> items) {
+    public void setItems(List<Link> items) {
         this.items = items;
     }
 

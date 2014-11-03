@@ -1,5 +1,6 @@
 package com.sdl.webapp.main.taglib;
 
+import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.Page;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +18,14 @@ public class PageTag extends TagSupport {
 
     private String name;
 
+    private String viewName;
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setViewName(String viewName) {
+        this.viewName = viewName;
     }
 
     @Override
@@ -32,7 +39,13 @@ public class PageTag extends TagSupport {
         if (page.getIncludes().containsKey(name)) {
             LOG.debug("Including page: {}", name);
             try {
-                pageContext.include(PAGE_PATH_PREFIX + "/" + name);
+                final StringBuilder sb = new StringBuilder();
+                sb.append(PAGE_PATH_PREFIX).append('/').append(name);
+                if (!Strings.isNullOrEmpty(viewName)) {
+                    sb.append("?viewName=").append(viewName);
+                }
+
+                pageContext.include(sb.toString());
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing include tag: " + name, e);
             } finally {

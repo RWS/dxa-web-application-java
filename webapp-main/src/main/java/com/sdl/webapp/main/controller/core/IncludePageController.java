@@ -1,5 +1,6 @@
 package com.sdl.webapp.main.controller.core;
 
+import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.main.controller.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,7 +22,8 @@ public class IncludePageController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(IncludePageController.class);
 
     @RequestMapping(method = RequestMethod.GET, value = "{includePageName}")
-    public String handleIncludePage(HttpServletRequest request, @PathVariable String includePageName) {
+    public String handleIncludePage(HttpServletRequest request, @PathVariable String includePageName,
+                                    @RequestParam String viewName) {
         LOG.trace("handleIncludePage: includePageName={}", includePageName);
 
         final Page page = getPageFromRequest(request);
@@ -32,7 +35,11 @@ public class IncludePageController extends AbstractController {
 
         request.setAttribute(PAGE_MODEL, includePage);
 
-        final String viewName = includePage.getViewName();
+        // If view name not specified in request, use view name from page model
+        if (Strings.isNullOrEmpty(viewName)) {
+            viewName = includePage.getViewName();
+        }
+
         LOG.trace("viewName: {}", viewName);
         return viewName;
     }

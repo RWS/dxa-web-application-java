@@ -21,7 +21,7 @@
     <![endif]-->
 </head>
 <body>
-<tri:page name="Header"/>
+<tri:page name="Header" viewName="shared/Header"/>
 <main class="page-row page-row-expanded" role="main">
     <div class="container-fluid page-border">
         <%
@@ -37,7 +37,7 @@
         </div>
     </div>
 </main>
-<tri:page name="Footer"/>
+<tri:page name="Footer" viewName="shared/Footer"/>
 <script src="/system/assets/scripts/main.js"></script>
 </body>
 </html>

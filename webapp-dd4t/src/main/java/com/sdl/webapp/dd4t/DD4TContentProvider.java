@@ -13,6 +13,7 @@ import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.api.model.page.PageImpl;
 import com.sdl.webapp.common.api.model.region.RegionImpl;
 import com.sdl.webapp.dd4t.fieldconverters.FieldConverterRegistry;
@@ -239,6 +240,17 @@ public final class DD4TContentProvider implements ContentProvider {
 
             entity.setId(componentId.split("-")[1]);
             entity.setViewName(ENTITY_VIEW_PREFIX + viewName);
+
+            // Special handling for media items
+            if (entity instanceof MediaItem && component.getMultimedia() != null &&
+                    !Strings.isNullOrEmpty(component.getMultimedia().getUrl())) {
+                final Multimedia multimedia = component.getMultimedia();
+                final MediaItem mediaItem = (MediaItem) entity;
+                mediaItem.setUrl(multimedia.getUrl());
+                mediaItem.setFileName(multimedia.getFileName());
+                mediaItem.setFileSize(multimedia.getSize());
+                mediaItem.setMimeType(multimedia.getMimeType());
+            }
 
             return entity;
         }

@@ -118,6 +118,51 @@
         </attribute>
     </tag>
 
+    <!-- Insert a YouTube video -->
+    <tag>
+        <name>youTubeVideo</name>
+        <tag-class>com.sdl.webapp.main.taglib.YouTubeVideoTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>youTubeId</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>url</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>headline</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>widthFactor</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>aspect</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>double</type>
+        </attribute>
+        <attribute>
+            <name>cssClass</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>containerSize</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+    </tag>
+
+
     <!-- Insert a resource text -->
     <tag>
         <name>resource</name>

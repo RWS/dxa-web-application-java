@@ -13,12 +13,11 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <c:set var="url" scope="request">${pageContext.request.requestURL}</c:set>
-    <base href="${fn:substring(url, 0, fn:length(url) - fn:length(pageContext.request.requestURI))}${pageContext.request.contextPath}/" />
     <title>${pageModel.title}</title>
-    <link rel="stylesheet" href="system/assets/css/main.css" type="text/css"/>
+    <link rel="stylesheet" href="/system/assets/css/main.css" type="text/css"/>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="system/assets/scripts/ie.js"></script>
+    <script src="/system/assets/scripts/ie.js"></script>
     <![endif]-->
 </head>
 <body>
@@ -39,6 +38,6 @@
     </div>
 </main>
 <tri:page name="Footer"/>
-<script src="system/assets/scripts/main.js"></script>
+<script src="/system/assets/scripts/main.js"></script>
 </body>
 </html>

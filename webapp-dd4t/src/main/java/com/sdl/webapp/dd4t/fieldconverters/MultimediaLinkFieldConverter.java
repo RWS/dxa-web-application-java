@@ -83,13 +83,7 @@ public class MultimediaLinkFieldConverter extends AbstractFieldConverter {
 
     private void fillMediaItemFields(GenericComponent component, MediaItem mediaItem) {
         final Multimedia multimedia = component.getMultimedia();
-
-        String url = multimedia.getUrl();
-        if (url.startsWith("/")) {
-            url = url.substring(1);
-        }
-        mediaItem.setUrl(url);
-
+        mediaItem.setUrl(multimedia.getUrl());
         mediaItem.setFileName(multimedia.getFileName());
         mediaItem.setFileSize(multimedia.getSize());
         mediaItem.setMimeType(multimedia.getMimeType());

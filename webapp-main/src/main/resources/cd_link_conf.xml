@@ -4,7 +4,7 @@
          xsi:noNamespaceSchemaLocation="schemas/cd_link_conf.xsd">
     <Publications>
       <Publication Id="8">
-        <Host Domain="localhost" Port="8080" Path="/webapp"/>
+        <Host Domain="localhost" Port="8080" Path=""/>
       </Publication>
     </Publications>
 </Configuration>

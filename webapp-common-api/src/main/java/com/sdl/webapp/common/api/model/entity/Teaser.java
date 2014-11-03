@@ -14,37 +14,45 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
         @SemanticEntity(entityName = "Image", vocabulary = SDL_CORE, prefix = "i"),
         @SemanticEntity(entityName = "Article", vocabulary = SDL_CORE, prefix = "a"),
         @SemanticEntity(entityName = "Place", vocabulary = SDL_CORE, prefix = "p"),
-        @SemanticEntity("LinkedContent") // TODO: Added to make carousel work, but might not be OK for everything
+        @SemanticEntity(entityName = "LinkedContent", vocabulary = SDL_CORE, prefix = "c")
 })
 public class Teaser extends AbstractEntity {
 
     @SemanticProperties({
             @SemanticProperty("a:_self"),
-            @SemanticProperty("p:_self")
+            @SemanticProperty("p:_self"),
+            @SemanticProperty("c:link")
     })
     private EmbeddedLink link;
 
     @SemanticProperties({
             @SemanticProperty("headline"),
             @SemanticProperty("subheading"),
-            @SemanticProperty("p:name")
+            @SemanticProperty("p:name"),
+            @SemanticProperty("c:headline"),
+            @SemanticProperty("c:subheading")
     })
     private String headline;
 
     @SemanticProperties({
             @SemanticProperty("i:_self"),
-            @SemanticProperty("a:image")
+            @SemanticProperty("a:image"),
+            @SemanticProperty("c:media")
     })
     private MediaItem media;
 
     @SemanticProperties({
             @SemanticProperty("content"),
-            @SemanticProperty("a:introText")
+            @SemanticProperty("a:introText"),
+            @SemanticProperty("c:text"),
+            @SemanticProperty("c:content")
     })
     private String text;
 
+    @SemanticProperty("c:date")
     private Date date;
 
+    @SemanticProperty("c:location")
     private Location location;
 
     public EmbeddedLink getLink() {

@@ -55,8 +55,11 @@ public class ImageTag extends TagSupport {
         final MediaHelper mediaHelper = WebApplicationContextUtils.getRequiredWebApplicationContext(
                 pageContext.getServletContext()).getBean(MediaHelper.class);
 
+        final double imageAspect = aspect == 0.0 ? mediaHelper.getDefaultMediaAspect() : aspect;
+
         final String contextPath = URL_PATH_HELPER.getContextPath((HttpServletRequest) pageContext.getRequest());
-        final String imageUrl = contextPath + mediaHelper.getResponsiveImageUrl(url, widthFactor, aspect, containerSize);
+        final String imageUrl = contextPath + mediaHelper.getResponsiveImageUrl(url, widthFactor, imageAspect,
+                containerSize);
         LOG.debug("imageUrl={}", imageUrl);
 
         String imgWidth = widthFactor;

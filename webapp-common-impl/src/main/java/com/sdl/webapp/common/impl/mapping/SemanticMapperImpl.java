@@ -44,21 +44,20 @@ public class SemanticMapperImpl implements SemanticMapper {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 // Find the semantics for this field
-                final List<FieldSemantics> fieldSemanticsList = registry.getFieldSemantics(field);
-                if (LOG.isTraceEnabled() && !fieldSemanticsList.isEmpty()) {
+                final List<FieldSemantics> registrySemantics = registry.getFieldSemantics(field);
+                if (LOG.isTraceEnabled() && !registrySemantics.isEmpty()) {
                     LOG.trace("field: {}", field);
                 }
 
+                boolean foundMatch = false;
+
                 // Try getting data using each of the field semantics in order
-                for (FieldSemantics fieldSemantics : fieldSemanticsList) {
+                for (FieldSemantics fieldSemantics : registrySemantics) {
                     // Find the matching semantic field
                     final SemanticField semanticField = semanticFields.get(fieldSemantics);
-                    if (LOG.isDebugEnabled()) {
-                        if (semanticField != null) {
-                            LOG.trace("fieldSemantics: {}, semanticField: {}", fieldSemantics, semanticField);
-                        } else {
-                            LOG.debug("Could not find semantic fields for: {} in: {}", fieldSemantics, semanticFields);
-                        }
+                    if (semanticField != null) {
+                        foundMatch = true;
+                        LOG.debug("Match found: {} -> {}", fieldSemantics, semanticField);
                     }
 
                     if (semanticField != null) {
@@ -79,6 +78,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                     // Special cases
                     final String propertyName = fieldSemantics.getPropertyName();
                     if (propertyName.equals(SELF_PROPERTY)) {
+                        foundMatch = true;
                         Object fieldData = null;
                         try {
                             fieldData = fieldDataProvider.getSelfFieldData(new TypeDescriptor(field));
@@ -92,6 +92,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                             break;
                         }
                     } else if (propertyName.equals(ALL_PROPERTY)) {
+                        foundMatch = true;
                         Map<String, String> fieldData = null;
                         try {
                             fieldData = fieldDataProvider.getAllFieldData();
@@ -105,6 +106,13 @@ public class SemanticMapperImpl implements SemanticMapper {
                             break;
                         }
                     }
+                }
+
+                if (LOG.isDebugEnabled() && !foundMatch && !registrySemantics.isEmpty()) {
+                    // This not necessarily means there is a problem; for some components in the input, not all fields
+                    // of the entity are mapped
+                    LOG.debug("No match found for field: {}; registry semantics: {} did not match with supplied " +
+                            "semantics: {}", new Object[] { field, registrySemantics, semanticFields });
                 }
             }
         });

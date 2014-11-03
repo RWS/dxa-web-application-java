@@ -1,25 +1,39 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
 
-@SemanticEntity(entityName = "ItemList", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
+@SemanticEntities({
+        @SemanticEntity(entityName = "ItemList", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true),
+        @SemanticEntity(entityName = "ContentQuery", vocabulary = SDL_CORE, prefix = "q")
+})
+
 public class ContentList extends AbstractEntity {
 
-    @SemanticProperty("s:headline")
+    @SemanticProperties({
+            @SemanticProperty("s:headline"),
+            @SemanticProperty("q:headline")
+    })
     private String headline;
 
+    @SemanticProperty("q:link")
     private EmbeddedLink link;
 
+    @SemanticProperty("q:pageSize")
     private int pageSize;
 
+    @SemanticProperty("q:contentType")
     private Tag contentType;
 
+    @SemanticProperty("q:sort")
     private Tag sort;
 
     private int start;
@@ -101,5 +115,20 @@ public class ContentList extends AbstractEntity {
 
     public void setItemListElements(List<Teaser> itemListElements) {
         this.itemListElements = itemListElements;
+    }
+
+    @Override
+    public String toString() {
+        return "ContentList{" +
+                "headline='" + headline + '\'' +
+                ", link=" + link +
+                ", pageSize=" + pageSize +
+                ", contentType=" + contentType +
+                ", sort=" + sort +
+                ", start=" + start +
+                ", currentPage=" + currentPage +
+                ", hasMore=" + hasMore +
+                ", itemListElements=" + itemListElements +
+                '}';
     }
 }

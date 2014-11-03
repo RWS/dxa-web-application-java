@@ -31,4 +31,13 @@ public class Tag {
     public void setTagCategory(String tagCategory) {
         this.tagCategory = tagCategory;
     }
+
+    @Override
+    public String toString() {
+        return "Tag{" +
+                "displayText='" + displayText + '\'' +
+                ", key='" + key + '\'' +
+                ", tagCategory='" + tagCategory + '\'' +
+                '}';
+    }
 }

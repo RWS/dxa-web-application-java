@@ -52,7 +52,10 @@ public class Teaser extends AbstractEntity {
     @SemanticProperty("c:date")
     private Date date;
 
-    @SemanticProperty("c:location")
+    @SemanticProperties({
+            @SemanticProperty("p:location"),
+            @SemanticProperty("c:location")
+    })
     private Location location;
 
     public EmbeddedLink getLink() {

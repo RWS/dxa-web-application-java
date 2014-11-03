@@ -21,6 +21,6 @@ public class ContextualMediaHelper extends AbstractMediaHelper {
         // Height is calculated from the aspect ratio (0 means preserve aspect ratio)
         final String height = aspect == 0.0 ? "" : Integer.toString((int) Math.ceil(width / aspect));
 
-        return String.format("/cid/scale/%dx%s/source/site/%s", width, height, url);
+        return String.format("/cid/scale/%dx%s/source/site%s", width, height, url);
     }
 }

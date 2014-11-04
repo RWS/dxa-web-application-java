@@ -29,9 +29,9 @@
             int mainContainerSize = hasLeftBar ? 9 : 12;
         %>
         <tri:region name="Hero"/>
-        <!-- TODO: Content Tools -->
+        <tri:page name="Content Tools"/>
         <div class="row">
-            <!-- TODO: Left Navigation -->
+            <tri:page name="Left Navigation"/>
             <% if (hasLeftBar) { %><div class="col-sm-12 col-md-3"><tri:region name="Left"/></div><% } %>
             <div class="col-sm-12 col-md-<%= mainContainerSize %>"><tri:regions exclude="Hero,Left"/></div>
         </div>

@@ -23,7 +23,7 @@ public class IncludePageController extends AbstractController {
 
     @RequestMapping(method = RequestMethod.GET, value = "{includePageName}")
     public String handleIncludePage(HttpServletRequest request, @PathVariable String includePageName,
-                                    @RequestParam String viewName) {
+                                    @RequestParam(required = false) String viewName) {
         LOG.trace("handleIncludePage: includePageName={}", includePageName);
 
         final Page page = getPageFromRequest(request);

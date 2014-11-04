@@ -25,7 +25,8 @@
 <main class="page-row page-row-expanded" role="main">
     <div class="container-fluid page-border">
         <%
-            boolean hasLeftBar = pageModel.getRegions().containsKey("Left");
+            boolean hasLeftBar = pageModel.getIncludes().containsKey("Left Navigation") ||
+                    pageModel.getRegions().containsKey("Left");
             int mainContainerSize = hasLeftBar ? 9 : 12;
         %>
         <tri:region name="Hero"/>

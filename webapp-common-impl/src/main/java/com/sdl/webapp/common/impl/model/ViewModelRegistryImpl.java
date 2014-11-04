@@ -35,7 +35,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     .put("SiteMap", SitemapItem.class)
                     .put("SiteMapXml", SitemapItem.class)
                     .put("SocialLinks", TagLinkList.class)
-                    .put("SocialSharing", LinkList.class)
+                    .put("SocialSharing", TagLinkList.class)
                     .put("Tab", ItemList.class)
                     .put("Teaser-ImageOverlay", Teaser.class)
                     .put("Teaser", Teaser.class)

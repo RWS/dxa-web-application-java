@@ -6,8 +6,10 @@ package com.sdl.webapp.common.api.mapping.config;
 public final class SemanticVocabulary {
 
     public static final String SDL_CORE = "http://www.sdl.com/web/schemas/core";
-
     public static final String SCHEMA_ORG = "http://schema.org";
+
+    public static final SemanticVocabulary SDL_CORE_VOCABULARY = new SemanticVocabulary(SDL_CORE);
+    public static final SemanticVocabulary SCHEMA_ORG_VOCABULARY = new SemanticVocabulary(SCHEMA_ORG);
 
     private final String id;
 

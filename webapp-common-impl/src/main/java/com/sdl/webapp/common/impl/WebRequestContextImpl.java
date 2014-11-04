@@ -44,7 +44,9 @@ public class WebRequestContextImpl implements WebRequestContext {
     public int getDisplayWidth() {
         if (displayWidth == null) {
             final ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
-            displayWidth = (int) currentClaimStore.get(URI_BROWSER_DISPLAY_WIDTH);
+            displayWidth = 1024; // (int) currentClaimStore.get(URI_BROWSER_DISPLAY_WIDTH);
+            // TODO: See [C#] BrowserClaims.DisplayWidth - special hack to make the default 1024 instead of 800
+
         }
         return displayWidth;
     }

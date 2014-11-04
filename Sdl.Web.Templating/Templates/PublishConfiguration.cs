@@ -197,10 +197,14 @@ namespace Sdl.Web.Tridion.Templates
             string siteId = GetSiteIdFromPublication(contextPublication);
             var master = GetMasterPublication(contextPublication);
             Logger.Debug(String.Format("Master publication is : {0}, siteId is {1}", master.Title, siteId));
-            List<PublicationDetails> pubs = new List<PublicationDetails> { GetPublicationDetails(master) };
+            List<PublicationDetails> pubs = new List<PublicationDetails>();
+            if (GetSiteIdFromPublication(master) == siteId)
+            {
+                pubs.Add(GetPublicationDetails(master));
+            }
             if (siteId!=null)
             {
-                pubs.AddRange(GetChildPublicationIds(master, siteId));
+                pubs.AddRange(GetChildPublicationDetails(master, siteId));
             }
             return pubs;
         }
@@ -228,7 +232,7 @@ namespace Sdl.Web.Tridion.Templates
             return pubData;
         }
 
-        private List<PublicationDetails> GetChildPublicationIds(Publication master, string siteId)
+        private List<PublicationDetails> GetChildPublicationDetails(Publication master, string siteId)
         {
             List<PublicationDetails> pubs = new List<PublicationDetails>();
             var filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };

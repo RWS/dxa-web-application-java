@@ -200,7 +200,7 @@ namespace Sdl.Web.Tridion.Templates
             List<PublicationDetails> pubs = new List<PublicationDetails>();
             if (GetSiteIdFromPublication(master) == siteId)
             {
-                pubs.Add(GetPublicationDetails(master));
+                pubs.Add(GetPublicationDetails(master, true));
             }
             if (siteId!=null)
             {
@@ -209,9 +209,9 @@ namespace Sdl.Web.Tridion.Templates
             return pubs;
         }
 
-        private PublicationDetails GetPublicationDetails(Publication pub)
+        private PublicationDetails GetPublicationDetails(Publication pub, bool isMaster = false)
         {
-            var pubData = new PublicationDetails { id = pub.Id.ItemId.ToString(), path = pub.PublicationUrl};
+            var pubData = new PublicationDetails { id = pub.Id.ItemId.ToString(), path = pub.PublicationUrl, isMaster = isMaster};
             if (_localizationConfigurationComponent != null)
             {
                 var localUri = new TcmUri(_localizationConfigurationComponent.Id.ItemId,ItemType.Component,pub.Id.ItemId);
@@ -244,7 +244,7 @@ namespace Sdl.Web.Tridion.Templates
                 if (childSiteId == siteId)
                 {
                     Logger.Debug(String.Format("Found valid descendent {0} with site ID {1} ", child.Title, childSiteId));
-                    pubs.Add(GetPublicationDetails(child));
+                    pubs.Add(GetPublicationDetails(child, child.Id.ItemId==this.GetPublication().Id.ItemId));
                 }
                 else
                 {
@@ -270,5 +270,6 @@ namespace Sdl.Web.Tridion.Templates
         public string id { get; set; }
         public string path { get; set; }
         public string language { get; set; }
+        public bool isMaster { get; set; }
     }
 }

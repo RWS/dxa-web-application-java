@@ -22,7 +22,7 @@ import org.springframework.web.servlet.view.JstlView;
  */
 @Configuration
 @EnableWebMvc
-@ComponentScan(basePackages = { "com.sdl.webapp.main" })
+@ComponentScan("com.sdl.webapp.main")
 public class WebAppConfiguration extends WebMvcConfigurerAdapter {
 
     private static final String VIEW_RESOLVER_PREFIX = "/WEB-INF/view/";

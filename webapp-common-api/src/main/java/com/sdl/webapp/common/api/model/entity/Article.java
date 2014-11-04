@@ -2,8 +2,8 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import org.joda.time.DateTime;
 
-import java.util.Date;
 import java.util.List;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
@@ -18,7 +18,7 @@ public class Article extends AbstractEntity {
     private Image image;
 
     @SemanticProperty("s:dateCreated")
-    private Date date;
+    private DateTime date;
 
     @SemanticProperty("s:about")
     private String description;
@@ -42,11 +42,11 @@ public class Article extends AbstractEntity {
         this.image = image;
     }
 
-    public Date getDate() {
+    public DateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(DateTime date) {
         this.date = date;
     }
 

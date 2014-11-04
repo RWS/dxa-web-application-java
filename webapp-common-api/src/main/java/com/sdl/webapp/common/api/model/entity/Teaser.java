@@ -4,8 +4,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
-
-import java.util.Date;
+import org.joda.time.DateTime;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
 
@@ -50,7 +49,7 @@ public class Teaser extends AbstractEntity {
     private String text;
 
     @SemanticProperty("c:date")
-    private Date date;
+    private DateTime date;
 
     @SemanticProperties({
             @SemanticProperty("p:location"),
@@ -90,11 +89,11 @@ public class Teaser extends AbstractEntity {
         this.text = text;
     }
 
-    public Date getDate() {
+    public DateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(DateTime date) {
         this.date = date;
     }
 

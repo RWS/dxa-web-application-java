@@ -2,15 +2,13 @@ package com.sdl.webapp.common.impl.mapping;
 
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
-import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import org.junit.Test;
 
 import java.util.List;
 
-import static org.hamcrest.Matchers.empty;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -55,8 +53,8 @@ public class SemanticMappingRegistryIgnoreTest {
 
         final List<FieldSemantics> field2 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field2"));
         assertThat("There should be semantics for field2", field2, hasSize(1));
-        assertThat(field2.get(0), is(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY,
-                TestEntity2.class.getSimpleName(), "field2")));
+        assertThat(field2.get(0), is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity2.class.getSimpleName(),
+                "field2")));
 
         final List<FieldSemantics> field3 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field3"));
         assertThat("field3 is static and should therefore be ignored", field3, empty());

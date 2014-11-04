@@ -1,11 +1,12 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
-import com.sdl.webapp.common.api.mapping.config.SemanticField;
+import com.google.common.base.Strings;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
-import org.springframework.core.convert.TypeDescriptor;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Component
@@ -20,6 +21,14 @@ public class DateFieldConverter extends AbstractFieldConverter {
 
     @Override
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
-        return field.getDateTimeValues();
+        final List<DateTime> dateTimeValues = new ArrayList<>();
+
+        for (String value : field.getDateTimeValues()) {
+            if (!Strings.isNullOrEmpty(value)) {
+                dateTimeValues.add(new DateTime(value));
+            }
+        }
+
+        return dateTimeValues;
     }
 }

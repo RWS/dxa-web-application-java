@@ -23,11 +23,11 @@ import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.CustomMeta;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class BrokerQuery {
@@ -176,8 +176,8 @@ public class BrokerQuery {
         Teaser teaser = new Teaser();
         teaser.setLink(link);
 
-        Date date = getDateFromCustomMeta(compMeta.getCustomMeta(), "dateCreated");
-        teaser.setDate(date != null ? date : compMeta.getLastPublicationDate());
+        DateTime date = getDateFromCustomMeta(compMeta.getCustomMeta(), "dateCreated");
+        teaser.setDate(date != null ? date : new DateTime(compMeta.getLastPublicationDate()));
 
         String headLine = getTextFromCustomMeta(compMeta.getCustomMeta(), "name");
         teaser.setHeadline(!headLine.isEmpty() ? headLine : compMeta.getTitle());
@@ -194,9 +194,9 @@ public class BrokerQuery {
         return null;
     }
 
-    private static Date getDateFromCustomMeta(CustomMeta meta, String fieldname) {
+    private static DateTime getDateFromCustomMeta(CustomMeta meta, String fieldname) {
         if (meta.getName().contains(fieldname)) {
-            return (Date) meta.getValue(fieldname);
+            return new DateTime(meta.getValue(fieldname));
         }
         return null;
     }

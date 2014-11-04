@@ -1,9 +1,9 @@
 package com.sdl.webapp.main.interceptor;
 
-import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentProvider;
-import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.UrlPathHelper;
 
@@ -28,7 +27,6 @@ import java.io.OutputStream;
  * This should be configured to be called after the {@code LocalizationResolverInterceptor} for requests that are
  * being handled by the Spring {@code DispatcherServlet}.
  */
-@Component
 public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);
 

@@ -3,8 +3,8 @@ package com.sdl.webapp.dd4t;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -46,6 +45,8 @@ public final class DD4TContentProvider implements ContentProvider {
 
     private static final String DEFAULT_PAGE_NAME = "index.html";
     private static final String DEFAULT_PAGE_EXTENSION = ".html";
+
+    private static final String DEFAULT_REGION_NAME = "Main";
 
     private static final String CORE_MODULE_NAME = "core";
 
@@ -181,26 +182,28 @@ public final class DD4TContentProvider implements ContentProvider {
 
             final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
             if (templateMeta != null) {
-                final String regionName = getStringValue(templateMeta, "regionView");
-                if (!Strings.isNullOrEmpty(regionName)) {
-                    RegionImpl region = regions.get(regionName);
-                    if (region == null) {
-                        LOG.debug("Creating region: {}", regionName);
-                        region = new RegionImpl();
-
-                        region.setName(regionName);
-                        region.setModule(CORE_MODULE_NAME);
-                        region.setViewName(REGION_VIEW_PREFIX + regionName);
-
-                        regions.put(regionName, region);
-                    }
-
-                    region.getEntities().add(entity);
+                String regionName = getStringValue(templateMeta, "regionView");
+                if (Strings.isNullOrEmpty(regionName)) {
+                    regionName = DEFAULT_REGION_NAME;
                 }
+
+                RegionImpl region = regions.get(regionName);
+                if (region == null) {
+                    LOG.debug("Creating region: {}", regionName);
+                    region = new RegionImpl();
+
+                    region.setName(regionName);
+                    region.setModule(CORE_MODULE_NAME);
+                    region.setViewName(REGION_VIEW_PREFIX + regionName);
+
+                    regions.put(regionName, region);
+                }
+
+                region.getEntities().add(entity);
             }
         }
 
-        final Map<String, Region> regionMap = new HashMap<>();
+        final Map<String, Region> regionMap = new LinkedHashMap<>();
         regionMap.putAll(regions);
         page.setRegions(regionMap);
 

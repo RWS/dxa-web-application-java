@@ -1,12 +1,11 @@
 package com.sdl.webapp.main.interceptor;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
-import com.sdl.webapp.common.api.WebRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,7 +18,6 @@ import javax.servlet.http.HttpServletResponse;
  * This should be the first interceptor to be called for requests that are being handled by the Spring
  * {@code DispatcherServlet}.
  */
-@Component
 public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(LocalizationResolverInterceptor.class);
 

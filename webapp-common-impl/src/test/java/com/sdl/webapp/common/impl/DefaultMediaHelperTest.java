@@ -13,7 +13,7 @@ import static org.junit.Assert.*;
  * Unit tests for {@code DefaultMediaHelper}.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { DefaultMediaHelperTestConfig.class })
+@ContextConfiguration(classes = DefaultMediaHelperTestConfig.class)
 public class DefaultMediaHelperTest {
 
     @Autowired

@@ -18,10 +18,11 @@ public interface SemanticMapper {
      * @param semanticFields The semantic fields to be used when performing semantic mapping.
      * @param fieldDataProvider A field data provider which provides the actual data for the fields when they are
      *                          mapped.
+     * @param <T> The entity type.
      * @return An entity of the specified type, in which the fields are filled with data provided by the field data
      *      provider.
      * @throws SemanticMappingException When an error occurs.
      */
-    Entity createEntity(Class<? extends Entity> entityClass, Map<FieldSemantics, SemanticField> semanticFields,
-                        SemanticFieldDataProvider fieldDataProvider) throws SemanticMappingException;
+    <T extends Entity> T createEntity(Class<? extends T> entityClass, Map<FieldSemantics, SemanticField> semanticFields,
+                                      SemanticFieldDataProvider fieldDataProvider) throws SemanticMappingException;
 }

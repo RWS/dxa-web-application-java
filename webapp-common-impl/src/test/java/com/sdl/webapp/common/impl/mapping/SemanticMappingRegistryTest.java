@@ -12,6 +12,7 @@ import org.junit.Test;
 import java.util.List;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -52,17 +53,17 @@ public class SemanticMappingRegistryTest {
         assertThat("Semantics should be registered in the order that they were specified in the annotations",
                 field1.get(0), is(new FieldSemantics(SDL_TEST_VOCABULARY, "TestOne", "F1")));
         assertThat("Semantics should be registered in the order that they were specified in the annotations",
-                field1.get(1), is(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, "CoreOne", "one")));
+                field1.get(1), is(new FieldSemantics(SDL_CORE_VOCABULARY, "CoreOne", "one")));
         assertThat("Default semantics should be last in the list", field1.get(2),
-                is(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, TestEntity1.class.getSimpleName(),
+                is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity1.class.getSimpleName(),
                         "field1")));
 
         final List<FieldSemantics> field2 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field2"));
         assertThat("There should be semantics for TestOne and default semantics for field2", field2, hasSize(2));
         assertThat("Semantics for CoreOne.two should be first in the list",
-                field2.get(0), is(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, "CoreOne", "two")));
+                field2.get(0), is(new FieldSemantics(SDL_CORE_VOCABULARY, "CoreOne", "two")));
         assertThat("Default semantics should be last in the list", field2.get(1),
-                is(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, TestEntity1.class.getSimpleName(),
+                is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity1.class.getSimpleName(),
                         "field2")));
     }
 }

@@ -6,11 +6,9 @@ import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.Entity;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.TypeDescriptor;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -20,7 +18,6 @@ import java.util.Map;
 /**
  * Implementation of {@code SemanticMapper}.
  */
-@Component
 public class SemanticMapperImpl implements SemanticMapper {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMapperImpl.class);
 
@@ -29,15 +26,16 @@ public class SemanticMapperImpl implements SemanticMapper {
 
     private final SemanticMappingRegistry registry = new SemanticMappingRegistry();
 
-    public SemanticMapperImpl() {
-        this.registry.registerEntities(AbstractEntity.class.getPackage().getName());
+    public SemanticMapperImpl(String basePackage) {
+        this.registry.registerEntities(basePackage);
     }
 
     @Override
-    public Entity createEntity(Class<? extends Entity> entityClass,
-                               final Map<FieldSemantics, SemanticField> semanticFields,
-                               final SemanticFieldDataProvider fieldDataProvider) throws SemanticMappingException {
-        final Entity entity = createInstance(entityClass);
+    public <T extends Entity> T createEntity(Class<? extends T> entityClass,
+                                             final Map<FieldSemantics, SemanticField> semanticFields,
+                                             final SemanticFieldDataProvider fieldDataProvider)
+            throws SemanticMappingException {
+        final T entity = createInstance(entityClass);
 
         // Map all the fields (including fields inherited from superclasses) of the entity
         ReflectionUtils.doWithFields(entityClass, new ReflectionUtils.FieldCallback() {
@@ -124,7 +122,7 @@ public class SemanticMapperImpl implements SemanticMapper {
         return entity;
     }
 
-    private Entity createInstance(Class<? extends Entity> entityClass) throws SemanticMappingException {
+    private <T extends Entity> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("entityClass: {}", entityClass.getName());
         }

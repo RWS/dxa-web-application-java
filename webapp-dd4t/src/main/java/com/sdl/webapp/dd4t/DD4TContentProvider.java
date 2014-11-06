@@ -1,6 +1,7 @@
 package com.sdl.webapp.dd4t;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
@@ -21,6 +22,7 @@ import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.contentmodel.exceptions.SerializationException;
 import org.dd4t.core.filters.FilterException;
+import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -214,8 +216,9 @@ public final class DD4TContentProvider implements ContentProvider {
 
     private Entity createEntity(ComponentPresentation cp, Localization localization) throws ContentProviderException {
         final GenericComponent component = cp.getComponent();
+        final ComponentTemplate componentTemplate = cp.getComponentTemplate();
 
-        final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
+        final Map<String, Field> templateMeta = componentTemplate.getMetadata();
         if (templateMeta != null) {
             final String componentId = component.getId();
 
@@ -243,6 +246,16 @@ public final class DD4TContentProvider implements ContentProvider {
 
             entity.setId(componentId.split("-")[1]);
             entity.setViewName(ENTITY_VIEW_PREFIX + viewName);
+
+            // Set entity data (used for semantic markup)
+            ImmutableMap.Builder<String, String> entityDataBuilder = ImmutableMap.builder();
+            entityDataBuilder.put("ComponentID", componentId);
+            entityDataBuilder.put("ComponentModified",
+                    ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
+            entityDataBuilder.put("ComponentTemplateID", componentTemplate.getId());
+            entityDataBuilder.put("ComponentTemplateModified",
+                    ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
+            entity.setEntityData(entityDataBuilder.build());
 
             // Special handling for media items
             if (entity instanceof MediaItem && component.getMultimedia() != null &&

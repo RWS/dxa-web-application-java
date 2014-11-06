@@ -15,6 +15,7 @@
     <c:set var="url" scope="request">${pageContext.request.requestURL}</c:set>
     <title>${pageModel.title}</title>
     <link rel="stylesheet" href="/system/assets/css/main.css" type="text/css"/>
+    <script src="/assets/scripts/header.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="/system/assets/scripts/ie.js"></script>

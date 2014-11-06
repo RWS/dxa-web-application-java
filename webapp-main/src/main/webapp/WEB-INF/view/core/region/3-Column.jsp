@@ -7,12 +7,7 @@
 <%
     int entityCount = regionModel.getEntities().size();
 
-    int cols = 3;
-    if (screenWidth == ScreenWidth.EXTRA_SMALL || screenWidth == ScreenWidth.SMALL) {
-        // Use only 2 columns on extra small and small screens
-        cols = 2;
-    }
-
+    int cols = screenWidth == ScreenWidth.SMALL ? 2 : 3;
     int rows = (int) Math.ceil(entityCount / (double) cols);
 
     for (int i = 0; i < rows; i++) {

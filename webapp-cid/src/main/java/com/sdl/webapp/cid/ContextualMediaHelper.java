@@ -16,8 +16,6 @@ public class ContextualMediaHelper extends AbstractMediaHelper {
     public String getResponsiveImageUrl(String url, String widthFactor, double aspect, int containerSize) {
         final int width = roundWidth(getResponsiveWidth(widthFactor, containerSize));
 
-        // TODO
-
         // Height is calculated from the aspect ratio (0 means preserve aspect ratio)
         final String height = aspect == 0.0 ? "" : Integer.toString((int) Math.ceil(width / aspect));
 

@@ -1,11 +1,14 @@
 package com.sdl.webapp.common.impl.mapping;
 
+import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
+import com.sdl.webapp.common.api.mapping.FieldData;
 import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.TypeDescriptor;
@@ -31,11 +34,13 @@ public class SemanticMapperImpl implements SemanticMapper {
     }
 
     @Override
-    public <T extends Entity> T createEntity(Class<? extends T> entityClass,
-                                             final Map<FieldSemantics, SemanticField> semanticFields,
-                                             final SemanticFieldDataProvider fieldDataProvider)
+    public <T extends AbstractEntity> T createEntity(Class<? extends T> entityClass,
+                                                     final Map<FieldSemantics, SemanticField> semanticFields,
+                                                     final SemanticFieldDataProvider fieldDataProvider)
             throws SemanticMappingException {
         final T entity = createInstance(entityClass);
+
+        final ImmutableMap.Builder<String, String> propertyDataBuilder = ImmutableMap.builder();
 
         // Map all the fields (including fields inherited from superclasses) of the entity
         ReflectionUtils.doWithFields(entityClass, new ReflectionUtils.FieldCallback() {
@@ -59,7 +64,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                     }
 
                     if (semanticField != null) {
-                        Object fieldData = null;
+                        FieldData fieldData = null;
                         try {
                             fieldData = fieldDataProvider.getFieldData(semanticField, new TypeDescriptor(field));
                         } catch (SemanticMappingException e) {
@@ -67,9 +72,18 @@ public class SemanticMapperImpl implements SemanticMapper {
                         }
 
                         if (fieldData != null) {
-                            field.setAccessible(true);
-                            field.set(entity, fieldData);
-                            break;
+                            final Object fieldValue = fieldData.getFieldValue();
+                            if (fieldValue != null) {
+                                field.setAccessible(true);
+                                field.set(entity, fieldValue);
+
+                                final String propertyData = fieldData.getPropertyData();
+                                if (!Strings.isNullOrEmpty(propertyData)) {
+                                    propertyDataBuilder.put(field.getName(), propertyData);
+                                }
+
+                                break;
+                            }
                         }
                     }
 
@@ -110,19 +124,19 @@ public class SemanticMapperImpl implements SemanticMapper {
                     // This not necessarily means there is a problem; for some components in the input, not all fields
                     // of the entity are mapped
                     LOG.debug("No match found for field: {}; registry semantics: {} did not match with supplied " +
-                            "semantics: {}", new Object[] { field, registrySemantics, semanticFields });
+                            "semantics: {}", new Object[]{field, registrySemantics, semanticFields});
                 }
             }
         });
 
-        // TODO: Set propertyData in entity
-        // See [C#] DD4TModelBuilder.CreateModelFromMapData
+        // Set property data (used for semantic markup)
+        entity.setPropertyData(propertyDataBuilder.build());
 
         LOG.trace("entity: {}", entity);
         return entity;
     }
 
-    private <T extends Entity> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
+    private <T extends AbstractEntity> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("entityClass: {}", entityClass.getName());
         }

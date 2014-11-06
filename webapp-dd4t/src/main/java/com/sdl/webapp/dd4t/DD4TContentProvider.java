@@ -225,7 +225,7 @@ public final class DD4TContentProvider implements ContentProvider {
             final String viewName = getStringValue(templateMeta, "view");
             LOG.debug("{}: viewName: {}", componentId, viewName);
 
-            final Class<? extends Entity> entityClass = viewModelRegistry.getViewEntityClass(viewName);
+            final Class<? extends AbstractEntity> entityClass = viewModelRegistry.getViewEntityClass(viewName);
             if (entityClass == null) {
                 throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
                         "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
@@ -238,7 +238,7 @@ public final class DD4TContentProvider implements ContentProvider {
 
             final AbstractEntity entity;
             try {
-                entity = (AbstractEntity) semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
+                entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
                         new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry));
             } catch (SemanticMappingException e) {
                 throw new ContentProviderException(e);
@@ -248,14 +248,7 @@ public final class DD4TContentProvider implements ContentProvider {
             entity.setViewName(ENTITY_VIEW_PREFIX + viewName);
 
             // Set entity data (used for semantic markup)
-            ImmutableMap.Builder<String, String> entityDataBuilder = ImmutableMap.builder();
-            entityDataBuilder.put("ComponentID", componentId);
-            entityDataBuilder.put("ComponentModified",
-                    ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
-            entityDataBuilder.put("ComponentTemplateID", componentTemplate.getId());
-            entityDataBuilder.put("ComponentTemplateModified",
-                    ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
-            entity.setEntityData(entityDataBuilder.build());
+            entity.setEntityData(getEntityData(cp));
 
             // Special handling for media items
             if (entity instanceof MediaItem && component.getMultimedia() != null &&
@@ -281,5 +274,20 @@ public final class DD4TContentProvider implements ContentProvider {
         }
 
         return null;
+    }
+
+    private Map<String, String> getEntityData(ComponentPresentation cp) {
+        final GenericComponent component = cp.getComponent();
+        final ComponentTemplate componentTemplate = cp.getComponentTemplate();
+
+        ImmutableMap.Builder<String, String> entityDataBuilder = ImmutableMap.builder();
+        entityDataBuilder.put("ComponentID", component.getId());
+        entityDataBuilder.put("ComponentModified",
+                ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
+        entityDataBuilder.put("ComponentTemplateID", componentTemplate.getId());
+        entityDataBuilder.put("ComponentTemplateModified",
+                ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
+
+        return entityDataBuilder.build();
     }
 }

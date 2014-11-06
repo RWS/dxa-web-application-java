@@ -2,7 +2,7 @@ package com.sdl.webapp.common.api.mapping;
 
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 
 import java.util.Map;
 
@@ -23,6 +23,8 @@ public interface SemanticMapper {
      *      provider.
      * @throws SemanticMappingException When an error occurs.
      */
-    <T extends Entity> T createEntity(Class<? extends T> entityClass, Map<FieldSemantics, SemanticField> semanticFields,
-                                      SemanticFieldDataProvider fieldDataProvider) throws SemanticMappingException;
+    <T extends AbstractEntity> T createEntity(Class<? extends T> entityClass,
+                                              Map<FieldSemantics, SemanticField> semanticFields,
+                                              SemanticFieldDataProvider fieldDataProvider)
+            throws SemanticMappingException;
 }

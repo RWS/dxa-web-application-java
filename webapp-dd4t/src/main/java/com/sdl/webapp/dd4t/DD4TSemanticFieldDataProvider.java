@@ -1,6 +1,7 @@
 package com.sdl.webapp.dd4t;
 
 import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.mapping.FieldData;
 import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.FieldPath;
@@ -54,7 +55,7 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
     }
 
     @Override
-    public Object getFieldData(SemanticField semanticField, TypeDescriptor targetType) throws SemanticMappingException {
+    public FieldData getFieldData(SemanticField semanticField, TypeDescriptor targetType) throws SemanticMappingException {
         LOG.trace("semanticField: {}, targetType: {}", semanticField, targetType);
 
         final Map<String, Field> fields;
@@ -79,8 +80,10 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
         }
         LOG.trace("Found DD4T field: [{}] {}", field.getFieldType(), field.getName());
 
-        return fieldConverterRegistry.getFieldConverterFor(field.getFieldType())
+        final Object fieldValue = fieldConverterRegistry.getFieldConverterFor(field.getFieldType())
                 .getFieldValue(semanticField, (BaseField) field, targetType, this);
+
+        return new FieldData(fieldValue, field.getXPath());
     }
 
     @Override

@@ -6,6 +6,8 @@
 <jsp:useBean id="pageModel" type="com.sdl.webapp.common.api.model.Page" scope="request"/>
 <jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.Article" scope="request"/>
 
+<%-- TODO: Refactor, this is not complete and not correct. --%>
+
 <article class="rich-text">
     <c:choose>
         <c:when test="${not empty entityModel.image}">

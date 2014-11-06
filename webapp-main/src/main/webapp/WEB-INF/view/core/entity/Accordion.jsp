@@ -6,6 +6,8 @@
 <jsp:useBean id="pageModel" type="com.sdl.webapp.common.api.model.Page" scope="request"/>
 <jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.ItemList" scope="request"/>
 
+<%-- TODO: Must be refactored because this is not correct (for example "NewGuid" is not something that exists) --%>
+
 <article class="rich-text">
     <div class="content">
         <c:if test="${not empty entityModel.headline}">

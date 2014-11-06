@@ -20,16 +20,16 @@
     </ol>
     <div class="carousel-inner">
         <c:forEach var="carousel" varStatus="carouselStatus" items="${entityModel.itemListElements}">
-            <c:set var="carouselItem" value="${carousel}" />
+            <c:set var="carouselItem" value="${carousel}" scope="request"/>
             <c:choose>
                 <c:when test="${carouselStatus.count == 1}">
                     <div class="item active">
-                        <%@ include file="/WEB-INF/view/core/entity/partial-includes/Teaser-ImageOverlay.jsp" %>
+                        <c:import url="/WEB-INF/view/core/entity/partial-includes/Teaser-ImageOverlay.jsp"/>
                     </div>
                 </c:when>
                 <c:otherwise>
                     <div class="item">
-                        <%@ include file="/WEB-INF/view/core/entity/partial-includes/Teaser-ImageOverlay.jsp" %>
+                        <c:import url="/WEB-INF/view/core/entity/partial-includes/Teaser-ImageOverlay.jsp"/>
                     </div>
                 </c:otherwise>
             </c:choose>

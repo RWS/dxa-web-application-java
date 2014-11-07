@@ -198,13 +198,15 @@ namespace Sdl.Web.Tridion.Templates
             var master = GetMasterPublication(contextPublication);
             Logger.Debug(String.Format("Master publication is : {0}, siteId is {1}", master.Title, siteId));
             List<PublicationDetails> pubs = new List<PublicationDetails>();
+            bool masterAdded = false;
             if (GetSiteIdFromPublication(master) == siteId)
             {
                 pubs.Add(GetPublicationDetails(master, true));
+                masterAdded = true;
             }
             if (siteId!=null)
             {
-                pubs.AddRange(GetChildPublicationDetails(master, siteId));
+                pubs.AddRange(GetChildPublicationDetails(master, siteId, masterAdded));
             }
             return pubs;
         }
@@ -232,7 +234,7 @@ namespace Sdl.Web.Tridion.Templates
             return pubData;
         }
 
-        private List<PublicationDetails> GetChildPublicationDetails(Publication master, string siteId)
+        private List<PublicationDetails> GetChildPublicationDetails(Publication master, string siteId, bool masterAdded)
         {
             List<PublicationDetails> pubs = new List<PublicationDetails>();
             var filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };
@@ -244,7 +246,8 @@ namespace Sdl.Web.Tridion.Templates
                 if (childSiteId == siteId)
                 {
                     Logger.Debug(String.Format("Found valid descendent {0} with site ID {1} ", child.Title, childSiteId));
-                    pubs.Add(GetPublicationDetails(child, child.Id.ItemId==this.GetPublication().Id.ItemId));
+                    bool isMaster = !masterAdded && child.Id.ItemId==this.GetPublication().Id.ItemId;
+                    pubs.Add(GetPublicationDetails(child, isMaster));
                 }
                 else
                 {

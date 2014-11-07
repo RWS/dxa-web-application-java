@@ -10,6 +10,7 @@ import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.util.StreamUtils;
 import com.sdl.webapp.main.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.main.controller.exception.NotFoundException;
+import com.sdl.webapp.main.markup.Markup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import static com.sdl.webapp.main.RequestAttributeNames.MARKUP;
 import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
 import static com.sdl.webapp.main.RequestAttributeNames.SCREEN_WIDTH;
 
@@ -47,13 +49,16 @@ public class PageController extends AbstractController {
 
     private final WebRequestContext webRequestContext;
 
+    private final Markup markup;
+
     @Autowired
     public PageController(Environment environment, ContentProvider contentProvider, MediaHelper mediaHelper,
-                          WebRequestContext webRequestContext) {
+                          WebRequestContext webRequestContext, Markup markup) {
         this.environment = environment;
         this.contentProvider = contentProvider;
         this.mediaHelper = mediaHelper;
         this.webRequestContext = webRequestContext;
+        this.markup = markup;
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = { "text/html" })
@@ -66,6 +71,7 @@ public class PageController extends AbstractController {
         LOG.trace("handleGetPage: page={}", page);
 
         request.setAttribute(PAGE_MODEL, page);
+        request.setAttribute(MARKUP, markup);
         request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
 
         final String viewName = page.getViewName();

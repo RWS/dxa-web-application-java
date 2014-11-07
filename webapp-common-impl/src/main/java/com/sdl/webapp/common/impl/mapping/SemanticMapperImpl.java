@@ -2,16 +2,15 @@ package com.sdl.webapp.common.impl.mapping;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.sdl.webapp.common.api.mapping.FieldData;
-import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
-import com.sdl.webapp.common.api.mapping.SemanticMapper;
-import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.*;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
@@ -21,16 +20,18 @@ import java.util.Map;
 /**
  * Implementation of {@code SemanticMapper}.
  */
+@Component
 public class SemanticMapperImpl implements SemanticMapper {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMapperImpl.class);
 
     private static final String ALL_PROPERTY = "_all";
     private static final String SELF_PROPERTY = "_self";
 
-    private final SemanticMappingRegistry registry = new SemanticMappingRegistry();
+    private final SemanticMappingRegistry registry;
 
-    public SemanticMapperImpl(String basePackage) {
-        this.registry.registerEntities(basePackage);
+    @Autowired
+    public SemanticMapperImpl(SemanticMappingRegistry registry) {
+        this.registry = registry;
     }
 
     @Override

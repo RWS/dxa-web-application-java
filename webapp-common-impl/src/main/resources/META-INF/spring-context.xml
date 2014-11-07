@@ -8,5 +8,5 @@
                            http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:annotation-config/>
-    <bean class="com.sdl.webapp.common.impl.SpringConfiguration"/>
+    <context:component-scan base-package="com.sdl.webapp.common.impl"/>
 </beans>

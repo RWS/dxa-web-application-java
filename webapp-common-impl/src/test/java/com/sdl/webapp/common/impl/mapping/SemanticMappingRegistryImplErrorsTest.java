@@ -11,7 +11,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
 /**
  * Unit tests for {@code SemanticMappingRegistry} that test error scenarios.
  */
-public class SemanticMappingRegistryErrorsTest {
+public class SemanticMappingRegistryImplErrorsTest {
 
     @SemanticEntities({
             @SemanticEntity(entityName = "One", vocabulary = SDL_CORE, prefix = "x"),
@@ -30,13 +30,13 @@ public class SemanticMappingRegistryErrorsTest {
 
     @Test(expected = SemanticAnnotationException.class)
     public void testSemanticEntityAnnosWithTheSamePrefix() {
-        final SemanticMappingRegistry registry = new SemanticMappingRegistry();
+        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity1.class);
     }
 
     @Test(expected = SemanticAnnotationException.class)
     public void testSemanticPropertyAnnoWithUnknownPrefix() {
-        final SemanticMappingRegistry registry = new SemanticMappingRegistry();
+        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity2.class);
     }
 }

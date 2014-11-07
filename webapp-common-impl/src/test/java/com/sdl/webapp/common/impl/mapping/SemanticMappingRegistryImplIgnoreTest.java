@@ -15,7 +15,7 @@ import static org.junit.Assert.assertThat;
  * Unit tests for {@code SemanticMappingRegistry} that test if the {@code @SemanticMappingIgnore} annotation on
  * entities and fields is handled correctly.
  */
-public class SemanticMappingRegistryIgnoreTest {
+public class SemanticMappingRegistryImplIgnoreTest {
 
     @SemanticMappingIgnore
     public static class TestEntity1 extends AbstractEntity {
@@ -32,7 +32,7 @@ public class SemanticMappingRegistryIgnoreTest {
 
     @Test
     public void testIgnoreOnEntity() throws NoSuchFieldException {
-        final SemanticMappingRegistry registry = new SemanticMappingRegistry();
+        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity1.class);
 
         final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field1"));
@@ -44,7 +44,7 @@ public class SemanticMappingRegistryIgnoreTest {
 
     @Test
     public void testIgnoreOnField() throws NoSuchFieldException {
-        final SemanticMappingRegistry registry = new SemanticMappingRegistry();
+        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity2.class);
 
         final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field1"));

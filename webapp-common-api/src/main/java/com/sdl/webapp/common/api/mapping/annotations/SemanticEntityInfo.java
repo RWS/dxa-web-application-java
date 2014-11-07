@@ -1,11 +1,10 @@
-package com.sdl.webapp.common.impl.mapping;
+package com.sdl.webapp.common.api.mapping.annotations;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.Entity;
 
-final class SemanticEntityInfo {
+public final class SemanticEntityInfo {
 
     public static final String DEFAULT_VOCABULARY = SemanticVocabulary.SDL_CORE;
 
@@ -63,7 +62,7 @@ final class SemanticEntityInfo {
         return prefix;
     }
 
-    public boolean isPublic_() {
+    public boolean isPublic() {
         return public_;
     }
 

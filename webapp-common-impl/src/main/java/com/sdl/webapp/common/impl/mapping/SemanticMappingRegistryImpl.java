@@ -3,6 +3,7 @@ package com.sdl.webapp.common.impl.mapping;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.annotations.*;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
@@ -20,19 +21,32 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 /**
- * Semantic mapping registry.
- *
- * The semantic mapping registry contains information about the entity classes, gathered from the semantic mapping
- * annotations declared on the classes and the fields of the classes.
+ * Implementation of {@code SemanticMappingRegistry}.
  */
-final class SemanticMappingRegistry {
-    private static final Logger LOG = LoggerFactory.getLogger(SemanticMappingRegistry.class);
+public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
+    private static final Logger LOG = LoggerFactory.getLogger(SemanticMappingRegistryImpl.class);
 
-    private final ListMultimap<Field, FieldSemantics> registry = ArrayListMultimap.create();
+    private final ListMultimap<Field, FieldSemantics> fieldSemanticsMap = ArrayListMultimap.create();
 
+    private final ListMultimap<Class<? extends Entity>, SemanticEntityInfo> semanticEntityInfo = ArrayListMultimap.create();
+    private final ListMultimap<Field, SemanticPropertyInfo> semanticPropertyInfo = ArrayListMultimap.create();
+
+    @Override
     public List<FieldSemantics> getFieldSemantics(Field field) {
-        final List<FieldSemantics> fieldSemanticsList = registry.get(field);
+        final List<FieldSemantics> fieldSemanticsList = fieldSemanticsMap.get(field);
         return fieldSemanticsList != null ? fieldSemanticsList : Collections.<FieldSemantics>emptyList();
+    }
+
+    @Override
+    public List<SemanticEntityInfo> getEntityInfo(Class<? extends Entity> entityClass) {
+        List<SemanticEntityInfo> semanticEntityInfoList = semanticEntityInfo.get(entityClass);
+        return semanticEntityInfoList != null ? semanticEntityInfoList : Collections.<SemanticEntityInfo>emptyList();
+    }
+
+    @Override
+    public List<SemanticPropertyInfo> getPropertyInfo(Field field) {
+        List<SemanticPropertyInfo> semanticPropertyInfoList = semanticPropertyInfo.get(field);
+        return semanticPropertyInfoList != null ? semanticPropertyInfoList : Collections.<SemanticPropertyInfo>emptyList();
     }
 
     /**
@@ -77,11 +91,14 @@ final class SemanticMappingRegistry {
 
         LOG.debug("Registering entity class: {}", entityClass.getName());
 
-        final Map<String, SemanticEntityInfo> entityInfoMap = getSemanticEntityInfo(entityClass);
+        final Map<String, SemanticEntityInfo> entityInfoMap = createSemanticEntityInfo(entityClass);
+        semanticEntityInfo.putAll(entityClass, entityInfoMap.values());
+
         final Map<String, SemanticVocabulary> vocabularies = new HashMap<>();
 
         for (Field field : entityClass.getDeclaredFields()) {
-            final ListMultimap<String, SemanticPropertyInfo> propertyInfoMap = getSemanticPropertyInfo(field);
+            final ListMultimap<String, SemanticPropertyInfo> propertyInfoMap = createSemanticPropertyInfo(field);
+            semanticPropertyInfo.putAll(field, propertyInfoMap.values());
 
             for (Map.Entry<String, SemanticPropertyInfo> entry : propertyInfoMap.entries()) {
                 // Get the corresponding semantic entity info
@@ -103,18 +120,18 @@ final class SemanticMappingRegistry {
                 final FieldSemantics fieldSemantics = new FieldSemantics(vocabularies.get(vocabularyId),
                         entityInfo.getEntityName(), entry.getValue().getPropertyName());
                 LOG.trace("FieldSemantics: {} -> {}", field, fieldSemantics);
-                registry.put(field, fieldSemantics);
+                fieldSemanticsMap.put(field, fieldSemantics);
             }
         }
     }
 
     /**
-     * Gets semantic entity information for an entity class from the semantic annotations on the class.
+     * Creates semantic entity information for an entity class from the semantic annotations on the class.
      *
      * @param entityClass The entity class.
      * @return A map with {@code SemanticEntityInfo} objects by vocabulary prefix.
      */
-    private Map<String, SemanticEntityInfo> getSemanticEntityInfo(Class<? extends Entity> entityClass) {
+    private Map<String, SemanticEntityInfo> createSemanticEntityInfo(Class<? extends Entity> entityClass) {
         // NOTE: LinkedHashMap because order of entries is important
         final Map<String, SemanticEntityInfo> result = new LinkedHashMap<>();
 
@@ -148,12 +165,12 @@ final class SemanticMappingRegistry {
     }
 
     /**
-     * Gets semantic property information for a field from the semantic annotations on the field.
+     * Creates semantic property information for a field from the semantic annotations on the field.
      *
      * @param field The field.
      * @return A map with {@code SemanticPropertyInfo} objects by vocabulary prefix.
      */
-    private ListMultimap<String, SemanticPropertyInfo> getSemanticPropertyInfo(Field field) {
+    private ListMultimap<String, SemanticPropertyInfo> createSemanticPropertyInfo(Field field) {
         // Ignore fields that have a @SemanticMappingIgnore annotation and static fields
         if (field.getAnnotation(SemanticMappingIgnore.class) != null || Modifier.isStatic(field.getModifiers())) {
             LOG.debug("Ignoring field: {}", field);

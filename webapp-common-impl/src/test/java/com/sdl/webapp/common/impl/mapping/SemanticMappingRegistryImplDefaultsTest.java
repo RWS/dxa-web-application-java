@@ -17,7 +17,7 @@ import static org.junit.Assert.assertThat;
  * Unit tests for {@code SemanticMappingRegistry} that test if default mapping information (when not explicitly
  * specified via annotations) is registered correctly.
  */
-public class SemanticMappingRegistryDefaultsTest {
+public class SemanticMappingRegistryImplDefaultsTest {
 
     public static class TestEntity1 extends AbstractEntity {
         private String field1;
@@ -46,7 +46,7 @@ public class SemanticMappingRegistryDefaultsTest {
      */
     @Test
     public void testRegisterDefaults() throws NoSuchFieldException {
-        final SemanticMappingRegistry registry = new SemanticMappingRegistry();
+        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity1.class);
 
         final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field1"));
@@ -69,7 +69,7 @@ public class SemanticMappingRegistryDefaultsTest {
      */
     @Test
     public void testRegisterDefaultsWhenAnnotationsPresent() throws NoSuchFieldException {
-        final SemanticMappingRegistry registry = new SemanticMappingRegistry();
+        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity2.class);
 
         final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field1"));
@@ -88,7 +88,7 @@ public class SemanticMappingRegistryDefaultsTest {
      */
     @Test
     public void testRegisterDefaultPrefix() throws NoSuchFieldException {
-        final SemanticMappingRegistry registry = new SemanticMappingRegistry();
+        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity3.class);
 
         final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity3.class.getDeclaredField("field1"));

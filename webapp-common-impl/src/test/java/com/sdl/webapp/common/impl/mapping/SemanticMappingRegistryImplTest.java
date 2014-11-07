@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 /**
  * Unit tests for {@code SemanticMappingRegistry}.
  */
-public class SemanticMappingRegistryTest {
+public class SemanticMappingRegistryImplTest {
 
     private static final String SDL_TEST = "http://www.sdl.com/web/schemas/test";
 
@@ -44,7 +44,7 @@ public class SemanticMappingRegistryTest {
 
     @Test
     public void testRegistration() throws NoSuchFieldException {
-        final SemanticMappingRegistry registry = new SemanticMappingRegistry();
+        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity1.class);
 
         final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field1"));

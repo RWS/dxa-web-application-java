@@ -1,12 +1,11 @@
-package com.sdl.webapp.common.impl.mapping;
+package com.sdl.webapp.common.api.mapping.annotations;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
 import java.lang.reflect.Field;
 import java.util.List;
 
-final class SemanticPropertyInfo {
+public final class SemanticPropertyInfo {
 
     private final String prefix;
 

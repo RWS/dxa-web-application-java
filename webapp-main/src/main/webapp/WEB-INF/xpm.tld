@@ -9,6 +9,18 @@
     <uri>http://www.sdl.com/tridion-xpm</uri>
 
     <tag>
+        <name>page</name>
+        <tag-class>com.sdl.webapp.main.taglib.xpm.XpmPageMarkupTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>page</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.sdl.webapp.common.api.model.Page</type>
+        </attribute>
+    </tag>
+
+    <tag>
         <name>region</name>
         <tag-class>com.sdl.webapp.main.taglib.xpm.XpmRegionMarkupTag</tag-class>
         <body-content>empty</body-content>

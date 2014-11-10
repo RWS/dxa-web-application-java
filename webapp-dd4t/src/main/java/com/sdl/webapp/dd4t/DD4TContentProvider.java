@@ -209,9 +209,35 @@ public final class DD4TContentProvider implements ContentProvider {
         regionMap.putAll(regions);
         page.setRegions(regionMap);
 
+        page.setPageData(getPageData(genericPage, localization));
+
         page.setViewName(PAGE_VIEW_PREFIX + getPageViewName(genericPage));
 
         return page;
+    }
+
+    private Map<String, String> getPageData(GenericPage page, Localization localization) {
+        final PageTemplate pageTemplate = page.getPageTemplate();
+
+        ImmutableMap.Builder<String, String> pageDataBuilder = ImmutableMap.builder();
+        pageDataBuilder.put("PageID", page.getId());
+        pageDataBuilder.put("PageModified", ISODateTimeFormat.dateHourMinuteSecond().print(page.getRevisionDate()));
+        pageDataBuilder.put("PageTemplateID", pageTemplate.getId());
+        pageDataBuilder.put("PageTemplateModified",
+                ISODateTimeFormat.dateHourMinuteSecond().print(pageTemplate.getRevisionDate()));
+
+        pageDataBuilder.put("CmsUrl", localization.getConfiguration("core.cmsurl"));
+
+        return pageDataBuilder.build();
+    }
+
+    private String getPageViewName(GenericPage genericPage) {
+        final PageTemplate pageTemplate = genericPage.getPageTemplate();
+        if (pageTemplate != null) {
+            return getStringValue(pageTemplate.getMetadata(), "view");
+        }
+
+        return null;
     }
 
     private Entity createEntity(ComponentPresentation cp, Localization localization) throws ContentProviderException {
@@ -262,15 +288,6 @@ public final class DD4TContentProvider implements ContentProvider {
             }
 
             return entity;
-        }
-
-        return null;
-    }
-
-    private String getPageViewName(GenericPage genericPage) {
-        final PageTemplate pageTemplate = genericPage.getPageTemplate();
-        if (pageTemplate != null) {
-            return getStringValue(pageTemplate.getMetadata(), "view");
         }
 
         return null;

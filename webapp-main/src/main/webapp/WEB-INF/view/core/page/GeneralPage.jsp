@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
+<%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="pageModel" type="com.sdl.webapp.common.api.model.Page" scope="request"/>
 <!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
 <!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->
@@ -41,5 +41,6 @@
 </main>
 <tri:page name="Footer" viewName="shared/Footer"/>
 <script src="/system/assets/scripts/main.js"></script>
+<xpm:page page="${pageModel}"/>
 </body>
 </html>

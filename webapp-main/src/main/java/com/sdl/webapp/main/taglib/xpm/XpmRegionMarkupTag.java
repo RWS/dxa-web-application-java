@@ -2,6 +2,7 @@ package com.sdl.webapp.main.taglib.xpm;
 
 import com.sdl.webapp.common.api.model.Region;
 import com.sdl.webapp.main.markup.html.HtmlCommentNode;
+import com.sdl.webapp.main.markup.html.HtmlNode;
 
 public class XpmRegionMarkupTag extends XpmMarkupTag {
 
@@ -15,7 +16,7 @@ public class XpmRegionMarkupTag extends XpmMarkupTag {
     }
 
     @Override
-    protected HtmlCommentNode generateXpmMarkup() {
+    protected HtmlNode generateXpmMarkup() {
         // TODO determine min occurs and max occurs for the region
 
         // TODO: Determine allowed component types

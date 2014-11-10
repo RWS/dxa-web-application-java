@@ -3,6 +3,7 @@ package com.sdl.webapp.main.taglib.xpm;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.main.markup.html.HtmlCommentNode;
+import com.sdl.webapp.main.markup.html.HtmlNode;
 
 import java.util.Map;
 
@@ -29,7 +30,7 @@ public class XpmPropertyMarkupTag extends XpmMarkupTag {
     }
 
     @Override
-    protected HtmlCommentNode generateXpmMarkup() {
+    protected HtmlNode generateXpmMarkup() {
         final Map<String, String> propertyData = entity.getPropertyData();
 
         final String xpath = propertyData.get(property);

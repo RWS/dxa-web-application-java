@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.taglib.xpm;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.main.markup.html.HtmlCommentNode;
+import com.sdl.webapp.main.markup.html.HtmlNode;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.jsp.JspException;
@@ -11,12 +11,12 @@ import java.io.IOException;
 
 public abstract class XpmMarkupTag extends TagSupport {
 
-    protected abstract HtmlCommentNode generateXpmMarkup();
+    protected abstract HtmlNode generateXpmMarkup();
 
     @Override
     public int doStartTag() throws JspException {
         if (isPreview()) {
-            final HtmlCommentNode xpmMarkup = generateXpmMarkup();
+            final HtmlNode xpmMarkup = generateXpmMarkup();
             if (xpmMarkup != null) {
                 final JspWriter out = pageContext.getOut();
                 try {

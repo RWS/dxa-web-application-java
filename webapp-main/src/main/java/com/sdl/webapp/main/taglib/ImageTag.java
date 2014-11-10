@@ -10,13 +10,9 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.TagSupport;
-import java.io.IOException;
 import java.util.Locale;
 
-public class ImageTag extends TagSupport {
+public class ImageTag extends HtmlElementTag {
     private static final Logger LOG = LoggerFactory.getLogger(ImageTag.class);
 
     private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
@@ -53,7 +49,7 @@ public class ImageTag extends TagSupport {
     }
 
     @Override
-    public int doStartTag() throws JspException {
+    public HtmlElement generateElement() {
         final MediaHelper mediaHelper = WebApplicationContextUtils.getRequiredWebApplicationContext(
                 pageContext.getServletContext()).getBean(MediaHelper.class);
 
@@ -69,20 +65,11 @@ public class ImageTag extends TagSupport {
             imgWidth = mediaHelper.getDefaultMediaFill();
         }
 
-        final HtmlElement element = HtmlBuilders.img(imageUrl)
+        return HtmlBuilders.img(imageUrl)
                 .withAlt(altText)
                 .withWidth(imgWidth)
                 .withClass(cssClass)
                 .withAttribute("data-aspect", String.format(Locale.US, "%.2f", aspect))
                 .build();
-
-        final JspWriter out = pageContext.getOut();
-        try {
-            out.write(element.toHtml());
-        } catch (IOException e) {
-            throw new JspException(e);
-        }
-
-        return SKIP_BODY;
     }
 }

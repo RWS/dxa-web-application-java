@@ -6,27 +6,24 @@ import java.util.List;
 
 public final class HtmlElement extends HtmlNode {
 
-    private final String tagName;
-
-    private final boolean closeTag;
-
-    private final List<HtmlAttribute> attributes;
+    private final HtmlStartTag startTag;
 
     private final List<HtmlNode> content;
 
+    private final HtmlEndTag endTag;
+
     public HtmlElement(String tagName, boolean closeTag, List<HtmlAttribute> attributes, List<HtmlNode> content) {
-        this.tagName = tagName;
-        this.closeTag = closeTag;
-        this.attributes = ImmutableList.copyOf(attributes);
+        this.startTag = new HtmlStartTag(tagName, attributes);
         this.content = ImmutableList.copyOf(content);
+        this.endTag = closeTag ? new HtmlEndTag(tagName) : null;
     }
 
-    public String getTagName() {
-        return tagName;
+    public HtmlStartTag getStartTag() {
+        return startTag;
     }
 
-    public List<HtmlAttribute> getAttributes() {
-        return attributes;
+    public HtmlEndTag getEndTag() {
+        return endTag;
     }
 
     public List<HtmlNode> getContent() {
@@ -35,16 +32,12 @@ public final class HtmlElement extends HtmlNode {
 
     @Override
     protected String renderHtml() {
-        final StringBuilder sb = new StringBuilder().append('<').append(tagName);
-        for (HtmlAttribute attribute : attributes) {
-            sb.append(' ').append(attribute.toHtml());
-        }
-        sb.append('>');
+        final StringBuilder sb = new StringBuilder().append(startTag.toHtml());
         for (HtmlNode node : content) {
             sb.append(node.toHtml());
         }
-        if (closeTag) {
-            sb.append("</").append(tagName).append('>');
+        if (endTag != null) {
+            sb.append(endTag.toHtml());
         }
         return sb.toString();
     }

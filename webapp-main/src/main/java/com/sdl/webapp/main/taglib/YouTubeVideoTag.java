@@ -7,13 +7,9 @@ import com.sdl.webapp.main.markup.html.HtmlElement;
 import com.sdl.webapp.main.markup.html.builders.HtmlBuilders;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.TagSupport;
-import java.io.IOException;
 import java.util.UUID;
 
-public class YouTubeVideoTag extends TagSupport {
+public class YouTubeVideoTag extends HtmlElementTag {
 
     private static final HtmlAttribute CLASS_EMBED_VIDEO_ATTR = new HtmlAttribute("class", "embed-video");
 
@@ -59,25 +55,11 @@ public class YouTubeVideoTag extends TagSupport {
     }
 
     @Override
-    public int doStartTag() throws JspException {
-        final MediaHelper mediaHelper = WebApplicationContextUtils.getRequiredWebApplicationContext(
-                pageContext.getServletContext()).getBean(MediaHelper.class);
-
-        JspWriter out = pageContext.getOut();
-        try {
-            if (!Strings.isNullOrEmpty(url)) {
-                out.write(getYouTubePlaceholder());
-            } else {
-                out.write(getYouTubeEmbed());
-            }
-        } catch (IOException e) {
-            throw new JspException(e);
-        }
-
-        return SKIP_BODY;
+    public HtmlElement generateElement() {
+        return !Strings.isNullOrEmpty(url) ? getYouTubePlaceholder() : getYouTubeEmbed();
     }
 
-    private String getYouTubePlaceholder() {
+    private HtmlElement getYouTubePlaceholder() {
         final MediaHelper mediaHelper = WebApplicationContextUtils.getRequiredWebApplicationContext(
                 pageContext.getServletContext()).getBean(MediaHelper.class);
 
@@ -94,16 +76,16 @@ public class YouTubeVideoTag extends TagSupport {
                         .withClass(cssClass)
                         .withContent(PLAY_BUTTON_OVERLAY)
                         .build())
-                .build().toHtml();
+                .build();
     }
 
-    private String getYouTubeEmbed() {
+    private HtmlElement getYouTubeEmbed() {
         return HtmlBuilders.iframe()
                 .withId("video" + UUID.randomUUID().toString())
                 .withAttribute("src", "https://www.youtube.com/embed/" + youTubeId + "?version=3&enablejsapi=1")
                 .withAttribute(ALLOWFULLSCREEN_ATTR)
                 .withAttribute(FRAMEBORDER_ATTR)
                 .withClass(cssClass)
-                .build().toHtml();
+                .build();
     }
 }

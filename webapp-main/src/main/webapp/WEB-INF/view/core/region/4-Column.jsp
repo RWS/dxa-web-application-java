@@ -2,8 +2,9 @@
 <%@ page import="com.sdl.webapp.common.api.ScreenWidth" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <jsp:useBean id="regionModel" type="com.sdl.webapp.common.api.model.Region" scope="request"/>
+<jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
-<div typeof="Region" resource="4-Column">
+<div ${markup.region(regionModel)}>
 <%
     int entityCount = regionModel.getEntities().size();
 

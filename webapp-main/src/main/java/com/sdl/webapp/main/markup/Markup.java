@@ -2,10 +2,12 @@ package com.sdl.webapp.main.markup;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
 import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.Region;
 import com.sdl.webapp.main.markup.html.HtmlAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,25 +16,36 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class Markup {
     private static final Logger LOG = LoggerFactory.getLogger(Markup.class);
 
+    private static final HtmlAttribute TYPEOF_REGION_ATTR = new HtmlAttribute("typeof", "Region");
+
     private final SemanticMappingRegistry semanticMappingRegistry;
 
+    private final WebRequestContext webRequestContext;
+
     @Autowired
-    public Markup(SemanticMappingRegistry semanticMappingRegistry) {
+    public Markup(SemanticMappingRegistry semanticMappingRegistry, WebRequestContext webRequestContext) {
         this.semanticMappingRegistry = semanticMappingRegistry;
+        this.webRequestContext = webRequestContext;
+    }
+
+    public String region(Region region) {
+        final List<String> attributes = new ArrayList<>();
+        attributes.add(TYPEOF_REGION_ATTR.toHtml());
+        attributes.add(new HtmlAttribute("resource", region.getName()).toHtml());
+        if (webRequestContext.isPreview()) {
+            attributes.add(new HtmlAttribute("data-region", region.getName()).toHtml());
+        }
+
+        return Joiner.on(' ').join(attributes);
     }
 
     public String entity(Entity entity) {
-        final StringBuilder sb = new StringBuilder();
-
         final List<String> vocabularies = new ArrayList<>();
         final List<String> entityTypes = new ArrayList<>();
 
@@ -47,11 +60,11 @@ public class Markup {
         }
 
         if (!vocabularies.isEmpty()) {
-            sb.append(new HtmlAttribute("prefix", Joiner.on(' ').join(vocabularies)).toHtml()).append(' ')
-                    .append(new HtmlAttribute("typeof", Joiner.on(' ').join(entityTypes)).toHtml());
+            return new HtmlAttribute("prefix", Joiner.on(' ').join(vocabularies)).toHtml() +
+                    ' ' + new HtmlAttribute("typeof", Joiner.on(' ').join(entityTypes)).toHtml();
         }
 
-        return sb.toString();
+        return "";
     }
 
     public String property(Entity entity, String fieldName) {
@@ -60,8 +73,6 @@ public class Markup {
             LOG.warn("Entity of type {} does not contain a field named {}", entity.getClass().getName(), fieldName);
             return "";
         }
-
-        final StringBuilder sb = new StringBuilder();
 
         final Set<String> publicPrefixes = new HashSet<>();
         for (SemanticEntityInfo entityInfo : semanticMappingRegistry.getEntityInfo(entity.getClass())) {
@@ -82,9 +93,13 @@ public class Markup {
         }
 
         if (!propertyTypes.isEmpty()) {
-            sb.append(new HtmlAttribute("property", Joiner.on(' ').join(propertyTypes)).toHtml());
+            return new HtmlAttribute("property", Joiner.on(' ').join(propertyTypes)).toHtml();
         }
 
-        return sb.toString();
+        return "";
+    }
+
+    public String resource(String key) {
+        return webRequestContext.getLocalization().getResource(key);
     }
 }

@@ -8,14 +8,10 @@ import com.sdl.webapp.main.markup.html.HtmlElement;
 import com.sdl.webapp.main.markup.html.builders.HtmlBuilders;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-import javax.servlet.jsp.tagext.TagSupport;
-import java.io.IOException;
 import java.util.Locale;
 import java.util.UUID;
 
-public class GoogleMapTag extends TagSupport {
+public class GoogleMapTag extends HtmlElementTag {
 
     private static final String CONFIG_MAPS_API_KEY = "core.mapsApiKey";
     private static final String DUMMY_API_KEY = "xxx";
@@ -52,7 +48,7 @@ public class GoogleMapTag extends TagSupport {
     }
 
     @Override
-    public int doStartTag() throws JspException {
+    public HtmlElement generateElement() {
         final WebRequestContext webRequestContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
                 pageContext.getServletContext()).getBean(WebRequestContext.class);
         final Localization localization = webRequestContext.getLocalization();
@@ -71,24 +67,13 @@ public class GoogleMapTag extends TagSupport {
             sb.append("&key=").append(mapsApiKey);
         }
 
-        final String queryString = sb.toString();
-
-        final HtmlElement element = HtmlBuilders.div()
+        return HtmlBuilders.div()
                 .withId("map" + UUID.randomUUID().toString())
                 .withAttribute(CLASS_STATIC_MAP_ATTR)
                 .withAttribute("style", "height: " + Integer.toString(mapHeight))
-                .withContent(HtmlBuilders.img("//maps.googleapis.com/maps/api/staticmap" + queryString)
+                .withContent(HtmlBuilders.img("//maps.googleapis.com/maps/api/staticmap" + sb.toString())
                         .withAlt(markerName)
                         .build())
                 .build();
-
-        final JspWriter out = pageContext.getOut();
-        try {
-            out.write(element.toHtml());
-        } catch (IOException e) {
-            throw new JspException(e);
-        }
-
-        return SKIP_BODY;
     }
 }

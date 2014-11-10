@@ -1,12 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <jsp:useBean id="regionModel" type="com.sdl.webapp.common.api.model.Region" scope="request"/>
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
 <jsp:useBean id="carouselItem" type="com.sdl.webapp.common.api.model.entity.Teaser" scope="request"/>
 <c:choose>
-    <c:when test="${regionModel['name'] == 'Hero'}">
+    <c:when test="${regionModel.name == 'Hero'}">
         <c:choose>
             <c:when test="${screenWidth == 'EXTRA_SMALL'}">
                 <c:set var="imageAspect" value="2.0"/>
@@ -32,7 +31,7 @@
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" width="100%">
         </c:otherwise>
     </c:choose>
-    <c:if test="${not empty carouselItem.headline or not empty carouselItem.text}" >
+    <c:if test="${not empty carouselItem.headline or not empty carouselItem.text}">
         <div class="overlay overlay-tl ribbon">
             <c:if test="${not empty carouselItem.headline}">
                 <h2>${carouselItem.headline}</h2>

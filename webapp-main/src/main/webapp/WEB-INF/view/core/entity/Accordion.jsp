@@ -26,7 +26,7 @@
                                     <figure ${markup.property(element, "media")}><%-- TODO: media --%></figure>
                                 </c:if>
                                 <c:if test="${not empty element.link.url}">
-                                    <p ${markup.property(element, "link.linkText")}> <%-- TODO: This markup won't work --%>
+                                    <p ${markup.property(element, "link.linkText")}>
                                         <tri:link link="${element.link}" cssClass="btn btn-primary"/>
                                     </p>
                                 </c:if>

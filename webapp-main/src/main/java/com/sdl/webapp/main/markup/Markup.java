@@ -67,11 +67,29 @@ public class Markup {
         return "";
     }
 
-    public String property(Entity entity, String fieldName) {
-        final Field field = ReflectionUtils.findField(entity.getClass(), fieldName);
+    public String property(Entity entity, String fieldPath) {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("property: entity={}, fieldPath={}", entity.getClass().getName(), fieldPath);
+        }
+
+        final List<String> parts = new ArrayList<>(Arrays.asList(fieldPath.split("\\.")));
+
+        Class<? extends Entity> entityClass = entity.getClass();
+        String fieldName = parts.remove(0);
+        Field field = ReflectionUtils.findField(entityClass, fieldName);
         if (field == null) {
-            LOG.warn("Entity of type {} does not contain a field named {}", entity.getClass().getName(), fieldName);
+            LOG.warn("Entity of type {} does not contain a field named {}", entityClass.getName(), fieldName);
             return "";
+        }
+
+        while (!parts.isEmpty()) {
+            entityClass = field.getType().asSubclass(Entity.class);
+            fieldName = parts.remove(0);
+            field = ReflectionUtils.findField(entityClass, fieldName);
+            if (field == null) {
+                LOG.warn("Entity of type {} does not contain a field named {}", entityClass.getName(), fieldName);
+                return "";
+            }
         }
 
         final Set<String> publicPrefixes = new HashSet<>();

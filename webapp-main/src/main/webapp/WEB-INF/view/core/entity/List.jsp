@@ -30,7 +30,7 @@
         </c:forEach>
     </ul>
     <c:if test="${not empty entityModel.link.url}">
-        <p ${markup.property(entityModel, "link.linkText")}> <%-- TODO: This does not work! --%>
+        <p ${markup.property(entityModel, "link.linkText")}>
             <a href="${entityModel.link.url}" title="${entityModel.link.alternateText}">
                 <c:choose>
                     <c:when test="${not empty entityModel.link.linkText}">${entityModel.link.linkText}</c:when>

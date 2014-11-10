@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
 import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.main.markup.html.HtmlAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,20 +47,14 @@ public class Markup {
         }
 
         if (!vocabularies.isEmpty()) {
-            sb.append("prefix=\"").append(Joiner.on(' ').join(vocabularies))
-                    .append("\" typeof=\"").append(Joiner.on(' ').join(entityTypes)).append("\"");
+            sb.append(new HtmlAttribute("prefix", Joiner.on(' ').join(vocabularies)).toHtml()).append(' ')
+                    .append(new HtmlAttribute("typeof", Joiner.on(' ').join(entityTypes)).toHtml());
         }
-
-        // TODO: Some extra stuff when IsPreview is true
 
         return sb.toString();
     }
 
     public String property(Entity entity, String fieldName) {
-        return property(entity, fieldName, 0);
-    }
-
-    public String property(Entity entity, String fieldName, int index) {
         final Field field = ReflectionUtils.findField(entity.getClass(), fieldName);
         if (field == null) {
             LOG.warn("Entity of type {} does not contain a field named {}", entity.getClass().getName(), fieldName);
@@ -87,10 +82,8 @@ public class Markup {
         }
 
         if (!propertyTypes.isEmpty()) {
-            sb.append("property=\"").append(Joiner.on(' ').join(propertyTypes)).append("\"");
+            sb.append(new HtmlAttribute("property", Joiner.on(' ').join(propertyTypes)).toHtml());
         }
-
-        // TODO: Some extra stuff when IsPreview is true
 
         return sb.toString();
     }

@@ -3,6 +3,9 @@ package com.sdl.webapp.main.taglib;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.main.markup.html.HtmlAttribute;
+import com.sdl.webapp.main.markup.html.HtmlElement;
+import com.sdl.webapp.main.markup.html.builders.HtmlBuilders;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.jsp.JspException;
@@ -19,6 +22,8 @@ public class GoogleMapTag extends TagSupport {
 
     private static final int DEFAULT_MAP_WIDTH = 311;
     private static final int DEFAULT_MAP_HEIGHT = 160;
+
+    private static final HtmlAttribute CLASS_STATIC_MAP_ATTR = new HtmlAttribute("class", "static-map");
 
     private double latitude;
     private double longitude;
@@ -68,21 +73,18 @@ public class GoogleMapTag extends TagSupport {
 
         final String queryString = sb.toString();
 
+        final HtmlElement element = HtmlBuilders.div()
+                .withId("map" + UUID.randomUUID().toString())
+                .withAttribute(CLASS_STATIC_MAP_ATTR)
+                .withAttribute("style", "height: " + Integer.toString(mapHeight))
+                .withContent(HtmlBuilders.img("//maps.googleapis.com/maps/api/staticmap" + queryString)
+                        .withAlt(markerName)
+                        .build())
+                .build();
+
         final JspWriter out = pageContext.getOut();
         try {
-            out.write("<div id=\"");
-            out.write("map" + UUID.randomUUID().toString());
-            out.write("\" class=\"static-map\" style=\"height:");
-            out.write(Integer.toString(mapHeight));
-            out.write("\">");
-
-            out.write("<img src=\"//maps.googleapis.com/maps/api/staticmap");
-            out.write(queryString);
-            out.write("\" alt=\"");
-            out.write(markerName);
-            out.write("\">");
-
-            out.write("</div>");
+            out.write(element.toHtml());
         } catch (IOException e) {
             throw new JspException(e);
         }

@@ -162,6 +162,22 @@
         </attribute>
     </tag>
 
+    <tag>
+        <name>link</name>
+        <tag-class>com.sdl.webapp.main.taglib.LinkTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>link</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.sdl.webapp.common.api.model.entity.Link</type>
+        </attribute>
+        <attribute>
+            <name>class</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
 
     <!-- Insert a resource text -->
     <tag>

@@ -2,6 +2,8 @@ package com.sdl.webapp.main.taglib;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.main.markup.html.HtmlElement;
+import com.sdl.webapp.main.markup.html.builders.HtmlBuilders;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -67,26 +69,16 @@ public class ImageTag extends TagSupport {
             imgWidth = mediaHelper.getDefaultMediaFill();
         }
 
+        final HtmlElement element = HtmlBuilders.img(imageUrl)
+                .withAlt(altText)
+                .withWidth(imgWidth)
+                .withClass(cssClass)
+                .withAttribute("data-aspect", String.format(Locale.US, "%.2f", aspect))
+                .build();
+
         final JspWriter out = pageContext.getOut();
         try {
-            out.write("<img");
-            out.write(" src=\"" + imageUrl + "\"");
-
-            if (!Strings.isNullOrEmpty(imgWidth)) {
-                out.write(" width=\"" + imgWidth + "\"");
-            }
-
-            if (!Strings.isNullOrEmpty(altText)) {
-                out.write(" alt=\"" + altText + "\"");
-            }
-
-            out.write(" data-aspect=\"" + String.format(Locale.US, "%.2f", aspect) + "\"");
-
-            if (!Strings.isNullOrEmpty(cssClass)) {
-                out.write(" class=\"" + cssClass + "\"");
-            }
-
-            out.write(">");
+            out.write(element.toHtml());
         } catch (IOException e) {
             throw new JspException(e);
         }

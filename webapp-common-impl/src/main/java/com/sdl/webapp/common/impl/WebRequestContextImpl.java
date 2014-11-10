@@ -36,6 +36,13 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     @Override
+    public boolean isPreview() {
+        // Should return true if the request is from XPM (NOTE currently always true for staging as we cannot reliably
+        // distinguish XPM requests)
+        return localization.isStaging();
+    }
+
+    @Override
     public void setLocalization(Localization localization) {
         this.localization = localization;
     }

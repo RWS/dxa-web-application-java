@@ -26,7 +26,7 @@
     </c:if>
     <div class="content">
         <c:forEach var="para" items="${entityModel.articleBody}" varStatus="status">
-            <div ${markup.property(entityModel, "articleBody", status.index)}>
+            <div ${markup.property(entityModel, "articleBody")}>
                 <c:if test="${not empty para.subheading}">
                     <h3 ${markup.property(para, "subheading")}>${para.subheading}</h3>
                 </c:if>

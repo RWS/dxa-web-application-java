@@ -2,6 +2,9 @@ package com.sdl.webapp.main.taglib;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.main.markup.html.HtmlAttribute;
+import com.sdl.webapp.main.markup.html.HtmlElement;
+import com.sdl.webapp.main.markup.html.builders.HtmlBuilders;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.jsp.JspException;
@@ -11,6 +14,13 @@ import java.io.IOException;
 import java.util.UUID;
 
 public class YouTubeVideoTag extends TagSupport {
+
+    private static final HtmlAttribute CLASS_EMBED_VIDEO_ATTR = new HtmlAttribute("class", "embed-video");
+
+    private static final HtmlElement PLAY_BUTTON_OVERLAY = HtmlBuilders.i().withClass("fa fa-play-circle").build();
+
+    private static final HtmlAttribute ALLOWFULLSCREEN_ATTR = new HtmlAttribute("allowfullscreen", "true");
+    private static final HtmlAttribute FRAMEBORDER_ATTR = new HtmlAttribute("frameborder", "0");
 
     private String youTubeId;
     private String url;
@@ -76,16 +86,24 @@ public class YouTubeVideoTag extends TagSupport {
         final String placeholderImageUrl = mediaHelper.getResponsiveImageUrl(url, widthFactor, imageAspect,
                 containerSize);
 
-        return new StringBuilder().append("<div class=\"embed-video\">")
-                .append("<img src=\"").append(placeholderImageUrl).append("\" alt=\"").append(headline).append("\">")
-                .append("<button type=\"button\" data-video=\"").append(youTubeId).append("\" class=\"")
-                .append(cssClass).append("\"><i class=\"fa fa-play-circle\"></i></button>").append("</div>").toString();
+        return HtmlBuilders.div()
+                .withAttribute(CLASS_EMBED_VIDEO_ATTR)
+                .withContent(HtmlBuilders.img(placeholderImageUrl).withAlt(headline).build())
+                .withContent(HtmlBuilders.button("button")
+                        .withAttribute("data-video", youTubeId)
+                        .withClass(cssClass)
+                        .withContent(PLAY_BUTTON_OVERLAY)
+                        .build())
+                .build().toHtml();
     }
 
     private String getYouTubeEmbed() {
-        return new StringBuilder().append("<iframe src=\"https://www.youtube.com/embed/").append(youTubeId)
-                .append("?version=3&enablejsapi=1\" id=\"").append("video" + UUID.randomUUID().toString())
-                .append("\" allowfullscreen=\"true\" frameborder=\"0\" class=\"").append(cssClass)
-                .append("\"></iframe>").toString();
+        return HtmlBuilders.iframe()
+                .withId("video" + UUID.randomUUID().toString())
+                .withAttribute("src", "https://www.youtube.com/embed/" + youTubeId + "?version=3&enablejsapi=1")
+                .withAttribute(ALLOWFULLSCREEN_ATTR)
+                .withAttribute(FRAMEBORDER_ATTR)
+                .withClass(cssClass)
+                .build().toHtml();
     }
 }

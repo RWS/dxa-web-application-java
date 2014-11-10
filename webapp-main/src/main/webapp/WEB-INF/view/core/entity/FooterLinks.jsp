@@ -16,7 +16,7 @@
     <c:forEach var="link" items="${entityModel.links}">
         <li>
             <small>
-                <a href="${link.url}" title="${link.alternateText}">${link.linkText}</a>
+                <tri:link link="${link}"/>
             </small>
         </li>
     </c:forEach>

@@ -15,7 +15,7 @@
         <ul class="list-unstyled">
             <c:forEach var="link" items="${entityModel.links}">
                 <li>
-                    <a href="${link.url}" title="${link.alternateText}">${link.linkText}</a>
+                    <tri:link link="${link}"/>
                 </li>
             </c:forEach>
         </ul>

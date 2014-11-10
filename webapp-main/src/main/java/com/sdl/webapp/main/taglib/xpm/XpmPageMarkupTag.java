@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class XpmPageMarkupTag extends XpmMarkupTag {
 
-    private static final String PAGE_PATTERN = "<!-- Page Settings: {{\"PageID\":\"%s\",\"PageModified\":\"%s\"," +
-            "\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"}} -->";
+    private static final String PAGE_PATTERN = "Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\"," +
+            "\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"}";
 
     private static final HtmlAttribute SCRIPT_TYPE_ATTR = new HtmlAttribute("type", "text/javascript");
     private static final HtmlAttribute SCRIPT_LANG_ATTR = new HtmlAttribute("language", "javascript");

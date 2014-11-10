@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class XpmPropertyMarkupTag extends XpmMarkupTag {
 
-    private static final String FIELD_PATTERN = "<!-- Start Component Field: {{\"XPath\":\"%s\"}} -->";
+    private static final String FIELD_PATTERN = "Start Component Field: {\"XPath\":\"%s\"}";
 
     private Entity entity;
 

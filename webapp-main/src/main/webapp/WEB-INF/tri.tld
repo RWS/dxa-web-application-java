@@ -11,7 +11,7 @@
     <!-- Include a page -->
     <tag>
         <name>page</name>
-        <tag-class>com.sdl.webapp.main.taglib.PageTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.tri.PageTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -28,7 +28,7 @@
     <!-- Include a specific region -->
     <tag>
         <name>region</name>
-        <tag-class>com.sdl.webapp.main.taglib.RegionTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.tri.RegionTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -40,7 +40,7 @@
     <!-- Include all regions on the page, except excluded ones -->
     <tag>
         <name>regions</name>
-        <tag-class>com.sdl.webapp.main.taglib.RegionsTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.tri.RegionsTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>exclude</name>
@@ -52,7 +52,7 @@
     <!-- Include a specific entity -->
     <tag>
         <name>entity</name>
-        <tag-class>com.sdl.webapp.main.taglib.EntityTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.tri.EntityTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>region</name>
@@ -70,7 +70,7 @@
     <!-- Include all entities in a region -->
     <tag>
         <name>entities</name>
-        <tag-class>com.sdl.webapp.main.taglib.EntitiesTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.tri.EntitiesTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>region</name>
@@ -82,7 +82,7 @@
     <!-- Insert an image -->
     <tag>
         <name>image</name>
-        <tag-class>com.sdl.webapp.main.taglib.ImageTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.tri.ImageTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>url</name>
@@ -121,7 +121,7 @@
     <!-- Insert a YouTube video -->
     <tag>
         <name>youTubeVideo</name>
-        <tag-class>com.sdl.webapp.main.taglib.YouTubeVideoTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.tri.YouTubeVideoTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>youTubeId</name>
@@ -164,7 +164,7 @@
 
     <tag>
         <name>link</name>
-        <tag-class>com.sdl.webapp.main.taglib.LinkTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.tri.LinkTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>link</name>
@@ -182,7 +182,7 @@
     <!-- Insert a resource text -->
     <tag>
         <name>resource</name>
-        <tag-class>com.sdl.webapp.main.taglib.ResourceTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.tri.ResourceTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>key</name>
@@ -203,7 +203,7 @@
 
     <tag>
         <name>googlemap</name>
-        <tag-class>com.sdl.webapp.main.taglib.GoogleMapTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.tri.GoogleMapTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>latitude</name>

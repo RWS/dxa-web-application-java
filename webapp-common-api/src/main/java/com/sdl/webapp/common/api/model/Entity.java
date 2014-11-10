@@ -6,7 +6,7 @@ public interface Entity extends ViewModel {
 
     String getId();
 
-    Map<String, String> getPropertyData();
-
     Map<String, String> getEntityData();
+
+    Map<String, String> getPropertyData();
 }

@@ -1,4 +1,4 @@
-package com.sdl.webapp.main.taglib;
+package com.sdl.webapp.main.taglib.tri;
 
 import com.sdl.webapp.main.markup.html.HtmlElement;
 import com.sdl.webapp.main.markup.html.HtmlEndTag;

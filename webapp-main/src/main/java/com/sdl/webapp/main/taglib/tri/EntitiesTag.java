@@ -1,6 +1,7 @@
-package com.sdl.webapp.main.taglib;
+package com.sdl.webapp.main.taglib.tri;
 
 import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,19 +13,13 @@ import java.io.IOException;
 import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
 import static com.sdl.webapp.main.controller.core.AbstractController.ENTITY_PATH_PREFIX;
 
-public class EntityTag extends TagSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(EntityTag.class);
+public class EntitiesTag extends TagSupport {
+    private static final Logger LOG = LoggerFactory.getLogger(EntitiesTag.class);
 
     private String regionName;
 
-    private int index;
-
     public void setRegion(String regionName) {
         this.regionName = regionName;
-    }
-
-    public void setIndex(int index) {
-        this.index = index;
     }
 
     @Override
@@ -35,11 +30,19 @@ public class EntityTag extends TagSupport {
             return SKIP_BODY;
         }
 
-        LOG.debug("Including entity: {}/{}", regionName, index);
-        try {
-            pageContext.include(String.format("%s/%s/%d", ENTITY_PATH_PREFIX, regionName, index));
-        } catch (ServletException | IOException e) {
-            throw new JspException("Error while processing entity tag", e);
+        final Region region = page.getRegions().get(regionName);
+        if (region == null) {
+            LOG.debug("Region not found: {}", regionName);
+            return SKIP_BODY;
+        }
+
+        int count = region.getEntities().size();
+        for (int index = 0; index < count; index++) {
+            try {
+                pageContext.include(String.format("%s/%s/%d", ENTITY_PATH_PREFIX, regionName, index));
+            } catch (ServletException | IOException e) {
+                throw new JspException("Error while processing entity tag", e);
+            }
         }
 
         return SKIP_BODY;

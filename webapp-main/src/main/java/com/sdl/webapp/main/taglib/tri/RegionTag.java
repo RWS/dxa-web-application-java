@@ -1,4 +1,4 @@
-package com.sdl.webapp.main.taglib;
+package com.sdl.webapp.main.taglib.tri;
 
 import com.sdl.webapp.common.api.model.Page;
 import org.slf4j.Logger;

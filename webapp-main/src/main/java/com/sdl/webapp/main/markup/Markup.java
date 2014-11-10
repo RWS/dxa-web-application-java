@@ -35,14 +35,9 @@ public class Markup {
     }
 
     public String region(Region region) {
-        final List<String> attributes = new ArrayList<>();
-        attributes.add(TYPEOF_REGION_ATTR.toHtml());
-        attributes.add(new HtmlAttribute("resource", region.getName()).toHtml());
-        if (webRequestContext.isPreview()) {
-            attributes.add(new HtmlAttribute("data-region", region.getName()).toHtml());
-        }
-
-        return Joiner.on(' ').join(attributes);
+        return Joiner.on(' ').join(Arrays.asList(
+                TYPEOF_REGION_ATTR.toHtml(),
+                new HtmlAttribute("resource", region.getName()).toHtml()));
     }
 
     public String entity(Entity entity) {
@@ -67,33 +62,17 @@ public class Markup {
         return "";
     }
 
-    public String property(Entity entity, String fieldPath) {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("property: entity={}, fieldPath={}", entity.getClass().getName(), fieldPath);
-        }
+    public String property(Entity entity, String fieldName) {
+        final Class<? extends Entity> entityClass = entity.getClass();
 
-        final List<String> parts = new ArrayList<>(Arrays.asList(fieldPath.split("\\.")));
-
-        Class<? extends Entity> entityClass = entity.getClass();
-        String fieldName = parts.remove(0);
-        Field field = ReflectionUtils.findField(entityClass, fieldName);
+        final Field field = ReflectionUtils.findField(entityClass, fieldName);
         if (field == null) {
             LOG.warn("Entity of type {} does not contain a field named {}", entityClass.getName(), fieldName);
             return "";
         }
 
-        while (!parts.isEmpty()) {
-            entityClass = field.getType().asSubclass(Entity.class);
-            fieldName = parts.remove(0);
-            field = ReflectionUtils.findField(entityClass, fieldName);
-            if (field == null) {
-                LOG.warn("Entity of type {} does not contain a field named {}", entityClass.getName(), fieldName);
-                return "";
-            }
-        }
-
         final Set<String> publicPrefixes = new HashSet<>();
-        for (SemanticEntityInfo entityInfo : semanticMappingRegistry.getEntityInfo(entity.getClass())) {
+        for (SemanticEntityInfo entityInfo : semanticMappingRegistry.getEntityInfo(entityClass)) {
             if (entityInfo.isPublic()) {
                 final String prefix = entityInfo.getPrefix();
                 if (!Strings.isNullOrEmpty(prefix)) {

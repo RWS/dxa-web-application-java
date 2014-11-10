@@ -1,4 +1,4 @@
-package com.sdl.webapp.main.taglib;
+package com.sdl.webapp.main.taglib.tri;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;

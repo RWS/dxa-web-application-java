@@ -39,7 +39,7 @@
                                 <div ${markup.property(element, "text")}>${element.text}</div>
                                 <c:if test="${not empty element.media}">
                                     <figure ${markup.property(element, "media")}>
-                                        <%-- TODO: media --%>
+                                        <tri:media media="${element.media}"/>
                                     </figure>
                                 </c:if>
                                 <c:if test="${not empty element.link.url}">

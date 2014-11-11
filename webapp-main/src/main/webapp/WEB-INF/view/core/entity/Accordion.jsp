@@ -28,7 +28,7 @@
                                 <c:if test="${not empty element.media}">
                                     <figure ${markup.property(element, "media")}>
                                         <xpm:property entity="${element}" property="media"/>
-                                        <%-- TODO: media --%>
+                                        <tri:media media="${element.media}"/>
                                     </figure>
                                 </c:if>
                                 <c:if test="${not empty element.link.url}">

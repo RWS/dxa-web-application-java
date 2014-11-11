@@ -5,9 +5,10 @@
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.ItemList" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
 <article class="rich-text" ${markup.entity(entity)}>
+    <xpm:entity entity="${entity}"/>
     <div class="content">
         <c:if test="${not empty entity.headline}">
-            <h1 ${markup.property(entity, "headline")}>${entity.headline}</h1>
+            <h1 ${markup.property(entity, "headline")}><xpm:property entity="${entity}" property="headline"/>${entity.headline}</h1>
         </c:if>
         <c:if test="${not entity.itemListElements.isEmpty()}">
             <c:set var="panelId" value="${tri:randomUUID()}"/>
@@ -27,7 +28,7 @@
                         <c:forEach var="element" items="${entity.itemListElements}" varStatus="status">
                             <li class="${status.index == 0 ? 'active' : ''}">
                                 <c:set var="ident" value="tab${panelId}_${status.index}"/>
-                                <a href="#${ident}" data-toggle="tab" ${markup.property(element, "headline")}>${element.headline}</a>
+                                <a href="#${ident}" data-toggle="tab" ${markup.property(element, "headline")}><xpm:property entity="${entity}" property="headline"/>${element.headline}</a>
                             </li>
                         </c:forEach>
                     </ul>
@@ -36,14 +37,16 @@
                         <c:forEach var="element" items="${entity.itemListElements}" varStatus="status">
                             <c:set var="ident" value="tab${panelId}_${status.index}"/>
                             <div class="tab-pane ${status.index == 0 ? 'active' : ''}" id="${ident}">
-                                <div ${markup.property(element, "text")}>${element.text}</div>
+                                <div ${markup.property(element, "text")}><xpm:property entity="${element}" property="text"/>${element.text}</div>
                                 <c:if test="${not empty element.media}">
                                     <figure ${markup.property(element, "media")}>
+                                        <xpm:property entity="${element}" property="media"/>
                                         <tri:media media="${element.media}"/>
                                     </figure>
                                 </c:if>
                                 <c:if test="${not empty element.link.url}">
                                     <p ${markup.property(element.link, "linkText")}>
+                                        <xpm:property entity="${element.link}" property="linkText"/>
                                         <tri:link link="${element.link}" cssClass="btn btn-primary"/>
                                     </p>
                                 </c:if>

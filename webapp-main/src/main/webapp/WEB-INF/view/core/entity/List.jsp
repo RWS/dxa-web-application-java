@@ -4,7 +4,8 @@
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.ContentList" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
-<div ${markup.entity(entityModel)}><xpm:entity entity="${entityModel}"/>
+<div ${markup.entity(entityModel)}>
+    <xpm:entity entity="${entityModel}"/>
     <c:if test="${not empty entityModel.headline}">
         <h3 ${markup.property(entityModel, "headline")}><xpm:property entity="${entityModel}" property="headline"/>${entityModel.headline}</h3>
     </c:if>
@@ -31,7 +32,8 @@
         </c:forEach>
     </ul>
     <c:if test="${not empty entityModel.link.url}">
-        <p ${markup.property(entityModel.link, "link")}><xpm:property entity="${entityModel.link}" property="linkText"/>
+        <p ${markup.property(entityModel.link, "link")}>
+            <xpm:property entity="${entityModel.link}" property="linkText"/>
             <a href="${entityModel.link.url}" title="${entityModel.link.alternateText}">
                 <c:choose>
                     <c:when test="${not empty entityModel.link.linkText}">${entityModel.link.linkText}</c:when>

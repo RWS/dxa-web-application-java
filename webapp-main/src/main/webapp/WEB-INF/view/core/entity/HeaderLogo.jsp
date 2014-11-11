@@ -6,7 +6,8 @@
 <div ${markup.entity(entityModel)}><xpm:entity entity="${entityModel}"/>
     <a class="navbar-logo" href="${entityModel.link.url}" title="${entityModel.link.linkText}">
         <c:if test="${not empty entityModel.media}">
-            <span ${markup.property(entityModel, "media")}><xpm:property entity="${entityModel}" property="media"/>
+            <span ${markup.property(entityModel, "media")}>
+                <xpm:property entity="${entityModel}" property="media"/>
                 <img src="${entityModel.media.url}" alt="${entityModel.media.alternateText}" height="80">
             </span>
         </c:if>

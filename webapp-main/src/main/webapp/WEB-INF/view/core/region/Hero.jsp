@@ -3,6 +3,7 @@
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="regionModel" type="com.sdl.webapp.common.api.model.Region" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
-<div ${markup.region(regionModel)}><xpm:region region="${regionModel}"/>
-<tri:entities region="Hero"/>
+<div ${markup.region(regionModel)}>
+    <xpm:region region="${regionModel}"/>
+    <tri:entities region="Hero"/>
 </div>

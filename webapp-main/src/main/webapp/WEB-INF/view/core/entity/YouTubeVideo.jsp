@@ -4,7 +4,8 @@
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.YouTubeVideo" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
-<div class="video" ${markup.entity(entityModel)}><xpm:entity entity="${entityModel}"/>
+<div class="video" ${markup.entity(entityModel)}>
+    <xpm:entity entity="${entityModel}"/>
     <c:if test="${not empty entityModel.headline}">
         <h3 ${markup.property(entityModel, "headline")}><xpm:property entity="${entityModel}" property="headline"/>${entityModel.headline}</h3>
     </c:if>

@@ -5,7 +5,8 @@
 <jsp:useBean id="regionModel" type="com.sdl.webapp.common.api.model.Region" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
-<div ${markup.region(regionModel)}><xpm:region region="${regionModel}"/>
+<div ${markup.region(regionModel)}>
+    <xpm:region region="${regionModel}"/>
 <%
     int entityCount = regionModel.getEntities().size();
 

@@ -5,7 +5,8 @@
 <jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.LinkList" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
 <c:if test="${not empty entityModel.links}" >
-    <ul class="nav navbar-nav utility-nav" ${markup.entity(entityModel)}><xpm:entity entity="${entityModel}"/>
+    <ul class="nav navbar-nav utility-nav" ${markup.entity(entityModel)}>
+        <xpm:entity entity="${entityModel}"/>
         <c:forEach var="link" items="${entityModel.links}" varStatus="status">
             <li ${markup.property(entityModel, "links")}><xpm:property entity="${entityModel}" property="links" index="${status.index}"/><tri:link link="${link}"/></li>
         </c:forEach>

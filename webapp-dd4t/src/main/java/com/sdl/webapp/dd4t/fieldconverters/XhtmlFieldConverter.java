@@ -21,7 +21,7 @@ public class XhtmlFieldConverter extends AbstractFieldConverter {
 
     @Override
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
-        // TODO: Content must be resolved; see [C#] DD4TModelBuilder.GetMultiLineStrings
+        // TODO: TSI-521 Content must be resolved; see [C#] DD4TModelBuilder.GetMultiLineStrings
         return field.getTextValues();
     }
 }

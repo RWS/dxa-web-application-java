@@ -2,21 +2,21 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
-<jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.ItemList" scope="request"/>
+<jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.ItemList" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
-<article class="rich-text" ${markup.entity(entityModel)}>
-    <xpm:entity entity="${entityModel}"/>
+<article class="rich-text" ${markup.entity(entity)}>
+    <xpm:entity entity="${entity}"/>
     <div class="content">
-        <c:if test="${not empty entityModel.headline}">
-            <h1 ${markup.property(entityModel, "headline")}><xpm:property entity="${entityModel}" property="headline"/>${entityModel.headline}</h1>
+        <c:if test="${not empty entity.headline}">
+            <h1 ${markup.property(entity, "headline")}><xpm:property entity="${entity}" property="headline"/>${entity.headline}</h1>
         </c:if>
-        <c:if test="${entityModel.itemListElements.size() > 0}">
+        <c:if test="${entity.itemListElements.size() > 0}">
             <c:set var="accordionId" value="accordion-${tri:randomUUID()}"/>
             <div class="panel-group responsive-accordion" id="${accordionId}">
-                <c:forEach var="element" items="${entityModel.itemListElements}" varStatus="status">
+                <c:forEach var="element" items="${entity.itemListElements}" varStatus="status">
                     <c:set var="collapseId" value="collapse-${tri:randomUUID()}"/>
-                    <div class="panel panel-default" ${markup.property(entityModel, "itemListElement")}>
-                        <xpm:property entity="${entityModel}" property="itemListElement" index="${status.index}"/>
+                    <div class="panel panel-default" ${markup.property(entity, "itemListElement")}>
+                        <xpm:property entity="${entity}" property="itemListElement" index="${status.index}"/>
                         <div class="panel-heading" data-toggle="collapse" data-target="#${collapseId}" data-parent="#${accordionId}">
                             <h4 class="panel-title" ${markup.property(element, "headline")}><xpm:property entity="${element}" property="headline"/>${element.headline}</h4>
                         </div>

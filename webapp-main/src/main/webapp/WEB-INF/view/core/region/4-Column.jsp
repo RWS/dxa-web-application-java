@@ -2,13 +2,13 @@
 <%@ page import="com.sdl.webapp.common.api.ScreenWidth" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
-<jsp:useBean id="regionModel" type="com.sdl.webapp.common.api.model.Region" scope="request"/>
+<jsp:useBean id="region" type="com.sdl.webapp.common.api.model.Region" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
-<div ${markup.region(regionModel)}>
-    <xpm:region region="${regionModel}"/>
+<div ${markup.region(region)}>
+    <xpm:region region="${region}"/>
 <%
-    int entityCount = regionModel.getEntities().size();
+    int entityCount = region.getEntities().size();
 
     int cols = screenWidth == ScreenWidth.SMALL ? 2 : 4;
     int rows = (int) Math.ceil(entityCount / (double) cols);

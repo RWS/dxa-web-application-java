@@ -3,9 +3,9 @@
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
-<jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.NavigationLinks" scope="request"/>
+<jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.NavigationLinks" scope="request"/>
 <%
-    final List<Link> links = entityModel.getItems();
+    final List<Link> links = entity.getItems();
     if (links != null && !links.isEmpty()) {
         int start = links.size() > 5 ? links.size() - 4 : 1;
 

@@ -1,11 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
-<jsp:useBean id="entityModel" type="com.sdl.webapp.common.api.model.entity.ItemList" scope="request"/>
+<jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.ItemList" scope="request"/>
 <c:set var="carouselId" value="carousel-${tri:randomUUID()}"/>
 <div id="${carouselId}" class="carousel slide" data-ride="carousel" data-interval="5000">
     <ol class="carousel-indicators">
-        <c:forEach var="indicator" varStatus="indicatorStatus" items="${entityModel.itemListElements}">
+        <c:forEach var="indicator" varStatus="indicatorStatus" items="${entity.itemListElements}">
             <c:choose>
                 <c:when test="${indicatorStatus.count == 1}">
                     <li data-target="#${carouselId}" data-slide-to="${indicatorStatus.count}" class=active"></li>
@@ -17,7 +17,7 @@
         </c:forEach>
     </ol>
     <div class="carousel-inner">
-        <c:forEach var="carousel" varStatus="carouselStatus" items="${entityModel.itemListElements}">
+        <c:forEach var="carousel" varStatus="carouselStatus" items="${entity.itemListElements}">
             <c:set var="carouselItem" value="${carousel}" scope="request"/>
             <c:choose>
                 <c:when test="${carouselStatus.count == 1}">

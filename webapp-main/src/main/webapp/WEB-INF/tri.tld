@@ -79,20 +79,16 @@
         </attribute>
     </tag>
 
-    <!-- Insert an image -->
+    <!-- Insert media: an image, YouTube video or download link -->
     <tag>
-        <name>image</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.ImageTag</tag-class>
+        <name>media</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.MediaTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
-            <name>url</name>
+            <name>media</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>alt</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
+            <type>com.sdl.webapp.common.api.model.entity.MediaItem</type>
         </attribute>
         <attribute>
             <name>widthFactor</name>
@@ -118,50 +114,7 @@
         </attribute>
     </tag>
 
-    <!-- Insert a YouTube video -->
-    <tag>
-        <name>youTubeVideo</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.YouTubeVideoTag</tag-class>
-        <body-content>empty</body-content>
-        <attribute>
-            <name>youTubeId</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>url</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>headline</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>widthFactor</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>aspect</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>double</type>
-        </attribute>
-        <attribute>
-            <name>cssClass</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>containerSize</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-            <type>int</type>
-        </attribute>
-    </tag>
-
+    <!-- Insert a link -->
     <tag>
         <name>link</name>
         <tag-class>com.sdl.webapp.main.taglib.tri.LinkTag</tag-class>
@@ -201,6 +154,7 @@
         </attribute>
     </tag>
 
+    <!-- Insert a Google map -->
     <tag>
         <name>googlemap</name>
         <tag-class>com.sdl.webapp.main.taglib.tri.GoogleMapTag</tag-class>
@@ -254,6 +208,4 @@
         <function-class>com.sdl.webapp.main.markup.MarkupFunctions</function-class>
         <function-signature>java.lang.String formatMessage(java.lang.String,java.lang.String)</function-signature>
     </function>
-
-
 </taglib>

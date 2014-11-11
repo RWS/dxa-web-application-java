@@ -1,7 +1,9 @@
 package com.sdl.webapp.dd4t;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
@@ -21,7 +23,10 @@ import com.sdl.webapp.dd4t.fieldconverters.FieldConverterRegistry;
 import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.contentmodel.exceptions.SerializationException;
+import org.dd4t.contentmodel.impl.BaseField;
+import org.dd4t.core.factories.PageFactory;
 import org.dd4t.core.filters.FilterException;
+import org.dd4t.core.resolvers.LinkResolver;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +38,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.sdl.webapp.dd4t.fieldconverters.FieldUtils.getStringValue;
@@ -52,6 +59,12 @@ public final class DD4TContentProvider implements ContentProvider {
 
     private static final String CORE_MODULE_NAME = "core";
 
+    private static final String REGION_FOR_PAGE_TITLE_COMPONENT = "Main";
+    private static final String STANDARD_METADATA_FIELD_NAME = "standardMeta";
+    private static final String STANDARD_METADATA_TITLE_FIELD_NAME = "name";
+    private static final String STANDARD_METADATA_DESCRIPTION_FIELD_NAME = "description";
+    private static final String COMPONENT_PAGE_TITLE_FIELD_NAME = "headline";
+
     private static final String PAGE_VIEW_PREFIX = CORE_MODULE_NAME + "/page/";
     private static final String REGION_VIEW_PREFIX = CORE_MODULE_NAME + "/region/";
     private static final String ENTITY_VIEW_PREFIX = CORE_MODULE_NAME + "/entity/";
@@ -62,19 +75,26 @@ public final class DD4TContentProvider implements ContentProvider {
 
     private final org.dd4t.core.factories.PageFactory dd4tPageFactory;
 
+    private final LinkResolver linkResolver;
+
     private final ViewModelRegistry viewModelRegistry;
 
     private final SemanticMapper semanticMapper;
 
     private final FieldConverterRegistry fieldConverterRegistry;
 
+    private final WebRequestContext webRequestContext;
+
     @Autowired
-    public DD4TContentProvider(org.dd4t.core.factories.PageFactory dd4tPageFactory, ViewModelRegistry viewModelRegistry,
-                               SemanticMapper semanticMapper, FieldConverterRegistry fieldConverterRegistry) {
+    public DD4TContentProvider(PageFactory dd4tPageFactory, LinkResolver linkResolver, ViewModelRegistry viewModelRegistry,
+                               SemanticMapper semanticMapper, FieldConverterRegistry fieldConverterRegistry,
+                               WebRequestContext webRequestContext) {
         this.dd4tPageFactory = dd4tPageFactory;
+        this.linkResolver = linkResolver;
         this.viewModelRegistry = viewModelRegistry;
         this.semanticMapper = semanticMapper;
         this.fieldConverterRegistry = fieldConverterRegistry;
+        this.webRequestContext = webRequestContext;
     }
 
     @Override
@@ -162,7 +182,12 @@ public final class DD4TContentProvider implements ContentProvider {
         final PageImpl page = new PageImpl();
 
         page.setId(genericPage.getId());
-        page.setTitle(genericPage.getTitle());
+        page.setName(genericPage.getTitle()); // It's confusing, but what DD4T calls the "title" is what is called the "name" here
+
+        final Map<String, String> pageMeta = new HashMap<>();
+        final String title = processPageMetadata(genericPage, pageMeta, localization);
+        page.setTitle(title);
+        page.setMeta(pageMeta);
 
         String localizationPath = localization.getPath();
         if (!localizationPath.endsWith("/")) {
@@ -174,7 +199,7 @@ public final class DD4TContentProvider implements ContentProvider {
         for (String include : localization.getIncludes(pageTypeId)) {
             final String includeUrl = localizationPath + include;
             final Page includePage = getPageModel(includeUrl, localization);
-            page.getIncludes().put(includePage.getTitle(), includePage);
+            page.getIncludes().put(includePage.getName(), includePage);
         }
 
         final Map<String, RegionImpl> regions = new LinkedHashMap<>();
@@ -182,13 +207,8 @@ public final class DD4TContentProvider implements ContentProvider {
         for (ComponentPresentation cp : genericPage.getComponentPresentations()) {
             final Entity entity = createEntity(cp, localization);
 
-            final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
-            if (templateMeta != null) {
-                String regionName = getStringValue(templateMeta, "regionView");
-                if (Strings.isNullOrEmpty(regionName)) {
-                    regionName = DEFAULT_REGION_NAME;
-                }
-
+            String regionName = getRegionName(cp);
+            if (!Strings.isNullOrEmpty(regionName)) {
                 RegionImpl region = regions.get(regionName);
                 if (region == null) {
                     LOG.debug("Creating region: {}", regionName);
@@ -214,6 +234,132 @@ public final class DD4TContentProvider implements ContentProvider {
         page.setViewName(PAGE_VIEW_PREFIX + getPageViewName(genericPage));
 
         return page;
+    }
+
+    private String processPageMetadata(GenericPage page, Map<String, String> pageMeta, Localization localization) {
+        // Process page metadata fields
+        if (page.getMetadata() != null) {
+            for (Field field : page.getMetadata().values()) {
+                processMetadataField(field, pageMeta);
+            }
+        }
+
+        String description = pageMeta.get("description");
+        String title = pageMeta.get("title");
+        String image = pageMeta.get("image");
+
+        if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(description)) {
+            for (ComponentPresentation cp : page.getComponentPresentations()) {
+                if (REGION_FOR_PAGE_TITLE_COMPONENT.equals(getRegionName(cp))) {
+                    final GenericComponent component = cp.getComponent();
+
+                    final Map<String, Field> metadata = component.getMetadata();
+                    BaseField standardMetaField = (BaseField) metadata.get(STANDARD_METADATA_FIELD_NAME);
+                    if (standardMetaField != null && !standardMetaField.getEmbeddedValues().isEmpty()) {
+                        final Map<String, Field> standardMeta = standardMetaField.getEmbeddedValues().get(0).getContent();
+                        if (Strings.isNullOrEmpty(title) && standardMeta.containsKey(STANDARD_METADATA_TITLE_FIELD_NAME)) {
+                            title = standardMeta.get(STANDARD_METADATA_TITLE_FIELD_NAME).getValues().get(0).toString();
+                        }
+                        if (Strings.isNullOrEmpty(description) && standardMeta.containsKey(STANDARD_METADATA_DESCRIPTION_FIELD_NAME)) {
+                            description = standardMeta.get(STANDARD_METADATA_DESCRIPTION_FIELD_NAME).getValues().get(0).toString();
+                        }
+                    }
+
+                    final Map<String, Field> content = component.getContent();
+                    if (Strings.isNullOrEmpty(title) && content.containsKey(COMPONENT_PAGE_TITLE_FIELD_NAME)) {
+                        title = content.get(COMPONENT_PAGE_TITLE_FIELD_NAME).getValues().get(0).toString();
+                    }
+
+                    if (Strings.isNullOrEmpty(image) && content.containsKey("image")) {
+                        image = ((GenericComponent) ((BaseField) content.get("image")).getLinkedComponentValues().get(0))
+                                .getMultimedia().getUrl();
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        // Use page title if no title found
+        if (Strings.isNullOrEmpty(title)) {
+            title = page.getTitle().replace("^\\d(3)\\s", "");
+            if (title.equalsIgnoreCase("index") || title.equalsIgnoreCase("default")) {
+                // Use default page title from configuration if nothing better was found
+                title = localization.getResource("core.defaultPageTitle");
+            }
+        }
+
+        pageMeta.put("twitter:card", "summary");
+        pageMeta.put("og:title", title);
+        pageMeta.put("og:url", webRequestContext.getRequestUrl());
+        pageMeta.put("og:type", "article");
+        pageMeta.put("og:locale", localization.getCulture());
+
+        if (!Strings.isNullOrEmpty(description)) {
+            pageMeta.put("og:description", description);
+        }
+
+        if (!Strings.isNullOrEmpty(image)) {
+            pageMeta.put("og:image", webRequestContext.getBaseUrl() + image);
+        }
+
+        if (!pageMeta.containsKey("description")) {
+            pageMeta.put("description", !Strings.isNullOrEmpty(description) ? description : title);
+        }
+
+        return title + " " + localization.getResource("core.pageTitleSeparator") + " " +
+                localization.getResource("core.pageTitlePostfix");
+    }
+
+    private void processMetadataField(Field field, Map<String, String> pageMeta) {
+        // If it's an embedded field, then process the subfields
+        if (field.getFieldType() == FieldType.Embedded) {
+            final List<FieldSet> embeddedValues = ((BaseField) field).getEmbeddedValues();
+            if (embeddedValues != null && !embeddedValues.isEmpty()) {
+                for (Field subfield : embeddedValues.get(0).getContent().values()) {
+                    processMetadataField(subfield, pageMeta);
+                }
+            }
+        } else {
+            final String fieldName = field.getName();
+
+            String value;
+            switch (fieldName) {
+                case "internalLink":
+                    final String componentId = field.getValues().get(0).toString();
+                    try {
+                        value = linkResolver.resolve(componentId);
+                    } catch (SerializationException | ItemNotFoundException e) {
+                        LOG.warn("Error while resolving link: {}", componentId);
+                        value = componentId;
+                    }
+                    break;
+                case "image":
+                    value = ((GenericComponent) ((BaseField) field).getLinkedComponentValues().get(0))
+                            .getMultimedia().getUrl();
+                    break;
+                default:
+                    value = Joiner.on(',').join(field.getValues());
+                    break;
+            }
+
+            if (!Strings.isNullOrEmpty(value) && !pageMeta.containsKey(fieldName)) {
+                pageMeta.put(fieldName, value);
+            }
+        }
+    }
+
+    private String getRegionName(ComponentPresentation cp) {
+        final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
+        if (templateMeta != null) {
+            String regionName = getStringValue(templateMeta, "regionView");
+            if (Strings.isNullOrEmpty(regionName)) {
+                regionName = DEFAULT_REGION_NAME;
+            }
+            return regionName;
+        }
+
+        return null;
     }
 
     private Map<String, String> getPageData(GenericPage page, Localization localization) {

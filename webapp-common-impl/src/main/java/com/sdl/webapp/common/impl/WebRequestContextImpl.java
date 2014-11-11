@@ -24,6 +24,9 @@ public class WebRequestContextImpl implements WebRequestContext {
 
     private static final int MAX_WIDTH = 1024;
 
+    private String baseUrl;
+    private String requestUrl;
+
     private Localization localization;
 
     private Integer displayWidth;
@@ -31,8 +34,33 @@ public class WebRequestContextImpl implements WebRequestContext {
     private Integer maxMediaWidth;
 
     @Override
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    @Override
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
+    @Override
+    public String getRequestUrl() {
+        return requestUrl;
+    }
+
+    @Override
+    public void setRequestUrl(String requestUrl) {
+        this.requestUrl = requestUrl;
+    }
+
+    @Override
     public Localization getLocalization() {
         return localization;
+    }
+
+    @Override
+    public void setLocalization(Localization localization) {
+        this.localization = localization;
     }
 
     @Override
@@ -40,11 +68,6 @@ public class WebRequestContextImpl implements WebRequestContext {
         // Should return true if the request is from XPM (NOTE currently always true for staging as we cannot reliably
         // distinguish XPM requests)
         return localization.isStaging();
-    }
-
-    @Override
-    public void setLocalization(Localization localization) {
-        this.localization = localization;
     }
 
     @Override

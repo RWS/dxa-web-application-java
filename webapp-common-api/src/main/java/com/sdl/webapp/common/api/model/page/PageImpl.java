@@ -9,7 +9,9 @@ import java.util.Map;
 public class PageImpl implements Page {
 
     private String id;
+    private String name;
     private String title;
+    private Map<String, String> meta = new HashMap<>();
     private Map<String, Page> includes = new HashMap<>();
     private Map<String, Region> regions = new HashMap<>();
     private Map<String, String> pageData = new HashMap<>();
@@ -25,12 +27,30 @@ public class PageImpl implements Page {
     }
 
     @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
     public String getTitle() {
         return title;
     }
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    @Override
+    public Map<String, String> getMeta() {
+        return meta;
+    }
+
+    public void setMeta(Map<String, String> meta) {
+        this.meta = meta;
     }
 
     @Override
@@ -73,7 +93,7 @@ public class PageImpl implements Page {
     public String toString() {
         return "PageImpl{" +
                 "id='" + id + '\'' +
-                ", regions=" + regions.keySet() +
+                ", title='" + title + '\'' +
                 ", viewName='" + viewName + '\'' +
                 '}';
     }

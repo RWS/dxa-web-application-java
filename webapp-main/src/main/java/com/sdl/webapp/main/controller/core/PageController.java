@@ -21,6 +21,7 @@ import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,7 +62,7 @@ public class PageController extends AbstractController {
         this.markup = markup;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = { "text/html" })
+    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = "text/html")
     public String handleGetPage(HttpServletRequest request) {
         // Strip the protocol, domain, port and context path off of the URL
         final String url = urlPathHelper.getRequestUri(request).replace(urlPathHelper.getContextPath(request), "");
@@ -79,7 +80,7 @@ public class PageController extends AbstractController {
         return viewName;
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = { "application/json" })
+    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = "application/json")
     public void handleGetPageJSON(HttpServletRequest request, HttpServletResponse response) throws IOException {
         final ServletServerHttpResponse res = new ServletServerHttpResponse(response);
 
@@ -103,6 +104,13 @@ public class PageController extends AbstractController {
         }
 
         res.close();
+    }
+
+    // Blank page for XPM
+    @RequestMapping(method = RequestMethod.GET, value = "/se_blank.html", produces = "text/html")
+    @ResponseBody
+    public String blankPage() {
+        return "";
     }
 
     private Page getPageModel(String url, Localization localization) {

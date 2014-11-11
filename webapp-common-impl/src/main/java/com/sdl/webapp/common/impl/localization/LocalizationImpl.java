@@ -147,6 +147,11 @@ class LocalizationImpl implements Localization {
     }
 
     @Override
+    public String getCulture() {
+        return getConfiguration("core.culture");
+    }
+
+    @Override
     public String getConfiguration(String key) {
         return configuration.get(key);
     }

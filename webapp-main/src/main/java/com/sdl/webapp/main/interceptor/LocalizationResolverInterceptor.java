@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(LocalizationResolverInterceptor.class);
 
+    private static final int DEFAULT_PORT = 80;
+
     private final LocalizationResolver localizationResolver;
 
     private final WebRequestContext webRequestContext;
@@ -38,6 +40,9 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
         final String url = request.getRequestURL().toString();
         LOG.trace("preHandle: {}", url);
 
+        webRequestContext.setBaseUrl(getBaseUrl(request));
+        webRequestContext.setRequestUrl(url);
+
         final Localization localization = localizationResolver.getLocalization(url);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Localization for {} is: [{}] {}",
@@ -52,5 +57,17 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
         LOG.trace("afterCompletion: {}", request.getRequestURL().toString());
+    }
+
+    private String getBaseUrl(HttpServletRequest request) {
+        final StringBuilder sb = new StringBuilder()
+                .append(request.getScheme()).append("://").append(request.getServerName());
+
+        int port = request.getServerPort();
+        if (port != DEFAULT_PORT) {
+            sb.append(':').append(port);
+        }
+
+        return sb.append(request.getContextPath()).toString();
     }
 }

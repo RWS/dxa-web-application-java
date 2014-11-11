@@ -47,6 +47,13 @@ public interface Localization {
     boolean isStaging();
 
     /**
+     * Gets the culture of this localization (for example "en-US").
+     *
+     * @return The culture of this localization.
+     */
+    String getCulture();
+
+    /**
      * Gets a configuration item.
      *
      * @param key The key of the configuration item.

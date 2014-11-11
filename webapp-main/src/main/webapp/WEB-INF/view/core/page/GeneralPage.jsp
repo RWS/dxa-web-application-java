@@ -12,8 +12,10 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <c:set var="url" scope="request">${pageContext.request.requestURL}</c:set>
     <title>${pageModel.title}</title>
+    <c:forEach var="meta" items="${pageModel.meta.entrySet()}">
+        <meta name="${meta.key}" content="${meta.value}">
+    </c:forEach>
     <link rel="stylesheet" href="/system/assets/css/main.css" type="text/css"/>
     <script src="/system/assets/scripts/header.js"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

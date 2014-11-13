@@ -150,12 +150,14 @@ namespace Sdl.Web.Tridion.Templates
             {
                 Logger.Warning("Could not find 'Localization Configuration' component, cannot publish language data");
             }
+            var sitePubs = LoadSitePublications(GetPublication());
+            var isMaster = sitePubs.Where(p => p.id == GetPublication().Id.ItemId.ToString()).FirstOrDefault().isMaster;
             List<string> additionalData = new List<string>
                 {
-                    String.Format("\"defaultLocalization\":{0}", JsonEncode(IsMasterWebPublication())),
+                    String.Format("\"defaultLocalization\":{0}", JsonEncode(isMaster)),
                     String.Format("\"staging\":{0}", JsonEncode(IsPublishingToStaging())),
                     String.Format("\"mediaRoot\":{0}", JsonEncode(GetPublication().MultimediaUrl)),
-                    String.Format("\"siteLocalizations\":{0}", JsonEncode(LoadSitePublications(GetPublication())))
+                    String.Format("\"siteLocalizations\":{0}", JsonEncode(sitePubs))
                 };
             return additionalData;
         }
@@ -201,12 +203,25 @@ namespace Sdl.Web.Tridion.Templates
             bool masterAdded = false;
             if (GetSiteIdFromPublication(master) == siteId)
             {
-                pubs.Add(GetPublicationDetails(master, true));
-                masterAdded = true;
+                masterAdded = IsMasterWebPublication(master);
+                pubs.Add(GetPublicationDetails(master, masterAdded));
             }
             if (siteId!=null)
             {
                 pubs.AddRange(GetChildPublicationDetails(master, siteId, masterAdded));
+            }
+            //It is possible that no publication has been set explicitly as the master
+            //in which case we set the context publication as the master
+            if (!pubs.Where(p=>p.isMaster).Any())
+            {
+                var currentPubId = GetPublication().Id.ItemId.ToString();
+                foreach (var pub in pubs)
+                {
+                    if (pub.id==currentPubId)
+                    {
+                        pub.isMaster = true;
+                    }
+                }
             }
             return pubs;
         }
@@ -246,8 +261,9 @@ namespace Sdl.Web.Tridion.Templates
                 if (childSiteId == siteId)
                 {
                     Logger.Debug(String.Format("Found valid descendent {0} with site ID {1} ", child.Title, childSiteId));
-                    bool isMaster = !masterAdded && child.Id.ItemId==this.GetPublication().Id.ItemId;
+                    bool isMaster = !masterAdded && IsMasterWebPublication(child);
                     pubs.Add(GetPublicationDetails(child, isMaster));
+                    masterAdded = masterAdded || isMaster;
                 }
                 else
                 {

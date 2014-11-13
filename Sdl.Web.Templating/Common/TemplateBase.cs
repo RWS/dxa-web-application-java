@@ -236,16 +236,18 @@ namespace Sdl.Web.Tridion.Common
             return Engine.RenderMode == RenderMode.PreviewDynamic || Engine.RenderMode == RenderMode.PreviewStatic;
         }
 
-        protected bool IsMasterWebPublication()
+        protected bool IsMasterWebPublication(Publication publication)
         {
-            var publication = GetPublication();
-            //TODO - possibly need to extend with metadata or something for the case we have a non-published parent and all children at same level - one publication should be leading
-            if (publication.PublicationUrl == "" || publication.PublicationUrl == "/")
+            if (publication.Metadata != null)
             {
-                return true;
+                var meta = new ItemFields(publication.Metadata, publication.MetadataSchema);
+                var isMaster = meta.GetTextValue("isMaster");
+                if (!String.IsNullOrEmpty(isMaster))
+                {
+                    return true;
+                }
             }
-            Logger.Debug("publication url is not / publication has children? " + publication.HasChildren);
-            return publication.HasChildren;
+            return false;
         }
 
         #endregion

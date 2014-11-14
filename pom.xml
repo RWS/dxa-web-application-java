@@ -10,9 +10,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>dd4t/dd4t-api</module>
-        <module>dd4t/dd4t-core</module>
-        <module>dd4t/dd4t-providers</module>
         <module>webapp-cid</module>
         <module>webapp-common-api</module>
         <module>webapp-common-impl</module>
@@ -27,6 +24,9 @@
 
         <!-- Java -->
         <java-version>1.7</java-version>
+
+        <!-- Dynamic Delivery for Tridion (DD4T) -->
+        <dd4t-version>1.31.2</dd4t-version>
 
         <!-- Tridion Content Delivery (CD) -->
         <tridion-cd-version>7.1.0</tridion-cd-version>
@@ -103,6 +103,23 @@
     <!-- Dependency management -->
     <dependencyManagement>
         <dependencies>
+            <!-- Dynamic Delivery for Tridion (DD4T) -->
+            <dependency>
+                <groupId>org.dynamicdelivery</groupId>
+                <artifactId>dd4t-api</artifactId>
+                <version>${dd4t-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dynamicdelivery</groupId>
+                <artifactId>dd4t-core</artifactId>
+                <version>${dd4t-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.dynamicdelivery</groupId>
+                <artifactId>dd4t-providers</artifactId>
+                <version>${dd4t-version}</version>
+            </dependency>
+
             <!-- Tridion Content Delivery (CD) -->
             <dependency>
                 <groupId>com.tridion</groupId>

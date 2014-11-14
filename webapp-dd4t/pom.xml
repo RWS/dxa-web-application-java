@@ -52,17 +52,14 @@
         <dependency>
             <groupId>org.dynamicdelivery</groupId>
             <artifactId>dd4t-api</artifactId>
-            <version>${dd4t-version}</version>
         </dependency>
         <dependency>
             <groupId>org.dynamicdelivery</groupId>
             <artifactId>dd4t-core</artifactId>
-            <version>${dd4t-version}</version>
         </dependency>
         <dependency>
             <groupId>org.dynamicdelivery</groupId>
             <artifactId>dd4t-providers</artifactId>
-            <version>${dd4t-version}</version>
         </dependency>
 
         <dependency>

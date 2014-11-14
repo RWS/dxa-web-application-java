@@ -125,8 +125,7 @@ public final class DD4TContentProvider implements ContentProvider {
             public InputStream tryFindPage(String url, int publicationId) throws ContentProviderException {
                 final String pageContent;
                 try {
-                    // NOTE: The method is called 'findXMLPageByUrl' but it does actually not have anything to do with XML
-                    pageContent = dd4tPageFactory.findXMLPageByUrl(url, publicationId);
+                    pageContent = dd4tPageFactory.findPageContentByUrl(url, publicationId);
                 } catch (ItemNotFoundException e) {
                     LOG.debug("Page not found: [{}] {}", publicationId, url);
                     return null;

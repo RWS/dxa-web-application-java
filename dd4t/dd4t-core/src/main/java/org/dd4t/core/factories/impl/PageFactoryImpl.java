@@ -160,8 +160,8 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
      * @throws ParseException
      */
     @Override
-    public String findXMLPageByUrl(String url, int publicationId) throws ItemNotFoundException, FilterException, ParseException, SerializationException, IOException {
-        LOG.debug("Enter findXMLPageByUrl with url: {} and publicationId: {}", url, publicationId);
+    public String findPageContentByUrl(String url, int publicationId) throws ItemNotFoundException, FilterException, ParseException, SerializationException, IOException {
+        LOG.debug("Enter findPageContentByUrl with url: {} and publicationId: {}", url, publicationId);
 
         String cacheKey = publicationId + "-" + url;
         CacheElement<String> cacheElement = cacheProvider.loadFromLocalCache(cacheKey);

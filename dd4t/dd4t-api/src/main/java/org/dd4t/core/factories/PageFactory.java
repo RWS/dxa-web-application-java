@@ -46,15 +46,13 @@ public interface PageFactory extends Factory {
     public Page findPageByUrl(String url, int publicationId) throws ItemNotFoundException, FilterException, ParseException, SerializationException, IOException;
 
     /**
-     * Find XML page by its URL. The url and publication id are specified. No
+     * Find page content as a string by its URL. The url and publication id are specified. No
      * security available.
      *
-     * @return XML as string
+     * @return Page content as string
      * @throws ItemNotFoundException
      * * Vinod Bhagat added on 13 September 2014
      */
-    public String findXMLPageByUrl(String url, int publicationId) throws ItemNotFoundException, FilterException, ParseException, SerializationException, IOException;
+    public String findPageContentByUrl(String url, int publicationId) throws ItemNotFoundException, FilterException, ParseException, SerializationException, IOException;
 
 }
-
-

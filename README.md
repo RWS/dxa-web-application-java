@@ -25,6 +25,10 @@ repository. You will need to install these libraries into your local Maven repos
 
 The directory `tridion-libs` contains these libraries. See the `README.md` in that directory for instructions.
 
+Also, the DD4T libraries need to be installed in your local Maven repository. The version of DD4T that this project
+needs is in a separate project, `dd4t-java`. Install that project in your local Maven repository by running
+`mvn clean install` in the `dd4t-java` project.
+
 ## Configuration
 
 Some configuration needs to be done in the following configuration files. These configuration files are in the directory

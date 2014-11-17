@@ -75,8 +75,8 @@ public class PageController extends AbstractController {
         request.setAttribute(MARKUP, markup);
         request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
 
-        final String viewName = page.getViewName();
-        LOG.trace("viewName: {}", viewName);
+        final String viewName = page.getMvcData().getViewName();
+        LOG.trace("Page MvcData: {}", page.getMvcData());
         return viewName;
     }
 

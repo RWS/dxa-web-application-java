@@ -37,7 +37,7 @@ public class IncludePageController extends AbstractController {
 
         // If view name not specified in request, use view name from page model
         if (Strings.isNullOrEmpty(viewName)) {
-            viewName = includePage.getViewName();
+            viewName = includePage.getMvcData().getViewName();
         }
 
         LOG.trace("viewName: {}", viewName);

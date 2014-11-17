@@ -26,8 +26,8 @@ public class EntityController extends AbstractController {
 
         request.setAttribute(ENTITY_MODEL, entity);
 
-        final String viewName = entity.getViewName();
-        LOG.trace("viewName: {}", viewName);
+        final String viewName = entity.getMvcData().getViewName();
+        LOG.trace("Entity MvcData: {}", entity.getMvcData());
         return viewName;
     }
 }

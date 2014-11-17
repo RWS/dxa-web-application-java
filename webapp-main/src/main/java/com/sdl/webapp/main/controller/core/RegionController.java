@@ -26,8 +26,8 @@ public class RegionController extends AbstractController {
 
         request.setAttribute(REGION_MODEL, region);
 
-        final String viewName = region.getViewName();
-        LOG.trace("viewName: {}", viewName);
+        final String viewName = region.getMvcData().getViewName();
+        LOG.trace("Region MvcData: {}", region.getMvcData());
         return viewName;
     }
 }

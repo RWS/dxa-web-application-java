@@ -7,8 +7,6 @@ public interface Region extends ViewModel {
 
     String getName();
 
-    String getModule();
-
     List<Entity> getEntities();
 
     Map<String, String> getRegionData();

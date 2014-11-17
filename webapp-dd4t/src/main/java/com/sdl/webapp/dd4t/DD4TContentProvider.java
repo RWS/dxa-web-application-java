@@ -11,10 +11,8 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.*;
 import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.Region;
-import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.api.model.page.PageImpl;
@@ -42,6 +40,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.sdl.webapp.dd4t.fieldconverters.FieldUtils.getStringValue;
 
@@ -57,17 +57,18 @@ public final class DD4TContentProvider implements ContentProvider {
 
     private static final String DEFAULT_REGION_NAME = "Main";
 
-    private static final String CORE_MODULE_NAME = "core";
-
     private static final String REGION_FOR_PAGE_TITLE_COMPONENT = "Main";
     private static final String STANDARD_METADATA_FIELD_NAME = "standardMeta";
     private static final String STANDARD_METADATA_TITLE_FIELD_NAME = "name";
     private static final String STANDARD_METADATA_DESCRIPTION_FIELD_NAME = "description";
     private static final String COMPONENT_PAGE_TITLE_FIELD_NAME = "headline";
 
+    private static final String CORE_MODULE_NAME = "core";
     private static final String PAGE_VIEW_PREFIX = CORE_MODULE_NAME + "/page/";
     private static final String REGION_VIEW_PREFIX = CORE_MODULE_NAME + "/region/";
     private static final String ENTITY_VIEW_PREFIX = CORE_MODULE_NAME + "/entity/";
+
+    private static final Pattern VIEW_NAME_PATTERN = Pattern.compile(".*\\[(.*)\\]");
 
     private static interface TryFindPage<T> {
         public T tryFindPage(String url, int publicationId) throws ContentProviderException;
@@ -214,8 +215,7 @@ public final class DD4TContentProvider implements ContentProvider {
                     region = new RegionImpl();
 
                     region.setName(regionName);
-                    region.setModule(CORE_MODULE_NAME);
-                    region.setViewName(REGION_VIEW_PREFIX + regionName);
+                    region.setMvcData(createRegionMvcData(cp));
 
                     regions.put(regionName, region);
                 }
@@ -230,7 +230,7 @@ public final class DD4TContentProvider implements ContentProvider {
 
         page.setPageData(getPageData(genericPage, localization));
 
-        page.setViewName(PAGE_VIEW_PREFIX + getPageViewName(genericPage));
+        page.setMvcData(createPageMvcData(genericPage));
 
         return page;
     }
@@ -376,15 +376,6 @@ public final class DD4TContentProvider implements ContentProvider {
         return pageDataBuilder.build();
     }
 
-    private String getPageViewName(GenericPage genericPage) {
-        final PageTemplate pageTemplate = genericPage.getPageTemplate();
-        if (pageTemplate != null) {
-            return getStringValue(pageTemplate.getMetadata(), "view");
-        }
-
-        return null;
-    }
-
     private Entity createEntity(ComponentPresentation cp, Localization localization) throws ContentProviderException {
         final GenericComponent component = cp.getComponent();
         final ComponentTemplate componentTemplate = cp.getComponentTemplate();
@@ -416,7 +407,7 @@ public final class DD4TContentProvider implements ContentProvider {
             }
 
             entity.setId(componentId.split("-")[1]);
-            entity.setViewName(ENTITY_VIEW_PREFIX + viewName);
+            entity.setMvcData(createEntityMvcData(cp));
 
             // Set entity data (used for semantic markup)
             entity.setEntityData(getEntityData(cp));
@@ -451,5 +442,125 @@ public final class DD4TContentProvider implements ContentProvider {
                 ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
 
         return entityDataBuilder.build();
+    }
+
+    private MvcData createPageMvcData(GenericPage genericPage) {
+        final DD4TMvcData mvcData = new DD4TMvcData();
+
+        mvcData.setControllerName("Page");
+        mvcData.setControllerAreaName("Core");
+        mvcData.setActionName("Page");
+
+        final PageTemplate pageTemplate = genericPage.getPageTemplate();
+        final Map<String, Field> templateMeta = pageTemplate.getMetadata();
+        String viewName = getStringValue(templateMeta, "view");
+        if (Strings.isNullOrEmpty(viewName)) {
+            viewName = pageTemplate.getTitle().replaceAll(" ", "");
+        }
+
+        final String[] parts = viewName.split(":");
+        if (parts.length > 1) {
+            mvcData.setViewName(PAGE_VIEW_PREFIX + parts[1]);
+            mvcData.setAreaName(parts[0]);
+        } else {
+            mvcData.setViewName(PAGE_VIEW_PREFIX + viewName);
+            mvcData.setAreaName("Core");
+        }
+
+        return mvcData;
+    }
+
+    private MvcData createRegionMvcData(ComponentPresentation cp) {
+        final DD4TMvcData mvcData = new DD4TMvcData();
+
+        mvcData.setControllerName("Region");
+        mvcData.setControllerAreaName("Core");
+        mvcData.setActionName("Region");
+
+        final ComponentTemplate componentTemplate = cp.getComponentTemplate();
+        final Map<String, Field> templateMeta = componentTemplate.getMetadata();
+        String viewName = getStringValue(templateMeta, "regionView");
+        if (Strings.isNullOrEmpty(viewName)) {
+            final Matcher matcher = VIEW_NAME_PATTERN.matcher(componentTemplate.getTitle());
+            viewName = matcher.matches() ? matcher.group(1) : "Main";
+        }
+
+        final String[] parts = viewName.split(":");
+        if (parts.length > 1) {
+            mvcData.setViewName(REGION_VIEW_PREFIX + parts[1]);
+            mvcData.setAreaName(parts[0]);
+        } else {
+            mvcData.setViewName(REGION_VIEW_PREFIX + viewName);
+            mvcData.setAreaName("Core");
+        }
+
+        return mvcData;
+    }
+
+    private MvcData createEntityMvcData(ComponentPresentation cp) {
+        final DD4TMvcData mvcData = new DD4TMvcData();
+
+        final ComponentTemplate componentTemplate = cp.getComponentTemplate();
+        final Map<String, Field> templateMeta = componentTemplate.getMetadata();
+        String controllerName = getStringValue(templateMeta, "controller");
+        if (Strings.isNullOrEmpty(controllerName)) {
+            controllerName = "Entity";
+        }
+
+        String[] parts = controllerName.split(":");
+        if (parts.length > 1) {
+            mvcData.setControllerName(parts[1]);
+            mvcData.setControllerAreaName(parts[0]);
+        } else {
+            mvcData.setControllerName(controllerName);
+            mvcData.setControllerAreaName("Core");
+        }
+
+        String actionName = getStringValue(templateMeta, "action");
+        if (Strings.isNullOrEmpty(actionName)) {
+            actionName = "Entity";
+        }
+
+        mvcData.setActionName(actionName);
+
+        String viewName = getStringValue(templateMeta, "view");
+        if (Strings.isNullOrEmpty(viewName)) {
+            viewName = componentTemplate.getTitle().replaceAll("\\[.*\\]|\\s", "");
+        }
+
+        parts = viewName.split(":");
+        if (parts.length > 1) {
+            mvcData.setViewName(ENTITY_VIEW_PREFIX + parts[1]);
+            mvcData.setAreaName(parts[0]);
+        } else {
+            mvcData.setViewName(ENTITY_VIEW_PREFIX + viewName);
+            mvcData.setAreaName("Core");
+        }
+
+        String regionView = getStringValue(templateMeta, "regionView");
+        if (Strings.isNullOrEmpty(regionView)) {
+            regionView = "Main";
+        }
+
+        parts = regionView.split(":");
+        if (parts.length > 1) {
+            mvcData.setRegionName(parts[1]);
+            mvcData.setRegionAreaName(parts[0]);
+        } else {
+            mvcData.setRegionName(regionView);
+            mvcData.setRegionAreaName("Core");
+        }
+
+        final Map<String, String> routeValues = new HashMap<>();
+        for (String routeValue : Strings.nullToEmpty(getStringValue(templateMeta, "routeValues")).split(",")) {
+            parts = routeValue.split(":");
+            if (parts.length > 1 && !routeValues.containsKey(parts[0])) {
+                routeValues.put(parts[0], parts[1]);
+            }
+        }
+
+        mvcData.setRouteValues(routeValues);
+
+        return mvcData;
     }
 }

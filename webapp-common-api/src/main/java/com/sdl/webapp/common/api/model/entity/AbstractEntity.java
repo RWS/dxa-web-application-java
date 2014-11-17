@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.MvcData;
 
 import java.util.Map;
 
@@ -15,7 +16,7 @@ public abstract class AbstractEntity implements Entity {
 
     private Map<String, String> propertyData;
 
-    private String viewName;
+    private MvcData mvcData;
 
     @Override
     public String getId() {
@@ -44,11 +45,12 @@ public abstract class AbstractEntity implements Entity {
         this.propertyData = ImmutableMap.copyOf(propertyData);
     }
 
-    public String getViewName() {
-        return viewName;
+    @Override
+    public MvcData getMvcData() {
+        return mvcData;
     }
 
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
+    public void setMvcData(MvcData mvcData) {
+        this.mvcData = mvcData;
     }
 }

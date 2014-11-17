@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.util.StreamUtils;
 import com.sdl.webapp.main.controller.exception.InternalServerErrorException;
@@ -75,9 +76,9 @@ public class PageController extends AbstractController {
         request.setAttribute(MARKUP, markup);
         request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
 
-        final String viewName = page.getMvcData().getViewName();
-        LOG.trace("Page MvcData: {}", page.getMvcData());
-        return viewName;
+        final MvcData mvcData = page.getMvcData();
+        LOG.trace("Page MvcData: {}", mvcData);
+        return mvcData.getAreaName().toLowerCase() + "/page/" + mvcData.getViewName();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = "application/json")

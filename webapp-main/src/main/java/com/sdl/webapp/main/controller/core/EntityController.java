@@ -1,6 +1,7 @@
 package com.sdl.webapp.main.controller.core;
 
 import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.MvcData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -26,8 +27,8 @@ public class EntityController extends AbstractController {
 
         request.setAttribute(ENTITY_MODEL, entity);
 
-        final String viewName = entity.getMvcData().getViewName();
-        LOG.trace("Entity MvcData: {}", entity.getMvcData());
-        return viewName;
+        final MvcData mvcData = entity.getMvcData();
+        LOG.trace("Entity MvcData: {}", mvcData);
+        return mvcData.getAreaName().toLowerCase() + "/entity/" + mvcData.getViewName();
     }
 }

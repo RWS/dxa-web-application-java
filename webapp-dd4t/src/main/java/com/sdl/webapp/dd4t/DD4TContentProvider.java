@@ -47,6 +47,8 @@ import static com.sdl.webapp.dd4t.fieldconverters.FieldUtils.getStringValue;
 
 /**
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
+ *
+ * TODO: Needs to be refactored, this is getting too big, messy and complicated.
  */
 @Component
 public final class DD4TContentProvider implements ContentProvider {
@@ -62,11 +64,6 @@ public final class DD4TContentProvider implements ContentProvider {
     private static final String STANDARD_METADATA_TITLE_FIELD_NAME = "name";
     private static final String STANDARD_METADATA_DESCRIPTION_FIELD_NAME = "description";
     private static final String COMPONENT_PAGE_TITLE_FIELD_NAME = "headline";
-
-    private static final String CORE_MODULE_NAME = "core";
-    private static final String PAGE_VIEW_PREFIX = CORE_MODULE_NAME + "/page/";
-    private static final String REGION_VIEW_PREFIX = CORE_MODULE_NAME + "/region/";
-    private static final String ENTITY_VIEW_PREFIX = CORE_MODULE_NAME + "/entity/";
 
     private static final Pattern VIEW_NAME_PATTERN = Pattern.compile(".*\\[(.*)\\]");
 
@@ -460,10 +457,10 @@ public final class DD4TContentProvider implements ContentProvider {
 
         final String[] parts = viewName.split(":");
         if (parts.length > 1) {
-            mvcData.setViewName(PAGE_VIEW_PREFIX + parts[1]);
+            mvcData.setViewName(parts[1]);
             mvcData.setAreaName(parts[0]);
         } else {
-            mvcData.setViewName(PAGE_VIEW_PREFIX + viewName);
+            mvcData.setViewName(viewName);
             mvcData.setAreaName("Core");
         }
 
@@ -487,10 +484,10 @@ public final class DD4TContentProvider implements ContentProvider {
 
         final String[] parts = viewName.split(":");
         if (parts.length > 1) {
-            mvcData.setViewName(REGION_VIEW_PREFIX + parts[1]);
+            mvcData.setViewName(parts[1]);
             mvcData.setAreaName(parts[0]);
         } else {
-            mvcData.setViewName(REGION_VIEW_PREFIX + viewName);
+            mvcData.setViewName(viewName);
             mvcData.setAreaName("Core");
         }
 
@@ -530,10 +527,10 @@ public final class DD4TContentProvider implements ContentProvider {
 
         parts = viewName.split(":");
         if (parts.length > 1) {
-            mvcData.setViewName(ENTITY_VIEW_PREFIX + parts[1]);
+            mvcData.setViewName(parts[1]);
             mvcData.setAreaName(parts[0]);
         } else {
-            mvcData.setViewName(ENTITY_VIEW_PREFIX + viewName);
+            mvcData.setViewName(viewName);
             mvcData.setAreaName("Core");
         }
 

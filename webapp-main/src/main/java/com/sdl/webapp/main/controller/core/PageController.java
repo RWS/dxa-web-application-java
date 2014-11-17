@@ -31,9 +31,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import static com.sdl.webapp.main.RequestAttributeNames.MARKUP;
-import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
-import static com.sdl.webapp.main.RequestAttributeNames.SCREEN_WIDTH;
+import static com.sdl.webapp.main.RequestAttributeNames.*;
 
 @Controller
 public class PageController extends AbstractController {

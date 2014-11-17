@@ -1,5 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.Entity;
@@ -10,12 +12,16 @@ import java.util.Map;
 @SemanticMappingIgnore
 public abstract class AbstractEntity implements Entity {
 
+    @JsonProperty("Id")
     private String id;
 
+    @JsonIgnore
     private Map<String, String> entityData;
 
+    @JsonIgnore
     private Map<String, String> propertyData;
 
+    @JsonIgnore
     private MvcData mvcData;
 
     @Override

@@ -1,5 +1,6 @@
 package com.sdl.webapp.dd4t;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -15,6 +16,7 @@ import com.sdl.webapp.common.api.model.*;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
+import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.page.PageImpl;
 import com.sdl.webapp.common.api.model.region.RegionImpl;
 import com.sdl.webapp.dd4t.fieldconverters.FieldConverterRegistry;
@@ -67,6 +69,8 @@ public final class DD4TContentProvider implements ContentProvider {
 
     private static final Pattern VIEW_NAME_PATTERN = Pattern.compile(".*\\[(.*)\\]");
 
+    private static final String NAVIGATION_MODEL_URL = "/navigation.json";
+
     private static interface TryFindPage<T> {
         public T tryFindPage(String url, int publicationId) throws ContentProviderException;
     }
@@ -83,16 +87,19 @@ public final class DD4TContentProvider implements ContentProvider {
 
     private final WebRequestContext webRequestContext;
 
+    private final ObjectMapper objectMapper;
+
     @Autowired
     public DD4TContentProvider(PageFactory dd4tPageFactory, LinkResolver linkResolver, ViewModelRegistry viewModelRegistry,
                                SemanticMapper semanticMapper, FieldConverterRegistry fieldConverterRegistry,
-                               WebRequestContext webRequestContext) {
+                               WebRequestContext webRequestContext, ObjectMapper objectMapper) {
         this.dd4tPageFactory = dd4tPageFactory;
         this.linkResolver = linkResolver;
         this.viewModelRegistry = viewModelRegistry;
         this.semanticMapper = semanticMapper;
         this.fieldConverterRegistry = fieldConverterRegistry;
         this.webRequestContext = webRequestContext;
+        this.objectMapper = objectMapper;
     }
 
     @Override
@@ -559,5 +566,14 @@ public final class DD4TContentProvider implements ContentProvider {
         mvcData.setRouteValues(routeValues);
 
         return mvcData;
+    }
+
+    @Override
+    public SitemapItem getNavigationModel(Localization localization) throws ContentProviderException {
+        try {
+            return objectMapper.readValue(getPageContent(NAVIGATION_MODEL_URL, localization), SitemapItem.class);
+        } catch (IOException e) {
+            throw new ContentProviderException("Exception while loading navigation model", e);
+        }
     }
 }

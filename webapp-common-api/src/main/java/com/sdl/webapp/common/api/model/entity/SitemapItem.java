@@ -1,19 +1,28 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.joda.time.DateTime;
+
 import java.util.List;
 
 public class SitemapItem extends AbstractEntity {
 
+    @JsonProperty("Title")
     private String title;
 
+    @JsonProperty("Url")
     private String url;
 
+    @JsonProperty("Type")
     private String type;
 
+    @JsonProperty("Items")
     private List<SitemapItem> items;
 
-    private String publishedDate;
+    @JsonProperty("PublishedDate")
+    private DateTime publishedDate;
 
+    @JsonProperty("Visible")
     private boolean visible;
 
     public String getTitle() {
@@ -48,11 +57,11 @@ public class SitemapItem extends AbstractEntity {
         this.items = items;
     }
 
-    public String getPublishedDate() {
+    public DateTime getPublishedDate() {
         return publishedDate;
     }
 
-    public void setPublishedDate(String publishedDate) {
+    public void setPublishedDate(DateTime publishedDate) {
         this.publishedDate = publishedDate;
     }
 

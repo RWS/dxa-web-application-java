@@ -27,8 +27,7 @@ public class IncludePageController extends AbstractController {
                                     @RequestParam(required = false) String viewName) {
         LOG.trace("handleIncludePage: includePageName={}", includePageName);
 
-        final Page page = getPageFromRequest(request);
-        final Page includePage = page.getIncludes().get(includePageName);
+        final Page includePage = getPageFromRequest(request).getIncludes().get(includePageName);
         if (includePage == null) {
             LOG.error("Include page not found: {}", includePageName);
             throw new NotFoundException("Include page not found: " + includePageName);
@@ -36,7 +35,7 @@ public class IncludePageController extends AbstractController {
 
         request.setAttribute(PAGE_MODEL, includePage);
 
-        final MvcData mvcData = page.getMvcData();
+        final MvcData mvcData = includePage.getMvcData();
         LOG.trace("Include Page MvcData: {}", mvcData);
 
         // If view name not specified in request, use view name from page model

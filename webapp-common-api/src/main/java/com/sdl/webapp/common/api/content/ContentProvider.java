@@ -12,24 +12,24 @@ import java.io.InputStream;
 public interface ContentProvider {
 
     /**
-     * Gets a page by URL for a specific localization.
+     * Gets a page by path for a specific localization.
      *
-     * @param url The URL of the page.
+     * @param path The path of the page.
      * @param localization The localization.
      * @return The {@code Page}.
      * @throws ContentProviderException If an error occurred so that the content of the page could be retrieved.
      */
-    Page getPageModel(String url, Localization localization) throws ContentProviderException;
+    Page getPageModel(String path, Localization localization) throws ContentProviderException;
 
     /**
      * Gets an {@code InputStream} from which the raw content of a page can be read.
      *
-     * @param url The URL of the page.
+     * @param path The path of the page.
      * @param localization The localization.
      * @return An {@code InputStream} from which the raw content of a page can be read.
      * @throws ContentProviderException If an error occurred so that the content of the page could be retrieved.
      */
-    InputStream getPageContent(String url, Localization localization) throws ContentProviderException;
+    InputStream getPageContent(String path, Localization localization) throws ContentProviderException;
 
     /**
      * TODO: Documentation.

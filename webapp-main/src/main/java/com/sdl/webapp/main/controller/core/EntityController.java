@@ -1,7 +1,9 @@
 package com.sdl.webapp.main.controller.core;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.NavigationBuilder;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
@@ -30,10 +32,13 @@ public class EntityController extends AbstractController {
     private static final String NAV_TYPE_LEFT = "Left";
     private static final String NAV_TYPE_BREADCRUMB = "Breadcrumb";
 
+    private final WebRequestContext webRequestContext;
+
     private final NavigationBuilder navigationBuilder;
 
     @Autowired
-    public EntityController(NavigationBuilder navigationBuilder) {
+    public EntityController(WebRequestContext webRequestContext, NavigationBuilder navigationBuilder) {
+        this.webRequestContext = webRequestContext;
         this.navigationBuilder = navigationBuilder;
     }
 
@@ -70,19 +75,22 @@ public class EntityController extends AbstractController {
     private String handleGetNavigation(HttpServletRequest request, Entity entity) throws ContentProviderException {
         final MvcData mvcData = entity.getMvcData();
 
+        final String requestPath = webRequestContext.getRequestPath();
+        final Localization localization = webRequestContext.getLocalization();
+
         final NavigationLinks navigationLinks;
         final String navType = mvcData.getRouteValues().get("navType");
         switch (navType) {
             case NAV_TYPE_TOP:
-                navigationLinks = navigationBuilder.buildTopNavigation();
+                navigationLinks = navigationBuilder.buildTopNavigation(requestPath, localization);
                 break;
 
             case NAV_TYPE_LEFT:
-                navigationLinks = navigationBuilder.buildContextNavigation();
+                navigationLinks = navigationBuilder.buildContextNavigation(requestPath, localization);
                 break;
 
             case NAV_TYPE_BREADCRUMB:
-                navigationLinks = navigationBuilder.buildBreadcrumb();
+                navigationLinks = navigationBuilder.buildBreadcrumb(requestPath, localization);
                 break;
 
             default:

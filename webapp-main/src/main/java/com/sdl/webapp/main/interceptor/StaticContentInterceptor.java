@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,8 +29,6 @@ import java.io.OutputStream;
 public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);
 
-    private final UrlPathHelper urlPathHelper = new UrlPathHelper();
-
     private final StaticContentProvider staticContentProvider;
 
     private final WebRequestContext webRequestContext;
@@ -44,9 +41,8 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        // Strip the protocol, domain, port and context path off of the URL
-        final String url = urlPathHelper.getRequestUri(request).replace(urlPathHelper.getContextPath(request), "");
-        LOG.trace("preHandle: {}", url);
+        final String requestPath = webRequestContext.getRequestPath();
+        LOG.trace("preHandle: {}", requestPath);
 
         final Localization localization = webRequestContext.getLocalization();
         if (localization == null) {
@@ -54,9 +50,9 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
                     "LocalizationResolverInterceptor is registered and executed before the StaticContentInterceptor.");
         }
 
-        if (localization.isStaticContent(url)) {
-            LOG.debug("Handling static content: {}", url);
-            final StaticContentItem staticContentItem = staticContentProvider.getStaticContent(url,
+        if (localization.isStaticContent(requestPath)) {
+            LOG.debug("Handling static content: {}", requestPath);
+            final StaticContentItem staticContentItem = staticContentProvider.getStaticContent(requestPath,
                     localization.getId(), localization.getPath());
 
             final ServletServerHttpRequest req = new ServletServerHttpRequest(request);

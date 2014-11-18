@@ -72,7 +72,7 @@ public final class DD4TContentProvider implements ContentProvider {
     private static final String NAVIGATION_MODEL_URL = "/navigation.json";
 
     private static interface TryFindPage<T> {
-        public T tryFindPage(String url, int publicationId) throws ContentProviderException;
+        public T tryFindPage(String path, int publicationId) throws ContentProviderException;
     }
 
     private final org.dd4t.core.factories.PageFactory dd4tPageFactory;
@@ -103,19 +103,19 @@ public final class DD4TContentProvider implements ContentProvider {
     }
 
     @Override
-    public Page getPageModel(String url, final Localization localization) throws ContentProviderException {
-        return findPage(url, localization, new TryFindPage<Page>() {
+    public Page getPageModel(String path, final Localization localization) throws ContentProviderException {
+        return findPage(path, localization, new TryFindPage<Page>() {
             @Override
-            public Page tryFindPage(String url, int publicationId) throws ContentProviderException {
+            public Page tryFindPage(String path, int publicationId) throws ContentProviderException {
                 GenericPage genericPage;
                 try {
-                    genericPage = (GenericPage) dd4tPageFactory.findPageByUrl(url, publicationId);
+                    genericPage = (GenericPage) dd4tPageFactory.findPageByUrl(path, publicationId);
                 } catch (ItemNotFoundException e) {
-                    LOG.debug("Page not found: [{}] {}", publicationId, url);
+                    LOG.debug("Page not found: [{}] {}", publicationId, path);
                     return null;
                 } catch (FilterException | ParseException | SerializationException | IOException e) {
                     throw new ContentProviderException("Exception while getting page model for: [" +
-                            publicationId + "] " + url, e);
+                            publicationId + "] " + path, e);
                 }
 
                 return createPage(genericPage, localization);
@@ -124,19 +124,19 @@ public final class DD4TContentProvider implements ContentProvider {
     }
 
     @Override
-    public InputStream getPageContent(String url, Localization localization) throws ContentProviderException {
-        return findPage(url, localization, new TryFindPage<InputStream>() {
+    public InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
+        return findPage(path, localization, new TryFindPage<InputStream>() {
             @Override
-            public InputStream tryFindPage(String url, int publicationId) throws ContentProviderException {
+            public InputStream tryFindPage(String path, int publicationId) throws ContentProviderException {
                 final String pageContent;
                 try {
-                    pageContent = dd4tPageFactory.findPageContentByUrl(url, publicationId);
+                    pageContent = dd4tPageFactory.findPageContentByUrl(path, publicationId);
                 } catch (ItemNotFoundException e) {
-                    LOG.debug("Page not found: [{}] {}", publicationId, url);
+                    LOG.debug("Page not found: [{}] {}", publicationId, path);
                     return null;
                 } catch (FilterException | ParseException | SerializationException | IOException e) {
                     throw new ContentProviderException("Exception while getting page content for: [" +
-                            publicationId + "] " + url, e);
+                            publicationId + "] " + path, e);
                 }
 
                 // NOTE: This assumes page content is always in UTF-8 encoding
@@ -145,41 +145,41 @@ public final class DD4TContentProvider implements ContentProvider {
         });
     }
 
-    private static <T> T findPage(String url, Localization localization, TryFindPage<T> callback)
+    private static <T> T findPage(String path, Localization localization, TryFindPage<T> callback)
             throws ContentProviderException {
-        String processedUrl = processUrl(url);
+        String processedPath = processPath(path);
         int publicationId = Integer.parseInt(localization.getId());
 
-        LOG.debug("Try to find page: [{}] {}", publicationId, processedUrl);
-        T page = callback.tryFindPage(processedUrl, publicationId);
-        if (page == null && !url.endsWith("/") && !hasExtension(url)) {
-            processedUrl = processUrl(url + "/");
-            LOG.debug("Try to find page: [{}] {}", publicationId, processedUrl);
-            page = callback.tryFindPage(processedUrl, publicationId);
+        LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
+        T page = callback.tryFindPage(processedPath, publicationId);
+        if (page == null && !path.endsWith("/") && !hasExtension(path)) {
+            processedPath = processPath(path + "/");
+            LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
+            page = callback.tryFindPage(processedPath, publicationId);
         }
 
         if (page == null) {
-            throw new PageNotFoundException("Page not found: [" + publicationId + "] " + processedUrl);
+            throw new PageNotFoundException("Page not found: [" + publicationId + "] " + processedPath);
         }
 
         return page;
     }
 
-    private static String processUrl(String url) {
-        if (Strings.isNullOrEmpty(url)) {
+    private static String processPath(String path) {
+        if (Strings.isNullOrEmpty(path)) {
             return DEFAULT_PAGE_NAME;
         }
-        if (url.endsWith("/")) {
-            url = url + DEFAULT_PAGE_NAME;
+        if (path.endsWith("/")) {
+            path = path + DEFAULT_PAGE_NAME;
         }
-        if (!hasExtension(url)) {
-            url = url + DEFAULT_PAGE_EXTENSION;
+        if (!hasExtension(path)) {
+            path = path + DEFAULT_PAGE_EXTENSION;
         }
-        return url;
+        return path;
     }
 
-    private static boolean hasExtension(String url) {
-        return url.lastIndexOf('.') > url.lastIndexOf('/');
+    private static boolean hasExtension(String path) {
+        return path.lastIndexOf('.') > path.lastIndexOf('/');
     }
 
     private Page createPage(GenericPage genericPage, Localization localization) throws ContentProviderException {
@@ -294,7 +294,7 @@ public final class DD4TContentProvider implements ContentProvider {
 
         pageMeta.put("twitter:card", "summary");
         pageMeta.put("og:title", title);
-        pageMeta.put("og:url", webRequestContext.getRequestUrl());
+        pageMeta.put("og:url", webRequestContext.getBaseUrl() + webRequestContext.getRequestPath());
         pageMeta.put("og:type", "article");
         pageMeta.put("og:locale", localization.getCulture());
 

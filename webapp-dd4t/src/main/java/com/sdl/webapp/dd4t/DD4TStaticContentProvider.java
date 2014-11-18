@@ -41,13 +41,13 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
     }
 
     @Override
-    public StaticContentItem getStaticContent(String url, String localizationId, String localizationPath)
+    public StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
             throws ContentProviderException {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("getStaticContent: {} [{}] {}", new Object[] { url, localizationId, localizationPath });
+            LOG.trace("getStaticContent: {} [{}] {}", new Object[] { path, localizationId, localizationPath });
         }
 
-        final File file = getStaticContentFile(url, localizationId, localizationPath);
+        final File file = getStaticContentFile(path, localizationId, localizationPath);
 
         return new StaticContentItem() {
             @Override
@@ -62,18 +62,18 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
         };
     }
 
-    private File getStaticContentFile(String url, String localizationId, String localizationPath)
+    private File getStaticContentFile(String path, String localizationId, String localizationPath)
             throws ContentProviderException {
         final File file = new File(new File(new File(new File(new File(
                 webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localizationId),
-                localizationPath), url);
+                localizationPath), path);
         LOG.trace("getStaticContentFile: {}", file);
 
         final int publicationId = Integer.parseInt(localizationId);
         try {
-            final BinaryVariant binaryVariant = findBinaryVariant(publicationId, url);
+            final BinaryVariant binaryVariant = findBinaryVariant(publicationId, path);
             if (binaryVariant == null) {
-                throw new StaticContentNotFoundException("No binary variant found for: [" + publicationId + "] " + url);
+                throw new StaticContentNotFoundException("No binary variant found for: [" + publicationId + "] " + path);
             }
 
             final BinaryMeta binaryMeta = binaryVariant.getBinaryMeta();
@@ -104,14 +104,14 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
             return file;
         } catch (StorageException | IOException e) {
             throw new ContentProviderException("Exception while getting static content for: [" + publicationId + "] "
-                    + url, e);
+                    + path, e);
         }
     }
 
-    private BinaryVariant findBinaryVariant(int publicationId, String url) throws StorageException {
+    private BinaryVariant findBinaryVariant(int publicationId, String path) throws StorageException {
         final BinaryVariantDAO dao = (BinaryVariantDAO) StorageManagerFactory.getDAO(publicationId,
                 StorageTypeMapping.BINARY_VARIANT);
-        final List<BinaryVariant> binaryVariants = dao.findByURL(url);
+        final List<BinaryVariant> binaryVariants = dao.findByURL(path);
         return binaryVariants != null && !binaryVariants.isEmpty() ? binaryVariants.get(0) : null;
     }
 

@@ -25,7 +25,7 @@ public class WebRequestContextImpl implements WebRequestContext {
     private static final int MAX_WIDTH = 1024;
 
     private String baseUrl;
-    private String requestUrl;
+    private String requestPath;
 
     private Localization localization;
 
@@ -44,13 +44,13 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     @Override
-    public String getRequestUrl() {
-        return requestUrl;
+    public String getRequestPath() {
+        return requestPath;
     }
 
     @Override
-    public void setRequestUrl(String requestUrl) {
-        this.requestUrl = requestUrl;
+    public void setRequestPath(String requestPath) {
+        this.requestPath = requestPath;
     }
 
     @Override

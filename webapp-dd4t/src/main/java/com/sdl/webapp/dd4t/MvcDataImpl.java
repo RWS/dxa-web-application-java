@@ -4,25 +4,19 @@ import com.sdl.webapp.common.api.model.MvcData;
 
 import java.util.Map;
 
-public class DD4TMvcData implements MvcData {
+final class MvcDataImpl implements MvcData {
 
-    private String controllerName;
     private String controllerAreaName;
+    private String controllerName;
     private String actionName;
-    private String viewName;
+
     private String areaName;
-    private String regionName;
+    private String viewName;
+
     private String regionAreaName;
+    private String regionName;
+
     private Map<String, String> routeValues;
-
-    @Override
-    public String getControllerName() {
-        return controllerName;
-    }
-
-    public void setControllerName(String controllerName) {
-        this.controllerName = controllerName;
-    }
 
     @Override
     public String getControllerAreaName() {
@@ -31,6 +25,15 @@ public class DD4TMvcData implements MvcData {
 
     public void setControllerAreaName(String controllerAreaName) {
         this.controllerAreaName = controllerAreaName;
+    }
+
+    @Override
+    public String getControllerName() {
+        return controllerName;
+    }
+
+    public void setControllerName(String controllerName) {
+        this.controllerName = controllerName;
     }
 
     @Override
@@ -43,15 +46,6 @@ public class DD4TMvcData implements MvcData {
     }
 
     @Override
-    public String getViewName() {
-        return viewName;
-    }
-
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
-    }
-
-    @Override
     public String getAreaName() {
         return areaName;
     }
@@ -61,12 +55,12 @@ public class DD4TMvcData implements MvcData {
     }
 
     @Override
-    public String getRegionName() {
-        return regionName;
+    public String getViewName() {
+        return viewName;
     }
 
-    public void setRegionName(String regionName) {
-        this.regionName = regionName;
+    public void setViewName(String viewName) {
+        this.viewName = viewName;
     }
 
     @Override
@@ -76,6 +70,15 @@ public class DD4TMvcData implements MvcData {
 
     public void setRegionAreaName(String regionAreaName) {
         this.regionAreaName = regionAreaName;
+    }
+
+    @Override
+    public String getRegionName() {
+        return regionName;
+    }
+
+    public void setRegionName(String regionName) {
+        this.regionName = regionName;
     }
 
     @Override
@@ -89,14 +92,14 @@ public class DD4TMvcData implements MvcData {
 
     @Override
     public String toString() {
-        return "DD4TMvcData{" +
-                "controllerName='" + controllerName + '\'' +
-                ", controllerAreaName='" + controllerAreaName + '\'' +
+        return "MvcDataImpl{" +
+                "controllerAreaName='" + controllerAreaName + '\'' +
+                ", controllerName='" + controllerName + '\'' +
                 ", actionName='" + actionName + '\'' +
-                ", viewName='" + viewName + '\'' +
                 ", areaName='" + areaName + '\'' +
-                ", regionName='" + regionName + '\'' +
+                ", viewName='" + viewName + '\'' +
                 ", regionAreaName='" + regionAreaName + '\'' +
+                ", regionName='" + regionName + '\'' +
                 ", routeValues=" + routeValues +
                 '}';
     }

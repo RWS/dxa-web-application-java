@@ -7,19 +7,19 @@ import java.util.Map;
  */
 public interface MvcData {
 
-    String getControllerName();
-
     String getControllerAreaName();
+
+    String getControllerName();
 
     String getActionName();
 
-    String getViewName();
-
     String getAreaName();
 
-    String getRegionName();
+    String getViewName();
 
     String getRegionAreaName();
+
+    String getRegionName();
 
     Map<String, String> getRouteValues();
 }

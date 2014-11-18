@@ -3,13 +3,15 @@
 <%@ page import="java.util.List" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
+<%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.NavigationLinks" scope="request"/>
+<jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
 <%
     final List<Link> links = entity.getItems();
     if (links != null && !links.isEmpty()) {
         int start = links.size() > 5 ? links.size() - 4 : 1;
 
-        %><ol class="breadcrumb"><%
+        %><ol class="breadcrumb" ${markup.entity(entity)}><xpm:entity entity="${entity}"/><%
         %><li><a href="<%= links.get(0).getUrl() %>"><i class="fa fa-home"><span class="sr-only"><%= links.get(0).getLinkText() %></span></i></a></li><%
         if (start > 1) {
             %><li>...</li><%

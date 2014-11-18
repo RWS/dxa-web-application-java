@@ -2,7 +2,6 @@ package com.sdl.webapp.common.api.content;
 
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.entity.SitemapItem;
 
 import java.io.InputStream;
 
@@ -30,13 +29,4 @@ public interface ContentProvider {
      * @throws ContentProviderException If an error occurred so that the content of the page could be retrieved.
      */
     InputStream getPageContent(String path, Localization localization) throws ContentProviderException;
-
-    /**
-     * TODO: Documentation.
-     *
-     * @param localization The localization.
-     * @return
-     * @throws ContentProviderException
-     */
-    SitemapItem getNavigationModel(Localization localization) throws ContentProviderException;
 }

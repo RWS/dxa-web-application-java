@@ -8,7 +8,8 @@ import com.sdl.webapp.common.api.localization.Localization;
 public interface WebRequestContext {
 
     /**
-     * Gets the base URL for the current request.
+     * Gets the base URL for the current request. The base URL consists of the protocol, server name, port number and
+     * context path of the webapp.
      *
      * @return The base URL for the current request.
      */

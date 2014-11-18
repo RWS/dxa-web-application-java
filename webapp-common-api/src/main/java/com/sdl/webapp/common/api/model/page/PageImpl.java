@@ -7,6 +7,9 @@ import com.sdl.webapp.common.api.model.Region;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implementation of {@code Page}.
+ */
 public class PageImpl implements Page {
 
     private String id;

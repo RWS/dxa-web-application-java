@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of {@code Region}.
+ */
 public class RegionImpl implements Region {
 
     private String name;

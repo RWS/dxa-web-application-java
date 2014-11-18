@@ -9,6 +9,9 @@ import com.sdl.webapp.common.api.model.MvcData;
 
 import java.util.Map;
 
+/**
+ * Abstract superclass for implementations of {@code Entity}.
+ */
 @SemanticMappingIgnore
 public abstract class AbstractEntity implements Entity {
 

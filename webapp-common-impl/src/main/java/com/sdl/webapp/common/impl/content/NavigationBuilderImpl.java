@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.impl.content;
 
-import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.NavigationBuilder;
@@ -64,14 +63,34 @@ public class NavigationBuilderImpl implements NavigationBuilder {
 
     @Override
     public NavigationLinks buildBreadcrumb(String requestPath, Localization localization) throws ContentProviderException {
-        final SitemapItem navigationModel = contentProvider.getNavigationModel(localization);
-
         final List<Link> links = new ArrayList<>();
-        // TODO: Not yet implemented
+
+        SitemapItem parent = contentProvider.getNavigationModel(localization);
+        links.add(createLink(parent));
+
+        int levels = requestPath.split("/").length;
+        while (levels > 1 && parent.getItems() != null) {
+            parent = findItemWithUrl(parent.getItems(), requestPath);
+            if (parent != null) {
+                links.add(createLink(parent));
+                levels--;
+            } else {
+                break;
+            }
+        }
 
         final NavigationLinks navigationLinks = new NavigationLinks();
         navigationLinks.setItems(links);
         return navigationLinks;
+    }
+
+    private SitemapItem findItemWithUrl(Iterable<SitemapItem> items, String requestPath) {
+        for (SitemapItem item : items) {
+            if (requestPath.startsWith(item.getUrl().toLowerCase())) {
+                return item;
+            }
+        }
+        return null;
     }
 
     @Override

@@ -2,6 +2,9 @@ package com.sdl.webapp.common.api.model;
 
 import java.util.Map;
 
+/**
+ * Page model.
+ */
 public interface Page extends ViewModel {
 
     String getId();

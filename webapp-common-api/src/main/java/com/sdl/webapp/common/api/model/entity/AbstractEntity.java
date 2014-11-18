@@ -1,21 +1,31 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.MvcData;
 
 import java.util.Map;
 
+/**
+ * Abstract superclass for implementations of {@code Entity}.
+ */
 @SemanticMappingIgnore
 public abstract class AbstractEntity implements Entity {
 
+    @JsonProperty("Id")
     private String id;
 
+    @JsonIgnore
     private Map<String, String> entityData;
 
+    @JsonIgnore
     private Map<String, String> propertyData;
 
-    private String viewName;
+    @JsonIgnore
+    private MvcData mvcData;
 
     @Override
     public String getId() {
@@ -44,11 +54,12 @@ public abstract class AbstractEntity implements Entity {
         this.propertyData = ImmutableMap.copyOf(propertyData);
     }
 
-    public String getViewName() {
-        return viewName;
+    @Override
+    public MvcData getMvcData() {
+        return mvcData;
     }
 
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
+    public void setMvcData(MvcData mvcData) {
+        this.mvcData = mvcData;
     }
 }

@@ -1,6 +1,7 @@
 package com.sdl.webapp.main.controller.core;
 
 import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.main.controller.exception.NotFoundException;
 import org.slf4j.Logger;
@@ -26,8 +27,7 @@ public class IncludePageController extends AbstractController {
                                     @RequestParam(required = false) String viewName) {
         LOG.trace("handleIncludePage: includePageName={}", includePageName);
 
-        final Page page = getPageFromRequest(request);
-        final Page includePage = page.getIncludes().get(includePageName);
+        final Page includePage = getPageFromRequest(request).getIncludes().get(includePageName);
         if (includePage == null) {
             LOG.error("Include page not found: {}", includePageName);
             throw new NotFoundException("Include page not found: " + includePageName);
@@ -35,12 +35,14 @@ public class IncludePageController extends AbstractController {
 
         request.setAttribute(PAGE_MODEL, includePage);
 
+        final MvcData mvcData = includePage.getMvcData();
+        LOG.trace("Include Page MvcData: {}", mvcData);
+
         // If view name not specified in request, use view name from page model
         if (Strings.isNullOrEmpty(viewName)) {
-            viewName = includePage.getViewName();
+            return mvcData.getAreaName().toLowerCase() + "/page/" + mvcData.getViewName();
         }
 
-        LOG.trace("viewName: {}", viewName);
         return viewName;
     }
 }

@@ -6,6 +6,13 @@ public class NavigationLinks extends AbstractEntity {
 
     private List<Link> items;
 
+    public NavigationLinks() {
+    }
+
+    public NavigationLinks(List<Link> items) {
+        this.items = items;
+    }
+
     public List<Link> getItems() {
         return items;
     }

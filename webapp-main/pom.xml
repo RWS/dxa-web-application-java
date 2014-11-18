@@ -87,12 +87,6 @@
             <artifactId>jstl</artifactId>
         </dependency>
 
-        <!-- Jackson -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-
         <!-- Hibernate - Necessary to make IntelliJ stop warning about missing classes -->
         <dependency>
             <groupId>org.hibernate</groupId>

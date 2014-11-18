@@ -1,5 +1,6 @@
 package com.sdl.webapp.main.controller.core;
 
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.Region;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,8 @@ public class RegionController extends AbstractController {
 
         request.setAttribute(REGION_MODEL, region);
 
-        final String viewName = region.getViewName();
-        LOG.trace("viewName: {}", viewName);
-        return viewName;
+        final MvcData mvcData = region.getMvcData();
+        LOG.trace("Region MvcData: {}", mvcData);
+        return mvcData.getAreaName().toLowerCase() + "/region/" + mvcData.getViewName();
     }
 }

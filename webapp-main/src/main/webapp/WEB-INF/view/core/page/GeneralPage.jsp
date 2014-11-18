@@ -35,14 +35,19 @@
         <tri:region name="Hero"/>
         <tri:page name="Content Tools"/>
         <div class="row">
-            <tri:page name="Left Navigation"/>
-            <% if (hasLeftBar) { %><div class="col-sm-12 col-md-3"><tri:region name="Left"/></div><% } %>
+            <% if (hasLeftBar) { %>
+                <div class="col-sm-12 col-md-3">
+                    <tri:page name="Left Navigation"/>
+                    <tri:region name="Left"/>
+                </div>
+            <% } %>
             <div class="col-sm-12 col-md-<%= mainContainerSize %>"><tri:regions exclude="Hero,Left"/></div>
         </div>
     </div>
 </main>
 <tri:page name="Footer" viewName="shared/Footer"/>
 <script src="/system/assets/scripts/main.js"></script>
+<xpm:if-enabled><script src="/system/assets/scripts/xpm.js"></script></xpm:if-enabled>
 <xpm:page page="${pageModel}"/>
 </body>
 </html>

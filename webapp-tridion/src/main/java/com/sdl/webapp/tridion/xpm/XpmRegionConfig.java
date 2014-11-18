@@ -27,11 +27,12 @@ public class XpmRegionConfig {
 
     private final StaticContentProvider staticContentProvider;
 
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public XpmRegionConfig(StaticContentProvider staticContentProvider) {
+    public XpmRegionConfig(StaticContentProvider staticContentProvider, ObjectMapper objectMapper) {
         this.staticContentProvider = staticContentProvider;
+        this.objectMapper = objectMapper;
     }
 
     public synchronized XpmRegion getXpmRegion(String regionName, Localization localization) {

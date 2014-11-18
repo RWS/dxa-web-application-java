@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.region;
 
 import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.Region;
 
 import java.util.ArrayList;
@@ -8,13 +9,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Implementation of {@code Region}.
+ */
 public class RegionImpl implements Region {
 
     private String name;
-    private String module;
     private List<Entity> entities = new ArrayList<>();
     private Map<String, String> regionData = new HashMap<>();
-    private String viewName;
+    private MvcData mvcData;
 
     @Override
     public String getName() {
@@ -23,15 +26,6 @@ public class RegionImpl implements Region {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String getModule() {
-        return module;
-    }
-
-    public void setModule(String module) {
-        this.module = module;
     }
 
     @Override
@@ -53,21 +47,20 @@ public class RegionImpl implements Region {
     }
 
     @Override
-    public String getViewName() {
-        return viewName;
+    public MvcData getMvcData() {
+        return mvcData;
     }
 
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
+    public void setMvcData(MvcData mvcData) {
+        this.mvcData = mvcData;
     }
 
     @Override
     public String toString() {
         return "RegionImpl{" +
                 "name='" + name + '\'' +
-                ", module='" + module + '\'' +
                 ", entities=" + entities +
-                ", viewName='" + viewName + '\'' +
+                ", mvcData='" + mvcData + '\'' +
                 '}';
     }
 }

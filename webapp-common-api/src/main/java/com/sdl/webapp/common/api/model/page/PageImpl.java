@@ -1,11 +1,15 @@
 package com.sdl.webapp.common.api.model.page;
 
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Implementation of {@code Page}.
+ */
 public class PageImpl implements Page {
 
     private String id;
@@ -15,7 +19,7 @@ public class PageImpl implements Page {
     private Map<String, Page> includes = new HashMap<>();
     private Map<String, Region> regions = new HashMap<>();
     private Map<String, String> pageData = new HashMap<>();
-    private String viewName;
+    private MvcData mvcData;
 
     @Override
     public String getId() {
@@ -81,12 +85,12 @@ public class PageImpl implements Page {
     }
 
     @Override
-    public String getViewName() {
-        return viewName;
+    public MvcData getMvcData() {
+        return mvcData;
     }
 
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
+    public void setMvcData(MvcData mvcData) {
+        this.mvcData = mvcData;
     }
 
     @Override
@@ -94,7 +98,7 @@ public class PageImpl implements Page {
         return "PageImpl{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
-                ", viewName='" + viewName + '\'' +
+                ", mvcData='" + mvcData + '\'' +
                 '}';
     }
 }

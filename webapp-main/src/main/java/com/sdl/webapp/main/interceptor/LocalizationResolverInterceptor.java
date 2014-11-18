@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,6 +24,8 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
 
     private static final int DEFAULT_PORT = 80;
 
+    private final UrlPathHelper urlPathHelper = new UrlPathHelper();
+
     private final LocalizationResolver localizationResolver;
 
     private final WebRequestContext webRequestContext;
@@ -36,17 +39,18 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        // NOTE: The full URL (including protocol, domain, port etc.) must be passed here
-        final String url = request.getRequestURL().toString();
-        LOG.trace("preHandle: {}", url);
+        final String baseUrl = getBaseUrl(request);
+        final String requestPath = urlPathHelper.getOriginatingRequestUri(request);
+        final String fullUrl = baseUrl + requestPath;
+        LOG.trace("preHandle: {}", fullUrl);
 
-        webRequestContext.setBaseUrl(getBaseUrl(request));
-        webRequestContext.setRequestUrl(url);
+        webRequestContext.setBaseUrl(baseUrl);
+        webRequestContext.setRequestPath(requestPath);
 
-        final Localization localization = localizationResolver.getLocalization(url);
+        final Localization localization = localizationResolver.getLocalization(fullUrl);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Localization for {} is: [{}] {}",
-                    new Object[] { url, localization.getId(), localization.getPath() });
+                    new Object[] { fullUrl, localization.getId(), localization.getPath() });
         }
         webRequestContext.setLocalization(localization);
 

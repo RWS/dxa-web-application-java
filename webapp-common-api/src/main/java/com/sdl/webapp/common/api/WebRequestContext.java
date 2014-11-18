@@ -8,7 +8,8 @@ import com.sdl.webapp.common.api.localization.Localization;
 public interface WebRequestContext {
 
     /**
-     * Gets the base URL for the current request.
+     * Gets the base URL for the current request. The base URL consists of the protocol, server name, port number and
+     * context path of the webapp.
      *
      * @return The base URL for the current request.
      */
@@ -22,18 +23,19 @@ public interface WebRequestContext {
     void setBaseUrl(String baseUrl);
 
     /**
-     * Gets the full URL for the current request.
+     * Gets the request path for the current request. This path is relative to the context path of the web application.
+     * If the current request is an include, this returns the path of the original request.
      *
-     * @return The full URL for the current request.
+     * @return The request path for the current request.
      */
-    String getRequestUrl();
+    String getRequestPath();
 
     /**
-     * Sets the full URL for the current request.
+     * Sets the request path for the current request.
      *
-     * @param requestUrl The full URL for the current request.
+     * @param requestPath The request path for the current request.
      */
-    void setRequestUrl(String requestUrl);
+    void setRequestPath(String requestPath);
 
     /**
      * Gets the localization for the current request.

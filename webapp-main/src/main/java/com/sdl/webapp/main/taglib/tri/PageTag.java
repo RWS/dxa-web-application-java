@@ -44,7 +44,7 @@ public class PageTag extends TagSupport {
             }
 
             try {
-                pageContext.include(ControllerUtils.getRequestPath(includePage));
+                pageContext.include(ControllerUtils.getIncludePath(includePage));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing include tag: " + name, e);
             }

@@ -48,7 +48,7 @@ public class RegionsTag extends TagSupport {
 
             LOG.debug("Including region: {}", name);
             try {
-                pageContext.include(ControllerUtils.getRequestPath(region));
+                pageContext.include(ControllerUtils.getIncludePath(region));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing regions tag", e);
             }

@@ -47,7 +47,7 @@ public class EntityTag extends TagSupport {
         if (entity != null) {
             LOG.debug("Including entity: {}/{}", regionName, entityId);
             try {
-                pageContext.include(ControllerUtils.getRequestPath(entity));
+                pageContext.include(ControllerUtils.getIncludePath(entity));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);
             }

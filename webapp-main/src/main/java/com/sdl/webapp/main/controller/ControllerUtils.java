@@ -17,29 +17,29 @@ public final class ControllerUtils {
     private ControllerUtils() {
     }
 
-    public static String getRequestPath(Page page) {
+    public static String getIncludePath(Page page) {
         final MvcData mvcData = page.getMvcData();
-        return getRequestPathPrefix(mvcData) +
+        return getIncludePathPrefix(mvcData) +
                 page.getName() +
                 getQueryParameters(mvcData);
     }
 
-    public static String getRequestPath(Region region) {
+    public static String getIncludePath(Region region) {
         final MvcData mvcData = region.getMvcData();
-        return getRequestPathPrefix(mvcData) +
+        return getIncludePathPrefix(mvcData) +
                 region.getName() +
                 getQueryParameters(mvcData);
     }
 
-    public static String getRequestPath(Entity entity) {
+    public static String getIncludePath(Entity entity) {
         final MvcData mvcData = entity.getMvcData();
-        return getRequestPathPrefix(mvcData) +
+        return getIncludePathPrefix(mvcData) +
                 mvcData.getRegionName() + "/" +
                 entity.getId() +
                 getQueryParameters(mvcData);
     }
 
-    private static String getRequestPathPrefix(MvcData mvcData) {
+    private static String getIncludePathPrefix(MvcData mvcData) {
         return REQUEST_PATH_PREFIX +
                 mvcData.getControllerAreaName() + "/" +
                 mvcData.getControllerName() + "/" +

@@ -39,7 +39,7 @@ public class EntitiesTag extends TagSupport {
 
         for (Entity entity : region.getEntities().values()) {
             try {
-                pageContext.include(ControllerUtils.getRequestPath(entity));
+                pageContext.include(ControllerUtils.getIncludePath(entity));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);
             }

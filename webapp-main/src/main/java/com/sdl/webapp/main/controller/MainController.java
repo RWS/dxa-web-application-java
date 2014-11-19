@@ -32,9 +32,12 @@ import java.io.OutputStream;
 
 import static com.sdl.webapp.main.RequestAttributeNames.*;
 
+/**
+ * Main controller. This handles requests that come from the client.
+ */
 @Controller
-public class PageController extends AbstractController {
-    private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
+public class MainController extends AbstractController {
+    private static final Logger LOG = LoggerFactory.getLogger(MainController.class);
 
     private static final String ALLOW_JSON_RESPONSE_PROPERTY = "AllowJsonResponse";
 
@@ -49,7 +52,7 @@ public class PageController extends AbstractController {
     private final Markup markup;
 
     @Autowired
-    public PageController(Environment environment, ContentProvider contentProvider, MediaHelper mediaHelper,
+    public MainController(Environment environment, ContentProvider contentProvider, MediaHelper mediaHelper,
                           WebRequestContext webRequestContext, Markup markup) {
         this.environment = environment;
         this.contentProvider = contentProvider;

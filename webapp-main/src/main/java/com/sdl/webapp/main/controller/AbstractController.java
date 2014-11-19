@@ -13,6 +13,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
 
+/**
+ * Abstract superclass for controllers with utility methods and exception handling.
+ */
 public abstract class AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractController.class);
 

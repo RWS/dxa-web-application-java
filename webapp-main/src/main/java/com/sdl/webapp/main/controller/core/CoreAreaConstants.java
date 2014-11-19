@@ -13,6 +13,9 @@ public final class CoreAreaConstants {
     public static final String ENTITY_CONTROLLER_NAME = "Entity";
     public static final String ENTITY_ACTION_NAME = "Entity";
 
+    public static final String LIST_CONTROLLER_NAME = "List";
+    public static final String LIST_ACTION_NAME = "List";
+
     public static final String NAVIGATION_CONTROLLER_NAME = "Navigation";
     public static final String NAVIGATION_ACTION_NAME = "Navigation";
 

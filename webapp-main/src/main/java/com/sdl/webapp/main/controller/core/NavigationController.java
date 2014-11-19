@@ -83,6 +83,7 @@ public class NavigationController extends AbstractController {
         }
 
         final MvcData mvcData = entity.getMvcData();
+        LOG.trace("Entity MvcData: {}", mvcData);
         return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
     }
 }

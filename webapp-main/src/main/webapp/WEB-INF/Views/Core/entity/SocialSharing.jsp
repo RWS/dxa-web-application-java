@@ -13,7 +13,7 @@
         <c:forEach var="link" items="${entity.links}" varStatus="status">
             <li ${markup.property(entity, "links")}>
                 <xpm:property entity="${entity}" property="links" index="${status.index}"/>
-                <a href="javascript:window.open('${tri:formatMessage(link.url, pageUrl)}', '_blank', 'width=400,height=500');void(0);"
+                <a href="javascript:window.open('${markup.formatMessage(link.url, pageUrl)}', '_blank', 'width=400,height=500');void(0);"
                    title="<tri:resource key="core.shareOnSocialLinkTitle" arg1="${link.tag.displayText}"/>">
                     <i class="fa fa-${link.tag.key}"></i>
                 </a>

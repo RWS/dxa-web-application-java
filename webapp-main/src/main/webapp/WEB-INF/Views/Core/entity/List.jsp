@@ -26,7 +26,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:if test="${not empty item.date}">
-                    <time class="meta small">[${tri:formatDateTime(item.date, "d MMM yyyy")}]</time>
+                    <time class="meta small">[${markup.formatDateTime(item.date, "d MMM yyyy")}]</time>
                 </c:if>
             </li>
         </c:forEach>

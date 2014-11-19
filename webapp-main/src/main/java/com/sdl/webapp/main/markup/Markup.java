@@ -9,6 +9,8 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Region;
 import com.sdl.webapp.main.markup.html.HtmlAttribute;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.text.MessageFormat;
 import java.util.*;
 
 @Component
@@ -98,5 +101,13 @@ public class Markup {
 
     public String resource(String key) {
         return webRequestContext.getLocalization().getResource(key);
+    }
+
+    public String formatDateTime(DateTime dateTime, String pattern) {
+        return DateTimeFormat.forPattern(pattern).print(dateTime);
+    }
+
+    public String formatMessage(String pattern, String arg) {
+        return MessageFormat.format(pattern, arg);
     }
 }

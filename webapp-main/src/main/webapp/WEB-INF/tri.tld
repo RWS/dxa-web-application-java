@@ -194,17 +194,4 @@
         <function-class>java.util.UUID</function-class>
         <function-signature>java.util.UUID randomUUID()</function-signature>
     </function>
-
-    <!-- TODO: Should this be a function or a tag? -->
-    <function>
-        <name>formatDateTime</name>
-        <function-class>com.sdl.webapp.main.markup.MarkupFunctions</function-class>
-        <function-signature>java.lang.String formatDateTime(org.joda.time.DateTime,java.lang.String)</function-signature>
-    </function>
-
-    <function>
-        <name>formatMessage</name>
-        <function-class>com.sdl.webapp.main.markup.MarkupFunctions</function-class>
-        <function-signature>java.lang.String formatMessage(java.lang.String,java.lang.String)</function-signature>
-    </function>
 </taglib>

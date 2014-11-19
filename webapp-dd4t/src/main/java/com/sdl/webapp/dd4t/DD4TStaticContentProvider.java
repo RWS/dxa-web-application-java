@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Implementation of {@code StaticContentProvider} that uses DD4T to provide static content.
@@ -32,6 +33,8 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DD4TStaticContentProvider.class);
 
     private static final String STATIC_FILES_DIR = "BinaryData";
+
+    private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
     private final WebApplicationContext webApplicationContext;
 
@@ -47,7 +50,7 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
             LOG.trace("getStaticContent: {} [{}] {}", new Object[] { path, localizationId, localizationPath });
         }
 
-        final File file = getStaticContentFile(path, localizationId, localizationPath);
+        final File file = getStaticContentFile(removeVersionNumber(path), localizationId, localizationPath);
 
         return new StaticContentItem() {
             @Override
@@ -60,6 +63,10 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
                 return new FileInputStream(file);
             }
         };
+    }
+
+    private String removeVersionNumber(String path) {
+        return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 
     private File getStaticContentFile(String path, String localizationId, String localizationPath)

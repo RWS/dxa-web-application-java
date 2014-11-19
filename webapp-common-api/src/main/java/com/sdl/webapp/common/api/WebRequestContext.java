@@ -8,8 +8,8 @@ import com.sdl.webapp.common.api.localization.Localization;
 public interface WebRequestContext {
 
     /**
-     * Gets the base URL for the current request. The base URL consists of the protocol, server name, port number and
-     * context path of the webapp.
+     * Gets the base URL for the current request. The base URL consists of the protocol, server name, and port number.
+     * It does not include the context path of the web application.
      *
      * @return The base URL for the current request.
      */
@@ -23,31 +23,52 @@ public interface WebRequestContext {
     void setBaseUrl(String baseUrl);
 
     /**
-     * Gets the request path for the current request. This path is relative to the context path of the web application.
+     * Gets the context path of the web application.
+     *
+     * @return The context path of the web application.
+     */
+    String getContextPath();
+
+    /**
+     * Sets the context path of the web application.
+     *
+     * @param contextPath The context path of the web application.
+     */
+    void setContextPath(String contextPath);
+
+    /**
+     * Gets the request path of the current request. This path is relative to the context path of the web application.
      * If the current request is an include, this returns the path of the original request.
      *
-     * @return The request path for the current request.
+     * @return The request path of the current request.
      */
     String getRequestPath();
 
     /**
-     * Sets the request path for the current request.
+     * Sets the request path of the current request.
      *
-     * @param requestPath The request path for the current request.
+     * @param requestPath The request path of the current request.
      */
     void setRequestPath(String requestPath);
 
     /**
-     * Gets the localization for the current request.
+     * Gets the full URL of the current request, consisting of the base URL, context path and request path.
      *
-     * @return The localization for the current request.
+     * @return The full URL of the current request.
+     */
+    String getFullUrl();
+
+    /**
+     * Gets the localization of the current request.
+     *
+     * @return The localization of the current request.
      */
     Localization getLocalization();
 
     /**
-     * Sets the localization for the current request. This is normally called by {@code LocalizationResolverInterceptor}.
+     * Sets the localization of the current request. This is normally called by {@code LocalizationResolverInterceptor}.
      *
-     * @return The localization for the current request.
+     * @return The localization of the current request.
      */
     void setLocalization(Localization localization);
 
@@ -59,23 +80,23 @@ public interface WebRequestContext {
     boolean isPreview();
 
     /**
-     * Gets the display width for the current request.
+     * Gets the display width of the current request.
      *
-     * @return The display width for the current request.
+     * @return The display width of the current request.
      */
     int getDisplayWidth();
 
     /**
-     * Gets the pixel ratio for the current request.
+     * Gets the pixel ratio of the current request.
      *
-     * @return The pixel ratio for the current request.
+     * @return The pixel ratio of the current request.
      */
     double getPixelRatio();
 
     /**
-     * Gets the maximum media width for the current request.
+     * Gets the maximum media width of the current request.
      *
-     * @return The maximum media width for the current request.
+     * @return The maximum media width of the current request.
      */
     int getMaxMediaWidth();
 }

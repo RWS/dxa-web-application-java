@@ -182,7 +182,7 @@ final class PageBuilder {
 
         pageMeta.put("twitter:card", "summary");
         pageMeta.put("og:title", title);
-        pageMeta.put("og:url", webRequestContext.getBaseUrl() + webRequestContext.getRequestPath());
+        pageMeta.put("og:url", webRequestContext.getFullUrl());
         pageMeta.put("og:type", "article");
         pageMeta.put("og:locale", localization.getCulture());
 
@@ -191,7 +191,7 @@ final class PageBuilder {
         }
 
         if (!Strings.isNullOrEmpty(image)) {
-            pageMeta.put("og:image", webRequestContext.getBaseUrl() + image);
+            pageMeta.put("og:image", webRequestContext.getBaseUrl() + webRequestContext.getContextPath() + image);
         }
 
         if (!pageMeta.containsKey("description")) {

@@ -3,6 +3,7 @@ package com.sdl.webapp.main.taglib.tri;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.entity.Download;
 import com.sdl.webapp.common.api.model.entity.Image;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
@@ -23,8 +24,6 @@ import java.util.UUID;
 
 public class MediaTag extends HtmlElementTag {
     private static final Logger LOG = LoggerFactory.getLogger(MediaTag.class);
-
-    private static final UrlPathHelper URL_PATH_HELPER = new UrlPathHelper();
 
     private static final HtmlAttribute CLASS_EMBED_VIDEO_ATTR = new HtmlAttribute("class", "embed-video");
     private static final HtmlElement PLAY_BUTTON_OVERLAY = HtmlBuilders.i().withClass("fa fa-play-circle").build();
@@ -111,10 +110,9 @@ public class MediaTag extends HtmlElementTag {
             widthFactor = mediaHelper.getDefaultMediaFill();
         }
 
-        final String contextPath = URL_PATH_HELPER.getContextPath((HttpServletRequest) pageContext.getRequest());
         final String imageUrl = mediaHelper.getResponsiveImageUrl(image.getUrl(), widthFactor, aspect, containerSize);
 
-        return HtmlBuilders.img(contextPath + imageUrl)
+        return HtmlBuilders.img(getContextPath() + imageUrl)
                 .withAlt(image.getAlternateText())
                 .withClass(cssClass)
                 .withWidth(imgWidth)
@@ -138,13 +136,12 @@ public class MediaTag extends HtmlElementTag {
 
         final double imageAspect = aspect == 0.0 ? mediaHelper.getDefaultMediaAspect() : aspect;
 
-        final String contextPath = URL_PATH_HELPER.getContextPath((HttpServletRequest) pageContext.getRequest());
         final String placeholderImageUrl = mediaHelper.getResponsiveImageUrl(video.getUrl(), widthFactor, imageAspect,
                 containerSize);
 
         return HtmlBuilders.div()
                 .withAttribute(CLASS_EMBED_VIDEO_ATTR)
-                .withContent(HtmlBuilders.img(contextPath + placeholderImageUrl).withAlt(video.getHeadline()).build())
+                .withContent(HtmlBuilders.img(getContextPath() + placeholderImageUrl).withAlt(video.getHeadline()).build())
                 .withContent(HtmlBuilders.button("button")
                         .withAttribute("data-video", video.getYouTubeId())
                         .withClass(cssClass)
@@ -206,6 +203,11 @@ public class MediaTag extends HtmlElementTag {
         }
 
         return Math.ceil(len) + " " + DOWNLOAD_SIZE_UNITS[order];
+    }
+
+    private String getContextPath() {
+        return WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
+                .getBean(WebRequestContext.class).getContextPath();
     }
 
     private MediaHelper getMediaHelper() {

@@ -37,6 +37,14 @@ public class Markup {
         this.webRequestContext = webRequestContext;
     }
 
+    public String url(String path) {
+        return webRequestContext.getContextPath() + path;
+    }
+
+    public String versionedContent(String path) {
+        return webRequestContext.getContextPath() + "/system/" + webRequestContext.getLocalization().getVersion() + path;
+    }
+
     public String region(Region region) {
         return Joiner.on(' ').join(Arrays.asList(
                 TYPEOF_REGION_ATTR.toHtml(),

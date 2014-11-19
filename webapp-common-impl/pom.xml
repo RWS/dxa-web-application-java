@@ -33,6 +33,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Servlet API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+
         <!-- Google Guava -->
         <dependency>
             <groupId>com.google.guava</groupId>

@@ -4,6 +4,7 @@
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="pageModel" type="com.sdl.webapp.common.api.model.Page" scope="request"/>
+<jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
 <!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
 <!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->
 <!--[if IE 8]><html class="no-js lt-ie9"><![endif]-->
@@ -16,11 +17,11 @@
     <c:forEach var="meta" items="${pageModel.meta.entrySet()}">
         <meta name="${meta.key}" content="${meta.value}">
     </c:forEach>
-    <link rel="stylesheet" href="/system/assets/css/main.css" type="text/css"/>
-    <script src="/system/assets/scripts/header.js"></script>
+    <link rel="stylesheet" href="${markup.versionedContent('/assets/css/main.css')}" type="text/css"/>
+    <script src="${markup.versionedContent('/assets/scripts/header.js')}"></script>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
-    <script src="/system/assets/scripts/ie.js"></script>
+    <script src="${markup.versionedContent('/assets/scripts/ie.js')}"></script>
     <![endif]-->
 </head>
 <body>
@@ -46,8 +47,8 @@
     </div>
 </main>
 <tri:page name="Footer" viewName="Shared/Footer"/>
-<script src="/system/assets/scripts/main.js"></script>
-<xpm:if-enabled><script src="/system/assets/scripts/xpm.js"></script></xpm:if-enabled>
+<script src="${markup.versionedContent('/assets/scripts/main.js')}"></script>
+<xpm:if-enabled><script src="${markup.versionedContent('/assets/scripts/xpm.js')}"></script></xpm:if-enabled>
 <xpm:page page="${pageModel}"/>
 </body>
 </html>

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
+import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.content.StaticContentProvider;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
@@ -16,7 +17,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -55,11 +59,15 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private final StaticContentProvider staticContentProvider;
 
+    private final WebApplicationContext webApplicationContext;
+
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public LocalizationFactoryImpl(StaticContentProvider staticContentProvider, ObjectMapper objectMapper) {
+    public LocalizationFactoryImpl(StaticContentProvider staticContentProvider,
+                                   WebApplicationContext webApplicationContext, ObjectMapper objectMapper) {
         this.staticContentProvider = staticContentProvider;
+        this.webApplicationContext = webApplicationContext;
         this.objectMapper = objectMapper;
     }
 
@@ -72,6 +80,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 .setPath(path);
 
         loadMainConfiguration(id, path, builder);
+        loadVersion(id, path, builder);
         loadResources(id, path, builder);
 
         final List<JsonSchema> semanticSchemas = parseJsonFileObject(staticContentProvider,
@@ -97,6 +106,35 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 .setDefault(configRootNode.get(DEFAULT_LOCALIZATION_NODE_NAME).asBoolean(false))
                 .setStaging(configRootNode.get(STAGING_NODE_NAME).asBoolean(false))
                 .addConfiguration(parseJsonSubFiles(staticContentProvider, configRootNode, id, path));
+    }
+
+    private void loadVersion(String id, String path, LocalizationImpl.Builder builder)
+            throws LocalizationFactoryException {
+        try {
+            StaticContentItem item = staticContentProvider.getStaticContent("/version.json", id, path);
+            try (final InputStream in = item.getContent()) {
+                builder.setVersion(objectMapper.readTree(in).get("version").asText());
+                return;
+            }
+        } catch (StaticContentNotFoundException e) {
+            LOG.debug("No published version.json found for localization [{}] {}", id, path);
+        } catch (ContentProviderException | IOException e) {
+            throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + id +
+                    "] " + path, e);
+        }
+
+        final File file = new File(new File(webApplicationContext.getServletContext().getRealPath("/")),
+                "/system/assets/version.json");
+        if (!file.exists()) {
+            throw new LocalizationFactoryException("File not found: " + file.getPath());
+        }
+
+        try (final InputStream in = new FileInputStream(file)) {
+            builder.setVersion(objectMapper.readTree(in).get("version").asText());
+        } catch (IOException e) {
+            throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + id +
+                    "] " + path, e);
+        }
     }
 
     private void loadResources(String id, String path, LocalizationImpl.Builder builder)

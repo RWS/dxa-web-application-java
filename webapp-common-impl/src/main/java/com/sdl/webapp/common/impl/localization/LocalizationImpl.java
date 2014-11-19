@@ -8,6 +8,7 @@ import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Implementation of {@code Localization}.
@@ -20,6 +21,7 @@ class LocalizationImpl implements Localization {
         private String mediaRoot;
         private boolean default_;
         private boolean staging;
+        private String version;
 
         private final ImmutableMap.Builder<String, String> configurationBuilder = ImmutableMap.builder();
         private final ImmutableMap.Builder<String, String> resourcesBuilder = ImmutableMap.builder();
@@ -51,6 +53,11 @@ class LocalizationImpl implements Localization {
 
         public Builder setStaging(boolean staging) {
             this.staging = staging;
+            return this;
+        }
+
+        public Builder setVersion(String version) {
+            this.version = version;
             return this;
         }
 
@@ -87,13 +94,15 @@ class LocalizationImpl implements Localization {
     }
 
     private static final String FAVICON_PATH = "/favicon.ico";
-    private static final String SYSTEM_ASSETS_PATH = "/system/assets";
+
+    private static final Pattern SYSTEM_ASSETS_PATTERN = Pattern.compile("/system(/v\\d+\\.\\d+)?/assets/.*");
 
     private final String id;
     private final String path;
     private final String mediaRoot;
     private final boolean default_;
     private final boolean staging;
+    private final String version;
 
     private final Map<String, String> configuration;
     private final Map<String, String> resources;
@@ -106,6 +115,8 @@ class LocalizationImpl implements Localization {
         this.mediaRoot = builder.mediaRoot;
         this.default_ = builder.default_;
         this.staging = builder.staging;
+        this.version = builder.version;
+
         this.configuration = builder.configurationBuilder.build();
         this.resources = builder.resourcesBuilder.build();
         this.semanticSchemas = builder.semanticSchemasBuilder.build();
@@ -133,7 +144,7 @@ class LocalizationImpl implements Localization {
         }
 
         final String p = path.equals("/") ? url : url.substring(path.length());
-        return p.equals(FAVICON_PATH) || p.startsWith(SYSTEM_ASSETS_PATH) || p.startsWith(mediaRoot);
+        return p.equals(FAVICON_PATH) || p.startsWith(mediaRoot) || SYSTEM_ASSETS_PATTERN.matcher(p).matches();
     }
 
     @Override
@@ -144,6 +155,11 @@ class LocalizationImpl implements Localization {
     @Override
     public boolean isStaging() {
         return staging;
+    }
+
+    @Override
+    public String getVersion() {
+        return version;
     }
 
     @Override

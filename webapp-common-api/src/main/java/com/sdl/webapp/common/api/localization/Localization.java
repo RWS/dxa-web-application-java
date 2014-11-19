@@ -47,6 +47,13 @@ public interface Localization {
     boolean isStaging();
 
     /**
+     * Gets the localization version number.
+     *
+     * @return The localization version number.
+     */
+    String getVersion();
+
+    /**
      * Gets the culture of this localization (for example "en-US").
      *
      * @return The culture of this localization.

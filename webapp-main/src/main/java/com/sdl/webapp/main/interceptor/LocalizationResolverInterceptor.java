@@ -39,13 +39,12 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
-        final String baseUrl = getBaseUrl(request);
-        final String requestPath = urlPathHelper.getOriginatingRequestUri(request);
-        final String fullUrl = baseUrl + requestPath;
-        LOG.trace("preHandle: {}", fullUrl);
+        webRequestContext.setBaseUrl(getBaseUrl(request));
+        webRequestContext.setContextPath(urlPathHelper.getOriginatingContextPath(request));
+        webRequestContext.setRequestPath(urlPathHelper.getOriginatingRequestUri(request));
 
-        webRequestContext.setBaseUrl(baseUrl);
-        webRequestContext.setRequestPath(requestPath);
+        final String fullUrl = webRequestContext.getFullUrl();
+        LOG.trace("preHandle: {}", fullUrl);
 
         final Localization localization = localizationResolver.getLocalization(fullUrl);
         if (LOG.isTraceEnabled()) {
@@ -72,6 +71,6 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
             sb.append(':').append(port);
         }
 
-        return sb.append(request.getContextPath()).toString();
+        return sb.toString();
     }
 }

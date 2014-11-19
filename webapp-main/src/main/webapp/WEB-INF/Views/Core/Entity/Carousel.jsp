@@ -22,12 +22,12 @@
             <c:choose>
                 <c:when test="${carouselStatus.count == 1}">
                     <div class="item active">
-                        <c:import url="/WEB-INF/view/core/entity/partial-includes/Teaser-ImageOverlay.jsp"/>
+                        <c:import url="/WEB-INF/Views/Core/Entity/Partials/Teaser-ImageOverlay.jsp"/>
                     </div>
                 </c:when>
                 <c:otherwise>
                     <div class="item">
-                        <c:import url="/WEB-INF/view/core/entity/partial-includes/Teaser-ImageOverlay.jsp"/>
+                        <c:import url="/WEB-INF/Views/Core/Entity/Partials/Teaser-ImageOverlay.jsp"/>
                     </div>
                 </c:otherwise>
             </c:choose>

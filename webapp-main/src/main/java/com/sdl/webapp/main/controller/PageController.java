@@ -1,4 +1,4 @@
-package com.sdl.webapp.main.controller.core;
+package com.sdl.webapp.main.controller;
 
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -72,7 +72,7 @@ public class PageController extends AbstractController {
 
         final MvcData mvcData = page.getMvcData();
         LOG.trace("Page MvcData: {}", mvcData);
-        return mvcData.getAreaName().toLowerCase() + "/page/" + mvcData.getViewName();
+        return mvcData.getAreaName() + "/Page/" + mvcData.getViewName();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = "application/json")

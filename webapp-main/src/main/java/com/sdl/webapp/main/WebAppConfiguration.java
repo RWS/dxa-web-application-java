@@ -25,7 +25,7 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan("com.sdl.webapp.main")
 public class WebAppConfiguration extends WebMvcConfigurerAdapter {
 
-    private static final String VIEW_RESOLVER_PREFIX = "/WEB-INF/view/";
+    private static final String VIEW_RESOLVER_PREFIX = "/WEB-INF/Views/";
     private static final String VIEW_RESOLVER_SUFFIX = ".jsp";
 
     @Autowired

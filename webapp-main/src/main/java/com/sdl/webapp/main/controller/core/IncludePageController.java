@@ -3,7 +3,7 @@ package com.sdl.webapp.main.controller.core;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.main.controller.exception.NotFoundException;
+import com.sdl.webapp.main.controller.AbstractController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -15,24 +15,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
-import static com.sdl.webapp.main.controller.core.AbstractController.PAGE_PATH_PREFIX;
+import static com.sdl.webapp.main.controller.ControllerUtils.REQUEST_PATH_PREFIX;
+import static com.sdl.webapp.main.controller.core.CoreAreaConstants.CORE_AREA_NAME;
+import static com.sdl.webapp.main.controller.core.CoreAreaConstants.PAGE_ACTION_NAME;
+import static com.sdl.webapp.main.controller.core.CoreAreaConstants.PAGE_CONTROLLER_NAME;
 
 @Controller
-@RequestMapping(PAGE_PATH_PREFIX)
+@RequestMapping(REQUEST_PATH_PREFIX + CORE_AREA_NAME + "/" + PAGE_CONTROLLER_NAME)
 public class IncludePageController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(IncludePageController.class);
 
-    @RequestMapping(method = RequestMethod.GET, value = "{includePageName}")
-    public String handleIncludePage(HttpServletRequest request, @PathVariable String includePageName,
-                                    @RequestParam(required = false) String viewName) {
-        LOG.trace("handleIncludePage: includePageName={}", includePageName);
+    @RequestMapping(method = RequestMethod.GET, value = PAGE_ACTION_NAME + "/{includePageName}")
+    public String handleGetIncludePage(HttpServletRequest request, @PathVariable String includePageName,
+                                       @RequestParam(required = false) String viewName) {
+        LOG.trace("handleGetIncludePage: includePageName={}", includePageName);
 
-        final Page includePage = getPageFromRequest(request).getIncludes().get(includePageName);
-        if (includePage == null) {
-            LOG.error("Include page not found: {}", includePageName);
-            throw new NotFoundException("Include page not found: " + includePageName);
-        }
-
+        final Page includePage = getIncludePageFromRequest(request, includePageName);
         request.setAttribute(PAGE_MODEL, includePage);
 
         final MvcData mvcData = includePage.getMvcData();
@@ -40,7 +38,7 @@ public class IncludePageController extends AbstractController {
 
         // If view name not specified in request, use view name from page model
         if (Strings.isNullOrEmpty(viewName)) {
-            return mvcData.getAreaName().toLowerCase() + "/page/" + mvcData.getViewName();
+            return mvcData.getAreaName() + "/Page/" + mvcData.getViewName();
         }
 
         return viewName;

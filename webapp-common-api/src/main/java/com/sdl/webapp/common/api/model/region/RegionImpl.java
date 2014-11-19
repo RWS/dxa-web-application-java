@@ -4,9 +4,8 @@ import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.Region;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -15,7 +14,7 @@ import java.util.Map;
 public class RegionImpl implements Region {
 
     private String name;
-    private List<Entity> entities = new ArrayList<>();
+    private Map<String, Entity> entities = new LinkedHashMap<>();
     private Map<String, String> regionData = new HashMap<>();
     private MvcData mvcData;
 
@@ -29,12 +28,16 @@ public class RegionImpl implements Region {
     }
 
     @Override
-    public List<Entity> getEntities() {
+    public Map<String, Entity> getEntities() {
         return entities;
     }
 
-    public void setEntities(List<Entity> entities) {
+    public void setEntities(Map<String, Entity> entities) {
         this.entities = entities;
+    }
+
+    public void addEntity(Entity entity) {
+        this.entities.put(entity.getId(), entity);
     }
 
     @Override

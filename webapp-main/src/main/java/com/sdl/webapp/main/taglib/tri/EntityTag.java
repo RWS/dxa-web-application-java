@@ -1,6 +1,9 @@
 package com.sdl.webapp.main.taglib.tri;
 
+import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.main.controller.ControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,21 +13,20 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
-import static com.sdl.webapp.main.controller.core.AbstractController.ENTITY_PATH_PREFIX;
 
 public class EntityTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(EntityTag.class);
 
     private String regionName;
 
-    private int index;
+    private String entityId;
 
     public void setRegion(String regionName) {
         this.regionName = regionName;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
+    public void setEntityId(String entityId) {
+        this.entityId = entityId;
     }
 
     @Override
@@ -35,11 +37,22 @@ public class EntityTag extends TagSupport {
             return SKIP_BODY;
         }
 
-        LOG.debug("Including entity: {}/{}", regionName, index);
-        try {
-            pageContext.include(String.format("%s/%s/%d", ENTITY_PATH_PREFIX, regionName, index));
-        } catch (ServletException | IOException e) {
-            throw new JspException("Error while processing entity tag", e);
+        final Region region = page.getRegions().get(regionName);
+        if (region == null) {
+            LOG.debug("Region not found on page: {}", regionName);
+            return SKIP_BODY;
+        }
+
+        final Entity entity = region.getEntities().get(entityId);
+        if (entity != null) {
+            LOG.debug("Including entity: {}/{}", regionName, entityId);
+            try {
+                pageContext.include(ControllerUtils.getRequestPath(entity));
+            } catch (ServletException | IOException e) {
+                throw new JspException("Error while processing entity tag", e);
+            }
+        } else {
+            LOG.debug("Entity not found in region: {}/{}", regionName, entityId);
         }
 
         return SKIP_BODY;

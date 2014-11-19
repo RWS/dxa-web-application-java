@@ -1,7 +1,9 @@
 package com.sdl.webapp.main.taglib.tri;
 
+import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.main.controller.ControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +13,6 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
-import static com.sdl.webapp.main.controller.core.AbstractController.ENTITY_PATH_PREFIX;
 
 public class EntitiesTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(EntitiesTag.class);
@@ -32,14 +33,13 @@ public class EntitiesTag extends TagSupport {
 
         final Region region = page.getRegions().get(regionName);
         if (region == null) {
-            LOG.debug("Region not found: {}", regionName);
+            LOG.debug("Region not found on page: {}", regionName);
             return SKIP_BODY;
         }
 
-        int count = region.getEntities().size();
-        for (int index = 0; index < count; index++) {
+        for (Entity entity : region.getEntities().values()) {
             try {
-                pageContext.include(String.format("%s/%s/%d", ENTITY_PATH_PREFIX, regionName, index));
+                pageContext.include(ControllerUtils.getRequestPath(entity));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);
             }

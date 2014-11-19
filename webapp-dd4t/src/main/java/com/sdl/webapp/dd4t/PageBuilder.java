@@ -113,7 +113,7 @@ final class PageBuilder {
                     regions.put(regionName, region);
                 }
 
-                region.getEntities().add(entity);
+                region.addEntity(entity);
             }
         }
 

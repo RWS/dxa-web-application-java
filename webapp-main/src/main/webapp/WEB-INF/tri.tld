@@ -60,10 +60,9 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>index</name>
+            <name>entityId</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>int</type>
         </attribute>
     </tag>
 

@@ -2,6 +2,7 @@ package com.sdl.webapp.main.taglib.tri;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.main.controller.ControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +12,6 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
-import static com.sdl.webapp.main.controller.core.AbstractController.PAGE_PATH_PREFIX;
 
 public class PageTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(PageTag.class);
@@ -36,24 +36,20 @@ public class PageTag extends TagSupport {
             return SKIP_BODY;
         }
 
-        if (page.getIncludes().containsKey(name)) {
-            LOG.debug("Including page: {}", name);
-            try {
-                final StringBuilder sb = new StringBuilder();
-                sb.append(PAGE_PATH_PREFIX).append('/').append(name);
-                if (!Strings.isNullOrEmpty(viewName)) {
-                    sb.append("?viewName=").append(viewName);
-                }
+        final Page includePage = page.getIncludes().get(name);
+        if (includePage != null) {
+            // Use alternate view name if specified
+            if (!Strings.isNullOrEmpty(viewName)) {
+                includePage.getMvcData().getRouteValues().put("viewName", viewName);
+            }
 
-                pageContext.include(sb.toString());
+            try {
+                pageContext.include(ControllerUtils.getRequestPath(includePage));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing include tag: " + name, e);
-            } finally {
-                // Restore request attribute to original page model
-                pageContext.getRequest().setAttribute(PAGE_MODEL, page);
             }
         } else {
-            LOG.debug("Include page not found: {}", name);
+            LOG.debug("Include page not found on page: {}", name);
         }
 
         return SKIP_BODY;

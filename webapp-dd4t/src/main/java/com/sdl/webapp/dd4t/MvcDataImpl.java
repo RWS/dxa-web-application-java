@@ -2,6 +2,7 @@ package com.sdl.webapp.dd4t;
 
 import com.sdl.webapp.common.api.model.MvcData;
 
+import java.util.HashMap;
 import java.util.Map;
 
 final class MvcDataImpl implements MvcData {
@@ -16,7 +17,7 @@ final class MvcDataImpl implements MvcData {
     private String regionAreaName;
     private String regionName;
 
-    private Map<String, String> routeValues;
+    private Map<String, String> routeValues = new HashMap<>();
 
     @Override
     public String getControllerAreaName() {

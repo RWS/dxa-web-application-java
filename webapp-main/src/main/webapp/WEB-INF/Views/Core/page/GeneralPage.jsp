@@ -24,7 +24,7 @@
     <![endif]-->
 </head>
 <body>
-<tri:page name="Header" viewName="shared/Header"/>
+<tri:page name="Header" viewName="Shared/Header"/>
 <main class="page-row page-row-expanded" role="main">
     <div class="container-fluid page-border">
         <%
@@ -45,7 +45,7 @@
         </div>
     </div>
 </main>
-<tri:page name="Footer" viewName="shared/Footer"/>
+<tri:page name="Footer" viewName="Shared/Footer"/>
 <script src="/system/assets/scripts/main.js"></script>
 <xpm:if-enabled><script src="/system/assets/scripts/xpm.js"></script></xpm:if-enabled>
 <xpm:page page="${pageModel}"/>

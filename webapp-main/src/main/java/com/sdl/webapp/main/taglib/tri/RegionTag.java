@@ -1,6 +1,8 @@
 package com.sdl.webapp.main.taglib.tri;
 
 import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.main.controller.ControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,7 +12,6 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
 import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
-import static com.sdl.webapp.main.controller.core.AbstractController.REGION_PATH_PREFIX;
 
 public class RegionTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(RegionTag.class);
@@ -29,15 +30,16 @@ public class RegionTag extends TagSupport {
             return SKIP_BODY;
         }
 
-        if (page.getRegions().containsKey(name)) {
+        final Region region = page.getRegions().get(name);
+        if (region != null) {
             LOG.debug("Including region: {}", name);
             try {
-                pageContext.include(REGION_PATH_PREFIX + "/" + name);
+                pageContext.include(ControllerUtils.getRequestPath(region));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing region tag: " + name, e);
             }
         } else {
-            LOG.debug("Region not found: {}", name);
+            LOG.debug("Region not found on page: {}", name);
         }
 
         return SKIP_BODY;

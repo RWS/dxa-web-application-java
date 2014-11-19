@@ -3,6 +3,7 @@ package com.sdl.webapp.main.taglib.tri;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.main.controller.ControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
-import static com.sdl.webapp.main.controller.core.AbstractController.REGION_PATH_PREFIX;
 
 public class RegionsTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(RegionsTag.class);
@@ -46,15 +46,11 @@ public class RegionsTag extends TagSupport {
                 continue;
             }
 
-            if (page.getRegions().containsKey(name)) {
-                LOG.debug("Including region: {}", name);
-                try {
-                    pageContext.include(REGION_PATH_PREFIX + "/" + name);
-                } catch (ServletException | IOException e) {
-                    throw new JspException("Error while processing regions tag", e);
-                }
-            } else {
-                LOG.debug("Region not found: {}", name);
+            LOG.debug("Including region: {}", name);
+            try {
+                pageContext.include(ControllerUtils.getRequestPath(region));
+            } catch (ServletException | IOException e) {
+                throw new JspException("Error while processing regions tag", e);
             }
         }
 

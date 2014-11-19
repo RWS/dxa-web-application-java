@@ -12,7 +12,7 @@ import java.util.Map;
 
 public final class ControllerUtils {
 
-    public static final String REQUEST_PATH_PREFIX = "/system/mvc/";
+    public static final String INCLUDE_PATH_PREFIX = "/system/mvc/";
 
     private ControllerUtils() {
     }
@@ -40,7 +40,7 @@ public final class ControllerUtils {
     }
 
     private static String getIncludePathPrefix(MvcData mvcData) {
-        return REQUEST_PATH_PREFIX +
+        return INCLUDE_PATH_PREFIX +
                 mvcData.getControllerAreaName() + "/" +
                 mvcData.getControllerName() + "/" +
                 mvcData.getActionName() + "/";

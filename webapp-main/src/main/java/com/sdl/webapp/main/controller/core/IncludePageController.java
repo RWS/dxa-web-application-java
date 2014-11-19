@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
-import static com.sdl.webapp.main.controller.ControllerUtils.REQUEST_PATH_PREFIX;
+import static com.sdl.webapp.main.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.CORE_AREA_NAME;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.PAGE_ACTION_NAME;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.PAGE_CONTROLLER_NAME;
 
 @Controller
-@RequestMapping(REQUEST_PATH_PREFIX + CORE_AREA_NAME + "/" + PAGE_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + PAGE_CONTROLLER_NAME)
 public class IncludePageController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(IncludePageController.class);
 

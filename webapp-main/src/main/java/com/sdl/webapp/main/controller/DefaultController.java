@@ -10,13 +10,13 @@ import org.springframework.web.util.UrlPathHelper;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.sdl.webapp.main.controller.ControllerUtils.REQUEST_PATH_PREFIX;
+import static com.sdl.webapp.main.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 
 /**
  * Default controller; this handles requests to unknown actions.
  */
 @Controller
-@RequestMapping(REQUEST_PATH_PREFIX)
+@RequestMapping(INCLUDE_PATH_PREFIX)
 public class DefaultController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultController.class);
 

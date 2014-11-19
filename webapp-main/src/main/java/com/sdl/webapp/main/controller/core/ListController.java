@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.sdl.webapp.main.RequestAttributeNames.ENTITY_MODEL;
-import static com.sdl.webapp.main.controller.ControllerUtils.REQUEST_PATH_PREFIX;
+import static com.sdl.webapp.main.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.*;
 
 @Controller
-@RequestMapping(REQUEST_PATH_PREFIX + CORE_AREA_NAME + "/" + LIST_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + LIST_CONTROLLER_NAME)
 public class ListController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(ListController.class);
 

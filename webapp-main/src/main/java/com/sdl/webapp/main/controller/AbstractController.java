@@ -19,13 +19,14 @@ import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
 public abstract class AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractController.class);
 
-    protected static final String ERROR_VIEW = "Shared/Error";
+    protected static final String NOT_FOUND_VIEW = "Shared/NotFound";
+    protected static final String ERROR_VIEW = "Shared/SectionError";
 
     protected Page getPageFromRequest(HttpServletRequest request) {
         final Page page = (Page) request.getAttribute(PAGE_MODEL);
         if (page == null) {
             LOG.error("Page not found in request attributes");
-            throw new BadRequestException("Page not found in request attributes");
+            throw new NotFoundException();
         }
         return page;
     }
@@ -58,6 +59,12 @@ public abstract class AbstractController {
             throw new NotFoundException("Entity not found in region: " + regionName + "/" + entityId);
         }
         return entity;
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public String handleNotFoundException(HttpServletRequest request, Exception exception) {
+        LOG.error("Not found: {}", request.getRequestURL(), exception);
+        return NOT_FOUND_VIEW;
     }
 
     @ExceptionHandler(Exception.class)

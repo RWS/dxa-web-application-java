@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.sdl.webapp.main.RequestAttributeNames.REGION_MODEL;
-import static com.sdl.webapp.main.controller.ControllerUtils.REQUEST_PATH_PREFIX;
+import static com.sdl.webapp.main.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.CORE_AREA_NAME;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.REGION_ACTION_NAME;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.REGION_CONTROLLER_NAME;
 
 @Controller
-@RequestMapping(REQUEST_PATH_PREFIX + CORE_AREA_NAME + "/" + REGION_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + REGION_CONTROLLER_NAME)
 public class RegionController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(RegionController.class);
 

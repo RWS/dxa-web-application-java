@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import javax.servlet.http.HttpServletRequest;
 
 import static com.sdl.webapp.main.RequestAttributeNames.ENTITY_MODEL;
-import static com.sdl.webapp.main.controller.ControllerUtils.REQUEST_PATH_PREFIX;
+import static com.sdl.webapp.main.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.CORE_AREA_NAME;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.NAVIGATION_ACTION_NAME;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.NAVIGATION_CONTROLLER_NAME;
 
 @Controller
-@RequestMapping(REQUEST_PATH_PREFIX + CORE_AREA_NAME + "/" + NAVIGATION_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + NAVIGATION_CONTROLLER_NAME)
 public class NavigationController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(NavigationController.class);
 

@@ -21,7 +21,7 @@ public interface StaticContentItem {
      *
      * @return The MIME type of this static content item.
      */
-    String getMimeType();
+    String getContentType();
 
     /**
      * Returns an {@code InputStream} from which the content of the static content item can be read. Callers are

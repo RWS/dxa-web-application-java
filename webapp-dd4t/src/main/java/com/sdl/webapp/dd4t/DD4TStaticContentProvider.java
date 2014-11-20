@@ -39,24 +39,25 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
 
     private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
-    private static final Map<String, String> CONTENT_TYPES_BY_EXTENSION = ImmutableMap.<String, String>builder()
-            .put("css", "text/css")
-            .put("js", "application/x-javascript")
-            .put("htc", "text/x-component")
-            .put("gif", "image/gif")
-            .put("jpg", "image/jpeg")
-            .put("jpeg", "image/jpeg")
-            .put("jpe", "image/jpeg")
-            .put("ico", "image/x-icon")
-            .put("png", "image/png")
-            .put("svg", "image/svg+xml")
-            .put("eot", "application/vnd.ms-fontobject")
-            .put("woff", "application/x-woff")
-            .put("otf", "application/x-font-opentype")
-            .put("ttf", "application/x-font-ttf")
-            .build();
-
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
+
+    private static final class StaticContentFile {
+        private final File file;
+        private final String contentType;
+
+        private StaticContentFile(File file, String contentType) {
+            this.file = file;
+            this.contentType = Strings.isNullOrEmpty(contentType) ? DEFAULT_CONTENT_TYPE : contentType;
+        }
+
+        public File getFile() {
+            return file;
+        }
+
+        public String getContentType() {
+            return contentType;
+        }
+    }
 
     private final WebApplicationContext webApplicationContext;
 
@@ -72,23 +73,23 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
             LOG.trace("getStaticContent: {} [{}] {}", new Object[] { path, localizationId, localizationPath });
         }
 
-        final File file = getStaticContentFile(removeVersionNumber(path), localizationId, localizationPath);
-        final String mimeType = determineMimeType(file);
+        final StaticContentFile staticContentFile = getStaticContentFile(removeVersionNumber(path), localizationId,
+                localizationPath);
 
         return new StaticContentItem() {
             @Override
             public long getLastModified() {
-                return file.lastModified();
+                return staticContentFile.getFile().lastModified();
             }
 
             @Override
-            public String getMimeType() {
-                return mimeType;
+            public String getContentType() {
+                return staticContentFile.getContentType();
             }
 
             @Override
             public InputStream getContent() throws IOException {
-                return new FileInputStream(file);
+                return new FileInputStream(staticContentFile.getFile());
             }
         };
     }
@@ -97,7 +98,7 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 
-    private File getStaticContentFile(String path, String localizationId, String localizationPath)
+    private StaticContentFile getStaticContentFile(String path, String localizationId, String localizationPath)
             throws ContentProviderException {
         final File file = new File(new File(new File(new File(new File(
                 webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localizationId),
@@ -136,7 +137,7 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
                 LOG.debug("File does not need to be refreshed: {}", file);
             }
 
-            return file;
+            return new StaticContentFile(file, binaryVariant.getBinaryType());
         } catch (StorageException | IOException e) {
             throw new ContentProviderException("Exception while getting static content for: [" + publicationId + "] "
                     + path, e);
@@ -146,8 +147,7 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
     private BinaryVariant findBinaryVariant(int publicationId, String path) throws StorageException {
         final BinaryVariantDAO dao = (BinaryVariantDAO) StorageManagerFactory.getDAO(publicationId,
                 StorageTypeMapping.BINARY_VARIANT);
-        final List<BinaryVariant> binaryVariants = dao.findByURL(path);
-        return binaryVariants != null && !binaryVariants.isEmpty() ? binaryVariants.get(0) : null;
+        return dao.findByURL(publicationId, path);
     }
 
     private ItemMeta findItemMeta(int publicationId, int itemId) throws StorageException {
@@ -159,14 +159,5 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
         final BinaryContentDAO dao = (BinaryContentDAO) StorageManagerFactory.getDAO(publicationId,
                 StorageTypeMapping.BINARY_CONTENT);
         return dao.findByPrimaryKey(publicationId, itemId, variantId);
-    }
-
-    private String determineMimeType(File file) {
-        final String fileName = file.getName();
-        final int i = fileName.lastIndexOf('.');
-        final String extension = i >= 0 ? fileName.substring(i + 1).toLowerCase() : "";
-
-        final String contentType = CONTENT_TYPES_BY_EXTENSION.get(extension);
-        return !Strings.isNullOrEmpty(contentType) ? contentType : DEFAULT_CONTENT_TYPE;
     }
 }

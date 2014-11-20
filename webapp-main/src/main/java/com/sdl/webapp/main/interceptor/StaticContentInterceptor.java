@@ -62,7 +62,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             // NOTE: In this version of Spring, the method 'getIfNotModifiedSince' is named incorrectly
             if (staticContentItem.getLastModified() > req.getHeaders().getIfNotModifiedSince() - 1000L) {
                 res.setStatusCode(HttpStatus.OK);
-                res.getHeaders().setContentType(MediaType.parseMediaType(staticContentItem.getMimeType()));
+                res.getHeaders().setContentType(MediaType.parseMediaType(staticContentItem.getContentType()));
                 try (final InputStream in = staticContentItem.getContent(); final OutputStream out = res.getBody()) {
                     StreamUtils.copy(in, out);
                 }

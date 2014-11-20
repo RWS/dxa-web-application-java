@@ -341,6 +341,12 @@ namespace Sdl.Web.Tridion.Templates
 
         private static string GetMimeType(string extension)
         {
+            // remove dot if extension starts with it
+            if (extension.StartsWith("."))
+            {
+                extension = extension.Substring(1);
+            }
+
             switch (extension)
             {
                 case "css":

@@ -40,11 +40,11 @@ public class Notification extends AbstractEntity {
         this.text = text;
     }
 
-    public String getContinue() {
+    public String getContinue_() {
         return continue_;
     }
 
-    public void setContinue(String continue_) {
+    public void setContinue_(String continue_) {
         this.continue_ = continue_;
     }
 

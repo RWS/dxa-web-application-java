@@ -3,7 +3,8 @@
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Teaser" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
-<div ${markup.entity(entity)}><xpm:entity entity="${entity}"/>
+<div ${markup.entity(entity)}>
+    <xpm:entity entity="${entity}"/>
     <a class="navbar-logo" href="${entity.link.url}" title="${entity.link.linkText}">
         <c:if test="${not empty entity.media}">
             <span ${markup.property(entity, "media")}>

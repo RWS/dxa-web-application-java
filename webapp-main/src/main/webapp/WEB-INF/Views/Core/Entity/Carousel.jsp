@@ -8,7 +8,7 @@
         <c:forEach var="indicator" varStatus="indicatorStatus" items="${entity.itemListElements}">
             <c:choose>
                 <c:when test="${indicatorStatus.count == 1}">
-                    <li data-target="#${carouselId}" data-slide-to="${indicatorStatus.count}" class=active"></li>
+                    <li data-target="#${carouselId}" data-slide-to="${indicatorStatus.count}" class="active"></li>
                 </c:when>
                 <c:otherwise>
                     <li data-target="#${carouselId}" data-slide-to="${indicatorStatus.count}"></li>

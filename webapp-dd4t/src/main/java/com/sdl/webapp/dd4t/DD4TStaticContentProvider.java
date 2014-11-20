@@ -1,5 +1,6 @@
 package com.sdl.webapp.dd4t;
 
+import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
@@ -36,6 +37,8 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
 
     private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
+    private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
+
     private final WebApplicationContext webApplicationContext;
 
     @Autowired
@@ -51,11 +54,17 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
         }
 
         final File file = getStaticContentFile(removeVersionNumber(path), localizationId, localizationPath);
+        final String mimeType = determineMimeType(file);
 
         return new StaticContentItem() {
             @Override
             public long getLastModified() {
                 return file.lastModified();
+            }
+
+            @Override
+            public String getMimeType() {
+                return mimeType;
             }
 
             @Override
@@ -131,5 +140,15 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
         final BinaryContentDAO dao = (BinaryContentDAO) StorageManagerFactory.getDAO(publicationId,
                 StorageTypeMapping.BINARY_CONTENT);
         return dao.findByPrimaryKey(publicationId, itemId, variantId);
+    }
+
+    private String determineMimeType(File file) {
+        try {
+            final String contentType = Files.probeContentType(file.toPath());
+            return !Strings.isNullOrEmpty(contentType) ? contentType : DEFAULT_CONTENT_TYPE;
+        } catch (IOException e) {
+            LOG.warn("Failed to determine content type of file: {}", file.getPath(), e);
+            return DEFAULT_CONTENT_TYPE;
+        }
     }
 }

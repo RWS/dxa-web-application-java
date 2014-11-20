@@ -17,6 +17,13 @@ public interface StaticContentItem {
     long getLastModified();
 
     /**
+     * Returns the MIME type of this static content item.
+     *
+     * @return The MIME type of this static content item.
+     */
+    String getMimeType();
+
+    /**
      * Returns an {@code InputStream} from which the content of the static content item can be read. Callers are
      * expected to close the stream.
      *

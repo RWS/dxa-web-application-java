@@ -1,6 +1,7 @@
 package com.sdl.webapp.dd4t;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -36,6 +38,23 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
     private static final String STATIC_FILES_DIR = "BinaryData";
 
     private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
+
+    private static final Map<String, String> CONTENT_TYPES_BY_EXTENSION = ImmutableMap.<String, String>builder()
+            .put("css", "text/css")
+            .put("js", "application/x-javascript")
+            .put("htc", "text/x-component")
+            .put("gif", "image/gif")
+            .put("jpg", "image/jpeg")
+            .put("jpeg", "image/jpeg")
+            .put("jpe", "image/jpeg")
+            .put("ico", "image/x-icon")
+            .put("png", "image/png")
+            .put("svg", "image/svg+xml")
+            .put("eot", "application/vnd.ms-fontobject")
+            .put("woff", "application/x-woff")
+            .put("otf", "application/x-font-opentype")
+            .put("ttf", "application/x-font-ttf")
+            .build();
 
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
@@ -143,12 +162,11 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
     }
 
     private String determineMimeType(File file) {
-        try {
-            final String contentType = Files.probeContentType(file.toPath());
-            return !Strings.isNullOrEmpty(contentType) ? contentType : DEFAULT_CONTENT_TYPE;
-        } catch (IOException e) {
-            LOG.warn("Failed to determine content type of file: {}", file.getPath(), e);
-            return DEFAULT_CONTENT_TYPE;
-        }
+        final String fileName = file.getName();
+        final int i = fileName.lastIndexOf('.');
+        final String extension = i >= 0 ? fileName.substring(i + 1).toLowerCase() : "";
+
+        final String contentType = CONTENT_TYPES_BY_EXTENSION.get(extension);
+        return !Strings.isNullOrEmpty(contentType) ? contentType : DEFAULT_CONTENT_TYPE;
     }
 }

@@ -202,7 +202,7 @@ public class MediaTag extends HtmlElementTag {
             len = len / 1024;
         }
 
-        return Math.ceil(len) + " " + DOWNLOAD_SIZE_UNITS[order];
+        return ((long) Math.ceil(len)) + " " + DOWNLOAD_SIZE_UNITS[order];
     }
 
     private String getContextPath() {

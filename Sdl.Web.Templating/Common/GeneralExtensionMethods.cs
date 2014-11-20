@@ -16,7 +16,7 @@ namespace Sdl.Web.Tridion.Common
         {
             foreach (var entry in zip.Entries)
             {
-                var path = Path.Combine(destinationDirectoryName, entry.FullName);
+                string path = Path.Combine(destinationDirectoryName, entry.FullName);
                 string directory = Path.GetDirectoryName(path);
                 if (!Directory.Exists(directory))
                 {

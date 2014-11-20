@@ -1,6 +1,5 @@
-﻿using System;
+﻿using Sdl.Web.Tridion.Common;
 using System.Collections.Generic;
-using Sdl.Web.Tridion.Common;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 

@@ -1,17 +1,17 @@
-﻿using System;
+﻿using Sdl.Web.Tridion.Common;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.Linq;
-using Sdl.Web.Tridion.Common;
 using Tridion;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
+using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
-using Tridion.ContentManager.ContentManagement.Fields;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -397,9 +397,8 @@ namespace Sdl.Web.Tridion.Templates
 
                 // input = "s:headline" but can also be "s:headline,x:something"
                 string[] properties = input.Split(',');
-                for (int index = 0; index < properties.Length; index++)
+                foreach (var value in properties)
                 {
-                    var value = properties[index];
                     string[] parts = value.Split(':');
                     if (entities.ContainsKey(parts[0]))
                     {
@@ -421,9 +420,11 @@ namespace Sdl.Web.Tridion.Templates
         {
             //Generate a list of Page Templates which have includes in the metadata
             var res = new List<string>();
-            var templateFilter = new RepositoryItemsFilter(Engine.GetSession());
-            templateFilter.ItemTypes = new List<ItemType> { ItemType.PageTemplate };
-            templateFilter.Recursive = true;
+            var templateFilter = new RepositoryItemsFilter(Engine.GetSession())
+            {
+                ItemTypes = new List<ItemType> {ItemType.PageTemplate},
+                Recursive = true
+            };
             foreach (XmlElement item in GetPublication().GetListItems(templateFilter).ChildNodes)
             {
                 var id = item.GetAttribute("ID");

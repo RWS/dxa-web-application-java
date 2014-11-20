@@ -1,14 +1,13 @@
-﻿using System;
+﻿using Sdl.Web.Tridion.Common;
+using System;
+using System.Collections.Generic;
 using System.Linq;
-using Sdl.Web.Tridion.Common;
+using System.Text.RegularExpressions;
+using System.Xml;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using System.Text;
-using System.Xml;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -56,15 +55,15 @@ namespace Sdl.Web.Tridion.Templates
             }
         }
 
-        private static string LINK_PATTERN = @"xlink:href=\\""(tcm\:\d+\-\d+)\\""";
-        private static string XHTML_PATTERN = " xmlns=\\\"http://www.w3.org/1999/xhtml\\\"";
-        
+        private const string LinkPattern = @"xlink:href=\\""(tcm\:\d+\-\d+)\\""";
+        private const string XhtmlPattern = " xmlns=\\\"http://www.w3.org/1999/xhtml\\\"";
+
         private string ResolveJsonContent(string content)
         {
             //remove XHTML namespace
-            content = content.Replace(XHTML_PATTERN, "");
+            content = content.Replace(XhtmlPattern, "");
             //add data attributes to component links
-            content = Regex.Replace(content, LINK_PATTERN, delegate(Match match)
+            content = Regex.Replace(content, LinkPattern, delegate(Match match)
             {
                 Logger.Debug("Found RTF link match: " + match.Value);
                 string compId = match.Groups[1].Value;

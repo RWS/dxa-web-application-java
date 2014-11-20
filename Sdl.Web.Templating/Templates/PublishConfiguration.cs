@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Xml;
+﻿using System.Globalization;
 using Sdl.Web.Tridion.Common;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Xml;
 using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
-using System.Linq;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -26,7 +27,7 @@ namespace Sdl.Web.Tridion.Templates
         private const string TaxonomiesConfigName = "taxonomies";
 
         private string _moduleRoot = String.Empty;
-        private Component _localizationConfigurationComponent = null;
+        private Component _localizationConfigurationComponent;
         public override void Transform(Engine engine, Package package)
         {
             Initialize(engine, package);
@@ -151,7 +152,7 @@ namespace Sdl.Web.Tridion.Templates
                 Logger.Warning("Could not find 'Localization Configuration' component, cannot publish language data");
             }
             var sitePubs = LoadSitePublications(GetPublication());
-            var isMaster = sitePubs.Where(p => p.id == GetPublication().Id.ItemId.ToString()).FirstOrDefault().isMaster;
+            var isMaster = sitePubs.Where(p => p.Id == GetPublication().Id.ItemId.ToString(CultureInfo.InvariantCulture)).FirstOrDefault().IsMaster;
             List<string> additionalData = new List<string>
                 {
                     String.Format("\"defaultLocalization\":{0}", JsonEncode(isMaster)),
@@ -190,11 +191,11 @@ namespace Sdl.Web.Tridion.Templates
             //a) Its siteId is "multisite-master" or
             //b) Its siteId matches the passed (child) siteId
             var siteId = GetSiteIdFromPublication(pub);
-            return siteId=="multisite-master" ? true : childId==siteId;
+            return siteId == "multisite-master" || childId == siteId;
         }
 
 
-        private List<PublicationDetails> LoadSitePublications(Publication contextPublication)
+        private IEnumerable<PublicationDetails> LoadSitePublications(Publication contextPublication)
         {
             string siteId = GetSiteIdFromPublication(contextPublication);
             var master = GetMasterPublication(contextPublication);
@@ -212,14 +213,14 @@ namespace Sdl.Web.Tridion.Templates
             }
             //It is possible that no publication has been set explicitly as the master
             //in which case we set the context publication as the master
-            if (!pubs.Where(p=>p.isMaster).Any())
+            if (!pubs.Any(p => p.IsMaster))
             {
-                var currentPubId = GetPublication().Id.ItemId.ToString();
+                var currentPubId = GetPublication().Id.ItemId.ToString(CultureInfo.InvariantCulture);
                 foreach (var pub in pubs)
                 {
-                    if (pub.id==currentPubId)
+                    if (pub.Id==currentPubId)
                     {
-                        pub.isMaster = true;
+                        pub.IsMaster = true;
                     }
                 }
             }
@@ -228,7 +229,7 @@ namespace Sdl.Web.Tridion.Templates
 
         private PublicationDetails GetPublicationDetails(Publication pub, bool isMaster = false)
         {
-            var pubData = new PublicationDetails { id = pub.Id.ItemId.ToString(), path = pub.PublicationUrl, isMaster = isMaster};
+            var pubData = new PublicationDetails { Id = pub.Id.ItemId.ToString(CultureInfo.InvariantCulture), Path = pub.PublicationUrl, IsMaster = isMaster};
             if (_localizationConfigurationComponent != null)
             {
                 var localUri = new TcmUri(_localizationConfigurationComponent.Id.ItemId,ItemType.Component,pub.Id.ItemId);
@@ -240,7 +241,7 @@ namespace Sdl.Web.Tridion.Templates
                     {
                         if (field.GetTextValue("name") == "language")
                         {
-                            pubData.language = field.GetTextValue("value");
+                            pubData.Language = field.GetTextValue("value");
                             break;
                         }
                     }
@@ -249,7 +250,7 @@ namespace Sdl.Web.Tridion.Templates
             return pubData;
         }
 
-        private List<PublicationDetails> GetChildPublicationDetails(Publication master, string siteId, bool masterAdded)
+        private IEnumerable<PublicationDetails> GetChildPublicationDetails(Publication master, string siteId, bool masterAdded)
         {
             List<PublicationDetails> pubs = new List<PublicationDetails>();
             var filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };
@@ -286,9 +287,9 @@ namespace Sdl.Web.Tridion.Templates
 
     internal class PublicationDetails
     {
-        public string id { get; set; }
-        public string path { get; set; }
-        public string language { get; set; }
-        public bool isMaster { get; set; }
+        public string Id { get; set; }
+        public string Path { get; set; }
+        public string Language { get; set; }
+        public bool IsMaster { get; set; }
     }
 }

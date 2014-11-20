@@ -3,7 +3,6 @@ package com.sdl.webapp.main.controller;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;
-import com.sdl.webapp.main.controller.exception.BadRequestException;
 import com.sdl.webapp.main.controller.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +18,7 @@ import static com.sdl.webapp.main.RequestAttributeNames.PAGE_MODEL;
 public abstract class AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractController.class);
 
-    protected static final String NOT_FOUND_VIEW = "Shared/NotFound";
-    protected static final String ERROR_VIEW = "Shared/SectionError";
+    private static final String SECTION_ERROR_VIEW = "Shared/SectionError";
 
     protected Page getPageFromRequest(HttpServletRequest request) {
         final Page page = (Page) request.getAttribute(PAGE_MODEL);
@@ -61,15 +59,9 @@ public abstract class AbstractController {
         return entity;
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public String handleNotFoundException(HttpServletRequest request, Exception exception) {
-        LOG.error("Not found: {}", request.getRequestURL(), exception);
-        return NOT_FOUND_VIEW;
-    }
-
     @ExceptionHandler(Exception.class)
     public String handleException(HttpServletRequest request, Exception exception) {
         LOG.error("Exception while processing request for: {}", request.getRequestURL(), exception);
-        return ERROR_VIEW;
+        return SECTION_ERROR_VIEW;
     }
 }

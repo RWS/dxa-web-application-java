@@ -17,6 +17,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.ComponentLink };
 
+    // TODO: Use ContentResolver here?
     private final LinkResolver linkResolver;
 
     @Autowired

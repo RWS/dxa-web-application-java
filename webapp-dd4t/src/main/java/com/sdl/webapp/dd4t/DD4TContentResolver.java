@@ -9,6 +9,12 @@ import com.sdl.webapp.common.api.content.ContentResolver;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.SimpleNamespaceContext;
 import com.sdl.webapp.common.util.XMLUtils;
+import org.dd4t.contentmodel.GenericComponent;
+import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
+import org.dd4t.contentmodel.exceptions.SerializationException;
+import org.dd4t.core.factories.ComponentFactory;
+import org.dd4t.core.filters.FilterException;
+import org.dd4t.core.resolvers.LinkResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +27,7 @@ import javax.xml.namespace.NamespaceContext;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.*;
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,15 +75,30 @@ public class DD4TContentResolver implements ContentResolver {
 
     private final WebRequestContext webRequestContext;
 
+    private final LinkResolver linkResolver;
+
+    private final ComponentFactory componentFactory;
+
     @Autowired
-    public DD4TContentResolver(MediaHelper mediaHelper, WebRequestContext webRequestContext) {
+    public DD4TContentResolver(MediaHelper mediaHelper, WebRequestContext webRequestContext,
+                               LinkResolver linkResolver, ComponentFactory componentFactory) {
         this.mediaHelper = mediaHelper;
         this.webRequestContext = webRequestContext;
+        this.linkResolver = linkResolver;
+        this.componentFactory = componentFactory;
     }
 
     @Override
     public String resolveLink(String url) {
-        // TODO: TSI-521 Implement this method
+        if (url.startsWith("tcm:")) {
+            try {
+                return linkResolver.resolve(url);
+            } catch (SerializationException | ItemNotFoundException e) {
+                LOG.warn("Exception while resolving link: {}", url, e);
+                return url;
+            }
+        }
+
         return url;
     }
 
@@ -141,7 +163,36 @@ public class DD4TContentResolver implements ContentResolver {
     }
 
     private void applyHashIfApplicable(Element linkElement) {
-        // TODO: Implement this method
+        final String target = linkElement.getAttribute("target");
+        if ("anchored".equals(target)) {
+            final String href= linkElement.getAttribute("href");
+            final String fullRequestPath = webRequestContext.getContextPath() + webRequestContext.getRequestPath();
+
+            final String linkName = getLinkName(linkElement);
+            final String hash = !Strings.isNullOrEmpty(linkName) ? "#" + linkName.replaceAll(" ", "_").toLowerCase() : "";
+
+            if (fullRequestPath.equalsIgnoreCase(fullRequestPath)) {
+                linkElement.setAttribute("href", hash);
+                linkElement.setAttribute("target", "");
+            } else {
+                linkElement.setAttribute("href", href + hash);
+                linkElement.setAttribute("target", "_top");
+            }
+        }
+    }
+
+    private String getLinkName(Element linkElement) {
+        final String componentUri = linkElement.getAttributeNS(XLINK_NS_URI, "href");
+
+        try {
+            // NOTE: This DD4T method requires a template URI but it does not actually use it; pass a dummy value
+            final GenericComponent component = componentFactory.getComponent(componentUri, "tcm:0-0-0");
+
+            final String title = component != null ? component.getTitle() : "";
+            return !Strings.isNullOrEmpty(title) ? title : linkElement.getAttribute("title");
+        } catch (ItemNotFoundException | SerializationException | FilterException | ParseException e) {
+            return linkElement.getAttribute("title");
+        }
     }
 
     private void removeXlinkAttributes(Element element) {

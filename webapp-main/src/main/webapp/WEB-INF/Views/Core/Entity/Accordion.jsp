@@ -11,10 +11,10 @@
             <h1 ${markup.property(entity, "headline")}><xpm:property entity="${entity}" property="headline"/>${entity.headline}</h1>
         </c:if>
         <c:if test="${entity.itemListElements.size() > 0}">
-            <c:set var="accordionId" value="accordion-${tri:randomUUID()}"/>
+            <c:set var="accordionId" value="${entity.id}"/>
             <div class="panel-group responsive-accordion" id="${accordionId}">
                 <c:forEach var="element" items="${entity.itemListElements}" varStatus="status">
-                    <c:set var="collapseId" value="collapse-${tri:randomUUID()}"/>
+                    <c:set var="collapseId" value="${entity.id}_${status.index}"/>
                     <div class="panel panel-default" ${markup.property(entity, "itemListElement")}>
                         <xpm:property entity="${entity}" property="itemListElement" index="${status.index}"/>
                         <div class="panel-heading" data-toggle="collapse" data-target="#${collapseId}" data-parent="#${accordionId}">

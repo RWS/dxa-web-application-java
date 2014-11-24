@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.ItemList" scope="request"/>
-<c:set var="carouselId" value="carousel-${tri:randomUUID()}"/>
+<c:set var="carouselId" value="carousel-${entity.id}"/>
 <div id="${carouselId}" class="carousel slide" data-ride="carousel" data-interval="5000">
     <ol class="carousel-indicators">
         <c:forEach var="indicator" varStatus="indicatorStatus" items="${entity.itemListElements}">

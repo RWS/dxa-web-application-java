@@ -188,10 +188,4 @@
             <type>int</type>
         </attribute>
     </tag>
-
-    <function>
-        <name>randomUUID</name>
-        <function-class>java.util.UUID</function-class>
-        <function-signature>java.util.UUID randomUUID()</function-signature>
-    </function>
 </taglib>

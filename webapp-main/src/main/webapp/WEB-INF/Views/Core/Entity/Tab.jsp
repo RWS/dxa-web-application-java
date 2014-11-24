@@ -11,7 +11,7 @@
             <h1 ${markup.property(entity, "headline")}><xpm:property entity="${entity}" property="headline"/>${entity.headline}</h1>
         </c:if>
         <c:if test="${not entity.itemListElements.isEmpty()}">
-            <c:set var="panelId" value="${tri:randomUUID()}"/>
+            <c:set var="panelId" value="${entity.id}"/>
             <div class="panel panel-default">
                 <div class="panel-body tab-container">
                     <%-- Tab dropdown --%>

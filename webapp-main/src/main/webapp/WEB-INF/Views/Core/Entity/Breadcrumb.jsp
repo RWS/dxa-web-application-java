@@ -11,16 +11,23 @@
     if (links != null && !links.isEmpty()) {
         int start = links.size() > 5 ? links.size() - 4 : 1;
 
-        %><ol class="breadcrumb" ${markup.entity(entity)}><xpm:entity entity="${entity}"/><%
-        %><li><a href="<%= links.get(0).getUrl() %>"><i class="fa fa-home"><span class="sr-only"><%= links.get(0).getLinkText() %></span></i></a></li><%
+        %><ol class="breadcrumb" ${markup.entity(entity)}><xpm:entity entity="${entity}"/>
+            <li><a href="<%= links.get(0).getUrl() %>"><i class="fa fa-home"><span class="sr-only"><%= links.get(0).getLinkText() %></span></i></a></li>
+        <%
         if (start > 1) {
-            %><li>...</li><%
+            %>
+            <li>...</li>
+            <%
         }
         for (int i = start; i < links.size() - 1; i++) {
-            %><li><a href="<%= links.get(i).getUrl() %>"><%= links.get(i).getLinkText() %></a></li><%
+            %>
+            <li><a href="<%= links.get(i).getUrl() %>"><%= links.get(i).getLinkText() %></a></li>
+            <%
         }
         if (links.size() > 1) {
-            %><li class="active"><%= links.get(links.size() - 1).getLinkText() %></li><%
+            %>
+            <li class="active"><%= links.get(links.size() - 1).getLinkText() %></li>
+            <%
         }
         %></ol><%
     }

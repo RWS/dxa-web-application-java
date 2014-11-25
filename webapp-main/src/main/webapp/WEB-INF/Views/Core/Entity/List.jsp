@@ -32,7 +32,7 @@
         </c:forEach>
     </ul>
     <c:if test="${not empty entity.link.url}">
-        <p ${markup.property(entity.link, "link")}>
+        <p ${markup.property(entity.link, "url")}>
             <xpm:property entity="${entity.link}" property="linkText"/>
             <a href="${entity.link.url}" title="${entity.link.alternateText}">
                 <c:choose>

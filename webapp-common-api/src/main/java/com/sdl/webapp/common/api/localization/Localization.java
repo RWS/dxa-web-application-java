@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.localization;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -59,6 +60,13 @@ public interface Localization {
      * @return The culture of this localization.
      */
     String getCulture();
+
+    /**
+     * Gets the Java {@code Locale} of this localization.
+     *
+     * @return The Java {@code Locale} of this localization.
+     */
+    Locale getLocale();
 
     /**
      * Gets a configuration item.

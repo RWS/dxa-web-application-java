@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -168,6 +169,11 @@ class LocalizationImpl implements Localization {
     @Override
     public String getCulture() {
         return getConfiguration("core.culture");
+    }
+
+    @Override
+    public Locale getLocale() {
+        return Locale.forLanguageTag(getCulture());
     }
 
     @Override

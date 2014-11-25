@@ -25,7 +25,7 @@
     <c:if test="${not empty entity.date}">
         <div class="meta" ${markup.property(entity, "date")}>
             <xpm:property entity="${entity}" property="date"/>
-            ${markup.formatDateTime(entity.date, "d MMM yyyy")}
+            ${markup.formatDate(entity.date)}
         </div>
     </c:if>
     <div class="content">

@@ -58,7 +58,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                 // Try getting data using each of the field semantics in order
                 for (FieldSemantics fieldSemantics : registrySemantics) {
                     // Find the matching semantic field
-                    final SemanticField semanticField = semanticFields.get(fieldSemantics);
+                    final SemanticField semanticField = findMatchingSemanticField(semanticFields, fieldSemantics);
                     if (semanticField != null) {
                         foundMatch = true;
                         LOG.debug("Match found: {} -> {}", fieldSemantics, semanticField);
@@ -147,5 +147,21 @@ public class SemanticMapperImpl implements SemanticMapper {
             throw new SemanticMappingException("Exception while creating instance of entity class: " +
                     entityClass.getName(), e);
         }
+    }
+
+    private SemanticField findMatchingSemanticField(Map<FieldSemantics, SemanticField> semanticFields,
+                                                    FieldSemantics fieldSemantics) {
+        SemanticField matchingField = semanticFields.get(fieldSemantics);
+        if (matchingField == null) {
+            // Search all embedded fields recursively
+            for (SemanticField semanticField : semanticFields.values()) {
+                matchingField = findMatchingSemanticField(semanticField.getEmbeddedFields(), fieldSemantics);
+                if (matchingField != null) {
+                    break;
+                }
+            }
+        }
+
+        return matchingField;
     }
 }

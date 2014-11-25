@@ -113,11 +113,11 @@ public class Markup {
         return webRequestContext.getLocalization().getResource(key);
     }
 
-    public String formatDateTime(DateTime dateTime, String pattern) {
-        return DateTimeFormat.forPattern(pattern).print(dateTime);
+    public String formatDate(DateTime dateTime) {
+        return DateTimeFormat.fullDate().withLocale(webRequestContext.getLocalization().getLocale()).print(dateTime);
     }
 
-    public String formatDateTimeDiff(DateTime dateTime, String pattern) {
+    public String formatDateDiff(DateTime dateTime) {
         final int dayDiff = Days.daysBetween(dateTime.toLocalDate(), LocalDate.now()).getDays();
         if (dayDiff <= 0) {
             return webRequestContext.getLocalization().getResource("core.todayText");
@@ -127,7 +127,8 @@ public class Markup {
             return MessageFormat.format(webRequestContext.getLocalization().getResource("core.xDaysAgoText"), dayDiff);
         }
 
-        return DateTimeFormat.forPattern(pattern).print(dateTime);
+        return DateTimeFormat.forPattern("d MMM yyyy").withLocale(webRequestContext.getLocalization().getLocale())
+                .print(dateTime);
     }
 
     public String formatMessage(String pattern, String arg) {

@@ -6,6 +6,8 @@ import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Article;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,20 +88,18 @@ public class SemanticMapperImplTest {
         when(fieldDataProvider.getFieldData(headlineField, new TypeDescriptor(Article.class.getDeclaredField("headline"))))
                 .thenReturn(new FieldData("HEADLINE", "HeadlineField"));
 
-        // TODO: This does not work, because in the schema dateCreated is an embedded field inside standardMeta, but
-        // according to the Article entity it's a top-level field. Does this work in the C# version?
-//        final DateTime dateTime = new DateTime(2014, 11, 4, 13, 14, 34, 123, DateTimeZone.UTC);
-//        when(fieldDataProvider.getFieldData(dateCreatedField, new TypeDescriptor(Article.class.getDeclaredField("date"))))
-//                .thenReturn(new FieldData(dateTime, "DateCreatedField"));
+        final DateTime dateTime = new DateTime(2014, 11, 4, 13, 14, 34, 123, DateTimeZone.UTC);
+        when(fieldDataProvider.getFieldData(dateCreatedField, new TypeDescriptor(Article.class.getDeclaredField("date"))))
+                .thenReturn(new FieldData(dateTime, "DateCreatedField"));
 
         final Article article = semanticMapper.createEntity(Article.class, schemaFields, fieldDataProvider);
 
         assertThat(article.getHeadline(), is("HEADLINE"));
-//        assertThat(article.getDate(), is(dateTime));
+        assertThat(article.getDate(), is(dateTime));
 
         final Map<String, String> propertyData = article.getPropertyData();
-        assertThat(propertyData.entrySet(), hasSize(1)); // 2
+        assertThat(propertyData.entrySet(), hasSize(2));
         assertThat(propertyData, hasEntry("headline", "HeadlineField"));
-//        assertThat(propertyData, hasEntry("date", "DateCreatedField"));
+        assertThat(propertyData, hasEntry("date", "DateCreatedField"));
     }
 }

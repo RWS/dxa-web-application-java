@@ -26,7 +26,7 @@
                     </c:otherwise>
                 </c:choose>
                 <c:if test="${not empty item.date}">
-                    <time class="meta small">[${markup.formatDateTimeDiff(item.date, "d MMM yyyy")}]</time>
+                    <time class="meta small">[${markup.formatDateDiff(item.date)}]</time>
                 </c:if>
             </li>
         </c:forEach>

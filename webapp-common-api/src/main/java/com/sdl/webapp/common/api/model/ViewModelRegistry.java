@@ -8,6 +8,15 @@ import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 public interface ViewModelRegistry {
 
     /**
+     * Registers an entity type for a view.
+     *
+     * @param viewName The name of the entity view.
+     * @return The type of the entity that this entity view needs.
+     */
+    void registerViewEntityClass(String viewName, Class<? extends AbstractEntity> entityClass);
+
+
+    /**
      * Returns the entity type to use for a specified entity view.
      *
      * @param viewName The name of the entity view.

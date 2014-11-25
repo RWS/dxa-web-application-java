@@ -3,8 +3,10 @@ package com.sdl.webapp.common.impl.model;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -13,7 +15,7 @@ import java.util.Map;
 @Component
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
-    private static final Map<String, Class<? extends AbstractEntity>> VIEW_ENTITY_CLASS_MAP =
+    private static final Map<String, Class<? extends AbstractEntity>> CORE_VIEW_ENTITY_CLASS_MAP =
             ImmutableMap.<String, Class<? extends AbstractEntity>>builder()
                     .put("Accordion", ItemList.class)
                     .put("Article", Article.class)
@@ -46,8 +48,19 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     .put("YouTubeVideo", YouTubeVideo.class)
                     .build();
 
+    private final Map<String, Class<? extends AbstractEntity>> viewEntityClassMap = new HashMap<>();
+
+    public ViewModelRegistryImpl() {
+        viewEntityClassMap.putAll(CORE_VIEW_ENTITY_CLASS_MAP);
+    }
+
+    @Override
+    public void registerViewEntityClass(String viewName, Class<? extends AbstractEntity> entityClass) {
+        viewEntityClassMap.put(viewName, entityClass);
+    }
+
     @Override
     public Class<? extends AbstractEntity> getViewEntityClass(String viewName) {
-        return VIEW_ENTITY_CLASS_MAP.get(viewName);
+        return viewEntityClassMap.get(viewName);
     }
 }

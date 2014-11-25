@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.modules.googleanalytics;
 
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
-import com.sdl.webapp.common.api.model.entity.Link;
+import com.sdl.webapp.common.api.model.entity.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,7 +19,6 @@ public class GoogleAnalyticsModuleInitializer {
 
     @PostConstruct
     public void registerViewModelEntityClasses() {
-        // TODO: Implement this for real, currently this is just a dummy implementation to avoid errors
-        viewModelRegistry.registerViewEntityClass("GoogleAnalytics:GoogleAnalytics", Link.class);
+        viewModelRegistry.registerViewEntityClass("GoogleAnalytics:GoogleAnalytics", Configuration.class);
     }
 }

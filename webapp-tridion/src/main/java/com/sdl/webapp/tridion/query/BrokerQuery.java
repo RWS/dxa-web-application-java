@@ -1,14 +1,15 @@
 package com.sdl.webapp.tridion.query;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.Teaser;
+import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
 import com.tridion.broker.querying.Query;
 import com.tridion.broker.querying.criteria.Criteria;
 import com.tridion.broker.querying.criteria.content.ItemSchemaCriteria;
-import com.tridion.broker.querying.criteria.content.ItemTypeCriteria;
 import com.tridion.broker.querying.criteria.content.PublicationCriteria;
 import com.tridion.broker.querying.criteria.operators.AndCriteria;
 import com.tridion.broker.querying.criteria.taxonomy.TaxonomyKeywordCriteria;
@@ -21,14 +22,13 @@ import com.tridion.broker.querying.sorting.column.CustomMetaKeyColumn;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.CustomMeta;
-import com.tridion.taxonomies.Keyword;
-import com.tridion.taxonomies.TaxonomyFactory;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class BrokerQuery {
     private static final Logger LOG = LoggerFactory.getLogger(BrokerQuery.class);
@@ -39,7 +39,7 @@ public class BrokerQuery {
     private String sort;
     private int start;
     private int pageSize;
-    private ListMultimap<String, String> keywordFilters;
+    private Multimap<String, String> keywordFilters = ArrayListMultimap.create();
     private boolean hasMore;
 
     public int getSchemaId() {
@@ -90,11 +90,11 @@ public class BrokerQuery {
         this.pageSize = pageSize;
     }
 
-    public ListMultimap<String, String> getKeywordFilters() {
+    public Multimap<String, String> getKeywordFilters() {
         return keywordFilters;
     }
 
-    public void setKeywordFilters(ListMultimap<String, String> keywordFilters) {
+    public void setKeywordFilters(Multimap<String, String> keywordFilters) {
         this.keywordFilters = keywordFilters;
     }
 
@@ -106,31 +106,34 @@ public class BrokerQuery {
         this.hasMore = hasMore;
     }
 
-    public List<Teaser> executeQuery() {
-        Criteria criteria = buildCriteria();
-        Query query = new Query(criteria);
+    public List<Teaser> executeQuery() throws BrokerQueryException {
+        final Query query = new Query(buildCriteria());
 
-        if (!sort.isEmpty() && !sort.toLowerCase().equals("none")) {
+        if (!Strings.isNullOrEmpty(sort) && !sort.toLowerCase().equals("none")) {
             query.addSorting(getSortParameter());
         }
+
         if (maxResults > 0) {
             query.setResultFilter(new LimitFilter(maxResults));
         }
+
         if (pageSize > 0) {
-            //We set the page size to one more than what we need, to see if there are more pages to come...
+            // We set the page size to one more than what we need, to see if there are more pages to come...
             query.setResultFilter(new PagingFilter(start, pageSize + 1));
         }
 
         try {
-            ComponentMetaFactory cmf = new ComponentMetaFactory(publicationId);
-            List<Teaser> results = new ArrayList<>();
-            String[] ids = query.executeQuery();
-            hasMore = ids.length > pageSize;
-            int count = 0;
+            final String[] ids = query.executeQuery();
 
+            final ComponentMetaFactory cmf = new ComponentMetaFactory(publicationId);
+            final List<Teaser> results = new ArrayList<>();
+
+            hasMore = ids.length > pageSize;
+
+            int count = 0;
             for (String compId : ids) {
                 if (count < pageSize) {
-                    ComponentMeta compMeta = cmf.getMeta(compId);
+                    final ComponentMeta compMeta = cmf.getMeta(compId);
                     if (compMeta != null) {
                         results.add(getTeaserFromMeta(compMeta));
                     }
@@ -139,124 +142,85 @@ public class BrokerQuery {
                     break;
                 }
             }
-            return results;
-        } catch (Exception ex) {
-            LOG.error(String.format("Error running Broker query: {0}", ex.getMessage()), ex);
-        }
 
-        return null;
+            return results;
+        } catch (StorageException e) {
+            throw new BrokerQueryException("Exception while executing broker query", e);
+        }
     }
 
     private Criteria buildCriteria() {
-        List<Criteria> criterias = new ArrayList<Criteria>();
-
-        criterias.add(new ItemTypeCriteria(16));
+        final List<Criteria> children = new ArrayList<>();
 
         if (schemaId > 0) {
-            criterias.add(new ItemSchemaCriteria(schemaId));
+            children.add(new ItemSchemaCriteria(schemaId));
         }
+
         if (publicationId > 0) {
-            criterias.add(new PublicationCriteria(publicationId));
-        }
-        if (keywordFilters != null) {
-            for (String taxonomy : keywordFilters.keySet()) {
-                for (String keyword : keywordFilters.get(taxonomy)) {
-                    criterias.add(new TaxonomyKeywordCriteria(taxonomy, keyword, true));
-                }
-            }
+            children.add(new PublicationCriteria(publicationId));
         }
 
-        return new AndCriteria(criterias.toArray(new Criteria[criterias.size()]));
-    }
-
-    private static Teaser getTeaserFromMeta(ComponentMeta compMeta) {
-        Link link = new Link();
-        link.setUrl(String.format("tcm:{0}-{1}", compMeta.getPublicationId(), compMeta.getId()));
-
-        Teaser teaser = new Teaser();
-        teaser.setLink(link);
-
-        DateTime date = getDateFromCustomMeta(compMeta.getCustomMeta(), "dateCreated");
-        teaser.setDate(date != null ? date : new DateTime(compMeta.getLastPublicationDate()));
-
-        String headLine = getTextFromCustomMeta(compMeta.getCustomMeta(), "name");
-        teaser.setHeadline(!headLine.isEmpty() ? headLine : compMeta.getTitle());
-
-        teaser.setText(getTextFromCustomMeta(compMeta.getCustomMeta(), "introText"));
-
-        return teaser;
-    }
-
-    private static String getTextFromCustomMeta(CustomMeta meta, String fieldname) {
-        if (meta.getName().contains(fieldname)) {
-            return meta.getValue(fieldname).toString();
-        }
-        return null;
-    }
-
-    private static DateTime getDateFromCustomMeta(CustomMeta meta, String fieldname) {
-        if (meta.getName().contains(fieldname)) {
-            return new DateTime(meta.getValue(fieldname));
-        }
-        return null;
-    }
-
-    public void setKeywordFilters(List<String> keywordUris) {
-        TaxonomyFactory taxonomyFactory = new TaxonomyFactory();
-        List<Keyword> keywords = new ArrayList<Keyword>();
-
-        for (String kwUri : keywordUris) {
-            Keyword kw = taxonomyFactory.getTaxonomyKeyword(kwUri);
-            if (kw != null) {
-                keywords.add(kw);
-            }
+        for (Map.Entry<String, String> entry : keywordFilters.entries()) {
+            children.add(new TaxonomyKeywordCriteria(entry.getKey(), entry.getValue(), true));
         }
 
-        if (keywordFilters == null) {
-            keywordFilters = ArrayListMultimap.create();
-        }
-
-        for (Keyword kw : keywords) {
-            keywordFilters.put(kw.getTaxonomyURI(), kw.getKeywordURI());
-        }
-    }
-
-    public static Keyword loadKeyword(String keywordUri) {
-        TaxonomyFactory taxonomyFactory = new TaxonomyFactory();
-        return taxonomyFactory.getTaxonomyKeyword(keywordUri);
-    }
-
-    public static List<Keyword> loadKeywords(List<String> keywordUris) {
-        List<Keyword> res = new ArrayList<Keyword>();
-        TaxonomyFactory taxonomyFactory = new TaxonomyFactory();
-
-        for (String uri : keywordUris) {
-            Keyword kw = taxonomyFactory.getTaxonomyKeyword(uri);
-            if (kw != null) {
-                res.add(kw);
-            }
-        }
-        return res;
+        return new AndCriteria(children.toArray(new Criteria[children.size()]));
     }
 
     private SortParameter getSortParameter() {
-        SortDirection sortDirection = (sort.toLowerCase().endsWith("asc")) ? SortParameter.ASCENDING : SortParameter.DESCENDING;
-        return new SortParameter(getSortColumn(), sortDirection);
+        SortDirection dir = sort.toLowerCase().endsWith("asc") ? SortDirection.ASCENDING : SortDirection.DESCENDING;
+        return new SortParameter(getSortColumn(), dir);
     }
 
     private SortColumn getSortColumn() {
-        //TODO add more options if required
-        int pos = sort.trim().indexOf(" ");
-
-        String sorting = pos > 0 ? sort.trim().substring(0, pos) : sort.trim();
-        switch (sorting.toLowerCase()) {
+        final String sortTrim = sort.trim();
+        final int pos = sortTrim.indexOf(' ');
+        final String sortCol = pos > 0 ? sortTrim.substring(0, pos) : sortTrim;
+        switch (sortCol.toLowerCase()) {
             case "title":
                 return SortParameter.ITEMS_TITLE;
+
             case "pubdate":
                 return SortParameter.ITEMS_LAST_PUBLISHED_DATE;
+
             default:
-                //Default is to assume that its a custom metadata date field;
+                // Default is to assume that its a custom metadata date field
                 return new CustomMetaKeyColumn(sort, MetadataType.DATE);
         }
+    }
+
+    private Teaser getTeaserFromMeta(ComponentMeta compMeta) {
+        final Teaser result = new Teaser();
+
+        final Link link = new Link();
+        link.setUrl("tcm:" + compMeta.getPublicationId() + "-" + compMeta.getId());
+        result.setLink(link);
+
+        final CustomMeta customMeta = compMeta.getCustomMeta();
+
+        final DateTime date = getDateFromCustomMeta(customMeta, "dateCreated");
+        result.setDate(date != null ? date : new DateTime(compMeta.getLastPublicationDate()));
+
+        final String headline = getTextFromCustomMeta(customMeta, "name");
+        result.setHeadline(headline != null ? headline : compMeta.getTitle());
+
+        result.setText(getTextFromCustomMeta(customMeta, "introText"));
+
+        return result;
+    }
+
+    private String getTextFromCustomMeta(CustomMeta meta, String fieldName) {
+        return meta.getNameValues().containsKey(fieldName) ? meta.getFirstValue(fieldName).toString() : null;
+    }
+
+    private DateTime getDateFromCustomMeta(CustomMeta meta, String fieldName) {
+        if (meta.getNameValues().containsKey(fieldName)) {
+            Object firstValue = meta.getFirstValue(fieldName);
+            if (!firstValue.equals("")) {
+                return new DateTime(firstValue);
+            }
+        }
+
+        return null;
     }
 }

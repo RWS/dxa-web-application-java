@@ -3,9 +3,14 @@ package com.sdl.webapp.dd4t;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.api.content.ContentResolver;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.entity.ContentList;
+import com.sdl.webapp.common.api.model.entity.Teaser;
+import com.sdl.webapp.tridion.query.BrokerQuery;
+import com.sdl.webapp.tridion.query.BrokerQueryException;
 import org.dd4t.contentmodel.GenericPage;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.contentmodel.exceptions.SerializationException;
@@ -40,10 +45,13 @@ public final class DD4TContentProvider implements ContentProvider {
 
     private final PageBuilder pageBuilder;
 
+    private final ContentResolver contentResolver;
+
     @Autowired
-    public DD4TContentProvider(PageFactory dd4tPageFactory, PageBuilder pageBuilder) {
+    public DD4TContentProvider(PageFactory dd4tPageFactory, PageBuilder pageBuilder, ContentResolver contentResolver) {
         this.dd4tPageFactory = dd4tPageFactory;
         this.pageBuilder = pageBuilder;
+        this.contentResolver = contentResolver;
     }
 
     @Override
@@ -124,5 +132,41 @@ public final class DD4TContentProvider implements ContentProvider {
 
     private static boolean hasExtension(String path) {
         return path.lastIndexOf('.') > path.lastIndexOf('/');
+    }
+
+    @Override
+    public void populateDynamicList(ContentList contentList, Localization localization) throws ContentProviderException {
+        final BrokerQuery brokerQuery = new BrokerQuery();
+        brokerQuery.setStart(contentList.getStart());
+        brokerQuery.setPublicationId(Integer.parseInt(localization.getId()));
+        brokerQuery.setPageSize(contentList.getPageSize());
+        brokerQuery.setSchemaId(mapSchema(contentList.getContentType().getKey(), localization));
+        brokerQuery.setSort(contentList.getSort().getKey());
+
+        // Execute query
+        try {
+            contentList.setItemListElements(brokerQuery.executeQuery());
+        } catch (BrokerQueryException e) {
+            throw new ContentProviderException(e);
+        }
+
+        // Resolve links
+        for (Teaser item : contentList.getItemListElements()) {
+            item.getLink().setUrl(contentResolver.resolveLink(item.getLink().getUrl()));
+        }
+
+        contentList.setHasMore(brokerQuery.isHasMore());
+    }
+
+    private int mapSchema(String schemaKey, Localization localization) {
+        final String[] parts = schemaKey.split("\\.");
+        final String configKey = parts.length > 1 ? (parts[0] + ".schemas." + parts[1]) : ("core.schemas." + parts[0]);
+        final String schemaId = localization.getConfiguration(configKey);
+        try {
+            return Integer.parseInt(schemaId);
+        } catch (NumberFormatException e) {
+            LOG.warn("Error while parsing schema id: {}", schemaId, e);
+            return 0;
+        }
     }
 }

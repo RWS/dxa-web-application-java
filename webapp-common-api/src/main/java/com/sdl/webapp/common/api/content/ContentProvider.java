@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api.content;
 
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.entity.ContentList;
 
 import java.io.InputStream;
 
@@ -29,4 +30,13 @@ public interface ContentProvider {
      * @throws ContentProviderException If an error occurred so that the content of the page could be retrieved.
      */
     InputStream getPageContent(String path, Localization localization) throws ContentProviderException;
+
+    /**
+     * Populates a dynamic list.
+     *
+     * @param contentList The list to populate.
+     * @param localization The localization.
+     * @throws ContentProviderException If an error occurred so that the content of the list could not be retrieved.
+     */
+    void populateDynamicList(ContentList contentList, Localization localization) throws ContentProviderException;
 }

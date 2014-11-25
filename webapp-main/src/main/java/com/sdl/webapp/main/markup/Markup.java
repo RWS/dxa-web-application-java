@@ -10,6 +10,8 @@ import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Region;
 import com.sdl.webapp.main.markup.html.HtmlAttribute;
 import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,6 +114,19 @@ public class Markup {
     }
 
     public String formatDateTime(DateTime dateTime, String pattern) {
+        return DateTimeFormat.forPattern(pattern).print(dateTime);
+    }
+
+    public String formatDateTimeDiff(DateTime dateTime, String pattern) {
+        final int dayDiff = Days.daysBetween(dateTime.toLocalDate(), LocalDate.now()).getDays();
+        if (dayDiff <= 0) {
+            return webRequestContext.getLocalization().getResource("core.todayText");
+        } else if (dayDiff == 1) {
+            return webRequestContext.getLocalization().getResource("core.yesterdayText");
+        } else if (dayDiff <= 7) {
+            return MessageFormat.format(webRequestContext.getLocalization().getResource("core.xDaysAgoText"), dayDiff);
+        }
+
         return DateTimeFormat.forPattern(pattern).print(dateTime);
     }
 

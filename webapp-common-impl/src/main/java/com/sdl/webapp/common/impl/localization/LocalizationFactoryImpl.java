@@ -44,6 +44,9 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     private static final String CONFIG_BOOTSTRAP_PATH = "/system/config/_all.json";
     private static final String RESOURCES_BOOTSTRAP_PATH = "/system/resources/_all.json";
 
+    private static final String VERSION_PATH = "/version.json";
+    private static final String DEFAULT_VERSION_PATH = "/system/assets/version.json";
+
     private static final String SEMANTIC_SCHEMAS_PATH = "/system/mappings/schemas.json";
     private static final String SEMANTIC_VOCABULARIES_PATH = "/system/mappings/vocabularies.json";
 
@@ -111,7 +114,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     private void loadVersion(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
         try {
-            StaticContentItem item = staticContentProvider.getStaticContent("/version.json", id, path);
+            StaticContentItem item = staticContentProvider.getStaticContent(VERSION_PATH, id, path);
             try (final InputStream in = item.getContent()) {
                 builder.setVersion(objectMapper.readTree(in).get("version").asText());
                 return;
@@ -124,7 +127,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         }
 
         final File file = new File(new File(webApplicationContext.getServletContext().getRealPath("/")),
-                "/system/assets/version.json");
+                DEFAULT_VERSION_PATH);
         if (!file.exists()) {
             throw new LocalizationFactoryException("File not found: " + file.getPath());
         }

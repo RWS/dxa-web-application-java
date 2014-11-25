@@ -73,8 +73,15 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
             LOG.trace("getStaticContent: {} [{}] {}", new Object[] { path, localizationId, localizationPath });
         }
 
-        final StaticContentFile staticContentFile = getStaticContentFile(removeVersionNumber(path), localizationId,
-                localizationPath);
+        final String contentPath;
+        if (localizationPath.length() > 1) {
+            contentPath = localizationPath + removeVersionNumber(path.startsWith(localizationPath) ?
+                    path.substring(localizationPath.length()) : path);
+        } else {
+            contentPath = removeVersionNumber(path);
+        }
+
+        final StaticContentFile staticContentFile = getStaticContentFile(contentPath, localizationId);
 
         return new StaticContentItem() {
             @Override
@@ -98,11 +105,10 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 
-    private StaticContentFile getStaticContentFile(String path, String localizationId, String localizationPath)
+    private StaticContentFile getStaticContentFile(String path, String localizationId)
             throws ContentProviderException {
-        final File file = new File(new File(new File(new File(new File(
-                webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localizationId),
-                localizationPath), path);
+        final File file = new File(new File(new File(new File(
+                webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localizationId), path);
         LOG.trace("getStaticContentFile: {}", file);
 
         final int publicationId = Integer.parseInt(localizationId);

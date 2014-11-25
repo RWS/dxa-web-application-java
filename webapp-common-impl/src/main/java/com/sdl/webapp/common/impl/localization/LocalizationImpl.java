@@ -142,9 +142,12 @@ class LocalizationImpl implements Localization {
         if (!url.startsWith(path)) {
             return false;
         }
+        if (url.startsWith(mediaRoot)) {
+            return true;
+        }
 
         final String p = path.equals("/") ? url : url.substring(path.length());
-        return p.equals(FAVICON_PATH) || p.startsWith(mediaRoot) || SYSTEM_ASSETS_PATTERN.matcher(p).matches();
+        return p.equals(FAVICON_PATH) || SYSTEM_ASSETS_PATTERN.matcher(p).matches();
     }
 
     @Override

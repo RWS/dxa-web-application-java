@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion;
 
+import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.localization.*;
 import com.tridion.dynamiccontent.DynamicContent;
 import com.tridion.dynamiccontent.publication.PublicationMapping;
@@ -11,15 +12,14 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.sdl.webapp.tridion.PublicationMappingUtil.getPublicationMappingBaseUrl;
-import static com.sdl.webapp.tridion.PublicationMappingUtil.getPublicationMappingPath;
-
 /**
  * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
  */
 @Component
 public class TridionLocalizationResolver implements LocalizationResolver {
     private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationResolver.class);
+
+    private static final String DEFAULT_PORT = "80";
 
     private final Map<String, Localization> localizations = new HashMap<>();
 
@@ -64,5 +64,41 @@ public class TridionLocalizationResolver implements LocalizationResolver {
         } catch (LocalizationFactoryException e) {
             throw new LocalizationResolverException("Exception while creating localization: [" + id + "] " + path, e);
         }
+    }
+
+    /**
+     * Gets the base URL of a publication mapping.
+     *
+     * @param publicationMapping The publication mapping.
+     * @return The base URL of the publication mapping.
+     */
+    private String getPublicationMappingBaseUrl(PublicationMapping publicationMapping) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(publicationMapping.getProtocol()).append("://").append(publicationMapping.getDomain());
+
+        final String port = publicationMapping.getPort();
+        if (!DEFAULT_PORT.equals(port)) {
+            sb.append(':').append(port);
+        }
+
+        return sb.append(getPublicationMappingPath(publicationMapping)).toString();
+    }
+
+    /**
+     * Gets the publication mapping path. The returned path always starts with a "/" and does not end with a "/", unless
+     * the path is the root path "/" itself.
+     *
+     * @param publicationMapping The publication mapping.
+     * @return The publication mapping path.
+     */
+    private String getPublicationMappingPath(PublicationMapping publicationMapping) {
+        String path = Strings.nullToEmpty(publicationMapping.getPath());
+        if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+        if (path.length() > 1 && path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        return path;
     }
 }

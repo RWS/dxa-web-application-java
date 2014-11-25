@@ -13,27 +13,40 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
 
 @SemanticEntities({
         @SemanticEntity(entityName = "ItemList", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true),
+        @SemanticEntity(entityName = "ItemList", vocabulary = SDL_CORE, prefix = "i"),
         @SemanticEntity(entityName = "ContentQuery", vocabulary = SDL_CORE, prefix = "q")
 })
-
 public class ContentList extends AbstractEntity {
 
     @SemanticProperties({
             @SemanticProperty("s:headline"),
+            @SemanticProperty("i:headline"),
             @SemanticProperty("q:headline")
     })
     private String headline;
 
-    @SemanticProperty("q:link")
+    @SemanticProperties({
+            @SemanticProperty("i:link"),
+            @SemanticProperty("q:link")
+    })
     private Link link;
 
-    @SemanticProperty("q:pageSize")
+    @SemanticProperties({
+            @SemanticProperty("i:pageSize"),
+            @SemanticProperty("q:pageSize")
+    })
     private int pageSize;
 
-    @SemanticProperty("q:contentType")
+    @SemanticProperties({
+            @SemanticProperty("i:contentType"),
+            @SemanticProperty("q:contentType")
+    })
     private Tag contentType;
 
-    @SemanticProperty("q:sort")
+    @SemanticProperties({
+            @SemanticProperty("i:sort"),
+            @SemanticProperty("q:sort")
+    })
     private Tag sort;
 
     private int start;
@@ -42,7 +55,10 @@ public class ContentList extends AbstractEntity {
 
     private boolean hasMore;
 
-    @SemanticProperty("s:itemListElement")
+    @SemanticProperties({
+            @SemanticProperty("s:itemListElement"),
+            @SemanticProperty("i:itemListElement")
+    })
     private List<Teaser> itemListElements = new ArrayList<>();
 
     public String getHeadline() {

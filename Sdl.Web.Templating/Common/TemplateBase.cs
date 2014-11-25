@@ -197,38 +197,26 @@ namespace Sdl.Web.Tridion.Common
             return repository as Publication;
         }
 
+        /// <summary>
+        /// Determine if current action is publishing to a XPM enabled target.
+        /// </summary>
+        /// <returns>True if publishing to a target which is XPM enabled.</returns>
         protected bool IsPublishingToStaging()
         {
-            bool isEnabled = false;
+            bool isXpmEnabled = false;
 
-            // TODO: change for 8.0 to use API (as there will be no Publication Targets anymore)
+            // TODO: change for 8.0 to use Utility.IsPublishTargetXpmEnabled(Engine.PublishingContext)
             if (Engine.PublishingContext != null)
             {
                 PublicationTarget pubTarget = Engine.PublishingContext.PublicationTarget;
                 if (pubTarget != null)
                 {
-                    ApplicationData appData = pubTarget.LoadApplicationData("SiteEdit");
-                    if (appData != null)
-                    {
-                        // appdata is expected to be a utf-8 encoded string
-                        string xmlData = Encoding.UTF8.GetString(appData.Data);
-                        XDocument doc = XDocument.Parse(xmlData);
-
-                        //<configuration xmlns="http://www.sdltridion.com/2011/SiteEdit">
-                        //  <PublicationTarget xmlns="http://www.sdltridion.com/2011/SiteEdit">
-                        //    <EnableSiteEdit>true</EnableSiteEdit>
-                        //    ...
-                        //  </PublicationTarget>
-                        //</configuration>
-                        XNamespace nsSiteEdit = "http://www.sdltridion.com/2011/SiteEdit";
-                        isEnabled = Boolean.Parse(doc.Element(nsSiteEdit + "configuration").Element(nsSiteEdit + "PublicationTarget").Element(nsSiteEdit + "EnableSiteEdit").Value);
-                        
-                        Logger.Debug(String.Format("Publication Target {0} ({1}) enabled for inline editing: {2}", pubTarget.Title, pubTarget.Id, isEnabled));
-                    }
+                    isXpmEnabled = Utility.IsPublicationTargetXpmEnabled(pubTarget);
+                    Logger.Debug(String.Format("Publication Target {0} ({1}) enabled for inline editing: {2}", pubTarget.Title, pubTarget.Id, isXpmEnabled));
                 }
             }
 
-            return isEnabled;
+            return isXpmEnabled;
         }
 
         protected bool IsPreviewMode()

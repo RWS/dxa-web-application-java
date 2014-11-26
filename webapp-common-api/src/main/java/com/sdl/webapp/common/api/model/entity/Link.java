@@ -49,7 +49,7 @@ public class Link extends AbstractEntity {
 
     @Override
     public String toString() {
-        return "EmbeddedLink{" +
+        return "Link{" +
                 "url='" + url + '\'' +
                 ", linkText='" + linkText + '\'' +
                 ", alternateText='" + alternateText + '\'' +

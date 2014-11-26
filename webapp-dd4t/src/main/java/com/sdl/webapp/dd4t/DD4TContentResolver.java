@@ -4,17 +4,17 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableBiMap;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.util.NamedNodeMapAdapter;
 import com.sdl.webapp.common.api.content.ContentResolver;
+import com.sdl.webapp.common.util.NamedNodeMapAdapter;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.SimpleNamespaceContext;
 import com.sdl.webapp.common.util.XMLUtils;
+import com.sdl.webapp.tridion.TridionLinkResolver;
 import org.dd4t.contentmodel.GenericComponent;
 import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.contentmodel.exceptions.SerializationException;
 import org.dd4t.core.factories.ComponentFactory;
 import org.dd4t.core.filters.FilterException;
-import org.dd4t.core.resolvers.LinkResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +30,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sdl.webapp.dd4t.DD4TContentProvider.DEFAULT_PAGE_EXTENSION;
+import static com.sdl.webapp.dd4t.DD4TContentProvider.DEFAULT_PAGE_NAME;
 
 @Component
 public class DD4TContentResolver implements ContentResolver {
@@ -75,13 +78,13 @@ public class DD4TContentResolver implements ContentResolver {
 
     private final WebRequestContext webRequestContext;
 
-    private final LinkResolver linkResolver;
+    private final TridionLinkResolver linkResolver;
 
     private final ComponentFactory componentFactory;
 
     @Autowired
     public DD4TContentResolver(MediaHelper mediaHelper, WebRequestContext webRequestContext,
-                               LinkResolver linkResolver, ComponentFactory componentFactory) {
+                               TridionLinkResolver linkResolver, ComponentFactory componentFactory) {
         this.mediaHelper = mediaHelper;
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
@@ -90,16 +93,18 @@ public class DD4TContentResolver implements ContentResolver {
 
     @Override
     public String resolveLink(String url) {
-        if (url.startsWith("tcm:")) {
-            try {
-                return linkResolver.resolve(url);
-            } catch (SerializationException | ItemNotFoundException e) {
-                LOG.warn("Exception while resolving link: {}", url, e);
-                return url;
+        String resolvedUrl = linkResolver.resolveLink(url, false);
+
+        if (!Strings.isNullOrEmpty(resolvedUrl)) {
+            if (resolvedUrl.endsWith(DEFAULT_PAGE_EXTENSION)) {
+                resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_EXTENSION.length());
+            }
+            if (resolvedUrl.endsWith("/" + DEFAULT_PAGE_NAME)) {
+                resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_NAME.length());
             }
         }
 
-        return url;
+        return resolvedUrl;
     }
 
     @Override

@@ -62,9 +62,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                     if (semanticField != null) {
                         foundMatch = true;
                         LOG.debug("Match found: {} -> {}", fieldSemantics, semanticField);
-                    }
 
-                    if (semanticField != null) {
                         FieldData fieldData = null;
                         try {
                             fieldData = fieldDataProvider.getFieldData(semanticField, new TypeDescriptor(field));

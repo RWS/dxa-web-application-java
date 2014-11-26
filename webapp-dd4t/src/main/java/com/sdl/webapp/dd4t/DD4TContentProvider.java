@@ -34,8 +34,8 @@ import java.text.ParseException;
 public final class DD4TContentProvider implements ContentProvider {
     private static final Logger LOG = LoggerFactory.getLogger(DD4TContentProvider.class);
 
-    private static final String DEFAULT_PAGE_NAME = "index.html";
-    private static final String DEFAULT_PAGE_EXTENSION = ".html";
+    public static final String DEFAULT_PAGE_NAME = "index";
+    public static final String DEFAULT_PAGE_EXTENSION = ".html";
 
     private static interface TryFindPage<T> {
         public T tryFindPage(String path, int publicationId) throws ContentProviderException;
@@ -119,10 +119,10 @@ public final class DD4TContentProvider implements ContentProvider {
 
     private static String processPath(String path) {
         if (Strings.isNullOrEmpty(path)) {
-            return DEFAULT_PAGE_NAME;
+            return DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
         }
         if (path.endsWith("/")) {
-            path = path + DEFAULT_PAGE_NAME;
+            path = path + DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
         }
         if (!hasExtension(path)) {
             path = path + DEFAULT_PAGE_EXTENSION;

@@ -9,7 +9,6 @@ import org.joda.time.DateTime;
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
 
 @SemanticEntities({
-        @SemanticEntity(entityName = "Teaser", vocabulary = SDL_CORE, prefix = "t"),
         @SemanticEntity(entityName = "Image", vocabulary = SDL_CORE, prefix = "i"),
         @SemanticEntity(entityName = "Article", vocabulary = SDL_CORE, prefix = "a"),
         @SemanticEntity(entityName = "Place", vocabulary = SDL_CORE, prefix = "p"),

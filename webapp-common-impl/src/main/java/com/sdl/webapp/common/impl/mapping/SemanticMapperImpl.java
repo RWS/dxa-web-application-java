@@ -85,36 +85,40 @@ public class SemanticMapperImpl implements SemanticMapper {
                             }
                         }
                     }
+                }
 
-                    // Special cases
-                    final String propertyName = fieldSemantics.getPropertyName();
-                    if (propertyName.equals(SELF_PROPERTY)) {
-                        foundMatch = true;
-                        Object fieldData = null;
-                        try {
-                            fieldData = fieldDataProvider.getSelfFieldData(new TypeDescriptor(field));
-                        } catch (SemanticMappingException e) {
-                            LOG.error("Exception while getting self property data for: " + field, e);
-                        }
+                // Special cases - only try these when nothing was found yet
+                if (!foundMatch) {
+                    for (FieldSemantics fieldSemantics : registrySemantics) {
+                        final String propertyName = fieldSemantics.getPropertyName();
+                        if (propertyName.equals(SELF_PROPERTY)) {
+                            foundMatch = true;
+                            Object fieldData = null;
+                            try {
+                                fieldData = fieldDataProvider.getSelfFieldData(new TypeDescriptor(field));
+                            } catch (SemanticMappingException e) {
+                                LOG.error("Exception while getting self property data for: " + field, e);
+                            }
 
-                        if (fieldData != null) {
-                            field.setAccessible(true);
-                            field.set(entity, fieldData);
-                            break;
-                        }
-                    } else if (propertyName.equals(ALL_PROPERTY)) {
-                        foundMatch = true;
-                        Map<String, String> fieldData = null;
-                        try {
-                            fieldData = fieldDataProvider.getAllFieldData();
-                        } catch (SemanticMappingException e) {
-                            LOG.error("Exception while getting all property data for: " + field, e);
-                        }
+                            if (fieldData != null) {
+                                field.setAccessible(true);
+                                field.set(entity, fieldData);
+                                break;
+                            }
+                        } else if (propertyName.equals(ALL_PROPERTY)) {
+                            foundMatch = true;
+                            Map<String, String> fieldData = null;
+                            try {
+                                fieldData = fieldDataProvider.getAllFieldData();
+                            } catch (SemanticMappingException e) {
+                                LOG.error("Exception while getting all property data for: " + field, e);
+                            }
 
-                        if (fieldData != null) {
-                            field.setAccessible(true);
-                            field.set(entity, fieldData);
-                            break;
+                            if (fieldData != null) {
+                                field.setAccessible(true);
+                                field.set(entity, fieldData);
+                                break;
+                            }
                         }
                     }
                 }

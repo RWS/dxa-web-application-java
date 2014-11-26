@@ -134,4 +134,8 @@ public class Markup {
     public String formatMessage(String pattern, String arg) {
         return MessageFormat.format(pattern, arg);
     }
+
+    public String replaceLineEndsWithHtmlBreaks(String text) {
+        return text.replaceAll("\\. ", "<br/>");
+    }
 }

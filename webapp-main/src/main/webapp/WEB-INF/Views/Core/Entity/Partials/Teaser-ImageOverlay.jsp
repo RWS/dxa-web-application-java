@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
+<%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="region" type="com.sdl.webapp.common.api.model.Region" scope="request"/>
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
 <jsp:useBean id="carouselItem" type="com.sdl.webapp.common.api.model.entity.Teaser" scope="request"/>
@@ -22,10 +23,13 @@
         <c:set var="imageAspect" value="0.0"/>
     </c:otherwise>
 </c:choose>
-<div>
+<div ${markup.entity(carouselItem)}>
     <c:choose>
         <c:when test="${not empty carouselItem.media}" >
-            <span><tri:media media="${carouselItem.media}" widthFactor="100%" aspect="${imageAspect}"/></span>
+            <span ${markup.property(carouselItem, "media")}>
+                <xpm:property entity="${carouselItem}" property="media"/>
+                <tri:media media="${carouselItem.media}" widthFactor="100%" aspect="${imageAspect}"/>
+            </span>
         </c:when>
         <c:otherwise>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" width="100%">
@@ -34,17 +38,18 @@
     <c:if test="${not empty carouselItem.headline or not empty carouselItem.text}">
         <div class="overlay overlay-tl ribbon">
             <c:if test="${not empty carouselItem.headline}">
-                <h2>${carouselItem.headline}</h2>
+                <h2 ${markup.property(carouselItem, "headline")}><xpm:property entity="${carouselItem}" property="headline"/>${carouselItem.headline}</h2>
             </c:if>
             <c:if test="${not empty carouselItem.text}">
-                <div>${carouselItem.text}</div>
+                <div ${markup.property(carouselItem, "text")}><xpm:property entity="${carouselItem}" property="text"/>${markup.replaceLineEndsWithHtmlBreaks(carouselItem.text)}</div>
             </c:if>
         </div>
     </c:if>
     <c:if test="${not empty carouselItem.link.linkText}">
         <div class="carousel-caption">
             <p>
-                <a href="${carouselItem.link.url}" title="${carouselItem.link.alternateText}" class="btn btn-primary">
+                <a href="${carouselItem.link.url}" title="${carouselItem.link.alternateText}" class="btn btn-primary" ${markup.property(carouselItem, "link")}>
+                    <xpm:property entity="${carouselItem}" property="link"/>
                     ${carouselItem.link.linkText}
                 </a>
             </p>

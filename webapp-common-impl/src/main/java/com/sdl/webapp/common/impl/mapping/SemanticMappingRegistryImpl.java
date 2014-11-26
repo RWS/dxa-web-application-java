@@ -39,14 +39,22 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
 
     @Override
     public List<SemanticEntityInfo> getEntityInfo(Class<? extends Entity> entityClass) {
-        List<SemanticEntityInfo> semanticEntityInfoList = semanticEntityInfo.get(entityClass);
-        return semanticEntityInfoList != null ? semanticEntityInfoList : Collections.<SemanticEntityInfo>emptyList();
+        final List<SemanticEntityInfo> result = new ArrayList<>();
+
+        // Get semantic entity info of this class and all superclasses (that implement interface Entity)
+        Class<? extends Entity> cls = entityClass;
+        while (cls != null) {
+            result.addAll(semanticEntityInfo.get(cls));
+            Class<?> superclass = cls.getSuperclass();
+            cls = Entity.class.isAssignableFrom(superclass) ? superclass.asSubclass(Entity.class) : null;
+        }
+
+        return result;
     }
 
     @Override
     public List<SemanticPropertyInfo> getPropertyInfo(Field field) {
-        List<SemanticPropertyInfo> semanticPropertyInfoList = semanticPropertyInfo.get(field);
-        return semanticPropertyInfoList != null ? semanticPropertyInfoList : Collections.<SemanticPropertyInfo>emptyList();
+        return semanticPropertyInfo.get(field);
     }
 
     /**

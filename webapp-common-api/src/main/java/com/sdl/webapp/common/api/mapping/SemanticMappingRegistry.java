@@ -27,7 +27,7 @@ public interface SemanticMappingRegistry {
 
     /**
      * Gets semantic information for the specified entity class. This information is gathered from the semantic entity
-     * annotation(s) on the entity class.
+     * annotation(s) on the entity class and all of its superclasses.
      *
      * @param entityClass The entity class.
      * @return A list of {@code SemanticEntityInfo} objects containing semantic entity information for the entity class.

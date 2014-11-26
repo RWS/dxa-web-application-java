@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.util.UrlPathHelper;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +46,7 @@ public class MainController {
 
     private static final String ALLOW_JSON_RESPONSE_PROPERTY = "AllowJsonResponse";
 
+    private static final String SECTION_ERROR_VIEW = "Shared/SectionError";
     private static final String NOT_FOUND_ERROR_VIEW = "Shared/NotFoundError";
     private static final String SERVER_ERROR_VIEW = "Shared/ServerError";
 
@@ -154,7 +156,7 @@ public class MainController {
     @ExceptionHandler(NotFoundException.class)
     public String handleNotFoundException(HttpServletRequest request) {
         request.setAttribute(MARKUP, markup);
-        return NOT_FOUND_ERROR_VIEW;
+        return isIncludeRequest(request) ? SECTION_ERROR_VIEW : NOT_FOUND_ERROR_VIEW;
     }
 
     /**
@@ -168,7 +170,7 @@ public class MainController {
     public String handleException(HttpServletRequest request, Exception exception) {
         LOG.error("Exception while processing request for: {}", urlPathHelper.getRequestUri(request), exception);
         request.setAttribute(MARKUP, markup);
-        return SERVER_ERROR_VIEW;
+        return isIncludeRequest(request) ? SECTION_ERROR_VIEW : SERVER_ERROR_VIEW;
     }
 
     private Page getPageModel(String path, Localization localization) {
@@ -193,5 +195,9 @@ public class MainController {
             LOG.error("An unexpected error occurred", e);
             throw new InternalServerErrorException("An unexpected error occurred", e);
         }
+    }
+
+    private boolean isIncludeRequest(HttpServletRequest request) {
+        return request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null;
     }
 }

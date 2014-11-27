@@ -20,11 +20,25 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.CORE_AREA_NA
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.PAGE_ACTION_NAME;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.PAGE_CONTROLLER_NAME;
 
+/**
+ * Include page controller for the Core area.
+ *
+ * This handles include requests to /system/mvc/Core/Page/{includePageName}
+ */
 @Controller
 @RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + PAGE_CONTROLLER_NAME)
 public class IncludePageController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(IncludePageController.class);
 
+    /**
+     * Handles a request for an include page.
+     *
+     * @param request The request.
+     * @param includePageName The name of the include page.
+     * @param viewName The name of the view to use (optional; overrides the name of the view in the include page
+     *                 if specified).
+     * @return The name of the page view that should be rendered for this request.
+     */
     @RequestMapping(method = RequestMethod.GET, value = PAGE_ACTION_NAME + "/{includePageName}")
     public String handleGetIncludePage(HttpServletRequest request, @PathVariable String includePageName,
                                        @RequestParam(required = false) String viewName) {

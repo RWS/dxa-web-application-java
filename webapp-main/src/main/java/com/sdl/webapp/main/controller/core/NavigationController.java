@@ -28,6 +28,12 @@ import static com.sdl.webapp.main.RequestAttributeNames.ENTITY_MODEL;
 import static com.sdl.webapp.main.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.*;
 
+/**
+ * Navigation controller for the Core area.
+ *
+ * This handles include requests to /system/mvc/Core/Navigation/Navigation/{regionName}/{entityId}
+ * and /system/mvc/Core/Navigation/SiteMap/{regionName}/{entityId}
+ */
 @Controller
 @RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + NAVIGATION_CONTROLLER_NAME)
 public class NavigationController extends AbstractController {
@@ -47,6 +53,17 @@ public class NavigationController extends AbstractController {
         this.navigationProvider = navigationProvider;
     }
 
+    /**
+     * Handles a request for navigation data, for example for the top navigation menu, left-side navigation or
+     * breadcrumb bar.
+     *
+     * @param request The request.
+     * @param regionName The name of the region.
+     * @param entityId The name of the entity.
+     * @param navType Navigation type.
+     * @return The name of the entity view that should be rendered for this request.
+     * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
+     */
     @RequestMapping(method = RequestMethod.GET, value = NAVIGATION_ACTION_NAME + "/{regionName}/{entityId}")
     public String handleGetNavigation(HttpServletRequest request, @PathVariable String regionName,
                                       @PathVariable String entityId, @RequestParam String navType)
@@ -90,6 +107,15 @@ public class NavigationController extends AbstractController {
         return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
     }
 
+    /**
+     * Handles a request to get the sitemap (in HTML).
+     *
+     * @param request The request.
+     * @param regionName The name of the region.
+     * @param entityId The name of the entity.
+     * @return The name of the entity view that should be rendered for this request.
+     * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
+     */
     @RequestMapping(method = RequestMethod.GET, value = SITEMAP_ACTION_NAME + "/{regionName}/{entityId}")
     public String handleGetSiteMap(HttpServletRequest request, @PathVariable String regionName,
                                    @PathVariable String entityId) throws NavigationProviderException {

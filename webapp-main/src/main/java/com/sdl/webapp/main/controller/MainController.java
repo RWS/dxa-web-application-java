@@ -35,7 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static com.sdl.webapp.main.RequestAttributeNames.*;
-import static com.sdl.webapp.main.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
+import static com.sdl.webapp.main.controller.ControllerUtils.*;
 
 /**
  * Main controller. This handles requests that come from the client.
@@ -45,10 +45,6 @@ public class MainController {
     private static final Logger LOG = LoggerFactory.getLogger(MainController.class);
 
     private static final String ALLOW_JSON_RESPONSE_PROPERTY = "AllowJsonResponse";
-
-    private static final String SECTION_ERROR_VIEW = "Shared/SectionError";
-    private static final String NOT_FOUND_ERROR_VIEW = "Shared/NotFoundError";
-    private static final String SERVER_ERROR_VIEW = "Shared/ServerError";
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
@@ -100,12 +96,11 @@ public class MainController {
      * Gets a page requested by a client in JSON format. For security reasons, this is only enabled if the system
      * property "AllowJsonResponse" is set to {@code true}; if not, a 406 Not Acceptable status code is returned.
      *
-     * @param request The request.
      * @param response The response.
      * @throws IOException If an I/O error occurs.
      */
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = "application/json")
-    public void handleGetPageJSON(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void handleGetPageJSON(HttpServletResponse response) throws IOException {
         final ServletServerHttpResponse res = new ServletServerHttpResponse(response);
 
         // Only handle this if explicitly enabled (by an environment property)

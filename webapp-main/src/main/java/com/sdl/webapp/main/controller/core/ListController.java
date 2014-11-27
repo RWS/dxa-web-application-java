@@ -23,6 +23,11 @@ import static com.sdl.webapp.main.RequestAttributeNames.ENTITY_MODEL;
 import static com.sdl.webapp.main.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static com.sdl.webapp.main.controller.core.CoreAreaConstants.*;
 
+/**
+ * List controller for the Core area.
+ *
+ * This handles include requests to /system/mvc/Core/List/{regionName}/{entityId}
+ */
 @Controller
 @RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + LIST_CONTROLLER_NAME)
 public class ListController extends AbstractController {
@@ -38,6 +43,14 @@ public class ListController extends AbstractController {
         this.contentProvider = contentProvider;
     }
 
+    /**
+     * Handles a request to fill a dynamic list with data.
+     *
+     * @param request The request.
+     * @param regionName The region name.
+     * @param entityId The entity id.
+     * @return The name of the entity view that should be rendered for this request.
+     */
     @RequestMapping(method = RequestMethod.GET, value = LIST_ACTION_NAME + "/{regionName}/{entityId}")
     public String handleGetList(HttpServletRequest request, @PathVariable String regionName,
                                 @PathVariable String entityId) {

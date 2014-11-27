@@ -14,6 +14,10 @@ public final class ControllerUtils {
 
     public static final String INCLUDE_PATH_PREFIX = "/system/mvc/";
 
+    public static final String SECTION_ERROR_VIEW = "Shared/SectionError";
+    public static final String NOT_FOUND_ERROR_VIEW = "Shared/NotFoundError";
+    public static final String SERVER_ERROR_VIEW = "Shared/ServerError";
+
     private ControllerUtils() {
     }
 

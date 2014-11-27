@@ -2,11 +2,14 @@ package com.sdl.webapp.common.api.content;
 
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
+import com.sdl.webapp.common.api.model.entity.SitemapItem;
 
 /**
  * Navigation provider.
  */
 public interface NavigationProvider {
+
+    SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException;
 
     /**
      * Gets navigation links for the top navigation menu for the specified request path.

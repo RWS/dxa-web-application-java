@@ -18,6 +18,7 @@ public final class CoreAreaConstants {
 
     public static final String NAVIGATION_CONTROLLER_NAME = "Navigation";
     public static final String NAVIGATION_ACTION_NAME = "Navigation";
+    public static final String SITEMAP_ACTION_NAME = "SiteMap";
 
     private CoreAreaConstants() {
     }

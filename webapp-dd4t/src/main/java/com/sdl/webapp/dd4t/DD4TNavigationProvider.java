@@ -1,10 +1,7 @@
 package com.sdl.webapp.dd4t;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdl.webapp.common.api.content.ContentProvider;
-import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.content.NavigationProvider;
-import com.sdl.webapp.common.api.content.NavigationProviderException;
+import com.sdl.webapp.common.api.content.*;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
@@ -35,6 +32,16 @@ public class DD4TNavigationProvider implements NavigationProvider {
     public DD4TNavigationProvider(ContentProvider contentProvider, ObjectMapper objectMapper) {
         this.contentProvider = contentProvider;
         this.objectMapper = objectMapper;
+    }
+
+    @Override
+    public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
+        try {
+            return objectMapper.readValue(contentProvider.getPageContent(NAVIGATION_MODEL_URL, localization),
+                    SitemapItem.class);
+        } catch (ContentProviderException | IOException e) {
+            throw new NavigationProviderException("Exception while loading navigation model", e);
+        }
     }
 
     @Override
@@ -103,15 +110,6 @@ public class DD4TNavigationProvider implements NavigationProvider {
         return false;
     }
 
-    private SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
-        try {
-            return objectMapper.readValue(contentProvider.getPageContent(NAVIGATION_MODEL_URL, localization),
-                    SitemapItem.class);
-        } catch (ContentProviderException | IOException e) {
-            throw new NavigationProviderException("Exception while loading navigation model", e);
-        }
-    }
-
     private List<Link> createLinksForVisibleItems(Iterable<SitemapItem> items) {
         final List<Link> links = new ArrayList<>();
         for (SitemapItem item : items) {
@@ -124,7 +122,7 @@ public class DD4TNavigationProvider implements NavigationProvider {
 
     private Link createLinkForItem(SitemapItem item) {
         final Link link = new Link();
-        link.setUrl(item.getUrl());     // TODO: Resolve link
+        link.setUrl(item.getUrl());
         link.setLinkText(item.getTitle());
         return link;
     }

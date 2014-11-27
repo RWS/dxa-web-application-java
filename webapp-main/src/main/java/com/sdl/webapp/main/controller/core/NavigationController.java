@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
+import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.main.controller.AbstractController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +20,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import static com.sdl.webapp.main.RequestAttributeNames.ENTITY_MODEL;
 import static com.sdl.webapp.main.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.CORE_AREA_NAME;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.NAVIGATION_ACTION_NAME;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.NAVIGATION_CONTROLLER_NAME;
+import static com.sdl.webapp.main.controller.core.CoreAreaConstants.*;
 
 @Controller
 @RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + NAVIGATION_CONTROLLER_NAME)
@@ -81,6 +84,42 @@ public class NavigationController extends AbstractController {
             navigationLinks.setPropertyData(entity.getPropertyData());
             request.setAttribute(ENTITY_MODEL, navigationLinks);
         }
+
+        final MvcData mvcData = entity.getMvcData();
+        LOG.trace("Entity MvcData: {}", mvcData);
+        return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = SITEMAP_ACTION_NAME + "/{regionName}/{entityId}")
+    public String handleGetSiteMap(HttpServletRequest request, @PathVariable String regionName,
+                                   @PathVariable String entityId) throws NavigationProviderException {
+        LOG.trace("handleGetSiteMap: regionName={}, entityId={}", regionName, entityId);
+
+        final Entity entity = getEntityFromRequest(request, regionName, entityId);
+
+        final SitemapItem navigationModel = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
+        navigationModel.setEntityData(entity.getEntityData());
+        navigationModel.setPropertyData(entity.getPropertyData());
+        request.setAttribute(ENTITY_MODEL, navigationModel);
+
+        // Put all items that do not have any subitems under the "Home" item
+        final List<SitemapItem> topSubItems = navigationModel.getItems();
+        final List<SitemapItem> homeSubItems = new ArrayList<>();
+        for (Iterator<SitemapItem> i = topSubItems.iterator(); i.hasNext(); ) {
+            final SitemapItem subItem = i.next();
+            if (subItem.getItems().isEmpty()) {
+                i.remove();
+                homeSubItems.add(subItem);
+            }
+        }
+
+        final SitemapItem homeItem = new SitemapItem();
+        homeItem.setTitle(navigationModel.getTitle());
+        homeItem.setUrl(navigationModel.getUrl());
+        homeItem.setItems(homeSubItems);
+
+        // Add the "Home" item as the first item
+        topSubItems.add(0, homeItem);
 
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);

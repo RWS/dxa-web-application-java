@@ -8,7 +8,11 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.main.markup.html.HtmlAttribute;
+import com.sdl.webapp.main.markup.html.HtmlElement;
+import com.sdl.webapp.main.markup.html.builders.HtmlBuilders;
+import com.sdl.webapp.main.markup.html.builders.SimpleElementBuilder;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -137,5 +141,33 @@ public class Markup {
 
     public String replaceLineEndsWithHtmlBreaks(String text) {
         return text.replaceAll("\\. ", "<br/>");
+    }
+
+    public String siteMapList(SitemapItem item) {
+        final HtmlElement htmlElement = siteMapListHelper(item);
+        return htmlElement != null ? htmlElement.toHtml() : "";
+    }
+
+    private HtmlElement siteMapListHelper(SitemapItem item) {
+        if (!item.getUrl().endsWith("/index")) {
+            final SimpleElementBuilder itemElementBuilder = HtmlBuilders.element("li")
+                    .withContent(HtmlBuilders.a(item.getUrl()).withTitle(item.getTitle()).withContent(item.getTitle())
+                            .build());
+
+            if (!item.getItems().isEmpty()) {
+                final SimpleElementBuilder childListBuilder = HtmlBuilders.element("ul").withClass("list-unstyled");
+                for (SitemapItem child : item.getItems()) {
+                    final HtmlElement childElement = siteMapListHelper(child);
+                    if (childElement != null) {
+                        childListBuilder.withContent(childElement);
+                    }
+                }
+                itemElementBuilder.withContent(childListBuilder.build());
+            }
+
+            return itemElementBuilder.build();
+        }
+
+        return null;
     }
 }

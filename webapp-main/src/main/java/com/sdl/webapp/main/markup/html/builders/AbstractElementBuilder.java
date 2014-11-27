@@ -52,6 +52,10 @@ public abstract class AbstractElementBuilder<B extends AbstractElementBuilder<B>
         return withContent(new HtmlTextNode(text));
     }
 
+    public B withLiteralContent(String text) {
+        return withContent(new HtmlTextNode(text, false));
+    }
+
     public HtmlElement build() {
         return new HtmlElement(tagName, closeTag, attributes.build(), content.build());
     }

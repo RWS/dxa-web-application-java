@@ -5,75 +5,48 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.main.markup.html.HtmlAttribute;
 import com.sdl.webapp.main.markup.html.HtmlElement;
+import com.sdl.webapp.main.markup.html.HtmlMultiNode;
+import com.sdl.webapp.main.markup.html.HtmlNode;
 import com.sdl.webapp.main.markup.html.builders.HtmlBuilders;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import java.util.Locale;
 import java.util.UUID;
 
-public class GoogleMapTag extends HtmlElementTag {
+public class GoogleMapTag extends AbstractGoogleMapTag {
 
-    private static final String CONFIG_MAPS_API_KEY = "core.mapsApiKey";
-    private static final String DUMMY_API_KEY = "xxx";
-
-    private static final int DEFAULT_MAP_WIDTH = 311;
-    private static final int DEFAULT_MAP_HEIGHT = 160;
-
-    private static final HtmlAttribute CLASS_STATIC_MAP_ATTR = new HtmlAttribute("class", "static-map");
-
-    private double latitude;
-    private double longitude;
-    private String markerName;
-    private int mapWidth = DEFAULT_MAP_WIDTH;
-    private int mapHeight = DEFAULT_MAP_HEIGHT;
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public void setMarkerName(String markerName) {
-        this.markerName = markerName;
-    }
-
-    public void setMapWidth(int mapWidth) {
-        this.mapWidth = mapWidth;
-    }
-
-    public void setMapHeight(int mapHeight) {
-        this.mapHeight = mapHeight;
-    }
+    private static final HtmlAttribute CLASS_MAP_CANVAS_ATTR = new HtmlAttribute("class", "map-canvas");
 
     @Override
-    public HtmlElement generateElement() {
+    protected HtmlNode generateNode() {
         final WebRequestContext webRequestContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
                 pageContext.getServletContext()).getBean(WebRequestContext.class);
         final Localization localization = webRequestContext.getLocalization();
 
-        final String latString = String.format(Locale.US, "%f", latitude);
-        final String lonString = String.format(Locale.US, "%f", longitude);
+        final String divId = "map" + UUID.randomUUID().toString().replaceAll("-", "");
 
-        final StringBuilder sb = new StringBuilder();
-        sb.append("?center=").append(latString).append(',').append(lonString);
-        sb.append("&zoom=15");
-        sb.append("&size=").append(mapWidth).append('x').append(mapHeight);
-        sb.append("&markers=").append(latString).append(',').append(lonString);
+        final String mapsApiKey = getMapsApiKey(localization);
+        final String queryString = !Strings.isNullOrEmpty(mapsApiKey) ? "?key=" + mapsApiKey : "";
 
-        final String mapsApiKey = localization.getConfiguration(CONFIG_MAPS_API_KEY);
-        if (!Strings.isNullOrEmpty(mapsApiKey) && !mapsApiKey.equals(DUMMY_API_KEY)) {
-            sb.append("&key=").append(mapsApiKey);
-        }
-
-        return HtmlBuilders.div()
-                .withId("map" + UUID.randomUUID().toString())
-                .withAttribute(CLASS_STATIC_MAP_ATTR)
-                .withAttribute("style", "height: " + Integer.toString(mapHeight))
-                .withContent(HtmlBuilders.img("//maps.googleapis.com/maps/api/staticmap" + sb.toString())
-                        .withAlt(markerName)
-                        .build())
+        final HtmlElement div = HtmlBuilders.div()
+                .withId(divId)
+                .withAttribute(CLASS_MAP_CANVAS_ATTR)
+                .withAttribute("style", "height:" + Integer.toString(getMapHeight()) + "px")
                 .build();
+
+        final HtmlElement script1 = HtmlBuilders.element("script")
+                .withAttribute("src", "//maps.googleapis.com/maps/api/js" + queryString)
+                .build();
+
+        final HtmlElement script2 = HtmlBuilders.element("script")
+                .withLiteralContent("function initialize() {\n" +
+                        "    var myLatlng = new google.maps.LatLng(" + getLatString() + ", " + getLonString() + ");\n" +
+                        "    var mapOptions = { center: myLatlng, zoom: 15 };\n" +
+                        "    var map = new google.maps.Map(document.getElementById(\"" + divId + "\"), mapOptions);\n" +
+                        "    var marker = new google.maps.Marker({ position: myLatlng, map: map, title: \"" + getMarkerName() + "\" });\n" +
+                        "}\n" +
+                        "google.maps.event.addDomListener(window, 'load', initialize);\n")
+                .build();
+
+        return new HtmlMultiNode(div, script1, script2);
     }
 }

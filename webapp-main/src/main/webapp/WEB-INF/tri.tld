@@ -153,6 +153,42 @@
         </attribute>
     </tag>
 
+    <!-- Insert a static Google map -->
+    <tag>
+        <name>googlestaticmap</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.GoogleStaticMapTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>latitude</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>double</type>
+        </attribute>
+        <attribute>
+            <name>longitude</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>double</type>
+        </attribute>
+        <attribute>
+            <name>markerName</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>mapWidth</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+        <attribute>
+            <name>mapHeight</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+    </tag>
+
     <!-- Insert a Google map -->
     <tag>
         <name>googlemap</name>

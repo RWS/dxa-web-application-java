@@ -18,7 +18,7 @@
         </c:choose>
     </h3>
     <c:if test="${not empty entity.location}">
-        <tri:googlemap latitude="${entity.location.latitude}" longitude="${entity.location.longitude}"
+        <tri:googlestaticmap latitude="${entity.location.latitude}" longitude="${entity.location.longitude}"
                        markerName="${entity.headline}" mapWidth="311" mapHeight="160"/>
     </c:if>
 </div>

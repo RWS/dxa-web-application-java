@@ -6,12 +6,19 @@ public final class HtmlTextNode extends HtmlNode {
 
     private final String text;
 
-    public HtmlTextNode(String text) {
+    private final boolean escape;
+
+    public HtmlTextNode(String text, boolean escape) {
         this.text = text;
+        this.escape = escape;
+    }
+
+    public HtmlTextNode(String text) {
+        this(text, true);
     }
 
     @Override
     protected String renderHtml() {
-        return HtmlUtils.htmlEscape(text);
+        return escape ? HtmlUtils.htmlEscape(text) : text;
     }
 }

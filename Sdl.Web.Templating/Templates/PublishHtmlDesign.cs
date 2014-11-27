@@ -47,12 +47,20 @@ namespace Sdl.Web.Tridion.Templates
             _mergeFileLines.Add("src\\templates\\partials\\module-scripts-footer.hbs", new List<string>());
 
             StringBuilder publishedFiles = new StringBuilder();
+            string drive = package.GetValue("drive") ?? String.Empty;
             string cleanup = package.GetValue("cleanup") ?? String.Empty;
 
-            // not using System.IO.Path.GetTempPath() because the paths in our zip are already quite long,
-            // so we need a very short temp path for the extract of our zipfile to succeed
-            // using drive from tridion cm homedir for temp folder
-            _tempFolder = ConfigurationSettings.GetTcmHomeDirectory().Substring(0, 3) + "t" + DateTime.Now.ToString("yyyyMMddHHmmssfff");
+            if (!String.IsNullOrEmpty(drive) && Char.IsLetter(drive.First()))
+            {
+                _tempFolder = drive.First() + @":\t" + DateTime.Now.ToString("yyyyMMddHHmmssfff"); 
+            }
+            else
+            {
+                // not using System.IO.Path.GetTempPath() because the paths in our zip are already quite long,
+                // so we need a very short temp path for the extract of our zipfile to succeed
+                // using drive from tridion cm homedir for temp folder
+                _tempFolder = ConfigurationSettings.GetTcmHomeDirectory().Substring(0, 3) + "t" + DateTime.Now.ToString("yyyyMMddHHmmssfff");                
+            }
 
             try
             {

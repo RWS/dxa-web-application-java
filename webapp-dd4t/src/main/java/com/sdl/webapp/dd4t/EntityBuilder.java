@@ -52,6 +52,7 @@ final class EntityBuilder {
             throws ContentProviderException {
         final GenericComponent component = componentPresentation.getComponent();
         final String componentId = component.getId();
+        LOG.debug("Creating entity for component: {}", componentId);
 
         final Map<String, Field> templateMeta = componentPresentation.getComponentTemplate().getMetadata();
         if (templateMeta == null) {

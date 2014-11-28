@@ -12,7 +12,8 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
         @SemanticEntity(entityName = "Image", vocabulary = SDL_CORE, prefix = "i"),
         @SemanticEntity(entityName = "Article", vocabulary = SDL_CORE, prefix = "a"),
         @SemanticEntity(entityName = "Place", vocabulary = SDL_CORE, prefix = "p"),
-        @SemanticEntity(entityName = "LinkedContent", vocabulary = SDL_CORE, prefix = "c")
+        @SemanticEntity(entityName = "LinkedContent", vocabulary = SDL_CORE, prefix = "c"),
+        @SemanticEntity(entityName = "StandardMetadata", vocabulary = SDL_CORE, prefix = "m")
 })
 public class Teaser extends AbstractEntity {
 
@@ -26,6 +27,7 @@ public class Teaser extends AbstractEntity {
     @SemanticProperties({
             @SemanticProperty("headline"),
             @SemanticProperty("subheading"),
+            @SemanticProperty("a:headline"),
             @SemanticProperty("p:name"),
             @SemanticProperty("c:headline"),
             @SemanticProperty("c:subheading")
@@ -43,11 +45,15 @@ public class Teaser extends AbstractEntity {
             @SemanticProperty("content"),
             @SemanticProperty("a:introText"),
             @SemanticProperty("c:text"),
-            @SemanticProperty("c:content")
+            @SemanticProperty("c:content"),
+            @SemanticProperty("m:introText"),
     })
     private String text;
 
-    @SemanticProperty("c:date")
+    @SemanticProperties({
+            @SemanticProperty("c:date"),
+            @SemanticProperty("m:dateCreated")
+    })
     private DateTime date;
 
     @SemanticProperties({

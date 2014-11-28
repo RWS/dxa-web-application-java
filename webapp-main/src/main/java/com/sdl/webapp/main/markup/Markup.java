@@ -135,8 +135,8 @@ public class Markup {
                 .print(dateTime);
     }
 
-    public String formatMessage(String pattern, String arg) {
-        return MessageFormat.format(pattern, arg);
+    public String formatMessage(String pattern, Object... args) {
+        return MessageFormat.format(pattern, args);
     }
 
     public String replaceLineEndsWithHtmlBreaks(String text) {

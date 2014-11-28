@@ -16,7 +16,7 @@ import com.sdl.webapp.main.markup.Markup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.Environment;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -44,11 +44,10 @@ import static com.sdl.webapp.main.controller.ControllerUtils.*;
 public class MainController {
     private static final Logger LOG = LoggerFactory.getLogger(MainController.class);
 
-    private static final String ALLOW_JSON_RESPONSE_PROPERTY = "AllowJsonResponse";
-
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
-    private final Environment environment;
+    @Value("#{environment.getProperty('AllowJsonResponse', 'false')}")
+    private boolean allowJsonResponse;
 
     private final ContentProvider contentProvider;
 
@@ -59,9 +58,8 @@ public class MainController {
     private final Markup markup;
 
     @Autowired
-    public MainController(Environment environment, ContentProvider contentProvider, MediaHelper mediaHelper,
-                          WebRequestContext webRequestContext, Markup markup) {
-        this.environment = environment;
+    public MainController(ContentProvider contentProvider, MediaHelper mediaHelper, WebRequestContext webRequestContext,
+                          Markup markup) {
         this.contentProvider = contentProvider;
         this.mediaHelper = mediaHelper;
         this.webRequestContext = webRequestContext;
@@ -104,7 +102,7 @@ public class MainController {
         final ServletServerHttpResponse res = new ServletServerHttpResponse(response);
 
         // Only handle this if explicitly enabled (by an environment property)
-        if (!environment.getProperty(ALLOW_JSON_RESPONSE_PROPERTY, Boolean.class, false)) {
+        if (!allowJsonResponse) {
             res.setStatusCode(HttpStatus.NOT_ACCEPTABLE);
             res.close();
             return;

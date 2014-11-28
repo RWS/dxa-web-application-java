@@ -37,7 +37,8 @@ public class DD4TNavigationProvider implements NavigationProvider {
     @Override
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
         try {
-            return objectMapper.readValue(contentProvider.getPageContent(NAVIGATION_MODEL_URL, localization),
+            final String path = localization.localizePath(NAVIGATION_MODEL_URL);
+            return objectMapper.readValue(contentProvider.getPageContent(path, localization),
                     SitemapItem.class);
         } catch (ContentProviderException | IOException e) {
             throw new NavigationProviderException("Exception while loading navigation model", e);

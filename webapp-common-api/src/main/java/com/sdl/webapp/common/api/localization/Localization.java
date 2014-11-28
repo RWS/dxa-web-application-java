@@ -98,4 +98,12 @@ public interface Localization {
      * @return The includes for the specified page type.
      */
     List<String> getIncludes(String pageTypeId);
+
+    /**
+     * Localize an URL by prefixing it with the path of this localization.
+     *
+     * @param url The URL.
+     * @return The URL prefixed by the path of this localization.
+     */
+    String localizePath(String url);
 }

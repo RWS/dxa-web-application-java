@@ -48,7 +48,8 @@ public class Markup {
     }
 
     public String versionedContent(String path) {
-        return webRequestContext.getContextPath() + "/system/" + webRequestContext.getLocalization().getVersion() + path;
+        return webRequestContext.getContextPath() + webRequestContext.getLocalization().localizePath(
+                "/system/" + webRequestContext.getLocalization().getVersion() + path);
     }
 
     public String region(Region region) {

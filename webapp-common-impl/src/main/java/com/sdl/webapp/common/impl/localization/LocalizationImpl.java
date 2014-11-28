@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl.localization;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
@@ -194,6 +195,18 @@ class LocalizationImpl implements Localization {
     @Override
     public List<String> getIncludes(String pageTypeId) {
         return includes.get(pageTypeId);
+    }
+
+    @Override
+    public String localizePath(String url) {
+        if (!Strings.isNullOrEmpty(path)) {
+            if (path.endsWith("/")) {
+                url = path + (url.startsWith("/") ? url.substring(1) : url);
+            } else {
+                url = path + (url.startsWith("/") ? url : "/" + url);
+            }
+        }
+        return url;
     }
 
     @Override

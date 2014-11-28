@@ -46,8 +46,10 @@
   </div>
 </main>
 <script src="${markup.versionedContent('/assets/scripts/main.js')}"></script>
+<%--
 <script src="${markup.versionedContent('/assets/scripts/custom.js')}"></script>
 <!-- discover-min.js is part of the SDL Tridion Context Engine -->
 <script src="${markup.versionedContent('/assets/scripts/discover-min.js')}"></script>
+--%>
 </body>
 </html>

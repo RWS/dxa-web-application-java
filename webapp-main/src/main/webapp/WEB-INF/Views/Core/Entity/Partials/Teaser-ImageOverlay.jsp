@@ -3,8 +3,9 @@
 <%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="region" type="com.sdl.webapp.common.api.model.Region" scope="request"/>
+<jsp:useBean id="item" type="com.sdl.webapp.common.api.model.entity.Teaser" scope="request"/>
+<jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
-<jsp:useBean id="carouselItem" type="com.sdl.webapp.common.api.model.entity.Teaser" scope="request"/>
 <c:choose>
     <c:when test="${region.name == 'Hero'}">
         <c:choose>
@@ -23,34 +24,34 @@
         <c:set var="imageAspect" value="0.0"/>
     </c:otherwise>
 </c:choose>
-<div ${markup.entity(carouselItem)}>
+<div ${markup.entity(item)}>
     <c:choose>
-        <c:when test="${not empty carouselItem.media}" >
-            <span ${markup.property(carouselItem, "media")}>
-                <xpm:property entity="${carouselItem}" property="media"/>
-                <tri:media media="${carouselItem.media}" widthFactor="100%" aspect="${imageAspect}"/>
+        <c:when test="${not empty item.media}" >
+            <span ${markup.property(item, "media")}>
+                <xpm:property entity="${item}" property="media"/>
+                <tri:media media="${item.media}" widthFactor="100%" aspect="${imageAspect}"/>
             </span>
         </c:when>
         <c:otherwise>
             <img src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" alt="" width="100%">
         </c:otherwise>
     </c:choose>
-    <c:if test="${not empty carouselItem.headline or not empty carouselItem.text}">
+    <c:if test="${not empty item.headline or not empty item.text}">
         <div class="overlay overlay-tl ribbon">
-            <c:if test="${not empty carouselItem.headline}">
-                <h2 ${markup.property(carouselItem, "headline")}><xpm:property entity="${carouselItem}" property="headline"/>${carouselItem.headline}</h2>
+            <c:if test="${not empty item.headline}">
+                <h2 ${markup.property(item, "headline")}><xpm:property entity="${item}" property="headline"/>${item.headline}</h2>
             </c:if>
-            <c:if test="${not empty carouselItem.text}">
-                <div ${markup.property(carouselItem, "text")}><xpm:property entity="${carouselItem}" property="text"/>${markup.replaceLineEndsWithHtmlBreaks(carouselItem.text)}</div>
+            <c:if test="${not empty item.text}">
+                <div ${markup.property(item, "text")}><xpm:property entity="${item}" property="text"/>${markup.replaceLineEndsWithHtmlBreaks(item.text)}</div>
             </c:if>
         </div>
     </c:if>
-    <c:if test="${not empty carouselItem.link.linkText}">
+    <c:if test="${not empty item.link.linkText}">
         <div class="carousel-caption">
             <p>
-                <a href="${carouselItem.link.url}" title="${carouselItem.link.alternateText}" class="btn btn-primary" ${markup.property(carouselItem, "link")}>
-                    <xpm:property entity="${carouselItem}" property="link"/>
-                    ${carouselItem.link.linkText}
+                <a href="${item.link.url}" title="${item.link.alternateText}" class="btn btn-primary" ${markup.property(item, "link")}>
+                    <xpm:property entity="${item}" property="link"/>
+                    ${item.link.linkText}
                 </a>
             </p>
         </div>

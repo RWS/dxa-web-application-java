@@ -21,7 +21,7 @@
     </ol>
     <div class="carousel-inner">
         <c:forEach var="carousel" varStatus="status" items="${entity.itemListElements}">
-            <c:set var="carouselItem" value="${carousel}" scope="request"/>
+            <c:set var="item" value="${carousel}" scope="request"/>
             <c:choose>
                 <c:when test="${status.index == 0}">
                     <div class="item active" ${markup.property(entity, "itemListElements")}>

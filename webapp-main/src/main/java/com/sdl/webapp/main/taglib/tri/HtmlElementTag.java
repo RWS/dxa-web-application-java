@@ -19,20 +19,24 @@ public abstract class HtmlElementTag extends TagSupport {
     public int doStartTag() throws JspException {
         this.element = generateElement();
 
-        write(element.getStartTag().toHtml());
+        if (element != null) {
+            write(element.getStartTag().toHtml());
+        }
 
         return EVAL_BODY_INCLUDE;
     }
 
     @Override
     public int doEndTag() throws JspException {
-        for (HtmlNode node : element.getContent()) {
-            write(node.toHtml());
-        }
+        if (element != null) {
+            for (HtmlNode node : element.getContent()) {
+                write(node.toHtml());
+            }
 
-        final HtmlEndTag endTag = element.getEndTag();
-        if (endTag != null) {
-            write(endTag.toHtml());
+            final HtmlEndTag endTag = element.getEndTag();
+            if (endTag != null) {
+                write(endTag.toHtml());
+            }
         }
 
         return EVAL_PAGE;

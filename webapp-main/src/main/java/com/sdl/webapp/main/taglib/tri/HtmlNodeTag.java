@@ -13,7 +13,10 @@ public abstract class HtmlNodeTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        write(generateNode().toHtml());
+        final HtmlNode node = generateNode();
+        if (node != null) {
+            write(node.toHtml());
+        }
         return SKIP_BODY;
     }
 

@@ -1,10 +1,12 @@
 package com.sdl.webapp.common.impl.localization;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.localization.SiteLocalization;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 
 import java.util.List;
@@ -25,6 +27,7 @@ class LocalizationImpl implements Localization {
         private boolean staging;
         private String version;
 
+        private final ImmutableList.Builder<SiteLocalization> siteLocalizationsBuilder = ImmutableList.builder();
         private final ImmutableMap.Builder<String, String> configurationBuilder = ImmutableMap.builder();
         private final ImmutableMap.Builder<String, String> resourcesBuilder = ImmutableMap.builder();
         private final ImmutableMap.Builder<Long, SemanticSchema> semanticSchemasBuilder = ImmutableMap.builder();
@@ -60,6 +63,11 @@ class LocalizationImpl implements Localization {
 
         public Builder setVersion(String version) {
             this.version = version;
+            return this;
+        }
+
+        public Builder addSiteLocalizations(Iterable<? extends SiteLocalization> siteLocalizations) {
+            this.siteLocalizationsBuilder.addAll(siteLocalizations);
             return this;
         }
 
@@ -106,6 +114,7 @@ class LocalizationImpl implements Localization {
     private final boolean staging;
     private final String version;
 
+    private final List<SiteLocalization> siteLocalizations;
     private final Map<String, String> configuration;
     private final Map<String, String> resources;
     private final Map<Long, SemanticSchema> semanticSchemas;
@@ -119,6 +128,7 @@ class LocalizationImpl implements Localization {
         this.staging = builder.staging;
         this.version = builder.version;
 
+        this.siteLocalizations = builder.siteLocalizationsBuilder.build();
         this.configuration = builder.configurationBuilder.build();
         this.resources = builder.resourcesBuilder.build();
         this.semanticSchemas = builder.semanticSchemasBuilder.build();
@@ -175,6 +185,11 @@ class LocalizationImpl implements Localization {
     @Override
     public Locale getLocale() {
         return Locale.forLanguageTag(getCulture());
+    }
+
+    @Override
+    public List<SiteLocalization> getSiteLocalizations() {
+        return siteLocalizations;
     }
 
     @Override

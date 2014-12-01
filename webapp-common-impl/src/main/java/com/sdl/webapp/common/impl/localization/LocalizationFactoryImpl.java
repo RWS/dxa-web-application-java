@@ -54,6 +54,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private static final String MEDIA_ROOT_NODE_NAME = "mediaRoot";
     private static final String DEFAULT_LOCALIZATION_NODE_NAME = "defaultLocalization";
+    private static final String SITE_LOCALIZATIONS_NODE_NAME = "siteLocalizations";
     private static final String STAGING_NODE_NAME = "staging";
 
     private static final String DEFAULT_MEDIA_ROOT = "/media/";
@@ -108,7 +109,13 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         builder.setMediaRoot(configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(DEFAULT_MEDIA_ROOT))
                 .setDefault(configRootNode.get(DEFAULT_LOCALIZATION_NODE_NAME).asBoolean(false))
                 .setStaging(configRootNode.get(STAGING_NODE_NAME).asBoolean(false))
+                .addSiteLocalizations(loadSiteLocalizations(configRootNode))
                 .addConfiguration(parseJsonSubFiles(staticContentProvider, configRootNode, id, path));
+    }
+
+    private List<SiteLocalizationImpl> loadSiteLocalizations(JsonNode configRootNode) {
+        return objectMapper.convertValue(configRootNode.get(SITE_LOCALIZATIONS_NODE_NAME),
+                new TypeReference<List<SiteLocalizationImpl>>() { });
     }
 
     private void loadVersion(String id, String path, LocalizationImpl.Builder builder)

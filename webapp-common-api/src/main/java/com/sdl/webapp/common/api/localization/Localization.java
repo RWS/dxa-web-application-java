@@ -68,6 +68,8 @@ public interface Localization {
      */
     Locale getLocale();
 
+    List<SiteLocalization> getSiteLocalizations();
+
     /**
      * Gets a configuration item.
      *

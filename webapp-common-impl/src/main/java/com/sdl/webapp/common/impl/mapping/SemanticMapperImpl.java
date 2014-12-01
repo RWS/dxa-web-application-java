@@ -73,6 +73,10 @@ public class SemanticMapperImpl implements SemanticMapper {
                         if (fieldData != null) {
                             final Object fieldValue = fieldData.getFieldValue();
                             if (fieldValue != null) {
+                                if (LOG.isTraceEnabled()) {
+                                    LOG.trace("Setting field value: {} -> {}", field.getName(), fieldValue);
+                                }
+
                                 field.setAccessible(true);
                                 field.set(entity, fieldValue);
 

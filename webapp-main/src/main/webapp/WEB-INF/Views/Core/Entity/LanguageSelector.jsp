@@ -8,7 +8,7 @@
 <jsp:useBean id="markup" type="com.sdl.webapp.main.markup.Markup" scope="request"/>
 <c:set var="siteLocalizations" value="${localization.siteLocalizations}"/>
 <c:set var="defaultItem" value="${entity.settings['defaultContentLink']}"/>
-<c:if test="${not empty siteLocalizations}">
+<c:if test="${not empty siteLocalizations and siteLocalizations.size() > 1}">
     <div ${markup.entity(entity)}>
         <xpm:entity entity="${entity}"/>
         <select class="selectpicker" data-width="auto">

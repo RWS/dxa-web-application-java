@@ -78,10 +78,12 @@ public class MainController {
         final String requestPath = webRequestContext.getRequestPath();
         LOG.trace("handleGetPage: requestPath={}", requestPath);
 
-        final Page page = getPageModel(requestPath, webRequestContext.getLocalization());
+        final Localization localization = webRequestContext.getLocalization();
+        final Page page = getPageModel(requestPath, localization);
         LOG.trace("handleGetPage: page={}", page);
 
         request.setAttribute(PAGE_MODEL, page);
+        request.setAttribute(LOCALIZATION, localization);
         request.setAttribute(MARKUP, markup);
         request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
 

@@ -44,7 +44,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
     public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass)
             throws FieldConverterException {
         String componentId = component.getId();
-        final String url = contentResolver.resolveLink(componentId);
+        final String url = contentResolver.resolveLink(componentId, null);
 
         if (targetClass.isAssignableFrom(String.class)) {
             return url;

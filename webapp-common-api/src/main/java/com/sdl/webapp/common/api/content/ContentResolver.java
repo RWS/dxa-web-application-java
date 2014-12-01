@@ -5,7 +5,7 @@ package com.sdl.webapp.common.api.content;
  */
 public interface ContentResolver {
 
-    String resolveLink(String url);
+    String resolveLink(String url, String localizationId);
 
     String resolveContent(String content);
 }

@@ -92,8 +92,9 @@ public class DD4TContentResolver implements ContentResolver {
     }
 
     @Override
-    public String resolveLink(String url) {
-        String resolvedUrl = linkResolver.resolveLink(url, false);
+    public String resolveLink(String url, String localizationId) {
+        final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
+        String resolvedUrl = linkResolver.resolveLink(url, publicationId, false);
 
         if (!Strings.isNullOrEmpty(resolvedUrl)) {
             if (resolvedUrl.endsWith(DEFAULT_PAGE_EXTENSION)) {
@@ -146,7 +147,7 @@ public class DD4TContentResolver implements ContentResolver {
 
                 if (Strings.isNullOrEmpty(linkUrl)) {
                     // Resolve a dynamic component link
-                    linkUrl = resolveLink(linkElement.getAttributeNS(XLINK_NS_URI, "href"));
+                    linkUrl = resolveLink(linkElement.getAttributeNS(XLINK_NS_URI, "href"), null);
                 }
 
                 if (!Strings.isNullOrEmpty(linkUrl)) {

@@ -1,9 +1,11 @@
 package com.sdl.webapp.main.controller;
 
+import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.api.content.ContentResolver;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -21,10 +23,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
 
@@ -51,6 +50,8 @@ public class MainController {
 
     private final ContentProvider contentProvider;
 
+    private final ContentResolver contentResolver;
+
     private final MediaHelper mediaHelper;
 
     private final WebRequestContext webRequestContext;
@@ -58,9 +59,10 @@ public class MainController {
     private final Markup markup;
 
     @Autowired
-    public MainController(ContentProvider contentProvider, MediaHelper mediaHelper, WebRequestContext webRequestContext,
-                          Markup markup) {
+    public MainController(ContentProvider contentProvider, ContentResolver contentResolver, MediaHelper mediaHelper,
+                          WebRequestContext webRequestContext, Markup markup) {
         this.contentProvider = contentProvider;
+        this.contentResolver = contentResolver;
         this.mediaHelper = mediaHelper;
         this.webRequestContext = webRequestContext;
         this.markup = markup;
@@ -81,6 +83,10 @@ public class MainController {
         final Localization localization = webRequestContext.getLocalization();
         final Page page = getPageModel(requestPath, localization);
         LOG.trace("handleGetPage: page={}", page);
+
+        if (!isIncludeRequest(request)) {
+            request.setAttribute(PAGE_ID, page.getId());
+        }
 
         request.setAttribute(PAGE_MODEL, page);
         request.setAttribute(LOCALIZATION, localization);
@@ -122,6 +128,27 @@ public class MainController {
         }
 
         res.close();
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/resolve/{itemId}")
+    public String handleResolve(@PathVariable String itemId, @RequestParam String localizationId,
+                                @RequestParam(required = false) String defaultPath,
+                                @RequestParam(required = false) String defaultItem) {
+        String url = contentResolver.resolveLink(itemId, localizationId);
+        if (Strings.isNullOrEmpty(url)) {
+            url = contentResolver.resolveLink(defaultItem, localizationId);
+        }
+        if (Strings.isNullOrEmpty(url)) {
+            url = Strings.isNullOrEmpty(defaultPath) ? "/" : defaultPath;
+        }
+        return "redirect:" + url;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{locPath}/resolve/{itemId}")
+    public String handleResolveLoc(@PathVariable String locPath, @PathVariable String itemId,
+                                   @RequestParam String localizationId, @RequestParam String defaultPath,
+                                   @RequestParam(required = false) String defaultItem) {
+        return handleResolve(itemId, localizationId, defaultPath, defaultItem);
     }
 
     // Blank page for XPM

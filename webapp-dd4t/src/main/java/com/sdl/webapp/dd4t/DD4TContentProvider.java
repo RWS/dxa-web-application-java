@@ -152,7 +152,7 @@ public final class DD4TContentProvider implements ContentProvider {
 
         // Resolve links
         for (Teaser item : contentList.getItemListElements()) {
-            item.getLink().setUrl(contentResolver.resolveLink(item.getLink().getUrl()));
+            item.getLink().setUrl(contentResolver.resolveLink(item.getLink().getUrl(), null));
         }
 
         contentList.setHasMore(brokerQuery.isHasMore());

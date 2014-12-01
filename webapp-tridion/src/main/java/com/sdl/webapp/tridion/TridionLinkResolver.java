@@ -12,13 +12,17 @@ import org.springframework.stereotype.Component;
 public class TridionLinkResolver {
     private static final Logger LOG = LoggerFactory.getLogger(TridionLinkResolver.class);
 
-    public String resolveLink(String uri, boolean isBinary) {
+    public String resolveLink(String uri, int publicationId, boolean isBinary) {
         if (uri.startsWith("tcm:")) {
             uri = uri.substring(4);
         }
 
         final String[] parts = uri.split("-");
-        final int publicationId = Integer.parseInt(parts[0]);
+
+        if (publicationId == 0) {
+            publicationId = Integer.parseInt(parts[0]);
+        }
+
         final int itemId = Integer.parseInt(parts[1]);
         final int itemType = parts.length > 2 ? Integer.parseInt(parts[2]) : 16;
 

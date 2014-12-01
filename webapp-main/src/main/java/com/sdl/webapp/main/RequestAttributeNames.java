@@ -6,6 +6,8 @@ public interface RequestAttributeNames {
     String REGION_MODEL = "region";
     String ENTITY_MODEL = "entity";
 
+    String PAGE_ID = "pageId";
+
     String LOCALIZATION = "localization";
 
     String MARKUP = "markup";

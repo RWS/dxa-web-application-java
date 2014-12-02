@@ -229,13 +229,18 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
             }
 
             final BufferedImage target = new BufferedImage(targetW, targetH, BufferedImage.TYPE_INT_RGB);
+
             final Graphics2D graphics = target.createGraphics();
             graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-            graphics.translate(-cropX, -cropY);
-            graphics.scale((double) sourceW / (double) targetW, (double) sourceH / (double) targetH);
-            graphics.drawRenderedImage(originalImage, new AffineTransform());
+
+            final AffineTransform transform = new AffineTransform();
+            transform.scale((double) targetW / (double) sourceW, (double) targetH / (double) sourceH);
+            transform.translate(-cropX, -cropY);
+
+            graphics.drawRenderedImage(originalImage, transform);
+
             graphics.dispose();
 
             final ByteArrayOutputStream out = new ByteArrayOutputStream();

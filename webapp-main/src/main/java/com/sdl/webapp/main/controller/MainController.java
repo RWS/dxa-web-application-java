@@ -159,7 +159,7 @@ public class MainController {
     }
 
     /**
-     * Throws a {@code BadRequestException }when a request is made to an URL under /system/mvc which is not handled
+     * Throws a {@code BadRequestException} when a request is made to an URL under /system/mvc which is not handled
      * by another controller.
      *
      * @param request The request.

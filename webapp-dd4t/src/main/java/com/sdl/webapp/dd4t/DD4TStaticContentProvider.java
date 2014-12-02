@@ -16,10 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.regex.Pattern;
 
@@ -172,8 +173,76 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
         return dao.findByPrimaryKey(publicationId, itemId, variantId);
     }
 
-    private byte[] resizeImage(byte[] original, StaticContentPathInfo pathInfo) {
-        // TODO: Resize image, see [C#] BinaryFileManager.ResizeImageFile
-        return original;
+    private byte[] resizeImage(byte[] original, StaticContentPathInfo pathInfo) throws ContentProviderException {
+        try {
+            final BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(original));
+
+            int cropX = 0, cropY = 0;
+            int sourceW = originalImage.getWidth(), sourceH = originalImage.getHeight();
+            int targetW, targetH;
+
+            // Most complex case is if a height AND width is specified
+            if (pathInfo.getWidth() > 0 && pathInfo.getHeight() > 0) {
+                if (pathInfo.isNoStretch()) {
+                    // If we don't want to stretch, then we crop
+                    float originalAspect = (float) sourceW / (float) sourceH;
+                    float targetAspect = (float) pathInfo.getWidth() / (float) pathInfo.getHeight();
+                    if (targetAspect < originalAspect) {
+                        // Crop the width - ensuring that we do not stretch if the requested height is bigger than the original
+                        targetH = Math.min(pathInfo.getHeight(), sourceH); // pathInfo.getHeight() > sourceH ? sourceH : pathInfo.getHeight();
+                        targetW = (int) Math.ceil(targetH * targetAspect);
+                        cropX = (int) Math.ceil((sourceW - (sourceH * targetAspect)) / 2);
+                        sourceW = sourceW - 2 * cropX;
+                    } else {
+                        // Crop the height - ensuring that we do not stretch if the requested width is bigger than the original
+                        targetW = Math.min(pathInfo.getWidth(), sourceW); // pathInfo.getWidth() > sourceW ? sourceW : pathInfo.getWidth();
+                        targetH = (int) Math.ceil(targetW / targetAspect);
+                        cropY = (int) Math.ceil((sourceH - (sourceW / targetAspect)) / 2);
+                        sourceH = sourceH - 2 * cropY;
+                    }
+                } else {
+                    // We stretch to fit the dimensions
+                    targetH = pathInfo.getHeight();
+                    targetW = pathInfo.getWidth();
+                }
+            } else if (pathInfo.getWidth() > 0) {
+                // If we simply have a certain width or height, its simple: We just use that and derive the other
+                // dimension from the original image aspect ratio. We also check if the target size is bigger than
+                // the original, and if we allow stretching.
+                targetW = (pathInfo.isNoStretch() && pathInfo.getWidth() > sourceW) ?
+                        sourceW : pathInfo.getWidth();
+                targetH = (int)(sourceH * ((float) targetW / (float) sourceW));
+            } else {
+                targetH = (pathInfo.isNoStretch() && pathInfo.getHeight() > sourceH) ?
+                        sourceH : pathInfo.getHeight();
+                targetW = (int)(sourceW * ((float) targetH / (float) sourceH));
+            }
+
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Image: {}, cropX = {}, cropY = {}, sourceW = {}, sourceH = {}, targetW = {}, targetH = {}",
+                        new Object[]{ pathInfo.getFileName(), cropX, cropY, sourceW, sourceH, targetW, targetH });
+            }
+
+            if (targetW == sourceW && targetH == sourceH) {
+                // No resize required
+                return original;
+            }
+
+            final BufferedImage target = new BufferedImage(targetW, targetH, BufferedImage.TYPE_INT_RGB);
+            final Graphics2D graphics = target.createGraphics();
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            graphics.translate(-cropX, -cropY);
+            graphics.scale((double) sourceW / (double) targetW, (double) sourceH / (double) targetH);
+            graphics.drawRenderedImage(originalImage, new AffineTransform());
+            graphics.dispose();
+
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
+            ImageIO.write(target, pathInfo.getImageFormatName(), out);
+            return out.toByteArray();
+        } catch (IOException e) {
+            throw new ContentProviderException("Exception while processing image data", e);
+        }
     }
 }

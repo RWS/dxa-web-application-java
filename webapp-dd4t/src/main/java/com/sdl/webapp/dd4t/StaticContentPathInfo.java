@@ -10,6 +10,7 @@ final class StaticContentPathInfo {
     private static final Pattern IMAGE_FILENAME_PATTERN = Pattern.compile("(.*)_w([\\d]+)(?:_h([\\d]+))?(_n)?(\\.[^\\.]+)?");
 
     private final String fileName;
+    private final String imageFormatName;
 
     private final boolean isImage;
     private final int width;
@@ -22,20 +23,22 @@ final class StaticContentPathInfo {
             final String baseName = matcher.group(1);
             final String widthString = matcher.group(2);
             final String heightString = matcher.group(3);
-            final String extension = matcher.group(4);
+            final String noStretchString = matcher.group(4);
+            final String extension = matcher.group(5);
 
             this.isImage = true;
             this.fileName = extension != null ? baseName + extension : baseName;
             this.width = !Strings.isNullOrEmpty(widthString) ? Integer.parseInt(widthString) : 0;
             this.height = !Strings.isNullOrEmpty(heightString) ? Integer.parseInt(heightString) : 0;
-            this.noStretch = matcher.group(5) != null;
-
+            this.noStretch = noStretchString != null;
+            this.imageFormatName = extension != null ? extension.substring(1) : null;
         } else {
             this.fileName = path;
             this.isImage = false;
             this.width = 0;
             this.height = 0;
             this.noStretch = false;
+            this.imageFormatName = null;
         }
     }
 
@@ -61,5 +64,9 @@ final class StaticContentPathInfo {
 
     public boolean isResized() {
         return width != 0 || height != 0;
+    }
+
+    public String getImageFormatName() {
+        return imageFormatName;
     }
 }

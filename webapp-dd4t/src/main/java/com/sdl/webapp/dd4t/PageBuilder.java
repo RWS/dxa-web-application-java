@@ -217,7 +217,7 @@ final class PageBuilder {
             String value;
             switch (fieldName) {
                 case "internalLink":
-                    final String componentId = field.getValues().get(0).toString();
+                    final String componentId = ((BaseField) field).getTextValues().get(0);
                     try {
                         value = linkResolver.resolve(componentId);
                     } catch (SerializationException | ItemNotFoundException e) {

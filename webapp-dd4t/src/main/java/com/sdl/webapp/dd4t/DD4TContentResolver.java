@@ -267,7 +267,7 @@ public class DD4TContentResolver implements ContentResolver {
                     button.appendChild(playButtonOverlay);
                     div.appendChild(button);
 
-                    document.replaceChild(div, youTubeElement);
+                    youTubeElement.getParentNode().replaceChild(div, youTubeElement);
                 }
             }
         } catch (XPathExpressionException e) {

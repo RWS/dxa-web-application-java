@@ -1,7 +1,6 @@
 package com.sdl.webapp.dd4t;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
@@ -22,8 +21,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 /**
@@ -111,11 +108,14 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
                 webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localizationId), path);
         LOG.trace("getStaticContentFile: {}", file);
 
+        final StaticContentPathInfo pathInfo = new StaticContentPathInfo(path);
+
         final int publicationId = Integer.parseInt(localizationId);
         try {
-            final BinaryVariant binaryVariant = findBinaryVariant(publicationId, path);
+            final BinaryVariant binaryVariant = findBinaryVariant(publicationId, pathInfo.getFileName());
             if (binaryVariant == null) {
-                throw new StaticContentNotFoundException("No binary variant found for: [" + publicationId + "] " + path);
+                throw new StaticContentNotFoundException("No binary variant found for: [" + publicationId + "] " +
+                        pathInfo.getFileName());
             }
 
             final BinaryMeta binaryMeta = binaryVariant.getBinaryMeta();
@@ -137,8 +137,13 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
                 final BinaryContent binaryContent = findBinaryContent(itemMeta.getPublicationId(), itemMeta.getItemId(),
                         binaryVariant.getVariantId());
 
+                byte[] content = binaryContent.getContent();
+                if (pathInfo.isImage() && pathInfo.isResized()) {
+                    content = resizeImage(content, pathInfo);
+                }
+
                 LOG.debug("Writing binary content to file: {}", file);
-                Files.write(file.toPath(), binaryContent.getContent());
+                Files.write(file.toPath(), content);
             } else {
                 LOG.debug("File does not need to be refreshed: {}", file);
             }
@@ -165,5 +170,10 @@ public class DD4TStaticContentProvider implements StaticContentProvider {
         final BinaryContentDAO dao = (BinaryContentDAO) StorageManagerFactory.getDAO(publicationId,
                 StorageTypeMapping.BINARY_CONTENT);
         return dao.findByPrimaryKey(publicationId, itemId, variantId);
+    }
+
+    private byte[] resizeImage(byte[] original, StaticContentPathInfo pathInfo) {
+        // TODO: Resize image, see [C#] BinaryFileManager.ResizeImageFile
+        return original;
     }
 }

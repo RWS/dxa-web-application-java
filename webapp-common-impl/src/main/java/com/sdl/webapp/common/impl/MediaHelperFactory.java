@@ -40,8 +40,9 @@ public class MediaHelperFactory extends AbstractFactoryBean<MediaHelper> {
         final ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
         for (String className : MEDIA_HELPER_CLASS_NAMES) {
             if (ClassUtils.isPresent(className, classLoader)) {
-                return (MediaHelper) BeanUtils.instantiateClass(ClassUtils.getConstructorIfAvailable(
-                        ClassUtils.forName(className, classLoader), WebRequestContext.class), webRequestContext);
+                return (MediaHelper) BeanUtils.instantiateClass(
+                        ClassUtils.forName(className, classLoader).getConstructor(WebRequestContext.class),
+                        webRequestContext);
             }
         }
 

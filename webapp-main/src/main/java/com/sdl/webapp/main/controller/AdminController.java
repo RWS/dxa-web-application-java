@@ -32,7 +32,7 @@ public class AdminController {
 
         localizationResolver.refreshLocalization(localization.getId());
 
-        return "redirect:" + localization.getPath();
+        return "redirect:" + localization.getPath() + "/";
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{locPath}/admin/refresh")

@@ -61,7 +61,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                     final SemanticField semanticField = findMatchingSemanticField(semanticFields, fieldSemantics);
                     if (semanticField != null) {
                         foundMatch = true;
-                        LOG.debug("Match found: {} -> {}", fieldSemantics, semanticField);
+                        LOG.trace("Match found: {} -> {}", fieldSemantics, semanticField);
 
                         FieldData fieldData = null;
                         try {
@@ -130,7 +130,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                 if (LOG.isDebugEnabled() && !foundMatch && !registrySemantics.isEmpty()) {
                     // This not necessarily means there is a problem; for some components in the input, not all fields
                     // of the entity are mapped
-                    LOG.debug("No match found for field: {}; registry semantics: {} did not match with supplied " +
+                    LOG.trace("No match found for field: {}; registry semantics: {} did not match with supplied " +
                             "semantics: {}", new Object[]{field, registrySemantics, semanticFields});
                 }
             }

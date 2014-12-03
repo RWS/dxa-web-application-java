@@ -26,11 +26,15 @@ public class DD4TNavigationProvider implements NavigationProvider {
 
     private final ContentProvider contentProvider;
 
+    private final ContentResolver contentResolver;
+
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public DD4TNavigationProvider(ContentProvider contentProvider, ObjectMapper objectMapper) {
+    public DD4TNavigationProvider(ContentProvider contentProvider, ContentResolver contentResolver,
+                                  ObjectMapper objectMapper) {
         this.contentProvider = contentProvider;
+        this.contentResolver = contentResolver;
         this.objectMapper = objectMapper;
     }
 
@@ -38,11 +42,21 @@ public class DD4TNavigationProvider implements NavigationProvider {
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
         try {
             final String path = localization.localizePath(NAVIGATION_MODEL_URL);
-            return objectMapper.readValue(contentProvider.getPageContent(path, localization),
-                    SitemapItem.class);
+            return resolveLinks(objectMapper.readValue(contentProvider.getPageContent(path, localization),
+                    SitemapItem.class), localization);
         } catch (ContentProviderException | IOException e) {
             throw new NavigationProviderException("Exception while loading navigation model", e);
         }
+    }
+
+    private SitemapItem resolveLinks(SitemapItem sitemapItem, Localization localization) {
+        sitemapItem.setUrl(contentResolver.resolveLink(sitemapItem.getUrl(), localization.getId()));
+
+        for (SitemapItem subItem : sitemapItem.getItems()) {
+            resolveLinks(subItem, localization);
+        }
+
+        return sitemapItem;
     }
 
     @Override

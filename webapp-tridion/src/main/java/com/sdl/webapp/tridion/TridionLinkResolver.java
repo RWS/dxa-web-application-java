@@ -13,9 +13,12 @@ public class TridionLinkResolver {
     private static final Logger LOG = LoggerFactory.getLogger(TridionLinkResolver.class);
 
     public String resolveLink(String uri, int publicationId, boolean isBinary) {
-        if (uri.startsWith("tcm:")) {
-            uri = uri.substring(4);
+        if (!uri.startsWith("tcm:")) {
+            return uri;
         }
+
+        // Remove the "tcm:" prefix
+        uri = uri.substring(4);
 
         final String[] parts = uri.split("-");
 

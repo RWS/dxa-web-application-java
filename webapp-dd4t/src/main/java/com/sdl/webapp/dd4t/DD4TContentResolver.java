@@ -252,22 +252,22 @@ public class DD4TContentResolver implements ContentResolver {
 
                     final String placeholderImageUrl = mediaHelper.getResponsiveImageUrl(src, "100%", 0.0, 0);
 
-                    final Element div = document.createElement("div");
-                    div.setAttribute("class", "embed-video");
+                    final Element span = document.createElement("span");
+                    span.setAttribute("class", "embed-video");
 
                     final Element img = document.createElement("img");
                     img.setAttribute("src", webRequestContext.getContextPath() + placeholderImageUrl);
                     img.setAttribute("alt", headline);
-                    div.appendChild(img);
+                    span.appendChild(img);
 
                     final Element button = document.createElement("button");
                     button.setAttribute("data-video", youTubeId);
                     final Element playButtonOverlay = document.createElement("i");
                     playButtonOverlay.setAttribute("class", "fa fa-play-circle");
                     button.appendChild(playButtonOverlay);
-                    div.appendChild(button);
+                    span.appendChild(button);
 
-                    youTubeElement.getParentNode().replaceChild(div, youTubeElement);
+                    youTubeElement.getParentNode().replaceChild(span, youTubeElement);
                 }
             }
         } catch (XPathExpressionException e) {

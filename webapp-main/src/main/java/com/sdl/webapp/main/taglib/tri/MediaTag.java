@@ -83,6 +83,10 @@ public class MediaTag extends HtmlElementTag {
 
     @Override
     protected HtmlElement generateElement() {
+        if (media == null) {
+            return null;
+        }
+
         if (media instanceof Image) {
             return generateImage();
         } else if (media instanceof YouTubeVideo) {

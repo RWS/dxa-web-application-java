@@ -15,6 +15,8 @@ import org.dd4t.contentmodel.exceptions.ItemNotFoundException;
 import org.dd4t.contentmodel.exceptions.SerializationException;
 import org.dd4t.core.factories.ComponentFactory;
 import org.dd4t.core.filters.FilterException;
+import org.htmlcleaner.HtmlCleaner;
+import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,12 +122,21 @@ public class DD4TContentResolver implements ContentResolver {
 
             // Write the modified document out as XML
             // Remove XML header and surrounding XHTML start and end tags
-            return XMLUtils.format(document)
-                    .replaceAll("\\A(<\\?xml.*\\?>)?\\s*<xhtml>", "").replaceAll("</xhtml>\\Z", "");
+            return cleanHtml(XMLUtils.format(document)
+                    .replaceAll("\\A(<\\?xml.*\\?>)?\\s*<xhtml>", "").replaceAll("</xhtml>\\Z", ""));
         } catch (SAXException | IOException | TransformerException e) {
             LOG.warn("Exception while parsing or processing XML content", e);
             return content;
         }
+    }
+
+    private String cleanHtml(String input) {
+        // This is necessary to convert the XHTML to valid HTML that the browser understands;
+        // note that the pages are HTML5, and including the XHTML in an HTML5 page as-is leads to
+        // strange rendering problems in some browsers.
+        final HtmlCleaner cleaner = new HtmlCleaner();
+        final TagNode node = cleaner.clean(input);
+        return cleaner.getInnerHtml(node);
     }
 
     private void resolveLinks(Document document) {

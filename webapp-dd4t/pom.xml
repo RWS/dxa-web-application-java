@@ -14,6 +14,7 @@
 
     <properties>
         <dd4t-version>1.31.2</dd4t-version>
+        <htmlcleaner-version>2.10</htmlcleaner-version>
     </properties>
 
     <dependencies>
@@ -51,6 +52,13 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
+        </dependency>
+
+        <!-- HtmlCleaner -->
+        <dependency>
+            <groupId>net.sourceforge.htmlcleaner</groupId>
+            <artifactId>htmlcleaner</artifactId>
+            <version>${htmlcleaner-version}</version>
         </dependency>
 
         <!-- DD4T -->

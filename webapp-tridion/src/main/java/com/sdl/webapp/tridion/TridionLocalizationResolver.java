@@ -19,8 +19,6 @@ import java.util.Map;
 public class TridionLocalizationResolver implements LocalizationResolver {
     private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationResolver.class);
 
-    private static final String DEFAULT_PORT = "80";
-
     private final Map<String, Localization> localizations = new HashMap<>();
 
     private final LocalizationFactory localizationFactory;
@@ -34,17 +32,14 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     public Localization getLocalization(String url) throws LocalizationResolverException {
         LOG.trace("getLocalization: {}", url);
 
-        final PublicationMapping publicationMapping = DynamicContent.getInstance().getMappingsResolver()
-                .getPublicationMappingFromUrl(url);
+        final PublicationMapping publicationMapping = getPublicationMappingFromUrl(url);
         if (publicationMapping == null) {
             throw new PublicationMappingNotFoundException("Publication mapping not found. " +
                     "Check if your cd_dynamic_conf.xml configuration file contains a publication mapping " +
                     "that matches this URL: " + url);
         }
 
-        // Create a unique key consisting of publication ID and publication base URL
-        final String key = String.format("%d@[%s]", publicationMapping.getPublicationId(),
-                getPublicationMappingBaseUrl(publicationMapping));
+        final String key = Integer.toString(publicationMapping.getPublicationId());
 
         synchronized (localizations) {
             if (!localizations.containsKey(key)) {
@@ -53,6 +48,19 @@ public class TridionLocalizationResolver implements LocalizationResolver {
         }
 
         return localizations.get(key);
+    }
+
+    @Override
+    public void refreshLocalization(String localizationId) {
+        synchronized (localizations) {
+            if (localizations.remove(localizationId) != null) {
+                LOG.debug("Removed cached localization with id: {}", localizationId);
+            }
+        }
+    }
+
+    private PublicationMapping getPublicationMappingFromUrl(String url) {
+        return DynamicContent.getInstance().getMappingsResolver().getPublicationMappingFromUrl(url);
     }
 
     private Localization createLocalization(PublicationMapping publicationMapping) throws LocalizationResolverException {
@@ -64,24 +72,6 @@ public class TridionLocalizationResolver implements LocalizationResolver {
         } catch (LocalizationFactoryException e) {
             throw new LocalizationResolverException("Exception while creating localization: [" + id + "] " + path, e);
         }
-    }
-
-    /**
-     * Gets the base URL of a publication mapping.
-     *
-     * @param publicationMapping The publication mapping.
-     * @return The base URL of the publication mapping.
-     */
-    private String getPublicationMappingBaseUrl(PublicationMapping publicationMapping) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(publicationMapping.getProtocol()).append("://").append(publicationMapping.getDomain());
-
-        final String port = publicationMapping.getPort();
-        if (!DEFAULT_PORT.equals(port)) {
-            sb.append(':').append(port);
-        }
-
-        return sb.append(getPublicationMappingPath(publicationMapping)).toString();
     }
 
     /**

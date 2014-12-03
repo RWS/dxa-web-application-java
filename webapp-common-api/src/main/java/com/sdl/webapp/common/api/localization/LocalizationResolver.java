@@ -13,4 +13,11 @@ public interface LocalizationResolver {
      * @throws LocalizationResolverException If an error occurred so that the localization could not be determined.
      */
     Localization getLocalization(String url) throws LocalizationResolverException;
+
+    /**
+     * Refreshes the specified localization, so that its configuration is reloaded.
+     *
+     * @param localizationId The localization ID of the localization to refresh.
+     */
+    void refreshLocalization(String localizationId);
 }

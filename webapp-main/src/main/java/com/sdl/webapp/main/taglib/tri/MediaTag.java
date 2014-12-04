@@ -15,9 +15,7 @@ import com.sdl.webapp.main.markup.html.builders.SimpleElementBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.springframework.web.util.UrlPathHelper;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;

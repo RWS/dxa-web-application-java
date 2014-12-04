@@ -3,7 +3,6 @@ package com.sdl.webapp.common.impl.model;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

@@ -11,7 +11,6 @@ public interface ViewModelRegistry {
      * Registers an entity type for a view.
      *
      * @param viewName The name of the entity view.
-     * @return The type of the entity that this entity view needs.
      */
     void registerViewEntityClass(String viewName, Class<? extends AbstractEntity> entityClass);
 

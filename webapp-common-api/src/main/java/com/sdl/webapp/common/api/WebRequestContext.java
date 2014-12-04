@@ -67,8 +67,6 @@ public interface WebRequestContext {
 
     /**
      * Sets the localization of the current request. This is normally called by {@code LocalizationResolverInterceptor}.
-     *
-     * @return The localization of the current request.
      */
     void setLocalization(Localization localization);
 

@@ -4,7 +4,6 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.NavigationProvider;
 import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
-import com.sdl.webapp.main.controller.ControllerUtils;
 import com.sdl.webapp.main.markup.Markup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,12 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static com.sdl.webapp.main.RequestAttributeNames.MARKUP;

@@ -13,6 +13,7 @@
     </parent>
 
     <dependencies>
+        <!-- Tridion Reference Implementation -->
         <dependency>
             <groupId>com.sdl</groupId>
             <artifactId>webapp-common-api</artifactId>
@@ -25,6 +26,10 @@
             <artifactId>spring-context</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
             <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
@@ -33,6 +38,14 @@
         </dependency>
 
         <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-annotations</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -44,11 +57,13 @@
             <artifactId>guava</artifactId>
         </dependency>
 
-        <!-- Tridion Content Delivery -->
+        <!-- Joda Time -->
         <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_ambient</artifactId>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
         </dependency>
+
+        <!-- Tridion Content Delivery -->
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_broker</artifactId>
@@ -68,12 +83,6 @@
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_model</artifactId>
-        </dependency>
-
-        <!-- Third-party libraries used by Tridion Content Delivery -->
-        <dependency>
-            <groupId>net.minidev</groupId>
-            <artifactId>json-smart</artifactId>
         </dependency>
     </dependencies>
 </project>

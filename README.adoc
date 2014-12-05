@@ -40,9 +40,7 @@ project):
 
 Build the project with Maven:
 
-----
-mvn clean package
-----
+ mvn clean package
 
 If no errors occur, you will find the resulting file `webapp-main.war` in the directory `webapp-main\target`.
 
@@ -75,3 +73,5 @@ Contextual Image Delivery (CID) for serving images.
 
 NOTE: Contextual Image Delivery (CID) is an optional component. For using Contextual Image Delivery, you need an
 additional license. Contact SDL if you with to use CID and you do not have such a license (or if you are not sure).
+
+[small]#This documentation is written in http://asciidoctor.org/[Asciidoc] format.#

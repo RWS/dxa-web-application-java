@@ -103,3 +103,5 @@ used to get data for a request. It also contains functionality for doing broker 
 
 This optional module contains an implementation of interface `MediaHelper` that transforms image URLs so that they will
 be handled by the `ImageTransformerServlet` that is part of Contextual Image Delivery.
+
+[small]#This documentation is written in http://asciidoctor.org/[Asciidoc] format.#

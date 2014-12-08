@@ -9,6 +9,5 @@
     <c:if test="${not empty entity.headline}">
         <h3 ${markup.property(entity, "headline")}><xpm:property entity="${entity}" property="headline"/>${entity.headline}</h3>
     </c:if>
-    <%-- TODO: Gepruts met containerSize --%>
     <tri:media media="${entity}" widthFactor="100%"/>
 </div>

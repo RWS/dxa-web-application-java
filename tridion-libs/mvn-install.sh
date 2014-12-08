@@ -10,10 +10,7 @@ mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_datalayer     
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_dynamic         -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_dynamic-7.1.0.jar
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_linking         -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_linking-7.1.0.jar
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_model           -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_model-7.1.0.jar
-mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_preview_ambient -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_preview_ambient-7.1.0.jar
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_session         -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_session-7.1.0.jar
-mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_tcdl            -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_tcdl-7.1.0.jar
-mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_wai             -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_wai-7.1.0.jar
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_wrapper         -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_wrapper-7.1.0.jar
 
 echo Installing Tridion Contextual Web Delivery libraries into the local Maven repository...

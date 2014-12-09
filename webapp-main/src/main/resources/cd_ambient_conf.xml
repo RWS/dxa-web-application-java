@@ -19,13 +19,14 @@
         </GloballyAcceptedClaims>
     </Security>
     <ExcludedPaths>
-        <Path>/cid</Path>
+        <!-- NOTE: Uncomment this if you want to use CID -->
+        <!--<Path>/cid</Path>-->
     </ExcludedPaths>
     <Cartridges>
         <!--<Cartridge File="cd_webservice_preview_cartridge.xml"/>-->
         <!--<Cartridge File="footprint_cartridge_conf.xml"/>-->
 
-        <!-- Cartridge for Contextual Web Delivery - Remove this is you are not using CID -->
-        <Cartridge File="cwd_engine_cartridge_conf.xml"/>
+        <!-- NOTE: Uncomment this if you want to use CID -->
+        <!--<Cartridge File="cwd_engine_cartridge_conf.xml"/>-->
     </Cartridges>
 </Configuration>

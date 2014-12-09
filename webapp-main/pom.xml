@@ -112,13 +112,19 @@
             <groupId>net.minidev</groupId>
             <artifactId>json-smart</artifactId>
         </dependency>
-
-        <!-- Tridion Contextual Image Delivery - Remove this is you are not using CID -->
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>webapp-cid</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>cid</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>webapp-cid</artifactId>
+                    <version>${project.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

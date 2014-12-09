@@ -10,7 +10,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>webapp-cid</module>
         <module>webapp-common-api</module>
         <module>webapp-common-impl</module>
         <module>webapp-dd4t</module>
@@ -547,6 +546,15 @@
             <artifactId>spring-test</artifactId>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>cid</id>
+            <modules>
+                <module>webapp-cid</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>

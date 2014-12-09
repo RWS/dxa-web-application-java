@@ -13,13 +13,14 @@ In the module `webapp-common-impl` there is a Spring factory bean `MediaHelperFa
 implementation of `MediaHelper` to use. It does this by checking if the CID-specific implementation is available in the
 classpath. If it is, it will use the CID-specific implementation, otherwise it will use the default implementation.
 
-== Removing CID from the project
+== Enabling or disabling the use of CID
 
-Follow these instructions if you do not want to use CID in the web application.
+When you activate the Maven profile `cid`, this module and its dependencies will be included in the project. This means
+you can compile the web application with support for CID by compiling the project with:
 
-. In the root `pom.xml` of the project, remove the module `webapp-cid`.
-. In the `pom.xml` of the module `webapp-main`, remove the dependency on `com.sdl:webapp-cid`.
-. In `cd_ambient_conf.xml` (which is in `webapp-main\src\main\resources`), remove the reference to the Ambient Data
-    Framework cartrigde for CID (`cwd_engine_cartridge_conf.xml`).
-. Remove the `cwd_..._conf.xml` configuration files from `webapp-main\src\main\resources`.
-. Remove the `ehcache_context_image.xml` configuration file from `webapp-main\src\main\resources`.
+ mvn clean package -P cid
+
+If you do not want to use CID, simply leave off `-P cid`.
+
+Note that if you do use CID, you will have to edit the configuration file `cd_ambient_conf` in
+`webapp-main\src\main\resources` to enable the CID Ambient Data Framework cartridge.

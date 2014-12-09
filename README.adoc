@@ -42,6 +42,13 @@ Build the project with Maven:
 
  mvn clean package
 
+If you want to use Contextual Image Delivery, edit the file `webapp-main\src\main\resources\cd_ambient_conf.xml` and
+compile the project with the profile `cid` enabled:
+
+ mvn clean package -P cid
+
+(see the README in the module `webapp-cid` for more information).
+
 If no errors occur, you will find the resulting file `webapp-main.war` in the directory `webapp-main\target`.
 
 == Running the project

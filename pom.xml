@@ -35,7 +35,8 @@
         <tridion-cwd-version>7.1.0</tridion-cwd-version>
 
         <!-- Spring Framework -->
-        <spring-version>3.1.0.RELEASE</spring-version>
+        <!-- NOTE: Tridion CD 7.1.0 is compiled against Spring 3.1.0, but we need Spring 3.2 features -->
+        <spring-version>3.2.8.RELEASE</spring-version>
 
         <!-- Hibernate -->
         <hibernate-version>4.0.1.Final</hibernate-version>

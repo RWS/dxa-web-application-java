@@ -2,6 +2,8 @@ package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import java.util.Arrays;
  */
 @Component
 public class MediaHelperFactory extends AbstractFactoryBean<MediaHelper> {
+    private static final Logger LOG = LoggerFactory.getLogger(MediaHelperFactory.class);
 
     // Class names of candidate implementations to try, ordered by priority (highest priority first)
     private static final String[] MEDIA_HELPER_CLASS_NAMES = {
@@ -40,6 +43,7 @@ public class MediaHelperFactory extends AbstractFactoryBean<MediaHelper> {
         final ClassLoader classLoader = ClassUtils.getDefaultClassLoader();
         for (String className : MEDIA_HELPER_CLASS_NAMES) {
             if (ClassUtils.isPresent(className, classLoader)) {
+                LOG.info("Using the following MediaHelper: {}", className);
                 return (MediaHelper) BeanUtils.instantiateClass(
                         ClassUtils.forName(className, classLoader).getConstructor(WebRequestContext.class),
                         webRequestContext);

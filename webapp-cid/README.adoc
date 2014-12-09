@@ -1,0 +1,25 @@
+= Contextual Image Delivery
+
+This is an optional module for the Tridion Reference Implementation Java web application. It contains an implementation
+of interface `MediaHelper` that uses Tridion Contextual Image Delivery (CID) to resize images on the server side.
+
+Note that in order to use Tridion CID, you need a license. If you do not have a license for CID or if you are not sure,
+then contact SDL if you want to use CID.
+
+You can also choose to not use CID. The web application will then use a different implementation of `MediaHelper` to
+resize images.
+
+In the module `webapp-common-impl` there is a Spring factory bean `MediaHelperFactory` that automatically chooses the
+implementation of `MediaHelper` to use. It does this by checking if the CID-specific implementation is available in the
+classpath. If it is, it will use the CID-specific implementation, otherwise it will use the default implementation.
+
+== Removing CID from the project
+
+Follow these instructions if you do not want to use CID in the web application.
+
+. In the root `pom.xml` of the project, remove the module `webapp-cid`.
+. In the `pom.xml` of the module `webapp-main`, remove the dependency on `com.sdl:webapp-cid`.
+. In `cd_ambient_conf.xml` (which is in `webapp-main\src\main\resources`), remove the reference to the Ambient Data
+    Framework cartrigde for CID (`cwd_engine_cartridge_conf.xml`).
+. Remove the `cwd_..._conf.xml` configuration files from `webapp-main\src\main\resources`.
+. Remove the `ehcache_context_image.xml` configuration file from `webapp-main\src\main\resources`.

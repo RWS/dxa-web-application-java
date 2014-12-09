@@ -17,6 +17,41 @@
         <finalName>${project.artifactId}</finalName>
     </build>
 
+    <profiles>
+        <profile>
+            <id>cid</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>webapp-cid</artifactId>
+                    <version>${project.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>cd-8.0.0</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config_api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config_legacy</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_util</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
     <!-- Dependencies -->
     <dependencies>
         <!-- Tridion Reference Implementation -->
@@ -113,18 +148,4 @@
             <artifactId>json-smart</artifactId>
         </dependency>
     </dependencies>
-
-    <profiles>
-        <profile>
-            <id>cid</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl</groupId>
-                    <artifactId>webapp-cid</artifactId>
-                    <version>${project.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 </project>

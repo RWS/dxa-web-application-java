@@ -24,6 +24,6 @@ public final class HtmlAttribute extends HtmlRenderable {
         // NOTE: This escapes double quotes, ampersands and left angle brackets in the value,
         // just like the C# method HttpUtility.HtmlAttributeEncode
         return String.format("%s=\"%s\"", name,
-                value.replaceAll("\"", "&quot;").replaceAll("&", "&amp;").replaceAll("<", "&lt;"));
+                value.replaceAll("&", "&amp;").replaceAll("\"", "&quot;").replaceAll("<", "&lt;"));
     }
 }

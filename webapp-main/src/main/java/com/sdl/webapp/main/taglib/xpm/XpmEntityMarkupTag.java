@@ -34,7 +34,7 @@ public class XpmEntityMarkupTag extends XpmMarkupTag {
 
         final String isRepositoryPublished;
         if (templateId.equals("tcm:0-0-0")) {
-            isRepositoryPublished = "true, \"IsQueryBased\" : true";
+            isRepositoryPublished = "true,\"IsQueryBased\":true";
         } else {
             isRepositoryPublished = "false";
         }

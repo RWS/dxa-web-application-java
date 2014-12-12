@@ -21,4 +21,9 @@ public abstract class HtmlRenderable {
     }
 
     protected abstract String renderHtml();
+
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + ": " + toHtml();
+    }
 }

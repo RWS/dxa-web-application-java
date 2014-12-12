@@ -105,9 +105,4 @@ public class MarkupTest {
     public void testReplaceLineEndsWithHtmlBreaks() {
         assertThat(markup.replaceLineEndsWithHtmlBreaks("Hello. Sunny World."), is("Hello<br/>Sunny World."));
     }
-
-    @Test
-    public void testSiteMapList() {
-        // TODO: Implement unit test
-    }
 }

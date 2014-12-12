@@ -58,6 +58,10 @@ public interface WebRequestContext {
      */
     String getFullUrl();
 
+    boolean isContextCookiePresent();
+
+    void setContextCookiePresent(boolean present);
+
     /**
      * Gets the localization of the current request.
      *

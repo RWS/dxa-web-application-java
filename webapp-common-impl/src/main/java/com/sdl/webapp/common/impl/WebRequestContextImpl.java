@@ -25,11 +25,14 @@ public class WebRequestContextImpl implements WebRequestContext {
     private static final URI URI_BROWSER_DISPLAY_WIDTH = URI.create("taf:claim:context:browser:displayWidth");
     private static final URI URI_DEVICE_PIXEL_RATIO = URI.create("taf:claim:context:device:pixelRatio");
 
+    private static final int DEFAULT_WIDTH = 1024;
     private static final int MAX_WIDTH = 1024;
 
     private String baseUrl;
     private String contextPath;
     private String requestPath;
+
+    private boolean contextCookiePresent;
 
     private Localization localization;
 
@@ -73,6 +76,16 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     @Override
+    public boolean isContextCookiePresent() {
+        return contextCookiePresent;
+    }
+
+    @Override
+    public void setContextCookiePresent(boolean present) {
+        this.contextCookiePresent = present;
+    }
+
+    @Override
     public Localization getLocalization() {
         return localization;
     }
@@ -93,9 +106,15 @@ public class WebRequestContextImpl implements WebRequestContext {
     public int getDisplayWidth() {
         if (displayWidth == null) {
             final ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
-            displayWidth = 1024; // (Integer) currentClaimStore.get(URI_BROWSER_DISPLAY_WIDTH);
-            // TODO: See [C#] BrowserClaims.DisplayWidth - special hack to make the default 1024 instead of 800
+            displayWidth = (Integer) currentClaimStore.get(URI_BROWSER_DISPLAY_WIDTH);
+            if (displayWidth == null) {
+                displayWidth = DEFAULT_WIDTH;
+            }
 
+            // NOTE: The context engine uses a default browser width of 800, which we override to 1024
+            if (displayWidth == 800 && isContextCookiePresent()) {
+                displayWidth = DEFAULT_WIDTH;
+            }
         }
         return displayWidth;
     }

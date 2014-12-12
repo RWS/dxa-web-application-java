@@ -68,6 +68,11 @@ public interface Localization {
      */
     Locale getLocale();
 
+    /**
+     * Gets the site localizations associated with this localization.
+     *
+     * @return The site localizations associated with this localization.
+     */
     List<SiteLocalization> getSiteLocalizations();
 
     /**

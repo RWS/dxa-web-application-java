@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.UrlPathHelper;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,6 +43,18 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
         webRequestContext.setBaseUrl(getBaseUrl(request));
         webRequestContext.setContextPath(urlPathHelper.getOriginatingContextPath(request));
         webRequestContext.setRequestPath(urlPathHelper.getOriginatingRequestUri(request));
+
+        // Check if the cookie set by CID is present
+        webRequestContext.setContextCookiePresent(false);
+        final Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("context")) {
+                    webRequestContext.setContextCookiePresent(true);
+                    break;
+                }
+            }
+        }
 
         final String fullUrl = webRequestContext.getFullUrl();
         LOG.trace("preHandle: {}", fullUrl);

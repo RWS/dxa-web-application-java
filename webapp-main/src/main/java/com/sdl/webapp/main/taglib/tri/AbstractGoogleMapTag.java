@@ -7,8 +7,8 @@ import java.util.Locale;
 
 public abstract class AbstractGoogleMapTag extends HtmlNodeTag {
 
-    protected static final String CONFIG_MAPS_API_KEY = "core.mapsApiKey";
-    protected static final String DUMMY_API_KEY = "xxx";
+    private static final String CONFIG_MAPS_API_KEY = "core.mapsApiKey";
+    private static final String DUMMY_API_KEY = "xxx";
 
     private static final int DEFAULT_MAP_WIDTH = 311;
     private static final int DEFAULT_MAP_HEIGHT = 160;

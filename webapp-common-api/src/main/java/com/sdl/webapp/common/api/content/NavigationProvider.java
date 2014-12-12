@@ -9,6 +9,13 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
  */
 public interface NavigationProvider {
 
+    /**
+     * Gets the navigation model for the specified localization.
+     *
+     * @param localization The localization.
+     * @return The navigation model as a {@code SitemapItem}.
+     * @throws NavigationProviderException If an error occurred so that the navigation model could not be retrieved.
+     */
     SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException;
 
     /**

@@ -14,8 +14,20 @@ call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_datalayer
 call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_dynamic              -Dversion=8.0.0 -Dpackaging=jar -Dfile=cd_dynamic-8.0.0.jar
 call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_linking              -Dversion=8.0.0 -Dpackaging=jar -Dfile=cd_linking-8.0.0.jar
 call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_model                -Dversion=8.0.0 -Dpackaging=jar -Dfile=cd_model-8.0.0.jar
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_odata                -Dversion=8.0.0 -Dpackaging=jar -Dfile=cd_odata-8.0.0.jar
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_odata_types          -Dversion=8.0.0 -Dpackaging=jar -Dfile=cd_odata_types-8.0.0.jar
 call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_session              -Dversion=8.0.0 -Dpackaging=jar -Dfile=cd_session-8.0.0.jar
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_tcdl                 -Dversion=8.0.0 -Dpackaging=jar -Dfile=cd_tcdl-8.0.0.jar
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_wai                  -Dversion=8.0.0 -Dpackaging=jar -Dfile=cd_wai-8.0.0.jar
 call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_wrapper              -Dversion=8.0.0 -Dpackaging=jar -Dfile=cd_wrapper-8.0.0.jar
+
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=odata_api               -Dversion=8.0.0 -Dpackaging=jar -Dfile=odata_api-8.0.0.jar
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=odata_client            -Dversion=8.0.0 -Dpackaging=jar -Dfile=odata_client-8.0.0.jar
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=odata_edm               -Dversion=8.0.0 -Dpackaging=jar -Dfile=odata_edm-8.0.0.jar
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=odata_parser            -Dversion=8.0.0 -Dpackaging=jar -Dfile=odata_parser-8.0.0.jar
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=odata_renderer          -Dversion=8.0.0 -Dpackaging=jar -Dfile=odata_renderer-8.0.0.jar
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=odata_tridion_client    -Dversion=8.0.0 -Dpackaging=jar -Dfile=odata_tridion_client-8.0.0.jar
+call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=odata_tridion_common    -Dversion=8.0.0 -Dpackaging=jar -Dfile=odata_tridion_common-8.0.0.jar
 
 echo Installing third-party libraries into the local Maven repository...
 call mvn -q install:install-file -DgroupId=com.vs.ezlicrun -DartifactId=easylicense -Dversion=2.5 -Dpackaging=jar -Dfile=easylicense-2.5.jar

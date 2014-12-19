@@ -48,6 +48,50 @@
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_util</artifactId>
                 </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_odata</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_odata_types</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>odata_api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>odata_client</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>odata_edm</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>odata_parser</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>odata_renderer</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>odata_tridion_client</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>odata_tridion_common</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>javax.cache</groupId>
+                    <artifactId>cache-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.ehcache</groupId>
+                    <artifactId>jcache</artifactId>
+                </dependency>
             </dependencies>
         </profile>
     </profiles>

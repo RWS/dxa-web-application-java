@@ -13,7 +13,7 @@ public class TridionLinkResolver {
     private static final Logger LOG = LoggerFactory.getLogger(TridionLinkResolver.class);
 
     public String resolveLink(String uri, int publicationId, boolean isBinary) {
-        if (!uri.startsWith("tcm:")) {
+        if (uri == null || !uri.startsWith("tcm:")) {
             return uri;
         }
 

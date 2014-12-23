@@ -25,4 +25,6 @@ public class Constants {
 	public static final String FALSE_STRING = "false";
 	public static final String COMPONENT_FIELDS = "Fields";
 	public static final String METADATA_FIELDS = "MetadataFields";
+	public static final String EMBEDDED_VALUES_NODE = "EmbeddedValues";
+	public static final String LINKED_COMPONENT_VALUES_NODE = "LinkedComponentValues";
 }

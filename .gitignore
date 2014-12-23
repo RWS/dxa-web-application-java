@@ -1,0 +1,7 @@
+*.iml
+dd4t-core/target
+dd4t-databind/target
+dd4t-test
+dd4t-providers-rs/target
+dd4t-providers/target
+dd4t-api/target

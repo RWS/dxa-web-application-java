@@ -1,6 +1,7 @@
 package org.dd4t.databind.builder.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.dd4t.contentmodel.FieldType;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.ModelConverter;
 import org.dd4t.core.databind.TridionViewModel;
@@ -18,9 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * test
@@ -86,9 +85,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 				final JsonNode currentNode = getJsonNodeToParse(fieldName, rawJsonData, isRootComponent, contentFields, metadataFields, m);
 				// Since we are now now going from modelproperty > fetch data, the data might actually be null
 				if (currentNode != null) {
-
 					this.buildField(model, fieldName, currentNode, m);
-
 				}
 			}
 		} catch (IllegalAccessException | IOException e) {
@@ -122,6 +119,32 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 	private <T extends BaseViewModel> void buildField (final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping m) throws IllegalAccessException, SerializationException, IOException {
 
 		final Field modelField = m.getField();
+		// TODO: move out of here if there's any other datasource than Tridion.
+		final FieldType tridionDataFieldType = FieldType.findByValue(currentField.get("FieldType").intValue());
+		LOG.debug("Tridion field type: {}", tridionDataFieldType);
+
+		final ArrayList<JsonNode> nodeList = new ArrayList<>();
+		if (tridionDataFieldType.equals(FieldType.COMPONENTLINK)
+				|| tridionDataFieldType.equals(FieldType.MULTIMEDIALINK)
+				) {
+				// Get the actual values from the values
+				// if the Model's field is List, grab all embedded values
+			// if it's a normal class (ComponentImpl or similar), just get the first
+
+			final Iterator<JsonNode> nodes = currentField.get(Constants.LINKED_COMPONENT_VALUES_NODE).elements();
+			while (nodes.hasNext()) {
+				nodeList.add(nodes.next());
+			}
+			LOG.debug("yep");
+
+		} else if (tridionDataFieldType.equals(FieldType.EMBEDDED)) {
+			// We can only do this after deserialization unfortunately, since no field type is present
+			// in the embedded field values.
+			nodeList.add(currentField);
+		}
+		else {
+			nodeList.add(currentField);
+		}
 
 		// TODO: maybe add Collection<?>
 		if (modelField.getType().equals(List.class)) {
@@ -129,34 +152,63 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			LOG.debug("Interface check: " + TypeUtils.classIsViewModel((Class<?>) parametrizedType));
 			if (TypeUtils.classIsViewModel((Class<?>) parametrizedType)) {
 				// Deserialize in a STM
-				// TODO:
-				LOG.debug(currentField.toString());
+
+				for (JsonNode node : nodeList) {
+					checkTypeAndBuildModel(model, fieldName, currentField, modelField, (Class<T>) parametrizedType);
+				}
 
 			} else {
-				deserializeGeneric(model, currentField, modelField);
+				for (JsonNode node : nodeList) {
+					deserializeGeneric(model, currentField, modelField);
+				}
 			}
 
 		} else if (TypeUtils.classIsViewModel(modelField.getType())) {
-			checkTypeAndBuildModel(model, fieldName, currentField, modelField);
+			final Class<T> modelClassToUse = (Class<T>) modelField.getType();
+			checkTypeAndBuildModel(model, fieldName, nodeList.get(0), modelField, modelClassToUse);
 
 		} else {
-			deserializeGeneric(model, currentField, modelField);
+			deserializeGeneric(model, nodeList.get(0), modelField);
 		}
 
 	}
 
-	private static <T extends BaseViewModel> void checkTypeAndBuildModel (final T model, final String fieldName, final JsonNode currentField, final Field modelField) throws SerializationException, IllegalAccessException {
+	private static <T extends BaseViewModel> void checkTypeAndBuildModel (final T model, final String fieldName, final JsonNode currentField, final Field modelField, final Class<T> modelClassToUse) throws SerializationException, IllegalAccessException {
 		if (!model.getClass().equals(modelField.getType())) {
 			LOG.debug("Building a model or Component for field:{}, type: {}", fieldName, modelField.getType().getName());
-			final BaseViewModel strongModel = buildModelForField(currentField, modelField);
-			modelField.set(model, strongModel);
+			final BaseViewModel strongModel = buildModelForField(currentField, modelField, modelClassToUse);
+
+			if (modelField.getType().equals(List.class)) {
+				LOG.debug("Creating an ArrayList");
+				List list = (List) modelField.get(model);
+				if (list == null) {
+
+					list = new ArrayList();
+					list.add(strongModel);
+					modelField.set(model, list);
+
+
+				} else {
+					list.add(strongModel);
+				}
+
+
+				// modelField.set(model,list);
+
+
+				//modelList.add(strongModel);
+				//modelField.set(model,modelList);
+
+			} else {
+				modelField.set(model, strongModel);
+			}
 		} else {
 			LOG.error("Type for field type: {} is the same as the type for this view model: {}. This is NOT supported because of infinite loops. Work around this by creating a separate field type.", model.getClass().getCanonicalName(), modelField.getType().getCanonicalName());
 		}
 	}
 
-	private static <T extends BaseViewModel> BaseViewModel buildModelForField (final JsonNode currentField, final Field f) throws SerializationException {
-		final Class<T> modelClassToUse = (Class<T>) f.getType();
+	private static <T extends BaseViewModel> BaseViewModel buildModelForField (final JsonNode currentField, final Field f, final Class<T> modelClassToUse) throws SerializationException {
+
 		final BaseViewModel strongModel = DataBindFactory.buildModel(currentField, modelClassToUse, "");
 		final ViewModel viewModelParameters = (ViewModel) modelClassToUse.getAnnotation(ViewModel.class);
 		if (viewModelParameters.setRawData()) {

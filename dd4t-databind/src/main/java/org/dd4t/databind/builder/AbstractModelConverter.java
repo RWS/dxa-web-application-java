@@ -1,7 +1,5 @@
 package org.dd4t.databind.builder;
 
-import org.dd4t.contentmodel.FieldSet;
-import org.dd4t.contentmodel.FieldType;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.databind.util.TypeUtils;
@@ -11,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Map;
 
 /**
  * dd4t-2
@@ -32,37 +29,21 @@ public abstract class AbstractModelConverter {
 			typeOfFieldToSet = f.getType();
 		}
 
-
 		List<Object> values = renderedField.getValues();
 
 		if (values != null && !values.isEmpty()) {
 
-			if (renderedField.getFieldType().equals(FieldType.EMBEDDED) && !TypeUtils.classIsViewModel((Class<?>) typeOfFieldToSet)) {
-// TODO: this needs to be set on the Embedded class on the parent field if it is list!
-				if (isMultiValued) {
-					for (Object o : values) {
-						final FieldSet fieldSet = (FieldSet) o;
-						final Map<String, org.dd4t.contentmodel.Field> content = fieldSet.getContent();
-						f.set(model, content.containsKey(f.getName()) ? content.get(f.getName()).getValues().get(0) : null);
-					}
-				} else {
-					LOG.warn("Probably you will want to have a List wrapping this EmbeddedField");
-					final FieldSet fieldSet = (FieldSet) values.get(0);
-					final Map<String, org.dd4t.contentmodel.Field> content = fieldSet.getContent();
-					f.set(model, content.containsKey(f.getName()) ? content.get(f.getName()).getValues().get(0) : null);
-				}
+			if (isMultiValued) {
+				LOG.debug("Setting multivalued field: {}", f.getName());
+				f.set(model, renderedField.getValues());
 			} else {
-				if (isMultiValued) {
-					LOG.debug("Setting multivalued field: {}", f.getName());
-					f.set(model, renderedField.getValues());
-				} else {
-					f.set(model, renderedField.getValues().get(0));
-				}
-
-				if (model instanceof TridionViewModel) {
-					setXpm((TridionViewModel) model, renderedField, isMultiValued);
-				}
+				f.set(model, renderedField.getValues().get(0));
 			}
+
+			if (model instanceof TridionViewModel) {
+				setXpm((TridionViewModel) model, renderedField, isMultiValued);
+			}
+
 		} else {
 			LOG.debug("No value(s) found!");
 			if (model instanceof TridionViewModel) {

@@ -1,10 +1,10 @@
 package org.dd4t.core.util;
 
-import com.sun.tools.internal.ws.processor.model.ModelException;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Field;
+import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.LabelServiceFactoryImpl;
 import org.dd4t.core.services.LabelService;
@@ -25,7 +25,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * TODO: totally redo component loading..
+ */
 public class RenderUtils {
+
+	private RenderUtils () {
+
+	}
 
 	private static final Logger LOG = LoggerFactory.getLogger(RenderUtils.class);
 	private static LabelService labelService = null;
@@ -233,7 +240,7 @@ public class RenderUtils {
 	 * @param componentPresentations , the list with component presentations
 	 * @return as string with all component presentations rendered and concatenated.
 	 */
-	public static String renderComponentPresentations(final HttpServletRequest request, final HttpServletResponse response, final List<ComponentPresentation> componentPresentations) throws ItemNotFoundException, ModelException {
+	public static String renderComponentPresentations(final HttpServletRequest request, final HttpServletResponse response, final List<ComponentPresentation> componentPresentations) throws ItemNotFoundException, FactoryException {
 		final StringBuilder buf = new StringBuilder();
 
 		if (componentPresentations == null) {
@@ -257,8 +264,7 @@ public class RenderUtils {
 	 */
 	public static String renderComponentPresentation(final HttpServletRequest request,
 	                                                 final HttpServletResponse response,
-	                                                 final ComponentPresentation cp)
-			throws ItemNotFoundException {
+	                                                 final ComponentPresentation cp) throws ItemNotFoundException, FactoryException {
 		return renderComponentPresentation(request, response, cp, true);
 	}
 
@@ -274,8 +280,7 @@ public class RenderUtils {
 	public static String renderComponentPresentation(final HttpServletRequest request,
 	                                                 final HttpServletResponse response,
 	                                                 final ComponentPresentation cp,
-	                                                 boolean useCache)
-			throws ItemNotFoundException {
+	                                                 boolean useCache) throws ItemNotFoundException, FactoryException {
 
 			return getResponse(request, response, cp, getViewName(cp));
 	}
@@ -294,8 +299,8 @@ public class RenderUtils {
 			String componentTemplateURI = getLabelService().getViewLabel(viewName);
 
 			return renderComponentPresentation(request, response, componentURI, componentTemplateURI, viewName);
-		} catch (IOException e) {
-			throw new ModelException(e);
+		} catch (IOException | FactoryException e) {
+			throw new ItemNotFoundException(e);
 		}
 	}
 
@@ -308,7 +313,7 @@ public class RenderUtils {
 	 * @param templateURI
 	 * @param viewName
 	 */
-	public static String renderComponentPresentation(final HttpServletRequest request, final HttpServletResponse response, final String componentURI, final String templateURI, final String viewName) throws ItemNotFoundException, ModelException {
+	public static String renderComponentPresentation(final HttpServletRequest request, final HttpServletResponse response, final String componentURI, final String templateURI, final String viewName) throws ItemNotFoundException, FactoryException {
 		ComponentPresentation componentPresentation = ComponentUtils.createPlaceholderComponentPresentation(componentURI, templateURI, viewName);
 
 		return getResponse(request, response, componentPresentation, viewName);
@@ -342,8 +347,7 @@ public class RenderUtils {
 	}
 
 	private static String getResponse(final HttpServletRequest request, final HttpServletResponse response,
-	                                  final ComponentPresentation cp, final String viewName)
-			throws ItemNotFoundException, ModelException {
+	                                  final ComponentPresentation cp, final String viewName) throws ItemNotFoundException, FactoryException {
 		try {
 			TCMURI tcmuri = new TCMURI(cp.getComponent().getId());
 			ComponentUtils.setComponent(request, cp);
@@ -355,7 +359,7 @@ public class RenderUtils {
 			return dispatchBufferedRequest(request, response, url);
 		} catch (IOException | ParseException | ServletException e) {
 			LOG.error(e.getMessage(), e);
-			throw new ModelException(e);
+			throw new FactoryException(e);
 		} finally {
 			ComponentUtils.removeComponent(request);
 		}

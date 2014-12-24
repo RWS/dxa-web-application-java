@@ -69,14 +69,9 @@ public class DataBindFactory {
 		return null;
 	}
 
-
-
-	// TODO: rootelementname!
 	public static String getRootElementName(Object componentNode) {
 		return INSTANCE.dataBinder.getRootElementName(componentNode);
 	}
-
-
 
 	public static boolean renderGenericComponentsOnly() {
 		return INSTANCE.dataBinder.renderDefaultComponentModelsOnly();

@@ -71,7 +71,6 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			isRootComponent = false;
 		}
 
-
 		// TODO: resolve unchecked exception (Move the Annotation to dd4t-api)
 		// TODO: mandatory but missing fields need their XPath set as well..
 		final Map<String, ModelFieldMapping> modelProperties = (HashMap<String, ModelFieldMapping>) model.getModelProperties();
@@ -120,29 +119,20 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
 		final Field modelField = m.getField();
 		// TODO: move out of here if there's any other datasource than Tridion.
-		final FieldType tridionDataFieldType = FieldType.findByValue(currentField.get("FieldType").intValue());
+		final FieldType tridionDataFieldType;
+		if (currentField.has("FieldType")) {
+			tridionDataFieldType = FieldType.findByValue(currentField.get("FieldType").intValue());
+		} else {
+			tridionDataFieldType = FieldType.EMBEDDED;
+		}
 		LOG.debug("Tridion field type: {}", tridionDataFieldType);
 
 		final ArrayList<JsonNode> nodeList = new ArrayList<>();
-		if (tridionDataFieldType.equals(FieldType.COMPONENTLINK)
-				|| tridionDataFieldType.equals(FieldType.MULTIMEDIALINK)
-				) {
-				// Get the actual values from the values
-				// if the Model's field is List, grab all embedded values
-			// if it's a normal class (ComponentImpl or similar), just get the first
-
-			final Iterator<JsonNode> nodes = currentField.get(Constants.LINKED_COMPONENT_VALUES_NODE).elements();
-			while (nodes.hasNext()) {
-				nodeList.add(nodes.next());
-			}
-			LOG.debug("yep");
-
+		if (tridionDataFieldType.equals(FieldType.COMPONENTLINK) || tridionDataFieldType.equals(FieldType.MULTIMEDIALINK)) {
+			fillLinkedComponentValues(currentField, nodeList);
 		} else if (tridionDataFieldType.equals(FieldType.EMBEDDED)) {
-			// We can only do this after deserialization unfortunately, since no field type is present
-			// in the embedded field values.
-			nodeList.add(currentField);
-		}
-		else {
+			fillEmbeddedValues(currentField, modelField, nodeList);
+		} else {
 			nodeList.add(currentField);
 		}
 
@@ -154,12 +144,12 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 				// Deserialize in a STM
 
 				for (JsonNode node : nodeList) {
-					checkTypeAndBuildModel(model, fieldName, currentField, modelField, (Class<T>) parametrizedType);
+					checkTypeAndBuildModel(model, fieldName, node, modelField, (Class<T>) parametrizedType);
 				}
 
 			} else {
 				for (JsonNode node : nodeList) {
-					deserializeGeneric(model, currentField, modelField);
+					deserializeGeneric(model, node, modelField);
 				}
 			}
 
@@ -170,7 +160,43 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		} else {
 			deserializeGeneric(model, nodeList.get(0), modelField);
 		}
+	}
 
+	private static void fillEmbeddedValues (final JsonNode currentField, final Field modelField, final ArrayList<JsonNode> nodeList) {
+		// We can only do this after deserialization unfortunately, since no field type is present
+		// in the embedded field values.
+
+		if (currentField.has(Constants.EMBEDDED_VALUES_NODE)) {
+			// Here we get the embedded values, which can be a multivalue list of embedded components.
+			// Once these nodes are extracted, the deserializer builds up fields one by one through the same
+			// mechanism. In this method it then goes through the else.
+			final Iterator<JsonNode> nodes = currentField.get(Constants.EMBEDDED_VALUES_NODE).elements();
+			while (nodes.hasNext()) {
+				nodeList.add(nodes.next());
+			}
+			LOG.debug("Nodes: {}", nodeList.size());
+		} else {
+			// This is where the serializer passes when it's trying to deserialize the actual field in an embedded
+			// component.
+
+			// TODO: add more info, like the embeddedschema info, XPM info here
+			// Best thing to do may be to just add required values to
+			// an embedded base class
+			if (currentField.has(modelField.getName())) {
+				nodeList.add(currentField.get(modelField.getName()));
+			}
+		}
+	}
+
+	private static void fillLinkedComponentValues (final JsonNode currentField, final ArrayList<JsonNode> nodeList) {
+		// Get the actual values from the values
+		// if the Model's field is List, grab all embedded values
+		// if it's a normal class (ComponentImpl or similar), just get the first
+
+		final Iterator<JsonNode> nodes = currentField.get(Constants.LINKED_COMPONENT_VALUES_NODE).elements();
+		while (nodes.hasNext()) {
+			nodeList.add(nodes.next());
+		}
 	}
 
 	private static <T extends BaseViewModel> void checkTypeAndBuildModel (final T model, final String fieldName, final JsonNode currentField, final Field modelField, final Class<T> modelClassToUse) throws SerializationException, IllegalAccessException {
@@ -179,31 +205,23 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			final BaseViewModel strongModel = buildModelForField(currentField, modelField, modelClassToUse);
 
 			if (modelField.getType().equals(List.class)) {
-				LOG.debug("Creating an ArrayList");
-				List list = (List) modelField.get(model);
-				if (list == null) {
-
-					list = new ArrayList();
-					list.add(strongModel);
-					modelField.set(model, list);
-
-
-				} else {
-					list.add(strongModel);
-				}
-
-
-				// modelField.set(model,list);
-
-
-				//modelList.add(strongModel);
-				//modelField.set(model,modelList);
-
+				addToListTypeField(model, modelField, strongModel);
 			} else {
 				modelField.set(model, strongModel);
 			}
 		} else {
 			LOG.error("Type for field type: {} is the same as the type for this view model: {}. This is NOT supported because of infinite loops. Work around this by creating a separate field type.", model.getClass().getCanonicalName(), modelField.getType().getCanonicalName());
+		}
+	}
+
+	private static <T extends BaseViewModel> void addToListTypeField (final T model, final Field modelField, final BaseViewModel strongModel) throws IllegalAccessException {
+		List list = (List) modelField.get(model);
+		if (list == null) {
+			list = new ArrayList();
+			list.add(strongModel);
+			modelField.set(model, list);
+		} else {
+			list.add(strongModel);
 		}
 	}
 

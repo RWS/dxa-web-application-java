@@ -1,6 +1,7 @@
 package org.dd4t.core.factories.impl;
 
 import org.dd4t.contentmodel.GenericPage;
+import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
@@ -41,11 +42,11 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
      * @throws SerializationException
      */
     @Override
-    public GenericPage getPage(String uri) throws FactoryException{
+    public Page getPage(String uri) throws FactoryException{
         LOG.debug("Enter getPage with uri: {}", uri);
 
-        CacheElement<GenericPage> cacheElement = cacheProvider.loadFromLocalCache(uri);
-        GenericPage page;
+        CacheElement<Page> cacheElement = cacheProvider.loadFromLocalCache(uri);
+        Page page;
 
         if (cacheElement.isExpired()) {
             synchronized (cacheElement) {
@@ -94,12 +95,12 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
      * @throws org.dd4t.core.exceptions.FactoryException
      */
     @Override
-    public GenericPage findPageByUrl(String url, int publicationId) throws FactoryException{
+    public Page findPageByUrl(String url, int publicationId) throws FactoryException{
         LOG.debug("Enter findPageByUrl with url: {} and publicationId: {}", url, publicationId);
 
         String cacheKey = publicationId + "-" + url;
-        CacheElement<GenericPage> cacheElement = cacheProvider.loadFromLocalCache(cacheKey);
-        GenericPage page;
+        CacheElement<Page> cacheElement = cacheProvider.loadFromLocalCache(cacheKey);
+        Page page;
 
         if (cacheElement.isExpired()) {
             synchronized (cacheElement) {

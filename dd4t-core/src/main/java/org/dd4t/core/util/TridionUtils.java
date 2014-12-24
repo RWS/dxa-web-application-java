@@ -1,5 +1,7 @@
 package org.dd4t.core.util;
 
+import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.Schema;
 import org.dd4t.core.request.RequestContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -70,5 +72,10 @@ public class TridionUtils {
 
     public static HttpServletRequest getCurrentRequest() {
         return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+    }
+
+    public static String getRootElementName(final Component component) {
+        Schema schema = component.getSchema();
+        return (null != component.getMultimedia()) ? schema.getTitle() : schema.getRootElement();
     }
 }

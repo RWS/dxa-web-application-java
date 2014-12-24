@@ -109,10 +109,6 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 	}
 
 	/**
-	 * Logic:
-	 * <p/>
-	 * If a viewName is set on
-	 *
 	 * @param source      the source object. In this case a JsonNode
 	 * @param modelName   the viewModel name set on the CT
 	 * @param templateUri the CT URI. Just to set it on the model

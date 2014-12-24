@@ -11,7 +11,7 @@ import java.text.ParseException;
  */
 public interface PageProvider extends BaseProvider {
 
-	public String getPageContentById (int id, int publication) throws IOException, ItemNotFoundException;
+	public String getPageContentById (int id, int publication) throws IOException, ItemNotFoundException, SerializationException;
 
 	/**
      * Retrieves a Page by its Publication and URL. It returns JSON representing a Page model object.

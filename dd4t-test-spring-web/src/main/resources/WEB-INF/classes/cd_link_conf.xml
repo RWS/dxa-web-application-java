@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The Tridion Linking configuration specifies all configuration values
+ to enable the linking functionality.                                   -->
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               Version="6.1"
+               xsi:noNamespaceSchemaLocation="../../schemas/cd_link_conf.xsd">
+    <!-- The Publications element is a container for separate Publication elements. -->
+    <Publications>
+        <!-- The publication element allows you to specify Publication specific settings.
+               The Id indicates the id of the publication. This should be a number. -->
+        <!--<Publication Id="1">-->
+        <!-- The Host element allows you to specify information about the site that
+                   can be used to create URLs for Dynamic Links.
+                   The following attributes are specified:
+                      Domain    The domain of the website, for example www.tridion.com. The default domain is localhost.
+                      Port      The port of the website, for instance 8080. The default port is 80.
+                      Path      The path of the virtual directory of your website. The default path is /.
+                      Protocol  The protocol used for the website. The default protocol is http. -->
+        <!--<Host Domain="localhost" Port="80" Path=""/>-->
+        <!-- The Linking element allows you to specify additional information about
+                   the generation of links.
+                   The following attributes can be specified:
+                      ComponentAnchors     Indicates if anchors should be added to Component
+                                           Links so the browser jumps to the position of the
+                                           targetted Component Presentation (true or false).
+                      AddComponentLinkInfo Indicates if additional information should be
+                                           added to the QueryString of a ComponentLink URL.
+                                           This information is used by the WAI for ComponentLinkTracking,
+                                           so if this functionality is used, the value should be set to true. -->
+        <!--<Linking ComponentAnchors="false" AddComponentLinkInfo="false"/>-->
+        <!--</Publication>-->
+    </Publications>
+
+</Configuration>

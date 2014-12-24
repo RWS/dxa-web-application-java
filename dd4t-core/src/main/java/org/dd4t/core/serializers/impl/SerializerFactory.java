@@ -2,6 +2,7 @@ package org.dd4t.core.serializers.impl;
 
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.serializers.Serializer;
+import org.dd4t.core.serializers.impl.json.JSONSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class SerializerFactory {
 
 	private SerializerFactory(){
 		LOG.debug("Init SerializerFactory.");
+	}
+
+	public SerializerFactory (final JSONSerializer serializerInstance) {
 	}
 
 	/**

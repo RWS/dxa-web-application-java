@@ -3,7 +3,10 @@ package org.dd4t.providers.impl;
 import com.tridion.dcp.ComponentPresentation;
 import com.tridion.dcp.ComponentPresentationFactory;
 import com.tridion.util.TCMURI;
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.providers.ComponentProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +20,9 @@ import java.util.Map;
  * raw DCP content from the database. Access to these objects is not cached, and as such must be cached externally.
  * TODO: build in caching
  * TODO: we shouldn't throw exceptions if a DCP is not found?
+ * TODO: decompress!
  */
-public class BrokerComponentProvider implements ComponentProvider {
+public class BrokerComponentProvider extends BaseBrokerProvider implements ComponentProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentProvider.class);
 
@@ -43,7 +47,7 @@ public class BrokerComponentProvider implements ComponentProvider {
 	 * @throws ItemNotFoundException if the requested DCP cannot be found
 	 */
 	@Override
-	public String getDynamicComponentPresentation(int componentId, int publicationId) throws ItemNotFoundException {
+	public String getDynamicComponentPresentation(int componentId, int publicationId) throws ItemNotFoundException, SerializationException {
 		return getDynamicComponentPresentation(componentId, 0, publicationId);
 	}
 
@@ -57,7 +61,7 @@ public class BrokerComponentProvider implements ComponentProvider {
 	 * @throws ItemNotFoundException if the requested DCP cannot be found
 	 */
 	@Override
-	public String getDynamicComponentPresentation(int componentId, int templateId, int publicationId) throws ItemNotFoundException {
+	public String getDynamicComponentPresentation(int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
 		ComponentPresentationFactory factory = factoryCache.get(publicationId);
 		if (factory == null) {
 			factory = new ComponentPresentationFactory(publicationId);
@@ -65,7 +69,7 @@ public class BrokerComponentProvider implements ComponentProvider {
 		}
 
 		ComponentPresentation result;
-
+		String resultString = null;
 		if (templateId != 0) {
 			result = factory.getComponentPresentation(componentId, templateId);
 
@@ -76,7 +80,7 @@ public class BrokerComponentProvider implements ComponentProvider {
 				throw new ItemNotFoundException(message);
 			}
 
-			return result.getContent();
+			resultString = result.getContent();
 		}
 
 		// option 1: use defaultTemplateId
@@ -91,7 +95,7 @@ public class BrokerComponentProvider implements ComponentProvider {
 				throw new ItemNotFoundException(message);
 			}
 
-			return result.getContent();
+			resultString = result.getContent();
 		}
 
 		// option 2: use defaultOutputFormat
@@ -106,7 +110,7 @@ public class BrokerComponentProvider implements ComponentProvider {
 				throw new ItemNotFoundException(message);
 			}
 
-			return result.getContent();
+			resultString = result.getContent();
 		}
 
 		// option 3: use priority
@@ -120,7 +124,10 @@ public class BrokerComponentProvider implements ComponentProvider {
 			throw new ItemNotFoundException(message);
 		}
 
-		return result.getContent();
+		if (!StringUtils.isEmpty(resultString)){
+			return decodeAndDecompressContent(resultString);
+		}
+		return  null;
 	}
 
 	public String getDefaultOutputFormat() {

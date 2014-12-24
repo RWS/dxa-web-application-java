@@ -5,16 +5,17 @@ import com.tridion.linking.Link;
 import com.tridion.util.TCMURI;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.providers.LinkProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Provider implementation to wrap around the ComponentLinker.
- *
+ * TODO: decompress!
  * @author rooudsho, Mihai Cadariu
  */
-public class BrokerLinkProvider implements LinkProvider {
+public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerLinkProvider.class);
 

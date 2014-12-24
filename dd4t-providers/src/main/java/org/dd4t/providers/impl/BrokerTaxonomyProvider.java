@@ -12,6 +12,7 @@ import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.util.TCMURI;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.providers.TaxonomyProvider;
 
 import java.text.ParseException;
@@ -26,10 +27,10 @@ import java.util.Map;
  *
  * TODO TODO TODO. Proper interface (same for client and service)
  * TODO: Proper overrides!!
- *
+ * * TODO: decompress!
  * @author Mihai Cadariu
  */
-public class BrokerTaxonomyProvider implements TaxonomyProvider {
+public class BrokerTaxonomyProvider extends BaseBrokerProvider implements TaxonomyProvider {
 
 	public static final String SELECT_RELATED_KEYWORDS = "select distinct(rk) from RelatedKeyword rk, ItemMeta im" +
 			" where rk.publicationId = :publicationId and rk.taxonomyId = :taxonomyId and im.itemType = :itemType and rk.itemId = im.itemId and rk.publicationId = im.publicationId";

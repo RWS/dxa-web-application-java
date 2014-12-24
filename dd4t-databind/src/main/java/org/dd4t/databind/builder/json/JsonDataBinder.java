@@ -50,7 +50,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		return INSTANCE;
 	}
 
-	public <T extends Page> T buildPage (final String source, final Class<T> aClass) throws SerializationException {
+	public <T extends Item> T buildPage (final String source, final Class<T> aClass) throws SerializationException {
 		try {
 			return GENERIC_MAPPER.readValue(source, aClass);
 		} catch (IOException e) {

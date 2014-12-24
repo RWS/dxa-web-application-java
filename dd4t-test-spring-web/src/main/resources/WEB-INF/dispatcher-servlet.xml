@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/jms
+        http://www.springframework.org/schema/jms/spring-jms.xsd">
+    <context:component-scan base-package="org.dd4t.test.web.controller" annotation-config="true"/>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean id="propertiesServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.PropertiesServiceFactory"
+          factory-method="getInstance"/>
+
+    <!-- Publication resolver -->
+    <bean id="publicationResolver" scope="singleton" class="org.dd4t.core.resolvers.impl.UrlPublicationResolver"
+          factory-bean="publicationResolverFactory">
+        <property name="level" value="1"/>
+    </bean>
+
+    <bean id="publicationResolverFactory" scope="singleton" factory-method="getInstance"
+          class="org.dd4t.core.factories.impl.PublicationResolverFactoryImpl"/>
+
+    <!-- DD4T Provider beans -->
+    <bean id="binaryProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerBinaryProvider">
+        <property name="contentIsCompressed" value="${content.compressed}"/>
+    </bean>
+
+    <bean id="componentProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerComponentProvider">
+        <property name="contentIsCompressed" value="${content.compressed}"/>
+    </bean>
+
+    <bean id="pageProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerPageProvider"
+          factory-bean="pageProviderFactory">
+        <property name="contentIsCompressed" value="${content.compressed}"/>
+    </bean>
+
+    <bean id="pageProviderFactory" scope="singleton" class="org.dd4t.core.factories.impl.PageProviderFactory"
+          factory-method="getInstance"/>
+
+    <bean id="linkProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerLinkProvider">
+        <property name="contentIsCompressed" value="${content.compressed}"/>
+    </bean>
+
+    <bean id="cacheProvider" scope="singleton" class="org.dd4t.core.caching.impl.EHCacheProvider"
+          depends-on="propertiesServiceFactory"/>
+
+    <bean id="cacheProviderFactory" scope="singleton" factory-method="getInstance"
+          class="org.dd4t.core.factories.impl.CacheProviderFactoryImpl"/>
+
+    <!-- DD4T Factories -->
+    <bean id="linkResolver" scope="singleton" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver"/>
+
+    <bean id="linkResolverFactory" scope="singleton" class="org.dd4t.core.factories.impl.LinkResolverFactory"
+          factory-method="getInstance"/>
+
+    <bean id="componentFactory" scope="singleton" class="org.dd4t.core.factories.impl.ComponentFactoryImpl"
+          factory-method="getInstance">
+    </bean>
+
+    <bean id="pageFactory" scope="singleton" class="org.dd4t.core.factories.impl.PageFactoryImpl"
+          factory-method="getInstance">
+        <!-- TODO set filters or autowire? -->
+    </bean>
+
+    <bean id="binaryFactory" scope="singleton" class="org.dd4t.core.factories.impl.BinaryFactoryImpl"
+          factory-method="getInstance">
+    </bean>
+
+    <!-- DD4T Controllers -->
+    <bean id="pageController" scope="singleton" class="org.dd4t.test.web.controller.SpringPageController">
+        <property name="pageViewPath" value="pages/"/>
+    </bean>
+
+    <bean id="componentController" scope="singleton" class="org.dd4t.test.web.controller.SpringComponentController">
+        <property name="componentViewPath" value="components/"/>
+    </bean>
+
+    <bean id="binaryController" scope="singleton" class="org.dd4t.test.web.controller.SpringBinaryController">
+        <property name="binaryRootFolder" value="${binary.rootfolder}"/>
+    </bean>
+
+    <bean id="serializer" class="org.dd4t.core.serializers.impl.json.JSONSerializer"/>
+    <bean id="serializerFactory" scope="singleton" class="org.dd4t.core.serializers.impl.SerializerFactory">
+        <constructor-arg name="serializerInstance" ref="serializer"/>
+    </bean>
+
+    <!-- Taxonomy Stuff -->
+    <bean id="taxonomyProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerTaxonomyProvider"/>
+
+    <bean id="taxonomyFactory" scope="singleton" class="org.dd4t.core.factories.impl.TaxonomyFactoryImpl"
+          factory-method="getInstance"/>
+
+    <bean id="taxonomyServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.TaxonomyServiceFactoryImpl"
+          factory-method="getInstance"/>
+    <!-- TODO: add label service -->
+
+    <!-- NEW Databind stuff. NOT wired yet -->
+    <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
+    <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
+        <!-- Set this value to your own models package root -->
+        <property name="viewModelPackageRoot" value="org.dd4t.databind.viewmodel.test" />
+        <property name="viewModelMetaKeyName" value="viewName" />
+        <!-- Set these to your need. If you only want regular Components set to true -->
+        <property name="renderDefaultComponentModelsOnly" value="false" />
+        <property name="renderDefaultComponentsIfNoModelFound" value="true" />
+        <property name="converter" ref="modelConverter" />
+        <!-- override these if you want your own implementations -->
+        <property name="concreteComponentPresentationImpl" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
+        <property name="concreteComponentImpl" value="org.dd4t.contentmodel.impl.ComponentImpl" />
+        <property name="concreteFieldImpl" value="org.dd4t.contentmodel.impl.BaseField"/>
+    </bean>
+
+    <!-- DD4T factories entry point  -->
+    <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="getInstance">
+        <property name="dataBinder" ref="dataBinder" />
+    </bean>
+</beans>

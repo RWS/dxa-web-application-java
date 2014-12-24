@@ -8,6 +8,7 @@ import org.dd4t.core.exceptions.FilterException;
 import org.dd4t.core.filters.LinkResolverFilter;
 import org.dd4t.core.filters.impl.BaseFilter;
 import org.dd4t.core.serializers.impl.SerializerFactory;
+import org.dd4t.databind.DataBindFactory;
 import org.dd4t.providers.CacheProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -87,6 +88,8 @@ public abstract class BaseFactory {
      * @return the deserialized object
      */
     protected <T extends Item> T deserialize(String source, Class<? extends T> clazz) throws SerializationException {
+
+
         return SerializerFactory.deserialize(source, clazz);
     }
 }

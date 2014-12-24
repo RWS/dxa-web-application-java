@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               Version="6.1"
+               xsi:noNamespaceSchemaLocation="../../schemas/cd_storage_conf.xsd">
+    <Global>
+        <ObjectCache Enabled="true">
+            <Policy Type="LRU" Class="com.tridion.cache.LRUPolicy">
+                <Param Name="MemSize" Value="32mb"/>
+            </Policy>
+
+            <Features>
+                <Feature Type="DependencyTracker" Class="com.tridion.cache.DependencyTracker"/>
+            </Features>
+        </ObjectCache>
+
+        <Storages>
+            <Storage Type="persistence" Id="defaultdb" dialect="MSSQL"
+                     Class="com.tridion.storage.persistence.JPADAOFactory">
+                <Pool Type="jdbc" Size="10" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120"/>
+                <DataSource Class="com.microsoft.sqlserver.jdbc.SQLServerDataSource">
+                    <Property Name="serverName" Value="[SERVER]"/>
+                    <Property Name="portNumber" Value="[PORT]"/>
+                    <Property Name="databaseName" Value="[DB_NAME]"/>
+                    <Property Name="user" Value="[DB_USER_NAME]"/>
+                    <Property Name="password" Value="[DB_PASSWORD]"/>
+                </DataSource>
+            </Storage>
+        </Storages>
+    </Global>
+
+    <ItemTypes defaultStorageId="defaultdb" cached="true"/>
+</Configuration>

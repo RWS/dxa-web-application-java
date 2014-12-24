@@ -10,6 +10,7 @@ import com.tridion.storage.dao.BinaryVariantDAO;
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.providers.BinaryProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,8 +21,9 @@ import java.text.ParseException;
  * Provides access to Binaries stored in the Content Delivery database. It uses JPA DAOs to retrieve raw binary content
  * or binary metadata from the database. Access to these objects is not cached, and as such must be cached externally.
  *
+ *  * TODO: decompress!
  */
-public class BrokerBinaryProvider implements BinaryProvider {
+public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerBinaryProvider.class);
 

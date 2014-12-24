@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xsd:element name="Configuration" id="cd_link_confN10006">
+        <xsd:annotation>
+            <xsd:documentation>
+                <p>Root of this configuration file.</p>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Global" minOccurs="0" maxOccurs="1" id="cd_link_confN10016">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Global configuration settings for the Content Broker.</p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="RMIChannel" minOccurs="0" id="cd_link_confN10028">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>RMI listener port.</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="ListenerPort" type="xsd:short" use="required"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Publications" id="cd_link_confN10041">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Specifies default and publication-specific locations for metadata, binaries and Pages.
+                            </p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element ref="Publication" minOccurs="0" maxOccurs="unbounded"/>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="License" minOccurs="0" id="cd_link_confN10059">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Specifies the location of the Content Broker license file. Without a license file,
+                                Content Broker stores content on the local file system only.
+                            </p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="Location" type="xsd:string" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>The full path and filename of the Content Broker configuration file.</p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="Version" type="xsd:decimal" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <p>The version of this Linking configuration file. This must be set to your Content Delivery
+                            version (without specifying a service pack), e.g. "5.4", "7.0".
+                        </p>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:element name="Publication" id="cd_link_confN1008B">
+        <xsd:annotation>
+            <xsd:documentation>
+                <p>Specifies locations for metadata, binaries and Pages that are specific to one Publication.</p>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Host" maxOccurs="unbounded" id="cd_link_confN1009B">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>A host associated with the Publication you are specifying. If the
+                                <code>Domain</code>
+                                attribute is left empty, the
+                                <code>Protocol</code>
+                                attribute is ignored if it is not set to<code>file</code>, and the
+                                <code>Port</code>
+                                attribute is always ignored.
+                            </p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="Domain" type="xsd:string" default="localhost">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>The domain of the host you are specifying.</p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Port" type="xsd:short" default="80">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>The port number of the host you are specifying.</p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Protocol" type="xsd:string" default="http">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>The protocol of the host you are specifying.</p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="Path" type="xsd:string">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>The path of the virtual directory of your Web site on the host you are
+                                        specifying.
+                                    </p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="Linking" minOccurs="0" id="cd_link_confN100F3">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Configuration about dynamic link resolving specific to this Publication.</p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="ComponentAnchors" type="xsd:boolean" use="optional" default="true">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>Indicates if anchors should be added to Component links so that the browser jumps
+                                        to the position of the targeted Component Presentation. The value can be either
+                                        'true' or 'false'.
+                                    </p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="AddComponentLinkInfo" type="xsd:boolean" use="optional" default="false">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>Indicates if additional information should be added to the QueryString of a
+                                        Component Link URL. The value can be either 'true' or 'false'. If this value is
+                                        'true', then a string that contains the Component ID and the Page ID is added as
+                                        CGI key/value pairs in the following form:
+                                    </p>
+                                    <p>
+                                        <code>ComponentId=x&amp;SourcePageId=y</code>
+                                    </p>
+                                    <p>
+                                        <strong>Note:</strong>
+                                        If you are using Profiling &amp; Personalization, set this value to
+                                        <code>true</code>, because Profiling &amp; Personalization uses this information
+                                        for Component Link Tracking.
+                                    </p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="Id" type="xsd:integer" use="optional">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <p>The ID of this Publication (a unique number)</p>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

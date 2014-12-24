@@ -3,7 +3,7 @@ package org.dd4t.databind;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
-import org.dd4t.contentmodel.Page;
+import org.dd4t.contentmodel.Item;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.exceptions.SerializationException;
@@ -16,6 +16,9 @@ import java.util.Hashtable;
 
 /**
  * Just a Singleton entry point for all DD4T classes
+ *
+ * TODO: return items extended from page to be compatible with the Factories
+ * This is probably for Page and Component only
  *
  * @author R. Kempees
  */
@@ -36,7 +39,7 @@ public class DataBindFactory {
 		return INSTANCE;
 	}
 
-	public static <T extends Page> T buildPage(final String source,final Class<T> aClass) throws SerializationException {
+	public static <T extends Item> T buildPage(final String source,final Class<T> aClass) throws SerializationException {
 		return INSTANCE.dataBinder.buildPage(source,aClass);
 	}
 

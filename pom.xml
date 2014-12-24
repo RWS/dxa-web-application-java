@@ -16,6 +16,7 @@
         <module>dd4t-providers-rs</module>
         <module>dd4t-test</module>
         <module>dd4t-mvc-support</module>
+        <module>dd4t-test-spring-web</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

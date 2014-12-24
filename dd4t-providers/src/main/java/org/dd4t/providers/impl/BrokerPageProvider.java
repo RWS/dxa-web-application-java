@@ -12,6 +12,7 @@ import com.tridion.storage.dao.ItemTypeSelector;
 import com.tridion.storage.dao.PageDAO;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.IOUtils;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.PageProvider;
@@ -29,7 +30,7 @@ import java.util.List;
  * TODO: Logging, use this class only from the enum TridionBrokerPageProvider
  * TODO: Implement caching
  */
-public class BrokerPageProvider implements PageProvider {
+public class BrokerPageProvider extends BaseBrokerProvider implements PageProvider {
 
 	private final static Logger LOG = LoggerFactory.getLogger(BrokerPageProvider.class);
 	private final static PublicationMetaFactory PUBLICATION_META_FACTORY = new PublicationMetaFactory();
@@ -44,7 +45,7 @@ public class BrokerPageProvider implements PageProvider {
 	 * @throws ItemNotFoundException if the requested page does not exist
 	 */
 	@Override
-	public String getPageContentById (int id, int publication) throws IOException, ItemNotFoundException {
+	public String getPageContentById (int id, int publication) throws IOException, ItemNotFoundException, SerializationException {
 
 		CharacterData data = null;
 		try {
@@ -57,8 +58,8 @@ public class BrokerPageProvider implements PageProvider {
 		if (data == null) {
 			throw new ItemNotFoundException("Unable to find page by id '" + id + "' and publication '" + publication + "'.");
 		}
-
-		return IOUtils.convertStreamToString(data.getInputStream());
+		String result = decodeAndDecompressContent(IOUtils.convertStreamToString(data.getInputStream()));
+		return result;
 	}
 
 	/**
@@ -72,7 +73,7 @@ public class BrokerPageProvider implements PageProvider {
 	 * @throws ItemNotFoundException if the requested page does not exist
 	 */
 	@Override
-	public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, IOException {
+	public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, IOException, SerializationException {
 		PageMeta meta = getPageMetaByURL(url, publication);
 
 		if (meta == null) {

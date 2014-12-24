@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+    <!-- Properties -->
+    <property name="log.pattern" value="%date %-5level %t %logger{0} - %message%n"/>
+    <property name="log.history" value="1"/>
+    <property name="log.folder" value="/Users/rai/logs"/>
+    <property name="log.level" value="DEBUG"/>
+
+    <!-- Appenders -->
+
+    <appender name="rollingDeserializerLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/TEST.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+    <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Loggers -->
+    <logger name="org.dd4t" level="OFF">
+        <appender-ref ref="rollingDeserializerLog"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+
+    <!-- Loggers -->
+    <logger name="org.dd4t.databind" level="${log.level}" additivity="false">
+        <appender-ref ref="rollingDeserializerLog"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+
+    <logger name="org.dd4t.core.serializers.impl.json" level="${log.level}" additivity="false">
+        <appender-ref ref="rollingDeserializerLog"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+
+    <logger name="com.radagio" level="${log.level}" additivity="false">
+        <appender-ref ref="rollingDeserializerLog"/>
+        <appender-ref ref="stdout"/>
+    </logger>
+    <root level="${log.level}">
+        <appender-ref ref="rollingDeserializerLog"/>
+        <appender-ref ref="stdout"/>
+    </root>
+</configuration>

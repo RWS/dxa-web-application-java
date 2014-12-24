@@ -1,6 +1,6 @@
 package org.dd4t.core.factories.impl;
 
-import org.dd4t.contentmodel.GenericPage;
+import org.dd4t.contentmodel.Item;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.caching.CacheElement;
@@ -10,6 +10,7 @@ import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.PageFactory;
 import org.dd4t.core.util.TCMURI;
+import org.dd4t.databind.DataBindFactory;
 import org.dd4t.providers.PageProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 	                try {
 		                page = deserialize(pageSource, PageImpl.class);
 		                cacheElement.setPayload(page);
-
+// TODO: put CPs on the request stack here
 		                TCMURI tcmUri = new TCMURI(uri);
 		                cacheProvider.storeInItemCache(uri, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
 		                LOG.debug("Added page with uri: {} to cache", uri);
@@ -120,6 +121,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
 	                try {
 		                page = deserialize(pageSource, PageImpl.class);
+                        // TODO: put CPs on the request stack here
 
 		                cacheElement.setPayload(page);
 
@@ -198,6 +200,16 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
         return page;
     }
 
+    /**
+     * Deserializes a JSON encoded String into an object of the given type
+     *
+     * @param source String representing the JSON encoded object
+     * @param clazz  Class representing the implementation type to deserialize into
+     * @return the deserialized object
+     */
+    @Override protected <T extends Item> T deserialize (final String source, final Class<? extends T> clazz) throws SerializationException {
+        return DataBindFactory.buildPage(source, clazz);
+    }
 
     /**
      * Method to check whether a page exists in the Tridion Broker.

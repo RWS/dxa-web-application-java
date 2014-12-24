@@ -118,7 +118,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 	private <T extends BaseViewModel> void buildField (final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping m) throws IllegalAccessException, SerializationException, IOException {
 
 		final Field modelField = m.getField();
-		// TODO: move out of here if there's any other datasource than Tridion.
+
 		final FieldType tridionDataFieldType;
 		if (currentField.has("FieldType")) {
 			tridionDataFieldType = FieldType.findByValue(currentField.get("FieldType").intValue());
@@ -127,7 +127,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		}
 		LOG.debug("Tridion field type: {}", tridionDataFieldType);
 
-		final ArrayList<JsonNode> nodeList = new ArrayList<>();
+		final List<JsonNode> nodeList = new ArrayList<>();
 		if (tridionDataFieldType.equals(FieldType.COMPONENTLINK) || tridionDataFieldType.equals(FieldType.MULTIMEDIALINK)) {
 			fillLinkedComponentValues(currentField, nodeList);
 		} else if (tridionDataFieldType.equals(FieldType.EMBEDDED)) {
@@ -136,7 +136,6 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			nodeList.add(currentField);
 		}
 
-		// TODO: maybe add Collection<?>
 		if (modelField.getType().equals(List.class)) {
 			final Type parametrizedType = TypeUtils.getRuntimeTypeOfTypeParameter(modelField.getGenericType());
 			LOG.debug("Interface check: " + TypeUtils.classIsViewModel((Class<?>) parametrizedType));
@@ -162,7 +161,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		}
 	}
 
-	private static void fillEmbeddedValues (final JsonNode currentField, final Field modelField, final ArrayList<JsonNode> nodeList) {
+	private static void fillEmbeddedValues (final JsonNode currentField, final Field modelField, final List<JsonNode> nodeList) {
 		// We can only do this after deserialization unfortunately, since no field type is present
 		// in the embedded field values.
 
@@ -179,7 +178,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			// This is where the serializer passes when it's trying to deserialize the actual field in an embedded
 			// component.
 
-			// TODO: add more info, like the embeddedschema info, XPM info here
+			// add more info, like the embeddedschema info, XPM info here
 			// Best thing to do may be to just add required values to
 			// an embedded base class
 			if (currentField.has(modelField.getName())) {
@@ -188,7 +187,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		}
 	}
 
-	private static void fillLinkedComponentValues (final JsonNode currentField, final ArrayList<JsonNode> nodeList) {
+	private static void fillLinkedComponentValues (final JsonNode currentField, final List<JsonNode> nodeList) {
 		// Get the actual values from the values
 		// if the Model's field is List, grab all embedded values
 		// if it's a normal class (ComponentImpl or similar), just get the first
@@ -202,7 +201,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 	private static <T extends BaseViewModel> void checkTypeAndBuildModel (final T model, final String fieldName, final JsonNode currentField, final Field modelField, final Class<T> modelClassToUse) throws SerializationException, IllegalAccessException {
 		if (!model.getClass().equals(modelField.getType())) {
 			LOG.debug("Building a model or Component for field:{}, type: {}", fieldName, modelField.getType().getName());
-			final BaseViewModel strongModel = buildModelForField(currentField, modelField, modelClassToUse);
+			final BaseViewModel strongModel = buildModelForField(currentField, modelClassToUse);
 
 			if (modelField.getType().equals(List.class)) {
 				addToListTypeField(model, modelField, strongModel);
@@ -225,10 +224,10 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		}
 	}
 
-	private static <T extends BaseViewModel> BaseViewModel buildModelForField (final JsonNode currentField, final Field f, final Class<T> modelClassToUse) throws SerializationException {
+	private static <T extends BaseViewModel> BaseViewModel buildModelForField (final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {
 
 		final BaseViewModel strongModel = DataBindFactory.buildModel(currentField, modelClassToUse, "");
-		final ViewModel viewModelParameters = (ViewModel) modelClassToUse.getAnnotation(ViewModel.class);
+		final ViewModel viewModelParameters = modelClassToUse.getAnnotation(ViewModel.class);
 		if (viewModelParameters.setRawData()) {
 			strongModel.setRawData(currentField.toString());
 		}

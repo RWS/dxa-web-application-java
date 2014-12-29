@@ -16,17 +16,14 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.databind.builder.BaseDataBinder;
 import org.dd4t.databind.serializers.json.ComponentPresentationDeserializer;
-import org.dd4t.databind.util.Constants;
+import org.dd4t.databind.util.DataBindConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author R. Kempees
@@ -54,7 +51,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		try {
 			return GENERIC_MAPPER.readValue(source, aClass);
 		} catch (IOException e) {
-			LOG.error(Constants.MESSAGE_ERROR_DESERIALIZING, e);
+			LOG.error(DataBindConstants.MESSAGE_ERROR_DESERIALIZING, e);
 			throw new SerializationException(e);
 		}
 	}
@@ -63,7 +60,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		try {
 			return GENERIC_MAPPER.readValue(source, aClass);
 		} catch (IOException e) {
-			LOG.error(Constants.MESSAGE_ERROR_DESERIALIZING, e);
+			LOG.error(DataBindConstants.MESSAGE_ERROR_DESERIALIZING, e);
 			throw new SerializationException(e);
 		}
 	}
@@ -81,14 +78,14 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 			}
 
 		} catch (IOException e) {
-			LOG.error(Constants.MESSAGE_ERROR_DESERIALIZING, e);
+			LOG.error(DataBindConstants.MESSAGE_ERROR_DESERIALIZING, e);
 			throw new SerializationException(e);
 		}
 	}
 
-	public Hashtable<String, BaseViewModel> buildModels (final Object source, final HashSet<String> modelNames, final String templateUri) throws SerializationException {
+	public HashMap<String, BaseViewModel> buildModels (final Object source, final HashSet<String> modelNames, final String templateUri) throws SerializationException {
 
-		Hashtable<String, BaseViewModel> models = new Hashtable<>();
+		HashMap<String, BaseViewModel> models = new HashMap<>();
 
 		for (String modelName : modelNames) {
 			if (VIEW_MODELS.containsKey(modelName)) {
@@ -192,11 +189,11 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 			LOG.error("Dunno what you're trying to do, but we're doing Json here.");
 			return null;
 		}
-		final JsonNode schemaNode = node.get(Constants.SCHEMA_NODE_NAME);
+		final JsonNode schemaNode = node.get(DataBindConstants.SCHEMA_NODE_NAME);
 		if (schemaNode != null) {
 			String nodeTypeName;
-			if (schemaNode.hasNonNull(Constants.ROOT_ELEMENT_NAME)) {
-				nodeTypeName = schemaNode.get(Constants.ROOT_ELEMENT_NAME).textValue();
+			if (schemaNode.hasNonNull(DataBindConstants.ROOT_ELEMENT_NAME)) {
+				nodeTypeName = schemaNode.get(DataBindConstants.ROOT_ELEMENT_NAME).textValue();
 				LOG.debug("RootElementName is: {}", nodeTypeName);
 				return nodeTypeName;
 			}

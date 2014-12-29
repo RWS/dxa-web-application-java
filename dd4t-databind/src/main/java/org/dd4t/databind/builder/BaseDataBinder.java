@@ -8,7 +8,7 @@ import org.dd4t.contentmodel.Field;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.ModelConverter;
 import org.dd4t.databind.annotations.ViewModel;
-import org.dd4t.databind.util.Constants;
+import org.dd4t.databind.util.DataBindConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -18,7 +18,7 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -109,7 +109,7 @@ public abstract class BaseDataBinder {
 		return concreteFieldImpl;
 	}
 
-	protected static BaseViewModel getModelOrNullForExistingEntry (Hashtable<String, BaseViewModel> models, Class modelClass) {
+	protected static BaseViewModel getModelOrNullForExistingEntry (HashMap<String, BaseViewModel> models, Class modelClass) {
 		for (BaseViewModel baseViewModel : models.values()) {
 			LOG.debug(baseViewModel.getClass().getName() + "==" + modelClass.getName());
 			if (baseViewModel.getClass().equals(modelClass)) {
@@ -124,13 +124,13 @@ public abstract class BaseDataBinder {
 
 	protected void checkViewModelConfiguration() {
 		if (StringUtils.isEmpty(viewModelMetaKeyName)) {
-			this.viewModelMetaKeyName = Constants.VIEW_MODEL_DEFAULT_META_KEY;
-			LOG.warn("Setting meta key to default: " + Constants.VIEW_MODEL_DEFAULT_META_KEY);
+			this.viewModelMetaKeyName = DataBindConstants.VIEW_MODEL_DEFAULT_META_KEY;
+			LOG.warn("Setting meta key to default: " + DataBindConstants.VIEW_MODEL_DEFAULT_META_KEY);
 		}
 
 		if (StringUtils.isEmpty(viewModelPackageRoot)) {
-			this.viewModelPackageRoot = Constants.VIEW_MODEL_DEFAULT_NAMESPACE;
-			LOG.warn("No package root configured for view models. Using the default package: " + Constants.VIEW_MODEL_DEFAULT_NAMESPACE);
+			this.viewModelPackageRoot = DataBindConstants.VIEW_MODEL_DEFAULT_NAMESPACE;
+			LOG.warn("No package root configured for view models. Using the default package: " + DataBindConstants.VIEW_MODEL_DEFAULT_NAMESPACE);
 		}
 
 		LOG.info("View model key name is: " + this.viewModelMetaKeyName);

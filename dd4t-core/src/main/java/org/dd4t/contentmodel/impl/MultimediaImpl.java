@@ -128,7 +128,6 @@ public class MultimediaImpl extends BaseField implements Multimedia {
 
     @Override
     public List<Object> getValues() {
-        // TODO: we should just give back the single binary bytes or something.
         List<Component> compValues = getLinkedComponentValues();
         List<Object> l = new LinkedList<Object>();
 

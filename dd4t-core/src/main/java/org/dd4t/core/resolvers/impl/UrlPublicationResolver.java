@@ -3,6 +3,7 @@ package org.dd4t.core.resolvers.impl;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.resolvers.PublicationResolver;
+import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.HttpUtils;
 import org.dd4t.core.util.PublicationDescriptor;
 import org.dd4t.providers.PageProvider;
@@ -28,10 +29,9 @@ import java.util.regex.Pattern;
 public class UrlPublicationResolver implements PublicationResolver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(UrlPublicationResolver.class);
-	private static final ConcurrentMap<String, Integer> urlToIdMap = new ConcurrentHashMap<>();
+	private static final ConcurrentMap<String, Integer> URL_TO_ID_MAP = new ConcurrentHashMap<>();
 
-	@Autowired
-	private PageProvider pageProvider;
+	@Autowired private PageProvider pageProvider;
 
 	private int level;
 	private Pattern includePattern = null;
@@ -42,8 +42,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @return int representing the SDL Tridion Publication item id
 	 */
-	@Override
-	public int getPublicationId() {
+	@Override public int getPublicationId () {
 		return getPublicationDescriptor().getId();
 	}
 
@@ -52,8 +51,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @return String representing the SDL Tridion Publication URL property
 	 */
-	@Override
-	public String getPublicationUrl() {
+	@Override public String getPublicationUrl () {
 		return getPublicationDescriptor().getPublicationUrl();
 	}
 
@@ -62,8 +60,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @return String representing the SDL Tridion Images URL property
 	 */
-	@Override
-	public String getImagesUrl() {
+	@Override public String getImagesUrl () {
 		return getPublicationDescriptor().getImageUrl();
 	}
 
@@ -73,8 +70,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 * @param url String representing the generic URL (i.e. URL path without PublicationUrl prefix)
 	 * @return String representing the current Publication URL followed by the given URL
 	 */
-	@Override
-	public String getLocalPageUrl(String url) {
+	@Override public String getLocalPageUrl (String url) {
 		String publicationUrl = getPublicationUrl();
 		if (StringUtils.isNotEmpty(publicationUrl)) {
 			return HttpUtils.normalizeUrl(publicationUrl + "/" + url);
@@ -88,8 +84,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 * @param url String representing the generic URL (i.e. URL path without PublicationUrl prefix)
 	 * @return String representing the current Publication URL followed by the given URL
 	 */
-	@Override
-	public String getLocalBinaryUrl(String url) {
+	@Override public String getLocalBinaryUrl (String url) {
 		String imagesUrl = getImagesUrl();
 		if (StringUtils.isNotEmpty(imagesUrl)) {
 			return HttpUtils.normalizeUrl(imagesUrl + "/" + url);
@@ -102,7 +97,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @param level
 	 */
-	public void setLevel(int level) {
+	public void setLevel (int level) {
 		LOG.debug("Set level: {} ", level);
 		this.level = level;
 	}
@@ -112,7 +107,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @param includePattern
 	 */
-	public void setIncludePattern(String includePattern) {
+	public void setIncludePattern (String includePattern) {
 		this.includePattern = Pattern.compile(includePattern);
 		LOG.debug("Set includePattern:  {}", includePattern);
 	}
@@ -123,7 +118,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @return includePattern
 	 */
-	public Pattern getIncludePattern() {
+	public Pattern getIncludePattern () {
 		if (includePattern == null) {
 			String servletInitParam = HttpUtils.getCurrentServletContext().getInitParameter("includePattern");
 			if (servletInitParam != null) {
@@ -139,7 +134,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @param provider
 	 */
-	public void setPageProvider(PageProvider provider) {
+	public void setPageProvider (PageProvider provider) {
 		LOG.debug("Set PageProvider: {} ", provider);
 		this.pageProvider = provider;
 	}
@@ -148,7 +143,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	Try resolve Publication id by looking up the Publication Url property in the Page Provider and,
 	if not found by looking up the Images URL property in the Binary Provider
 	 */
-	private int discoverPublicationId(String urlStub) throws SerializationException {
+	private int discoverPublicationId (String urlStub) throws SerializationException {
 		LOG.debug("Discover Publication id by UrlStub: {} ", urlStub);
 
 		try {
@@ -159,84 +154,88 @@ public class UrlPublicationResolver implements PublicationResolver {
 		}
 	}
 
-	private PublicationDescriptor getPublicationDescriptor() {
-		Object pd = HttpUtils.currentRequest().getSession().getAttribute("publicationdescriptor");
+	private PublicationDescriptor getPublicationDescriptor () {
+		Object pd = HttpUtils.currentRequest().getSession().getAttribute(Constants.PUBLICATION_DESCRIPTOR);
 		if (pd != null) {
 			try {
 				String baseUrl = getBaseUrl();
-				if ((baseUrl.equals(((PublicationDescriptor)pd).getPublicationUrl()))) {
+				if (baseUrl.equals(((PublicationDescriptor) pd).getPublicationUrl())) {
 					return (PublicationDescriptor) pd;
 				}
 			} catch (FileNotFoundException e) {
 				// TODO decide how to handle the situation where the current URL cannot be mapped to a publication
 				// but there is already a publication descriptor in the session
 				// for now, we will remove the pd from the session
-				HttpUtils.currentRequest().getSession().removeAttribute("publicationdescriptor");
+				LOG.error("Could not find Publication Descriptor for url");
+				HttpUtils.currentRequest().getSession().removeAttribute(Constants.PUBLICATION_DESCRIPTOR);
 				return getEmptyPublicationDescriptor();
 			}
 		}
 
 		try {
 			PublicationDescriptor publicationDescriptor = createPublicationDescriptor();
-			HttpUtils.currentRequest().getSession().setAttribute("publicationdescriptor", publicationDescriptor);
+			HttpUtils.currentRequest().getSession().setAttribute(Constants.PUBLICATION_DESCRIPTOR, publicationDescriptor);
 			return publicationDescriptor;
-		} catch (FileNotFoundException e) {
-			return getEmptyPublicationDescriptor(); // do not store this in the session!!
+		} catch (FileNotFoundException | SerializationException e) {
+			LOG.error("Could not find Publication Descriptor for url");
+			LOG.error(e.getLocalizedMessage(),e);
+			// do not store this in the session!!
+			return getEmptyPublicationDescriptor();
 		}
 	}
 
-	private String getBaseUrl() throws FileNotFoundException {
+	private String getBaseUrl () throws FileNotFoundException {
 		String urlPath = HttpUtils.getOriginalUri(HttpUtils.currentRequest());
 		// if there is a context path, and the current URI starts with it, remove the context path
 		if (urlPath.startsWith(HttpUtils.currentRequest().getContextPath())) {
 			urlPath = urlPath.substring(HttpUtils.currentRequest().getContextPath().length());
 		}
 		// if url is empty or only a slash, we cannot find the publication
-		if (StringUtils.isEmpty(urlPath) || urlPath.equals("/")) {
+		if (StringUtils.isEmpty(urlPath) || "/".equals(urlPath)) {
 			throw new FileNotFoundException("No publication found for path " + urlPath);
 		}
 		return HttpUtils.createPathFromUri(urlPath, level);
 
 	}
 
-	private PublicationDescriptor createPublicationDescriptor() throws FileNotFoundException {
+	private PublicationDescriptor createPublicationDescriptor () throws FileNotFoundException, SerializationException {
 		PublicationDescriptor publicationDescriptor = new PublicationDescriptor();
 		try {
 			publicationDescriptor.setPublicationUrl(getBaseUrl());
 
-			if (urlToIdMap.containsKey(publicationDescriptor.getPublicationUrl())) {
-				publicationDescriptor.setId(urlToIdMap.get(publicationDescriptor.getPublicationUrl()));
-			} else {
-				// it is possible to define an include pattern
-				// only if the stub matches this pattern, we will try to
-				// resolve the publication
-				Pattern includePattern = getIncludePattern();
-				if (includePattern != null) {
-					Matcher m = includePattern.matcher(publicationDescriptor.getPublicationUrl());
-					if (!m.matches()) {
-						publicationDescriptor.setId(-1);
-						return publicationDescriptor;
-					}
-				}
-				int pubId = discoverPublicationId(publicationDescriptor.getPublicationUrl());
-
-				if (pubId > 0) {
-					LOG.info("Found publication id {} for publication url {}", pubId, publicationDescriptor.getPublicationUrl());
-					urlToIdMap.put(publicationDescriptor.getPublicationUrl(), pubId);
-				}
-				else {
-					LOG.error("Publication resolver returned " + pubId + " for url: " + publicationDescriptor.getPublicationUrl());
-				}
-
-				publicationDescriptor.setId(pubId);
+			if (URL_TO_ID_MAP.containsKey(publicationDescriptor.getPublicationUrl())) {
+				publicationDescriptor.setId(URL_TO_ID_MAP.get(publicationDescriptor.getPublicationUrl()));
+				return publicationDescriptor;
 			}
+			// it is possible to define an include pattern
+			// only if the stub matches this pattern, we will try to
+			// resolve the publication
+			Pattern pattern = getIncludePattern();
+			if (pattern != null) {
+				Matcher m = pattern.matcher(publicationDescriptor.getPublicationUrl());
+				if (!m.matches()) {
+					publicationDescriptor.setId(-1);
+					return publicationDescriptor;
+				}
+			}
+			int pubId = discoverPublicationId(publicationDescriptor.getPublicationUrl());
+
+			if (pubId > 0) {
+				LOG.info("Found publication id {} for publication url {}", pubId, publicationDescriptor.getPublicationUrl());
+				URL_TO_ID_MAP.put(publicationDescriptor.getPublicationUrl(), pubId);
+			} else {
+				LOG.error("Publication resolver returned " + pubId + " for url: " + publicationDescriptor.getPublicationUrl());
+			}
+
+			publicationDescriptor.setId(pubId);
 			return publicationDescriptor;
+
 		} catch (SerializationException e) {
-			throw new RuntimeException(e);
+			throw e;
 		}
 	}
 
-	private PublicationDescriptor getEmptyPublicationDescriptor() {
+	private PublicationDescriptor getEmptyPublicationDescriptor () {
 		PublicationDescriptor pd = new PublicationDescriptor();
 		pd.setId(-1);
 		pd.setPublicationUrl("/");

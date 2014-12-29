@@ -15,4 +15,6 @@ public interface ComponentFactory extends Factory {
      * @throws org.dd4t.core.exceptions.FactoryException
      */
     public Component getComponent(String componentURI, String viewOrTemplateURI) throws FactoryException;
+
+    public <T extends Component> T deserialize (final String componentModel, final Class<? extends T> componentClass) throws FactoryException;
 }

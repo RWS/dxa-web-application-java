@@ -7,12 +7,12 @@ import java.sql.Timestamp;
 import java.util.Calendar;
 
 public class DateUtils {
+
+
+    private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     private DateUtils(){
 
     }
-
-    private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-
     /**
      * Helper method to convert the date to string
      *

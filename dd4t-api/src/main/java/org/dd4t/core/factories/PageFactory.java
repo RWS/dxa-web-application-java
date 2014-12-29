@@ -32,6 +32,15 @@ public interface PageFactory extends Factory {
      * @throws FactoryException
      */
     public String findSourcePageByUrl(String url, int publicationId) throws FactoryException;
+    /**
+     * Deserializes a JSON encoded String into an object of the given type, which must
+     * derive from the Page interface
+     *
+     * @param source String representing the JSON encoded object
+     * @param clazz  Class representing the implementation type to deserialize into
+     * @return the deserialized object
+     */
+    <T extends Page> T deserialize (final String source, final Class<? extends T> clazz) throws FactoryException;
 }
 
 

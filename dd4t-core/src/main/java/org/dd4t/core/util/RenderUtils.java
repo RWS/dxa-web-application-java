@@ -8,6 +8,7 @@ import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.LabelServiceFactoryImpl;
 import org.dd4t.core.services.LabelService;
+import org.dd4t.databind.util.DataBindConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +31,13 @@ import java.util.Map;
  */
 public class RenderUtils {
 
+	private static final Logger LOG = LoggerFactory.getLogger(RenderUtils.class);
+	private static LabelService labelService = null;
+
 	private RenderUtils () {
 
 	}
 
-	private static final Logger LOG = LoggerFactory.getLogger(RenderUtils.class);
-	private static LabelService labelService = null;
 
 	public static LabelService getLabelService() {
 		if (labelService == null) {
@@ -54,8 +56,8 @@ public class RenderUtils {
 		ComponentTemplate componentTemplate = cp.getComponentTemplate();
 		Map<String, Field> metadata = componentTemplate.getMetadata();
 
-		if (metadata != null && metadata.containsKey("viewName")) {
-			String viewName = (String) metadata.get("viewName").getValues().get(0);
+		if (metadata != null && metadata.containsKey(DataBindConstants.VIEW_MODEL_DEFAULT_META_KEY)) {
+			String viewName = (String) metadata.get(DataBindConstants.VIEW_MODEL_DEFAULT_META_KEY).getValues().get(0);
 			if (StringUtils.isNotEmpty(viewName)) {
 				return viewName.toLowerCase();
 			}
@@ -75,7 +77,7 @@ public class RenderUtils {
 		if (metadata != null && metadata.containsKey("cache")) {
 			String useCache = (String) metadata.get("cache").getValues().get(0);
 			if (StringUtils.isNotEmpty(useCache)) {
-				return !useCache.toLowerCase().equals("false");
+				return !"false".equalsIgnoreCase(useCache);
 			}
 		}
 
@@ -127,7 +129,7 @@ public class RenderUtils {
 
 			final Map<String, Field> metadata = cp.getComponentTemplate().getMetadata();
 			final Field currentRegion = metadata != null ? metadata.get("region") : null;
-			if (currentRegion != null && currentRegion.getValues() != null && currentRegion.getValues().size() > 0) {
+			if (currentRegion != null && currentRegion.getValues() != null && !currentRegion.getValues().isEmpty()) {
 				if (regionIsSet) {
 					boolean removeCp = true;
 					for (Object regionValue : currentRegion.getValues()) {

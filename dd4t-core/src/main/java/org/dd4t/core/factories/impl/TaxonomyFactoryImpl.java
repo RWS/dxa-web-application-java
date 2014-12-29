@@ -6,6 +6,7 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.contentmodel.impl.KeywordImpl;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.factories.TaxonomyFactory;
+import org.dd4t.core.serializers.impl.SerializerFactory;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.TaxonomyProvider;
@@ -93,6 +94,10 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         }
 
         return taxonomy;
+    }
+
+    private Keyword deserialize (final String taxonomySource, final Class<KeywordImpl> keywordClass) throws SerializationException {
+        return SerializerFactory.deserialize(taxonomySource,keywordClass);
     }
 
     /**

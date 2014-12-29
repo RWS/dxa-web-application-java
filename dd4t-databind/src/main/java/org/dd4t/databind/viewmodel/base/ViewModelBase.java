@@ -21,7 +21,7 @@ import java.util.List;
 public abstract class ViewModelBase implements BaseViewModel {
 	private static final Logger LOG = LoggerFactory.getLogger(ViewModelBase.class);
 	private final List<String> viewModelNames;
-	private HashMap<String,ModelFieldMapping> modelProperties;
+	private HashMap<String,Object> modelProperties;
 	private boolean setGenericComponentOnComponentPresentation;
 	private boolean setRawDataOnModel;
 	private Object rawData;
@@ -95,7 +95,7 @@ public abstract class ViewModelBase implements BaseViewModel {
 		return setGenericComponentOnComponentPresentation;
 	}
 
-	public HashMap<String,ModelFieldMapping> getModelProperties() {
+	public HashMap<String,Object> getModelProperties() {
 		return this.modelProperties;
 	}
 }

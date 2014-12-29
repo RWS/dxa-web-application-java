@@ -9,7 +9,7 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.databind.DataBindFactory;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.builder.AbstractModelConverter;
-import org.dd4t.databind.util.Constants;
+import org.dd4t.databind.util.DataBindConstants;
 import org.dd4t.databind.util.JsonUtils;
 import org.dd4t.databind.util.TypeUtils;
 import org.dd4t.databind.viewmodel.base.ModelFieldMapping;
@@ -59,28 +59,27 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		}
 		boolean isRootComponent = true;
 		JsonNode contentFields = null;
-		if (rawJsonData.has(Constants.COMPONENT_FIELDS)) {
-			contentFields = rawJsonData.get(Constants.COMPONENT_FIELDS);
+		if (rawJsonData.has(DataBindConstants.COMPONENT_FIELDS)) {
+			contentFields = rawJsonData.get(DataBindConstants.COMPONENT_FIELDS);
 		}
 		JsonNode metadataFields = null;
-		if (rawJsonData.has(Constants.METADATA_FIELDS)) {
-			metadataFields = rawJsonData.get(Constants.METADATA_FIELDS);
+		if (rawJsonData.has(DataBindConstants.METADATA_FIELDS)) {
+			metadataFields = rawJsonData.get(DataBindConstants.METADATA_FIELDS);
 		}
 
 		if (contentFields == null && metadataFields == null) {
 			isRootComponent = false;
 		}
 
-		// TODO: resolve unchecked exception (Move the Annotation to dd4t-api)
 		// TODO: mandatory but missing fields need their XPath set as well..
-		final Map<String, ModelFieldMapping> modelProperties = (HashMap<String, ModelFieldMapping>) model.getModelProperties();
+		final Map<String, Object> modelProperties = model.getModelProperties();
 
 		try {
-			for (Map.Entry<String, ModelFieldMapping> entry : modelProperties.entrySet()) {
+			for (Map.Entry<String, Object> entry : modelProperties.entrySet()) {
 				final String fieldName = entry.getKey();
 				LOG.debug("Key:{}", fieldName);
 
-				ModelFieldMapping m = entry.getValue();
+				ModelFieldMapping m = (ModelFieldMapping)entry.getValue();
 				final JsonNode currentNode = getJsonNodeToParse(fieldName, rawJsonData, isRootComponent, contentFields, metadataFields, m);
 				// Since we are now now going from modelproperty > fetch data, the data might actually be null
 				if (currentNode != null) {
@@ -165,11 +164,11 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		// We can only do this after deserialization unfortunately, since no field type is present
 		// in the embedded field values.
 
-		if (currentField.has(Constants.EMBEDDED_VALUES_NODE)) {
+		if (currentField.has(DataBindConstants.EMBEDDED_VALUES_NODE)) {
 			// Here we get the embedded values, which can be a multivalue list of embedded components.
 			// Once these nodes are extracted, the deserializer builds up fields one by one through the same
 			// mechanism. In this method it then goes through the else.
-			final Iterator<JsonNode> nodes = currentField.get(Constants.EMBEDDED_VALUES_NODE).elements();
+			final Iterator<JsonNode> nodes = currentField.get(DataBindConstants.EMBEDDED_VALUES_NODE).elements();
 			while (nodes.hasNext()) {
 				nodeList.add(nodes.next());
 			}
@@ -192,7 +191,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		// if the Model's field is List, grab all embedded values
 		// if it's a normal class (ComponentImpl or similar), just get the first
 
-		final Iterator<JsonNode> nodes = currentField.get(Constants.LINKED_COMPONENT_VALUES_NODE).elements();
+		final Iterator<JsonNode> nodes = currentField.get(DataBindConstants.LINKED_COMPONENT_VALUES_NODE).elements();
 		while (nodes.hasNext()) {
 			nodeList.add(nodes.next());
 		}
@@ -243,8 +242,8 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 	}
 
 	private <T extends BaseViewModel> void setTridionProperties (final TridionViewModel model, final JsonNode rawComponent) {
-		model.setLastPublishDate(JsonUtils.getDateFromField(Constants.LAST_PUBLISHED_DATE, rawComponent));
-		model.setLastModified(JsonUtils.getDateFromField(Constants.LAST_MODIFIED_DATE, rawComponent));
-		model.setTcmUri(JsonUtils.getTcmUriFromField(Constants.ID, rawComponent));
+		model.setLastPublishDate(JsonUtils.getDateFromField(DataBindConstants.LAST_PUBLISHED_DATE, rawComponent));
+		model.setLastModified(JsonUtils.getDateFromField(DataBindConstants.LAST_MODIFIED_DATE, rawComponent));
+		model.setTcmUri(JsonUtils.getTcmUriFromField(DataBindConstants.ID, rawComponent));
 	}
 }

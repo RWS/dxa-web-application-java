@@ -64,6 +64,7 @@
         <selenium-java.version>2.42.2</selenium-java.version>
         <xml-apis.version>1.4.01</xml-apis.version>
         <selenium.version>1.0.1</selenium.version>
+        <jersey.version>2.8</jersey.version>
     </properties>
     <build>
         <plugins>
@@ -208,6 +209,13 @@
             <groupId>javax.jms</groupId>
             <artifactId>jms-api</artifactId>
             <version>${javax.jms.version}</version>
+        </dependency>
+
+        <!-- only used for dd4t-providers-rs -->
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+            <version>${jersey.version}</version>
         </dependency>
     </dependencies>
     </dependencyManagement>

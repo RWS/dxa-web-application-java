@@ -1,7 +1,7 @@
 package org.dd4t.core.filters.impl;
 
+import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
-import org.dd4t.contentmodel.GenericComponent;
 import org.dd4t.contentmodel.GenericPage;
 import org.dd4t.contentmodel.Item;
 import org.dd4t.core.exceptions.FactoryException;
@@ -37,7 +37,7 @@ public class HybridPublishingFilter implements Filter {
 
                     try {
                         // retrieve the dynamic component based on template
-                        GenericComponent comp = ComponentFactoryImpl.getInstance().getComponent(cp.getComponent().getId(), cp.getComponentTemplate().getId());
+                        Component comp = ComponentFactoryImpl.getInstance().getComponent(cp.getComponent().getId(), cp.getComponentTemplate().getId());
                         // set the dynamic component
                         cp.setComponent(comp);
                     } catch (FactoryException e) {

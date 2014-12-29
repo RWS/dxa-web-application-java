@@ -2,13 +2,11 @@ package org.dd4t.core.factories.impl;
 
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.contentmodel.Item;
+import org.dd4t.core.exceptions.FilterException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.filters.Filter;
-import org.dd4t.core.exceptions.FilterException;
 import org.dd4t.core.filters.LinkResolverFilter;
 import org.dd4t.core.filters.impl.BaseFilter;
-import org.dd4t.core.serializers.impl.SerializerFactory;
-import org.dd4t.databind.DataBindFactory;
 import org.dd4t.providers.CacheProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -80,16 +78,5 @@ public abstract class BaseFactory {
         cacheProvider = cacheAgent;
     }
 
-    /**
-     * Deserializes a JSON encoded String into an object of the given type
-     *
-     * @param source String representing the JSON encoded object
-     * @param clazz  Class representing the implementation type to deserialize into
-     * @return the deserialized object
-     */
-    protected <T extends Item> T deserialize(String source, Class<? extends T> clazz) throws SerializationException {
 
-
-        return SerializerFactory.deserialize(source, clazz);
-    }
 }

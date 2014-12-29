@@ -14,13 +14,13 @@ import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.databind.DataBindFactory;
 import org.dd4t.databind.builder.json.JsonDataBinder;
-import org.dd4t.databind.util.Constants;
+import org.dd4t.databind.util.DataBindConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -62,23 +62,23 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 
 			LOG.trace(element.getKey() + "  " + element.getValue().toString());
 
-			if (key.equalsIgnoreCase(Constants.COMPONENT_NODE_NAME)) {
+			if (key.equalsIgnoreCase(DataBindConstants.COMPONENT_NODE_NAME)) {
 				LOG.debug("Fishing out Component Data");
 				rawComponentData = element.getValue();
 				LOG.trace("Data is: {}", rawComponentData);
-			} else if (key.equalsIgnoreCase(Constants.COMPONENT_TEMPLATE_NODE_NAME)) {
+			} else if (key.equalsIgnoreCase(DataBindConstants.COMPONENT_TEMPLATE_NODE_NAME)) {
 				LOG.debug("Deserializing Component Template Data.");
 				final JsonParser parser = element.getValue().traverse();
 				final ComponentTemplate componentTemplate = JsonDataBinder.getGenericMapper().readValue(parser, this.concreteComponentTemplateClass);
 				componentPresentation.setComponentTemplate(componentTemplate);
 				viewModelName = DataBindFactory.findComponentTemplateViewName(componentTemplate);
 				LOG.debug("Found view model name: " + viewModelName);
-			} else if (key.equalsIgnoreCase(Constants.IS_DYNAMIC_NODE)) {
+			} else if (key.equalsIgnoreCase(DataBindConstants.IS_DYNAMIC_NODE)) {
 				final String isDynamic = element.getValue().asText().toLowerCase();
 				setIsDynamic(componentPresentation, isDynamic);
-			} else if (key.equalsIgnoreCase(Constants.ORDER_ON_PAGE_NODE)) {
+			} else if (key.equalsIgnoreCase(DataBindConstants.ORDER_ON_PAGE_NODE)) {
 				componentPresentation.setOrderOnPage(element.getValue().asInt());
-			} else if (key.equalsIgnoreCase(Constants.RENDERED_CONTENT_NODE)) {
+			} else if (key.equalsIgnoreCase(DataBindConstants.RENDERED_CONTENT_NODE)) {
 				componentPresentation.setRenderedContent(element.getValue().asText());
 			}
 		}
@@ -113,7 +113,7 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 				modelNames.add(rootElementName);
 			}
 			// TODO: explanation
-			final Hashtable<String, BaseViewModel> models = DataBindFactory.buildModels(rawComponentData, modelNames, componentPresentation.getComponentTemplate().getId());
+			final HashMap<String, BaseViewModel> models = DataBindFactory.buildModels(rawComponentData, modelNames, componentPresentation.getComponentTemplate().getId());
 
 			if (models == null || models.isEmpty()) {
 				if (DataBindFactory.renderDefaultComponentsIfNoModelFound()) {
@@ -165,7 +165,7 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 	}
 
 	private void setIsDynamic (final ComponentPresentation componentPresentation, final String isDynamic) {
-		if (isDynamic.equalsIgnoreCase(Constants.TRUE_STRING) || isDynamic.equalsIgnoreCase(Constants.FALSE_STRING)) {
+		if (isDynamic.equalsIgnoreCase(DataBindConstants.TRUE_STRING) || isDynamic.equalsIgnoreCase(DataBindConstants.FALSE_STRING)) {
 			componentPresentation.setIsDynamic(Boolean.parseBoolean(isDynamic));
 		} else {
 			componentPresentation.setIsDynamic(false);

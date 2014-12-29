@@ -29,6 +29,10 @@ public class ComponentUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(ComponentUtils.class);
 	private static ComponentFactory componentFactory = null;
 
+	private ComponentUtils() {
+
+	}
+
 	public static ComponentFactory getComponentFactory () {
 		if (componentFactory == null) {
 			componentFactory = JspBeanContext.getBean(ComponentFactory.class);
@@ -42,16 +46,6 @@ public class ComponentUtils {
 	 */
 	public static Component getComponent (final HttpServletRequest request) {
 		return (Component) request.getAttribute(COMPONENT_NAME);
-	}
-
-	/**
-	 * // TODO: where is this being used?
-	 * Get the component from the request that has been set using
-	 * {@link #setComponent}, and check if it has the specified publication- and
-	 * item id.
-	 */
-	public static Component getComponent (final HttpServletRequest request, final int publicationId, final int itemId) {
-		return getComponent(request);
 	}
 
 	/**
@@ -75,7 +69,7 @@ public class ComponentUtils {
 
 		// TODO: wire to strong typed model
 		request.setAttribute(modelName, component);
-		//LOG.debug("Adding typed model with name '{}' of type '{}' to the request.", modelName, model.getClass().getName());
+		LOG.debug("Adding typed model with name '{}' of type '{}' to the request.", modelName, component.getClass().getName());
 
 	}
 
@@ -83,7 +77,7 @@ public class ComponentUtils {
 		// TODO: wire to strong typed model
 		String modelName = component.getSchema().getRootElement();
 		request.setAttribute(modelName, component);
-		//LOG.debug("Adding typed model with name '{}' of type '{}' to the request.", modelName, model.getClass().getName());
+		LOG.debug("Adding typed model with name '{}' of type '{}' to the request.", modelName, component.getClass().getName());
 	}
 
 

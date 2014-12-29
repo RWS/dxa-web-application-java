@@ -1,5 +1,6 @@
 package org.dd4t.core.factories.impl;
 
+import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.GenericComponent;
 import org.dd4t.contentmodel.impl.ComponentImpl;
 import org.dd4t.core.caching.CacheElement;
@@ -9,6 +10,7 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.ComponentFactory;
 import org.dd4t.core.services.LabelService;
 import org.dd4t.core.util.TCMURI;
+import org.dd4t.databind.DataBindFactory;
 import org.dd4t.providers.ComponentProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +55,7 @@ public class ComponentFactoryImpl extends BaseFactory implements ComponentFactor
      * @throws org.dd4t.core.exceptions.FactoryException if no item found NotAuthorizedException if the user is not authorized to get the component
      */
     @Override
-    public GenericComponent getComponent(String componentURI, String viewOrTemplateURI) throws FactoryException {
+    public Component getComponent(String componentURI, String viewOrTemplateURI) throws FactoryException {
         LOG.debug("Enter getComponent with componentURI: {} and templateURI: {}", componentURI, viewOrTemplateURI);
 
         if (viewOrTemplateURI == null || viewOrTemplateURI.length() == 0) {
@@ -122,6 +124,14 @@ public class ComponentFactoryImpl extends BaseFactory implements ComponentFactor
 
     public void setComponentProvider(ComponentProvider componentProvider) {
         this.componentProvider = componentProvider;
+    }
+
+    public <T extends Component> T deserialize (final String componentModel, final Class<? extends T> componentClass) throws FactoryException {
+        try {
+            return DataBindFactory.buildComponent(componentModel,componentClass);
+        } catch (SerializationException e) {
+            throw new FactoryException(e);
+        }
     }
 
     public LabelService getLabelService() {

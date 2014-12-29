@@ -2,7 +2,7 @@ package org.dd4t.contentmodel;
 
 import org.dd4t.core.databind.BaseViewModel;
 
-import java.util.Hashtable;
+import java.util.HashMap;
 
 public interface ComponentPresentation {
 
@@ -60,11 +60,11 @@ public interface ComponentPresentation {
     void setOrderOnPage (int i);
 
     // TODO: change in API!
-    void setViewModel(Hashtable<String,BaseViewModel> models);
+    void setViewModel(HashMap<String,BaseViewModel> models);
 
     // TODO: change in API!
 
-    Hashtable<String,BaseViewModel> getAllViewModels();
+    HashMap<String,BaseViewModel> getAllViewModels();
 
     BaseViewModel getViewModel (String modelName);
 }

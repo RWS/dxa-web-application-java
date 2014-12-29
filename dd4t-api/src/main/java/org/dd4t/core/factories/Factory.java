@@ -10,9 +10,17 @@ import java.util.List;
  */
 public interface Factory {
 
+    /**
+     * @deprecated
+     * @return list of Filters
+     */
     @Deprecated
     public List<Filter> getFilters();
 
+    /**
+     * @deprecated
+     * @param filters list of Filters
+     */
     @Deprecated
     public void setFilters(List<Filter> filters);
 

@@ -26,23 +26,23 @@ import java.util.Map;
 public class TridionJsonFieldTypeIdResolver implements TypeIdResolver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TridionJsonFieldTypeIdResolver.class);
-	private static final Map<FieldType, String> fieldTypes = new HashMap<>();
-	// TODO: make configurable
+	private static final Map<FieldType, String> FIELD_TYPES = new HashMap<>();
 	private static final String NAMESPACE_PREFIX = "org.dd4t.contentmodel.impl.";
+	private static final String TEXT_FIELD = "TextField";
 
 	static {
-		fieldTypes.put(FieldType.TEXT, NAMESPACE_PREFIX + "TextField");
-		fieldTypes.put(FieldType.MULTILINETEXT, NAMESPACE_PREFIX + "TextField");
-		fieldTypes.put(FieldType.XHTML, NAMESPACE_PREFIX + "XhtmlField");
-		fieldTypes.put(FieldType.KEYWORD, NAMESPACE_PREFIX + "KeywordField");
-		fieldTypes.put(FieldType.EMBEDDED, NAMESPACE_PREFIX + "EmbeddedField");
+		FIELD_TYPES.put(FieldType.TEXT, NAMESPACE_PREFIX + TEXT_FIELD);
+		FIELD_TYPES.put(FieldType.MULTILINETEXT, NAMESPACE_PREFIX + TEXT_FIELD);
+		FIELD_TYPES.put(FieldType.XHTML, NAMESPACE_PREFIX + "XhtmlField");
+		FIELD_TYPES.put(FieldType.KEYWORD, NAMESPACE_PREFIX + "KeywordField");
+		FIELD_TYPES.put(FieldType.EMBEDDED, NAMESPACE_PREFIX + "EmbeddedField");
 		// This (5) is actually a MM Link field, but the links are needed for multi values and meta
-		fieldTypes.put(FieldType.MULTIMEDIALINK, NAMESPACE_PREFIX + "ComponentLinkField");
-		fieldTypes.put(FieldType.COMPONENTLINK, NAMESPACE_PREFIX + "ComponentLinkField");
-		fieldTypes.put(FieldType.EXTERNALLINK, NAMESPACE_PREFIX + "TextField");
-		fieldTypes.put(FieldType.NUMBER, NAMESPACE_PREFIX + "NumericField");
-		fieldTypes.put(FieldType.DATE, NAMESPACE_PREFIX + "DateField");
-		fieldTypes.put(FieldType.UNKNOWN, NAMESPACE_PREFIX + "BaseField");
+		FIELD_TYPES.put(FieldType.MULTIMEDIALINK, NAMESPACE_PREFIX + "ComponentLinkField");
+		FIELD_TYPES.put(FieldType.COMPONENTLINK, NAMESPACE_PREFIX + "ComponentLinkField");
+		FIELD_TYPES.put(FieldType.EXTERNALLINK, NAMESPACE_PREFIX + TEXT_FIELD);
+		FIELD_TYPES.put(FieldType.NUMBER, NAMESPACE_PREFIX + "NumericField");
+		FIELD_TYPES.put(FieldType.DATE, NAMESPACE_PREFIX + "DateField");
+		FIELD_TYPES.put(FieldType.UNKNOWN, NAMESPACE_PREFIX + "BaseField");
 	}
 
 	private JavaType mBaseType;
@@ -101,7 +101,7 @@ public class TridionJsonFieldTypeIdResolver implements TypeIdResolver {
 	private String getClassForKey (String type) {
 		LOG.trace("Fetching field type for {}", type);
 		FieldType fieldType = FieldType.findByName(type);
-		String result = fieldTypes.get(fieldType);
+		String result = FIELD_TYPES.get(fieldType);
 		LOG.trace("Returning field type {}", result);
 
 		return result;
@@ -112,7 +112,7 @@ public class TridionJsonFieldTypeIdResolver implements TypeIdResolver {
 			aClassName = NAMESPACE_PREFIX + aClassName;
 		}
 
-		for (Map.Entry<FieldType, String> entry : fieldTypes.entrySet()) {
+		for (Map.Entry<FieldType, String> entry : FIELD_TYPES.entrySet()) {
 			if (entry.getValue().equalsIgnoreCase(aClassName)) {
 				LOG.trace("Found {}::{}", entry.getKey(), entry.getValue());
 				return entry.getKey().toString();

@@ -35,6 +35,7 @@
 
     <bean id="componentProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerComponentProvider">
         <property name="contentIsCompressed" value="${content.compressed}"/>
+
     </bean>
 
     <bean id="pageProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerPageProvider"

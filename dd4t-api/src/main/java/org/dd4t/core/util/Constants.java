@@ -6,6 +6,8 @@ package org.dd4t.core.util;
  * @author R. Kempees
  */
 public class Constants {
+	public static final String PUBLICATION_DESCRIPTOR = "publicationdescriptor";
+
 	private Constants () {
 
 	}

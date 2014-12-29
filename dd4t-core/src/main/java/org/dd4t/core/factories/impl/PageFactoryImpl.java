@@ -1,6 +1,5 @@
 package org.dd4t.core.factories.impl;
 
-import org.dd4t.contentmodel.Item;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.caching.CacheElement;
@@ -73,7 +72,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 		                TCMURI tcmUri = new TCMURI(uri);
 		                cacheProvider.storeInItemCache(uri, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
 		                LOG.debug("Added page with uri: {} to cache", uri);
-	                } catch (SerializationException | ParseException e) {
+	                } catch (FactoryException | ParseException e) {
 		               throw new FactoryException(e);
 	                }
 
@@ -128,7 +127,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 		                TCMURI tcmUri = new TCMURI(page.getId());
 		                cacheProvider.storeInItemCache(cacheKey, cacheElement, publicationId, tcmUri.getItemId());
 		                LOG.debug("Added page with uri: {} and publicationId: {} to cache", url, publicationId);
-	                } catch (SerializationException | ParseException e) {
+	                } catch (FactoryException | ParseException e) {
 		                throw new FactoryException(e);
 	                }
 
@@ -201,14 +200,20 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
     }
 
     /**
-     * Deserializes a JSON encoded String into an object of the given type
+     * Deserializes a JSON encoded String into an object of the given type, which must
+     * derive from the Page interface
      *
      * @param source String representing the JSON encoded object
      * @param clazz  Class representing the implementation type to deserialize into
      * @return the deserialized object
      */
-    @Override protected <T extends Item> T deserialize (final String source, final Class<? extends T> clazz) throws SerializationException {
-        return DataBindFactory.buildPage(source, clazz);
+
+    public <T extends Page> T deserialize (final String source, final Class<? extends T> clazz) throws FactoryException {
+        try {
+            return DataBindFactory.buildPage(source, clazz);
+        } catch (SerializationException e) {
+           throw new FactoryException(e);
+        }
     }
 
     /**

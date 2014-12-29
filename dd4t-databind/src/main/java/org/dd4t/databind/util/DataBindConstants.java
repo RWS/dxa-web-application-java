@@ -6,7 +6,7 @@ package org.dd4t.databind.util;
  * @author R. Kempees
  * @since 01/12/14.
  */
-public class Constants {
+public class DataBindConstants {
 	public static final String VIEW_MODEL_DEFAULT_NAMESPACE = "org.dd4t.web.models";
 	public static final String VIEW_MODEL_DEFAULT_META_KEY = "viewName";
 

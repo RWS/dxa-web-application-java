@@ -3,9 +3,11 @@ package org.dd4t.core.providers;
 import org.apache.commons.codec.binary.Base64;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.serializers.impl.CompressionUtils;
+import org.dd4t.core.util.TridionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.client.Invocation;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -16,7 +18,7 @@ import java.io.UnsupportedEncodingException;
 public abstract class BaseBrokerProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BaseBrokerProvider.class);
-	private final Base64 urlCoder = new Base64(true);
+	private static final Base64 URL_CODER = new Base64(true);
 
 	// Set these values in Spring configuration
 	protected boolean contentIsCompressed = true;
@@ -73,7 +75,7 @@ public abstract class BaseBrokerProvider {
 			return "";
 		}
 
-		String encoded = urlCoder.encodeAsString(url.getBytes());
+		String encoded = URL_CODER.encodeAsString(url.getBytes());
 		if (encoded == null) {
 			return "";
 		}
@@ -82,17 +84,17 @@ public abstract class BaseBrokerProvider {
 
 	/**
 	 * Inserts a cookie for with the Preview Session Token into the Invocation.Builder object (if available)
-	 * TODO
+	 *
 	 * @param builder Invocation.Builder object to insert cookie into
 	 * @return Invocation.Builder object with the token cookie insterted
 	 */
-//	protected Invocation.Builder getSessionPreviewBuilder (Invocation.Builder builder) {
-//		String sessionPreviewToken = TridionUtils.getSessionPreviewToken();
-//
-//		if (sessionPreviewToken != null) {
-//			builder = builder.cookie(TridionUtils.PREVIEW_SESSION_TOKEN, sessionPreviewToken);
-//		}
-//
-//		return builder;
-//	}
+	protected Invocation.Builder getSessionPreviewBuilder (Invocation.Builder builder) {
+		String sessionPreviewToken = TridionUtils.getSessionPreviewToken();
+
+		if (sessionPreviewToken != null) {
+			builder = builder.cookie(TridionUtils.PREVIEW_SESSION_TOKEN, sessionPreviewToken);
+		}
+
+		return builder;
+	}
 }

@@ -1,10 +1,10 @@
 package org.dd4t.core.databind;
 
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
- * TODO: API Change!
+ *
  *
  * @author R. Kempees
  */
@@ -20,6 +20,5 @@ public interface BaseViewModel {
 	boolean setRawDataOnModel ();
 	void setRawData(Object data);
 	String getRawDataAsString();
-	// TODO: move the annotation to the API?
-	HashMap<String,?> getModelProperties();
+	Map<String,Object> getModelProperties();
 }

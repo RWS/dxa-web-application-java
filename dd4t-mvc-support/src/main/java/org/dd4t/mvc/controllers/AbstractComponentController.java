@@ -71,7 +71,7 @@ public class AbstractComponentController {
 		// double check the component is on the request - we are not actually doing something with it
 		// TODO: REMOVE THIS IS WRONG!
 		int publicationId = publicationResolver.getPublicationId();
-		Component component = ComponentUtils.getComponent(request, publicationId, componentId);
+		Component component = ComponentUtils.getComponent(request);
 
 		if (component == null) {
 			// In normal operation, this action is called from the server to render embedded component presentations.

@@ -5,6 +5,7 @@ import org.dd4t.contentmodel.impl.ComponentImpl;
 import org.dd4t.contentmodel.impl.ComponentPresentationImpl;
 import org.dd4t.contentmodel.impl.ComponentTemplateImpl;
 import org.dd4t.contentmodel.impl.TextField;
+import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.ComponentFactory;
@@ -56,13 +57,22 @@ public class ComponentUtils {
 	public static void setComponent (final HttpServletRequest request, ComponentPresentation componentPresentation) throws ItemNotFoundException, FactoryException {
 		resolveDynamicComponentPresentation(componentPresentation);
 		Component component = componentPresentation.getComponent();
+		HashMap<String, BaseViewModel> viewModels = componentPresentation.getAllViewModels();
+		for (Map.Entry<String,BaseViewModel> viewModelEntry : viewModels.entrySet()) {
+			LOG.debug(">> " + viewModelEntry.getKey());
+		}
+
 		setComponent(request, component);
 	}
 
 	public static void setComponent (final HttpServletRequest request, Component component) throws ItemNotFoundException {
 
 		request.setAttribute(COMPONENT_NAME, component);
-		String modelName = getRequestAttributeName((GenericComponent) component);
+
+
+
+
+		String modelName = getRequestAttributeName((Component) component);
 
 		request.setAttribute(MODEL_ATTRIBUTE_NAME, modelName);
 
@@ -143,7 +153,7 @@ public class ComponentUtils {
 	 * convention the attribute name will start with a lower case character, for
 	 * example newsArticle, product etc.
 	 */
-	private static String getRequestAttributeName (final GenericComponent component) {
+	private static String getRequestAttributeName (final Component component) {
 		String attributeName = TridionUtils.getRootElementName(component);
 
 		/*

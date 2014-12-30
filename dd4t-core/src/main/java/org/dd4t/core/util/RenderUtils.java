@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO: totally redo component loading..
+ *
  */
 public class RenderUtils {
 
@@ -267,25 +267,9 @@ public class RenderUtils {
 	public static String renderComponentPresentation(final HttpServletRequest request,
 	                                                 final HttpServletResponse response,
 	                                                 final ComponentPresentation cp) throws ItemNotFoundException, FactoryException {
-		return renderComponentPresentation(request, response, cp, true);
+		return getResponse(request, response, cp, getViewName(cp));
 	}
 
-	/**
-	 * Renders a single component presentation using the dispatchers include method.
-	 *
-	 * @param request  , the http request
-	 * @param response , the http response
-	 * @param cp       , the component presentation
-	 * @param useCache , flag indicating whether CP output will be cached. Default = true.
-	 * @return the rendered component presentation as a string.
-	 */
-	public static String renderComponentPresentation(final HttpServletRequest request,
-	                                                 final HttpServletResponse response,
-	                                                 final ComponentPresentation cp,
-	                                                 boolean useCache) throws ItemNotFoundException, FactoryException {
-
-			return getResponse(request, response, cp, getViewName(cp));
-	}
 
 	/**
 	 * Render a dynamic component presentation based on component and view name. The CT uri is looked up using the LabelService.
@@ -299,7 +283,6 @@ public class RenderUtils {
 	public static String renderComponentPresentation(final HttpServletRequest request, final HttpServletResponse response, final String componentURI, final String viewName) throws ItemNotFoundException {
 		try {
 			String componentTemplateURI = getLabelService().getViewLabel(viewName);
-
 			return renderComponentPresentation(request, response, componentURI, componentTemplateURI, viewName);
 		} catch (IOException | FactoryException e) {
 			throw new ItemNotFoundException(e);

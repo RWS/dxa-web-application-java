@@ -68,7 +68,6 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 	                try {
 		                page = deserialize(pageSource, PageImpl.class);
 		                cacheElement.setPayload(page);
-// TODO: put CPs on the request stack here
 		                TCMURI tcmUri = new TCMURI(uri);
 		                cacheProvider.storeInItemCache(uri, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
 		                LOG.debug("Added page with uri: {} to cache", uri);
@@ -106,7 +105,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);
-	                String pageSource = null;
+	                String pageSource;
 	                try {
 		                pageSource = pageProvider.getPageContentByURL(url, publicationId);
 	                } catch (ItemNotFoundException| SerializationException | IOException e) {
@@ -162,7 +161,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
         String cacheKey = publicationId + "-" + url;
         CacheElement<String> cacheElement = cacheProvider.loadFromLocalCache(cacheKey);
 
-        String page = null;
+        String page;
 
         if (cacheElement.isExpired()) {
             synchronized (cacheElement) {

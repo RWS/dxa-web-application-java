@@ -16,6 +16,10 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <bean id="propertiesService" scope="singleton" class="org.dd4t.core.services.impl.PropertiesServiceImpl">
+        <property name="location" value="dd4t.properties"/>
+    </bean>
+
     <bean id="propertiesServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.PropertiesServiceFactory"
           factory-method="getInstance"/>
 
@@ -61,11 +65,9 @@
 
     <bean id="linkResolverFactory" scope="singleton" class="org.dd4t.core.factories.impl.LinkResolverFactory"
           factory-method="getInstance"/>
-
     <bean id="componentFactory" scope="singleton" class="org.dd4t.core.factories.impl.ComponentFactoryImpl"
           factory-method="getInstance">
     </bean>
-
     <bean id="pageFactory" scope="singleton" class="org.dd4t.core.factories.impl.PageFactoryImpl"
           factory-method="getInstance">
         <!-- TODO set filters or autowire? -->
@@ -101,7 +103,12 @@
 
     <bean id="taxonomyServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.TaxonomyServiceFactoryImpl"
           factory-method="getInstance"/>
-    <!-- TODO: add label service -->
+    <!-- Label Stuff -->
+    <bean id="labelService" scope="singleton" class="org.dd4t.core.services.impl.LabelServiceImpl" />
+
+    <bean id="labelServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.LabelServiceFactoryImpl"
+          factory-method="getInstance"/>
+
 
     <!-- NEW Databind stuff. NOT wired yet -->
     <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
@@ -119,8 +126,6 @@
         <property name="concreteComponentImpl" value="org.dd4t.contentmodel.impl.ComponentImpl" />
         <property name="concreteFieldImpl" value="org.dd4t.contentmodel.impl.BaseField"/>
     </bean>
-
-    <!-- DD4T factories entry point  -->
     <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="getInstance">
         <property name="dataBinder" ref="dataBinder" />
     </bean>

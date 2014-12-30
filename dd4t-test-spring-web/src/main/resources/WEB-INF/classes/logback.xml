@@ -19,7 +19,7 @@
     </appender>
     <appender name="rollingDd4tLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.folder}/hammerfest.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.folder}/dd4t.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>${log.history}</maxHistory>
         </rollingPolicy>
         <encoder>

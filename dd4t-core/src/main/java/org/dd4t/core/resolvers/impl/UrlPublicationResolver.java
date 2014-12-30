@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 /**
  * Resolves Publication id for the current request by looking at the request URI. It uses a discovery phase where it
- * interrogates Hammerfest trying to lookup the Publication id by Publication URL property, and if not found, then by
+ * interrogates the Tridion Broker trying to lookup the Publication id by Publication URL property, and if not found, then by
  * Images URL (in case of binary URLs). The identified ids are stored in a concurrent hash map for the duration of the
  * web-application.
  * <p/>

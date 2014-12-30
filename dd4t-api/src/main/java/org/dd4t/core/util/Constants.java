@@ -7,11 +7,7 @@ package org.dd4t.core.util;
  */
 public class Constants {
 	public static final String PUBLICATION_DESCRIPTOR = "publicationdescriptor";
-
-	private Constants () {
-
-	}
-
+	public static final String LABELPAGE_URL = "labelpage.url";
 	public static final String PAGE_MODEL_KEY = "pageModel";
 	public static final String PAGE_LOCALE_KEY = "pageLocale";
 	// Key for dynamic component presentations, needed for Experience Manager
@@ -24,5 +20,7 @@ public class Constants {
 	public static final String REFERER = "Referer";
 	public static final String DEFAULT_PAGE = "index.html";
 	public static final String DEFAULT_PUBLICATION_URL_CONFIGURATION_KEY = "default.publication.url";
+	private Constants () {
 
+	}
 }

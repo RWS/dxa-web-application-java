@@ -24,8 +24,6 @@ import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -88,8 +86,6 @@ public abstract class AbstractPageController {
 
 			response.setHeader(LAST_MODIFIED, createDateFormat().format(lastPublishDate.toDate()));
 
-			setNodeHeader(response);
-
 			model.addAttribute(Constants.REFERER, request.getHeader(HttpHeaders.REFERER));
 			model.addAttribute(Constants.PAGE_MODEL_KEY, pageModel);
 			model.addAttribute(Constants.PAGE_REQUEST_URI, HttpUtils.appendDefaultPageIfRequired(request.getRequestURI()));
@@ -108,25 +104,6 @@ public abstract class AbstractPageController {
 
 		return null;
 	}
-
-	private void setNodeHeader(HttpServletResponse response) {
-		try {
-			InetAddress address = InetAddress.getLocalHost();
-			String host = address.getHostName();
-
-			LOG.debug("Identified hostname {}", host);
-			host = host.replaceAll("\\D+", "");
-
-			if (StringUtils.isEmpty(host)) {
-				host = "0";
-			}
-
-			response.setHeader("X-Node", host);
-		} catch (UnknownHostException e) {
-			LOG.error("Cannot retrieve local host information", e);
-		}
-	}
-
 
 	private String getDefaultPublicationUrl() {
 		return getPropertiesService().getProperty(Constants.DEFAULT_PUBLICATION_URL_CONFIGURATION_KEY);

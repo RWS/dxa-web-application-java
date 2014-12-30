@@ -94,13 +94,6 @@
             <version>0.9.9-RC2</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-core</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
-
     </dependencies>
 
 </project>

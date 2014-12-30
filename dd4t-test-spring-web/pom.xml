@@ -11,12 +11,66 @@
 
     <artifactId>dd4t-test-spring-web</artifactId>
 
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archiveClasses>true</archiveClasses>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/resources/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>**/**</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <directory>webapp/</directory>
+                            <includes>
+                                <include>**/**</include>
+                            </includes>
+                        </resource>
+
+                    </webResources>
+                    <webXml>webapp/WEB-INF/web.xml</webXml>
+                    <failOnMissingWebXml>true</failOnMissingWebXml>
+                    <includeEmptyDirectories>true</includeEmptyDirectories>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-war</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>war-exploded</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exploded</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>custom-war</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
+        <!-- dd4t-core has a dependency on dd4t-databind-->
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-core</artifactId>

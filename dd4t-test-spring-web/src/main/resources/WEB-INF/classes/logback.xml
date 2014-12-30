@@ -3,7 +3,7 @@
     <!-- Properties -->
     <property name="log.pattern" value="%date %-5level %logger{0} - %message%n"/>
     <property name="log.history" value="1"/>
-    <property name="log.folder" value="/var/log/dd4t"/>
+    <property name="log.folder" value="/var/log"/>
     <property name="log.level" value="DEBUG"/>
 
     <!-- Appenders -->
@@ -74,10 +74,12 @@
     </appender>
 
     <!-- Loggers -->
-    <logger name="com.tridion" level="${log.level}"/>
-    <logger name="com.tridion.cache" level="${log.level}" additivity="false">
-        <appender-ref ref="rollingCachingLog"/>
+    <logger name="com.tridion" level="${log.level}" additivity="false">
+        <appender-ref ref="rollingCoreLog"/>
         <appender-ref ref="stdout"/>
+    </logger>
+    <logger name="com.tridion.cache" level="${log.level}" additivity="false">
+
     </logger>
     <logger name="org.hibernate" level="ERROR" additivity="false">
         <appender-ref ref="rollingHibernateLog"/>

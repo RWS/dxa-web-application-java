@@ -39,12 +39,12 @@
 
     <error-page>
         <error-code>404</error-code>
-        <location>/system/errors/404/index.html</location>
+        <location>/system/errors/404.html</location>
     </error-page>
 
     <error-page>
         <error-code>500</error-code>
-        <location>/system/errors/500/index.html</location>
+        <location>/system/errors/500.html</location>
     </error-page>
 
 </web-app>

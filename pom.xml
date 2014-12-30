@@ -40,6 +40,7 @@
         <tridion.version>7.1.0</tridion.version>
         <hibernate.version>4.0.1.Final</hibernate.version>
         <jackson.version>2.4.3</jackson.version>
+        <woodstox.version>4.4.1</woodstox.version>
         <javax.jms.version>1.1-rev-1</javax.jms.version>
 
         <httpcomponents.version>4.3.3</httpcomponents.version>
@@ -114,12 +115,6 @@
             <version>${jsp-api.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.validation</groupId>
-            <artifactId>validation-api</artifactId>
-            <version>${javax.validation.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
@@ -167,6 +162,11 @@
             <version>${spring.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+            <version>${spring.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
@@ -191,6 +191,12 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
             <version>${jackson.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>${woodstox.version}</version>
         </dependency>
 
         <dependency>

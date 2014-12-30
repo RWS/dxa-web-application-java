@@ -2,6 +2,7 @@ package org.dd4t.providers.impl;
 
 import com.tridion.broker.StorageException;
 import com.tridion.data.CharacterData;
+import com.tridion.meta.PublicationMeta;
 import com.tridion.meta.PublicationMetaFactory;
 import com.tridion.storage.ItemMeta;
 import com.tridion.storage.PageMeta;
@@ -10,11 +11,15 @@ import com.tridion.storage.StorageTypeMapping;
 import com.tridion.storage.dao.ItemDAO;
 import com.tridion.storage.dao.ItemTypeSelector;
 import com.tridion.storage.dao.PageDAO;
+import org.dd4t.core.caching.CacheElement;
+import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.factories.impl.CacheProviderFactoryImpl;
 import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.IOUtils;
 import org.dd4t.core.util.TCMURI;
+import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.PageProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,11 +34,14 @@ import java.util.List;
  *
  * TODO: Logging, use this class only from the enum TridionBrokerPageProvider
  * TODO: Implement caching
+ * TODO: Singleton through enum
  */
 public class BrokerPageProvider extends BaseBrokerProvider implements PageProvider {
 
-	private final static Logger LOG = LoggerFactory.getLogger(BrokerPageProvider.class);
-	private final static PublicationMetaFactory PUBLICATION_META_FACTORY = new PublicationMetaFactory();
+	private static final Logger LOG = LoggerFactory.getLogger(BrokerPageProvider.class);
+	private static final  PublicationMetaFactory PUBLICATION_META_FACTORY = new PublicationMetaFactory();
+	private final CacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
+
 	/**
 	 * Retrieves content of a Page by looking the page up by its item id and Publication id.
 	 *
@@ -177,7 +185,69 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	}
 
 	@Override public int discoverPublicationId (final String url) throws SerializationException {
-		//TODO
-		return -1;
+		LOG.debug("Discovering Publication id for url: {}", url);
+
+		String key = getKey(CacheType.DiscoverPublicationURL, url);
+		CacheElement<Integer> cacheElement = cacheProvider.loadFromLocalCache(key);
+		Integer result = null;
+
+		if (cacheElement.isExpired()) {
+			synchronized (cacheElement) {
+				if (cacheElement.isExpired()) {
+					cacheElement.setExpired(false);
+
+					String[] urlsToTry = new String[2];
+					if (url.endsWith("/")) {
+						urlsToTry[0] = url;
+						urlsToTry[1] = url.substring(0, url.length() - 1);
+					} else {
+						urlsToTry[0] = url + "/";
+						urlsToTry[1] = url;
+					}
+					result = -1;
+					for (String urlToTry : urlsToTry) {
+						PublicationMeta[] pms = new PublicationMeta[0];
+						try {
+							pms = PUBLICATION_META_FACTORY.getMetaByPublicationUrl(urlToTry);
+						} catch (StorageException e) {
+							throw new SerializationException(e);
+						}
+
+						if (pms.length > 0) {
+							result = pms[0].getId();
+							if (pms.length > 1) {
+								LOG.error("Found duplicate Publication IDs, returning the first publication: {}", result);
+							}
+							LOG.debug("Discovered Publication id {}", result);
+							break;
+						}
+					}
+
+					cacheElement.setPayload(result);
+					cacheProvider.storeInItemCache(key, cacheElement);
+					LOG.debug("Stored Publication Id with key: {} in cache", key);
+				} else {
+					LOG.debug("Fetched a Publication Id with key: {} from cache", key);
+					result = cacheElement.getPayload();
+				}
+			}
+		} else {
+			LOG.debug("Fetched Publication Id with key: {} from cache", key);
+			result = cacheElement.getPayload();
+		}
+
+		return result == null ? -1 : result;
+	}
+
+	/**
+	 * Builds a key using a named cache type (region) and a URL. This type of key is used to point to
+	 * actual payload in the cache. Use this key when looking up objects cached for a particular URL.
+	 *
+	 * @param type CacheType representing the type (or region) where the associated item is in cache
+	 * @param url  the path part of the URL of a Tridion item
+	 * @return String representing the key pointing to a URL value
+	 */
+	private String getKey(CacheType type, String url) {
+		return String.format("%s-%s", type, url);
 	}
 }

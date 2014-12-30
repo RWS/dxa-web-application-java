@@ -27,7 +27,7 @@ public class EHCacheProvider implements CacheProvider, CacheInvalidator {
     /**
      * The name of the EHCache that contains the cached items for this application
      */
-    public static final String CACHE_NAME = "dd4t-object-cache";
+    public static final String CACHE_NAME = "DD4T";
     private final Cache cache = CacheManager.create().getCache(CACHE_NAME);
     public static final String DEPENDENT_KEY_FORMAT = "%s:%s";
     private static final Logger LOG = LoggerFactory.getLogger(EHCacheProvider.class);

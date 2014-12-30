@@ -3,6 +3,7 @@ package org.dd4t.mvc.controllers;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.dd4t.contentmodel.Page;
+import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
 import org.dd4t.core.factories.impl.PropertiesServiceFactory;
@@ -91,16 +92,18 @@ public abstract class AbstractPageController {
 			model.addAttribute(Constants.PAGE_REQUEST_URI, HttpUtils.appendDefaultPageIfRequired(request.getRequestURI()));
 
 			response.setContentType(HttpUtils.getContentTypeByExtension(url));
+			String pageView = getPageViewName(pageModel);
+			return pageView;
 
-			return getPageViewName(pageModel);
+		} catch (ItemNotFoundException | FactoryException e) {
 
-		} catch (ItemNotFoundException e) {
 			LOG.warn("Page with url '{}' could not be found.", url);
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
-		} catch (Exception e) {
-			LOG.error("Generic Error.", e);
-			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 		}
+//		} catch (Exception e) {
+//			LOG.error("Generic Error.", e);
+//			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+//		}
 
 		return null;
 	}

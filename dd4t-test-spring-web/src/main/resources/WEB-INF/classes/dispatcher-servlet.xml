@@ -34,24 +34,24 @@
 
     <!-- DD4T Provider beans -->
     <bean id="binaryProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerBinaryProvider">
-        <property name="contentIsCompressed" value="${content.compressed}"/>
+        <property name="contentIsCompressed" value="true"/>
     </bean>
 
     <bean id="componentProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerComponentProvider">
-        <property name="contentIsCompressed" value="${content.compressed}"/>
+        <property name="contentIsCompressed" value="true"/>
 
     </bean>
 
     <bean id="pageProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerPageProvider"
           factory-bean="pageProviderFactory">
-        <property name="contentIsCompressed" value="${content.compressed}"/>
+        <property name="contentIsCompressed" value="true"/>
     </bean>
 
     <bean id="pageProviderFactory" scope="singleton" class="org.dd4t.core.factories.impl.PageProviderFactory"
           factory-method="getInstance"/>
 
     <bean id="linkProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerLinkProvider">
-        <property name="contentIsCompressed" value="${content.compressed}"/>
+        <property name="contentIsCompressed" value="true"/>
     </bean>
 
     <bean id="cacheProvider" scope="singleton" class="org.dd4t.core.caching.impl.EHCacheProvider"
@@ -87,7 +87,8 @@
     </bean>
 
     <bean id="binaryController" scope="singleton" class="org.dd4t.test.web.controller.SpringBinaryController">
-        <property name="binaryRootFolder" value="${binary.rootfolder}"/>
+        <!-- TODO -->
+        <property name="binaryRootFolder" value="/media"/>
     </bean>
 
     <bean id="serializer" class="org.dd4t.core.serializers.impl.json.JSONSerializer"/>

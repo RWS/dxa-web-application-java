@@ -49,7 +49,7 @@ public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
 		final Page page = (Page) getJspContext().getAttribute(Constants.PAGE_MODEL_KEY, PageContext.REQUEST_SCOPE);
 
 		if (page != null) {
-			PageContext pageContext = (PageContext) getJspContext();
+			final PageContext pageContext = (PageContext) getJspContext();
 			List<ComponentPresentation> filteredComponentPresentations = RenderUtils.filterComponentPresentations(getComponentPresentationsForRegion(page), getSchema(), getRootElement(), getView());
 			String out = "";
 
@@ -65,8 +65,8 @@ public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
 				}
 			}
 
-			HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-			HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+			final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+			final HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 
 			try {
 				out = RenderUtils.renderComponentPresentations(request, response, filteredComponentPresentations);

@@ -346,7 +346,16 @@ public class RenderUtils {
 			final HashMap<String,BaseViewModel> viewModels = cp.getAllViewModels();
 			if (!viewModels.isEmpty()) {
 				// TODO: determine what to do with them
-				request.setAttribute(Constants.COMPONENT_PRESENTATION_VIEW_MODELS,viewModels);
+				// TODO: all STM keys are now on the request stack,
+				// but still always the viewName is essentially used.
+				// This should now be changed to allowing loading beans in view
+				// but based on for instance root element names
+				// TODO: think of use cases for this.
+				for(final Map.Entry<String,BaseViewModel> modelEntry : viewModels.entrySet()) {
+					LOG.debug("Adding model with key: {} and type {} to the request stack",modelEntry.getKey(),modelEntry.getValue());
+					request.setAttribute(modelEntry.getKey(), modelEntry.getValue());
+				}
+				// TODO: REMOVE ONCE DONE!
 			}
 
 			return dispatchBufferedRequest(request, response, url);

@@ -13,7 +13,7 @@ public class Constants {
 	public static final String DYNAMIC_COMPONENT_PRESENTATION = "dynamicComponentPresentation";
 	// Key for component template id, needed for Exeprience Manager
 	public static final String COMPONENT_TEMPLATE_ID = "componentTemplateId";
-	public static final String COMPONENT_PRESENTATION_VIEW_MODELS = "stringViewModels";
+	public static final String COMPONENT_PRESENTATION_VIEW_MODELS = "strongViewModels";
 	public static final String CONTROLLER_MAPPING_PATTERN = "/%s/%s.dcp";
 	public static final String PAGE_REQUEST_URI = "pageRequestURI";
 	public static final String PAGE_REQUEST_URL = "pageRequestURL";

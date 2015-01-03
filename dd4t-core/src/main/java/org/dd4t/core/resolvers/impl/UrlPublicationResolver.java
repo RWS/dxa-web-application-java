@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
  * interrogates the Tridion Broker trying to lookup the Publication id by Publication URL property, and if not found, then by
  * Images URL (in case of binary URLs). The identified ids are stored in a concurrent hash map for the duration of the
  * web-application.
+ *
+ * TODO: includepattern!
  * <p/>
  * Ther resolver uses property 'level' to indicate how many levels deep in the URI path to search for a valid
  * Publication URL or Images URL value.

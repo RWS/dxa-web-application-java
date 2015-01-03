@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <jsp:useBean id="pageModel" type="org.dd4t.contentmodel.Page" scope="request"/>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="dd4t" uri="http://www.dd4t.org/tags/2.0" %>
 <html>
 <head>
     <title>${pageModel.title}</title>
@@ -14,5 +15,7 @@
 <c:forEach var="componentPresentation" items="${pageModel.componentPresentations}">
     <p>${componentPresentation.component.title}</p>
 </c:forEach>
+<dd4t:componentpresentations />
+
 </body>
 </html>

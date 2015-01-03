@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Field;
+import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.LabelServiceFactoryImpl;
@@ -21,10 +22,7 @@ import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -345,7 +343,11 @@ public class RenderUtils {
 			request.setAttribute(Constants.DYNAMIC_COMPONENT_PRESENTATION, cp.isDynamic());
 			String url = fixUrl(String.format(Constants.CONTROLLER_MAPPING_PATTERN, viewName, tcmuri.getItemId()));
 
-			// TODO: add STMs here
+			final HashMap<String,BaseViewModel> viewModels = cp.getAllViewModels();
+			if (!viewModels.isEmpty()) {
+				// TODO: determine what to do with them
+				request.setAttribute(Constants.COMPONENT_PRESENTATION_VIEW_MODELS,viewModels);
+			}
 
 			return dispatchBufferedRequest(request, response, url);
 		} catch (IOException | ParseException | ServletException e) {

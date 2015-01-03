@@ -4,12 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.annotations.ViewModelProperty;
+import org.dd4t.databind.util.DataUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,13 +43,15 @@ public abstract class ViewModelBase implements BaseViewModel {
 		LOG.trace("Setting generic parameters on model.");
 		final ViewModel viewModelAnnotation = this.getClass().getAnnotation(ViewModel.class);
 		if (null != viewModelAnnotation) {
-			final String[] rootElements = viewModelAnnotation.rootElementNames();
-			if (rootElements != null && rootElements.length > 0) {
-				this.viewModelNames.addAll(Arrays.asList(rootElements));
+			final List<String> rootElements = DataUtils.convertToNonEmptyList(viewModelAnnotation.rootElementNames());
+
+			if (!rootElements.isEmpty()) {
+
+				this.viewModelNames.addAll(rootElements);
 			}
-			final String[] viewModels = viewModelAnnotation.viewModelNames();
-			if (viewModels != null && viewModels.length > 0) {
-				this.viewModelNames.addAll(Arrays.asList(viewModels));
+			final List<String> viewModels = DataUtils.convertToNonEmptyList(viewModelAnnotation.viewModelNames());
+			if (!viewModels.isEmpty()) {
+				this.viewModelNames.addAll(viewModels);
 			}
 			this.setGenericComponentOnComponentPresentation = viewModelAnnotation.setComponentObject();
 			this.setRawDataOnModel = viewModelAnnotation.setRawData();

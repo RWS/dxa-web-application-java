@@ -143,13 +143,13 @@ public class UrlPublicationResolver implements PublicationResolver {
 	Try resolve Publication id by looking up the Publication Url property in the Page Provider and,
 	if not found by looking up the Images URL property in the Binary Provider
 	 */
-	private int discoverPublicationId (String urlStub) throws SerializationException {
-		LOG.debug("Discover Publication id by UrlStub: {} ", urlStub);
+	private int discoverPublicationId (String url) throws SerializationException {
+		LOG.debug("Discover Publication id by UrlStub: {} ", url);
 
 		try {
-			return pageProvider.discoverPublicationId(urlStub);
+			return pageProvider.discoverPublicationId(url);
 		} catch (SerializationException e) {
-			LOG.error("Error while discovering Publication id by Url " + urlStub, e);
+			LOG.error("Error while discovering Publication id by Url " + url, e);
 			throw e;
 		}
 	}
@@ -157,6 +157,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	private PublicationDescriptor getPublicationDescriptor () {
 		Object pd = HttpUtils.currentRequest().getSession().getAttribute(Constants.PUBLICATION_DESCRIPTOR);
 		if (pd != null) {
+			// TODO: FNFE never thrown anymore
 			try {
 				String baseUrl = getBaseUrl();
 				if (baseUrl.equals(((PublicationDescriptor) pd).getPublicationUrl())) {
@@ -191,9 +192,9 @@ public class UrlPublicationResolver implements PublicationResolver {
 			urlPath = urlPath.substring(HttpUtils.currentRequest().getContextPath().length());
 		}
 		// if url is empty or only a slash, we cannot find the publication
-		if (StringUtils.isEmpty(urlPath) || "/".equals(urlPath)) {
-			throw new FileNotFoundException("No publication found for path " + urlPath);
-		}
+//		if (StringUtils.isEmpty(urlPath) || "/".equals(urlPath)) {
+//			throw new FileNotFoundException("No publication found for path " + urlPath);
+//		}
 		return HttpUtils.createPathFromUri(urlPath, level);
 
 	}
@@ -218,7 +219,10 @@ public class UrlPublicationResolver implements PublicationResolver {
 					return publicationDescriptor;
 				}
 			}
-			int pubId = discoverPublicationId(publicationDescriptor.getPublicationUrl());
+
+			final String requestUrl = HttpUtils.getOriginalFullUrl(HttpUtils.currentRequest());
+
+			int pubId = discoverPublicationId(requestUrl);
 
 			if (pubId > 0) {
 				LOG.info("Found publication id {} for publication url {}", pubId, publicationDescriptor.getPublicationUrl());

@@ -51,8 +51,12 @@ public class RenderUtils {
 	 * If the component template has a template parameter viewName, the value of
 	 * that parameter is returned. Otherwise the title of the component template
 	 * is returned.
+	 *
+	 * In DD4T 2.0 this is extended, so that views can also be rendered based
+	 * on RootElementName. This is done through a separate tag!
+	 *
 	 */
-	public static String getViewName(ComponentPresentation cp) {
+	public static String getViewName (ComponentPresentation cp) {
 		ComponentTemplate componentTemplate = cp.getComponentTemplate();
 		Map<String, Field> metadata = componentTemplate.getMetadata();
 
@@ -340,6 +344,8 @@ public class RenderUtils {
 			request.setAttribute(Constants.COMPONENT_TEMPLATE_ID, cp.getComponentTemplate().getId());
 			request.setAttribute(Constants.DYNAMIC_COMPONENT_PRESENTATION, cp.isDynamic());
 			String url = fixUrl(String.format(Constants.CONTROLLER_MAPPING_PATTERN, viewName, tcmuri.getItemId()));
+
+			// TODO: add STMs here
 
 			return dispatchBufferedRequest(request, response, url);
 		} catch (IOException | ParseException | ServletException e) {

@@ -9,6 +9,7 @@
         http://www.springframework.org/schema/context/spring-context-3.1.xsd
         http://www.springframework.org/schema/jms
         http://www.springframework.org/schema/jms/spring-jms.xsd">
+    <!-- Change this to the base-package where your overridden controllers are -->
     <context:component-scan base-package="org.dd4t.test.web.controller" annotation-config="true"/>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -111,11 +112,11 @@
           factory-method="getInstance"/>
 
 
-    <!-- NEW Databind stuff. NOT wired yet -->
+    <!-- Databind stuff.-->
     <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
     <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
         <!-- Set this value to your own models package root -->
-        <property name="viewModelPackageRoot" value="org.dd4t.databind.viewmodel.test" />
+        <property name="viewModelPackageRoot" value="org.dd4t.test.web.models" />
         <property name="viewModelMetaKeyName" value="viewName" />
         <!-- Set these to your need. If you only want regular Components set to true -->
         <property name="renderDefaultComponentModelsOnly" value="false" />

@@ -1,8 +1,15 @@
 package org.dd4t.providers.impl;
 
 import com.tridion.broker.StorageException;
+import com.tridion.broker.querying.Query;
+import com.tridion.broker.querying.criteria.content.PageURLCriteria;
+import com.tridion.broker.querying.criteria.content.PublicationCriteria;
+import com.tridion.broker.querying.criteria.operators.AndCriteria;
+import com.tridion.broker.querying.filter.LimitFilter;
+import com.tridion.broker.querying.sorting.SortDirection;
+import com.tridion.broker.querying.sorting.SortParameter;
 import com.tridion.data.CharacterData;
-import com.tridion.meta.PublicationMeta;
+import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.PublicationMetaFactory;
 import com.tridion.storage.ItemMeta;
 import com.tridion.storage.PageMeta;
@@ -41,7 +48,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerPageProvider.class);
 	private static final  PublicationMetaFactory PUBLICATION_META_FACTORY = new PublicationMetaFactory();
 	private final CacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
-
+	private static final DynamicMetaRetriever DYNAMIC_META_RETRIEVER = new DynamicMetaRetriever();
 	/**
 	 * Retrieves content of a Page by looking the page up by its item id and Publication id.
 	 *
@@ -179,15 +186,12 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 		return result.toString();
 	}
 
+	// TODO: introduce ProviderException
 	@Override public Boolean checkPageExists (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
-		// TODO
-		return false;
-	}
 
-	@Override public int discoverPublicationId (final String url) throws SerializationException {
-		LOG.debug("Discovering Publication id for url: {}", url);
+		LOG.debug("Checking whether Page with url: {} exists", url);
 
-		String key = getKey(CacheType.DiscoverPublicationURL, url);
+		String key = getKey(CacheType.PageExists, url);
 		CacheElement<Integer> cacheElement = cacheProvider.loadFromLocalCache(key);
 		Integer result = null;
 
@@ -195,33 +199,89 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 			synchronized (cacheElement) {
 				if (cacheElement.isExpired()) {
 					cacheElement.setExpired(false);
+					final PublicationCriteria publicationCriteria = new PublicationCriteria(publicationId);
+					final PageURLCriteria pageURLCriteria = new PageURLCriteria(url);
 
-					String[] urlsToTry = new String[2];
-					if (url.endsWith("/")) {
-						urlsToTry[0] = url;
-						urlsToTry[1] = url.substring(0, url.length() - 1);
+					final Query tridionQuery = new Query(new AndCriteria(publicationCriteria, pageURLCriteria));
+					tridionQuery.setResultFilter(new LimitFilter(1));
+					tridionQuery.addSorting(new SortParameter(SortParameter.ITEMS_URL, SortDirection.DESCENDING));
+
+					try {
+						String[] results = tridionQuery.executeQuery();
+						if (results != null && results.length > 0) {
+							LOG.debug("Found 1 result");
+							result = 1;
+							TCMURI tcmuri = new TCMURI(results[0]);
+							cacheElement.setPayload(result);
+							cacheProvider.storeInItemCache(key, cacheElement, tcmuri.getPublicationId(), tcmuri.getItemId());
+						} else {
+							LOG.debug("No results");
+							result = 0;
+							cacheElement.setPayload(result);
+							cacheProvider.storeInItemCache(key, cacheElement);
+						}
+					} catch (StorageException | ParseException e) {
+						LOG.error(e.getLocalizedMessage(),e);
+					}
+					LOG.debug("Stored Page exist check with key: {} in cache", key);
+				} else {
+					LOG.debug("Fetched a Page exist check with key: {} from cache", key);
+					result = cacheElement.getPayload();
+				}
+			}
+		} else {
+			LOG.debug("Fetched Page exist check with key: {} from cache", key);
+			result = cacheElement.getPayload();
+		}
+
+		return result != null && (result == 1);
+	}
+
+	@Override public int discoverPublicationId (final String url) throws SerializationException {
+		LOG.debug("Discovering Publication id for url: {}", url);
+		final String key = getKey(CacheType.DiscoverPublicationURL, url);
+		final CacheElement<Integer> cacheElement = cacheProvider.loadFromLocalCache(key);
+		Integer result = -1;
+
+		if (cacheElement.isExpired()) {
+			synchronized (cacheElement) {
+				if (cacheElement.isExpired()) {
+					cacheElement.setExpired(false);
+
+//					String[] urlsToTry = new String[2];
+//					if (url.endsWith("/")) {
+//						urlsToTry[0] = url;
+//						urlsToTry[1] = url.substring(0, url.length() - 1);
+//					} else {
+//						urlsToTry[0] = url + "/";
+//						urlsToTry[1] = url;
+//					}
+
+					final com.tridion.meta.PageMeta pageMeta = DYNAMIC_META_RETRIEVER.getPageMetaByURL(url);
+					if (pageMeta != null) {
+						result = pageMeta.getPublicationId();
+						LOG.debug("Publication Id for URL: {}, is {}", url,result);
 					} else {
-						urlsToTry[0] = url + "/";
-						urlsToTry[1] = url;
+						LOG.warn("Could not resolve publication Id for URL: {}",url);
 					}
-					result = -1;
-					for (String urlToTry : urlsToTry) {
-						PublicationMeta[] pms = new PublicationMeta[0];
-						try {
-							pms = PUBLICATION_META_FACTORY.getMetaByPublicationUrl(urlToTry);
-						} catch (StorageException e) {
-							throw new SerializationException(e);
-						}
 
-						if (pms.length > 0) {
-							result = pms[0].getId();
-							if (pms.length > 1) {
-								LOG.error("Found duplicate Publication IDs, returning the first publication: {}", result);
-							}
-							LOG.debug("Discovered Publication id {}", result);
-							break;
-						}
-					}
+//					for (String urlToTry : urlsToTry) {
+//						PublicationMeta[] pms = new PublicationMeta[0];
+//						try {
+//							pms = PUBLICATION_META_FACTORY.getMetaByPublicationUrl(urlToTry);
+//						} catch (StorageException e) {
+//							throw new SerializationException(e);
+//						}
+//
+//						if (pms.length > 0) {
+//							result = pms[0].getId();
+//							if (pms.length > 1) {
+//								LOG.error("Found duplicate Publication IDs, returning the first publication: {}", result);
+//							}
+//							LOG.debug("Discovered Publication id {}", result);
+//							break;
+//						}
+//					}
 
 					cacheElement.setPayload(result);
 					cacheProvider.storeInItemCache(key, cacheElement);

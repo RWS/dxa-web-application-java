@@ -135,6 +135,10 @@
             <scope>runtime</scope>
         </dependency>
 
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
 
         <!--
             If you use the Tridion Stack inside the web app,

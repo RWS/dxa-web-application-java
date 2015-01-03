@@ -77,10 +77,6 @@ public abstract class AbstractPageController {
 				throw new ItemNotFoundException("Local Page Url could not be resolved: " + originalUrl + " (probably publication url could not be resolved)");
 			}
 
-			// Get the Locale from the PageModel instead
-			Locale pageLocale = HttpUtils.buildLocale(url);
-			request.setAttribute(Constants.PAGE_LOCALE_KEY, pageLocale);
-
 			Page pageModel = pageFactory.findPageByUrl(url, publicationResolver.getPublicationId());
 
 			DateTime lastPublishDate = pageModel.getLastPublishedDate();

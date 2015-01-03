@@ -117,6 +117,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 	private <T extends BaseViewModel> void buildField (final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping m) throws IllegalAccessException, SerializationException, IOException {
 
 		final Field modelField = m.getField();
+		modelField.setAccessible(true);
 
 		final FieldType tridionDataFieldType;
 		if (currentField.has("FieldType")) {

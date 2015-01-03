@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author R. Kempees
  */
-@ViewModel(viewModelNames = "footnotes")
+@ViewModel(viewModelNames = "footnote", setComponentObject = true)
 public class GenericTextField extends TridionViewModelBase {
 	@ViewModelProperty(entityFieldName = "textfield")
 	private List<String> textFields;

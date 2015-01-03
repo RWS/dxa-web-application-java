@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 public class AbstractComponentController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractComponentController.class);
-	public static String PRODUCT_RANGE_VIEW_NAME = "productrange";
 
 	@Autowired private ComponentFactoryImpl componentFactory;
 
@@ -65,7 +64,8 @@ public class AbstractComponentController {
 	 * @param request             the request on which the component must be present
 	 * @return the view name to render
 	 */
-	@RequestMapping(value = {"/{componentViewPrefix}/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD}) public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
+	@RequestMapping(value = {"/{componentViewPrefix}/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
 		LOG.debug(">> {} component with viewPrefix: {}, viewName: {} and componentId: {}", new Object[]{request.getMethod(), componentViewPrefix, componentViewName, componentId});
 
 		// double check the component is on the request - we are not actually doing something with it

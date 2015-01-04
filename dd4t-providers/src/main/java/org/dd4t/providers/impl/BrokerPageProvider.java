@@ -10,7 +10,6 @@ import com.tridion.broker.querying.sorting.SortDirection;
 import com.tridion.broker.querying.sorting.SortParameter;
 import com.tridion.data.CharacterData;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
-import com.tridion.meta.PublicationMetaFactory;
 import com.tridion.storage.ItemMeta;
 import com.tridion.storage.PageMeta;
 import com.tridion.storage.StorageManagerFactory;
@@ -46,9 +45,8 @@ import java.util.List;
 public class BrokerPageProvider extends BaseBrokerProvider implements PageProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerPageProvider.class);
-	private static final  PublicationMetaFactory PUBLICATION_META_FACTORY = new PublicationMetaFactory();
-	private final CacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
 	private static final DynamicMetaRetriever DYNAMIC_META_RETRIEVER = new DynamicMetaRetriever();
+	private final CacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
 	/**
 	 * Retrieves content of a Page by looking the page up by its item id and Publication id.
 	 *
@@ -191,7 +189,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 
 		LOG.debug("Checking whether Page with url: {} exists", url);
 
-		String key = getKey(CacheType.PageExists, url);
+		String key = getKey(CacheType.PAGE_EXISTS, url);
 		CacheElement<Integer> cacheElement = cacheProvider.loadFromLocalCache(key);
 		Integer result = null;
 
@@ -239,7 +237,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 
 	@Override public int discoverPublicationId (final String url) throws SerializationException {
 		LOG.debug("Discovering Publication id for url: {}", url);
-		final String key = getKey(CacheType.DiscoverPublicationURL, url);
+		final String key = getKey(CacheType.DISCOVER_PUBLICATION_URL, url);
 		final CacheElement<Integer> cacheElement = cacheProvider.loadFromLocalCache(key);
 		Integer result = -1;
 
@@ -248,15 +246,6 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 				if (cacheElement.isExpired()) {
 					cacheElement.setExpired(false);
 
-//					String[] urlsToTry = new String[2];
-//					if (url.endsWith("/")) {
-//						urlsToTry[0] = url;
-//						urlsToTry[1] = url.substring(0, url.length() - 1);
-//					} else {
-//						urlsToTry[0] = url + "/";
-//						urlsToTry[1] = url;
-//					}
-
 					final com.tridion.meta.PageMeta pageMeta = DYNAMIC_META_RETRIEVER.getPageMetaByURL(url);
 					if (pageMeta != null) {
 						result = pageMeta.getPublicationId();
@@ -264,24 +253,6 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 					} else {
 						LOG.warn("Could not resolve publication Id for URL: {}",url);
 					}
-
-//					for (String urlToTry : urlsToTry) {
-//						PublicationMeta[] pms = new PublicationMeta[0];
-//						try {
-//							pms = PUBLICATION_META_FACTORY.getMetaByPublicationUrl(urlToTry);
-//						} catch (StorageException e) {
-//							throw new SerializationException(e);
-//						}
-//
-//						if (pms.length > 0) {
-//							result = pms[0].getId();
-//							if (pms.length > 1) {
-//								LOG.error("Found duplicate Publication IDs, returning the first publication: {}", result);
-//							}
-//							LOG.debug("Discovered Publication id {}", result);
-//							break;
-//						}
-//					}
 
 					cacheElement.setPayload(result);
 					cacheProvider.storeInItemCache(key, cacheElement);

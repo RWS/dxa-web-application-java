@@ -1,6 +1,6 @@
 package org.dd4t.core.serializers.impl;
 
-import org.dd4t.contentmodel.GenericPage;
+import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.serializers.Serializer;
 import org.dd4t.core.util.DateUtils;
@@ -23,7 +23,7 @@ public class SerializerFactoryTest {
         // TODO: add test data
         String pageSource = "";
         // Deserialize Test Content
-        GenericPage page = SerializerFactory.deserialize(pageSource, PageImpl.class);
+        Page page = SerializerFactory.deserialize(pageSource, PageImpl.class);
 
 
         DateTime revisionDate = DateUtils.convertStringToDate("2014-06-25T23:40:51.433");

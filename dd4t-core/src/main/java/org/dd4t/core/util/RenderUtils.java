@@ -343,7 +343,7 @@ public class RenderUtils {
 			request.setAttribute(Constants.DYNAMIC_COMPONENT_PRESENTATION, cp.isDynamic());
 			String url = fixUrl(String.format(Constants.CONTROLLER_MAPPING_PATTERN, viewName, tcmuri.getItemId()));
 
-			final HashMap<String,BaseViewModel> viewModels = cp.getAllViewModels();
+			final Map<String,BaseViewModel> viewModels = cp.getAllViewModels();
 			if (!viewModels.isEmpty()) {
 				// TODO: determine what to do with them
 				// TODO: all STM keys are now on the request stack,

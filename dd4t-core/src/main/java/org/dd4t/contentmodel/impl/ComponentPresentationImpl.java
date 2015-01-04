@@ -9,6 +9,7 @@ import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.core.databind.BaseViewModel;
 
 import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Class representing a component presentation which holds a component template and a component.
@@ -37,7 +38,7 @@ public class ComponentPresentationImpl implements ComponentPresentation {
     private int orderOnPage;
 
     @JsonIgnore
-    private HashMap<String,BaseViewModel> baseViewModels;
+    private Map<String,BaseViewModel> baseViewModels;
 
     /**
      * Get the component
@@ -100,14 +101,14 @@ public class ComponentPresentationImpl implements ComponentPresentation {
         this.orderOnPage = orderOnPage;
     }
 
-    @Override public HashMap<String, BaseViewModel> getAllViewModels () {
+    @Override public Map<String, BaseViewModel> getAllViewModels () {
         if (this.baseViewModels == null) {
             return new HashMap<>();
         }
         return this.baseViewModels;
     }
 
-    @Override public void setViewModel (final HashMap<String, BaseViewModel> models) {
+    @Override public void setViewModel (final Map<String, BaseViewModel> models) {
         this.baseViewModels = models;
     }
 

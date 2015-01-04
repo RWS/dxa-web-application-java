@@ -2,7 +2,7 @@ package org.dd4t.contentmodel;
 
 import org.dd4t.core.databind.BaseViewModel;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public interface ComponentPresentation {
 
@@ -53,18 +53,13 @@ public interface ComponentPresentation {
      */
     public boolean isDynamic();
 
-    // TODO: change in API
     void setIsDynamic (boolean b);
 
-    // TODO: change in API
     void setOrderOnPage (int i);
 
-    // TODO: change in API!
-    void setViewModel(HashMap<String,BaseViewModel> models);
+    void setViewModel(Map<String,BaseViewModel> models);
 
-    // TODO: change in API!
-
-    HashMap<String,BaseViewModel> getAllViewModels();
+    Map<String,BaseViewModel> getAllViewModels();
 
     BaseViewModel getViewModel (String modelName);
 }

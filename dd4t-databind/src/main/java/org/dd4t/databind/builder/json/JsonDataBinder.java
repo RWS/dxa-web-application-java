@@ -47,7 +47,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		return INSTANCE;
 	}
 
-	public <T extends Item> T buildPage (final String source, final Class<T> aClass) throws SerializationException {
+	public <T extends Page> T buildPage (final String source, final Class<T> aClass) throws SerializationException {
 		try {
 			return GENERIC_MAPPER.readValue(source, aClass);
 		} catch (IOException e) {
@@ -85,14 +85,14 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 
 	public HashMap<String, BaseViewModel> buildModels (final Object source, final HashSet<String> modelNames, final String templateUri) throws SerializationException {
 
-		HashMap<String, BaseViewModel> models = new HashMap<>();
+		final HashMap<String, BaseViewModel> models = new HashMap<>();
 
 		for (String modelName : modelNames) {
 			if (VIEW_MODELS.containsKey(modelName)) {
-				Class modelClass = VIEW_MODELS.get(modelName);
+				final Class modelClass = VIEW_MODELS.get(modelName);
 				// check to ensure we don't already have built the same model. We can reuse it if the case
 				// this loop is cheaper than deserializing new models all the time
-				BaseViewModel alreadyExistingModel = getModelOrNullForExistingEntry(models, modelClass);
+				final BaseViewModel alreadyExistingModel = getModelOrNullForExistingEntry(models, modelClass);
 				if (alreadyExistingModel != null) {
 					models.put(modelName, alreadyExistingModel);
 				} else {
@@ -124,11 +124,10 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 
 	public <T extends BaseViewModel> T buildModel (final Object source, final Class modelClass, final String templateUri) throws SerializationException {
 
-		T concreteModel;
 		try {
 			// TODO:If anyone can resolve this unchecked cast, then great.
 			// This appears a limitation in the Java Generics implementation.
-			concreteModel = (T) modelClass.newInstance();
+			final T concreteModel = (T) modelClass.newInstance();
 
 			if (concreteModel instanceof TridionViewModel && !StringUtils.isEmpty(templateUri)) {
 				((TridionViewModel) concreteModel).setTemplateUri(new TCMURI(templateUri));

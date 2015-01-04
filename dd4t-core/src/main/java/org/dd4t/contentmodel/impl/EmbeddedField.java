@@ -22,7 +22,7 @@ public class EmbeddedField extends BaseField implements Field {
 
     @Override
     public List<Object> getValues() {
-        LinkedList<Object> list = new LinkedList<Object>();
+        List<Object> list = new LinkedList<>();
 
         for (FieldSet fs : getEmbeddedValues()) {
             list.add(fs);

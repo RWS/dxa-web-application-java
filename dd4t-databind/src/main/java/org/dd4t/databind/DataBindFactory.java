@@ -16,8 +16,6 @@ import java.util.HashSet;
 
 /**
  * Just a Singleton entry point for all DD4T classes
- *
- * TODO: return items extended from page to be compatible with the Factories
  * This is probably for Page and Component only
  *
  * @author R. Kempees

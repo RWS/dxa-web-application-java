@@ -57,7 +57,7 @@ public class ComponentUtils {
 	public static void setComponent (final HttpServletRequest request, ComponentPresentation componentPresentation) throws ItemNotFoundException, FactoryException {
 		resolveDynamicComponentPresentation(componentPresentation);
 		Component component = componentPresentation.getComponent();
-		HashMap<String, BaseViewModel> viewModels = componentPresentation.getAllViewModels();
+		Map<String, BaseViewModel> viewModels = componentPresentation.getAllViewModels();
 		for (Map.Entry<String,BaseViewModel> viewModelEntry : viewModels.entrySet()) {
 			LOG.debug(">> " + viewModelEntry.getKey());
 		}

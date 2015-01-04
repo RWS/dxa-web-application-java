@@ -9,23 +9,23 @@ package org.dd4t.core.caching;
  */
 public enum CacheType {
 
-	BinaryContent("BC"),
-	BinaryMeta("BM"),
-	PageContent("PC"),
-	PageMeta("PM"),
-	ComponentLink("CL"),
-	ComponentLinkPage("CLP"),
-	Taxonomy("T"),
-	RelatedKeyword("RK"),
-	RelatedKeywordBySchema("RKS"),
-	ComponentContent("CC"),
-	DiscoverPublicationURL("DP"),
-	DiscoverImagesURL("DI"),
-	PageExists("PE"),
-	PageList("PL"),
-	SearchCustomMeta("SCM"),
-	ComponentsBySchema("CBS"),
-	ComponentsBySchemaInKeyword("CBSK");
+	BINARY_CONTENT("BC"),
+	BINARY_META("BM"),
+	PAGE_CONTENT("PC"),
+	PAGE_META("PM"),
+	COMPONENT_LINK("CL"),
+	COMPONENT_LINK_PAGE("CLP"),
+	TAXONOMY("T"),
+	RELATED_KEYWORD("RK"),
+	RELATED_KEYWORD_BY_SCHEMA("RKS"),
+	COMPONENT_CONTENT("CC"),
+	DISCOVER_PUBLICATION_URL("DP"),
+	DISCOVER_IMAGES_URL("DI"),
+	PAGE_EXISTS("PE"),
+	PAGE_LIST("PL"),
+	SEARCH_CUSTOM_META("SCM"),
+	COMPONENTS_BY_SCHEMA("CBS"),
+	COMPONENTS_BY_SCHEMA_IN_KEYWORD("CBSK");
 
 	private String id;
 

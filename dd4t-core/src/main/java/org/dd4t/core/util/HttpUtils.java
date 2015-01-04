@@ -227,7 +227,7 @@ public final class HttpUtils {
 		return null;
 	}
 
-	public static String SetUrlSchema(String input, String prepend) {
+	public static String setUrlSchema (String input, String prepend) {
 		if (StringUtils.isEmpty(input)) {
 			return "";
 		}

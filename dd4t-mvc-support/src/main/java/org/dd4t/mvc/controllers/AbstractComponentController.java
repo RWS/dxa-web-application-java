@@ -5,7 +5,6 @@ import org.dd4t.contentmodel.Component;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.factories.impl.ComponentFactoryImpl;
 import org.dd4t.core.resolvers.PublicationResolver;
-import org.dd4t.core.services.LabelService;
 import org.dd4t.core.util.ComponentUtils;
 import org.dd4t.core.util.RenderUtils;
 import org.dd4t.core.util.TCMURI;
@@ -37,8 +36,6 @@ public class AbstractComponentController {
 
 	@Autowired private PublicationResolver publicationResolver;
 
-	@Autowired private LabelService labelService;
-
 	private String componentViewPath = "";
 
 	/**
@@ -69,7 +66,7 @@ public class AbstractComponentController {
 		LOG.debug(">> {} component with viewPrefix: {}, viewName: {} and componentId: {}", new Object[]{request.getMethod(), componentViewPrefix, componentViewName, componentId});
 
 		// double check the component is on the request - we are not actually doing something with it
-		// TODO: REMOVE THIS IS WRONG!
+		// TODO: redo this mechanism. It's not right
 		int publicationId = publicationResolver.getPublicationId();
 		Component component = ComponentUtils.getComponent(request);
 

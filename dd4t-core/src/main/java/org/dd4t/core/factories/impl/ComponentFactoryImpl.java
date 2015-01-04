@@ -1,7 +1,6 @@
 package org.dd4t.core.factories.impl;
 
 import org.dd4t.contentmodel.Component;
-import org.dd4t.contentmodel.GenericComponent;
 import org.dd4t.contentmodel.impl.ComponentImpl;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
@@ -80,8 +79,8 @@ public class ComponentFactoryImpl extends BaseFactory implements ComponentFactor
         int templateId = templateTcmUri.getItemId();
 
         String key = getKey(publicationId, componentId, templateId);
-        CacheElement<GenericComponent> cacheElement = cacheProvider.loadFromLocalCache(key);
-        GenericComponent component;
+        CacheElement<Component> cacheElement = cacheProvider.loadFromLocalCache(key);
+        Component component;
 
         if (cacheElement.isExpired()) {
             synchronized (cacheElement) {

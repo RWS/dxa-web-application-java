@@ -5,7 +5,6 @@ package org.dd4t.test;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.exceptions.SerializationException;
@@ -15,7 +14,6 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.zip.GZIPInputStream;
 
@@ -91,7 +89,7 @@ public class DD4TModelConverter {
 		String r = decompress(decoded);
 
 		System.out.println(">> length after decompress: " + r.getBytes().length);
-		FileUtils.writeStringToFile(new File("/Users/rai/logs/output.txt"), r);
+		System.out.println("Content is: " + r);
 		return r;
 	}
 

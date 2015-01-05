@@ -39,12 +39,12 @@ public class BrokerQueryProvider extends BaseBrokerProvider implements QueryProv
 			String queryLocale = appendSlashIfRequired(locale);
 
 			StringBuilder queryValue = new StringBuilder();
-			for (String key : keyValueMap.keySet()) {
-				for (String value : keyValueMap.get(key)) {
+			for (Map.Entry<String,Collection<String>> entrySet : keyValueMap.entrySet()) {
+				for (String value : entrySet.getValue()) {
 					if (queryValue.length() > 0) {
 						queryValue.append("&");
 					}
-					queryValue.append(key.trim()).append("=").append(value.trim());
+					queryValue.append(entrySet.getKey().trim()).append("=").append(value.trim());
 				}
 			}
 			String encodedParameter = encodeUrl(queryValue.toString()).trim();

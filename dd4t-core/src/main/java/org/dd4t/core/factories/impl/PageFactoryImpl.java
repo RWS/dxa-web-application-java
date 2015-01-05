@@ -119,8 +119,6 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
 	                try {
 		                page = deserialize(pageSource, PageImpl.class);
-                        // TODO: put CPs on the request stack here
-
 		                cacheElement.setPayload(page);
 
 		                TCMURI tcmUri = new TCMURI(page.getId());

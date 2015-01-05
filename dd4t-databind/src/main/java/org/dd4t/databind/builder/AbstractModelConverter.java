@@ -2,12 +2,10 @@ package org.dd4t.databind.builder;
 
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.TridionViewModel;
-import org.dd4t.databind.util.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -21,12 +19,8 @@ public abstract class AbstractModelConverter {
 	protected <T extends BaseViewModel> void setFieldValue (final T model, final Field f, final org.dd4t.contentmodel.Field renderedField) throws IllegalAccessException {
 
 		boolean isMultiValued = false;
-		Type typeOfFieldToSet;
 		if (f.getType().equals(List.class)) {
 			isMultiValued = true;
-			typeOfFieldToSet = TypeUtils.getRuntimeTypeOfTypeParameter(f.getGenericType());
-		} else {
-			typeOfFieldToSet = f.getType();
 		}
 
 		List<Object> values = renderedField.getValues();

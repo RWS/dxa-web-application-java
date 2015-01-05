@@ -73,13 +73,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 	@Override
 	public byte[] getBinaryContentByURL (String url, int publication) throws ItemNotFoundException {
 
-
 		BinaryVariant variant = getBinaryVariantByURL(url, publication);
-
-		if (variant == null) {
-			throw new ItemNotFoundException("Unable to find binary content by url '" + url + "' and publication '" + publication + "'.");
-		}
-
 		return getBinaryContentById(variant.getBinaryId(), variant.getPublicationId());
 	}
 

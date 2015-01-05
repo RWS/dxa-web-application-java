@@ -7,11 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * LinkResolverFactory. Hides actual LinkResolver implementations.
- * <p/>
+ *
  * Configured through Spring beans.
  *
  * @author R. Kempees
- * @since 10.06.2014
  */
 public class LinkResolverFactory {
 

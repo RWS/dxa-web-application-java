@@ -88,11 +88,6 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	@Override
 	public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, IOException, SerializationException {
 		PageMeta meta = getPageMetaByURL(url, publication);
-
-		if (meta == null) {
-			throw new ItemNotFoundException("Unable to find page by url '" + url + "' and publication '" + publication + "'.");
-		}
-
 		return getPageContentById(meta.getItemId(), meta.getPublicationId());
 	}
 

@@ -22,15 +22,15 @@ public class BinaryWrapper implements Serializable {
      */
     public BinaryWrapper(String binary, byte[] content) {
         this.binary = binary;
-        this.content = content;
+        this.content = content.clone();
     }
 
     public byte[] getContent() {
-        return content;
+        return content.clone();
     }
 
     public void setContent(byte[] content) {
-        this.content = content;
+        this.content = content.clone();
     }
 
     public String getBinary() {

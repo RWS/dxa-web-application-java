@@ -13,11 +13,11 @@ public class BinaryDataImpl implements BinaryData {
     private byte[] bytes;
 
     public byte[] getBytes() {
-        return bytes;
+        return this.bytes.clone();
     }
 
     public void setBytes(final byte[] bytes) {
-        this.bytes = bytes;
+        this.bytes = bytes.clone();
     }
 
     @Override

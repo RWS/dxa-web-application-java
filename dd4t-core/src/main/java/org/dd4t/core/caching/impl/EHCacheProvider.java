@@ -42,7 +42,7 @@ public class EHCacheProvider implements CacheProvider, CacheInvalidator {
 	    final String ttlExpired = "cache.expired.ttl";
 	    final String ttlExpiredDefault = "299";
 	    String ttl = propertiesService.getProperty(ttlExpired, ttlExpiredDefault);
-        expiredTTL = Integer.valueOf(ttl);
+        expiredTTL = Integer.parseInt(ttl);
         LOG.debug("Using {} = {} seconds", ttlExpired, expiredTTL);
     }
 

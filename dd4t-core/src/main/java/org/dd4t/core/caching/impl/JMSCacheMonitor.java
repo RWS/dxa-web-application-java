@@ -58,7 +58,7 @@ public class JMSCacheMonitor {
         PropertiesServiceFactory propertiesServiceFactory = PropertiesServiceFactory.getInstance();
         PropertiesService propertiesService = propertiesServiceFactory.getPropertiesService();
         String interval = propertiesService.getProperty(MONITOR_SERVICE_INTERVAL, MONITOR_SERVICE_INTERVAL_DEFAULT);
-        monitorServiceInterval = Integer.valueOf(interval) * 1000;
+        monitorServiceInterval = Integer.parseInt(interval) * 1000;
         LOG.debug("Using {} = {} seconds", MONITOR_SERVICE_INTERVAL, monitorServiceInterval / 1000);
 
         LOG.debug("Start cache monitor thread");

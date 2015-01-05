@@ -115,6 +115,6 @@ public class AbstractComponentController {
 		this.componentViewPath = componentViewPath;
 	}
 
-	@ResponseStatus(value = HttpStatus.NOT_FOUND) public class ResourceNotFoundException extends RuntimeException {
+	@ResponseStatus(value = HttpStatus.NOT_FOUND) public static class ResourceNotFoundException extends RuntimeException {
 	}
 }

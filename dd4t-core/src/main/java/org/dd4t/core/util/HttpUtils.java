@@ -227,7 +227,7 @@ public final class HttpUtils {
 		return null;
 	}
 
-	public static String setUrlSchema (String input, String prepend) {
+	public static String setSchemaForUrl (String input, String prepend) {
 		if (StringUtils.isEmpty(input)) {
 			return "";
 		}
@@ -243,6 +243,9 @@ public final class HttpUtils {
 	}
 
 	public static String appendDefaultPageIfRequired(String url) {
+		if (StringUtils.isEmpty(url)) {
+			return "";
+		}
 		String ext = FilenameUtils.getExtension(url);
 
 		if (StringUtils.isEmpty(ext)) {

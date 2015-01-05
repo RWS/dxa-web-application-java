@@ -204,9 +204,10 @@ public abstract class BaseDataBinder {
 			LOG.info("Storing viewModelName: {}, for class: {}", viewModelName, model.toString());
 			if (VIEW_MODELS.containsKey(viewModelName)) {
 				LOG.warn("Key: {} already exists! Model for key is: {}", viewModelName, model.toString());
+				return;
 			}
 			// TODO: fix unchecked assignment
-			VIEW_MODELS.putIfAbsent(viewModelName, model);
+			VIEW_MODELS.put(viewModelName, model);
 		}
 	}
 }

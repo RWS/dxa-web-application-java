@@ -1,10 +1,6 @@
 package org.dd4t.core.util;
 
-import javax.xml.transform.Templates;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 import java.io.CharArrayWriter;
@@ -44,8 +40,8 @@ public class XSLTransformer {
 
         // get XSL transformer
         Transformer trans = getTransformer(resource);
-        for (String key : params.keySet()) {
-            trans.setParameter(key, params.get(key));
+        for (Map.Entry<String,Object> entry : params.entrySet()) {
+            trans.setParameter(entry.getKey(), entry.getValue());
         }
 
         // if found, transform

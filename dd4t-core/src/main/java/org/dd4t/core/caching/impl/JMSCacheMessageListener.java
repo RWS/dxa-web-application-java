@@ -38,6 +38,8 @@ public class JMSCacheMessageListener implements MessageListener {
                     LOG.debug("Flush " + event);
                     monitor.setMQServerStatusUp();
                     break;
+                default:
+                    break;
             }
         }
     }

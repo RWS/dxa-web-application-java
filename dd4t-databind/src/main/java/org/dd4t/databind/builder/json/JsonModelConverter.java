@@ -114,9 +114,9 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		return null;
 	}
 
-	private <T extends BaseViewModel> void buildField (final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping m) throws IllegalAccessException, SerializationException, IOException {
+	private <T extends BaseViewModel> void buildField (final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping modelFieldMapping) throws IllegalAccessException, SerializationException, IOException {
 
-		final Field modelField = m.getField();
+		final Field modelField = modelFieldMapping.getField();
 		modelField.setAccessible(true);
 
 		final FieldType tridionDataFieldType;
@@ -131,7 +131,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		if (tridionDataFieldType.equals(FieldType.COMPONENTLINK) || tridionDataFieldType.equals(FieldType.MULTIMEDIALINK)) {
 			fillLinkedComponentValues(currentField, nodeList);
 		} else if (tridionDataFieldType.equals(FieldType.EMBEDDED)) {
-			fillEmbeddedValues(currentField, modelField, nodeList);
+			fillEmbeddedValues(currentField, modelFieldMapping, nodeList);
 		} else {
 			nodeList.add(currentField);
 		}
@@ -161,7 +161,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		}
 	}
 
-	private static void fillEmbeddedValues (final JsonNode currentField, final Field modelField, final List<JsonNode> nodeList) {
+	private static void fillEmbeddedValues (final JsonNode currentField, final ModelFieldMapping modelFieldMapping, final List<JsonNode> nodeList) {
 		// We can only do this after deserialization unfortunately, since no field type is present
 		// in the embedded field values.
 
@@ -181,8 +181,10 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			// add more info, like the embeddedschema info, XPM info here
 			// Best thing to do may be to just add required values to
 			// an embedded base class
-			if (currentField.has(modelField.getName())) {
-				nodeList.add(currentField.get(modelField.getName()));
+
+
+			if (currentField.has(modelFieldMapping.getViewModelProperty().entityFieldName())) {
+				nodeList.add(currentField.get(modelFieldMapping.getViewModelProperty().entityFieldName()));
 			}
 		}
 	}

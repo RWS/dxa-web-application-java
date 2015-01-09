@@ -1,7 +1,6 @@
 package org.dd4t.databind.builder.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.ModelConverter;
@@ -23,7 +22,7 @@ import java.lang.reflect.Type;
 import java.util.*;
 
 /**
- * test
+ * JsonModelConverter.
  *
  * @author R. Kempees
  * @since 19/11/14.
@@ -96,20 +95,6 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		}
 
 		return model;
-	}
-
-	private static String getFieldKeyForModelProperty (final String fieldName, final ModelFieldMapping m) {
-		final String fieldKey;
-		if (m.getViewModelProperty() == null) {
-			fieldKey = fieldName;
-		} else {
-			if (StringUtils.isEmpty(m.getViewModelProperty().entityFieldName())) {
-				fieldKey = fieldName;
-			} else {
-				fieldKey = m.getViewModelProperty().entityFieldName();
-			}
-		}
-		return fieldKey;
 	}
 
 	/**
@@ -244,17 +229,6 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			}
 		} else {
 			LOG.error("Type for field type: {} is the same as the type for this view model: {}. This is NOT supported because of infinite loops. Work around this by creating a separate field type.", model.getClass().getCanonicalName(), modelField.getType().getCanonicalName());
-		}
-	}
-
-	private static <T extends BaseViewModel> void addToListTypeField (final T model, final Field modelField, final BaseViewModel strongModel) throws IllegalAccessException {
-		List list = (List) modelField.get(model);
-		if (list == null) {
-			list = new ArrayList();
-			list.add(strongModel);
-			modelField.set(model, list);
-		} else {
-			list.add(strongModel);
 		}
 	}
 

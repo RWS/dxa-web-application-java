@@ -27,4 +27,9 @@ public class DataBindConstants {
 	public static final String METADATA_FIELDS = "MetadataFields";
 	public static final String EMBEDDED_VALUES_NODE = "EmbeddedValues";
 	public static final String LINKED_COMPONENT_VALUES_NODE = "LinkedComponentValues";
+	public static final String FIELD_TYPE_KEY = "FieldType";
+
+	private DataBindConstants () {
+
+	}
 }

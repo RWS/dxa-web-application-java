@@ -80,7 +80,8 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 				LOG.debug("Key:{}", fieldName);
 
 				ModelFieldMapping m = (ModelFieldMapping)entry.getValue();
-				final JsonNode currentNode = getJsonNodeToParse(fieldName, rawJsonData, isRootComponent, contentFields, metadataFields, m);
+
+				final JsonNode currentNode = getJsonNodeToParse(m.getViewModelProperty().entityFieldName(), rawJsonData, isRootComponent, contentFields, metadataFields, m);
 				// Since we are now now going from modelproperty > fetch data, the data might actually be null
 				if (currentNode != null) {
 					this.buildField(model, fieldName, currentNode, m);
@@ -93,7 +94,21 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		return model;
 	}
 
-	private static JsonNode getJsonNodeToParse (final String key, final JsonNode rawJsonData, final boolean isRootComponent, final JsonNode contentFields, final JsonNode metadataFields, final ModelFieldMapping m) {
+	/**
+	 * Searches for the Json node to set on the model field in the Json data.
+	 *
+	 * @param entityFieldName The annotated model property. Used to search the Json node
+	 * @param rawJsonData The Json data representing a node inside a child node of a component. Used for
+	 *                    embedded fields and component link fields
+	 * @param isRootComponent A flag to check whether the current Json node is the component node. If it is
+	 *                        the case, then a choice is made whether to fetch the metadata or the normal content
+	 *                        node.
+	 * @param contentFields The content node
+	 * @param metadataFields The metadata node
+	 * @param m The current model field that is parsing at the moment
+	 * @return the Json node found under the entityFieldName key or null
+	 */
+	private static JsonNode getJsonNodeToParse (final String entityFieldName, final JsonNode rawJsonData, final boolean isRootComponent, final JsonNode contentFields, final JsonNode metadataFields, final ModelFieldMapping m) {
 		final JsonNode currentNode;
 		if (isRootComponent) {
 			if (m.getViewModelProperty().isMetadata()) {
@@ -107,7 +122,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
 		if (currentNode != null) {
 			if (isRootComponent) {
-				return currentNode.get(key);
+				return currentNode.get(entityFieldName);
 			}
 			return currentNode;
 		}
@@ -120,8 +135,8 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		modelField.setAccessible(true);
 
 		final FieldType tridionDataFieldType;
-		if (currentField.has("FieldType")) {
-			tridionDataFieldType = FieldType.findByValue(currentField.get("FieldType").intValue());
+		if (currentField.has(DataBindConstants.FIELD_TYPE_KEY)) {
+			tridionDataFieldType = FieldType.findByValue(currentField.get(DataBindConstants.FIELD_TYPE_KEY).intValue());
 		} else {
 			tridionDataFieldType = FieldType.EMBEDDED;
 		}
@@ -181,7 +196,6 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			// add more info, like the embeddedschema info, XPM info here
 			// Best thing to do may be to just add required values to
 			// an embedded base class
-
 
 			if (currentField.has(modelFieldMapping.getViewModelProperty().entityFieldName())) {
 				nodeList.add(currentField.get(modelFieldMapping.getViewModelProperty().entityFieldName()));

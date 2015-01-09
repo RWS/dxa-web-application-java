@@ -1,11 +1,14 @@
 package org.dd4t.databind.builder;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.TridionViewModel;
+import org.dd4t.databind.viewmodel.base.ModelFieldMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,6 +18,31 @@ import java.util.List;
  */
 public abstract class AbstractModelConverter {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractModelConverter.class);
+
+	protected static String getFieldKeyForModelProperty (final String fieldName, final ModelFieldMapping m) {
+		final String fieldKey;
+		if (m.getViewModelProperty() == null) {
+			fieldKey = fieldName;
+		} else {
+			if (StringUtils.isEmpty(m.getViewModelProperty().entityFieldName())) {
+				fieldKey = fieldName;
+			} else {
+				fieldKey = m.getViewModelProperty().entityFieldName();
+			}
+		}
+		return fieldKey;
+	}
+
+	protected static <T extends BaseViewModel> void addToListTypeField (final T model, final Field modelField, final BaseViewModel strongModel) throws IllegalAccessException {
+		List list = (List) modelField.get(model);
+		if (list == null) {
+			list = new ArrayList();
+			list.add(strongModel);
+			modelField.set(model, list);
+		} else {
+			list.add(strongModel);
+		}
+	}
 
 	protected <T extends BaseViewModel> void setFieldValue (final T model, final Field f, final org.dd4t.contentmodel.Field renderedField) throws IllegalAccessException {
 

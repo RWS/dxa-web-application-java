@@ -1,6 +1,7 @@
 package org.dd4t.databind.builder.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.ModelConverter;
@@ -81,7 +82,10 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
 				ModelFieldMapping m = (ModelFieldMapping)entry.getValue();
 
-				final JsonNode currentNode = getJsonNodeToParse(m.getViewModelProperty().entityFieldName(), rawJsonData, isRootComponent, contentFields, metadataFields, m);
+				String fieldKey;
+				fieldKey = getFieldKeyForModelProperty(fieldName, m);
+
+				final JsonNode currentNode = getJsonNodeToParse(fieldKey, rawJsonData, isRootComponent, contentFields, metadataFields, m);
 				// Since we are now now going from modelproperty > fetch data, the data might actually be null
 				if (currentNode != null) {
 					this.buildField(model, fieldName, currentNode, m);
@@ -92,6 +96,20 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		}
 
 		return model;
+	}
+
+	private static String getFieldKeyForModelProperty (final String fieldName, final ModelFieldMapping m) {
+		final String fieldKey;
+		if (m.getViewModelProperty() == null) {
+			fieldKey = fieldName;
+		} else {
+			if (StringUtils.isEmpty(m.getViewModelProperty().entityFieldName())) {
+				fieldKey = fieldName;
+			} else {
+				fieldKey = m.getViewModelProperty().entityFieldName();
+			}
+		}
+		return fieldKey;
 	}
 
 	/**

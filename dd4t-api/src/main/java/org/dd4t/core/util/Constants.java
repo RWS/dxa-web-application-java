@@ -20,6 +20,7 @@ public class Constants {
 	public static final String REFERER = "Referer";
 	public static final String DEFAULT_PAGE = "index.html";
 	public static final String DEFAULT_PUBLICATION_URL_CONFIGURATION_KEY = "default.publication.url";
+	public static final String SMART_INCLUDE_URL = "smartIncludeUrl";
 	private Constants () {
 
 	}

@@ -58,6 +58,8 @@ public class ComponentUtils {
 		resolveDynamicComponentPresentation(componentPresentation);
 		Component component = componentPresentation.getComponent();
 		Map<String, BaseViewModel> viewModels = componentPresentation.getAllViewModels();
+
+		// TODO: fix this
 		for (Map.Entry<String,BaseViewModel> viewModelEntry : viewModels.entrySet()) {
 			LOG.debug(">> " + viewModelEntry.getKey());
 		}

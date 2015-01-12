@@ -72,6 +72,19 @@
             <type>java.lang.Integer</type>
         </attribute>
     </tag>
+    <tag>
+        <name>smartInclude</name>
+        <tag-class>org.dd4t.mvc.tags.SmartIncludeTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>page</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+    </tag>
+
+
 
     <function>
         <name>escapeEcmaScript</name>

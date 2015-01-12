@@ -16,6 +16,7 @@ public interface BaseViewModel {
 	 * @return a List of all associated view names
 	 */
 	List<String> getViewNames();
+	// TODO: move to TridionViewModel
 	boolean setGenericComponentOnComponentPresentation();
 	boolean setRawDataOnModel ();
 	void setRawData(Object data);

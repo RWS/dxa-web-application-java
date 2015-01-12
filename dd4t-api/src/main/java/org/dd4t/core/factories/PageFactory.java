@@ -2,6 +2,8 @@ package org.dd4t.core.factories;
 
 import org.dd4t.contentmodel.Page;
 import org.dd4t.core.exceptions.FactoryException;
+import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.SerializationException;
 
 public interface PageFactory extends Factory {
 
@@ -41,6 +43,16 @@ public interface PageFactory extends Factory {
      * @return the deserialized object
      */
     <T extends Page> T deserialize (final String source, final Class<? extends T> clazz) throws FactoryException;
+    /**
+     * Method to check whether a page exists in the Tridion Broker.
+     *
+     * @param url the URL to check
+     * @param publicationId the publication Id for the url
+     * @return true if the page url exists in the broker
+     * @throws SerializationException
+     * @throws ItemNotFoundException
+     */
+    public Boolean isPagePublished(String url, int publicationId);
 }
 
 

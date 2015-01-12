@@ -222,9 +222,14 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
      * @throws SerializationException
      * @throws ItemNotFoundException
      */
-    public Boolean isPagePublished(String url, int publicationId) throws ItemNotFoundException, SerializationException {
+    public Boolean isPagePublished(String url, int publicationId) {
         LOG.debug("Enter isPagePublished with url: {} and publicationId: {}", url, publicationId);
-        return pageProvider.checkPageExists(url, publicationId);
+        try {
+            return pageProvider.checkPageExists(url, publicationId);
+        } catch (ItemNotFoundException | SerializationException e) {
+           LOG.error(e.getLocalizedMessage(),e);
+        }
+        return false;
     }
 
     public void setPageProvider(PageProvider provider) {

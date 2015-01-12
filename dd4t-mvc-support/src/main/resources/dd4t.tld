@@ -84,7 +84,11 @@
         </attribute>
     </tag>
 
-
+    <function>
+        <name>publicationUrl</name>
+        <function-class>org.dd4t.mvc.tags.PublicationUrl</function-class>
+        <function-signature>java.lang.String getPublicationUrl()</function-signature>
+    </function>
 
     <function>
         <name>escapeEcmaScript</name>

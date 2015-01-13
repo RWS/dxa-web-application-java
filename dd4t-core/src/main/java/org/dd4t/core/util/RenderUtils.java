@@ -302,7 +302,6 @@ public class RenderUtils {
 	 */
 	public static String renderComponentPresentation(final HttpServletRequest request, final HttpServletResponse response, final String componentURI, final String templateURI, final String viewName) throws ItemNotFoundException, FactoryException {
 		ComponentPresentation componentPresentation = ComponentUtils.createPlaceholderComponentPresentation(componentURI, templateURI, viewName);
-
 		return getResponse(request, response, componentPresentation, viewName);
 	}
 

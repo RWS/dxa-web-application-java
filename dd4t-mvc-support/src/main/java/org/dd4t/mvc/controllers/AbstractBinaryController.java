@@ -6,7 +6,6 @@ import org.dd4t.contentmodel.Binary;
 import org.dd4t.contentmodel.BinaryData;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.BinaryFactory;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.slf4j.Logger;
@@ -113,7 +112,7 @@ public class AbstractBinaryController {
 			// Check if anything changed, if nothing changed return a 304
 			// TODO: test if this works..
 			String modifiedHeader = request.getHeader(IF_MODIFIED_SINCE);
-			if (StringUtils.isNotEmpty(modifiedHeader) && createDateFormat().format(binary.getLastPublishDate().toDate()).equals(modifiedHeader)) {
+			if (StringUtils.isNotEmpty(modifiedHeader) && createDateFormat().format(binary.getLastPublishedDate().toDate()).equals(modifiedHeader)) {
 				response.setStatus(HttpStatus.NOT_MODIFIED.value());
 				return;
 			}
@@ -160,7 +159,7 @@ public class AbstractBinaryController {
 			if (isUseBinaryStorage()) {
 				// Check last modified dates
 				File binaryFile = new File(path);
-				if (!binaryFile.exists() || binary.getLastPublishDate().isAfter(binaryFile.lastModified())) {
+				if (!binaryFile.exists() || binary.getLastPublishedDate().isAfter(binaryFile.lastModified())) {
 					if (resizeToWidth == -1) {
 						saveBinary(binary, binaryFile);
 					} else {
@@ -190,7 +189,7 @@ public class AbstractBinaryController {
 
 			response.setContentType(getContentType(binary, path, request));
 			response.setHeader(CONTENT_LENGTH, Long.toString(contentLength));
-			response.setHeader(LAST_MODIFIED, createDateFormat().format(binary.getLastPublishDate().toDate()));
+			response.setHeader(LAST_MODIFIED, createDateFormat().format(binary.getLastPublishedDate().toDate()));
 			response.setStatus(HttpStatus.OK.value());
 
 			// Write binary data to output stream

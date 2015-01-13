@@ -1,7 +1,5 @@
 package org.dd4t.contentmodel;
 
-import org.joda.time.DateTime;
-
 /**
  * Interface for a binary items i.e. images and pdfs.
  *
@@ -90,16 +88,4 @@ public interface Binary extends RepositoryLocalItem {
      * @param mimeType (String)
      */
     public void setMimeType(String mimeType);
-
-    /**
-     * Get the Date the binary was last published
-     */
-    public DateTime getLastPublishDate();
-
-    /**
-     * Set the Date the binary was last published
-     *
-     * @param date (Date)
-     */
-    public void setLastPublishDate(DateTime date);
 }

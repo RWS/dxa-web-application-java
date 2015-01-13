@@ -20,7 +20,6 @@ public @interface ViewModelProperty {
 	 */
 	String entityFieldName() default "";
 
-	// TODO: Tridion Field Types should be read straight
 	FieldType tridionFieldType() default FieldType.TEXT;
 	boolean isMetadata() default false;
 }

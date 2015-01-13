@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Configured through Spring beans
  *
  * @author Mihai Cadariu
- * @since 21.07.2014
  */
 public class LabelServiceFactoryImpl implements LabelServiceFactory {
 

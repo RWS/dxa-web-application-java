@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * interrogates the Tridion Broker trying to lookup the Publication id by Publication URL property, and if not found, then by
  * Images URL (in case of binary URLs). The identified ids are stored in a concurrent hash map for the duration of the
  * web-application.
- *
+ * <p/>
  * TODO: includepattern!
  * <p/>
  * Ther resolver uses property 'level' to indicate how many levels deep in the URI path to search for a valid
@@ -156,22 +156,13 @@ public class UrlPublicationResolver implements PublicationResolver {
 		}
 	}
 
+	// TODO: move away from the session
 	private PublicationDescriptor getPublicationDescriptor () {
 		Object pd = HttpUtils.currentRequest().getSession().getAttribute(Constants.PUBLICATION_DESCRIPTOR);
 		if (pd != null) {
-			// TODO: FNFE never thrown anymore
-			try {
-				String baseUrl = getBaseUrl();
-				if (baseUrl.equals(((PublicationDescriptor) pd).getPublicationUrl())) {
-					return (PublicationDescriptor) pd;
-				}
-			} catch (FileNotFoundException e) {
-				// TODO decide how to handle the situation where the current URL cannot be mapped to a publication
-				// but there is already a publication descriptor in the session
-				// for now, we will remove the pd from the session
-				LOG.error("Could not find Publication Descriptor for url");
-				HttpUtils.currentRequest().getSession().removeAttribute(Constants.PUBLICATION_DESCRIPTOR);
-				return getEmptyPublicationDescriptor();
+			String baseUrl = getBaseUrl();
+			if (baseUrl.equals(((PublicationDescriptor) pd).getPublicationUrl())) {
+				return (PublicationDescriptor) pd;
 			}
 		}
 
@@ -181,13 +172,13 @@ public class UrlPublicationResolver implements PublicationResolver {
 			return publicationDescriptor;
 		} catch (FileNotFoundException | SerializationException e) {
 			LOG.error("Could not find Publication Descriptor for url");
-			LOG.error(e.getLocalizedMessage(),e);
+			LOG.error(e.getLocalizedMessage(), e);
 			// do not store this in the session!!
 			return getEmptyPublicationDescriptor();
 		}
 	}
 
-	private String getBaseUrl () throws FileNotFoundException {
+	private String getBaseUrl () {
 		String urlPath = HttpUtils.getOriginalUri(HttpUtils.currentRequest());
 		// if there is a context path, and the current URI starts with it, remove the context path
 		if (urlPath.startsWith(HttpUtils.currentRequest().getContextPath())) {
@@ -224,7 +215,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 
 			final String requestUrl = HttpUtils.getOriginalFullUrl(HttpUtils.currentRequest());
 
-			int pubId = discoverPublicationId(requestUrl);
+			final int pubId = discoverPublicationId(requestUrl);
 
 			if (pubId > 0) {
 				LOG.info("Found publication id {} for publication url {}", pubId, publicationDescriptor.getPublicationUrl());

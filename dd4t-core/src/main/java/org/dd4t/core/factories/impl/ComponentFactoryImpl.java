@@ -1,5 +1,6 @@
 package org.dd4t.core.factories.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.impl.ComponentImpl;
 import org.dd4t.core.caching.CacheElement;
@@ -57,12 +58,11 @@ public class ComponentFactoryImpl extends BaseFactory implements ComponentFactor
     public Component getComponent(String componentURI, String viewOrTemplateURI) throws FactoryException {
         LOG.debug("Enter getComponent with componentURI: {} and templateURI: {}", componentURI, viewOrTemplateURI);
 
-        if (viewOrTemplateURI == null || viewOrTemplateURI.length() == 0) {
+        if (StringUtils.isEmpty(viewOrTemplateURI)) {
             throw new FactoryException("Provide a CT view or TCMURI");
         }
 
 	    TCMURI componentTcmUri;
-
 	    TCMURI templateTcmUri;
 	    try {
 		    componentTcmUri = new TCMURI(componentURI);

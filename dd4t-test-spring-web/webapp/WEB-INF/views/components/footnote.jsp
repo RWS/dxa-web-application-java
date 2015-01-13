@@ -4,3 +4,4 @@
 <c:forEach var="note" items="${footnote.textFields}">
     <p><c:out value="${note}"/></p>
 </c:forEach>
+${footnote.c}

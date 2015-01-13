@@ -35,8 +35,6 @@ public class EHCacheProvider implements CacheProvider, CacheInvalidator {
 
     private EHCacheProvider () {
         LOG.debug("Create new instance");
-
-	    // TODO: redo. Weird code.
         PropertiesServiceFactory propertiesServiceFactory = PropertiesServiceFactory.getInstance();
         PropertiesService propertiesService = propertiesServiceFactory.getPropertiesService();
 	    final String ttlExpired = "cache.expired.ttl";

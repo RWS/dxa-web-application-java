@@ -333,8 +333,11 @@ public class RenderUtils {
 		return responseWrapper.toString();
 	}
 
+	// TODO: refactor ComponentUtils with this
 	private static String getResponse(final HttpServletRequest request, final HttpServletResponse response,
 	                                  final ComponentPresentation cp, final String viewName) throws ItemNotFoundException, FactoryException {
+
+		final Map<String,BaseViewModel> viewModels = cp.getAllViewModels();
 		try {
 			TCMURI tcmuri = new TCMURI(cp.getComponent().getId());
 			ComponentUtils.setComponent(request, cp);
@@ -343,7 +346,7 @@ public class RenderUtils {
 			request.setAttribute(Constants.DYNAMIC_COMPONENT_PRESENTATION, cp.isDynamic());
 			String url = fixUrl(String.format(Constants.CONTROLLER_MAPPING_PATTERN, viewName, tcmuri.getItemId()));
 
-			final Map<String,BaseViewModel> viewModels = cp.getAllViewModels();
+
 			if (!viewModels.isEmpty()) {
 				// TODO: determine what to do with them
 				// TODO: all STM keys are now on the request stack,
@@ -355,7 +358,7 @@ public class RenderUtils {
 					LOG.debug("Adding model with key: {} and type {} to the request stack",modelEntry.getKey(),modelEntry.getValue());
 					request.setAttribute(modelEntry.getKey(), modelEntry.getValue());
 				}
-				// TODO: REMOVE ONCE DONE!
+
 			}
 
 			return dispatchBufferedRequest(request, response, url);
@@ -364,6 +367,10 @@ public class RenderUtils {
 			throw new FactoryException(e);
 		} finally {
 			ComponentUtils.removeComponent(request);
+			LOG.debug("Removing STM entries");
+			for(final Map.Entry<String,BaseViewModel> modelEntry : viewModels.entrySet()) {
+				request.removeAttribute(modelEntry.getKey());
+			}
 		}
 	}
 }

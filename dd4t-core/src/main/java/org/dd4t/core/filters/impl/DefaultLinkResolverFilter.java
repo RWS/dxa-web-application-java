@@ -52,16 +52,16 @@ public class DefaultLinkResolverFilter extends BaseFilter implements LinkResolve
     public void doFilter(Item item) throws FilterException {
         linkResolver.setContextPath(contextPath);
 
-        if (item instanceof GenericPage) {
+        if (item instanceof Page) {
             try {
-                resolvePage((GenericPage) item);
+                resolvePage((Page) item);
             } catch (TransformerException e) {
                 LOG.error(e.getMessage(), e);
                 throw new FilterException(e);
             }
-        } else if (item instanceof GenericComponent) {
+        } else if (item instanceof Component) {
             try {
-                resolveComponent((GenericComponent) item);
+                resolveComponent((Component) item);
             } catch (TransformerException e) {
                 LOG.error(e.getMessage(), e);
                 throw new FilterException(e);
@@ -71,17 +71,17 @@ public class DefaultLinkResolverFilter extends BaseFilter implements LinkResolve
         }
     }
 
-    protected void resolvePage(GenericPage page) throws TransformerException {
+    protected void resolvePage(Page page) throws TransformerException {
         List<ComponentPresentation> cpList = page.getComponentPresentations();
         if (cpList != null) {
             for (ComponentPresentation cp : cpList) {
-                resolveComponent(cp.getComponent(), page);
+                resolveComponentOnPage(cp.getComponent());
             }
         }
         resolveMap(page.getMetadata());
     }
 
-    protected void resolveComponent(Component component, GenericPage page) throws TransformerException {
+    protected void resolveComponentOnPage (Component component) throws TransformerException {
         if (component != null) {
             // resolve regular content
             resolveMap(component.getContent());
@@ -90,7 +90,7 @@ public class DefaultLinkResolverFilter extends BaseFilter implements LinkResolve
         }
     }
 
-    protected void resolveComponent(GenericComponent component) throws TransformerException {
+    protected void resolveComponent(Component component) throws TransformerException {
         try {
             if (component != null) {
                 resolveMap(component.getContent());
@@ -129,7 +129,7 @@ public class DefaultLinkResolverFilter extends BaseFilter implements LinkResolve
         List<Object> compList = componentLinkField.getValues();
 
         for (Object component : compList) {
-            resolveComponent((GenericComponent) component);
+            resolveComponent((Component) component);
         }
     }
 

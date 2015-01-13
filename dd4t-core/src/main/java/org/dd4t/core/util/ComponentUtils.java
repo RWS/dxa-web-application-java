@@ -10,7 +10,7 @@ import org.dd4t.contentmodel.impl.ComponentTemplateImpl;
 import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.factories.ComponentFactory;
+import org.dd4t.core.factories.impl.ComponentFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,17 +30,9 @@ public class ComponentUtils {
 	private static final String MODEL_ATTRIBUTE_NAME = "modelAttributeName";
 
 	private static final Logger LOG = LoggerFactory.getLogger(ComponentUtils.class);
-	private static ComponentFactory componentFactory = null;
 
-	private ComponentUtils() {
+	private ComponentUtils () {
 
-	}
-
-	public static ComponentFactory getComponentFactory () {
-		if (componentFactory == null) {
-			componentFactory = JspBeanContext.getBean(ComponentFactory.class);
-		}
-		return componentFactory;
 	}
 
 	/**
@@ -83,15 +75,12 @@ public class ComponentUtils {
 			ComponentTemplate template = componentPresentation.getComponentTemplate();
 			String templateURI = template.getId();
 
-			component = getComponentFactory().getComponent(componentURI, templateURI);
+			component = ComponentFactoryImpl.getInstance().getComponent(componentURI, templateURI);
 			if (component == null) {
 				throw new ItemNotFoundException("Cannot find Dynamic Component " + componentURI +
 						" and Component Template " + templateURI);
 			}
-
 			componentPresentation.setComponent(component);
-			// TODO: redo
-
 		}
 	}
 
@@ -115,30 +104,12 @@ public class ComponentUtils {
 
 	public static Object getModel (final HttpServletRequest request) {
 		String modelName = (String) request.getAttribute(MODEL_ATTRIBUTE_NAME);
-
 		return request.getAttribute(modelName);
 
 	}
 
 	public static Object getModel () {
 		return getModel(HttpUtils.currentRequest());
-	}
-
-	/**
-	 * Returns the attribute name for the given component, if the component
-	 * contains a rootElementName, the rootElementName will be used. By
-	 * convention the attribute name will start with a lower case character, for
-	 * example newsArticle, product etc.
-	 */
-	private static String getRequestAttributeName (final Component component) {
-		String attributeName = TridionUtils.getRootElementName(component);
-
-		/*
-	     * Force the attribute name to start with a lowercase character.
-		 * Although it is convention we cannot rely on the fact everyone follows
-		 * the convention.
-		 */
-		return attributeName.substring(0, 1).toLowerCase() + attributeName.substring(1);
 	}
 
 	/**

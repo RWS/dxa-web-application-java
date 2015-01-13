@@ -1,5 +1,7 @@
 package org.dd4t.contentmodel;
 
+import org.joda.time.DateTime;
+
 /**
  * Interface for all items except for publications
  *
@@ -47,4 +49,8 @@ public interface RepositoryLocalItem extends Item {
      * @param publication
      */
     public void setPublication(Publication publication);
+
+    public void setLastPublishedDate(DateTime date);
+
+    public DateTime getLastPublishedDate();
 }

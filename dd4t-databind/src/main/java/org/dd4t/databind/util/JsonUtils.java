@@ -29,14 +29,6 @@ public class JsonUtils {
 		return JsonDataBinder.getGenericMapper().readValue(parser,concreteClass);
 	}
 
-	public static String getTextValueFromField(String fieldName, JsonNode node) {
-		if (!node.has(fieldName)) {
-			return null;
-		}
-
-		return node.get(fieldName).textValue();
-	}
-
 	public static TCMURI getTcmUriFromField (String fieldName, JsonNode node) {
 		if (!node.has(fieldName)) {
 			return null;

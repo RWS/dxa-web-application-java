@@ -1,11 +1,13 @@
 package org.dd4t.core.util;
 
-import org.dd4t.contentmodel.*;
+import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.impl.ComponentImpl;
 import org.dd4t.contentmodel.impl.ComponentPresentationImpl;
 import org.dd4t.contentmodel.impl.ComponentTemplateImpl;
 import org.dd4t.contentmodel.impl.TextField;
-import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.ComponentFactory;
@@ -57,41 +59,14 @@ public class ComponentUtils {
 	public static void setComponent (final HttpServletRequest request, ComponentPresentation componentPresentation) throws ItemNotFoundException, FactoryException {
 		resolveDynamicComponentPresentation(componentPresentation);
 		Component component = componentPresentation.getComponent();
-		Map<String, BaseViewModel> viewModels = componentPresentation.getAllViewModels();
-
-		// TODO: fix this
-		for (Map.Entry<String,BaseViewModel> viewModelEntry : viewModels.entrySet()) {
-			LOG.debug(">> " + viewModelEntry.getKey());
-		}
-
 		setComponent(request, component);
 	}
 
 	public static void setComponent (final HttpServletRequest request, Component component) throws ItemNotFoundException {
 
 		request.setAttribute(COMPONENT_NAME, component);
-
-
-
-
-		String modelName = getRequestAttributeName((Component) component);
-
-		request.setAttribute(MODEL_ATTRIBUTE_NAME, modelName);
-
-
-		// TODO: wire to strong typed model
-		request.setAttribute(modelName, component);
-		LOG.debug("Adding typed model with name '{}' of type '{}' to the request.", modelName, component.getClass().getName());
-
+		LOG.debug("Added component with id {} and rootElementName '{}' to the request.", component.getId(), component.getSchema().getRootElement());
 	}
-
-	public static void setModel (final HttpServletRequest request, Component component) throws ItemNotFoundException {
-		// TODO: wire to strong typed model
-		String modelName = component.getSchema().getRootElement();
-		request.setAttribute(modelName, component);
-		LOG.debug("Adding typed model with name '{}' of type '{}' to the request.", modelName, component.getClass().getName());
-	}
-
 
 	/**
 	 * If this is a DCP, it resolves the Component inside it by fetching its model as Dynamic Component with the

@@ -23,7 +23,7 @@ public class TestViewModel extends TridionViewModelBase {
 	public String heading;
 
 	@ViewModelProperty
-	public List<Component> body;
+	public Component body;
 
 	@ViewModelProperty
 	public List<TestVideoModel> video;

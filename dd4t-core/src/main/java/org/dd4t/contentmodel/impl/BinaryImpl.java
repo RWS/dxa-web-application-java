@@ -22,9 +22,6 @@ public class BinaryImpl extends BaseRepositoryLocalItem implements Binary {
 
     private BinaryData binaryData;
 
-	@JsonProperty("LastPublishDate") @JsonDeserialize(as = DateTime.class)
-    private DateTime lastPublishDate = new DateTime(0);
-
     @Override
     public Schema getSchema() {
         return schema;
@@ -83,15 +80,5 @@ public class BinaryImpl extends BaseRepositoryLocalItem implements Binary {
     @Override
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
-    }
-
-    @Override
-    public DateTime getLastPublishDate() {
-        return this.lastPublishDate;
-    }
-
-    @Override
-    public void setLastPublishDate(final DateTime date) {
-        this.lastPublishDate = date;
     }
 }

@@ -25,10 +25,7 @@ import java.net.URISyntaxException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -63,7 +60,7 @@ public final class HttpUtils {
 		if (dispatcherType == DispatcherType.ERROR) {
 			url = request.getRequestURI();
 		} else if (dispatcherType == DispatcherType.INCLUDE) {
-			url = request.getRequestURI();
+			url = (String)request.getAttribute(RequestDispatcher.INCLUDE_REQUEST_URI);
 		}
 		else {
 			url = getOriginalUri(request);

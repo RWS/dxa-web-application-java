@@ -64,17 +64,17 @@ public abstract class AbstractPageController {
 	 */
 	@RequestMapping(value = {"/**/*.html", "/**/*.txt", "/**/*.xml"}, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String showPage(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String originalUrl = HttpUtils.getCurrentURL(request);
-		originalUrl = HttpUtils.appendDefaultPageIfRequired(originalUrl);
+		String urlToFetch = HttpUtils.getCurrentURL(request);
+		urlToFetch = HttpUtils.appendDefaultPageIfRequired(urlToFetch);
 
-		String url = adjustLocalErrorUrl(request, originalUrl);
+		String url = adjustLocalErrorUrl(request, urlToFetch);
 		url = HttpUtils.normalizeUrl(url);
 
 		LOG.debug(">> {} page {} with dispatcher type {}", new Object[]{request.getMethod(), url, request.getDispatcherType().toString()});
 		try {
 			if (StringUtils.isEmpty(url)) {
 				// url is not valid, throw an ItemNotFoundException
-				throw new ItemNotFoundException("Local Page Url could not be resolved: " + originalUrl + " (probably publication url could not be resolved)");
+				throw new ItemNotFoundException("Local Page Url could not be resolved: " + urlToFetch + " (probably publication url could not be resolved)");
 			}
 
 			Page pageModel = pageFactory.findPageByUrl(url, publicationResolver.getPublicationId());

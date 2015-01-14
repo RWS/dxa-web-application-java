@@ -158,6 +158,8 @@ public class UrlPublicationResolver implements PublicationResolver {
 
 	// TODO: move away from the session
 	private PublicationDescriptor getPublicationDescriptor () {
+
+		// TODO: remove Sessioning part
 		Object pd = HttpUtils.currentRequest().getSession().getAttribute(Constants.PUBLICATION_DESCRIPTOR);
 		if (pd != null) {
 			String baseUrl = getBaseUrl();

@@ -60,9 +60,12 @@ public final class HttpUtils {
 		String url;
 
 		DispatcherType dispatcherType = request.getDispatcherType();
- if (dispatcherType == DispatcherType.ERROR) {
+		if (dispatcherType == DispatcherType.ERROR) {
 			url = request.getRequestURI();
-		} else {
+		} else if (dispatcherType == DispatcherType.INCLUDE) {
+			url = request.getRequestURI();
+		}
+		else {
 			url = getOriginalUri(request);
 		}
 

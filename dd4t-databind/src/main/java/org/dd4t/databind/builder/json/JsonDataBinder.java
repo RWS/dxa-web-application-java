@@ -17,6 +17,7 @@ import org.dd4t.core.util.TCMURI;
 import org.dd4t.databind.builder.BaseDataBinder;
 import org.dd4t.databind.serializers.json.ComponentPresentationDeserializer;
 import org.dd4t.databind.util.DataBindConstants;
+import org.dd4t.databind.util.JsonUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,13 +183,13 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 	}
 
 	public String getRootElementName (Object componentNode) {
-		JsonNode node;
-		if (componentNode instanceof JsonNode) {
-			node = (JsonNode) componentNode;
-		} else {
+
+		if (!JsonUtils.isValidJsonNode(componentNode)) {
 			LOG.error("Dunno what you're trying to do, but we're doing Json here.");
 			return null;
 		}
+
+		final JsonNode node = (JsonNode) componentNode;
 		final JsonNode schemaNode = node.get(DataBindConstants.SCHEMA_NODE_NAME);
 		if (schemaNode != null) {
 			String nodeTypeName;

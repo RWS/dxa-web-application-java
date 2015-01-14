@@ -1,6 +1,7 @@
 package org.dd4t.databind.builder;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dd4t.contentmodel.Component;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.databind.viewmodel.base.ModelFieldMapping;
@@ -33,43 +34,58 @@ public abstract class AbstractModelConverter {
 		return fieldKey;
 	}
 
-	protected static <T extends BaseViewModel> void addToListTypeField (final T model, final Field modelField, final BaseViewModel strongModel) throws IllegalAccessException {
+	protected static <T extends BaseViewModel> void addToListTypeField (final T model, final Field modelField, final Object fieldValue) throws IllegalAccessException {
 		List list = (List) modelField.get(model);
 		if (list == null) {
 			list = new ArrayList();
-			list.add(strongModel);
+			list.add(fieldValue);
 			modelField.set(model, list);
 		} else {
-			list.add(strongModel);
+			list.add(fieldValue);
 		}
 	}
 
-	protected <T extends BaseViewModel> void setFieldValue (final T model, final Field f, final org.dd4t.contentmodel.Field renderedField) throws IllegalAccessException {
+	protected <T extends BaseViewModel> void setFieldValue (final T model, final Field f, final Object fieldValue) throws IllegalAccessException {
 
 		boolean isMultiValued = false;
 		if (f.getType().equals(List.class)) {
 			isMultiValued = true;
 		}
 
-		List<Object> values = renderedField.getValues();
+		if (fieldValue instanceof org.dd4t.contentmodel.Field ) {
+			setFieldValueOnField(model, f, (org.dd4t.contentmodel.Field) fieldValue, isMultiValued);
+		} else if (fieldValue instanceof Component) {
+			setComponentOnField(model, f, fieldValue, isMultiValued);
+		}
+	}
 
+	private <T extends BaseViewModel> void setComponentOnField (final T model, final Field f, final Object fieldValue, final boolean isMultiValued) throws IllegalAccessException {
+		LOG.debug("Setting component on field");
+		if (isMultiValued) {
+			addToListTypeField(model,f,fieldValue);
+		} else {
+			f.set(model,fieldValue);
+		}
+	}
+
+	private <T extends BaseViewModel> void setFieldValueOnField (final T model, final Field f, final org.dd4t.contentmodel.Field fieldValue, final boolean isMultiValued) throws IllegalAccessException {
+		List<Object> values = fieldValue.getValues();
 		if (values != null && !values.isEmpty()) {
-
 			if (isMultiValued) {
 				LOG.debug("Setting multivalued field: {}", f.getName());
-				f.set(model, renderedField.getValues());
+				f.set(model, fieldValue.getValues());
 			} else {
-				f.set(model, renderedField.getValues().get(0));
+				f.set(model, fieldValue.getValues().get(0));
 			}
 
 			if (model instanceof TridionViewModel) {
-				setXpm((TridionViewModel) model, renderedField, isMultiValued);
+				setXpm((TridionViewModel) model, fieldValue, isMultiValued);
 			}
 
 		} else {
 			LOG.debug("No value(s) found!");
 			if (model instanceof TridionViewModel) {
-				setXpm((TridionViewModel) model, renderedField, isMultiValued);
+				setXpm((TridionViewModel) model, fieldValue, isMultiValued);
 			}
 		}
 	}

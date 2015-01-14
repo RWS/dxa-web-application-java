@@ -116,6 +116,36 @@ public interface Component extends RepositoryLocalItem {
     void setRevisionDate(DateTime date);
 
     public enum ComponentType {
-        Multimedia, Normal
+        Multimedia(0), Normal(1), UNKNOWN(-1);
+        private final int value;
+        ComponentType(int value) {
+            this.value = value;
+        }
+        public static ComponentType findByValue(int value) {
+            for (ComponentType componentType : values()) {
+                if (componentType.getValue() == value) {
+                    return componentType;
+                }
+            }
+
+            return UNKNOWN;
+        }
+
+        public static ComponentType findByName(String name) {
+            try {
+                return ComponentType.valueOf(name.toUpperCase());
+            } catch (IllegalArgumentException iae) {
+                try {
+                    int value = Integer.parseInt(name);
+                    return findByValue(value);
+                } catch (NumberFormatException nfe) {
+                    return UNKNOWN;
+                }
+            }
+        }
+
+        public int getValue() {
+            return value;
+        }
     }
 }

@@ -28,6 +28,8 @@ public class DataBindConstants {
 	public static final String EMBEDDED_VALUES_NODE = "EmbeddedValues";
 	public static final String LINKED_COMPONENT_VALUES_NODE = "LinkedComponentValues";
 	public static final String FIELD_TYPE_KEY = "FieldType";
+	public static final String COMPONENT_TYPE = "ComponentType";
+	public static final String MULTIMEDIA = "Multimedia";
 
 	private DataBindConstants () {
 

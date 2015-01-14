@@ -99,7 +99,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 					models.put(modelName, buildModel(source, modelClass, templateUri));
 				}
 			} else {
-				LOG.warn("Could not load Model Class for viewName: {}", modelName);
+				LOG.warn("Could not load Model Class for key: {}", modelName);
 			}
 		}
 		return models;
@@ -116,9 +116,10 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 	public <T extends BaseViewModel> T buildModel (final Object source, final String modelName, final String templateUri) throws SerializationException {
 		if (VIEW_MODELS.containsKey(modelName)) {
 			Class modelClass = VIEW_MODELS.get(modelName);
+			LOG.info("Start building model for viewName: {}, with class: {}", modelName,modelClass);
 			return buildModel(source, modelClass, templateUri);
 		}
-		LOG.warn("Could not load Model Class for viewName: {}", modelName);
+		LOG.info("Could not load Model Class for viewName: {}", modelName);
 		return null;
 	}
 

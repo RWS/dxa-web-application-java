@@ -81,6 +81,26 @@ public abstract class BaseDataBinder {
 		this.renderDefaultComponentsIfNoModelFound = renderDefaultComponentsIfNoModelFound;
 	}
 
+	public boolean isRenderDefaultComponentModelsOnly () {
+		return renderDefaultComponentModelsOnly;
+	}
+
+	public boolean isRenderDefaultComponentsIfNoModelFound () {
+		return renderDefaultComponentsIfNoModelFound;
+	}
+
+	public Class<ComponentPresentation> getConcreteComponentPresentationImpl () {
+		return concreteComponentPresentationImpl;
+	}
+
+	public Class<ComponentTemplate> getConcreteComponentTemplateImpl () {
+		return concreteComponentTemplateImpl;
+	}
+
+	public Class<Component> getConcreteComponentImpl () {
+		return concreteComponentImpl;
+	}
+
 	public void setConcreteFieldImpl (final Class<Field> concreteFieldImpl) {
 		this.concreteFieldImpl = concreteFieldImpl;
 	}

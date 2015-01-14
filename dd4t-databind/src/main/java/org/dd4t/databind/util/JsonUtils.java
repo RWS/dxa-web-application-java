@@ -43,6 +43,18 @@ public class JsonUtils {
 		return uri;
 	}
 
+	public static boolean isValidJsonNode(Object data) {
+		return isNotNull(data) && isJsonNode(data);
+	}
+
+	public static boolean isJsonNode(Object data) {
+		return data instanceof JsonNode;
+	}
+
+	public static boolean isNotNull(Object data) {
+		return data != null;
+	}
+
 	public static DateTime getDateFromField (String fieldName, JsonNode node) {
 		if (!node.has(fieldName)) {
 			return null;

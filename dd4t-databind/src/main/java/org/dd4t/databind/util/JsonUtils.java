@@ -44,6 +44,7 @@ public class JsonUtils {
 	}
 
 	public static boolean isValidJsonNode(Object data) {
+		
 		return isNotNull(data) && isJsonNode(data);
 	}
 

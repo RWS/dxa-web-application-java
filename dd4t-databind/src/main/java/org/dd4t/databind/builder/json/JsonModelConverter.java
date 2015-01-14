@@ -158,6 +158,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		LOG.debug("Tridion field type: {}", tridionDataFieldType);
 
 		final List<JsonNode> nodeList = new ArrayList<>();
+		// TODO: check if we need the node's information besides only the Linked Component Values
 		if (tridionDataFieldType.equals(FieldType.COMPONENTLINK) || tridionDataFieldType.equals(FieldType.MULTIMEDIALINK)) {
 			fillLinkedComponentValues(currentField, nodeList);
 		} else if (tridionDataFieldType.equals(FieldType.EMBEDDED)) {
@@ -170,8 +171,6 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			final Type parametrizedType = TypeUtils.getRuntimeTypeOfTypeParameter(modelField.getGenericType());
 			LOG.debug("Interface check: " + TypeUtils.classIsViewModel((Class<?>) parametrizedType));
 			if (TypeUtils.classIsViewModel((Class<?>) parametrizedType)) {
-				// Deserialize in a STM
-
 				for (JsonNode node : nodeList) {
 					checkTypeAndBuildModel(model, fieldName, node, modelField, (Class<T>) parametrizedType);
 				}
@@ -229,6 +228,17 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		}
 	}
 
+	/**
+	 * Deserializes in a Strongly Typed Model.
+	 * @param model the model to build
+	 * @param fieldName the current field name
+	 * @param currentField the current Json node
+	 * @param modelField the model property
+	 * @param modelClassToUse the Model class
+	 * @param <T> the model class extending from BaseViewModel
+	 * @throws SerializationException
+	 * @throws IllegalAccessException
+	 */
 	private static <T extends BaseViewModel> void checkTypeAndBuildModel (final T model, final String fieldName, final JsonNode currentField, final Field modelField, final Class<T> modelClassToUse) throws SerializationException, IllegalAccessException {
 		if (!model.getClass().equals(modelField.getType())) {
 			LOG.debug("Building a model or Component for field:{}, type: {}", fieldName, modelField.getType().getName());

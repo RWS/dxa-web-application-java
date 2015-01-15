@@ -10,21 +10,11 @@ public class BaseComponent extends BaseRepositoryLocalItem {
     @JsonDeserialize(as = SchemaImpl.class)
     private Schema schema;
 
-    private String resolvedUrl;
-
     public Schema getSchema() {
         return schema;
     }
 
     public void setSchema(Schema schema) {
         this.schema = schema;
-    }
-
-    public String getResolvedUrl() {
-        return resolvedUrl;
-    }
-
-    public void setResolvedUrl(String resolvedUrl) {
-        this.resolvedUrl = resolvedUrl;
     }
 }

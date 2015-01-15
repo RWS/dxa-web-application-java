@@ -167,7 +167,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 			LOG.error(e.getMessage(),e);
 		}
 
-		if (itemMetas == null || itemMetas.size() == 0) {
+		if (itemMetas == null || itemMetas.isEmpty()) {
 			throw new ItemNotFoundException("Unable to find page URL list by publication '" + publication + "'.");
 		}
 

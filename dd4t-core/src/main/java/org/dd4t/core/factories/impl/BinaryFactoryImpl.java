@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO
  * @author R.S. Kempees
  */
 public class BinaryFactoryImpl implements BinaryFactory {
@@ -96,7 +95,6 @@ public class BinaryFactoryImpl implements BinaryFactory {
      */
     @Override
     public Binary getBinaryByURL(final String url, final int publicationId) throws FactoryException {
-        // TODO: check if in File cache here. This means it needs to be moved away from the binary controller
         LOG.debug("Enter getBinaryByURL with url: {} and publicationId: {}", url, publicationId);
 
         String key = getCacheKey(url, publicationId);

@@ -8,8 +8,8 @@ import java.util.Map;
 
 /**
  * Base class for all tridion items
- * <p/>
- * The latest DD4T version have got Uppercase start characters in elements.
+ *
+ * The latest DD4T version has uppercase start characters in elements.
  *
  * @author Quirijn Slings, Raimond Kempees
  */

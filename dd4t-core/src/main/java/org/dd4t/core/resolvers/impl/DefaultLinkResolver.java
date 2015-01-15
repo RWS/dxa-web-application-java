@@ -2,13 +2,12 @@ package org.dd4t.core.resolvers.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
-import org.dd4t.contentmodel.GenericComponent;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.Schema;
-import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.contentmodel.impl.PublicationImpl;
 import org.dd4t.core.caching.CacheElement;
+import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.resolvers.LinkResolver;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.core.util.TridionUtils;
@@ -35,10 +34,8 @@ public class DefaultLinkResolver implements LinkResolver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultLinkResolver.class);
 
-	@Autowired
-	private LinkProvider linkProvider;
-	@Autowired
-	private CacheProvider cacheProvider;
+	@Autowired private LinkProvider linkProvider;
+	@Autowired private CacheProvider cacheProvider;
 	private Map<String, String> schemaToUrlMappings;
 	private String schemaKey;
 	private boolean encodeUrl = true;
@@ -48,24 +45,20 @@ public class DefaultLinkResolver implements LinkResolver {
 		LOG.debug("Create new instance");
 	}
 
-	@Override
-	public String resolve (Component component) throws ItemNotFoundException, SerializationException {
+	@Override public String resolve (Component component) throws ItemNotFoundException, SerializationException {
 		return resolve(component, null);
 	}
 
-	@Override
-	public String resolve (Component component, Page page) throws ItemNotFoundException, SerializationException {
+	@Override public String resolve (Component component, Page page) throws ItemNotFoundException, SerializationException {
 		LOG.debug("Resolving link to component: {} from page: {}", component, page);
 		String resolvedUrl = null;
 		if (component == null) {
 			return null;
 		}
 		// option 1 - handle multimedia
-		if (component instanceof GenericComponent) {
-			GenericComponent comp = (GenericComponent) component;
-			if (comp.getMultimedia() != null) {
-				resolvedUrl = comp.getMultimedia().getUrl();
-			}
+
+		if (component.getMultimedia() != null) {
+			resolvedUrl = component.getMultimedia().getUrl();
 		}
 
 		Schema schema = component.getSchema();
@@ -97,10 +90,6 @@ public class DefaultLinkResolver implements LinkResolver {
 		if (contextPath != null && contextPath.length() > 0) {
 			resolvedUrl = contextPath + resolvedUrl;
 		}
-
-		component.setResolvedUrl(resolvedUrl);
-
-
 		return resolvedUrl;
 	}
 
@@ -115,8 +104,7 @@ public class DefaultLinkResolver implements LinkResolver {
 		}
 	}
 
-	@Override
-	public String resolve (String componentURI) throws ItemNotFoundException, SerializationException {
+	@Override public String resolve (String componentURI) throws ItemNotFoundException, SerializationException {
 		return resolve(componentURI, null);
 	}
 
@@ -132,8 +120,7 @@ public class DefaultLinkResolver implements LinkResolver {
 		return true;
 	}
 
-	@Override
-	public String resolve (String componentURI, String pageURI) throws ItemNotFoundException, SerializationException {
+	@Override public String resolve (String componentURI, String pageURI) throws ItemNotFoundException, SerializationException {
 		String key;
 		if (!StringUtils.isEmpty(pageURI)) {
 			key = getCacheKey(componentURI, pageURI);
@@ -255,13 +242,11 @@ public class DefaultLinkResolver implements LinkResolver {
 		this.encodeUrl = encodeUrl;
 	}
 
-	@Override
-	public String getContextPath () {
+	@Override public String getContextPath () {
 		return contextPath;
 	}
 
-	@Override
-	public void setContextPath (String contextPath) {
+	@Override public void setContextPath (String contextPath) {
 		this.contextPath = contextPath;
 	}
 

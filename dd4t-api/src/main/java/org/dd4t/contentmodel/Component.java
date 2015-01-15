@@ -25,22 +25,6 @@ public interface Component extends RepositoryLocalItem {
      * @param schema
      */
     public void setSchema(Schema schema);
-
-    /**
-     * Get the resolved url
-     *
-     * @return the resolved url
-     */
-    public String getResolvedUrl();
-
-    /**
-     * Set the resolved url
-     *
-     * @param resolvedUrl
-     */
-    public void setResolvedUrl(String resolvedUrl);
-
-
     /**
      * Get the last published date
      *

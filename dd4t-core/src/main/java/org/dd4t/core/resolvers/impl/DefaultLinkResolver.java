@@ -28,7 +28,9 @@ import java.util.regex.Pattern;
 /**
  * Load this class through the LinkResolverFactory!
  * <p/>
+ *
  * TODO: this class is not thread safe, yet it's a singleton factory!
+ * TODO: redo this
  */
 public class DefaultLinkResolver implements LinkResolver {
 

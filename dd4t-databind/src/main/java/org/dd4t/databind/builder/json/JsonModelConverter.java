@@ -167,6 +167,11 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			nodeList.add(currentField);
 		}
 
+		if (nodeList.isEmpty()) {
+			LOG.debug("Nothing to do.");
+			return;
+		}
+
 		if (modelField.getType().equals(List.class)) {
 			final Type parametrizedType = TypeUtils.getRuntimeTypeOfTypeParameter(modelField.getGenericType());
 			LOG.debug("Interface check: " + TypeUtils.classIsViewModel((Class<?>) parametrizedType));

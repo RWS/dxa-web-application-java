@@ -64,8 +64,7 @@ public abstract class AbstractPageController {
 	 */
 	@RequestMapping(value = {"/**/*.html", "/**/*.txt", "/**/*.xml"}, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String showPage(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
-		String urlToFetch = HttpUtils.getCurrentURL(request);
-		urlToFetch = HttpUtils.appendDefaultPageIfRequired(urlToFetch);
+		final String urlToFetch = HttpUtils.appendDefaultPageIfRequired(HttpUtils.getCurrentURL(request));
 
 		String url = adjustLocalErrorUrl(request, urlToFetch);
 		url = HttpUtils.normalizeUrl(url);
@@ -113,7 +112,6 @@ public abstract class AbstractPageController {
 		if (request.getDispatcherType() == DispatcherType.ERROR) {
 			url = publicationResolver.getLocalPageUrl(url);
 		}
-
 		return url;
 	}
 
@@ -156,13 +154,12 @@ public abstract class AbstractPageController {
 	 * SimpleDateFormat is not allowed, it's access should be sync-ed.
 	 */
 	private DateFormat createDateFormat() {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
+		final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
 		dateFormat.setTimeZone(GMT);
 		return dateFormat;
 	}
 
 	private PropertiesService getPropertiesService() {
-		PropertiesServiceFactory factory = PropertiesServiceFactory.getInstance();
-		return factory.getPropertiesService();
+		return PropertiesServiceFactory.getInstance().getPropertiesService();
 	}
 }

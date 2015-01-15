@@ -79,7 +79,7 @@ public class DD4TModelConverter {
 	private static String decodeAndDecompressContent (String content) throws IOException {
 		byte[] decoded;
 		if (Base64.isBase64(content)) {
-			System.out.println(">> length before base64 decode: " + content.getBytes().length);
+			System.out.println(">> length before base64 decode: " + content.getBytes("UTF-8").length);
 
 			decoded = Base64.decodeBase64(content);
 			System.out.println(">> length after base64 decode: " + decoded.length);
@@ -89,7 +89,7 @@ public class DD4TModelConverter {
 
 		String r = decompress(decoded);
 
-		System.out.println(">> length after decompress: " + r.getBytes().length);
+		System.out.println(">> length after decompress: " + r.getBytes("UTF-8").length);
 		System.out.println("Content is: " + r);
 		return r;
 	}

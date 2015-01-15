@@ -75,7 +75,12 @@ public abstract class BaseBrokerProvider {
 			return "";
 		}
 
-		String encoded = URL_CODER.encodeAsString(url.getBytes());
+		String encoded = null;
+		try {
+			encoded = URL_CODER.encodeAsString(url.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			LOG.error(e.getLocalizedMessage(),e);
+		}
 		if (encoded == null) {
 			return "";
 		}

@@ -70,7 +70,7 @@ public class CompressionUtils {
             baos = new ByteArrayOutputStream();
             gos = new GZIPOutputStream(baos);
 
-            gos.write(content.getBytes());
+            gos.write(content.getBytes("UTF-8"));
             gos.close();
 
             return baos.toByteArray();

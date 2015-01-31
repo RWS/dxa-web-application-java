@@ -8,7 +8,6 @@ import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
-import org.dd4t.core.services.LabelService;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.databind.DataBindFactory;
 import org.dd4t.providers.ComponentPresentationProvider;
@@ -16,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
 import java.text.ParseException;
 
 public class ComponentPresentationFactoryImpl extends BaseFactory implements ComponentPresentationFactory {
@@ -26,8 +24,6 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
     private static final ComponentPresentationFactoryImpl INSTANCE = new ComponentPresentationFactoryImpl();
     @Autowired
     protected ComponentPresentationProvider componentPresentationProvider;
-    @Autowired
-    private LabelService labelService;
 
     private ComponentPresentationFactoryImpl () {
         LOG.debug("Create new instance");
@@ -55,10 +51,10 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
      * @throws org.dd4t.core.exceptions.FactoryException if no item found NotAuthorizedException if the user is not authorized to get the component
      */
     @Override
-    public Component getComponentPresentation (String componentURI, String viewOrTemplateURI) throws FactoryException {
-        LOG.debug("Enter getComponentPresentation with componentURI: {} and templateURI: {}", componentURI, viewOrTemplateURI);
+    public Component getComponentPresentation (String componentURI, String templateURI) throws FactoryException {
+        LOG.debug("Enter getComponentPresentation with componentURI: {} and templateURI: {}", componentURI, templateURI);
 
-        if (StringUtils.isEmpty(viewOrTemplateURI)) {
+        if (StringUtils.isEmpty(templateURI)) {
             throw new FactoryException("Provide a CT view or TCMURI");
         }
 
@@ -66,10 +62,9 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 	    TCMURI templateTcmUri;
 	    try {
 		    componentTcmUri = new TCMURI(componentURI);
-		    String templateURI = labelService.getViewLabel(viewOrTemplateURI);
 		    templateTcmUri = new TCMURI(templateURI);
 	    }
-	    catch (ParseException | IOException e)
+	    catch (ParseException e)
 	    {
 		    throw new FactoryException(e);
 	    }
@@ -98,14 +93,14 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 
                     cacheElement.setPayload(component);
                     cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);
-                    LOG.debug("Added component with uri: {} and template: {} to cache", componentURI, viewOrTemplateURI);
+                    LOG.debug("Added component with uri: {} and template: {} to cache", componentURI, templateURI);
                 } else {
-                    LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, viewOrTemplateURI);
+                    LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, templateURI);
                     component = cacheElement.getPayload();
                 }
             }
         } else {
-            LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, viewOrTemplateURI);
+            LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, templateURI);
             component = cacheElement.getPayload();
         }
 
@@ -131,13 +126,5 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
         } catch (SerializationException e) {
             throw new FactoryException(e);
         }
-    }
-
-    public LabelService getLabelService() {
-        return labelService;
-    }
-
-    public void setLabelService(LabelService labelService) {
-        this.labelService = labelService;
     }
 }

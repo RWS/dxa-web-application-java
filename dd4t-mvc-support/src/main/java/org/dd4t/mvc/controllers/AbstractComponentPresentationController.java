@@ -32,7 +32,7 @@ public class AbstractComponentPresentationController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractComponentPresentationController.class);
 
-	@Autowired private ComponentPresentationFactoryImpl componentFactory;
+	@Autowired private ComponentPresentationFactoryImpl componentPresentationFactory;
 
 	@Autowired private PublicationResolver publicationResolver;
 
@@ -76,7 +76,7 @@ public class AbstractComponentPresentationController {
 			// However, it is also possible to retrieve a DCP directly from the browser.
 			LOG.debug("No component found in request.");
 			try {
-				component = componentFactory.getComponentPresentation(new TCMURI(publicationId, componentId, 16, 0).toString(), componentViewName);
+				component = componentPresentationFactory.getComponentPresentation(new TCMURI(publicationId, componentId, 16, 0).toString(), componentViewName);
 
 			} catch (FactoryException e) {
 				LOG.error(e.getLocalizedMessage(), e);

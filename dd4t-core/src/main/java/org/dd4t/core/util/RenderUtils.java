@@ -7,8 +7,6 @@ import org.dd4t.contentmodel.Field;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.factories.impl.LabelServiceFactoryImpl;
-import org.dd4t.core.services.LabelService;
 import org.dd4t.databind.util.DataBindConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,19 +28,9 @@ import java.util.*;
 public class RenderUtils {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RenderUtils.class);
-	private static LabelService labelService = null;
 
 	private RenderUtils () {
 
-	}
-
-
-	public static LabelService getLabelService() {
-		if (labelService == null) {
-			labelService = LabelServiceFactoryImpl.getInstance().getLabelService();
-		}
-
-		return labelService;
 	}
 
 	/**
@@ -279,14 +267,13 @@ public class RenderUtils {
 	 * @param request
 	 * @param response
 	 * @param componentURI
-	 * @param viewName
+	 * @param templateURI
 	 * @return
 	 */
-	public static String renderComponentPresentation(final HttpServletRequest request, final HttpServletResponse response, final String componentURI, final String viewName) throws ItemNotFoundException {
+	public static String renderComponentPresentation(final HttpServletRequest request, final HttpServletResponse response, final String componentURI, final String templateURI) throws ItemNotFoundException {
 		try {
-			String componentTemplateURI = getLabelService().getViewLabel(viewName);
-			return renderComponentPresentation(request, response, componentURI, componentTemplateURI, viewName);
-		} catch (IOException | FactoryException e) {
+			return renderComponentPresentation(request, response, componentURI, templateURI, templateURI);
+		} catch (FactoryException e) {
 			throw new ItemNotFoundException(e);
 		}
 	}

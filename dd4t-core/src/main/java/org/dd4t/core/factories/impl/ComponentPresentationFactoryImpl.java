@@ -7,11 +7,11 @@ import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.factories.ComponentFactory;
+import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.services.LabelService;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.databind.DataBindFactory;
-import org.dd4t.providers.ComponentProvider;
+import org.dd4t.providers.ComponentPresentationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,21 +19,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.text.ParseException;
 
-public class ComponentFactoryImpl extends BaseFactory implements ComponentFactory {
+public class ComponentPresentationFactoryImpl extends BaseFactory implements ComponentPresentationFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ComponentFactoryImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ComponentPresentationFactoryImpl.class);
 
-    private static final ComponentFactoryImpl INSTANCE = new ComponentFactoryImpl();
+    private static final ComponentPresentationFactoryImpl INSTANCE = new ComponentPresentationFactoryImpl();
     @Autowired
-    protected ComponentProvider componentProvider;
+    protected ComponentPresentationProvider componentPresentationProvider;
     @Autowired
     private LabelService labelService;
 
-    private ComponentFactoryImpl() {
+    private ComponentPresentationFactoryImpl () {
         LOG.debug("Create new instance");
     }
 
-    public static ComponentFactoryImpl getInstance() {
+    public static ComponentPresentationFactoryImpl getInstance() {
         return INSTANCE;
     }
 
@@ -55,8 +55,8 @@ public class ComponentFactoryImpl extends BaseFactory implements ComponentFactor
      * @throws org.dd4t.core.exceptions.FactoryException if no item found NotAuthorizedException if the user is not authorized to get the component
      */
     @Override
-    public Component getComponent(String componentURI, String viewOrTemplateURI) throws FactoryException {
-        LOG.debug("Enter getComponent with componentURI: {} and templateURI: {}", componentURI, viewOrTemplateURI);
+    public Component getComponentPresentation (String componentURI, String viewOrTemplateURI) throws FactoryException {
+        LOG.debug("Enter getComponentPresentation with componentURI: {} and templateURI: {}", componentURI, viewOrTemplateURI);
 
         if (StringUtils.isEmpty(viewOrTemplateURI)) {
             throw new FactoryException("Provide a CT view or TCMURI");
@@ -88,7 +88,7 @@ public class ComponentFactoryImpl extends BaseFactory implements ComponentFactor
                     cacheElement.setExpired(false);
 
                     try {
-                        String componentModel = componentProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
+                        String componentModel = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
                         component = deserialize(componentModel, ComponentImpl.class);
                     } catch (ItemNotFoundException | SerializationException e) {
                         cacheElement.setPayload(null);
@@ -109,7 +109,7 @@ public class ComponentFactoryImpl extends BaseFactory implements ComponentFactor
             component = cacheElement.getPayload();
         }
 
-        LOG.debug("Exit getComponent");
+        LOG.debug("Exit getComponentPresentation");
         return component;
     }
 
@@ -117,12 +117,12 @@ public class ComponentFactoryImpl extends BaseFactory implements ComponentFactor
         return String.format("Component-%d-%d-%d", publicationId, componentId, templateId);
     }
 
-    public ComponentProvider getComponentProvider() {
-        return componentProvider;
+    public ComponentPresentationProvider getComponentPresentationProvider () {
+        return componentPresentationProvider;
     }
 
-    public void setComponentProvider(ComponentProvider componentProvider) {
-        this.componentProvider = componentProvider;
+    public void setComponentPresentationProvider (ComponentPresentationProvider componentPresentationProvider) {
+        this.componentPresentationProvider = componentPresentationProvider;
     }
 
     public <T extends Component> T deserialize (final String componentModel, final Class<? extends T> componentClass) throws FactoryException {

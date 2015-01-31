@@ -3,7 +3,7 @@ package org.dd4t.mvc.controllers;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.core.exceptions.FactoryException;
-import org.dd4t.core.factories.impl.ComponentFactoryImpl;
+import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.dd4t.core.util.ComponentUtils;
 import org.dd4t.core.util.RenderUtils;
@@ -28,11 +28,11 @@ import javax.servlet.http.HttpServletRequest;
  *
  */
 @Controller
-public class AbstractComponentController {
+public class AbstractComponentPresentationController {
 
-	private static final Logger LOG = LoggerFactory.getLogger(AbstractComponentController.class);
+	private static final Logger LOG = LoggerFactory.getLogger(AbstractComponentPresentationController.class);
 
-	@Autowired private ComponentFactoryImpl componentFactory;
+	@Autowired private ComponentPresentationFactoryImpl componentFactory;
 
 	@Autowired private PublicationResolver publicationResolver;
 
@@ -76,7 +76,7 @@ public class AbstractComponentController {
 			// However, it is also possible to retrieve a DCP directly from the browser.
 			LOG.debug("No component found in request.");
 			try {
-				component = componentFactory.getComponent(new TCMURI(publicationId, componentId, 16, 0).toString(), componentViewName);
+				component = componentFactory.getComponentPresentation(new TCMURI(publicationId, componentId, 16, 0).toString(), componentViewName);
 
 			} catch (FactoryException e) {
 				LOG.error(e.getLocalizedMessage(), e);

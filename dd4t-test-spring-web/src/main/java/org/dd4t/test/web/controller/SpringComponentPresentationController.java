@@ -1,7 +1,7 @@
 package org.dd4t.test.web.controller;
 
 
-import org.dd4t.mvc.controllers.AbstractComponentController;
+import org.dd4t.mvc.controllers.AbstractComponentPresentationController;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author R. Kempees
  */
-public class SpringComponentController extends AbstractComponentController {
+public class SpringComponentPresentationController extends AbstractComponentPresentationController {
 
 	/**
 	 * Renders the component/model, which must be put on the request using

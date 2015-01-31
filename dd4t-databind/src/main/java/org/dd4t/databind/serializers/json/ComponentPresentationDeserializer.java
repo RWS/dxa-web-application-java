@@ -19,10 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * test
@@ -107,7 +104,7 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 			}
 		} else {
 
-			final HashSet<String> modelNames = new HashSet<>();
+			final Set<String> modelNames = new HashSet<>();
 			modelNames.add(viewModelName);
 			if (!rootElementName.equals(viewModelName)) {
 				modelNames.add(rootElementName);

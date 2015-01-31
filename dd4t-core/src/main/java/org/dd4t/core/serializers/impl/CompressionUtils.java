@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
@@ -163,7 +164,7 @@ public class CompressionUtils {
         if (message == null) {
             return null;
         } else {
-            return encodeBase64(message.getBytes());
+            return encodeBase64(message.getBytes(Charset.forName("UTF-8")));
         }
     }
 

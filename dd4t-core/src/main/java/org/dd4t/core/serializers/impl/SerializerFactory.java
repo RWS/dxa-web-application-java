@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * Needed to hide implementations (JSON, XML)
  * and to have only one instance through the entire application.
  *
+ * TODO: rework for databind
+ *
  * @Author R. Kempees
  * @Since 06/06/14.
  */

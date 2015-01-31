@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.providers.BaseBrokerProvider;
-import org.dd4t.providers.ComponentProvider;
+import org.dd4t.providers.ComponentPresentationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +22,9 @@ import java.util.Map;
  * TODO: we shouldn't throw exceptions if a DCP is not found?
  * TODO: decompress!
  */
-public class BrokerComponentProvider extends BaseBrokerProvider implements ComponentProvider {
+public class BrokerComponentPresentationProvider extends BaseBrokerProvider implements ComponentPresentationProvider {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentProvider.class);
+	private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentPresentationProvider.class);
 
 	// default Component Template to use when looking up CP
 	private int defaultTemplateId;

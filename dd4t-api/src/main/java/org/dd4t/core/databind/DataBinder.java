@@ -8,7 +8,7 @@ import org.dd4t.core.exceptions.SerializationException;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * test
@@ -18,7 +18,7 @@ import java.util.HashSet;
  */
 public interface DataBinder {
 
-	public HashMap<String,BaseViewModel> buildModels(final Object source, final HashSet<String> modelNames, final String templateUri) throws SerializationException;
+	public HashMap<String,BaseViewModel> buildModels(final Object source, final Set<String> modelNames, final String templateUri) throws SerializationException;
 	public <T extends BaseViewModel> T buildModel(final Object rawData, final String modelName, final String templateUri) throws SerializationException;
 	public <T extends BaseViewModel> T buildModel (final Object source, final Class modelClass, final String templateUri) throws SerializationException;
 	public <T extends Page> T buildPage(final String source,final Class<T> aClass) throws SerializationException;

@@ -2,7 +2,7 @@ package org.dd4t.providers.rs;
 
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.providers.ComponentProvider;
+import org.dd4t.providers.ComponentPresentationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +15,7 @@ import javax.ws.rs.core.MediaType;
 /**
  * Component provider.
  */
-public class BrokerComponentProvider extends BaseBrokerProvider implements ComponentProvider {
+public class BrokerComponentProvider extends BaseBrokerProvider implements ComponentPresentationProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentProvider.class);
 

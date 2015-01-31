@@ -38,7 +38,7 @@
         <property name="contentIsCompressed" value="true"/>
     </bean>
 
-    <bean id="componentProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerComponentProvider">
+    <bean id="componentPresentationProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerComponentPresentationProvider">
         <property name="contentIsCompressed" value="true"/>
 
     </bean>
@@ -66,7 +66,7 @@
 
     <bean id="linkResolverFactory" scope="singleton" class="org.dd4t.core.factories.impl.LinkResolverFactory"
           factory-method="getInstance"/>
-    <bean id="componentFactory" scope="singleton" class="org.dd4t.core.factories.impl.ComponentFactoryImpl"
+    <bean id="componentFactory" scope="singleton" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl"
           factory-method="getInstance">
     </bean>
     <bean id="pageFactory" scope="singleton" class="org.dd4t.core.factories.impl.PageFactoryImpl"
@@ -83,7 +83,7 @@
         <property name="pageViewPath" value="pages/"/>
     </bean>
 
-    <bean id="componentController" scope="singleton" class="org.dd4t.test.web.controller.SpringComponentController">
+    <bean id="componentPresentationController" scope="singleton" class="org.dd4t.test.web.controller.SpringComponentPresentationController">
         <property name="componentViewPath" value="components/"/>
     </bean>
 

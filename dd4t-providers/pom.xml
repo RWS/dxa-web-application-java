@@ -52,7 +52,6 @@
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <!-- TODO: move all tridion dependencies to this group id -->
             <groupId>com.tridion</groupId>
             <artifactId>cd_dynamic</artifactId>
             <version>${tridion.version}</version>

@@ -10,7 +10,7 @@ import org.dd4t.contentmodel.impl.ComponentTemplateImpl;
 import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.factories.impl.ComponentFactoryImpl;
+import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +75,7 @@ public class ComponentUtils {
 			ComponentTemplate template = componentPresentation.getComponentTemplate();
 			String templateURI = template.getId();
 
-			component = ComponentFactoryImpl.getInstance().getComponent(componentURI, templateURI);
+			component = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(componentURI, templateURI);
 			if (component == null) {
 				throw new ItemNotFoundException("Cannot find Dynamic Component " + componentURI +
 						" and Component Template " + templateURI);

@@ -21,12 +21,13 @@ import java.util.Map;
  *
  * @author R. Kempees
  */
-public class TridionJsonFieldTypeIdResolver implements TypeIdResolver {
+public class TridionFieldTypeIdResolver implements TypeIdResolver {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TridionJsonFieldTypeIdResolver.class);
+	private static final Logger LOG = LoggerFactory.getLogger(TridionFieldTypeIdResolver.class);
 	private static final Map<FieldType, String> FIELD_TYPES = new HashMap<>();
 	private static final String NAMESPACE_PREFIX = "org.dd4t.contentmodel.impl.";
 	private static final String TEXT_FIELD = "TextField";
+	private static final String COMPONENT_LINK_FIELD = "ComponentLinkField";
 
 	static {
 		FIELD_TYPES.put(FieldType.TEXT, NAMESPACE_PREFIX + TEXT_FIELD);
@@ -35,8 +36,8 @@ public class TridionJsonFieldTypeIdResolver implements TypeIdResolver {
 		FIELD_TYPES.put(FieldType.KEYWORD, NAMESPACE_PREFIX + "KeywordField");
 		FIELD_TYPES.put(FieldType.EMBEDDED, NAMESPACE_PREFIX + "EmbeddedField");
 		// This (5) is actually a MM Link field, but the links are needed for multi values and meta
-		FIELD_TYPES.put(FieldType.MULTIMEDIALINK, NAMESPACE_PREFIX + "ComponentLinkField");
-		FIELD_TYPES.put(FieldType.COMPONENTLINK, NAMESPACE_PREFIX + "ComponentLinkField");
+		FIELD_TYPES.put(FieldType.MULTIMEDIALINK, NAMESPACE_PREFIX + COMPONENT_LINK_FIELD);
+		FIELD_TYPES.put(FieldType.COMPONENTLINK, NAMESPACE_PREFIX + COMPONENT_LINK_FIELD);
 		FIELD_TYPES.put(FieldType.EXTERNALLINK, NAMESPACE_PREFIX + TEXT_FIELD);
 		FIELD_TYPES.put(FieldType.NUMBER, NAMESPACE_PREFIX + "NumericField");
 		FIELD_TYPES.put(FieldType.DATE, NAMESPACE_PREFIX + "DateField");
@@ -45,7 +46,7 @@ public class TridionJsonFieldTypeIdResolver implements TypeIdResolver {
 
 	private JavaType mBaseType;
 
-	public TridionJsonFieldTypeIdResolver () {
+	public TridionFieldTypeIdResolver () {
 	}
 
 	@Override
@@ -96,7 +97,7 @@ public class TridionJsonFieldTypeIdResolver implements TypeIdResolver {
 		return JsonTypeInfo.Id.CUSTOM;
 	}
 
-	private String getClassForKey (String type) {
+	public static String getClassForKey (String type) {
 		LOG.trace("Fetching field type for {}", type);
 		FieldType fieldType = FieldType.findByName(type);
 		String result = FIELD_TYPES.get(fieldType);

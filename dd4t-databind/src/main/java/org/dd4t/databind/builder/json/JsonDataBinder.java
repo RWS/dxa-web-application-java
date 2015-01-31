@@ -161,7 +161,6 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		final SimpleModule module = new SimpleModule("ComponentPresentationDeserializerModule", new Version(1, 0, 0, "RELEASE", "org.dd4t", "dd4t-databind"));
 		module.addDeserializer(ComponentPresentation.class, componentPresentationDeserializer);
 		GENERIC_MAPPER.registerModule(module);
-
 		GENERIC_MAPPER.addMixInAnnotations(Field.class, BaseFieldMixIn.class);
 
 		LOG.debug("Mapper configured for: {} and {}", this.concreteComponentPresentationImpl.toString(), this.concreteComponentTemplateImpl.toString());

@@ -13,6 +13,6 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 		include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
 		property = "FieldType",
 		visible = true)
-@JsonTypeIdResolver (TridionJsonFieldTypeIdResolver.class)
+@JsonTypeIdResolver (TridionFieldTypeIdResolver.class)
 public class BaseFieldMixIn {
 }

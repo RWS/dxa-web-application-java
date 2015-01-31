@@ -196,8 +196,6 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 	}
 
 	private static void fillEmbeddedValues (final JsonNode currentField, final ModelFieldMapping modelFieldMapping, final List<JsonNode> nodeList) {
-		// We can only do this after deserialization unfortunately, since no field type is present
-		// in the embedded field values.
 
 		if (currentField.has(DataBindConstants.EMBEDDED_VALUES_NODE)) {
 			// Here we get the embedded values, which can be a multivalue list of embedded components.

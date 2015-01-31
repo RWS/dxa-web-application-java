@@ -6,7 +6,7 @@ import org.dd4t.core.exceptions.SerializationException;
 /**
  * Component Provider.
  */
-public interface ComponentProvider {
+public interface ComponentPresentationProvider {
 
     /**
      * Retrieves content of a Dynamic Component Presentation by looking up its componentId and publicationId.

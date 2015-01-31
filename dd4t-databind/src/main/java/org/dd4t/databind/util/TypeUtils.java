@@ -20,10 +20,12 @@ public class TypeUtils {
 	}
 
 	public static Type getRuntimeTypeOfTypeParameter (Type type) {
-		Type[] genericTypes = ((ParameterizedType)type).getActualTypeArguments();
-		if (genericTypes != null && genericTypes.length > 0) {
-			LOG.debug("Type was List. Runtime Parametrized type is: {}" ,genericTypes[0].toString());
-			return genericTypes[0];
+		if (type instanceof ParameterizedType) {
+			Type[] genericTypes = ((ParameterizedType) type).getActualTypeArguments();
+			if (genericTypes != null && genericTypes.length > 0) {
+				LOG.debug("Type was List. Runtime Parametrized type is: {}", genericTypes[0].toString());
+				return genericTypes[0];
+			}
 		}
 		return Object.class;
 	}

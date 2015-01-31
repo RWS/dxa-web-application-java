@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Just a Singleton entry point for all DD4T classes
@@ -49,7 +49,7 @@ public class DataBindFactory {
 		return INSTANCE.dataBinder.buildComponent(source,aClass);
 	}
 
-	public static HashMap<String,BaseViewModel> buildModels(final Object rawData,final HashSet<String> modelNames, final String currentTemplateUri) throws SerializationException{
+	public static HashMap<String,BaseViewModel> buildModels(final Object rawData,final Set<String> modelNames, final String currentTemplateUri) throws SerializationException{
 		return INSTANCE.dataBinder.buildModels(rawData,modelNames,currentTemplateUri);
 	}
 

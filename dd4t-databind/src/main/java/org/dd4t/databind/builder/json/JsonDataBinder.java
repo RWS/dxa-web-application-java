@@ -84,7 +84,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		}
 	}
 
-	public HashMap<String, BaseViewModel> buildModels (final Object source, final HashSet<String> modelNames, final String templateUri) throws SerializationException {
+	public HashMap<String, BaseViewModel> buildModels (final Object source, final Set<String> modelNames, final String templateUri) throws SerializationException {
 
 		final HashMap<String, BaseViewModel> models = new HashMap<>();
 

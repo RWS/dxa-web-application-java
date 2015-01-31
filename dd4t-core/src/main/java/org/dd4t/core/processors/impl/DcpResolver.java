@@ -1,9 +1,6 @@
 package org.dd4t.core.processors.impl;
 
-import org.dd4t.contentmodel.Component;
-import org.dd4t.contentmodel.ComponentPresentation;
-import org.dd4t.contentmodel.GenericPage;
-import org.dd4t.contentmodel.Item;
+import org.dd4t.contentmodel.*;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.processors.Processor;
@@ -23,30 +20,24 @@ public class DcpResolver extends BaseProcessor implements Processor {
 
     @Override
     public void execute(Item item) {
-        LOG.debug("[HybridPublishingFilter] acting upon item " + item);
+        LOG.debug("Processing item: {} ", item);
+        if (item instanceof Page) {
+            final Page page = (Page) item;
 
-        // filter only acts on pages
-        if (item instanceof GenericPage) {
-            GenericPage page = (GenericPage) item;
-
-            LOG.debug("[HybridPublishingFilter] Detected " + page.getComponentPresentations().size() + " component presentations.");
+            LOG.debug("DCP Resolver detected {} component presentations.", page.getComponentPresentations().size());
 
             for (ComponentPresentation cp : page.getComponentPresentations()) {
                 if (cp.isDynamic()) {
-                    LOG.debug("[HybridPublishingFilter] Detected dynamic component presentation " + cp);
+                    LOG.debug("Detected dynamic component presentation " + cp);
 
                     try {
-                        // retrieve the dynamic component based on template
-                        Component comp = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(cp.getComponent().getId(), cp.getComponentTemplate().getId());
-                        // set the dynamic component
+                        final Component comp = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(cp.getComponent().getId(), cp.getComponentTemplate().getId());
                         cp.setComponent(comp);
                     } catch (FactoryException e) {
-                        // note: the other exceptions (authorization & authentication) are passed on
                         LOG.error("Unable to find component by id " + cp.getComponent().getId(), e);
                     }
                 }
             }
         }
-        LOG.debug("[HybridPublishingFilter] exits for item " + item);
     }
 }

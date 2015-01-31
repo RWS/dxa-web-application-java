@@ -1,10 +1,10 @@
-package org.dd4t.core.filters.impl;
+package org.dd4t.core.processors.impl;
 
 import org.dd4t.contentmodel.*;
 import org.dd4t.contentmodel.impl.EmbeddedField;
 import org.dd4t.contentmodel.impl.XhtmlField;
-import org.dd4t.core.filters.Filter;
-import org.dd4t.core.exceptions.FilterException;
+import org.dd4t.core.processors.Processor;
+import org.dd4t.core.exceptions.ProcessorException;
 import org.dd4t.core.util.XSLTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,13 +21,12 @@ import java.util.regex.Pattern;
  *
  * @author bjornl
  */
-public class RichTextResolverFilter extends BaseFilter implements Filter {
+public class RichTextResolver extends BaseProcessor implements Processor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(RichTextResolverFilter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RichTextResolver.class);
 	private final XSLTransformer xslTransformer = XSLTransformer.getInstance();
 
-	public RichTextResolverFilter () {
-		setCachingAllowed(true);
+	public RichTextResolver () {
 	}
 
 	/**
@@ -36,20 +35,20 @@ public class RichTextResolverFilter extends BaseFilter implements Filter {
 	 * @param item    the to resolve the links
 	 */
 	@Override
-	public void doFilter (Item item) throws FilterException {
-		if (item instanceof GenericPage) {
+	public void execute (Item item) throws ProcessorException {
+		if (item instanceof Page) {
 			try {
-				resolvePage((GenericPage) item);
+				resolvePage((Page)item);
 			} catch (TransformerException e) {
 				LOG.error(e.getMessage(), e);
-				throw new FilterException(e);
+				throw new ProcessorException(e);
 			}
-		} else if (item instanceof GenericComponent) {
+		} else if (item instanceof Component) {
 			try {
-				resolveComponent((GenericComponent) item);
+				resolveComponent((Component) item);
 			} catch (TransformerException e) {
 				LOG.error(e.getMessage(), e);
-				throw new FilterException(e);
+				throw new ProcessorException(e);
 			}
 		} else {
 			LOG.debug("RichTextResolverFilter. Item is not a GenericPage or GenericComponent so no component to resolve");
@@ -58,7 +57,7 @@ public class RichTextResolverFilter extends BaseFilter implements Filter {
 
 	}
 
-	protected void resolvePage (GenericPage page) throws TransformerException {
+	protected void resolvePage (Page page) throws TransformerException {
 		List<ComponentPresentation> cpList = page.getComponentPresentations();
 		if (cpList != null) {
 			for (ComponentPresentation cp : cpList) {
@@ -68,7 +67,6 @@ public class RichTextResolverFilter extends BaseFilter implements Filter {
 		resolveMap(page.getMetadata());
 	}
 
-	// TODO: API change
 	protected void resolveComponent (Component component) throws TransformerException {
 		if (component != null) {
 			resolveMap(component.getContent());
@@ -99,7 +97,6 @@ public class RichTextResolverFilter extends BaseFilter implements Filter {
 		List<Object> xhtmlValues = xhtmlField.getValues();
 		List<String> newValues = new ArrayList<String>();
 
-		// find all component links and try to resolve them
 		Pattern p = Pattern.compile("</?ddtmproot>");
 		for (Object xhtmlValue : xhtmlValues) {
 			String result = xslTransformer.transformSourceFromFilesource("<ddtmproot>" + xhtmlValue + "</ddtmproot>", "/resolveXhtml.xslt");

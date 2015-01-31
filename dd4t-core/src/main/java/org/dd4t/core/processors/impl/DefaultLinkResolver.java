@@ -1,4 +1,4 @@
-package org.dd4t.core.filters.impl;
+package org.dd4t.core.processors.impl;
 
 import org.dd4t.contentmodel.*;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -7,8 +7,8 @@ import org.dd4t.contentmodel.impl.ComponentLinkField;
 import org.dd4t.contentmodel.impl.EmbeddedField;
 import org.dd4t.contentmodel.impl.XhtmlField;
 import org.dd4t.core.factories.impl.LinkResolverFactory;
-import org.dd4t.core.exceptions.FilterException;
-import org.dd4t.core.filters.LinkResolverFilter;
+import org.dd4t.core.exceptions.ProcessorException;
+import org.dd4t.core.processors.LinkResolverProcessor;
 import org.dd4t.core.resolvers.LinkResolver;
 import org.dd4t.core.util.TridionUtils;
 import org.dd4t.core.util.XSLTransformer;
@@ -25,9 +25,9 @@ import java.util.regex.Pattern;
  *
  * @author bjornl
  */
-public class DefaultLinkResolverFilter extends BaseFilter implements LinkResolverFilter {
+public class DefaultLinkResolver extends BaseProcessor implements LinkResolverProcessor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultLinkResolverFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultLinkResolver.class);
 	// TODO: remove
     private static final boolean USE_XSLT = true;
     private final XSLTransformer xslTransformer = XSLTransformer.getInstance();
@@ -37,8 +37,7 @@ public class DefaultLinkResolverFilter extends BaseFilter implements LinkResolve
     private String contextPath;
     private Map<String, Object> params = new HashMap<>();
 
-    public DefaultLinkResolverFilter() {
-        setCachingAllowed(false);
+    public DefaultLinkResolver () {
         LinkResolverFactory factory = LinkResolverFactory.getInstance();
         setLinkResolver(factory.getLinkResolver());
     }
@@ -49,7 +48,7 @@ public class DefaultLinkResolverFilter extends BaseFilter implements LinkResolve
      * @param item    the to resolve the links
      */
     @Override
-    public void doFilter(Item item) throws FilterException {
+    public void execute(Item item) throws ProcessorException {
         linkResolver.setContextPath(contextPath);
 
         if (item instanceof Page) {
@@ -57,14 +56,14 @@ public class DefaultLinkResolverFilter extends BaseFilter implements LinkResolve
                 resolvePage((Page) item);
             } catch (TransformerException e) {
                 LOG.error(e.getMessage(), e);
-                throw new FilterException(e);
+                throw new ProcessorException(e);
             }
         } else if (item instanceof Component) {
             try {
                 resolveComponent((Component) item);
             } catch (TransformerException e) {
                 LOG.error(e.getMessage(), e);
-                throw new FilterException(e);
+                throw new ProcessorException(e);
             }
         } else {
             LOG.debug("DefaultLinkResolverFilter. Item is not a GenericPage or GenericComponent so no component to resolve");

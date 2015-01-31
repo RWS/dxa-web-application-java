@@ -1,6 +1,6 @@
-package org.dd4t.core.filters;
+package org.dd4t.core.processors;
 
-public interface LinkResolverFilter extends Filter {
+public interface LinkResolverProcessor extends Processor {
     public String getContextPath();
 
     public void setContextPath(String contextPath);

@@ -6,7 +6,7 @@ import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.BinaryFactory;
-import org.dd4t.core.filters.Filter;
+import org.dd4t.core.processors.Processor;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.BinaryProvider;
 import org.dd4t.providers.CacheProvider;
@@ -129,13 +129,13 @@ public class BinaryFactoryImpl implements BinaryFactory {
     }
 
     @Override
-    public List<Filter> getFilters() {
+    public List<Processor> getProcessors () {
         // TODO: Not implemented yet
         return new ArrayList<>();
     }
 
     @Override
-    public void setFilters(final List<Filter> filters) {
+    public void setProcessors (final List<Processor> processors) {
         // TODO: Not implemented yet
     }
 

@@ -15,7 +15,7 @@ public interface PageFactory extends Factory {
      * @return a Page Object
      * @throws FactoryException
      */
-    public Page getPage(String uri) throws FactoryException;
+    Page getPage(String uri) throws FactoryException;
 
     /**
      * Find page by its URL. The url and publication id are specified. No
@@ -25,7 +25,7 @@ public interface PageFactory extends Factory {
      * @return a Page Object
      * @throws org.dd4t.core.exceptions.FactoryException
      */
-    public Page findPageByUrl(String url, int publicationId) throws FactoryException;
+    Page findPageByUrl(String url, int publicationId) throws FactoryException;
 
     /**
      * Find the source of the Page by Url. The url and publication id are specified.
@@ -33,7 +33,7 @@ public interface PageFactory extends Factory {
      * @return XML as string
      * @throws FactoryException
      */
-    public String findSourcePageByUrl(String url, int publicationId) throws FactoryException;
+    String findSourcePageByUrl(String url, int publicationId) throws FactoryException;
     /**
      * Deserializes a JSON encoded String into an object of the given type, which must
      * derive from the Page interface
@@ -52,7 +52,7 @@ public interface PageFactory extends Factory {
      * @throws SerializationException
      * @throws ItemNotFoundException
      */
-    public Boolean isPagePublished(String url, int publicationId);
+    Boolean isPagePublished(String url, int publicationId);
 }
 
 

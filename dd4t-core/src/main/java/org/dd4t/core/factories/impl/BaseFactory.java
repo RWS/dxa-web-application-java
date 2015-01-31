@@ -2,11 +2,10 @@ package org.dd4t.core.factories.impl;
 
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.contentmodel.Item;
-import org.dd4t.core.exceptions.FilterException;
-import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.filters.Filter;
-import org.dd4t.core.filters.LinkResolverFilter;
-import org.dd4t.core.filters.impl.BaseFilter;
+import org.dd4t.core.exceptions.ProcessorException;
+import org.dd4t.core.processors.LinkResolverProcessor;
+import org.dd4t.core.processors.Processor;
+import org.dd4t.core.processors.RunPhase;
 import org.dd4t.providers.CacheProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -14,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base class for all factories. All factories have a list of filters and a
+ * Base class for all factories. All factories have a list of processors and a
  * default cache agent.
  *
  * @author bjornl, rai
@@ -23,52 +22,50 @@ public abstract class BaseFactory {
 
     @Autowired
     protected CacheProvider cacheProvider;
-    private List<Filter> filters;
+    private List<Processor> processors;
 
-    public List<Filter> getFilters() {
-        if (filters == null) {
-            this.filters = new ArrayList<>();
+    public List<Processor> getProcessors () {
+        if (processors == null) {
+            this.processors = new ArrayList<>();
         }
-        return filters;
+        return processors;
     }
 
-    public void setFilters(List<Filter> filters) {
-        this.filters = new ArrayList<>();
+    /**
+     * Configure through Spring
+     * @param processors list of Processors to run
+     */
+    public void setProcessors (List<Processor> processors) {
+        this.processors = new ArrayList<>();
 
-        for (Filter filter : filters) {
-            this.filters.add(filter);
+        for (Processor processor : processors) {
+            this.processors.add(processor);
         }
     }
 
     /**
-     * Runs all the filters on an item. If the cachingAllowed is true it will
-     * only run the filters where the result is allowed to be cached.
+     * Runs all the processors on an item. If the cachingAllowed is true it will
+     * only run the processors where the result is allowed to be cached.
      *
      * @param item The DD4T Item
-     * @throws FilterException
-     * @throws SerializationException
+     * @throws org.dd4t.core.exceptions.ProcessorException
      */
-    public void doFilters(Item item, BaseFilter.RunPhase runPhase) throws FilterException, SerializationException {
+    public void executeProcessors (Item item, RunPhase runPhase) throws ProcessorException {
         if (item != null) {
-            for (Filter filter : getFilters()) {
-                if (runPhase == BaseFilter.RunPhase.BOTH) {
-                    this.doFilter(filter, item);
-                } else if (runPhase == BaseFilter.RunPhase.BEFORE_CACHING && filter.getCachingAllowed()) {
-                    this.doFilter(filter, item);
-                } else if (runPhase == BaseFilter.RunPhase.AFTER_CACHING && !filter.getCachingAllowed()) {
-                    this.doFilter(filter, item);
+            for (Processor processor : getProcessors()) {
+                if (runPhase == processor.getRunPhase()) {
+                    this.execute(processor, item);
                 }
             }
         }
     }
 
-    private void doFilter(Filter filter, Item item) throws FilterException, SerializationException {
+    private void execute (Processor processor, Item item) throws ProcessorException {
         // link resolving is not needed for the simple objects or binary
-        if (filter instanceof LinkResolverFilter && item instanceof Binary) {
+        if (processor instanceof LinkResolverProcessor && item instanceof Binary) {
             return;
         }
-
-        filter.doFilter(item);
+        processor.execute(item);
     }
 
     /**

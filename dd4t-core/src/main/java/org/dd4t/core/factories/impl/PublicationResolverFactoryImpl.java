@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
  * PublicationResolverFactoryImpl hides actual LabelService implementation
  * Configured through Spring beans
  *
- * TODO: resolve AutoWired
- *
  * @author Mihai Cadariu
  */
 public class PublicationResolverFactoryImpl implements PublicationResolverFactory {
@@ -34,7 +32,7 @@ public class PublicationResolverFactoryImpl implements PublicationResolverFactor
     }
 
     @Autowired
-    private void setPublicationResolver(PublicationResolver publicationResolver) {
+    public void setPublicationResolver(PublicationResolver publicationResolver) {
         LOG.debug("Set PublicationResolver " + publicationResolver);
         this.publicationResolver = publicationResolver;
     }

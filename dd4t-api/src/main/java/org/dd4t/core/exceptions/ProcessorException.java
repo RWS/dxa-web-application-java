@@ -15,11 +15,19 @@
  */
 package org.dd4t.core.exceptions;
 
-/**
- * Internal exception used by the securityfilter
- */
-public class FilterOutException extends Exception {
+public class ProcessorException extends Exception {
 
-    private static final long serialVersionUID = 6658697599722958452L;
+    private static final long serialVersionUID = -1823501094129230885L;
 
+    public ProcessorException (String message) {
+        super(message);
+    }
+
+    public ProcessorException (Throwable t) {
+        super(t);
+    }
+
+    public ProcessorException (String message, Throwable t) {
+        super(message, t);
+    }
 }

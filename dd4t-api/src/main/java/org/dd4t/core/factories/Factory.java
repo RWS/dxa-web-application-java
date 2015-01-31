@@ -1,6 +1,6 @@
 package org.dd4t.core.factories;
 
-import org.dd4t.core.filters.Filter;
+import org.dd4t.core.processors.Processor;
 import org.dd4t.providers.CacheProvider;
 
 import java.util.List;
@@ -11,18 +11,15 @@ import java.util.List;
 public interface Factory {
 
     /**
-     * @deprecated
-     * @return list of Filters
+     * @return list of Processors
      */
     @Deprecated
-    public List<Filter> getFilters();
+    public List<Processor> getProcessors ();
 
     /**
-     * @deprecated
-     * @param filters list of Filters
+     * @param processors list of Processors
      */
-    @Deprecated
-    public void setFilters(List<Filter> filters);
+    public void setProcessors (List<Processor> processors);
 
 
 

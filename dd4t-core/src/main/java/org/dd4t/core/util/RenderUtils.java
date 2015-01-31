@@ -75,7 +75,7 @@ public class RenderUtils {
 	}
 
 	/**
-	 * Filters the list of component presentations based on the filters provided
+	 * Filters the list of component presentations based on the processors provided
 	 * by schemaName and templateName. To align with the .Net variant of DD4T
 	 * the schema and template matches uses the startsWith method and there also
 	 * is support for the negation of the expression.

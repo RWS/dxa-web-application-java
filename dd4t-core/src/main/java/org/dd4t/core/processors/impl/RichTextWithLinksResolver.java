@@ -1,8 +1,8 @@
-package org.dd4t.core.filters.impl;
+package org.dd4t.core.processors.impl;
 
 import org.dd4t.contentmodel.impl.XhtmlField;
 import org.dd4t.core.factories.impl.LinkResolverFactory;
-import org.dd4t.core.filters.Filter;
+import org.dd4t.core.processors.Processor;
 import org.dd4t.core.resolvers.LinkResolver;
 import org.dd4t.core.util.XSLTransformer;
 import org.slf4j.Logger;
@@ -20,14 +20,13 @@ import java.util.regex.Pattern;
  *
  * @author bjornl
  */
-public class RichTextWithLinksResolverFilter extends RichTextResolverFilter implements Filter {
+public class RichTextWithLinksResolver extends RichTextResolver implements Processor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(RichTextWithLinksResolverFilter.class);
+	private static final Logger LOG = LoggerFactory.getLogger(RichTextWithLinksResolver.class);
 	private final XSLTransformer xslTransformer = XSLTransformer.getInstance();
 	private LinkResolver linkResolver;
 
-	public RichTextWithLinksResolverFilter () {
-		setCachingAllowed(true);
+	public RichTextWithLinksResolver () {
 		LinkResolverFactory factory = LinkResolverFactory.getInstance();
 		setLinkResolver(factory.getLinkResolver());
 		LOG.debug("Init RichTextWithLinksResolverFilter");

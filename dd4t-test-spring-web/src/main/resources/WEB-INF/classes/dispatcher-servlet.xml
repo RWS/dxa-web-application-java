@@ -71,7 +71,7 @@
     </bean>
     <bean id="pageFactory" scope="singleton" class="org.dd4t.core.factories.impl.PageFactoryImpl"
           factory-method="getInstance">
-        <!-- TODO set filters or autowire? -->
+        <!-- TODO set processors or autowire? -->
     </bean>
 
     <bean id="binaryFactory" scope="singleton" class="org.dd4t.core.factories.impl.BinaryFactoryImpl"
@@ -105,12 +105,6 @@
 
     <bean id="taxonomyServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.TaxonomyServiceFactoryImpl"
           factory-method="getInstance"/>
-    <!-- Label Stuff -->
-    <bean id="labelService" scope="singleton" class="org.dd4t.core.services.impl.LabelServiceImpl" />
-
-    <bean id="labelServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.LabelServiceFactoryImpl"
-          factory-method="getInstance"/>
-
 
     <!-- Databind stuff.-->
     <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />

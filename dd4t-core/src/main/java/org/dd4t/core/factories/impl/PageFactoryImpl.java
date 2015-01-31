@@ -1,13 +1,15 @@
 package org.dd4t.core.factories.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
-import org.dd4t.core.exceptions.FilterException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.ProcessorException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.PageFactory;
+import org.dd4t.core.processors.RunPhase;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.databind.DataBindFactory;
 import org.dd4t.providers.PageProvider;
@@ -18,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.text.ParseException;
 
+// TODO: refactor duplicate code
 public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageFactoryImpl.class);
@@ -34,10 +37,10 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
     }
 
     /**
-     * @param uri     of the page
+     * @param uri of the page
      * @return
      * @throws ItemNotFoundException
-     * @throws FilterException
+     * @throws org.dd4t.core.exceptions.ProcessorException
      * @throws ParseException
      * @throws SerializationException
      */
@@ -52,14 +55,14 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);
-	                String pageSource = null;
+	                String pageSource;
 	                try {
 		                pageSource = pageProvider.getPageContentById(uri);
 	                } catch (ItemNotFoundException | ParseException | SerializationException | IOException e) {
 		               throw new FactoryException(e);
 	                }
 
-	                if (pageSource == null || pageSource.length() == 0) {
+	                if (StringUtils.isEmpty(pageSource)) {
                         cacheElement.setPayload(null);
                         cacheProvider.storeInItemCache(uri, cacheElement);
                         throw new FactoryException("Unable to find page by id " + uri);
@@ -67,11 +70,13 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
 	                try {
 		                page = deserialize(pageSource, PageImpl.class);
+                        LOG.debug("Running pre caching processors");
+                        this.executeProcessors(page, RunPhase.BEFORE_CACHING);
 		                cacheElement.setPayload(page);
-		                TCMURI tcmUri = new TCMURI(uri);
+		                final TCMURI tcmUri = new TCMURI(uri);
 		                cacheProvider.storeInItemCache(uri, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
 		                LOG.debug("Added page with uri: {} to cache", uri);
-	                } catch (FactoryException | ParseException e) {
+	                } catch (FactoryException | ProcessorException | ParseException e) {
 		               throw new FactoryException(e);
 	                }
 
@@ -83,6 +88,14 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
         } else {
             LOG.debug("Return page with uri: {} from cache", uri);
             page = cacheElement.getPayload();
+        }
+        if (page != null) {
+            LOG.debug("Running Post caching Processors");
+            try {
+                this.executeProcessors(page,RunPhase.AFTER_CACHING);
+            } catch (ProcessorException e) {
+               LOG.error(e.getLocalizedMessage(),e);
+            }
         }
         return page;
     }
@@ -121,10 +134,12 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 		                page = deserialize(pageSource, PageImpl.class);
 		                cacheElement.setPayload(page);
 
-		                TCMURI tcmUri = new TCMURI(page.getId());
+		                final TCMURI tcmUri = new TCMURI(page.getId());
+                        LOG.debug("Running pre caching processors");
+                        this.executeProcessors(page, RunPhase.BEFORE_CACHING);
 		                cacheProvider.storeInItemCache(cacheKey, cacheElement, publicationId, tcmUri.getItemId());
 		                LOG.debug("Added page with uri: {} and publicationId: {} to cache", url, publicationId);
-	                } catch (FactoryException | ParseException e) {
+	                } catch (FactoryException | ProcessorException | ParseException e) {
 		                throw new FactoryException(e);
 	                }
 
@@ -137,14 +152,22 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
             LOG.debug("Return page with url: {} and publicationId: {} from cache", url, publicationId);
             page = cacheElement.getPayload();
         }
-
+        if (page != null) {
+            LOG.debug("Running Post caching Processors");
+            try {
+                this.executeProcessors(page,RunPhase.AFTER_CACHING);
+            } catch (ProcessorException e) {
+                LOG.error(e.getLocalizedMessage(),e);
+            }
+        }
         return page;
     }
 
 
     /**
      * This method explicitly used for querying the Broker Storage
-     * for pages and returns raw content as string.
+     * for pages and returns raw content as string. Does NOT trigger
+     * processors.
      *
      * To handle nulls, check for a returned null in the controller.
      *
@@ -216,11 +239,9 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
     /**
      * Method to check whether a page exists in the Tridion Broker.
      *
-     * @param url
-     * @param publicationId
-     * @return
-     * @throws SerializationException
-     * @throws ItemNotFoundException
+     * @param url the Url to check
+     * @param publicationId the publication Id
+     * @return boolean indicating the page is present
      */
     public Boolean isPagePublished(String url, int publicationId) {
         LOG.debug("Enter isPagePublished with url: {} and publicationId: {}", url, publicationId);

@@ -13,7 +13,6 @@ public interface Factory {
     /**
      * @return list of Processors
      */
-    @Deprecated
     public List<Processor> getProcessors ();
 
     /**

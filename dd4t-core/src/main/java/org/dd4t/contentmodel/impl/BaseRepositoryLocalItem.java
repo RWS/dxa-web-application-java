@@ -28,6 +28,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
     @JsonDeserialize(as = PublicationImpl.class)
     protected Publication owningPublication;
 
+    // TODO: move lower in the chain
     @JsonProperty("Folder")
     @JsonDeserialize(as = OrganizationalItemImpl.class)
     protected OrganizationalItem organizationalItem;

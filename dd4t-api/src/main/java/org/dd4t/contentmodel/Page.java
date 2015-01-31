@@ -7,20 +7,6 @@ import java.util.Map;
 
 public interface Page extends RepositoryLocalItem {
     /**
-     * Get the metadata schema
-     *
-     * @return the metadata schema
-     */
-    public Schema getSchema();
-
-    /**
-     * Set the metadata schema
-     *
-     * @param schema
-     */
-    public void setSchema(Schema schema);
-
-    /**
      * Get the page template
      *
      * @return the page template object

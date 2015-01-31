@@ -13,7 +13,6 @@ import java.util.TreeMap;
  * (as Keyword) or individual Keywords identified by their name, key, desciption or TCMURI.
  *
  * @author Mihai Cadariu
- * @since 18.06.2014
  */
 public class TaxonomyServiceImpl implements TaxonomyService {
 

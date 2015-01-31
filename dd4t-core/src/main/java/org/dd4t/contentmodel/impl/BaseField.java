@@ -2,25 +2,15 @@ package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import org.dd4t.contentmodel.*;
 import org.dd4t.core.serializers.impl.json.FieldTypeConverter;
-import org.dd4t.core.serializers.impl.json.TridionJsonFieldTypeIdResolver;
 
 import java.util.LinkedList;
 import java.util.List;
 
-// Note that Value is basically always a Map.get(0)
-@JsonIgnoreProperties({"Value"})
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.CUSTOM,
-        include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
-        property = "FieldType",
-        visible = true)
 
-@JsonTypeIdResolver(TridionJsonFieldTypeIdResolver.class)
+@JsonIgnoreProperties({"Value"})
 public abstract class BaseField implements Field {
 
     @JsonProperty("Name")

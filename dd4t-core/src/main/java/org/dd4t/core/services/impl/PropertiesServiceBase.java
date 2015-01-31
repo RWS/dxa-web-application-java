@@ -6,7 +6,6 @@ import java.util.Properties;
 
 /**
  * @author Mihai Cadariu
- * @since 18.07.2014
  */
 public abstract class PropertiesServiceBase implements PropertiesService {
 

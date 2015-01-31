@@ -1,4 +1,4 @@
-package org.dd4t.core.serializers.impl.json;
+package org.dd4t.databind.serializers.json;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.JavaType;
@@ -20,8 +20,6 @@ import java.util.Map;
  * is sent by the DD4T templating assembly for each serialized Tridion Field.
  *
  * @author R. Kempees
- * @see org.dd4t.contentmodel.impl.BaseField
- * @since 04.06.2014
  */
 public class TridionJsonFieldTypeIdResolver implements TypeIdResolver {
 

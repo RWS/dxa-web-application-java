@@ -12,10 +12,6 @@ import java.util.List;
  */
 public class PageImpl extends BasePage implements Page, HasMetadata {
 
-    @JsonProperty("Schema")
-    @JsonDeserialize(as=SchemaImpl.class)
-    private Schema schema;
-
     @JsonProperty("Filename")
     protected String fileName;
 
@@ -29,14 +25,6 @@ public class PageImpl extends BasePage implements Page, HasMetadata {
 
 	@JsonProperty("StructureGroup") @JsonDeserialize(as = StructureGroupImpl.class)
     protected StructureGroup structureGroup;
-
-	public Schema getSchema () {
-		return schema;
-	}
-
-	public void setSchema (final Schema schema) {
-		this.schema = schema;
-	}
 
     public PageTemplate getPageTemplate() {
         return pageTemplate;

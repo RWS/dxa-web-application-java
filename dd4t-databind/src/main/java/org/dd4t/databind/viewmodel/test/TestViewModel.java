@@ -1,6 +1,5 @@
 package org.dd4t.databind.viewmodel.test;
 
-import org.dd4t.contentmodel.Component;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.annotations.ViewModelProperty;
 import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
@@ -23,7 +22,7 @@ public class TestViewModel extends TridionViewModelBase {
 	public String heading;
 
 	@ViewModelProperty
-	public Component body;
+	public String body;
 
 	@ViewModelProperty
 	public List<TestVideoModel> video;

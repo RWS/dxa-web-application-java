@@ -34,6 +34,16 @@ public interface ComponentPresentation {
      */
     public void setComponentTemplate(ComponentTemplate componentTemplate);
 
+
+	/**
+	 * Sets the raw component content form the broker.
+	 * Needed to build DCP strong models and to
+	 * have all needed meta information on the CP and CT.
+	 * @param rawComponentContent the Json or XML Component String from the broker.
+	 */
+	public void setRawComponentContent(String rawComponentContent);
+
+	public String getRawComponentContent();
     /**
      * Get the rendered content
      */

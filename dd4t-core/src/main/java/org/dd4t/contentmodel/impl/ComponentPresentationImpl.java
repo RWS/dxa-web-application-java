@@ -40,6 +40,9 @@ public class ComponentPresentationImpl implements ComponentPresentation {
     @JsonIgnore
     private Map<String,BaseViewModel> baseViewModels;
 
+	@JsonIgnore
+	private String rawComponentContent;
+
     /**
      * Get the component
      *
@@ -118,4 +121,19 @@ public class ComponentPresentationImpl implements ComponentPresentation {
         }
         return null;
     }
+
+	/**
+	 * Sets the raw component content form the broker.
+	 * Needed to build DCP strong models and to
+	 * have all needed meta information on the CP and CT.
+	 *
+	 * @param rawComponentContent the Json or XML Component String from the broker.
+	 */
+	@Override public void setRawComponentContent (final String rawComponentContent) {
+		this.rawComponentContent = rawComponentContent;
+	}
+
+	@Override public String getRawComponentContent () {
+		return this.rawComponentContent;
+	}
 }

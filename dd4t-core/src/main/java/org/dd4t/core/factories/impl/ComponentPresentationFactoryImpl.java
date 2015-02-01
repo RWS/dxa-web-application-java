@@ -1,7 +1,7 @@
 package org.dd4t.core.factories.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.impl.ComponentImpl;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
@@ -51,7 +51,7 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 	 * @return the component
 	 * @throws org.dd4t.core.exceptions.FactoryException if no item found NotAuthorizedException if the user is not authorized to get the component
 	 */
-	@Override public Component getComponentPresentation (String componentURI, String templateURI) throws FactoryException {
+	@Override public ComponentPresentation getComponentPresentation (String componentURI, String templateURI) throws FactoryException {
 		LOG.debug("Enter getComponentPresentation with componentURI: {} and templateURI: {}", componentURI, templateURI);
 
 		if (StringUtils.isEmpty(templateURI)) {
@@ -72,8 +72,9 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 		int templateId = templateTcmUri.getItemId();
 
 		String key = getKey(publicationId, componentId, templateId);
-		CacheElement<Component> cacheElement = cacheProvider.loadFromLocalCache(key);
-		Component component;
+		CacheElement<ComponentPresentation> cacheElement = cacheProvider.loadFromLocalCache(key);
+
+		ComponentPresentation componentPresentation;
 
 		if (cacheElement.isExpired()) {
 			synchronized (cacheElement) {
@@ -81,13 +82,20 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 					cacheElement.setExpired(false);
 
 					try {
-						String componentModel = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
-						component = deserialize(componentModel, ComponentImpl.class);
+						componentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
 
+						if (componentPresentation == null) {
 
-						cacheElement.setPayload(component);
+							cacheElement.setPayload(null);
+							cacheProvider.storeInItemCache(key, cacheElement);
+							throw new FactoryException(String.format("Could not find DCP with componentURI: %s and templateURI: %s", componentURI, templateURI));
+						}
+
+						final ComponentPresentation renderedPresentation = DataBindFactory.buildDynamicComponentPresentation(componentPresentation, ComponentImpl.class);
+
 						LOG.debug("Running pre caching processors");
-						this.executeProcessors(component, RunPhase.BEFORE_CACHING);
+						this.executeProcessors(renderedPresentation.getComponent(), RunPhase.BEFORE_CACHING);
+						cacheElement.setPayload(renderedPresentation);
 						cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);
 						LOG.debug("Added component with uri: {} and template: {} to cache", componentURI, templateURI);
 					} catch (ItemNotFoundException | ProcessorException | SerializationException e) {
@@ -97,25 +105,25 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 					}
 				} else {
 					LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, templateURI);
-					component = cacheElement.getPayload();
+					componentPresentation = cacheElement.getPayload();
 				}
 			}
 		} else {
 			LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, templateURI);
-			component = cacheElement.getPayload();
+			componentPresentation = cacheElement.getPayload();
 		}
 
-		if (component != null) {
+		if (componentPresentation != null) {
 			LOG.debug("Running Post caching Processors");
 			try {
-				this.executeProcessors(component, RunPhase.AFTER_CACHING);
+				this.executeProcessors(componentPresentation.getComponent(), RunPhase.AFTER_CACHING);
 			} catch (ProcessorException e) {
 				LOG.error(e.getLocalizedMessage(), e);
 			}
 		}
 
 		LOG.debug("Exit getComponentPresentation");
-		return component;
+		return componentPresentation;
 	}
 
 	private String getKey (int publicationId, int componentId, int templateId) {
@@ -128,13 +136,5 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 
 	public void setComponentPresentationProvider (ComponentPresentationProvider componentPresentationProvider) {
 		this.componentPresentationProvider = componentPresentationProvider;
-	}
-
-	public <T extends Component> T deserialize (final String componentModel, final Class<? extends T> componentClass) throws FactoryException {
-		try {
-			return DataBindFactory.buildComponent(componentModel, componentClass);
-		} catch (SerializationException e) {
-			throw new FactoryException(e);
-		}
 	}
 }

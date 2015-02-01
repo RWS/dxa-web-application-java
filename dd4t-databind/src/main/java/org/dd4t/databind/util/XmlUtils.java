@@ -6,4 +6,5 @@ package org.dd4t.databind.util;
  * @author R. Kempees
  */
 public class XmlUtils {
+
 }

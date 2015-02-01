@@ -22,7 +22,7 @@ public interface DataBinder {
 	public <T extends BaseViewModel> T buildModel(final Object rawData, final String modelName, final String templateUri) throws SerializationException;
 	public <T extends BaseViewModel> T buildModel (final Object source, final Class modelClass, final String templateUri) throws SerializationException;
 	public <T extends Page> T buildPage(final String source,final Class<T> aClass) throws SerializationException;
-	public <T extends ComponentPresentation> T buildDynamicComponentPresentation(final String source,final Class<T> aClass) throws SerializationException;
+	public ComponentPresentation buildDynamicComponentPresentation (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException;
 	public <T extends Component> T buildComponent(final Object source, final Class<T> aClass) throws SerializationException;
 
 	public String findComponentTemplateViewName(ComponentTemplate template) throws IOException;

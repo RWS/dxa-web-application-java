@@ -40,7 +40,8 @@
 
     <bean id="componentPresentationProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerComponentPresentationProvider">
         <property name="contentIsCompressed" value="true"/>
-
+        <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
     </bean>
 
     <bean id="pageProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerPageProvider"

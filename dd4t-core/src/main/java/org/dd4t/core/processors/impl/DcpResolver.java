@@ -31,8 +31,9 @@ public class DcpResolver extends BaseProcessor implements Processor {
                     LOG.debug("Detected dynamic component presentation " + cp);
 
                     try {
-                        final Component comp = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(cp.getComponent().getId(), cp.getComponentTemplate().getId());
-                        cp.setComponent(comp);
+                        final ComponentPresentation componentPresentation = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(cp.getComponent().getId(), cp.getComponentTemplate().getId());
+                        cp.setComponent(componentPresentation.getComponent());
+	                    cp.setViewModel(componentPresentation.getAllViewModels());
                     } catch (FactoryException e) {
                         LOG.error("Unable to find component by id " + cp.getComponent().getId(), e);
                     }

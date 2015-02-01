@@ -24,12 +24,6 @@
     <bean id="propertiesServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.PropertiesServiceFactory"
           factory-method="getInstance"/>
 
-    <!-- Publication resolver -->
-    <bean id="publicationResolver" scope="singleton" class="org.dd4t.core.resolvers.impl.UrlPublicationResolver"
-          factory-bean="publicationResolverFactory">
-        <property name="level" value="1"/>
-    </bean>
-
     <bean id="publicationResolverFactory" scope="singleton" factory-method="getInstance"
           class="org.dd4t.core.factories.impl.PublicationResolverFactoryImpl"/>
 

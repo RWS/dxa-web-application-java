@@ -186,28 +186,4 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 
 		return exists == 1;
 	}
-
-	/**
-	 * Checks whether a Publication with the given Publication URL exists and returns the Publication TCMURI item id.
-	 *
-	 * @param publicationURL String representing the Publication URL to check
-	 * @return int representing the item id of the Publication with Publication URL or 0, otherwise
-	 * @throws SerializationException if there was an error communicating with the service
-	 */
-	@Override
-	public int discoverPublicationId (final String publicationURL) throws SerializationException {
-		long time = System.currentTimeMillis();
-		LOG.debug("Discovering Publication id for PublicationUrl: {}", publicationURL);
-
-		try {
-			int result = JAXRSClient.INSTANCE.getDiscoverPublicationByPublicationURLTarget().path(CompressionUtils.encodeBase64(publicationURL)).request(MediaType.TEXT_PLAIN).get(Integer.class);
-
-			time = System.currentTimeMillis() - time;
-			LOG.debug("Finished discovering Publication id. Duration {}s", time / 1000.0);
-
-			return result;
-		} catch (ClientErrorException | ProcessingException e) {
-			throw new SerializationException(e);
-		}
-	}
 }

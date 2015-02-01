@@ -17,6 +17,12 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
+    <bean id="publicationProvider" class="org.dd4t.providers.impl.BrokerPublicationProvider" />
+
+    <bean id="publicationResolver" scope="singleton" class="org.dd4t.core.resolvers.impl.UrlPublicationResolver">
+        <property name="publicationProvider" ref="publicationProvider" />
+    </bean>
+
     <bean id="propertiesService" scope="singleton" class="org.dd4t.core.services.impl.PropertiesServiceImpl">
         <property name="location" value="dd4t.properties"/>
     </bean>

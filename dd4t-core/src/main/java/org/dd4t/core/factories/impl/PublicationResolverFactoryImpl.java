@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
- * PublicationResolverFactoryImpl hides actual LabelService implementation
+ * PublicationResolverFactoryImpl hides actual implementation
  * Configured through Spring beans
  *
  * @author Mihai Cadariu

@@ -56,12 +56,4 @@ public interface PageProvider extends BaseProvider {
      * @throws SerializationException if there was an error communicating with the service
      */
     public Boolean checkPageExists(final String url, final int publicationId) throws ItemNotFoundException, SerializationException;
-
-	/**
-	 * Discovers the publication Id based on the URL
-	 * @param publicationURL the current URL
-	 * @return int representing the Tridion publication Id
-	 * @throws SerializationException
-	 */
-	public int discoverPublicationId(final String publicationURL) throws SerializationException;
 }

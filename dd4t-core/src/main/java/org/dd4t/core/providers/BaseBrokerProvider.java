@@ -1,6 +1,7 @@
 package org.dd4t.core.providers;
 
 import org.apache.commons.codec.binary.Base64;
+import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.serializers.impl.CompressionUtils;
 import org.dd4t.core.util.TridionUtils;
@@ -101,5 +102,17 @@ public abstract class BaseBrokerProvider {
 		}
 
 		return builder;
+	}
+
+	/**
+	 * Builds a key using a named cache type (region) and a URL. This type of key is used to point to
+	 * actual payload in the cache. Use this key when looking up objects cached for a particular URL.
+	 *
+	 * @param type CacheType representing the type (or region) where the associated item is in cache
+	 * @param url  the path part of the URL of a Tridion item
+	 * @return String representing the key pointing to a URL value
+	 */
+	protected String getKey(CacheType type, String url) {
+		return String.format("%s-%s", type, url);
 	}
 }

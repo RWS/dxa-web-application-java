@@ -5,7 +5,7 @@ import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
-import org.dd4t.core.resolvers.PublicationResolver;
+import org.dd4t.core.factories.impl.PublicationResolverFactoryImpl;
 import org.dd4t.core.util.ComponentUtils;
 import org.dd4t.core.util.RenderUtils;
 import org.dd4t.core.util.TCMURI;
@@ -34,8 +34,6 @@ public class AbstractComponentPresentationController {
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractComponentPresentationController.class);
 
 	@Autowired private ComponentPresentationFactoryImpl componentPresentationFactory;
-
-	@Autowired private PublicationResolver publicationResolver;
 
 	private String componentViewPath = "";
 
@@ -71,7 +69,7 @@ public class AbstractComponentPresentationController {
 
 		// double check the component is on the request - we are not actually doing something with it
 
-		int publicationId = publicationResolver.getPublicationId();
+		int publicationId = PublicationResolverFactoryImpl.getInstance().getPublicationResolver().getPublicationId();
 		Component component = ComponentUtils.getComponent(request);
 
 		if (component == null) {

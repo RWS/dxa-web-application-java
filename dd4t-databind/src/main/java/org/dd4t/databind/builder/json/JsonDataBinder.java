@@ -14,6 +14,7 @@ import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.util.TCMURI;
+import org.dd4t.databind.DataBindFactory;
 import org.dd4t.databind.builder.BaseDataBinder;
 import org.dd4t.databind.serializers.json.BaseFieldMixIn;
 import org.dd4t.databind.serializers.json.ComponentPresentationDeserializer;
@@ -58,13 +59,25 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		}
 	}
 
-	public <T extends ComponentPresentation> T buildDynamicComponentPresentation (final String source, final Class<T> aClass) throws SerializationException {
+	public ComponentPresentation buildDynamicComponentPresentation (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException {
+		final Set<String> modelNames = new HashSet<>();
 		try {
-			return GENERIC_MAPPER.readValue(source, aClass);
-		} catch (IOException e) {
-			LOG.error(DataBindConstants.MESSAGE_ERROR_DESERIALIZING, e);
-			throw new SerializationException(e);
+			String viewModelName = DataBindFactory.findComponentTemplateViewName(componentPresentation.getComponentTemplate());
+			final Component component = DataBindFactory.buildComponent(componentPresentation.getRawComponentContent(), aClass);
+			componentPresentation.setComponent(component);
+			String rootElementName = component.getSchema().getRootElement();
+			modelNames.add(viewModelName);
+			if (!rootElementName.equals(viewModelName)) {
+				modelNames.add(rootElementName);
+			}
+			final JsonNode rawComponentData = GENERIC_MAPPER.readTree(componentPresentation.getRawComponentContent());
+			final Map<String, BaseViewModel> models = DataBindFactory.buildModels(rawComponentData, modelNames, componentPresentation.getComponentTemplate().getId());
+
+			componentPresentation.setViewModel(models);
+		}catch (SerializationException | IOException e) {
+			LOG.error(e.getLocalizedMessage(),e);
 		}
+		return componentPresentation;
 	}
 
 	public <T extends Component> T buildComponent (final Object source, final Class<T> aClass) throws SerializationException {

@@ -1,8 +1,9 @@
 package org.dd4t.core.factories;
 
-import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
 
+// TODO: expand with: getComponentPresentations
 public interface ComponentPresentationFactory extends Factory {
 
     /**
@@ -14,7 +15,5 @@ public interface ComponentPresentationFactory extends Factory {
      * @return a Generic Component object
      * @throws org.dd4t.core.exceptions.FactoryException
      */
-    public Component getComponentPresentation (String componentURI, String viewOrTemplateURI) throws FactoryException;
-
-    public <T extends Component> T deserialize (final String componentModel, final Class<? extends T> componentClass) throws FactoryException;
+    public ComponentPresentation getComponentPresentation (String componentURI, String viewOrTemplateURI) throws FactoryException;
 }

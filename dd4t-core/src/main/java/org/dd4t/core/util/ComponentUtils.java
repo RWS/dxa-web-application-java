@@ -61,6 +61,7 @@ public class ComponentUtils {
 	}
 
 	/**
+	 * TODO: this is not needed anymore
 	 * If this is a DCP, it resolves the Component inside it by fetching its model as Dynamic Component with the
 	 * Component Template specified in the CP.
 	 *
@@ -75,12 +76,13 @@ public class ComponentUtils {
 			ComponentTemplate template = componentPresentation.getComponentTemplate();
 			String templateURI = template.getId();
 
-			component = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(componentURI, templateURI);
-			if (component == null) {
+			ComponentPresentation dynamicComponentPresentation = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(componentURI, templateURI);
+			if (dynamicComponentPresentation == null) {
 				throw new ItemNotFoundException("Cannot find Dynamic Component " + componentURI +
 						" and Component Template " + templateURI);
 			}
-			componentPresentation.setComponent(component);
+			componentPresentation.setComponent(dynamicComponentPresentation.getComponent());
+			componentPresentation.setViewModel(dynamicComponentPresentation.getAllViewModels());
 		}
 	}
 

@@ -110,7 +110,7 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 				modelNames.add(rootElementName);
 			}
 			// TODO: explanation
-			final HashMap<String, BaseViewModel> models = DataBindFactory.buildModels(rawComponentData, modelNames, componentPresentation.getComponentTemplate().getId());
+			final Map<String, BaseViewModel> models = DataBindFactory.buildModels(rawComponentData, modelNames, componentPresentation.getComponentTemplate().getId());
 
 			if (models == null || models.isEmpty()) {
 				if (DataBindFactory.renderDefaultComponentsIfNoModelFound()) {

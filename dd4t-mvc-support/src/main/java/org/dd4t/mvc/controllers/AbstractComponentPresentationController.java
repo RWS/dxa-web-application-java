@@ -2,6 +2,7 @@ package org.dd4t.mvc.controllers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.resolvers.PublicationResolver;
@@ -63,10 +64,13 @@ public class AbstractComponentPresentationController {
 	 */
 	@RequestMapping(value = {"/{componentViewPrefix}/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
+		// TODO: redo this mechanism entirely. It's not right.
+
 		LOG.debug(">> {} component with viewPrefix: {}, viewName: {} and componentId: {}", new Object[]{request.getMethod(), componentViewPrefix, componentViewName, componentId});
 
+
 		// double check the component is on the request - we are not actually doing something with it
-		// TODO: redo this mechanism. It's not right
+
 		int publicationId = publicationResolver.getPublicationId();
 		Component component = ComponentUtils.getComponent(request);
 
@@ -76,8 +80,9 @@ public class AbstractComponentPresentationController {
 			// However, it is also possible to retrieve a DCP directly from the browser.
 			LOG.debug("No component found in request.");
 			try {
-				component = componentPresentationFactory.getComponentPresentation(new TCMURI(publicationId, componentId, 16, 0).toString(), componentViewName);
+				final ComponentPresentation componentPresentation = componentPresentationFactory.getComponentPresentation(new TCMURI(publicationId, componentId, 16, 0).toString(), componentViewName);
 
+				component = componentPresentation.getComponent();
 			} catch (FactoryException e) {
 				LOG.error(e.getLocalizedMessage(), e);
 			}

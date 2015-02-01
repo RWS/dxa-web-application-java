@@ -8,6 +8,7 @@ import org.joda.time.DateTime;
  * @author bjornl
  */
 public interface RepositoryLocalItem extends Item {
+
     /**
      * Get the organizational item
      *

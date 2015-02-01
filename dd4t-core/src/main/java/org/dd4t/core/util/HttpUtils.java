@@ -20,13 +20,17 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
-import java.util.regex.Pattern;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Utility class for Http related things.
@@ -34,7 +38,6 @@ import java.util.regex.Pattern;
 public final class HttpUtils {
 
 	private static final Logger LOG = LoggerFactory.getLogger(HttpUtils.class);
-	private static final Pattern LOCAL_DOMAIN_ADDRESS_PATTERN = Pattern.compile("(^10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$)|(^172\\.(1[6-9]|2[0-9]|3[0,1])\\.\\d{1,3}\\.\\d{1,3}$)|(^192\\.168\\.\\d{1,3}\\.\\d{1,3}$)|(^127\\.0\\.0\\.1$)");
 
 	private HttpUtils() {
 	}
@@ -118,7 +121,7 @@ public final class HttpUtils {
 		return clientIP;
 	}
 
-	public static boolean isLocalDomainRequest(final HttpServletRequest request) {
+	public static boolean isLocalDomainRequest(final HttpServletRequest request) throws UnknownHostException {
 		return isLocalDomainAddress(getClientIP(request));
 	}
 
@@ -132,8 +135,9 @@ public final class HttpUtils {
 	 *     127.0.0.1
 	 * </pre>
 	 */
-	private static boolean isLocalDomainAddress(final String ipAddress) {
-		return LOCAL_DOMAIN_ADDRESS_PATTERN.matcher(ipAddress).matches();
+	private static boolean isLocalDomainAddress(final String ipAddress) throws UnknownHostException {
+		final InetAddress inetAddress = InetAddress.getByName(ipAddress);
+		return inetAddress.isAnyLocalAddress() || inetAddress.isLinkLocalAddress() || inetAddress.isMulticastAddress() || inetAddress.isSiteLocalAddress();
 	}
 
 	/**

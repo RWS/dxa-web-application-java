@@ -30,7 +30,7 @@ public class CacheProviderFactoryImpl implements CacheProviderFactory {
 
     @Autowired
     private void setCacheProvider(CacheProvider cacheProvider) {
-        LOG.debug("Set Cacheprovider " + cacheProvider);
+        LOG.debug("Set Cacheprovider: {} ",cacheProvider);
         this.cacheProvider = cacheProvider;
     }
 }

@@ -119,7 +119,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @throws org.dd4t.core.exceptions.SerializationException
 	 */
 	@Override public List<org.dd4t.contentmodel.ComponentPresentation> getDynamicComponentPresentations (final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
-		return null;
+		return new ArrayList<>();
 	}
 
 

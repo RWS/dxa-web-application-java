@@ -12,6 +12,7 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -126,6 +127,6 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @throws org.dd4t.core.exceptions.SerializationException
 	 */
 	@Override public List<ComponentPresentation> getDynamicComponentPresentations (final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
-		return null;
+		return new ArrayList<>();
 	}
 }

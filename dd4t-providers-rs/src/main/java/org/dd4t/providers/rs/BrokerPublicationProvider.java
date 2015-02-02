@@ -1,6 +1,7 @@
 package org.dd4t.providers.rs;
 
 import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.util.PublicationDescriptor;
 import org.dd4t.providers.PublicationProvider;
 
 /**
@@ -14,6 +15,30 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 	}
 
 	@Override public String discoverPublicationUrl (final int publicationId) {
+		return null;
+	}
+
+	@Override public String discoverPublicationPath (final int publicationId) {
+		return null;
+	}
+
+	@Override public String discoverImagesUrl (final int publicationId) {
+		return null;
+	}
+
+	@Override public String discoverImagesPath (final int publicationId) {
+		return null;
+	}
+
+	@Override public String discoverPublicationTitle (final int publicationId) {
+		return null;
+	}
+
+	@Override public String discoverPublicationKey (final int publicationId) {
+		return null;
+	}
+
+	@Override public PublicationDescriptor getPublicationDescriptor (final int publicationId) {
 		return null;
 	}
 }

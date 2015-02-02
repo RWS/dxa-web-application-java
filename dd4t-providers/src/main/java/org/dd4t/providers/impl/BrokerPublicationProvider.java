@@ -9,6 +9,7 @@ import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.impl.CacheProviderFactoryImpl;
 import org.dd4t.core.providers.BaseBrokerProvider;
+import org.dd4t.core.util.PublicationDescriptor;
 import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.PublicationProvider;
 import org.slf4j.Logger;
@@ -24,6 +25,8 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 	private static final PublicationMetaFactory PUBLICATION_META_FACTORY = new PublicationMetaFactory();
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerPublicationProvider.class);
 	private final CacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
+	private Class<? extends PublicationDescriptor> publicationDescriptor;
+
 
 	public int discoverPublicationId (final String url) throws SerializationException {
 		LOG.debug("Discovering Publication id for url: {}", url);
@@ -60,14 +63,120 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 		return result == null ? -1 : result;
 	}
 
-	// TODO: cache metas and expand
 	@Override public String discoverPublicationUrl (int publicationId) {
+		final PublicationMeta publicationMeta = getPublicationMeta(publicationId);
+		if (publicationMeta == null) {
+			return null;
+		}
+		return publicationMeta.getPublicationUrl();
+	}
+
+	@Override public String discoverPublicationPath (int publicationId) {
+		final PublicationMeta publicationMeta = getPublicationMeta(publicationId);
+		if (publicationMeta == null) {
+			return null;
+		}
+		return publicationMeta.getPublicationPath();
+	}
+
+	@Override public String discoverImagesUrl (int publicationId) {
+		final PublicationMeta publicationMeta = getPublicationMeta(publicationId);
+		if (publicationMeta == null) {
+			return null;
+		}
+		return  publicationMeta.getMultimediaUrl();
+	}
+
+	@Override public String discoverImagesPath (int publicationId) {
+		final PublicationMeta publicationMeta = getPublicationMeta(publicationId);
+		if (publicationMeta == null) {
+			return null;
+		}
+		return publicationMeta.getMultimediaPath();
+	}
+
+	@Override public String discoverPublicationTitle (int publicationId) {
+		final PublicationMeta publicationMeta = getPublicationMeta(publicationId);
+		if (publicationMeta == null) {
+			return null;
+		}
+		return publicationMeta.getTitle();
+	}
+
+	@Override public String discoverPublicationKey (int publicationId) {
+		final PublicationMeta publicationMeta = getPublicationMeta(publicationId);
+		if (publicationMeta == null) {
+			return null;
+		}
+		return publicationMeta.getKey();
+	}
+
+	/**
+	 * For use in remote scenarios
+	 * @param publicationId the publication Id
+	 * @return a Publication descriptor
+	 */
+	@Override public PublicationDescriptor getPublicationDescriptor (final int publicationId) {
+		final PublicationMeta publicationMeta = getPublicationMeta(publicationId);
+		if (publicationMeta == null) {
+			return null;
+		}
+
 		try {
-			PublicationMeta publicationMeta = PUBLICATION_META_FACTORY.getMeta(publicationId);
-			return publicationMeta.getPublicationUrl();
-		} catch (StorageException e) {
+			final PublicationDescriptor concretePublicationDescriptor = publicationDescriptor.newInstance();
+			concretePublicationDescriptor.setId(publicationMeta.getId());
+			concretePublicationDescriptor.setKey(publicationMeta.getKey());
+			concretePublicationDescriptor.setPublicationUrl(publicationMeta.getPublicationUrl());
+			concretePublicationDescriptor.setPublicationPath(publicationMeta.getPublicationPath());
+			concretePublicationDescriptor.setMultimediaUrl(publicationMeta.getMultimediaUrl());
+			concretePublicationDescriptor.setMultimediaPath(publicationMeta.getMultimediaPath());
+			concretePublicationDescriptor.setTitle(publicationMeta.getTitle());
+			return concretePublicationDescriptor;
+		} catch (InstantiationException | IllegalAccessException e) {
 			LOG.error(e.getLocalizedMessage(),e);
 		}
+
 		return null;
+	}
+
+
+	private PublicationMeta getPublicationMeta (final int publicationId) {
+		final String key = getKey(CacheType.PUBLICATION_META, Integer.toString(publicationId));
+		final CacheElement<PublicationMeta> cacheElement = cacheProvider.loadFromLocalCache(key);
+
+		PublicationMeta publicationMeta = null;
+
+		if (cacheElement.isExpired()) {
+			synchronized (cacheElement) {
+				if (cacheElement.isExpired()) {
+					cacheElement.setExpired(false);
+					try {
+						publicationMeta = PUBLICATION_META_FACTORY.getMeta(publicationId);
+						cacheElement.setPayload(publicationMeta);
+						cacheProvider.storeInItemCache(key, cacheElement);
+						LOG.debug("Stored Publication Meta with key: {} in cache", key);
+					} catch (StorageException e) {
+						LOG.error(e.getLocalizedMessage(),e);
+					}
+				} else {
+					LOG.debug("Fetched a Publication Meta with key: {} from cache", key);
+					publicationMeta = cacheElement.getPayload();
+				}
+			}
+		} else {
+			LOG.debug("Fetched a Publication Meta with key: {} from cache", key);
+			publicationMeta = cacheElement.getPayload();
+		}
+
+		if (publicationMeta == null) {
+			LOG.error("Could not find Publication Meta for publication id: {}",publicationId);
+			return null;
+		}
+
+		return publicationMeta;
+	}
+
+	public void setPublicationDescriptor (final Class<? extends PublicationDescriptor> publicationDescriptor) {
+		this.publicationDescriptor = publicationDescriptor;
 	}
 }

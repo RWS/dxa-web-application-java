@@ -3,6 +3,7 @@ package org.dd4t.core.resolvers.impl;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.dd4t.core.util.HttpUtils;
+import org.dd4t.core.util.PublicationDescriptor;
 import org.dd4t.providers.PublicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 /**
  * dd4t-2
  *
- * @author R. Kempees
+ * @author R. Kempees, Q. Slings
  */
 public class UrlPublicationResolver implements PublicationResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(UrlPublicationResolver.class);
@@ -41,12 +42,30 @@ public class UrlPublicationResolver implements PublicationResolver {
 	}
 
 	/**
+	 * Gets the Publication Path property as defined in Tridion Publication metadata corresponding to the current request
+	 *
+	 * @return String representing the SDL Tridion Publication Path metadata property
+	 */
+	@Override public String getPublicationPath () {
+		return publicationProvider.discoverPublicationPath(getPublicationId());
+	}
+
+	/**
 	 * Gets the Images URL property as defined in Tridion Publication metadata corresponding to the current request
 	 *
 	 * @return String representing the SDL Tridion Images URL metadata property
 	 */
 	@Override public String getImagesUrl () {
-		return null;
+		return publicationProvider.discoverImagesUrl(getPublicationId());
+	}
+
+	/**
+	 * Gets the Images Path property as defined in Tridion Publication metadata corresponding to the current request
+	 *
+	 * @return String representing the SDL Tridion Images Path metadata property
+	 */
+	@Override public String getImagesPath () {
+		return publicationProvider.discoverImagesPath(getPublicationId());
 	}
 
 	/**
@@ -56,17 +75,28 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 * @return String representing the current Publication URL followed by the given URL
 	 */
 	@Override public String getLocalPageUrl (final String url) {
-		return null;
+		String publicationUrl = publicationProvider.discoverPublicationUrl(getPublicationId());
+		return url.replaceFirst(publicationUrl,"");
 	}
 
 	/**
+	 * TODO: check with Q whether this is allright
 	 * Gets the Binary URL in the current Publication corresponding to the given generic URL
 	 *
 	 * @param url String representing the generic URL (i.e. URL path without PublicationUrl prefix)
 	 * @return String representing the current Publication URL followed by the given URL
 	 */
 	@Override public String getLocalBinaryUrl (final String url) {
-		return null;
+		String binaryUrl = publicationProvider.discoverImagesUrl(getPublicationId());
+		return url.replaceFirst(binaryUrl,"");
+	}
+
+	/**
+	 * For use in the RS scenario.
+	 * @return a publication descriptor
+	 */
+	@Override public PublicationDescriptor getPublicationDescriptor () {
+		return publicationProvider.getPublicationDescriptor(getPublicationId());
 	}
 
 	public void setPublicationProvider (final PublicationProvider publicationProvider) {

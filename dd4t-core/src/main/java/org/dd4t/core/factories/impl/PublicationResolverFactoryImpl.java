@@ -16,7 +16,8 @@ public class PublicationResolverFactoryImpl implements PublicationResolverFactor
 
     private static final Logger LOG = LoggerFactory.getLogger(PublicationResolverFactoryImpl.class);
     private static final PublicationResolverFactory INSTANCE = new PublicationResolverFactoryImpl();
-    private PublicationResolver publicationResolver;
+
+	private PublicationResolver publicationResolver;
 
     private PublicationResolverFactoryImpl() {
         LOG.debug("Create new instance");

@@ -4,7 +4,6 @@ import org.dd4t.contentmodel.Keyword;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.factories.TaxonomyFactory;
 import org.dd4t.core.factories.TaxonomyServiceFactory;
-import org.dd4t.core.services.LabelService;
 import org.dd4t.core.services.TaxonomyService;
 import org.dd4t.core.services.impl.TaxonomyServiceImpl;
 import org.dd4t.core.util.TCMURI;
@@ -26,7 +25,7 @@ public class TaxonomyServiceFactoryImpl implements TaxonomyServiceFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(TaxonomyServiceFactoryImpl.class);
     private static final TaxonomyServiceFactory INSTANCE = new TaxonomyServiceFactoryImpl();
-    private LabelService labelService;
+
     private TaxonomyFactory taxonomyFactory;
 
     @Autowired
@@ -43,13 +42,12 @@ public class TaxonomyServiceFactoryImpl implements TaxonomyServiceFactory {
     /**
      * Generic taxonomy service.
      *
-     * @param category String representing the Tridion Category XML name or TCMURI
+     * @param categoryURI String representing the Tridion Category XML name or TCMURI
      * @return TaxonomyService
      * @throws IOException if something goes wrong while fetching the taxonomy
      */
     @Override
-    public TaxonomyService getTaxonomyService(String category) throws IOException {
-        String categoryURI = labelService.getCategoryLabel(category);
+    public TaxonomyService getTaxonomyService(String categoryURI) throws IOException {
 
         String key = getCacheKey(categoryURI);
         CacheElement<TaxonomyService> cacheElement = cacheProvider.loadFromLocalCache(key);
@@ -90,16 +88,14 @@ public class TaxonomyServiceFactoryImpl implements TaxonomyServiceFactory {
     /**
      * Generic taxonomy service that retrieves only classified Component based on the given SchemaURI.
      *
-     * @param category String representing the Tridion Category XML name or TCMURI
-     * @param schema   String representing the filter for classified related Components to return for each Keyword
+     * @param categoryURI String representing the Tridion Category XML name or TCMURI
+     * @param schemaURI   String representing the filter for classified related Components to return for each Keyword
      * @return TaxonomyService
      * @throws IOException if something goes wrong while fetching the taxonomy
      */
     @Override
-    public TaxonomyService getTaxonomyBySchemaService(String category, String schema)
+    public TaxonomyService getTaxonomyBySchemaService(String categoryURI, String schemaURI)
             throws IOException {
-        String categoryURI = labelService.getCategoryLabel(category);
-        String schemaURI = labelService.getSchemaLabel(schema);
 
         String key = getCacheKey(categoryURI, schemaURI);
         CacheElement<TaxonomyService> cacheElement = cacheProvider.loadFromLocalCache(key);
@@ -143,17 +139,6 @@ public class TaxonomyServiceFactoryImpl implements TaxonomyServiceFactory {
 
     private String getCacheKey(String categoryURI, String schemaURI) {
         return String.format("TS-%s-%s", categoryURI, schemaURI);
-    }
-
-    /**
-     * Set LabelService value
-     *
-     * @param labelService
-     */
-    @Autowired
-    public void setLabelService(LabelService labelService) {
-        LOG.debug("Set LabelService " + labelService);
-        this.labelService = labelService;
     }
 
     /**

@@ -7,7 +7,6 @@ import org.dd4t.core.processors.LinkResolverProcessor;
 import org.dd4t.core.processors.Processor;
 import org.dd4t.core.processors.RunPhase;
 import org.dd4t.providers.CacheProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +19,6 @@ import java.util.List;
  */
 public abstract class BaseFactory {
 
-    @Autowired
     protected CacheProvider cacheProvider;
     private List<Processor> processors;
 

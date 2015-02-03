@@ -31,6 +31,7 @@ public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
 	private Boolean addAnchor = true;
 	private Integer start;
 	private Integer end;
+	private String region;
 
 	public int getAnchorCount(HttpServletRequest request) {
 		int counter = 0;
@@ -42,7 +43,7 @@ public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
 		return counter;
 	}
 
-	protected abstract List<ComponentPresentation> getComponentPresentationsForRegion(Page page);
+	protected abstract List<ComponentPresentation> getComponentPresentations(Page page);
 
 	@Override
 	public void doTag() throws JspException, IOException {
@@ -50,7 +51,9 @@ public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
 
 		if (page != null) {
 			final PageContext pageContext = (PageContext) getJspContext();
-			List<ComponentPresentation> filteredComponentPresentations = RenderUtils.filterComponentPresentations(getComponentPresentationsForRegion(page), getSchema(), getRootElement(), getView());
+			List<ComponentPresentation> filteredComponentPresentations = RenderUtils.filterComponentPresentations(
+					getComponentPresentations(page),
+					getSchema(), getRootElement(), getView(), this.getRegion());
 			String out = "";
 
 			if (start != null || end != null) {
@@ -123,5 +126,13 @@ public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
 
 	public void setEnd(final Integer end) {
 		this.end = end;
+	}
+
+	public String getRegion () {
+		return region;
+	}
+
+	public void setRegion (final String region) {
+		this.region = region;
 	}
 }

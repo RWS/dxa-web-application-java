@@ -1,23 +1,11 @@
 package org.dd4t.core.util;
 
-import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
-import org.dd4t.contentmodel.ComponentTemplate;
-import org.dd4t.contentmodel.Field;
-import org.dd4t.contentmodel.impl.ComponentImpl;
-import org.dd4t.contentmodel.impl.ComponentPresentationImpl;
-import org.dd4t.contentmodel.impl.ComponentTemplateImpl;
-import org.dd4t.contentmodel.impl.TextField;
-import org.dd4t.core.exceptions.FactoryException;
-import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
+import org.dd4t.core.databind.BaseViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,10 +13,7 @@ import java.util.Map;
  */
 public class ComponentUtils {
 
-	public static final String COMPONENT_NAME = "component";
-	private static final String VIEW_NAME_FIELD = "viewName";
-	private static final String MODEL_ATTRIBUTE_NAME = "modelAttributeName";
-
+	private static final String COMPONENT_PRESENTATION_NAME = "componentPresentation";
 	private static final Logger LOG = LoggerFactory.getLogger(ComponentUtils.class);
 
 	private ComponentUtils () {
@@ -37,116 +22,43 @@ public class ComponentUtils {
 
 	/**
 	 * Get the component from the request that has been set using
-	 * {@link #setComponent}.
+	 * {@link #setComponentPresentation}.
 	 */
-	public static Component getComponent (final HttpServletRequest request) {
-		return (Component) request.getAttribute(COMPONENT_NAME);
+	public static ComponentPresentation getComponentPresentation (final HttpServletRequest request) {
+		return (ComponentPresentation) request.getAttribute(COMPONENT_PRESENTATION_NAME);
 	}
 
-	/**
-	 * Set the component and model on the request so it can be rendered.
-	 * If rendering is complete, then remove the component and model using
-	 * {@link #removeComponent}.
-	 */
-	public static void setComponent (final HttpServletRequest request, ComponentPresentation componentPresentation) throws ItemNotFoundException, FactoryException {
-		resolveDynamicComponentPresentation(componentPresentation);
-		Component component = componentPresentation.getComponent();
-		setComponent(request, component);
-	}
-
-	public static void setComponent (final HttpServletRequest request, Component component) throws ItemNotFoundException {
-
-		request.setAttribute(COMPONENT_NAME, component);
-		LOG.debug("Added component with id {} and rootElementName '{}' to the request.", component.getId(), component.getSchema().getRootElement());
-	}
-
-	/**
-	 * TODO: this is not needed anymore
-	 * If this is a DCP, it resolves the Component inside it by fetching its model as Dynamic Component with the
-	 * Component Template specified in the CP.
-	 *
-	 * @param componentPresentation ComponentPresentation to lookup the Component in
-	 * @throws ItemNotFoundException if the Component is not published with the Dynamic CT
-	 */
-	public static void resolveDynamicComponentPresentation (ComponentPresentation componentPresentation) throws ItemNotFoundException, FactoryException {
-		if (componentPresentation.isDynamic()) {
-
-			Component component = componentPresentation.getComponent();
-			String componentURI = component.getId();
-			ComponentTemplate template = componentPresentation.getComponentTemplate();
-			String templateURI = template.getId();
-
-			ComponentPresentation dynamicComponentPresentation = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(componentURI, templateURI);
-			if (dynamicComponentPresentation == null) {
-				throw new ItemNotFoundException("Cannot find Dynamic Component " + componentURI +
-						" and Component Template " + templateURI);
-			}
-			componentPresentation.setComponent(dynamicComponentPresentation.getComponent());
-			componentPresentation.setViewModel(dynamicComponentPresentation.getAllViewModels());
-		}
+	public static void setComponentPresentation (final HttpServletRequest request, ComponentPresentation componentPresentation) {
+		request.setAttribute(COMPONENT_PRESENTATION_NAME, componentPresentation);
+		LOG.debug("Added Component Presentation with Component id {} and rootElementName '{}' to the request.", componentPresentation.getComponent().getId(), componentPresentation.getComponent().getSchema().getRootElement());
 	}
 
 	/**
 	 * Remove the component and model from the request which have been set using
-	 * {@link #setComponent}.
+	 * {@link #setComponentPresentation}.
 	 */
-	public static void removeComponent (final HttpServletRequest request) {
-		request.removeAttribute(COMPONENT_NAME);
+	public static void removeComponentPresentation (final HttpServletRequest request) {
+		request.removeAttribute(COMPONENT_PRESENTATION_NAME);
+	}
 
-		String modelName = (String) request.getAttribute(MODEL_ATTRIBUTE_NAME);
-
-		request.removeAttribute(MODEL_ATTRIBUTE_NAME);
-		if (modelName != null) {
-			request.removeAttribute(modelName);
+	public static Map<String,BaseViewModel> getViewModels (final HttpServletRequest request) {
+		final ComponentPresentation componentPresentation = (ComponentPresentation) request.getAttribute(COMPONENT_PRESENTATION_NAME);
+		if (componentPresentation != null) {
+			return componentPresentation.getAllViewModels();
 		}
-
-		LOG.debug("Removing typed model with name '{}' to the request.", modelName);
-
+		return null;
 	}
 
-	public static Object getModel (final HttpServletRequest request) {
-		String modelName = (String) request.getAttribute(MODEL_ATTRIBUTE_NAME);
-		return request.getAttribute(modelName);
-
+	public static BaseViewModel getViewModel(String modelName) {
+		final Map<String,BaseViewModel> viewModels = getViewModels(HttpUtils.currentRequest());
+		if (viewModels != null && !viewModels.isEmpty()) {
+			return viewModels.get(modelName);
+		}
+		return null;
 	}
 
-	public static Object getModel () {
-		return getModel(HttpUtils.currentRequest());
-	}
 
-	/**
-	 * Create a mock component presentation for the given component, CT uri and viewname
-	 *
-	 * @param componentURI
-	 * @param templateURI
-	 * @param viewName
-	 */
-	public static ComponentPresentation createPlaceholderComponentPresentation (String componentURI, String templateURI, String viewName) {
-		// build component template mock
-		List<String> values = new ArrayList<String>();
-		values.add(viewName);
-
-		TextField field = new TextField();
-		field.setName(VIEW_NAME_FIELD);
-		field.setTextValues(values);
-
-		Map<String, Field> metadata = new HashMap<String, Field>();
-		metadata.put(VIEW_NAME_FIELD, field);
-
-		ComponentTemplate componentTemplate = new ComponentTemplateImpl();
-		componentTemplate.setId(templateURI);
-		componentTemplate.setMetadata(metadata);
-
-		// build component mock
-		ComponentImpl component = new ComponentImpl();
-		component.setId(componentURI);
-
-		// build component presentation mock
-		ComponentPresentationImpl componentPresentation = new ComponentPresentationImpl();
-		componentPresentation.setComponent(component);
-		componentPresentation.setComponentTemplate(componentTemplate);
-		componentPresentation.setIsDynamic(true);
-
-		return componentPresentation;
+	public static Object getViewModels () {
+		return getViewModels(HttpUtils.currentRequest());
 	}
 }

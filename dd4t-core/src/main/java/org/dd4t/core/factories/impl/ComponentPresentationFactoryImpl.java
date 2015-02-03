@@ -15,7 +15,6 @@ import org.dd4t.databind.DataBindFactory;
 import org.dd4t.providers.ComponentPresentationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 
@@ -24,7 +23,7 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 	private static final Logger LOG = LoggerFactory.getLogger(ComponentPresentationFactoryImpl.class);
 
 	private static final ComponentPresentationFactoryImpl INSTANCE = new ComponentPresentationFactoryImpl();
-	@Autowired protected ComponentPresentationProvider componentPresentationProvider;
+	protected ComponentPresentationProvider componentPresentationProvider;
 
 	private ComponentPresentationFactoryImpl () {
 		LOG.debug("Create new instance");
@@ -91,11 +90,12 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 							throw new FactoryException(String.format("Could not find DCP with componentURI: %s and templateURI: %s", componentURI, templateURI));
 						}
 
-						final ComponentPresentation renderedPresentation = DataBindFactory.buildDynamicComponentPresentation(componentPresentation, ComponentImpl.class);
+						// Building STMs here.
+						componentPresentation = DataBindFactory.buildDynamicComponentPresentation(componentPresentation, ComponentImpl.class);
 
 						LOG.debug("Running pre caching processors");
-						this.executeProcessors(renderedPresentation.getComponent(), RunPhase.BEFORE_CACHING);
-						cacheElement.setPayload(renderedPresentation);
+						this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING);
+						cacheElement.setPayload(componentPresentation);
 						cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);
 						LOG.debug("Added component with uri: {} and template: {} to cache", componentURI, templateURI);
 					} catch (ItemNotFoundException | ProcessorException | SerializationException e) {

@@ -71,13 +71,20 @@
     <bean id="componentFactory" scope="singleton" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl"
           factory-method="getInstance">
     </bean>
+
     <bean id="pageFactory" scope="singleton" class="org.dd4t.core.factories.impl.PageFactoryImpl"
           factory-method="getInstance">
-        <!-- TODO set processors or autowire? -->
+        <property name="pageProvider" ref="pageProvider" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+    <bean id="componentPresentationFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl" factory-method="getInstance">
+        <property name="componentPresentationProvider" ref="componentPresentationProvider" />
+        <property name="cacheProvider" ref="cacheProvider" />
     </bean>
 
-    <bean id="binaryFactory" scope="singleton" class="org.dd4t.core.factories.impl.BinaryFactoryImpl"
-          factory-method="getInstance">
+    <bean id="binaryFactory" scope="singleton" class="org.dd4t.core.factories.impl.BinaryFactoryImpl" factory-method="getInstance">
+        <property name="binaryProvider" ref="binaryProvider" />
+        <property name="cacheProvider" ref="cacheProvider" />
     </bean>
 
     <!-- DD4T Controllers -->
@@ -102,8 +109,10 @@
     <!-- Taxonomy Stuff -->
     <bean id="taxonomyProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerTaxonomyProvider"/>
 
-    <bean id="taxonomyFactory" scope="singleton" class="org.dd4t.core.factories.impl.TaxonomyFactoryImpl"
-          factory-method="getInstance"/>
+    <bean id="taxonomyFactory" scope="singleton" class="org.dd4t.core.factories.impl.TaxonomyFactoryImpl" factory-method="getInstance">
+        <property name="taxonomyProvider" ref="taxonomyProvider" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
 
     <bean id="taxonomyServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.TaxonomyServiceFactoryImpl"
           factory-method="getInstance"/>

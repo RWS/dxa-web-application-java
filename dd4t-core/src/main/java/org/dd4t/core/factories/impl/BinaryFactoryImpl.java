@@ -12,7 +12,6 @@ import org.dd4t.providers.BinaryProvider;
 import org.dd4t.providers.CacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -27,9 +26,7 @@ public class BinaryFactoryImpl implements BinaryFactory {
     // Singleton implementation
     private static final BinaryFactoryImpl INSTANCE = new BinaryFactoryImpl();
 
-    @Autowired
     private CacheProvider cacheProvider;
-    @Autowired
     private BinaryProvider binaryProvider;
 
     private BinaryFactoryImpl() {

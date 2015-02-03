@@ -1,7 +1,6 @@
 package org.dd4t.mvc.controllers;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
@@ -39,7 +38,7 @@ public class AbstractComponentPresentationController {
 
 	/**
 	 * Renders the component/model, which must be put on the request using
-	 * {@link ComponentUtils#setComponent}.
+	 * {@link ComponentUtils#setComponentPresentation}.
 	 *
 	 * @param componentViewName the viewName to be used to render this component
 	 * @param componentId       the id as an int, not a tcm uri!
@@ -62,34 +61,30 @@ public class AbstractComponentPresentationController {
 	 */
 	@RequestMapping(value = {"/{componentViewPrefix}/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
-		// TODO: redo this mechanism entirely. It's not right.
-
 		LOG.debug(">> {} component with viewPrefix: {}, viewName: {} and componentId: {}", new Object[]{request.getMethod(), componentViewPrefix, componentViewName, componentId});
 
-
-		// double check the component is on the request - we are not actually doing something with it
-
 		int publicationId = PublicationResolverFactoryImpl.getInstance().getPublicationResolver().getPublicationId();
-		Component component = ComponentUtils.getComponent(request);
+		ComponentPresentation componentPresentation = ComponentUtils.getComponentPresentation(request);
 
-		if (component == null) {
+		if (componentPresentation == null) {
 			// In normal operation, this action is called from the server to render embedded component presentations.
 			// In that case, the component should be present on the request already.
 			// However, it is also possible to retrieve a DCP directly from the browser.
+
 			LOG.debug("No component found in request.");
 			try {
-				final ComponentPresentation componentPresentation = componentPresentationFactory.getComponentPresentation(new TCMURI(publicationId, componentId, 16, 0).toString(), componentViewName);
-
-				component = componentPresentation.getComponent();
+				componentPresentation = componentPresentationFactory.getComponentPresentation(new TCMURI(publicationId, componentId, 16, 0).toString(), componentViewName);
 			} catch (FactoryException e) {
 				LOG.error(e.getLocalizedMessage(), e);
 			}
 		}
 
-		if (component == null) {
+		if (componentPresentation == null) {
 			// still no component, now we should fail
 			throw new ResourceNotFoundException();
 		}
+
+		RenderUtils.setViewModelsOnRequest(request,componentPresentation);
 
 		LOG.debug("Rendering component presentation with template '{}' and component id '{}'", componentViewName, componentId);
 
@@ -105,7 +100,7 @@ public class AbstractComponentPresentationController {
 	}
 
 	/**
-	 * @return, the component view path
+	 * @return String the component view path
 	 */
 	public String getComponentViewPath () {
 		return componentViewPath;

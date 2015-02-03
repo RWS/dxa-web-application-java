@@ -1,10 +1,10 @@
 package org.dd4t.core.factories.impl;
 
 import org.dd4t.contentmodel.Keyword;
-import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.contentmodel.impl.KeywordImpl;
 import org.dd4t.core.caching.CacheElement;
+import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.TaxonomyFactory;
 import org.dd4t.core.serializers.impl.SerializerFactory;
 import org.dd4t.core.util.TCMURI;
@@ -12,7 +12,6 @@ import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.TaxonomyProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -29,9 +28,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
     private static final Logger LOG = LoggerFactory.getLogger(TaxonomyFactoryImpl.class);
     private static final TaxonomyFactoryImpl INSTANCE = new TaxonomyFactoryImpl();
 
-    @Autowired
     private TaxonomyProvider taxonomyProvider;
-    @Autowired
     private CacheProvider cacheProvider;
 
     private TaxonomyFactoryImpl() {

@@ -18,7 +18,9 @@ import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.providers.BaseBrokerProvider;
+import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.DateUtils;
+import org.dd4t.core.util.RenderUtils;
 import org.dd4t.providers.ComponentPresentationProvider;
 import org.dd4t.providers.util.DaoUtils;
 import org.joda.time.DateTime;
@@ -122,8 +124,6 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 		return new ArrayList<>();
 	}
 
-
-	// TODO: this doesnt work..
 	private org.dd4t.contentmodel.ComponentPresentation constructComponentPresentation (String componentSource, int publicationId, int componentId, int componentTemplateId, ComponentPresentation componentPresentation) {
 		try {
 
@@ -138,15 +138,23 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 			componentTemplate.setTitle(componentPresentationMeta.getTemplateMeta().getTitle());
 			final DateTime dateTime = new DateTime(componentPresentationMeta.getTemplateMeta().getLastPublishDate());
 			componentTemplate.setRevisionDate(dateTime);
-
-			// Setting custommetavalues to get the viewname, among others
-			final List<CustomMetaValue> customMetaValues = componentPresentationMeta.getTemplateMeta().getCustomMetaValues();
-
 			final Map<String, Field> metadata = new HashMap<>();
-			setTemplateMeta(customMetaValues, metadata);
+
+			// TODO: this is a hack
+			// Component Template Custom Meta is not published with
+			// the component template, so we cannot read the viewName.
+			// Therefore, the only supported way for now is use the lowercased
+			// template name as view model name...
+
+			final List<String> values = new ArrayList<>();
+			values.add(RenderUtils.stringToDashCase(componentTemplate.getTitle()));
+
+			TextField field = new TextField();
+			field.setName(Constants.VIEW_NAME_FIELD);
+			field.setTextValues(values);
+			metadata.put(Constants.VIEW_NAME_FIELD, field);
 
 			componentTemplate.setMetadata(metadata);
-
 			componentPresentationResult.setComponentTemplate(componentTemplate);
 			return componentPresentationResult;
 		} catch (InstantiationException | StorageException | IllegalAccessException e) {
@@ -155,68 +163,6 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 		return null;
 	}
 
-
-	private static void setTemplateMeta (final List<CustomMetaValue> customMetaValues, final Map<String, Field> metadata) {
-		for (CustomMetaValue customMetaValue : customMetaValues) {
-
-			Field field = null;
-
-			if (metadata.containsKey(customMetaValue.getKeyName())) {
-				field = metadata.get(customMetaValue.getKeyName());
-			}
-			final Object valueToSet;
-			if (customMetaValue.getMetadataType() == MetadataType.DATE) {
-				valueToSet = new DateTime(customMetaValue.getDateValue());
-				if (field == null) {
-					metadata.put(customMetaValue.getKeyName(), getDateField(customMetaValue.getKeyName(), (DateTime) valueToSet));
-				} else {
-					((DateField) field).getDateTimeValues().add(DateUtils.convertDateToString((DateTime) valueToSet));
-				}
-			} else if (customMetaValue.getMetadataType() == MetadataType.STRING) {
-				valueToSet = customMetaValue.getStringValue();
-				if (field == null) {
-					metadata.put(customMetaValue.getKeyName(), getTextField(customMetaValue.getKeyName(), (String) valueToSet));
-				} else {
-					((DateField) field).getDateTimeValues().add((String) valueToSet);
-				}
-
-			} else if (customMetaValue.getMetadataType() == MetadataType.FLOAT) {
-				valueToSet = customMetaValue.getFloatValue().intValue();
-				if (field == null) {
-					metadata.put(customMetaValue.getKeyName(), getNumericField(customMetaValue.getKeyName(), (int) valueToSet));
-				} else {
-					((NumericField) field).getNumericValues().add((double) valueToSet);
-				}
-			}
-		}
-	}
-
-	private static Field getNumericField (String name, int value) {
-		final NumericField numericField = new NumericField();
-		numericField.setName(name);
-		final List<Double> values = new ArrayList<>();
-		values.add((double) value);
-		numericField.setNumericValues(values);
-		return numericField;
-	}
-
-	private static Field getDateField (String name, DateTime value) {
-		final DateField dateField = new DateField();
-		dateField.setName(name);
-		final List<String> values = new ArrayList<>();
-		values.add(DateUtils.convertDateToString(value));
-		dateField.setDateTimeValues(values);
-		return dateField;
-	}
-
-	private static Field getTextField (String name, String value) {
-		final TextField textField = new TextField();
-		textField.setName(name);
-		final List<String> values = new ArrayList<>();
-		values.add(value);
-		textField.setTextValues(values);
-		return textField;
-	}
 
 	public void setConcreteComponentPresentation (final Class<? extends org.dd4t.contentmodel.ComponentPresentation> concreteComponentPresentation) {
 		this.concreteComponentPresentation = concreteComponentPresentation;

@@ -70,11 +70,11 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 		fieldMap.put(fieldName, new XPMInfo(xpath, multiValued));
 	}
 
-	private Map<String, XPMInfo> getFieldMap() {
+	public Map<String, XPMInfo> getFieldMap() {
 		return fieldMap;
 	}
 
-	protected static class XPMInfo {
+	public static class XPMInfo {
 		private final String xpath;
 		private final boolean multiValued;
 
@@ -83,11 +83,11 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 			this.multiValued = multiValued;
 		}
 
-		String getXpath() {
+		public String getXpath() {
 			return xpath;
 		}
 
-		boolean isMultiValued() {
+		public boolean isMultiValued() {
 			return multiValued;
 		}
 	}

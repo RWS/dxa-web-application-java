@@ -15,7 +15,7 @@ import java.util.List;
  * @author R. Kempees
  */
 
-@ViewModel(viewModelNames = {"benefit","appsbanner"},rootElementNames = "benefits",setComponentObject = true)
+@ViewModel(viewModelNames = {"benefit","appsbanner","product-details"},rootElementNames = "benefits",setComponentObject = true)
 public class TestViewModel extends TridionViewModelBase {
 
 	@ViewModelProperty(entityFieldName = "heading")

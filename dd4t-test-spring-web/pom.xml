@@ -21,8 +21,7 @@
         <hibernate-jpa-2.0-version>1.0.1.Final</hibernate-jpa-2.0-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-pool-version>1.5.3</commons-pool-version>
-        <!-- TODO: set to 2.5 -->
-        <easylicense-version>1.0.0</easylicense-version>
+        <easylicense-version>2.5</easylicense-version>
         <json-smart-version>1.1.1</json-smart-version>
         <xalan-version>2.7.1</xalan-version>
         <sqljdbc4-version>4.0.0</sqljdbc4-version>

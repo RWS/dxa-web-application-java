@@ -9,7 +9,6 @@ import com.tridion.broker.querying.filter.LimitFilter;
 import com.tridion.broker.querying.sorting.SortDirection;
 import com.tridion.broker.querying.sorting.SortParameter;
 import com.tridion.data.CharacterData;
-import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.storage.ItemMeta;
 import com.tridion.storage.PageMeta;
 import com.tridion.storage.StorageManagerFactory;
@@ -45,7 +44,6 @@ import java.util.List;
 public class BrokerPageProvider extends BaseBrokerProvider implements PageProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerPageProvider.class);
-	private static final DynamicMetaRetriever DYNAMIC_META_RETRIEVER = new DynamicMetaRetriever();
 	private final CacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
 	/**
 	 * Retrieves content of a Page by looking the page up by its item id and Publication id.

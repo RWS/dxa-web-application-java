@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * test
@@ -21,7 +22,7 @@ import java.util.List;
 public abstract class ViewModelBase implements BaseViewModel {
 	private static final Logger LOG = LoggerFactory.getLogger(ViewModelBase.class);
 	private final List<String> viewModelNames;
-	private HashMap<String,Object> modelProperties;
+	private Map<String,Object> modelProperties;
 	private boolean setGenericComponentOnComponentPresentation;
 	private boolean setRawDataOnModel;
 	private Object rawData;
@@ -97,7 +98,7 @@ public abstract class ViewModelBase implements BaseViewModel {
 		return setGenericComponentOnComponentPresentation;
 	}
 
-	public HashMap<String,Object> getModelProperties() {
+	public Map<String,Object> getModelProperties() {
 		return this.modelProperties;
 	}
 }

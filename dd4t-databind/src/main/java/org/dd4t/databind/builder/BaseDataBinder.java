@@ -18,8 +18,8 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -129,7 +129,7 @@ public abstract class BaseDataBinder {
 		return concreteFieldImpl;
 	}
 
-	protected static BaseViewModel getModelOrNullForExistingEntry (HashMap<String, BaseViewModel> models, Class modelClass) {
+	protected static BaseViewModel getModelOrNullForExistingEntry (Map<String, BaseViewModel> models, Class modelClass) {
 		for (BaseViewModel baseViewModel : models.values()) {
 			LOG.debug(baseViewModel.getClass().getName() + "==" + modelClass.getName());
 			if (baseViewModel.getClass().equals(modelClass)) {

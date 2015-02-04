@@ -66,6 +66,8 @@ public abstract class AbstractPageController {
 	public String showPage(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		final String urlToFetch = HttpUtils.appendDefaultPageIfRequired(HttpUtils.getCurrentURL(request));
 
+		String fullUrl = request.getRequestURL().toString();
+
 		String url = adjustLocalErrorUrl(request, urlToFetch);
 		url = HttpUtils.normalizeUrl(url);
 

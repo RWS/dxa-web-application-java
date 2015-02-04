@@ -66,6 +66,12 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 			final Component component = DataBindFactory.buildComponent(componentPresentation.getRawComponentContent(), aClass);
 			componentPresentation.setComponent(component);
 			String rootElementName = component.getSchema().getRootElement();
+
+			if (StringUtils.isEmpty(viewModelName)){
+				LOG.error("Viewmodel name not found on CT: {}. Not proceeding to build models", componentPresentation.getComponentTemplate().getId());
+				return componentPresentation;
+			}
+
 			modelNames.add(viewModelName);
 			if (!rootElementName.equals(viewModelName)) {
 				modelNames.add(rootElementName);

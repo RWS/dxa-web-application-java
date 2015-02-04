@@ -32,7 +32,9 @@
     <bean id="propertiesServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.PropertiesServiceFactory"
           factory-method="getInstance"/>
 
-    <bean id="publicationResolverFactory" scope="singleton" factory-method="getInstance" class="org.dd4t.core.factories.impl.PublicationResolverFactoryImpl" />
+    <bean id="publicationResolverFactory" scope="singleton" factory-method="getInstance" class="org.dd4t.core.factories.impl.PublicationResolverFactoryImpl">
+        <property name="publicationResolver" ref="publicationResolver" />
+    </bean>
 
     <!-- DD4T Provider beans -->
     <bean id="binaryProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerBinaryProvider">

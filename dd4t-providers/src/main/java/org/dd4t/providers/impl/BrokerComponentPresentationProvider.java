@@ -1,25 +1,21 @@
 package org.dd4t.providers.impl;
 
 import com.tridion.broker.StorageException;
-import com.tridion.broker.querying.MetadataType;
 import com.tridion.dcp.ComponentPresentation;
 import com.tridion.dcp.ComponentPresentationFactory;
 import com.tridion.storage.ComponentPresentationMeta;
-import com.tridion.storage.CustomMetaValue;
 import com.tridion.storage.StorageTypeMapping;
 import com.tridion.storage.dao.ComponentPresentationMetaDAO;
 import com.tridion.util.TCMURI;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Field;
-import org.dd4t.contentmodel.impl.DateField;
-import org.dd4t.contentmodel.impl.NumericField;
 import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
+
 import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.Constants;
-import org.dd4t.core.util.DateUtils;
 import org.dd4t.core.util.RenderUtils;
 import org.dd4t.providers.ComponentPresentationProvider;
 import org.dd4t.providers.util.DaoUtils;
@@ -145,6 +141,9 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 			// the component template, so we cannot read the viewName.
 			// Therefore, the only supported way for now is use the lowercased
 			// template name as view model name...
+
+			// We should actually fix this in the Generate Dynamic Component TBB to also
+			// include CT data.
 
 			final List<String> values = new ArrayList<>();
 			values.add(RenderUtils.stringToDashCase(componentTemplate.getTitle()));

@@ -79,7 +79,10 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 */
 	@Override public String getLocalPageUrl (final String url) {
 		String publicationUrl = publicationProvider.discoverPublicationUrl(getPublicationId());
-		return url.replaceFirst(publicationUrl,"");
+		if (!url.startsWith(publicationUrl)) {
+			return String.format("%s%s", publicationUrl, url.startsWith("/") ? url : "/" + url);
+		}
+		return url;
 	}
 
 	/**

@@ -4,6 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -251,6 +252,18 @@ public class RenderUtils {
 	 */
 	public static String renderDynamicComponentPresentation (final HttpServletRequest request, final HttpServletResponse response, final String componentURI, final String templateURI, final String viewName) throws FactoryException {
 		final ComponentPresentation componentPresentation = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(componentURI,templateURI);
+
+		List<String> values = new ArrayList<>();
+		values.add(viewName);
+
+		TextField field = new TextField();
+		field.setName(Constants.VIEW_NAME_FIELD);
+		field.setTextValues(values);
+
+		Map<String, Field> metadata = new HashMap<>();
+		metadata.put(Constants.VIEW_NAME_FIELD, field);
+		componentPresentation.getComponentTemplate().setMetadata(metadata);
+
 		return getResponse(request, response, componentPresentation, viewName);
 	}
 

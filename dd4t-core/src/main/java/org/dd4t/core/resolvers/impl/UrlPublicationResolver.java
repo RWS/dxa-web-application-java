@@ -8,6 +8,8 @@ import org.dd4t.providers.PublicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * dd4t-2
  *
@@ -25,7 +27,8 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 */
 	@Override public int getPublicationId () {
 		try {
-			return publicationProvider.discoverPublicationId(HttpUtils.getCurrentURL(HttpUtils.currentRequest()));
+			final HttpServletRequest request = HttpUtils.currentRequest();
+			return publicationProvider.discoverPublicationId(request.getRequestURL().toString());
 		} catch (SerializationException e) {
 			LOG.error(e.getLocalizedMessage(),e);
 		}

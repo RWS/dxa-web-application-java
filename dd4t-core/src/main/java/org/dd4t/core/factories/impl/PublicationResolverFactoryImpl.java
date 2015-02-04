@@ -4,7 +4,6 @@ import org.dd4t.core.factories.PublicationResolverFactory;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * PublicationResolverFactoryImpl hides actual implementation
@@ -32,7 +31,6 @@ public class PublicationResolverFactoryImpl implements PublicationResolverFactor
         return publicationResolver;
     }
 
-    @Autowired
     public void setPublicationResolver(PublicationResolver publicationResolver) {
         LOG.debug("Set PublicationResolver " + publicationResolver);
         this.publicationResolver = publicationResolver;

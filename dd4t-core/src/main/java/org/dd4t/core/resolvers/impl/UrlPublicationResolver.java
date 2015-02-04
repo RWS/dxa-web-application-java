@@ -1,5 +1,6 @@
 package org.dd4t.core.resolvers.impl;
 
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.dd4t.core.util.HttpUtils;
@@ -79,6 +80,10 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 */
 	@Override public String getLocalPageUrl (final String url) {
 		String publicationUrl = publicationProvider.discoverPublicationUrl(getPublicationId());
+		if (StringUtils.isEmpty(url) || StringUtils.isEmpty(publicationUrl)) {
+			return "";
+		}
+
 		if (!url.startsWith(publicationUrl)) {
 			return String.format("%s%s", publicationUrl, url.startsWith("/") ? url : "/" + url);
 		}

@@ -44,9 +44,12 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
 
     @JsonProperty("Categories") @JsonDeserialize(contentAs = CategoryImpl.class)
     protected List<Category> categories;
+	@JsonProperty("Schema")
+	@JsonDeserialize(as = SchemaImpl.class)
+	private Schema schema;
 
 
-    /**
+	/**
      * Get the organizational item
      */
     @Override
@@ -147,4 +150,12 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
     public void setCategories(List<Category> categories) {
         this.categories = categories;
     }
+
+	public Schema getSchema() {
+	    return schema;
+	}
+
+	public void setSchema(Schema schema) {
+	    this.schema = schema;
+	}
 }

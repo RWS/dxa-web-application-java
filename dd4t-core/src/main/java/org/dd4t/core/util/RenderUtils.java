@@ -1,6 +1,7 @@
 package org.dd4t.core.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Field;
@@ -330,5 +331,9 @@ public class RenderUtils {
 				request.setAttribute(modelEntry.getKey(), modelEntry.getValue());
 			}
 		}
+	}
+
+	public static void setDynamicComponentOnRequest (final HttpServletRequest request, final Component component) {
+		request.setAttribute(Constants.COMPONENT_NAME,component);
 	}
 }

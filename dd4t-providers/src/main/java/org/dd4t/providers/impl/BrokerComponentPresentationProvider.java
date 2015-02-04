@@ -123,6 +123,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	}
 
 
+	// TODO: this doesnt work..
 	private org.dd4t.contentmodel.ComponentPresentation constructComponentPresentation (String componentSource, int publicationId, int componentId, int componentTemplateId, ComponentPresentation componentPresentation) {
 		try {
 

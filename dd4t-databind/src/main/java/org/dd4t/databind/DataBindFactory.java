@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -49,7 +49,7 @@ public class DataBindFactory {
 		return INSTANCE.dataBinder.buildComponent(source,aClass);
 	}
 
-	public static HashMap<String,BaseViewModel> buildModels(final Object rawData,final Set<String> modelNames, final String currentTemplateUri) throws SerializationException{
+	public static Map<String,BaseViewModel> buildModels(final Object rawData,final Set<String> modelNames, final String currentTemplateUri) throws SerializationException{
 		return INSTANCE.dataBinder.buildModels(rawData,modelNames,currentTemplateUri);
 	}
 

@@ -52,7 +52,7 @@
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion</groupId>
+            <groupId>com.tridion.contentdelivery</groupId>
             <artifactId>cd_dynamic</artifactId>
             <version>${tridion.version}</version>
         </dependency>

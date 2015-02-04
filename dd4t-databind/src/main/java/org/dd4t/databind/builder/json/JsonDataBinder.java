@@ -98,9 +98,9 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		}
 	}
 
-	public HashMap<String, BaseViewModel> buildModels (final Object source, final Set<String> modelNames, final String templateUri) throws SerializationException {
+	public Map<String, BaseViewModel> buildModels (final Object source, final Set<String> modelNames, final String templateUri) throws SerializationException {
 
-		final HashMap<String, BaseViewModel> models = new HashMap<>();
+		final Map<String, BaseViewModel> models = new HashMap<>();
 
 		for (String modelName : modelNames) {
 			if (VIEW_MODELS.containsKey(modelName)) {

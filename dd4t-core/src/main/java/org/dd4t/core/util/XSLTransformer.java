@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class XSLTransformer {
     private static final XSLTransformer INSTANCE = new XSLTransformer();
-    private static final ConcurrentHashMap<String, Templates> CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, Templates> CACHE = new ConcurrentHashMap<>();
 
     private XSLTransformer() {
         // point the transformerfactory towards Xalan XSLTC

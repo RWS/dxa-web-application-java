@@ -25,7 +25,7 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 	private static final PublicationMetaFactory PUBLICATION_META_FACTORY = new PublicationMetaFactory();
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerPublicationProvider.class);
 	private final CacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
-	private Class<? extends PublicationDescriptor> publicationDescriptor;
+	private Class publicationDescriptor;
 
 
 	public int discoverPublicationId (final String url) throws SerializationException {
@@ -123,7 +123,7 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 		}
 
 		try {
-			final PublicationDescriptor concretePublicationDescriptor = publicationDescriptor.newInstance();
+			final PublicationDescriptor concretePublicationDescriptor = (PublicationDescriptor)publicationDescriptor.newInstance();
 			concretePublicationDescriptor.setId(publicationMeta.getId());
 			concretePublicationDescriptor.setKey(publicationMeta.getKey());
 			concretePublicationDescriptor.setPublicationUrl(publicationMeta.getPublicationUrl());
@@ -176,7 +176,11 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 		return publicationMeta;
 	}
 
-	public void setPublicationDescriptor (final Class<? extends PublicationDescriptor> publicationDescriptor) {
+	public void setPublicationDescriptor (final Class publicationDescriptor) {
 		this.publicationDescriptor = publicationDescriptor;
+	}
+
+	public Class getPublicationDescriptor () {
+		return publicationDescriptor;
 	}
 }

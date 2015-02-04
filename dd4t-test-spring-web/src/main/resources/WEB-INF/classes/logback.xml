@@ -85,7 +85,7 @@
         <appender-ref ref="rollingHibernateLog"/>
         <appender-ref ref="stdout"/>
     </logger>
-    <logger name="org.springframework" level="OFF" additivity="false">
+    <logger name="org.springframework" level="INFO" additivity="false">
         <appender-ref ref="rollingSpringLog"/>
         <appender-ref ref="stdout"/>
     </logger>

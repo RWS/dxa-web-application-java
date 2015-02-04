@@ -5,10 +5,10 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Schema;
+import org.dd4t.databind.builder.json.JsonDataBinder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +23,6 @@ import java.util.Map;
 public class FieldSetImpl implements FieldSet {
 
     private static final Logger LOG = LoggerFactory.getLogger(FieldSetImpl.class);
-    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     private final Map<String, Object> rawContent = new HashMap<>();
 	@JsonIgnore
@@ -50,7 +49,8 @@ public class FieldSetImpl implements FieldSet {
 
         try {
             // The basefield annotations will map the fields to concrete types
-            BaseField b = MAPPER.readValue(embeddedField.toString(), BaseField.class);
+	        // TODO: see if this breaks with XML
+            BaseField b = JsonDataBinder.getGenericMapper().readValue(embeddedField.toString(), BaseField.class);
             content.put(fieldKey, b);
         } catch (IOException e) {
             LOG.error("Error deserializing FieldSet.", e);

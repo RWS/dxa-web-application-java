@@ -18,6 +18,8 @@ public class Constants {
 	public static final String DEFAULT_PUBLICATION_URL_CONFIGURATION_KEY = "default.publication.url";
 	public static final String SMART_INCLUDE_URL = "smartIncludeUrl";
 	public static final String VIEW_NAME_FIELD = "viewName";
+	public static final String COMPONENT_NAME = "component";
+
 	private Constants () {
 
 	}

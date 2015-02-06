@@ -4,11 +4,9 @@ import org.apache.commons.codec.binary.Base64;
 import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.serializers.impl.CompressionUtils;
-import org.dd4t.core.util.TridionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.client.Invocation;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -86,22 +84,6 @@ public abstract class BaseBrokerProvider {
 			return "";
 		}
 		return encoded.trim();
-	}
-
-	/**
-	 * Inserts a cookie for with the Preview Session Token into the Invocation.Builder object (if available)
-	 *
-	 * @param builder Invocation.Builder object to insert cookie into
-	 * @return Invocation.Builder object with the token cookie insterted
-	 */
-	protected Invocation.Builder getSessionPreviewBuilder (Invocation.Builder builder) {
-		String sessionPreviewToken = TridionUtils.getSessionPreviewToken();
-
-		if (sessionPreviewToken != null) {
-			builder = builder.cookie(TridionUtils.PREVIEW_SESSION_TOKEN, sessionPreviewToken);
-		}
-
-		return builder;
 	}
 
 	/**

@@ -7,7 +7,7 @@ import org.dd4t.contentmodel.*;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ComponentImpl extends BaseComponent implements Component, HasContent, HasMetadata, HasMultimedia {
+public class ComponentImpl extends BaseComponent implements GenericComponent, HasContent, HasMetadata, HasMultimedia {
 
 	@JsonProperty("ComponentType") @JsonDeserialize(as = ComponentImpl.ComponentType.class)
     protected ComponentType componentType;

@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * TODO: Region support. Or are we just sticking the region on the CP?
  */
-public class PageImpl extends BasePage implements Page, HasMetadata {
+public class PageImpl extends BasePage implements GenericPage, HasMetadata {
 
     @JsonProperty("Filename")
     protected String fileName;

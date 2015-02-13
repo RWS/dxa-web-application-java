@@ -129,7 +129,7 @@ public class DefaultLinkResolver implements LinkResolver {
 		} else {
 			key = getCacheKey(componentURI);
 		}
-		CacheElement<String> cacheElement = cacheProvider.loadFromLocalCache(key);
+		CacheElement<String> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
 		String result;
 
 		if (!validInCache(cacheElement)) {

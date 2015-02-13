@@ -1,7 +1,7 @@
 package org.dd4t.core.factories;
 
 import org.dd4t.core.processors.Processor;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 
 import java.util.List;
 
@@ -22,5 +22,5 @@ public interface Factory {
 
 
 
-    public void setCacheProvider(CacheProvider cacheAgent);
+    public void setCacheProvider(PayloadCacheProvider cacheAgent);
 }

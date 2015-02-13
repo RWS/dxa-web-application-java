@@ -6,7 +6,7 @@ import org.dd4t.core.exceptions.ProcessorException;
 import org.dd4t.core.processors.LinkResolverProcessor;
 import org.dd4t.core.processors.Processor;
 import org.dd4t.core.processors.RunPhase;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public abstract class BaseFactory {
 
-    protected CacheProvider cacheProvider;
+    protected PayloadCacheProvider cacheProvider;
     private List<Processor> processors;
 
     public List<Processor> getProcessors () {
@@ -69,7 +69,7 @@ public abstract class BaseFactory {
     /**
      * Set the cache agent.
      */
-    public void setCacheProvider(CacheProvider cacheAgent) {
+    public void setCacheProvider(PayloadCacheProvider cacheAgent) {
         cacheProvider = cacheAgent;
     }
 

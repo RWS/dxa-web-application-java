@@ -7,7 +7,7 @@ import org.dd4t.core.factories.TaxonomyServiceFactory;
 import org.dd4t.core.services.TaxonomyService;
 import org.dd4t.core.services.impl.TaxonomyServiceImpl;
 import org.dd4t.core.util.TCMURI;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +29,7 @@ public class TaxonomyServiceFactoryImpl implements TaxonomyServiceFactory {
     private TaxonomyFactory taxonomyFactory;
 
     @Autowired
-    private CacheProvider cacheProvider;
+    private PayloadCacheProvider cacheProvider;
 
     private TaxonomyServiceFactoryImpl() {
         LOG.debug("Create new instance");

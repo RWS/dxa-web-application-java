@@ -12,7 +12,7 @@ public interface PayloadCacheProvider {
      * @param key String representing the name under which the object is stored in the cache
      * @return CacheElement the wrapper around the actual payload object in cache
      */
-    public <T> CacheElement<T> loadFromLocalCache(String key);
+    public <T> CacheElement<T> loadPayloadFromLocalCache(String key);
 
     /**
      * Store given item in the cache with a simple time-to-live property (for items not depending on Tridion items)

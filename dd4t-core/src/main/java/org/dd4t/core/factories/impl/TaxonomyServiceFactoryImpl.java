@@ -50,7 +50,7 @@ public class TaxonomyServiceFactoryImpl implements TaxonomyServiceFactory {
     public TaxonomyService getTaxonomyService(String categoryURI) throws IOException {
 
         String key = getCacheKey(categoryURI);
-        CacheElement<TaxonomyService> cacheElement = cacheProvider.loadFromLocalCache(key);
+        CacheElement<TaxonomyService> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
         TaxonomyService result;
 
         if (cacheElement.isExpired()) {
@@ -98,7 +98,7 @@ public class TaxonomyServiceFactoryImpl implements TaxonomyServiceFactory {
             throws IOException {
 
         String key = getCacheKey(categoryURI, schemaURI);
-        CacheElement<TaxonomyService> cacheElement = cacheProvider.loadFromLocalCache(key);
+        CacheElement<TaxonomyService> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
         TaxonomyService result;
 
         if (cacheElement.isExpired()) {

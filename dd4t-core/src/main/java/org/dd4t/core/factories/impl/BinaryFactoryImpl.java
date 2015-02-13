@@ -49,7 +49,7 @@ public class BinaryFactoryImpl implements BinaryFactory {
     public Binary getBinaryByURI(final String tcmUri) throws FactoryException {
         LOG.debug("Enter getBinaryByURI with uri: {}", tcmUri);
 
-        CacheElement<Binary> cacheElement = cacheProvider.loadFromLocalCache(tcmUri);
+        CacheElement<Binary> cacheElement = cacheProvider.loadPayloadFromLocalCache(tcmUri);
         Binary binary;
 
         if (cacheElement.isExpired()) {
@@ -95,7 +95,7 @@ public class BinaryFactoryImpl implements BinaryFactory {
         LOG.debug("Enter getBinaryByURL with url: {} and publicationId: {}", url, publicationId);
 
         String key = getCacheKey(url, publicationId);
-        CacheElement<Binary> cacheElement = cacheProvider.loadFromLocalCache(key);
+        CacheElement<Binary> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
         Binary binary;
 
         if (cacheElement.isExpired()) {

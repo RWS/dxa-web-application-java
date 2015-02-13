@@ -51,7 +51,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
     public Keyword getTaxonomy(String taxonomyURI) throws IOException {
         LOG.debug("Enter getTaxonomy with uri: {}", taxonomyURI);
 
-        CacheElement<Keyword> cacheElement = cacheProvider.loadFromLocalCache(taxonomyURI);
+        CacheElement<Keyword> cacheElement = cacheProvider.loadPayloadFromLocalCache(taxonomyURI);
         Keyword taxonomy;
 
         if (cacheElement.isExpired()) {
@@ -113,7 +113,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         LOG.debug("Enter getTaxonomyFilterBySchema with uri: {} and schema: {}", taxonomyURI, schemaURI);
 
         String key = taxonomyURI + schemaURI;
-        CacheElement<Keyword> cacheElement = cacheProvider.loadFromLocalCache(key);
+        CacheElement<Keyword> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
         Keyword taxonomy;
 
         if (cacheElement.isExpired()) {

@@ -48,7 +48,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
     public Page getPage(String uri) throws FactoryException{
         LOG.debug("Enter getPage with uri: {}", uri);
 
-        CacheElement<Page> cacheElement = cacheProvider.loadFromLocalCache(uri);
+        CacheElement<Page> cacheElement = cacheProvider.loadPayloadFromLocalCache(uri);
         Page page;
 
         if (cacheElement.isExpired()) {
@@ -111,7 +111,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
         LOG.debug("Enter findPageByUrl with url: {} and publicationId: {}", url, publicationId);
 
         String cacheKey = publicationId + "-" + url;
-        CacheElement<Page> cacheElement = cacheProvider.loadFromLocalCache(cacheKey);
+        CacheElement<Page> cacheElement = cacheProvider.loadPayloadFromLocalCache(cacheKey);
         Page page;
 
         if (cacheElement.isExpired()) {
@@ -180,7 +180,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
         LOG.debug("Enter findXMLPageByUrl with url: {} and publicationId: {}", url, publicationId);
 
         String cacheKey = publicationId + "-" + url;
-        CacheElement<String> cacheElement = cacheProvider.loadFromLocalCache(cacheKey);
+        CacheElement<String> cacheElement = cacheProvider.loadPayloadFromLocalCache(cacheKey);
 
         String page;
 

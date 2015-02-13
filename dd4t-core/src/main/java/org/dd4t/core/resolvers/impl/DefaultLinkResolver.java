@@ -11,7 +11,7 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.resolvers.LinkResolver;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.core.util.TridionUtils;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.LinkProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class DefaultLinkResolver implements LinkResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultLinkResolver.class);
 
 	@Autowired private LinkProvider linkProvider;
-	@Autowired private CacheProvider cacheProvider;
+	@Autowired private PayloadCacheProvider cacheProvider;
 	private Map<String, String> schemaToUrlMappings;
 	private String schemaKey;
 	private boolean encodeUrl = true;
@@ -260,11 +260,11 @@ public class DefaultLinkResolver implements LinkResolver {
 		this.linkProvider = linkProvider;
 	}
 
-	public CacheProvider getCacheProvider () {
+	public PayloadCacheProvider getCacheProvider () {
 		return cacheProvider;
 	}
 
-	public void setCacheProvider (CacheProvider cacheProvider) {
+	public void setCacheProvider (PayloadCacheProvider cacheProvider) {
 		this.cacheProvider = cacheProvider;
 	}
 }

@@ -9,7 +9,7 @@ import org.dd4t.core.factories.BinaryFactory;
 import org.dd4t.core.processors.Processor;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.BinaryProvider;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +26,7 @@ public class BinaryFactoryImpl implements BinaryFactory {
     // Singleton implementation
     private static final BinaryFactoryImpl INSTANCE = new BinaryFactoryImpl();
 
-    private CacheProvider cacheProvider;
+    private PayloadCacheProvider cacheProvider;
     private BinaryProvider binaryProvider;
 
     private BinaryFactoryImpl() {
@@ -137,7 +137,7 @@ public class BinaryFactoryImpl implements BinaryFactory {
     }
 
     @Override
-    public void setCacheProvider(final CacheProvider cacheAgent) {
+    public void setCacheProvider(final PayloadCacheProvider cacheAgent) {
         cacheProvider = cacheAgent;
     }
 

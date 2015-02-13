@@ -3,12 +3,14 @@ package org.dd4t.core.caching.impl;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
+
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.CacheInvalidator;
 import org.dd4t.core.factories.impl.PropertiesServiceFactory;
 import org.dd4t.core.services.PropertiesService;
 import org.dd4t.core.util.TridionUtils;
 import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +25,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
  *
  * @author R. Kempees, Mihai Cadariu
  */
-public class EHCacheProvider implements CacheProvider, CacheInvalidator {
+public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator {
 
 	/**
 	 * The name of the EHCache that contains the cached items for this application

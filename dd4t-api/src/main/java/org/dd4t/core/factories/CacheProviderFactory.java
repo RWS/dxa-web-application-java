@@ -1,11 +1,11 @@
 package org.dd4t.core.factories;
 
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 
 /**
  * @author Mihai Cadariu
  */
 public interface CacheProviderFactory {
 
-    CacheProvider getCacheProvider();
+    PayloadCacheProvider getCacheProvider();
 }

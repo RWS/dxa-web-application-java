@@ -13,224 +13,315 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * EH Cache implementation
- *
+ * <p/>
  * TODO: this class has bugs! Only use for Tridion Object invalidation!
  *
  * @author R. Kempees, Mihai Cadariu
  */
 public class EHCacheProvider implements CacheProvider, CacheInvalidator {
 
-    /**
-     * The name of the EHCache that contains the cached items for this application
-     */
-    public static final String CACHE_NAME = "DD4T";
-    private final Cache cache = CacheManager.create().getCache(CACHE_NAME);
-    public static final String DEPENDENT_KEY_FORMAT = "%s:%s";
-    private static final Logger LOG = LoggerFactory.getLogger(EHCacheProvider.class);
+	/**
+	 * The name of the EHCache that contains the cached items for this application
+	 */
+	public static final String CACHE_NAME = "DD4T";
+	public static final String CACHE_NAME_DEPENDENCY = "Dependency";
+	public static final String DEPENDENT_KEY_FORMAT = "%s:%s";
+	// keep expired items in cache for another X seconds
+	public static final String CACHE_EXPIRED_TTL = "cache.expired.ttl";
+	//seconds
+	public static final String CACHE_EXPIRED_TTL_DEFAULT = "299";
+	// keep items in DD4T cache for X seconds (0=eternal)
+	public static final String CACHE_DEPENDENCY_TTL = "cache.dependency.ttl";
+	// keep items in DD4T short-lived cache for X seconds (0=eternal)
+	public static final String CACHE_TTL = "cache.ttl";
+	//seconds
+	public static final String CACHE_TTL_DEFAULT = "3599";
+	public static final int ADJUST_TTL = 2;
+
+	private static final Logger LOG = LoggerFactory.getLogger(EHCacheProvider.class);
+	private final Cache cache = CacheManager.create().getCache(CACHE_NAME);
+	private final Cache dependencyCache = CacheManager.create().getCache(CACHE_NAME_DEPENDENCY);
 	private final int expiredTTL;
+	private final int cacheDependencyTTL;
+	private final int cacheTTL;
 
-    private EHCacheProvider () {
-        LOG.debug("Create new instance");
-        PropertiesServiceFactory propertiesServiceFactory = PropertiesServiceFactory.getInstance();
-        PropertiesService propertiesService = propertiesServiceFactory.getPropertiesService();
-	    final String ttlExpired = "cache.expired.ttl";
-	    final String ttlExpiredDefault = "299";
-	    String ttl = propertiesService.getProperty(ttlExpired, ttlExpiredDefault);
-        expiredTTL = Integer.parseInt(ttl);
-        LOG.debug("Using {} = {} seconds", ttlExpired, expiredTTL);
-    }
 
-    /**
-     * Loads given object from the cache and returns it inside a CacheItem wrapper.
-     *
-     * @param key String representing the cache key to retrieve a payload for
-     * @return CacheElement object wrapping the actual payload. Return object never null, but it can wrap a null
-     * payload. It can also return an expired (stale) payload, which must be updated.
-     */
-    @Override
-    public <T> CacheElement<T> loadFromLocalCache(String key) {
-        String sessionPreviewToken = TridionUtils.getSessionPreviewToken();
+	private EHCacheProvider () {
+		LOG.debug("Create new instance");
 
-        if (sessionPreviewToken == null && cache != null) {
-            Element element = cache.get(key);
+		PropertiesServiceFactory propertiesServiceFactory = PropertiesServiceFactory.getInstance();
+		PropertiesService propertiesService = propertiesServiceFactory.getPropertiesService();
 
-            if (element == null) {
-                element = new Element(key, new CacheElementImpl<T>(null, true));
-                setExpired(element);
-                Element oldElement = cache.putIfAbsent(element);
+		String ttl = propertiesService.getProperty(CACHE_TTL, CACHE_TTL_DEFAULT);
+		cacheTTL = Integer.valueOf(ttl);
+		LOG.debug("Using {} = {} seconds", CACHE_TTL, cacheTTL == 0 ? "ETERNAL" : cacheTTL);
 
-                if (oldElement != null) {
-                    element = oldElement;
-                }
-            }
-            boolean isExpired = isExpired(element);
-            CacheElement<T> cacheElement = (CacheElement<T>) element.getObjectValue();
-            cacheElement.setExpired(isExpired);
+		ttl = propertiesService.getProperty(CACHE_DEPENDENCY_TTL, CACHE_TTL_DEFAULT);
+		cacheDependencyTTL = Integer.valueOf(ttl);
+		LOG.debug("Using {} = {} seconds", CACHE_DEPENDENCY_TTL, cacheDependencyTTL == 0 ? "ETERNAL" : cacheDependencyTTL);
 
-            return cacheElement;
-        } else {
-            LOG.debug("Disable cache for Preview Session Token: {}", sessionPreviewToken);
-            return new CacheElementImpl<T>(null, true);
-        }
-    }
+		ttl = propertiesService.getProperty(CACHE_EXPIRED_TTL, CACHE_EXPIRED_TTL_DEFAULT);
+		expiredTTL = Integer.valueOf(ttl);
+		LOG.debug("Using {} = {} seconds", CACHE_EXPIRED_TTL, expiredTTL);
+	}
 
-    /**
-     * Store given item in the cache with a simple time-to-live property.
-     *
-     * @param key          String representing the key to store the payload under
-     * @param cacheElement CacheElement a wrapper around the actual value to store in cache
-     */
-    @Override
-    public <T> void storeInItemCache(String key, CacheElement<T> cacheElement) {
+	/**
+	 * Loads given object from the cache and returns it inside a CacheItem wrapper.
+	 *
+	 * @param key String representing the cache key to retrieve a payload for
+	 * @return CacheElement object wrapping the actual payload. Return object never null, but it can wrap a null
+	 * payload. It can also return an expired (stale) payload, which must be updated.
+	 */
+	@Override public <T> CacheElement<T> loadFromLocalCache (String key) {
+		String sessionPreviewToken = TridionUtils.getSessionPreviewToken();
 
-        if (cache == null) {
-            LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
-            return;
-        }
+		if (sessionPreviewToken == null && cache != null) {
+			Element currentElement = cache.get(key);
 
-        cacheElement.setExpired(false);
-        Element element = new Element(key, cacheElement);
+			if (currentElement == null) {
+				currentElement = new Element(key, new CacheElementImpl<T>(null));
+				setExpired(currentElement, 0);
+				Element oldElement = cache.putIfAbsent(currentElement);
 
-        if (cache.isKeyInCache(key)) {
-            cache.replace(element);
-        } else {
-            cache.put(element);
-        }
-    }
+				if (oldElement != null) {
+					currentElement = oldElement;
+				}
+			}
 
-    /**
-     * Store given item in the cache with a reference to supplied Tridion Item.
-     *
-     * @param key                    String representing the key to store the cacheItem under
-     * @param cacheElement           Object the actual value to store in cache
-     * @param dependingPublicationId int representing the Publication id of the Tridion item the cacheItem depends on
-     * @param dependingItemId        int representing the Item id of the Tridion item the cacheItem depends on
-     */
-    @Override
-    public <T> void storeInItemCache(String key, CacheElement<T> cacheElement, int dependingPublicationId, int dependingItemId) {
-        if (cache == null) {
-            LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
-            return;
-        }
+			CacheElement<T> cacheElement = (CacheElement<T>) currentElement.getObjectValue();
+			String dependencyKey = cacheElement.getDependentKey();
 
-        cacheElement.setExpired(false);
-        Element element = cache.get(key);
+			if (dependencyKey != null) {
+				Element dependencyElement = dependencyCache.get(dependencyKey); // update LRU stats
+				if (dependencyElement == null) { // recover evicted dependent key
+					addDependency(key, dependencyKey);
+				}
+			}
 
-        if (element == null) {
-            cache.put(new Element(key, cacheElement, true));
-        } else {
-            setNotExpired(element);
-        }
+			return cacheElement;
+		} else {
+			LOG.debug("Disable cache for Preview Session Token: {}", sessionPreviewToken);
+			return new CacheElementImpl<T>((T) null, true);
+		}
+	}
 
-        String dependentKey = getKey(dependingPublicationId, dependingItemId);
-        addDependency(key, dependentKey);
-    }
+	/**
+	 * Store given item in the cache with a simple time-to-live property.
+	 *
+	 * @param key          String representing the key to store the payload under
+	 * @param cacheElement CacheElement a wrapper around the actual value to store in cache
+	 */
+	@Override public <T> void storeInItemCache (String key, CacheElement<T> cacheElement) {
+		if (cache == null) {
+			LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
+			return;
+		}
 
-    @Override
-    public void flush() {
-        if (cache == null) {
-            LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
-            return;
-        }
-        LOG.debug("Expire all items in cache");
-        for (Object key : cache.getKeys()) {
-            setExpired(cache.get(key));
-        }
-    }
+		cacheElement.setExpired(false);
+		Element element = new Element(key, cacheElement);
+		element.setTimeToLive(cacheTTL);
 
-    @Override
-    public void invalidate(final String key) {
-        if (cache == null) {
-            LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
-            return;
-        }
-        String fromKey = getKey(key);
-        Element element = cache.get(fromKey);
+		if (cache.isKeyInCache(key)) {
+			cache.replace(element);
+		} else {
+			cache.put(element);
+		}
+	}
 
-        if (element != null) {
-            LOG.debug("Expire key: {} from cache", fromKey);
-            setExpired(element);
-            ConcurrentSkipListSet<String> dependentSet = (ConcurrentSkipListSet<String>) element.getObjectValue();
+	/**
+	 * Store given item in the cache with a reference to supplied Tridion Item.
+	 *
+	 * @param key                    String representing the key to store the cacheItem under
+	 * @param cacheElement           Object the actual value to store in cache
+	 * @param dependingPublicationId int representing the Publication id of the Tridion item the cacheItem depends on
+	 * @param dependingItemId        int representing the Item id of the Tridion item the cacheItem depends on
+	 */
+	@Override public <T> void storeInItemCache (String key, CacheElement<T> cacheElement, int dependingPublicationId, int dependingItemId) {
+		if (cache == null) {
+			LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
+			return;
+		}
 
-            if (dependentSet != null) {
-	            for (String dependentKey : dependentSet) {
-		            LOG.debug("Expire dependent key: {} from cache", dependentKey);
+		cacheElement.setExpired(false);
+		Element element = cache.get(key);
 
-		            Element dependentElement = cache.get(dependentKey);
-		            setExpired(dependentElement);
-	            }
-            }
-        }
-    }
+		if (element == null) {
+			element = new Element(key, cacheElement);
+			cache.put(element);
+		}
+		element.setTimeToLive(cacheDependencyTTL);
 
-    /*
-    Makes the _fromKey_ dependent on _toKey_
-    It adds the _fromKey_ to the list of values that depend on the _toKey_
-     */
-    private void addDependency(String toKey, String fromKey) {
-        if (cache == null) {
-            LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
-            return;
-        }
-        ConcurrentSkipListSet<String> dependentSet = null;
-        Element element = cache.get(fromKey);
+		String dependentKey = getKey(dependingPublicationId, dependingItemId);
+		cacheElement.setDependentKey(dependentKey);
+		addDependency(key, dependentKey);
+		updateTTL(dependencyCache.get(dependentKey));
+	}
 
-        if (element != null) {
-            dependentSet = (ConcurrentSkipListSet<String>) element.getObjectValue();
-            setNotExpired(element);
-        }
+	@Override public void flush () {
+		if (cache == null) {
+			LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
+			return;
+		}
 
-        if (dependentSet == null) {
-            LOG.debug("Add empty dependencies for key: {} to cache", fromKey);
-            dependentSet = new ConcurrentSkipListSet<>();
-            Element dependentElement = new Element(fromKey, dependentSet, true);
+		LOG.info("Expire all items in cache");
+		for (Object key : cache.getKeys()) {
+			setExpired(cache.get(key), 0);
+		}
 
-            Element oldElement = cache.putIfAbsent(dependentElement);
-            if (oldElement != null) {
-                LOG.debug("Found existing dependencies for key: {} in cache", fromKey);
-                dependentSet = (ConcurrentSkipListSet<String>) oldElement.getObjectValue();
-            }
-        }
+		for (Object key : dependencyCache.getKeys()) {
+			setExpired(dependencyCache.get(key), ADJUST_TTL);
+		}
 
-        LOG.debug("Add dependency from key: {} to key: {}", fromKey, toKey);
-        dependentSet.add(toKey);
-    }
+	}
 
-    private boolean isExpired(Element element) {
-        return element == null || element.getTimeToLive() == expiredTTL;
-    }
+	@Override public void invalidate (final String key) {
+		if (dependencyCache == null) {
+			LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
+			return;
+		}
 
-    private void setExpired(Element element) {
-        if (element != null) {
-            element.setTimeToLive(expiredTTL);
-        }
-    }
+		String dependencyKey = getKey(key);
+		Element dependencyElement = dependencyCache.get(dependencyKey);
 
-    private void setNotExpired(Element element) {
-        if (element != null) {
-            element.setEternal(true);
-        }
-    }
+		if (dependencyElement != null) {
+			LOG.info("Expire key: {} from dependency cache", dependencyKey);
+			setExpired(dependencyElement, ADJUST_TTL);
+			ConcurrentSkipListSet<String> cacheSet = ((CacheElement<ConcurrentSkipListSet<String>>) dependencyElement.getObjectValue()).getPayload();
 
-    private static String getKey(Serializable key) {
-        String[] parts = ((String) key).split(":");
-        switch (parts.length) {
-            case 0:
-                return "";
+			if (cacheSet != null) {
+				for (Iterator<String> iterator = cacheSet.iterator(); iterator.hasNext(); ) {
+					String cacheKey = iterator.next();
+					LOG.debug("Expire cache key: {} from cache", cacheKey);
 
-            case 1:
-                return String.format(DEPENDENT_KEY_FORMAT, parts[0], "");
+					Element cacheElement = cache.get(cacheKey);
+					setExpired(cacheElement, 0);
+				}
+			}
+		} else {
+			LOG.info("Attempting to expire key {} but not found in dependency cache", dependencyKey);
+		}
+	}
 
-            default:
-                return String.format(DEPENDENT_KEY_FORMAT, parts[0], parts[1]);
-        }
-    }
+	/*
+	Makes the _fromKey_ dependent on _toKey_
+	It adds the _fromKey_ to the list of values that depend on the _toKey_
+	 */
+	private void addDependency (String cacheKey, String dependencyKey) {
+		if (dependencyCache == null) {
+			LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
+			return;
+		}
 
-    private static String getKey(int publicationId, int itemId) {
-        return String.format(DEPENDENT_KEY_FORMAT, publicationId, itemId);
-    }
+		ConcurrentSkipListSet<String> cacheSet = null;
+		Element dependencyElement = dependencyCache.get(dependencyKey);
+
+		if (dependencyElement != null) {
+			cacheSet = ((CacheElement<ConcurrentSkipListSet<String>>) dependencyElement.getObjectValue()).getPayload();
+			setNotExpired(dependencyElement);
+		}
+
+		if (cacheSet == null) {
+			LOG.debug("Add empty dependencies for key: {} to cache", dependencyKey);
+			cacheSet = new ConcurrentSkipListSet<>();
+
+			CacheElementImpl<ConcurrentSkipListSet<String>> cacheElement = new CacheElementImpl<ConcurrentSkipListSet<String>>(cacheSet);
+			Element newElement = new Element(dependencyKey, cacheElement);
+			newElement.setTimeToLive(cacheDependencyTTL);
+
+			Element oldElement = dependencyCache.putIfAbsent(newElement);
+			if (oldElement != null) {
+				ConcurrentSkipListSet<String> oldCacheSet = ((CacheElement<ConcurrentSkipListSet<String>>) oldElement.getObjectValue()).getPayload();
+				if (oldCacheSet != null) {
+					cacheSet.addAll(oldCacheSet);
+				}
+			}
+		}
+
+		LOG.debug("Add dependency from key: {} to key: {}", dependencyKey, cacheKey);
+		cacheSet.add(cacheKey);
+	}
+
+	public void setExpired (Element element, int adjustTTL) {
+		if (element == null) {
+			return;
+		}
+
+		if (element.getObjectValue() instanceof CacheElement) {
+			CacheElement cacheElement = (CacheElement) element.getObjectValue();
+			if (!cacheElement.isExpired()) {
+				cacheElement.setExpired(true);
+				expireElement(element, adjustTTL);
+			}
+		} else {
+			expireElement(element, adjustTTL);
+		}
+	}
+
+	private boolean isExpired (Element element) {
+		return element == null || element.getTimeToLive() == expiredTTL;
+	}
+
+	private void expireElement (Element element, int adjustTTL) {
+		long lastAccessTime = element.getLastAccessTime();
+		long creationTime = element.getCreationTime();
+
+		// set element eviction to ('now' + expiredTTL) seconds in the future
+		int timeToLive = lastAccessTime == 0 ? expiredTTL : (int) (lastAccessTime - creationTime) / 1000 + expiredTTL;
+		timeToLive += adjustTTL;
+		element.setTimeToLive(timeToLive);
+	}
+
+	/*
+	 * Sets an element from DependencyCache to not expired. Updates its TTL.
+	 */
+	private void setNotExpired (Element dependentElement) {
+		if (dependentElement == null) {
+			return;
+		}
+
+		CacheElement cacheElement = (CacheElement) dependentElement.getObjectValue();
+		if (cacheElement.isExpired()) {
+			cacheElement.setExpired(false);
+			updateTTL(dependentElement);
+		}
+	}
+
+	/*
+	 * Update TTL of element from DependencyCache to 'now' + cacheDependencyTTL + adjustTTL
+	 */
+	private void updateTTL (Element dependentElement) {
+		if (dependentElement == null) {
+			return;
+		}
+
+		long lastAccessTime = dependentElement.getLastAccessTime();
+		long creationTime = dependentElement.getCreationTime();
+
+		int timeToLive = lastAccessTime == 0 ? cacheDependencyTTL : (int) (lastAccessTime - creationTime) / 1000 + cacheDependencyTTL;
+		timeToLive += ADJUST_TTL;
+		dependentElement.setTimeToLive(timeToLive);
+	}
+
+	private static String getKey (Serializable key) {
+		String[] parts = ((String) key).split(":");
+		switch (parts.length) {
+			case 0:
+				return "";
+
+			case 1:
+				return String.format(DEPENDENT_KEY_FORMAT, parts[0], "");
+
+			default:
+				return String.format(DEPENDENT_KEY_FORMAT, parts[0], parts[1]);
+		}
+	}
+
+	private static String getKey (int publicationId, int itemId) {
+		return String.format(DEPENDENT_KEY_FORMAT, publicationId, itemId);
+	}
 }

@@ -17,4 +17,8 @@ public interface CacheElement<T> {
 	public boolean isExpired();
 
 	public void setExpired(boolean update);
+
+	public String getDependentKey();
+
+	void setDependentKey(String dependentKey);
 }

@@ -1,8 +1,6 @@
 package org.dd4t.core.caching.impl;
 
 import org.dd4t.core.caching.CacheInvalidator;
-import org.dd4t.core.factories.impl.PropertiesServiceFactory;
-import org.dd4t.core.services.PropertiesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class JMSCacheMonitor {
 
     private static final Logger LOG = LoggerFactory.getLogger(JMSCacheMonitor.class);
-    private static final JMSCacheMonitor INSTANCE = new JMSCacheMonitor();
-    private static final String MONITOR_SERVICE_INTERVAL = "monitor.service.interval";
-    private static final String MONITOR_SERVICE_INTERVAL_DEFAULT = "30"; // seconds
-    private final int monitorServiceInterval; // milliseconds
+    private int monitorServiceInterval = 30000; // milliseconds
 
-    @Autowired
+	@Autowired
     private CacheInvalidator cacheInvalidator;
-    private MQServerStatus serverStatus = MQServerStatus.DOWN; // assume it's down
+    private MQServerStatus serverStatus = MQServerStatus.UP; // assume it's down
 
     private final Runnable monitor = new Runnable() {
         @Override
@@ -55,11 +50,7 @@ public class JMSCacheMonitor {
     private JMSCacheMonitor () {
         LOG.debug("Create new instance");
 
-        PropertiesServiceFactory propertiesServiceFactory = PropertiesServiceFactory.getInstance();
-        PropertiesService propertiesService = propertiesServiceFactory.getPropertiesService();
-        String interval = propertiesService.getProperty(MONITOR_SERVICE_INTERVAL, MONITOR_SERVICE_INTERVAL_DEFAULT);
-        monitorServiceInterval = Integer.parseInt(interval) * 1000;
-        LOG.debug("Using {} = {} seconds", MONITOR_SERVICE_INTERVAL, monitorServiceInterval / 1000);
+        LOG.debug("Using Monitor interval (or cache refresh time when JMS is down) = {} seconds", monitorServiceInterval, monitorServiceInterval / 1000);
 
         LOG.debug("Start cache monitor thread");
         thread = new Thread(monitor);
@@ -67,10 +58,14 @@ public class JMSCacheMonitor {
         thread.start();
     }
 
-    public static JMSCacheMonitor getInstance() {
-        return INSTANCE;
-    }
+    public int getMonitorServiceInterval() {
+		return monitorServiceInterval;
+	}
 
+	public void setMonitorServiceInterval(int monitorServiceInterval) {
+		this.monitorServiceInterval = monitorServiceInterval;
+	}
+	
     public boolean isMQServerUp() {
         return serverStatus == MQServerStatus.UP;
     }

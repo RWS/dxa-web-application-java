@@ -92,6 +92,8 @@
     <!-- DD4T Controllers -->
     <bean id="pageController" scope="singleton" class="org.dd4t.test.web.controller.SpringPageController">
         <property name="pageViewPath" value="pages/"/>
+        <property name="publicationResolver" ref="publicationResolver" />
+        <property name="pageFactory" ref="pageFactory"/>
     </bean>
 
     <bean id="componentPresentationController" scope="singleton" class="org.dd4t.test.web.controller.SpringComponentPresentationController">

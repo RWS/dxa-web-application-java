@@ -15,4 +15,8 @@
            timeToIdleSeconds="60"
            memoryStoreEvictionPolicy="LRU">
     </cache>
+    <cache name="Dependency"
+           maxEntriesLocalHeap="50000"
+           memoryStoreEvictionPolicy="LRU">
+    </cache>
 </ehcache>

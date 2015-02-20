@@ -11,6 +11,7 @@
     <modules>
         <module>dd4t-api</module>
         <module>dd4t-core</module>
+        <module>dd4t-compatibility</module>		
         <module>dd4t-databind</module>
         <module>dd4t-providers</module>
         <module>dd4t-providers-rs</module>

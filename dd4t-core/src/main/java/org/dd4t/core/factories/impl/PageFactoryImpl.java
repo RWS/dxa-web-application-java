@@ -68,7 +68,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 					try {
 						page = deserialize(pageSource, PageImpl.class);
 						LOG.debug("Running pre caching processors");
-						this.executeProcessors(page, RunPhase.BEFORE_CACHING);
+						this.executeProcessors(page, RunPhase.BEFORE_CACHING,getRequestContext());
 						cacheElement.setPayload(page);
 						final TCMURI tcmUri = new TCMURI(uri);
 						cacheProvider.storeInItemCache(uri, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
@@ -76,7 +76,6 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 					} catch (ParseException e) {
 						throw new SerializationException(e);
 					}
-
 				} else {
 					LOG.debug("Return a page with uri: {} from cache", uri);
 					page = cacheElement.getPayload();
@@ -89,7 +88,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 		if (page != null) {
 			LOG.debug("Running Post caching Processors");
 			try {
-				this.executeProcessors(page, RunPhase.AFTER_CACHING);
+				this.executeProcessors(page, RunPhase.AFTER_CACHING,getRequestContext());
 			} catch (ProcessorException e) {
 				LOG.error(e.getLocalizedMessage(), e);
 			}
@@ -124,14 +123,12 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 						cacheProvider.storeInItemCache(cacheKey, cacheElement);
 						throw new ItemNotFoundException("Page with url: " + url + " not found.");
 					}
-
+					page = deserialize(pageSource, PageImpl.class);
+					cacheElement.setPayload(page);
 					try {
-						page = deserialize(pageSource, PageImpl.class);
-						cacheElement.setPayload(page);
-
 						final TCMURI tcmUri = new TCMURI(page.getId());
 						LOG.debug("Running pre caching processors");
-						this.executeProcessors(page, RunPhase.BEFORE_CACHING);
+						this.executeProcessors(page, RunPhase.BEFORE_CACHING,getRequestContext());
 						cacheProvider.storeInItemCache(cacheKey, cacheElement, publicationId, tcmUri.getItemId());
 						LOG.debug("Added page with uri: {} and publicationId: {} to cache", url, publicationId);
 					} catch (ParseException e) {
@@ -150,7 +147,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 		if (page != null) {
 			LOG.debug("Running Post caching Processors");
 			try {
-				this.executeProcessors(page, RunPhase.AFTER_CACHING);
+				this.executeProcessors(page, RunPhase.AFTER_CACHING,getRequestContext());
 			} catch (ProcessorException e) {
 				LOG.error(e.getLocalizedMessage(), e);
 				throw e;

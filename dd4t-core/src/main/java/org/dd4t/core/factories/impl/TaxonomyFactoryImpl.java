@@ -159,10 +159,6 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         return taxonomy;
     }
 
-    public void setCacheProvider(CacheProvider cacheProvider) {
-        this.cacheProvider = cacheProvider;
-    }
-
     public void setTaxonomyProvider(TaxonomyProvider taxonomyProvider) {
         this.taxonomyProvider = taxonomyProvider;
     }

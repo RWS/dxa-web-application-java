@@ -28,7 +28,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 */
 	@Override public int getPublicationId () {
 		try {
-			final HttpServletRequest request = HttpUtils.currentRequest();
+			final HttpServletRequest request = HttpUtils.getCurrentRequest();
 			return publicationProvider.discoverPublicationId(request.getRequestURL().toString());
 		} catch (SerializationException e) {
 			LOG.error(e.getLocalizedMessage(),e);

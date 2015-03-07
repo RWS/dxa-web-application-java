@@ -2,8 +2,6 @@ package org.dd4t.core.util;
 
 /**
  * dd4t-2
- *
- * @author R. Kempees
  */
 
 import org.apache.commons.io.FilenameUtils;
@@ -43,7 +41,7 @@ public final class HttpUtils {
 	}
 
 	public static ServletContext getCurrentServletContext() {
-		return currentRequest().getServletContext();
+		return getCurrentRequest().getServletContext();
 	}
 
 	public static String getOriginalUri(final HttpServletRequest request) {
@@ -81,7 +79,7 @@ public final class HttpUtils {
 		return String.format("%s://%s:%d%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), contextPath, location);
 	}
 
-	public static HttpServletRequest currentRequest() {
+	public static HttpServletRequest getCurrentRequest () {
 		return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 	}
 
@@ -214,7 +212,7 @@ public final class HttpUtils {
 	}
 
 	public static Cookie findCookieByName(String name) {
-		HttpServletRequest request = currentRequest();
+		HttpServletRequest request = getCurrentRequest();
 		if (request == null) {
 			return null;
 		}

@@ -50,7 +50,7 @@ public class ComponentUtils {
 	}
 
 	public static BaseViewModel getViewModel(String modelName) {
-		final Map<String,BaseViewModel> viewModels = getViewModels(HttpUtils.currentRequest());
+		final Map<String,BaseViewModel> viewModels = getViewModels(HttpUtils.getCurrentRequest());
 		if (viewModels != null && !viewModels.isEmpty()) {
 			return viewModels.get(modelName);
 		}
@@ -59,6 +59,6 @@ public class ComponentUtils {
 
 
 	public static Object getViewModels () {
-		return getViewModels(HttpUtils.currentRequest());
+		return getViewModels(HttpUtils.getCurrentRequest());
 	}
 }

@@ -92,7 +92,7 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 					componentPresentation = DataBindFactory.buildDynamicComponentPresentation(componentPresentation, ComponentImpl.class);
 
 					LOG.debug("Running pre caching processors");
-					this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING);
+					this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING, getRequestContext());
 					cacheElement.setPayload(componentPresentation);
 					cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);
 					LOG.debug("Added component with uri: {} and template: {} to cache", componentURI, templateURI);
@@ -110,7 +110,7 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 		if (componentPresentation != null) {
 			LOG.debug("Running Post caching Processors");
 			try {
-				this.executeProcessors(componentPresentation.getComponent(), RunPhase.AFTER_CACHING);
+				this.executeProcessors(componentPresentation.getComponent(), RunPhase.AFTER_CACHING,getRequestContext());
 			} catch (ProcessorException e) {
 				LOG.error(e.getLocalizedMessage(), e);
 			}

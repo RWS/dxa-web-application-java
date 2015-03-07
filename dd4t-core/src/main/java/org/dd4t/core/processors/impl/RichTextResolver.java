@@ -5,6 +5,7 @@ import org.dd4t.contentmodel.impl.EmbeddedField;
 import org.dd4t.contentmodel.impl.XhtmlField;
 import org.dd4t.core.processors.Processor;
 import org.dd4t.core.exceptions.ProcessorException;
+import org.dd4t.core.request.RequestContext;
 import org.dd4t.core.util.XSLTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class RichTextResolver extends BaseProcessor implements Processor {
 	 * @param item    the to resolve the links
 	 */
 	@Override
-	public void execute (Item item) throws ProcessorException {
+	public void execute (Item item, RequestContext context) throws ProcessorException {
 		if (item instanceof Page) {
 			try {
 				resolvePage((Page)item);

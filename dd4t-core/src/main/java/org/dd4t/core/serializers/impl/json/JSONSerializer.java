@@ -14,7 +14,7 @@ import java.io.IOException;
 /**
  * JSONSerializer
  *
- * @Author R. Kempees
+ * @author R. Kempees
  */
 public class JSONSerializer implements Serializer {
 

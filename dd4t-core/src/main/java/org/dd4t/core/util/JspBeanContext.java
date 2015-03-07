@@ -3,11 +3,6 @@ package org.dd4t.core.util;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
-/**
- * dd4t-2
- *
- * @author R. Kempees
- */
 public final class JspBeanContext {
 
 	private JspBeanContext() {
@@ -26,6 +21,6 @@ public final class JspBeanContext {
 	}
 
 	private static WebApplicationContext getWebApplicationContext() {
-		return RequestContextUtils.getWebApplicationContext(HttpUtils.currentRequest());
+		return RequestContextUtils.getWebApplicationContext(HttpUtils.getCurrentRequest());
 	}
 }

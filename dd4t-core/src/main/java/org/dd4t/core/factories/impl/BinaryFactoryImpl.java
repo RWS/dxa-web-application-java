@@ -5,27 +5,20 @@ import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.BinaryFactory;
-import org.dd4t.core.processors.Processor;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.BinaryProvider;
-import org.dd4t.providers.CacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author R.S. Kempees
  */
-public class BinaryFactoryImpl implements BinaryFactory {
+public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(BinaryFactoryImpl.class);
-    // Singleton implementation
     private static final BinaryFactoryImpl INSTANCE = new BinaryFactoryImpl();
-
-    private CacheProvider cacheProvider;
     private BinaryProvider binaryProvider;
 
     private BinaryFactoryImpl() {
@@ -122,22 +115,6 @@ public class BinaryFactoryImpl implements BinaryFactory {
         }
 
         return binary;
-    }
-
-    @Override
-    public List<Processor> getProcessors () {
-        // TODO: Not implemented yet
-        return new ArrayList<>();
-    }
-
-    @Override
-    public void setProcessors (final List<Processor> processors) {
-        // TODO: Not implemented yet
-    }
-
-    @Override
-    public void setCacheProvider(final CacheProvider cacheAgent) {
-        cacheProvider = cacheAgent;
     }
 
     public void setBinaryProvider(final BinaryProvider binaryProvider) {

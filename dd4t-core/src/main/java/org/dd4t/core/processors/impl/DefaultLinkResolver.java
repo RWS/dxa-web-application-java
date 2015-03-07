@@ -9,6 +9,7 @@ import org.dd4t.contentmodel.impl.XhtmlField;
 import org.dd4t.core.factories.impl.LinkResolverFactory;
 import org.dd4t.core.exceptions.ProcessorException;
 import org.dd4t.core.processors.LinkResolverProcessor;
+import org.dd4t.core.request.RequestContext;
 import org.dd4t.core.resolvers.LinkResolver;
 import org.dd4t.core.util.TridionUtils;
 import org.dd4t.core.util.XSLTransformer;
@@ -48,7 +49,7 @@ public class DefaultLinkResolver extends BaseProcessor implements LinkResolverPr
      * @param item    the to resolve the links
      */
     @Override
-    public void execute(Item item) throws ProcessorException {
+    public void execute(Item item, RequestContext context) throws ProcessorException {
         linkResolver.setContextPath(contextPath);
 
         if (item instanceof Page) {

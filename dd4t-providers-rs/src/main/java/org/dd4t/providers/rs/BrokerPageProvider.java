@@ -14,7 +14,6 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
-import java.io.IOException;
 import java.text.ParseException;
 
 /**
@@ -35,7 +34,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 		LOG.debug("Create new instance");
 	}
 
-	@Override public String getPageContentById (final int id, final int publication) throws IOException, ItemNotFoundException {
+	@Override public String getPageContentById (final int id, final int publication) throws ItemNotFoundException {
 
 		TCMURI pageUri = new TCMURI(publication, id, 64, -1);
 		try {
@@ -97,7 +96,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @throws SerializationException if response from service does not represent a serialized Page
 	 */
 	@Override
-	public String getPageContentById (final String tcmUri) throws ItemNotFoundException, SerializationException, IOException, ParseException {
+	public String getPageContentById (final String tcmUri) throws ItemNotFoundException, SerializationException, ParseException {
 		long time = System.currentTimeMillis();
 		LOG.debug("Fetching page by uri: {}", tcmUri);
 

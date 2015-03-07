@@ -15,7 +15,7 @@
  */
 package org.dd4t.core.exceptions;
 
-public class ProcessorException extends Exception {
+public class ProcessorException extends FactoryException {
 
     private static final long serialVersionUID = -1823501094129230885L;
 

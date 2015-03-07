@@ -139,7 +139,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 			// TODO: this is a hack
 			// Component Template Custom Meta is not published with
 			// the component template, so we cannot read the viewName.
-			// Therefore, the only supported way for now is use the lowercased
+			// Therefore, the only supported way for now is use the lower cased
 			// template name as view model name...
 
 			// We should actually fix this in the Generate Dynamic Component TBB to also

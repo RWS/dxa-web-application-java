@@ -7,7 +7,6 @@ import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.ProcessorException;
-import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.processors.RunPhase;
 import org.dd4t.core.util.TCMURI;
@@ -50,20 +49,21 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 	 * @return the component
 	 * @throws org.dd4t.core.exceptions.FactoryException if no item found NotAuthorizedException if the user is not authorized to get the component
 	 */
-	@Override public ComponentPresentation getComponentPresentation (String componentURI, String templateURI) throws FactoryException {
+	@Override
+	public ComponentPresentation getComponentPresentation (String componentURI, String templateURI) throws FactoryException {
 		LOG.debug("Enter getComponentPresentation with componentURI: {} and templateURI: {}", componentURI, templateURI);
 
 		if (StringUtils.isEmpty(templateURI)) {
-			throw new FactoryException("Provide a CT view or TCMURI");
+			throw new ItemNotFoundException("Provide a CT view or TCMURI");
 		}
 
-		TCMURI componentTcmUri;
-		TCMURI templateTcmUri;
+		final TCMURI componentTcmUri;
+		final TCMURI templateTcmUri;
 		try {
 			componentTcmUri = new TCMURI(componentURI);
 			templateTcmUri = new TCMURI(templateURI);
 		} catch (ParseException e) {
-			throw new FactoryException(e);
+			throw new ItemNotFoundException(e);
 		}
 		componentURI = componentTcmUri.toString();
 		int publicationId = componentTcmUri.getPublicationId();
@@ -79,30 +79,24 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 			synchronized (cacheElement) {
 				if (cacheElement.isExpired()) {
 					cacheElement.setExpired(false);
+					componentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
 
-					try {
-						componentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
+					if (componentPresentation == null) {
 
-						if (componentPresentation == null) {
-
-							cacheElement.setPayload(null);
-							cacheProvider.storeInItemCache(key, cacheElement);
-							throw new FactoryException(String.format("Could not find DCP with componentURI: %s and templateURI: %s", componentURI, templateURI));
-						}
-
-						// Building STMs here.
-						componentPresentation = DataBindFactory.buildDynamicComponentPresentation(componentPresentation, ComponentImpl.class);
-
-						LOG.debug("Running pre caching processors");
-						this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING);
-						cacheElement.setPayload(componentPresentation);
-						cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);
-						LOG.debug("Added component with uri: {} and template: {} to cache", componentURI, templateURI);
-					} catch (ItemNotFoundException | ProcessorException | SerializationException e) {
 						cacheElement.setPayload(null);
 						cacheProvider.storeInItemCache(key, cacheElement);
-						throw new FactoryException(e);
+						throw new ItemNotFoundException(String.format("Could not find DCP with componentURI: %s and templateURI: %s", componentURI, templateURI));
 					}
+
+					// Building STMs here.
+					componentPresentation = DataBindFactory.buildDynamicComponentPresentation(componentPresentation, ComponentImpl.class);
+
+					LOG.debug("Running pre caching processors");
+					this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING);
+					cacheElement.setPayload(componentPresentation);
+					cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);
+					LOG.debug("Added component with uri: {} and template: {} to cache", componentURI, templateURI);
+
 				} else {
 					LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, templateURI);
 					componentPresentation = cacheElement.getPayload();

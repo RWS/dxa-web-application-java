@@ -84,7 +84,6 @@ public class UrlPublicationResolver implements PublicationResolver {
 		}
 		String publicationUrl = publicationProvider.discoverPublicationUrl(getPublicationId());
 
-
 		if (!url.startsWith(publicationUrl)) {
 			return String.format("%s%s", publicationUrl, url.startsWith("/") ? url : "/" + url);
 		}

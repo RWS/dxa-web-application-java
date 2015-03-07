@@ -8,7 +8,7 @@ import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.exceptions.FactoryException;
-import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.RenderException;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.databind.util.DataBindConstants;
 import org.slf4j.Logger;
@@ -23,7 +23,10 @@ import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -216,7 +219,7 @@ public class RenderUtils {
 	 * @param componentPresentations , the list with component presentations
 	 * @return as string with all component presentations rendered and concatenated.
 	 */
-	public static String renderComponentPresentations (final HttpServletRequest request, final HttpServletResponse response, final List<ComponentPresentation> componentPresentations) throws ItemNotFoundException, FactoryException {
+	public static String renderComponentPresentations (final HttpServletRequest request, final HttpServletResponse response, final List<ComponentPresentation> componentPresentations) throws FactoryException {
 		final StringBuilder output = new StringBuilder();
 
 		if (componentPresentations == null) {
@@ -304,7 +307,7 @@ public class RenderUtils {
 			return dispatchBufferedRequest(request, response, url);
 		} catch (IOException | ParseException | ServletException e) {
 			LOG.error(e.getMessage(), e);
-			throw new FactoryException(e);
+			throw new RenderException(e);
 		} finally {
 			ComponentUtils.removeComponentPresentation(request);
 			removeViewModelsFromRequest(request);

@@ -1,6 +1,6 @@
 package org.dd4t.core.exceptions;
 
-public class ItemNotFoundException extends Exception {
+public class ItemNotFoundException extends FactoryException {
 
     private static final long serialVersionUID = 8243724759254216595L;
 

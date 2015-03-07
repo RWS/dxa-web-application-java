@@ -3,7 +3,7 @@ package org.dd4t.core.util;
 /**
  * dd4t-2
  *
- * @author R. Kempees
+ * @author Q. Slings, R. Kempees
  */
 public class TridionPublicationDescriptor implements PublicationDescriptor {
 	private int id;

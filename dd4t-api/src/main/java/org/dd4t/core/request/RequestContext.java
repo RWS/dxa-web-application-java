@@ -1,10 +1,8 @@
 package org.dd4t.core.request;
 
-import org.dd4t.core.exceptions.NotAuthenticatedException;
-
-import javax.servlet.http.HttpServletRequest;
-
 /**
+ *
+ * TODO: update comment - CWA is sooo old ;)
  * Bean Interface describes the request which is given to CWA for retrieval. It will at the
  * minimum contain a reference to the actual servletrequest (with references to request parameters,
  * headers, etc), but is here mostly to be expanded in implementations.
@@ -15,10 +13,8 @@ import javax.servlet.http.HttpServletRequest;
  *
  * @author rooudsho
  */
-@Deprecated
+
 public interface RequestContext {
-
-    public HttpServletRequest getServletRequest();
-
-    public boolean isUserInRole(String role) throws NotAuthenticatedException;
+	// TODO: What do you think of renaming this to getRequest?
+    public Object getServletRequest();
 }

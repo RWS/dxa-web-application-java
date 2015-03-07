@@ -15,7 +15,6 @@ import org.dd4t.core.util.RenderUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -45,17 +45,17 @@ public abstract class AbstractPageController {
 	private static final TimeZone GMT = TimeZone.getTimeZone("GMT");
 	private static final String LAST_MODIFIED = "Last-Modified";
 	private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
-	@Autowired
-	private PageFactoryImpl pageFactory;
-	@Autowired
-	private PublicationResolver publicationResolver;
 
+	// Set through Spring
+	protected PageFactoryImpl pageFactory;
+	protected PublicationResolver publicationResolver;
 	private String pageViewPath = "";
-
 	/**
 	 * Boolean indicating if context path on the page URL should be removed, defaults to true
 	 */
 	private boolean removeContextPath = false;
+
+
 
 	/**
 	 * All page requests are handled by this method. The page meta XML is
@@ -65,11 +65,17 @@ public abstract class AbstractPageController {
 	@RequestMapping(value = {"/**/*.html", "/**/*.txt", "/**/*.xml"}, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String showPage(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		final String urlToFetch = HttpUtils.appendDefaultPageIfRequired(HttpUtils.getCurrentURL(request));
-
-		String fullUrl = request.getRequestURL().toString();
-
 		String url = adjustLocalErrorUrl(request, urlToFetch);
 		url = HttpUtils.normalizeUrl(url);
+		if (request.getDispatcherType() == DispatcherType.ERROR) {
+			Enumeration<String> headers = request.getHeaderNames();
+			while (headers.hasMoreElements()) {
+				String header = headers.nextElement();
+				LOG.debug("{}:{}",header,request.getHeader(header));
+			}
+		}
+
+		String publicationUrl = publicationResolver.getPublicationUrl();
 
 		LOG.debug(">> {} page {} with dispatcher type {}", new Object[]{request.getMethod(), url, request.getDispatcherType().toString()});
 		try {
@@ -89,18 +95,22 @@ public abstract class AbstractPageController {
 			model.addAttribute(Constants.PAGE_REQUEST_URI, HttpUtils.appendDefaultPageIfRequired(request.getRequestURI()));
 
 			response.setContentType(HttpUtils.getContentTypeByExtension(url));
-			String pageView = getPageViewName(pageModel);
-			return pageView;
+			return getPageViewName(pageModel);
 
-		} catch (ItemNotFoundException | FactoryException e) {
+		} catch (ItemNotFoundException e) {
 
 			LOG.warn("Page with url '{}' could not be found.", url);
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+		} catch (FactoryException e) {
+			if (e.getCause() instanceof ItemNotFoundException) {
+				LOG.warn("Page with url '{}' could not be found.", url);
+				response.setHeader("X-PU",publicationUrl);
+				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+			} else {
+				LOG.error("Factory Error.", e);
+				response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+			}
 		}
-//		} catch (Exception e) {
-//			LOG.error("Generic Error.", e);
-//			response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-//		}
 
 		return null;
 	}
@@ -149,6 +159,23 @@ public abstract class AbstractPageController {
 
 	public void setRemoveContextPath(boolean removeContextPath) {
 		this.removeContextPath = removeContextPath;
+	}
+
+
+	public PageFactoryImpl getPageFactory () {
+		return pageFactory;
+	}
+
+	public void setPageFactory (final PageFactoryImpl pageFactory) {
+		this.pageFactory = pageFactory;
+	}
+
+	public PublicationResolver getPublicationResolver () {
+		return publicationResolver;
+	}
+
+	public void setPublicationResolver (final PublicationResolver publicationResolver) {
+		this.publicationResolver = publicationResolver;
 	}
 
 	/**

@@ -1,9 +1,12 @@
 package org.dd4t.core.processors.impl;
 
-import org.dd4t.contentmodel.*;
+import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.Item;
+import org.dd4t.contentmodel.Page;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.processors.Processor;
+import org.dd4t.core.request.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +22,7 @@ public class DcpResolver extends BaseProcessor implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(DcpResolver.class);
 
     @Override
-    public void execute(Item item) {
+    public void execute(Item item, RequestContext context) {
         LOG.debug("Processing item: {} ", item);
         if (item instanceof Page) {
             final Page page = (Page) item;

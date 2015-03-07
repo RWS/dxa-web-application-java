@@ -36,7 +36,7 @@ public class TridionUtils {
     Looks up the Preview Session token from the cookie in the request
     */
     public static String getSessionPreviewToken() {
-        return getSessionPreviewToken(getCurrentRequest());
+        return getSessionPreviewToken(HttpUtils.getCurrentRequest());
     }
 
     /*
@@ -47,7 +47,7 @@ public class TridionUtils {
             return null;
         }
 
-        return getSessionPreviewToken(context.getServletRequest());
+        return getSessionPreviewToken((HttpServletRequest) context.getServletRequest());
     }
 
     /*
@@ -68,10 +68,6 @@ public class TridionUtils {
         }
 
         return null;
-    }
-
-    public static HttpServletRequest getCurrentRequest() {
-        return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
     }
 
     public static String getRootElementName(final Component component) {

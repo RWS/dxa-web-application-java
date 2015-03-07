@@ -36,10 +36,6 @@ import java.util.List;
 /**
  * Provides access to Page content and metadata from Content Delivery database. Access to page content is not cached,
  * so as such much be cached externally. Calls to Page meta are cached in the Tridion object cache.
- *
- * TODO: Logging, use this class only from the enum TridionBrokerPageProvider
- * TODO: Implement caching
- * TODO: Singleton through enum
  */
 public class BrokerPageProvider extends BaseBrokerProvider implements PageProvider {
 
@@ -51,12 +47,10 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @param id          int representing the page item id
 	 * @param publication int representing the Publication id of the page
 	 * @return String representing the content of the Page
-	 * @throws StorageException      if something went wrong while accessing the CD DB
-	 * @throws IOException           if the character stream cannot be read
 	 * @throws ItemNotFoundException if the requested page does not exist
 	 */
 	@Override
-	public String getPageContentById (int id, int publication) throws IOException, ItemNotFoundException, SerializationException {
+	public String getPageContentById (int id, int publication) throws ItemNotFoundException, SerializationException {
 
 		CharacterData data = null;
 		try {
@@ -69,8 +63,11 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 		if (data == null) {
 			throw new ItemNotFoundException("Unable to find page by id '" + id + "' and publication '" + publication + "'.");
 		}
-		String result = decodeAndDecompressContent(IOUtils.convertStreamToString(data.getInputStream()));
-		return result;
+		try {
+			return decodeAndDecompressContent(IOUtils.convertStreamToString(data.getInputStream()));
+		} catch (IOException e) {
+			throw new SerializationException(e);
+		}
 	}
 
 	/**
@@ -79,17 +76,16 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @param url         String representing the path part of the page URL
 	 * @param publication int representing the Publication id of the page
 	 * @return String representing the content of the Page
-	 * @throws StorageException      if something went wrong while accessing the CD DB
 	 * @throws IOException           if the character stream cannot be read
 	 * @throws ItemNotFoundException if the requested page does not exist
 	 */
 	@Override
-	public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, IOException, SerializationException {
+	public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, SerializationException {
 		PageMeta meta = getPageMetaByURL(url, publication);
 		return getPageContentById(meta.getItemId(), meta.getPublicationId());
 	}
 
-	@Override public String getPageContentById (final String tcmUri) throws ItemNotFoundException, ParseException, SerializationException, IOException {
+	@Override public String getPageContentById (final String tcmUri) throws ItemNotFoundException, ParseException, SerializationException {
 		TCMURI uri = new TCMURI(tcmUri);
 		return getPageContentById(uri.getItemId(),uri.getPublicationId());
 	}
@@ -100,7 +96,6 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @param id          int representing the page item id
 	 * @param publication int representing the Publication id of the page
 	 * @return PageMeta representing the metadata of the Page
-	 * @throws StorageException      if something went wrong while accessing the CD DB
 	 * @throws ItemNotFoundException if the requested page does not exist
 	 */
 	public PageMeta getPageMetaById(int id, int publication) throws ItemNotFoundException {
@@ -126,7 +121,6 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @param url         String representing the path part of the page URL
 	 * @param publication int representing the Publication id of the page
 	 * @return PageMeta representing the metadata of the Page
-	 * @throws StorageException      if something went wrong while accessing the CD DB
 	 * @throws ItemNotFoundException if the requested page does not exist
 	 */
 	public PageMeta getPageMetaByURL(String url, int publication) throws ItemNotFoundException {
@@ -152,7 +146,6 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @param publication int representing the Publication id of the page
 	 * @return String representing the list of URLs (one URL per line)
 	 * @throws ItemNotFoundException if the requested page does not exist
-	 * @throws StorageException      if something went wrong while accessing the CD DB
 	 */
 	@Override
 	public String getPageListByPublicationId(int publication) throws ItemNotFoundException {
@@ -171,7 +164,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 
 		StringBuilder result = new StringBuilder();
 		for (ItemMeta itemMeta : itemMetas) {
-			result.append(((PageMeta) itemMeta).getUrl() + "\r\n");
+			result.append(((PageMeta) itemMeta).getUrl()).append("\r\n");
 		}
 
 		return result.toString();

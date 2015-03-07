@@ -22,7 +22,7 @@ public interface PageProvider extends BaseProvider {
      * @throws ItemNotFoundException  if said page cannot be found
      * @throws SerializationException if response from service does not represent a serialized Page
      */
-    public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, SerializationException, IOException;
+    public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, SerializationException;
 
     /**
      * Retrieves a Page by its TCMURI. It returns JSON representing a Page model object.
@@ -33,7 +33,7 @@ public interface PageProvider extends BaseProvider {
      * @throws ParseException         if given parameter does not represent a TCMURI
      * @throws SerializationException if response from service does not represent a serialized Page
      */
-    public String getPageContentById(String tcmUri) throws ItemNotFoundException, ParseException, SerializationException, IOException;
+    public String getPageContentById(String tcmUri) throws ItemNotFoundException, ParseException, SerializationException;
 
 	/**
 	 * Retrieves a list of published page URLs as one String.

@@ -5,7 +5,7 @@ package org.dd4t.core.exceptions;
  *
  * @author R. Kempees
  */
-public class FactoryException extends Exception {
+public abstract class FactoryException extends Exception {
 
 	private static final long serialVersionUID = -1540633460800491579L;
 

@@ -3,7 +3,6 @@ package org.dd4t.core.factories.impl;
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
-import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.BinaryFactory;
 import org.dd4t.core.processors.Processor;
@@ -62,10 +61,10 @@ public class BinaryFactoryImpl implements BinaryFactory {
 		                    TCMURI binaryURI = new TCMURI(tcmUri);
 		                    cacheProvider.storeInItemCache(tcmUri, cacheElement, binaryURI.getPublicationId(), binaryURI.getItemId());
                         LOG.debug("Added binary with uri: {} to cache", tcmUri);
-                    } catch (ItemNotFoundException |SerializationException | ParseException e) {
+                    } catch (ParseException e) {
                         cacheElement.setPayload(null);
                         cacheProvider.storeInItemCache(tcmUri, cacheElement);
-                        throw new FactoryException(e);
+                        throw new SerializationException(e);
                     }
                 } else {
                     LOG.debug("Return a binary with uri: {} from cache", tcmUri);
@@ -109,8 +108,8 @@ public class BinaryFactoryImpl implements BinaryFactory {
                         TCMURI tcmUri = new TCMURI(binary.getId());
                         cacheProvider.storeInItemCache(key, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
                         LOG.debug("Added binary with url: {} to cache", url);
-                    } catch (ItemNotFoundException |SerializationException |ParseException e) {
-                        throw new FactoryException(e);
+                    } catch (ParseException e) {
+                        throw new SerializationException(e);
                     }
                 } else {
                     LOG.debug("Return a binary with url: {} from cache", url);

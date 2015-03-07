@@ -3,7 +3,6 @@ package org.dd4t.mvc.tags;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.core.exceptions.FactoryException;
-import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.RenderUtils;
 import org.slf4j.Logger;
@@ -73,7 +72,7 @@ public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
 
 			try {
 				out = RenderUtils.renderComponentPresentations(request, response, filteredComponentPresentations);
-			} catch (ItemNotFoundException | FactoryException e) {
+			} catch (FactoryException e) {
 				LOG.error(e.getLocalizedMessage(),e);
 			}
 

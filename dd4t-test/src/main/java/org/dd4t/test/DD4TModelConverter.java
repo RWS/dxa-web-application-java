@@ -77,10 +77,10 @@ public class DD4TModelConverter {
 	// TODO: OrderOnPage always is 0 in the JSon
 
 	private static void deserializeJson (String content) throws IOException, SerializationException {
-		//String content = decodeAndDecompressContent(test3);//test4;//
+		String content1 = decodeAndDecompressContent(test3);//test4;//
 
-		PageImpl page = DataBindFactory.buildPage(content, PageImpl.class);
-		System.out.println(content);
+		PageImpl page = DataBindFactory.buildPage(content1, PageImpl.class);
+		System.out.println(content1);
 		System.out.println("Page Title: " + page.getTitle());
 	}
 

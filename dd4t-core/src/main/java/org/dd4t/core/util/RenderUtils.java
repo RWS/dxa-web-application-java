@@ -208,7 +208,7 @@ public class RenderUtils {
 		if (value == null) {
 			return "";
 		}
-		return value.replaceAll("[^a-zA-Z0-9]", "-").replaceAll("([-]+)", "-").toLowerCase();
+		return value.replaceAll("[^a-zA-Z0-9]", "_").replaceAll("([_]+)", "_").toLowerCase();
 	}
 
 	/**

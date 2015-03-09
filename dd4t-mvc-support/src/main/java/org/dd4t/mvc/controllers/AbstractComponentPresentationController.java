@@ -66,7 +66,7 @@ public class AbstractComponentPresentationController {
 		int publicationId = PublicationResolverFactoryImpl.getInstance().getPublicationResolver().getPublicationId();
 		ComponentPresentation componentPresentation = ComponentUtils.getComponentPresentation(request);
 
-		if (componentPresentation == null) {
+		if (componentPresentation == null || componentPresentation.isDynamic()) {
 			// In normal operation, this action is called from the server to render embedded component presentations.
 			// In that case, the component should be present on the request already.
 			// However, it is also possible to retrieve a DCP directly from the browser.

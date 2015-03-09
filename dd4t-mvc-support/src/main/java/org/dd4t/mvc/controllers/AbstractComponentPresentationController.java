@@ -71,11 +71,15 @@ public class AbstractComponentPresentationController {
 			// In that case, the component should be present on the request already.
 			// However, it is also possible to retrieve a DCP directly from the browser.
 
-			LOG.debug("No component found in request.");
-			try {
-				componentPresentation = componentPresentationFactory.getComponentPresentation(new TCMURI(publicationId, componentId, 16, 0).toString(), componentViewName);
-			} catch (FactoryException e) {
-				LOG.error(e.getLocalizedMessage(), e);
+			if (componentPresentation != null) {
+				try {
+					componentPresentation = componentPresentationFactory.getComponentPresentation(new TCMURI(publicationId, componentId, 16, 0).toString(), componentPresentation.getComponentTemplate().getId());
+
+				} catch (FactoryException e) {
+					LOG.error(e.getLocalizedMessage(), e);
+				}
+			} else {
+				LOG.debug("No component found in request.");
 			}
 		}
 

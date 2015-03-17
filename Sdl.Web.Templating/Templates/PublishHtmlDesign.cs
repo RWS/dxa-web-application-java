@@ -50,16 +50,19 @@ namespace Sdl.Web.Tridion.Templates
             string drive = package.GetValue("drive") ?? String.Empty;
             string cleanup = package.GetValue("cleanup") ?? String.Empty;
 
+            // not using System.IO.Path.GetTempPath() because the paths in our zip are already quite long,
+            // so we need a very short temp path for the extract of our zipfile to succeed
+            // using current time and convert to hex (the date won't matter as this folder is cleaned up so time is unique enough)
+            int timestamp = Convert.ToInt32(DateTime.Now.ToString("HHmmssfff"));
             if (!String.IsNullOrEmpty(drive) && Char.IsLetter(drive.First()))
             {
-                _tempFolder = drive.First() + @":\t" + DateTime.Now.ToString("yyyyMMddHHmmssfff"); 
+
+                _tempFolder = drive.First() + @":\_" + timestamp.ToString("x");
             }
             else
             {
-                // not using System.IO.Path.GetTempPath() because the paths in our zip are already quite long,
-                // so we need a very short temp path for the extract of our zipfile to succeed
                 // using drive from tridion cm homedir for temp folder
-                _tempFolder = ConfigurationSettings.GetTcmHomeDirectory().Substring(0, 3) + "t" + DateTime.Now.ToString("yyyyMMddHHmmssfff");                
+                _tempFolder = ConfigurationSettings.GetTcmHomeDirectory().Substring(0, 3) + "_" + timestamp.ToString("x");
             }
 
             try

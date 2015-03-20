@@ -18,6 +18,7 @@
         <module>dd4t-test</module>
         <module>dd4t-mvc-support</module>
         <module>dd4t-test-spring-web</module>
+		<module>dd4t-example-site</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

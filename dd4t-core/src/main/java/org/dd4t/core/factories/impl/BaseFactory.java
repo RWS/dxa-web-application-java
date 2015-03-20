@@ -7,7 +7,7 @@ import org.dd4t.core.processors.RunPhase;
 import org.dd4t.core.request.AbstractRequestContext;
 import org.dd4t.core.request.RequestContext;
 import org.dd4t.core.util.HttpUtils;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +22,8 @@ import java.util.List;
  * @author bjornl, rai
  */
 public abstract class BaseFactory {
-
 	private static final Logger LOG = LoggerFactory.getLogger(BaseFactory.class);
-    protected CacheProvider cacheProvider;
+    protected PayloadCacheProvider cacheProvider;
     private List<Processor> processors;
 	private Class requestClass;
 
@@ -71,7 +70,7 @@ public abstract class BaseFactory {
     /**
      * Set the cache agent.
      */
-    public void setCacheProvider(CacheProvider cacheAgent) {
+    public void setCacheProvider(PayloadCacheProvider cacheAgent) {
         cacheProvider = cacheAgent;
     }
 

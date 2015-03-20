@@ -8,7 +8,7 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.TaxonomyFactory;
 import org.dd4t.core.serializers.impl.SerializerFactory;
 import org.dd4t.core.util.TCMURI;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.TaxonomyProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +29,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
     private static final TaxonomyFactoryImpl INSTANCE = new TaxonomyFactoryImpl();
 
     private TaxonomyProvider taxonomyProvider;
-    private CacheProvider cacheProvider;
+    private PayloadCacheProvider cacheProvider;
 
     private TaxonomyFactoryImpl() {
         LOG.debug("Create new instance");
@@ -51,7 +51,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
     public Keyword getTaxonomy(String taxonomyURI) throws IOException {
         LOG.debug("Enter getTaxonomy with uri: {}", taxonomyURI);
 
-        CacheElement<Keyword> cacheElement = cacheProvider.loadFromLocalCache(taxonomyURI);
+        CacheElement<Keyword> cacheElement = cacheProvider.loadPayloadFromLocalCache(taxonomyURI);
         Keyword taxonomy;
 
         if (cacheElement.isExpired()) {
@@ -113,7 +113,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         LOG.debug("Enter getTaxonomyFilterBySchema with uri: {} and schema: {}", taxonomyURI, schemaURI);
 
         String key = taxonomyURI + schemaURI;
-        CacheElement<Keyword> cacheElement = cacheProvider.loadFromLocalCache(key);
+        CacheElement<Keyword> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
         Keyword taxonomy;
 
         if (cacheElement.isExpired()) {
@@ -157,6 +157,10 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         }
 
         return taxonomy;
+    }
+
+    public void setCacheProvider(PayloadCacheProvider cacheProvider) {
+        this.cacheProvider = cacheProvider;
     }
 
     public void setTaxonomyProvider(TaxonomyProvider taxonomyProvider) {

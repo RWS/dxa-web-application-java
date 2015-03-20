@@ -10,7 +10,7 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.impl.CacheProviderFactoryImpl;
 import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.PublicationDescriptor;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.PublicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,14 +24,14 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 	private static final DynamicMetaRetriever DYNAMIC_META_RETRIEVER = new DynamicMetaRetriever();
 	private static final PublicationMetaFactory PUBLICATION_META_FACTORY = new PublicationMetaFactory();
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerPublicationProvider.class);
-	private final CacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
+	private final PayloadCacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
 	private Class publicationDescriptor;
 
 
 	public int discoverPublicationId (final String url) throws SerializationException {
 		LOG.debug("Discovering Publication id for url: {}", url);
 		final String key = getKey(CacheType.DISCOVER_PUBLICATION_URL, url);
-		final CacheElement<Integer> cacheElement = cacheProvider.loadFromLocalCache(key);
+		final CacheElement<Integer> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
 		Integer result = -1;
 
 		if (cacheElement.isExpired()) {
@@ -142,7 +142,7 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 
 	private PublicationMeta getPublicationMeta (final int publicationId) {
 		final String key = getKey(CacheType.PUBLICATION_META, Integer.toString(publicationId));
-		final CacheElement<PublicationMeta> cacheElement = cacheProvider.loadFromLocalCache(key);
+		final CacheElement<PublicationMeta> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
 
 		PublicationMeta publicationMeta = null;
 

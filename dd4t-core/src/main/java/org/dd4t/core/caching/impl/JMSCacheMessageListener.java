@@ -23,7 +23,11 @@ public class JMSCacheMessageListener implements MessageListener {
     @Autowired
     private JMSCacheMonitor monitor;
 
-    @Override
+    public void setMonitor(JMSCacheMonitor monitor) {
+		this.monitor = monitor;
+	}
+
+	@Override
     public void onMessage(Message message) {
         CacheEvent event = getCacheEvent(message);
         if (event != null) {

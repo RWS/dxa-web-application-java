@@ -71,7 +71,7 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 		int templateId = templateTcmUri.getItemId();
 
 		String key = getKey(publicationId, componentId, templateId);
-		CacheElement<ComponentPresentation> cacheElement = cacheProvider.loadFromLocalCache(key);
+		CacheElement<ComponentPresentation> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
 
 		ComponentPresentation componentPresentation;
 

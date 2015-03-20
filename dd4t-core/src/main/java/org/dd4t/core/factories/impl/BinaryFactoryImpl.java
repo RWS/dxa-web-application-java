@@ -3,22 +3,29 @@ package org.dd4t.core.factories.impl;
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
-import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.BinaryFactory;
+import org.dd4t.core.processors.Processor;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.BinaryProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author R.S. Kempees
  */
-public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
+public class BinaryFactoryImpl implements BinaryFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(BinaryFactoryImpl.class);
+    // Singleton implementation
     private static final BinaryFactoryImpl INSTANCE = new BinaryFactoryImpl();
+
+    private PayloadCacheProvider cacheProvider;
     private BinaryProvider binaryProvider;
 
     private BinaryFactoryImpl() {
@@ -41,7 +48,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
     public Binary getBinaryByURI(final String tcmUri) throws FactoryException {
         LOG.debug("Enter getBinaryByURI with uri: {}", tcmUri);
 
-        CacheElement<Binary> cacheElement = cacheProvider.loadFromLocalCache(tcmUri);
+        CacheElement<Binary> cacheElement = cacheProvider.loadPayloadFromLocalCache(tcmUri);
         Binary binary;
 
         if (cacheElement.isExpired()) {
@@ -57,7 +64,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
                     } catch (ParseException e) {
                         cacheElement.setPayload(null);
                         cacheProvider.storeInItemCache(tcmUri, cacheElement);
-                        throw new SerializationException(e);
+                        throw new ItemNotFoundException(e);
                     }
                 } else {
                     LOG.debug("Return a binary with uri: {} from cache", tcmUri);
@@ -87,7 +94,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
         LOG.debug("Enter getBinaryByURL with url: {} and publicationId: {}", url, publicationId);
 
         String key = getCacheKey(url, publicationId);
-        CacheElement<Binary> cacheElement = cacheProvider.loadFromLocalCache(key);
+        CacheElement<Binary> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
         Binary binary;
 
         if (cacheElement.isExpired()) {
@@ -102,7 +109,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
                         cacheProvider.storeInItemCache(key, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
                         LOG.debug("Added binary with url: {} to cache", url);
                     } catch (ParseException e) {
-                        throw new SerializationException(e);
+                        throw new ItemNotFoundException(e);
                     }
                 } else {
                     LOG.debug("Return a binary with url: {} from cache", url);
@@ -115,6 +122,22 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
         }
 
         return binary;
+    }
+
+    @Override
+    public List<Processor> getProcessors () {
+        // TODO: Not implemented yet
+        return new ArrayList<>();
+    }
+
+    @Override
+    public void setProcessors (final List<Processor> processors) {
+        // TODO: Not implemented yet
+    }
+
+    @Override
+    public void setCacheProvider(final PayloadCacheProvider cacheAgent) {
+        cacheProvider = cacheAgent;
     }
 
     public void setBinaryProvider(final BinaryProvider binaryProvider) {

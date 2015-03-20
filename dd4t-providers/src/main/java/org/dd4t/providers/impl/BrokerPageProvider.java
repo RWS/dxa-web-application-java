@@ -24,7 +24,7 @@ import org.dd4t.core.factories.impl.CacheProviderFactoryImpl;
 import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.IOUtils;
 import org.dd4t.core.util.TCMURI;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.PageProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +40,7 @@ import java.util.List;
 public class BrokerPageProvider extends BaseBrokerProvider implements PageProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerPageProvider.class);
-	private final CacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
+	private final PayloadCacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
 	/**
 	 * Retrieves content of a Page by looking the page up by its item id and Publication id.
 	 *
@@ -176,7 +176,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 		LOG.debug("Checking whether Page with url: {} exists", url);
 
 		String key = getKey(CacheType.PAGE_EXISTS, url);
-		CacheElement<Integer> cacheElement = cacheProvider.loadFromLocalCache(key);
+		CacheElement<Integer> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
 		Integer result = null;
 
 		if (cacheElement.isExpired()) {

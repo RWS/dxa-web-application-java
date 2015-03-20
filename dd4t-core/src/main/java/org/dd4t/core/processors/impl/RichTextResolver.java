@@ -1,26 +1,32 @@
 package org.dd4t.core.processors.impl;
 
-import org.dd4t.contentmodel.*;
-import org.dd4t.contentmodel.impl.EmbeddedField;
-import org.dd4t.contentmodel.impl.XhtmlField;
-import org.dd4t.core.processors.Processor;
-import org.dd4t.core.exceptions.ProcessorException;
-import org.dd4t.core.request.RequestContext;
-import org.dd4t.core.util.XSLTransformer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.xml.transform.TransformerException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import javax.xml.transform.TransformerException;
+
+import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.FieldSet;
+import org.dd4t.contentmodel.Item;
+import org.dd4t.contentmodel.Page;
+import org.dd4t.contentmodel.impl.EmbeddedField;
+import org.dd4t.contentmodel.impl.XhtmlField;
+import org.dd4t.core.exceptions.ProcessorException;
+import org.dd4t.core.processors.Processor;
+import org.dd4t.core.request.RequestContext;
+import org.dd4t.core.util.XSLTransformer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Filter to resolve component links.
  *
- * @author bjornl
+ * @author bjornl, rogier oudshoorn
  */
 public class RichTextResolver extends BaseProcessor implements Processor {
 
@@ -40,6 +46,13 @@ public class RichTextResolver extends BaseProcessor implements Processor {
 		if (item instanceof Page) {
 			try {
 				resolvePage((Page)item);
+			} catch (TransformerException e) {
+				LOG.error(e.getMessage(), e);
+				throw new ProcessorException(e);
+			}
+		} else if (item instanceof ComponentPresentation) {
+			try {
+				resolveComponent(((ComponentPresentation) item).getComponent());
 			} catch (TransformerException e) {
 				LOG.error(e.getMessage(), e);
 				throw new ProcessorException(e);

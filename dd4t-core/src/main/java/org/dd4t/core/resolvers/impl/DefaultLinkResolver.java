@@ -2,6 +2,7 @@ package org.dd4t.core.resolvers.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.Schema;
 import org.dd4t.contentmodel.impl.PublicationImpl;
@@ -47,6 +48,12 @@ public class DefaultLinkResolver implements LinkResolver {
 		LOG.debug("Create new instance");
 	}
 
+	@Override
+	public String resolve(ComponentPresentation cp)
+			throws ItemNotFoundException, SerializationException {
+		return resolve(cp.getComponent(), null);
+	}
+	
 	@Override public String resolve (Component component) throws ItemNotFoundException, SerializationException {
 		return resolve(component, null);
 	}
@@ -267,4 +274,5 @@ public class DefaultLinkResolver implements LinkResolver {
 	public void setCacheProvider (PayloadCacheProvider cacheProvider) {
 		this.cacheProvider = cacheProvider;
 	}
+
 }

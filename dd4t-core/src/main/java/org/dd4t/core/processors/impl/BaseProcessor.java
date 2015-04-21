@@ -13,11 +13,12 @@ import org.dd4t.core.processors.RunPhase;
  *  Note: running processors after fetching an item from cache is
  *  perfectly fine, but in case of expensive operations, be sure to
  *  use additional caching (like output caching in a web application) to
- *  cache final output.
+ *  cache final output. Even so, as most processors tends to run here, this
+ *  is the default phase.
  */
 public abstract class BaseProcessor implements Processor {
 
-    private RunPhase runPhase;
+    private RunPhase runPhase = RunPhase.AFTER_CACHING;
 
     /**
      * To be configured in a Spring application context.

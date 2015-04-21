@@ -5,7 +5,7 @@
 .metadata
 .recommenders
 cd_*.xml
-
+dd4t-example-site/src/main/webapp/lib
 target
 META-INF
 Servers

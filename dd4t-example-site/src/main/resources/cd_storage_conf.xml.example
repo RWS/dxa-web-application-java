@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration Version="6.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="schemas/cd_storage_conf.xsd">
+    <Global>
+        <!--Optional:-->
+        <ObjectCache Enabled="true">
+            <!--Optional:-->
+            <Policy Type="LRU" Class="com.tridion.cache.LRUPolicy">
+				<!--
+					The maximum size of memory used by the cache. The string must consist a number 
+					followed by units: "k" or "kb" for kilobytes; "m" or "mb" for megabytes (case insensitive)
+				-->
+				<Param Name="MemSize" Value="64mb"/>
+			</Policy>
+			
+            <!--Optional:-->
+            <!-- The Features element specifies classes that add additional functionality to the cache. -->
+			<Features>
+				<Feature Type="DependencyTracker" Class="com.tridion.cache.DependencyTracker"/>
+			</Features>
+            <!--Optional:-->			
+			<!--
+					The optional RemoteSynchronization element specifies a remote Cache Channel Service.
+					The remote Cache Channel Service is used to send messages between caches that are running
+					on separate virtual machines. (For example, if the Broker and the Deployer run on separate
+					virtual machines.)
+					The Cache Channel Service must be running and listening on the configured host and port for
+					remote synchronization to function.
+					If this element is omitted, the cache does not use any inter-virtual machine cache communication.
+					You must use the RemoteSynchronization element in conjunction with the Cache Channel service in
+					order for objects to be updated or removed from the Broker's object cache when they are published
+					or unpublished using the Deployer.
+			
+            <RemoteSynchronization Host="127.0.0.1" Port="1099" Queuesize="128" ServiceMonitorInterval="10000"/>
+            -->			
+        </ObjectCache>
+
+		<MetaQueryConstants>				
+			<FindByURLCaseSensitivity Value="false"/>
+			<CategoryQuerySeparator Value="/"/>
+		</MetaQueryConstants>
+              
+        <Storages>
+			<!--
+				For Database elements of type sql, you can specify the pooling that
+				should be used with a Pool element. This pooling is independent of the selected database driver.
+				
+				This element has the following attributes:
+					Type               The type should be either jdbc or tridion.
+					Size               Maximum number of connections to open.
+					MonitorInterval    Number of seconds between checks on the pool.
+					IdleTimeout        Number of seconds a connection can be idle before it is closed.
+					CheckoutTimeout    Number of seconds a connection can be checked out before it is returned to pool.
+			-->
+			<!--			
+				Configuration example for MS SQL Server 2005 SP3 & 2008 R2, using the MSSQL JDBC driver.
+
+				The DataSource element specifies the class name of the DataSource to use and properties specific to the datasource.
+				For the MSSQL JDBC driver the minimum set of properties to set are:
+					serverName: name of the server that hosts the database
+					portNumber: configuration of the port used for TCP/IP connections to the database. 1433 is the default port.
+					databaseName: name of the database to access
+					userName: username used to access the database
+					password: password used to access the database
+			-->			
+			
+			<Storage Type="persistence" Id="defaultdb" dialect="MSSQL" Class="com.tridion.storage.persistence.JPADAOFactory">
+				<Pool Type="jdbc" Size="5" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120" />
+				<DataSource Class="com.microsoft.sqlserver.jdbc.SQLServerDataSource">
+					<Property Name="serverName" Value="server-name" />
+					<Property Name="portNumber" Value="server-port" />
+					<Property Name="databaseName" Value="db-name" />
+					<Property Name="user" Value="user-name" />
+					<Property Name="password" Value="user-password" />
+				</DataSource>
+			</Storage>		
+		
+			<!--			
+				Configuration example for using filesystem as data storage. 
+			-->
+			<Storage Type="filesystem" Class="com.tridion.storage.filesystem.FSDAOFactory" Id="defaultFile" defaultFilesystem="false">
+				<Root Path="c:\temp" />
+			</Storage>
+            <Storage Type="filesystem" Class="com.tridion.storage.filesystem.FSDAOFactory" Id="defaultDataFile" defaultFilesystem="true" defaultStorage="true">
+				<Root Path="c:\temp\data" />
+			</Storage>
+			
+			<!--
+			Configuration Example for SearchFilter home used by the SearchFilter Query API
+			-->
+			
+			<SearchFilter Name="SearchFilter" Class="com.tridion.broker.components.meta.MsSqlSearchFilterHome" defaultStorageId="defaultdb"/>
+			
+        </Storages>
+		<!-- Configures transaction storage settings, how long before a transaction gets rolledback and on which interval to monitor for
+		outstanding transactions. Default timeout is 60000 ms. (1 minute) and Default interval is 5000ms. (5 seconds) -->
+		<!-- <Transaction Timeout="60000" MonitorInterval="5000"/> -->
+    </Global>
+
+	<!-- If no item type mappings are defined within ItemTypes or if storages on a lower level do not exist then the storage defined by defaultStorageId attribute will be used.
+		 If storage defined by defaultStorageId does not exist then exception will be thrown. -->
+    <ItemTypes defaultStorageId="defaultdb" cached="false">
+		<!-- Query type mapping is replacement for Query generator. If there was query generator defined in a Broker configuration then  Query type mapping should be binded to default DB. -->
+		<Item typeMapping="Query" storageId="defaultdb"/>	
+    </ItemTypes>
+        
+    <!-- Specifies the location of the license file. -->
+    <!--
+    <License Location="c:/Tridion/config/cd_licenses.xml"/>
+    -->
+</Configuration>

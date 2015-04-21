@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<parent>
+		<artifactId>dd4t-parent</artifactId>
+		<groupId>org.dd4t</groupId>
+		<version>2.0.0-SNAPSHOT</version>
+	</parent>
+	<modelVersion>4.0.0</modelVersion>
+
+	<artifactId>dd4t-example-site</artifactId>
+	<name>DD4T Example Site</name>
+
+	<packaging>war</packaging>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<tridion.version>7.1.0</tridion.version>
+		<spring.version>3.1.0.RELEASE</spring.version>
+		<hibernate.version>4.2.10.Final</hibernate.version>
+		<jersey.version>1.12</jersey.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.dd4t</groupId>
+			<artifactId>dd4t-core</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dd4t</groupId>
+			<artifactId>dd4t-mvc-support</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dd4t</groupId>
+			<artifactId>dd4t-api</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.dd4t</groupId>
+			<artifactId>dd4t-providers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		
+		<!-- Tridion jarfiles (poms from maven4 tridion) -->
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_ambient</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_broker</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_cache</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_core</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_datalayer</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_dynamic</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_linking</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_model</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<!-- Tridion XPM jars (poms by maven4tridion) -->
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_odata</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_odata_types</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_preview_ambient</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_preview_web</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_session</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.tridion.contentdelivery</groupId>
+			<artifactId>cd_wrapper</artifactId>
+			<version>${tridion.version}</version>
+		</dependency>
+
+		<!-- Jersey jars (open source) -->
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-client</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-core</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-json</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-servlet</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+
+
+		<!-- Spring jarfiles -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aop</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-expression</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-web</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
+
+		<!-- Hibernate jarfiles -->
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>${hibernate.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.hibernate.javax.persistence</groupId>
+			<artifactId>hibernate-jpa-2.0-api</artifactId>
+			<version>1.0.1.Final</version>
+		</dependency>
+
+		<!-- Closed source third party dependencies (poms from maven4 tridion) -->
+		<dependency>
+			<groupId>easylicense</groupId>
+			<artifactId>easylicense</artifactId>
+			<version>2.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>jdbcpool</groupId>
+			<artifactId>jdbcpool</artifactId>
+			<version>1.0</version>
+		</dependency>
+
+		<!-- Jettison (added for XPM) <dependency> <groupId>org.bluestemsoftware.open.maven.tparty</groupId> 
+			<artifactId>jettison</artifactId> <version>1.1</version> </dependency> -->
+
+		<!-- Open source third party jarfiles -->
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>antlr</groupId>
+			<artifactId>antlr</artifactId>
+			<version>2.7.7</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>1.4</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>14.0.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api</artifactId>
+			<version>2.1</version>
+		</dependency>
+		<dependency>
+			<groupId>net.minidev</groupId>
+			<artifactId>json-smart</artifactId>
+			<version>1.0.9</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-classic</artifactId>
+			<version>1.0.13</version>
+		</dependency>
+		<dependency>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.0.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.6.4</version>
+		</dependency>
+		<dependency>
+			<groupId>xalan</groupId>
+			<artifactId>xalan</artifactId>
+			<version>2.7.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>6.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+</project>

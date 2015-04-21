@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:jaxws="http://cxf.apache.org/jaxws" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:dwr="http://www.directwebremoting.org/schema/spring-dwr"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+                            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+                            http://cxf.apache.org/jaxws 
+                            http://cxf.apache.org/schemas/jaxws.xsd
+                            http://www.directwebremoting.org/schema/spring-dwr
+                            http://www.directwebremoting.org/schema/spring-dwr-2.0.xsd
+                            http://www.springframework.org/schema/context
+                            http://www.springframework.org/schema/context/spring-context-3.0.xsd
+                            http://www.springframework.org/schema/util 
+                            http://www.springframework.org/schema/util/spring-util-3.0.xsd
+                            http://www.springframework.org/schema/aop
+           					http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+           					
+    <import resource="siteeditsettings.xml" />
+    <import resource="urlmapping.xml" />
+
+	<!-- Handler Mappings -->
+	<bean
+		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping">
+		<property name="order" value="1" />
+	</bean>
+
+	<!-- Static access to spring context through a util class -->
+  	<bean id="springApplicationContext" class="org.dd4t.springmvc.util.ApplicationContextProvider"/>         		
+
+	<!-- DD4T providers, note cache is NOT wired for SiteEdit use -->
+ 	<bean id="cacheProvider" class="org.dd4t.providers.impl.NoCacheProvider" />
+ 	<bean id="linkProvider" class="org.dd4t.providers.impl.BrokerLinkProvider" />
+ 		
+	<bean id="pageProvider" class="org.dd4t.providers.impl.BrokerPageProvider" >
+		<property name="contentIsCompressed" value="false" />
+	</bean>	
+
+    <bean id="componentPresentationProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerComponentPresentationProvider">
+        <property name="contentIsCompressed" value="true" />
+        <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
+    </bean>
+    
+	<!-- Factory filters -->
+	<bean id="hybridPublishingFilter"
+		class="org.dd4t.core.processors.impl.DcpResolver">
+		<!-- <property name="genericComponentFactory"><ref bean="genericComponentFactory" /></property>  -->					
+	</bean>
+
+	<bean id="richTextWithLinksResolverFilter"
+		class="org.dd4t.core.processors.impl.RichTextWithLinksResolver">
+		<property name="linkResolver"><ref bean="LinkResolver" /></property>		
+	</bean>	
+
+    <bean id="linkResolverFactory" scope="singleton" class="org.dd4t.core.factories.impl.LinkResolverFactory"
+          factory-method="getInstance">
+		<property name="linkResolver"><ref bean="LinkResolver" /></property>          
+    </bean>
+          
+	<!-- Note that the factory is prepped for hybrid publishing -->
+	<bean id="genericPageFactory"
+		class="org.dd4t.core.factories.impl.PageFactoryImpl">
+	    <property name="cacheProvider"><ref bean="cacheProvider" /></property>
+		<property name="pageProvider"><ref bean="pageProvider" /></property>
+		<property name="processors">
+			<list>
+				<ref bean="hybridPublishingFilter" />
+				<ref bean="richTextWithLinksResolverFilter" />				
+			</list>			
+		</property>		
+	</bean>	
+
+    <bean id="componentPresentationFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl" factory-method="getInstance">
+        <property name="componentPresentationProvider" ref="componentPresentationProvider" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+
+	<!-- View handlers -->
+	<bean id="JSPPageViewHandler" class="org.dd4t.springmvc.view.impl.JSPPageViewHandler">
+	    <property name="filePattern"><value>/pages/jsp/%1$s.jsp</value></property>	
+	</bean>	
+	
+	<bean id="JSPComponentViewHandler" class="org.dd4t.springmvc.view.impl.JSPComponentPresentationViewHandler">
+	    <property name="filePattern"><value>/components/jsp/%1$s.jsp</value></property>	
+	</bean>
+
+	<!--  XSLT singleton -->
+	<bean id="XSLTransformer" class="org.dd4t.core.util.XSLTransformer" />
+
+	<!-- content controller -->
+	<bean id="ContentController" class="org.dd4t.springmvc.controller.DynamicPageContentController" >
+	    <property name="componentViewManager"><ref bean="JSPComponentViewHandler" /></property>				
+	</bean>
+
+	<!-- Application-level JSP views are managed through spring internal viewResolver -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	    <property name="prefix"><value>/applications/jsp/</value></property>
+	    <property name="suffix"><value>.jsp</value></property>
+	</bean>	
+	
+    <!-- NEW Databind stuff. NOT wired yet -->
+    <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
+    <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance" init-method="init">
+        <!-- Set this value to your own models package root -->
+        <property name="viewModelPackageRoot" value="org.dd4t.databind.viewmodel.test" />
+        <property name="viewModelMetaKeyName" value="viewName" />
+        <!-- Set these to your need. If you only want regular Components set to true -->
+        <property name="renderDefaultComponentModelsOnly" value="true" />
+        <property name="renderDefaultComponentsIfNoModelFound" value="true" />
+        <property name="converter" ref="modelConverter" />
+        <!-- override these if you want your own implementations -->
+        <property name="concreteComponentPresentationImpl" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
+        <property name="concreteComponentImpl" value="org.dd4t.contentmodel.impl.ComponentImpl" />
+        <property name="concreteFieldImpl" value="org.dd4t.contentmodel.impl.BaseField"/>
+    </bean>
+
+    <!-- DD4T factories entry point  -->
+    <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="getInstance">
+        <property name="dataBinder" ref="dataBinder" />
+    </bean>	
+</beans>

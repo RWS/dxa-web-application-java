@@ -36,6 +36,7 @@ public class JMSCacheMessageListener implements MessageListener {
                     LOG.debug("Invalidate " + event);
                     Serializable key = event.getKey();
                     cacheInvalidator.invalidate(key.toString());
+                    monitor.setMQServerStatusUp();
                     break;
 
                 case CacheEvent.FLUSH:

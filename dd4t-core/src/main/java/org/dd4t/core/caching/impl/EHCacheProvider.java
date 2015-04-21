@@ -100,8 +100,7 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator,
 	 */
 	@Override
 	public <T> CacheElement<T> loadPayloadFromLocalCache(String key) {
-		String sessionPreviewToken = TridionUtils.getSessionPreviewToken();
-		if (!doCheckForPreview() || (sessionPreviewToken == null && cache != null)) {
+		if (!doCheckForPreview() || (TridionUtils.getSessionPreviewToken() == null && cache != null)) {
 			Element currentElement = cache.get(key);
 			if (currentElement == null) {
 				currentElement = new Element(key, new CacheElementImpl<T>(null));
@@ -126,7 +125,7 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator,
 			return cacheElement;
 		} else {
 			LOG.debug("Disable cache for Preview Session Token: {}",
-					sessionPreviewToken);
+					TridionUtils.getSessionPreviewToken());
 			return new CacheElementImpl<T>((T) null, true);
 		}
 	}

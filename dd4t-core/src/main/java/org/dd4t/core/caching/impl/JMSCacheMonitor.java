@@ -1,5 +1,7 @@
 package org.dd4t.core.caching.impl;
 
+import javax.annotation.PostConstruct;
+
 import org.dd4t.core.caching.CacheInvalidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,19 +47,21 @@ public class JMSCacheMonitor {
         }
     };
 
-    private final Thread thread;
+    private Thread thread;
 
-    private JMSCacheMonitor () {
+    @PostConstruct
+    public void init(){
         LOG.debug("Create new instance");
 
         LOG.debug("Using Monitor interval (or cache refresh time when JMS is down) = {} seconds", monitorServiceInterval, monitorServiceInterval / 1000);
-
-        LOG.debug("Start cache monitor thread");
         thread = new Thread(monitor);
         thread.setName("Dd4tWebAppJMSMonitorThread");
+        
+        LOG.debug("Start cache monitor thread");
+
         thread.start();
     }
-
+    
     public int getMonitorServiceInterval() {
 		return monitorServiceInterval;
 	}

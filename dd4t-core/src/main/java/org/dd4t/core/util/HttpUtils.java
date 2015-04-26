@@ -296,4 +296,24 @@ public final class HttpUtils {
 
 		return key.replaceAll("\\W+", replacement);
 	}
+
+	/*
+			Looks up the Preview Session token from the cookie in the request
+			*/
+	public static String getSessionPreviewToken(HttpServletRequest request) {
+	    if (request == null) {
+	        return null;
+	    }
+
+	    Cookie[] cookies = request.getCookies();
+	    if (cookies != null) {
+	        for (Cookie cookie : cookies) {
+	            if (TridionUtils.PREVIEW_SESSION_TOKEN.equals(cookie.getName())) {
+	                return cookie.getValue();
+	            }
+	        }
+	    }
+
+	    return null;
+	}
 }

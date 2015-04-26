@@ -11,6 +11,7 @@ import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.core.databind.BaseViewModel;
+import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.databind.DataBindFactory;
 import org.dd4t.databind.builder.json.JsonDataBinder;
@@ -109,7 +110,7 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 			if (!rootElementName.equals(viewModelName)) {
 				modelNames.add(rootElementName);
 			}
-			// TODO: explanation
+
 			final Map<String, BaseViewModel> models = DataBindFactory.buildModels(rawComponentData, modelNames, componentPresentation.getComponentTemplate().getId());
 
 			if (models == null || models.isEmpty()) {
@@ -121,7 +122,7 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 
 			} else {
 				for (BaseViewModel model : models.values()) {
-					if (model.setGenericComponentOnComponentPresentation()) {
+					if (model instanceof TridionViewModel && ((TridionViewModel)model).setGenericComponentOnComponentPresentation()) {
 						LOG.debug("Also setting a Component object on the CP.");
 						componentPresentation.setComponent(DataBindFactory.buildComponent(rawComponentData, this.concreteComponentClass));
 					}

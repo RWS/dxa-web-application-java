@@ -24,5 +24,7 @@ public interface TridionViewModel extends BaseViewModel {
 	void setLastPublishDate(DateTime lastPublishDate);
 
 	String getXPath(final String fieldName);
-	public void addXpmEntry(final String fieldName, final String xpath, final boolean multiValued);
+	void addXpmEntry(final String fieldName, final String xpath, final boolean multiValued);
+
+	boolean setGenericComponentOnComponentPresentation();
 }

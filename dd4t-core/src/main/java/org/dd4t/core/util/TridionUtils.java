@@ -3,10 +3,7 @@ package org.dd4t.core.util;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Schema;
 import org.dd4t.core.request.RequestContext;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.text.ParseException;
 
@@ -36,7 +33,7 @@ public class TridionUtils {
     Looks up the Preview Session token from the cookie in the request
     */
     public static String getSessionPreviewToken() {
-        return getSessionPreviewToken(HttpUtils.getCurrentRequest());
+        return HttpUtils.getSessionPreviewToken(HttpUtils.getCurrentRequest());
     }
 
     /*
@@ -47,27 +44,7 @@ public class TridionUtils {
             return null;
         }
 
-        return getSessionPreviewToken((HttpServletRequest) context.getServletRequest());
-    }
-
-    /*
-    Looks up the Preview Session token from the cookie in the request
-     */
-    public static String getSessionPreviewToken(HttpServletRequest request) {
-        if (request == null) {
-            return null;
-        }
-
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (PREVIEW_SESSION_TOKEN.equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-
-        return null;
+        return HttpUtils.getSessionPreviewToken((HttpServletRequest) context.getServletRequest());
     }
 
     public static String getRootElementName(final Component component) {

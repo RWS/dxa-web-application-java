@@ -15,8 +15,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Just a Singleton entry point for all DD4T classes
- * This is probably for Page and Component only
+ * Singleton entry point for all DD4T classes
  *
  * @author R. Kempees
  */

@@ -9,6 +9,7 @@ import org.dd4t.providers.PublicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -18,6 +19,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class UrlPublicationResolver implements PublicationResolver {
 	private static final Logger LOG = LoggerFactory.getLogger(UrlPublicationResolver.class);
+
+	@Resource
 	private PublicationProvider publicationProvider;
 
 
@@ -84,14 +87,13 @@ public class UrlPublicationResolver implements PublicationResolver {
 		}
 		String publicationUrl = publicationProvider.discoverPublicationUrl(getPublicationId());
 
-		if (!url.startsWith(publicationUrl)) {
+		if (StringUtils.isNotEmpty(publicationUrl) && !url.startsWith(publicationUrl)) {
 			return String.format("%s%s", publicationUrl, url.startsWith("/") ? url : "/" + url);
 		}
 		return url;
 	}
 
 	/**
-	 * TODO: check with Q whether this is allright
 	 * Gets the Binary URL in the current Publication corresponding to the given generic URL
 	 *
 	 * @param url String representing the generic URL (i.e. URL path without PublicationUrl prefix)
@@ -99,7 +101,7 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 */
 	@Override public String getLocalBinaryUrl (final String url) {
 		String binaryUrl = publicationProvider.discoverImagesUrl(getPublicationId());
-		return url.replaceFirst(binaryUrl,"");
+		return url.replaceFirst(binaryUrl, "");
 	}
 
 	/**

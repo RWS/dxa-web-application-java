@@ -15,6 +15,5 @@ package org.dd4t.core.request;
  */
 
 public interface RequestContext {
-	// TODO: What do you think of renaming this to getRequest?
-    public Object getServletRequest();
+   Object getRequest ();
 }

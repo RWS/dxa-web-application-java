@@ -8,14 +8,14 @@
         TTL 3600 = 1 hour
         TTI 60 = 1 min
     -->
-    <cache name="DD4T"
+    <cache name="DD4T-Objects"
            eternal="false"
            maxEntriesLocalHeap="10000"
            timeToLiveSeconds="3600"
            timeToIdleSeconds="60"
            memoryStoreEvictionPolicy="LRU">
     </cache>
-    <cache name="Dependency"
+    <cache name="DD4T-Dependencies"
            maxEntriesLocalHeap="50000"
            memoryStoreEvictionPolicy="LRU">
     </cache>

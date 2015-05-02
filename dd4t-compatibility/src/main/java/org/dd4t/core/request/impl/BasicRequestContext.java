@@ -15,33 +15,30 @@
  */
 package org.dd4t.core.request.impl;
 
-import org.dd4t.core.request.AbstractRequestContext;
 import org.dd4t.core.request.RequestContext;
+import org.dd4t.core.util.HttpUtils;
 
 import javax.servlet.http.HttpServletRequest;
 
 
 /**
  * Simple implementation of the RequestContext interface.
- * TODO: actually should be renamed to something like HttpServletRequestContext
- * TODO: Move back into the core
- * @author rooudsho
  *
+ * @author rooudsho
  */
 @Deprecated
-public class BasicRequestContext extends AbstractRequestContext implements RequestContext {
+public class BasicRequestContext implements RequestContext {
 	private HttpServletRequest req;
 	
-	public BasicRequestContext(Object request){
-		this.req = (HttpServletRequest)request;
+	public BasicRequestContext(){
+		this.req = HttpUtils.getCurrentRequest();
 	}
 
 	@Override
-	public HttpServletRequest getServletRequest() {
+	public HttpServletRequest getRequest () {
 		return req;
 	}
 
-	// TODO: @Rogier: slight difference to be able to have more than HttpServletRequest
 	public boolean isUserInRole(String role) {
 		return req.isUserInRole(role);
 	}

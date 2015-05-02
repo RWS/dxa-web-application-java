@@ -88,7 +88,6 @@ public class AbstractComponentPresentationController {
 			throw new ResourceNotFoundException();
 		}
 
-		// TODO: make configurable
 		RenderUtils.setDynamicComponentOnRequest(request,componentPresentation.getComponent());
 		RenderUtils.setViewModelsOnRequest(request,componentPresentation);
 

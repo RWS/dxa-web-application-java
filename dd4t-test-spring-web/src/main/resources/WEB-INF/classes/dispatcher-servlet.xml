@@ -17,10 +17,6 @@
         <property name="suffix" value=".jsp"/>
     </bean>
 
-    <bean id="publicationProvider" class="org.dd4t.providers.impl.BrokerPublicationProvider">
-        <property name="publicationDescriptor" value="org.dd4t.contentmodel.impl.PublicationDescriptorImpl" />
-    </bean>
-
     <bean id="publicationResolver" class="org.dd4t.core.resolvers.impl.UrlPublicationResolver">
         <property name="publicationProvider" ref="publicationProvider" />
     </bean>
@@ -34,26 +30,33 @@
     </bean>
 
     <!-- DD4T Provider beans -->
+    <bean id="cacheProvider" class="org.dd4t.core.providers.EHCacheProvider" />
+
     <bean id="binaryProvider" class="org.dd4t.providers.impl.BrokerBinaryProvider">
         <property name="contentIsCompressed" value="true"/>
+        <property name="cacheProvider" ref="cacheProvider" />
     </bean>
 
     <bean id="componentPresentationProvider" class="org.dd4t.providers.impl.BrokerComponentPresentationProvider">
         <property name="contentIsCompressed" value="true"/>
         <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
         <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
+        <property name="cacheProvider" ref="cacheProvider" />
     </bean>
 
     <bean id="pageProvider" class="org.dd4t.providers.impl.BrokerPageProvider">
         <property name="contentIsCompressed" value="true"/>
+        <property name="cacheProvider" ref="cacheProvider" />
     </bean>
 
     <bean id="linkProvider" class="org.dd4t.providers.impl.BrokerLinkProvider">
         <property name="contentIsCompressed" value="true"/>
     </bean>
 
-    <bean id="cacheProvider" class="org.dd4t.core.providers.EHCacheProvider" />
-
+    <bean id="publicationProvider" class="org.dd4t.providers.impl.BrokerPublicationProvider">
+        <property name="publicationDescriptor" value="org.dd4t.contentmodel.impl.PublicationDescriptorImpl" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
 
     <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver"/>
 
@@ -62,19 +65,22 @@
     </bean>
 
     <!-- DD4T Factories -->
-    <bean id="pageFactory" scope="singleton" class="org.dd4t.core.factories.impl.PageFactoryImpl"
+    <bean id="pageFactory" class="org.dd4t.core.factories.impl.PageFactoryImpl"
           factory-method="getInstance">
         <property name="pageProvider" ref="pageProvider" />
         <property name="cacheProvider" ref="cacheProvider" />
+        <property name="requestContextClass" value="org.dd4t.core.util.HttpRequestContext" />
     </bean>
     <bean id="componentPresentationFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl" factory-method="getInstance">
         <property name="componentPresentationProvider" ref="componentPresentationProvider" />
         <property name="cacheProvider" ref="cacheProvider" />
+        <property name="requestContextClass" value="org.dd4t.core.util.HttpRequestContext" />
     </bean>
 
-    <bean id="binaryFactory" scope="singleton" class="org.dd4t.core.factories.impl.BinaryFactoryImpl" factory-method="getInstance">
+    <bean id="binaryFactory" class="org.dd4t.core.factories.impl.BinaryFactoryImpl" factory-method="getInstance">
         <property name="binaryProvider" ref="binaryProvider" />
         <property name="cacheProvider" ref="cacheProvider" />
+        <property name="requestContextClass" value="org.dd4t.core.util.HttpRequestContext" />
     </bean>
 
     <!-- DD4T Controllers -->

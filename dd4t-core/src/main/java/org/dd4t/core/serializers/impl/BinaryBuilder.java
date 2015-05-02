@@ -4,6 +4,7 @@ import org.dd4t.contentmodel.Binary;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.contentmodel.impl.BinaryDataImpl;
 import org.dd4t.contentmodel.impl.BinaryImpl;
+import org.dd4t.core.util.CompressionUtils;
 import org.dd4t.providers.transport.BinaryWrapper;
 
 /**

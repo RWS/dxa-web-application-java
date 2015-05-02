@@ -1,17 +1,34 @@
+/*
+ * Copyright (c) 2015 Radagio
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.databind.viewmodel.base;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.annotations.ViewModelProperty;
+import org.dd4t.databind.util.DataUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * test
@@ -21,8 +38,7 @@ import java.util.List;
 public abstract class ViewModelBase implements BaseViewModel {
 	private static final Logger LOG = LoggerFactory.getLogger(ViewModelBase.class);
 	private final List<String> viewModelNames;
-	private HashMap<String,ModelFieldMapping> modelProperties;
-	private boolean setGenericComponentOnComponentPresentation;
+	private Map<String,Object> modelProperties;
 	private boolean setRawDataOnModel;
 	private Object rawData;
 
@@ -39,19 +55,21 @@ public abstract class ViewModelBase implements BaseViewModel {
 		setFieldParameters();
 	}
 
-	private void setGenericParameters () {
+	protected void setGenericParameters () {
 		LOG.trace("Setting generic parameters on model.");
 		final ViewModel viewModelAnnotation = this.getClass().getAnnotation(ViewModel.class);
 		if (null != viewModelAnnotation) {
-			final String[] rootElements = viewModelAnnotation.rootElementNames();
-			if (rootElements != null && rootElements.length > 0) {
-				this.viewModelNames.addAll(Arrays.asList(rootElements));
+			final List<String> rootElements = DataUtils.convertToNonEmptyList(viewModelAnnotation.rootElementNames());
+
+			if (!rootElements.isEmpty()) {
+
+				this.viewModelNames.addAll(rootElements);
 			}
-			final String[] viewModels = viewModelAnnotation.viewModelNames();
-			if (viewModels != null && viewModels.length > 0) {
-				this.viewModelNames.addAll(Arrays.asList(viewModels));
+			final List<String> viewModels = DataUtils.convertToNonEmptyList(viewModelAnnotation.viewModelNames());
+			if (!viewModels.isEmpty()) {
+				this.viewModelNames.addAll(viewModels);
 			}
-			this.setGenericComponentOnComponentPresentation = viewModelAnnotation.setComponentObject();
+
 			this.setRawDataOnModel = viewModelAnnotation.setRawData();
 		}
 	}
@@ -91,11 +109,9 @@ public abstract class ViewModelBase implements BaseViewModel {
 		return null;
 	}
 
-	@Override public boolean setGenericComponentOnComponentPresentation () {
-		return setGenericComponentOnComponentPresentation;
-	}
 
-	public HashMap<String,ModelFieldMapping> getModelProperties() {
+
+	public Map<String,Object> getModelProperties() {
 		return this.modelProperties;
 	}
 }

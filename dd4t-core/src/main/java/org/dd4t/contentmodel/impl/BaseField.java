@@ -1,26 +1,32 @@
+/*
+ * Copyright (c) 2015 SDL, Radagio & R. Oudshoorn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import org.dd4t.contentmodel.*;
 import org.dd4t.core.serializers.impl.json.FieldTypeConverter;
-import org.dd4t.core.serializers.impl.json.TridionJsonFieldTypeIdResolver;
 
 import java.util.LinkedList;
 import java.util.List;
 
-// Note that Value is basically always a Map.get(0)
-@JsonIgnoreProperties({"Value"})
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.CUSTOM,
-        include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
-        property = "FieldType",
-        visible = true)
 
-@JsonTypeIdResolver(TridionJsonFieldTypeIdResolver.class)
+@JsonIgnoreProperties({"Value"})
 public abstract class BaseField implements Field {
 
     @JsonProperty("Name")

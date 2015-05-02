@@ -1,8 +1,11 @@
 *.iml
-dd4t-core/target
-dd4t-databind/target
-dd4t-test/target
-dd4t-providers-rs/target
-dd4t-providers/target
-dd4t-api/target
+.classpath
+.project
+.settings
+.metadata
+.recommenders
+cd_*.xml
+dd4t-example-site/src/main/webapp/lib
 target
+META-INF
+Servers

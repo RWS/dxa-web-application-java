@@ -1,6 +1,25 @@
+/*
+ * Copyright (c) 2015 SDL, Radagio & R. Oudshoorn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.providers.impl;
 
+import com.tridion.ItemTypes;
 import com.tridion.broker.StorageException;
+import com.tridion.meta.BinaryMeta;
+import com.tridion.meta.BinaryMetaFactory;
 import com.tridion.storage.BinaryContent;
 import com.tridion.storage.BinaryVariant;
 import com.tridion.storage.StorageManagerFactory;
@@ -8,9 +27,12 @@ import com.tridion.storage.StorageTypeMapping;
 import com.tridion.storage.dao.BinaryContentDAO;
 import com.tridion.storage.dao.BinaryVariantDAO;
 import org.dd4t.contentmodel.Binary;
+import org.dd4t.contentmodel.impl.BinaryDataImpl;
+import org.dd4t.contentmodel.impl.BinaryImpl;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.providers.BaseBrokerProvider;
+import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.BinaryProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,18 +42,59 @@ import java.text.ParseException;
 /**
  * Provides access to Binaries stored in the Content Delivery database. It uses JPA DAOs to retrieve raw binary content
  * or binary metadata from the database. Access to these objects is not cached, and as such must be cached externally.
- *
- *  * TODO: decompress!
  */
 public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryProvider {
+
+	private static final BinaryMetaFactory BINARY_META_FACTORY = new BinaryMetaFactory();
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerBinaryProvider.class);
 
 	@Override public Binary getBinaryByURI (final String tcmUri) throws ItemNotFoundException, ParseException, SerializationException {
-		return null;
+		final TCMURI binaryUri = new TCMURI(tcmUri);
+		final BinaryMeta binaryMeta = BINARY_META_FACTORY.getMeta(tcmUri);
+		return getBinary(binaryUri,binaryMeta);
 	}
 
+
 	@Override public Binary getBinaryByURL (final String url, final int publication) throws ItemNotFoundException, SerializationException {
+		final BinaryMeta binaryMeta = BINARY_META_FACTORY.getMetaByURL(publication,url);
+		final TCMURI binaryUri = new TCMURI(binaryMeta.getPublicationId(),TCMURI.safeLongToInt(binaryMeta.getId()), ItemTypes.COMPONENT,-1);
+		return getBinary(binaryUri,binaryMeta);
+	}
+
+	private static Binary getBinary (final TCMURI binaryUri, final BinaryMeta binaryMeta) throws ItemNotFoundException {
+		if (binaryMeta != null) {
+			final BinaryImpl binary = new BinaryImpl();
+			binary.setId(binaryUri.toString());
+			binary.setUrlPath(binaryMeta.getURLPath());
+			// TODO: check if this actually is the Mime Type
+			binary.setMimeType(binaryMeta.getType());
+
+			// TODO: binaryMeta.getCustomMeta();
+			//binaryMeta.getDescription();
+			//binaryMeta.getPath();
+			//binaryMeta.getVariantId();
+
+
+			final BinaryContentDAO contentDAO;
+			BinaryContent content = null;
+			try {
+				contentDAO = (BinaryContentDAO) StorageManagerFactory.getDAO(binaryUri.getPublicationId(), StorageTypeMapping.BINARY_CONTENT);
+				content = contentDAO.findByPrimaryKey(binaryUri.getPublicationId(), binaryUri.getItemId(), null);
+			} catch (StorageException e) {
+				LOG.error(e.getMessage(), e);
+			}
+
+
+			if (content == null) {
+				throw new ItemNotFoundException("Unable to find binary content by id:" + binaryUri.toString());
+			}
+
+			final BinaryDataImpl binaryData = new BinaryDataImpl();
+			binaryData.setBytes(content.getContent().clone());
+			binary.setBinaryData(binaryData);
+			return binary;
+		}
 		return null;
 	}
 
@@ -73,13 +136,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 	@Override
 	public byte[] getBinaryContentByURL (String url, int publication) throws ItemNotFoundException {
 
-
 		BinaryVariant variant = getBinaryVariantByURL(url, publication);
-
-		if (variant == null) {
-			throw new ItemNotFoundException("Unable to find binary content by url '" + url + "' and publication '" + publication + "'.");
-		}
-
 		return getBinaryContentById(variant.getBinaryId(), variant.getPublicationId());
 	}
 

@@ -1,9 +1,23 @@
+/*
+ * Copyright (c) 2015 SDL, Radagio & R. Oudshoorn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.core.util;
 
 /**
  * dd4t-2
- *
- * @author R. Kempees
  */
 
 import org.apache.commons.io.FilenameUtils;
@@ -20,8 +34,10 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
 import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -29,7 +45,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.regex.Pattern;
 
 /**
  * Utility class for Http related things.
@@ -37,16 +52,15 @@ import java.util.regex.Pattern;
 public final class HttpUtils {
 
 	private static final Logger LOG = LoggerFactory.getLogger(HttpUtils.class);
-	private static final Pattern LOCAL_DOMAIN_ADDRESS_PATTERN = Pattern.compile("(^10\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}$)|(^172\\.(1[6-9]|2[0-9]|3[0,1])\\.\\d{1,3}\\.\\d{1,3}$)|(^192\\.168\\.\\d{1,3}\\.\\d{1,3}$)|(^127\\.0\\.0\\.1$)");
 
-	private HttpUtils() {
+	private HttpUtils () {
 	}
 
-	public static ServletContext getCurrentServletContext() {
-		return currentRequest().getServletContext();
+	public static ServletContext getCurrentServletContext () {
+		return getCurrentRequest().getServletContext();
 	}
 
-	public static String getOriginalUri(final HttpServletRequest request) {
+	public static String getOriginalUri (final HttpServletRequest request) {
 		String orgUri = (String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
 
 		if (StringUtils.isNotEmpty(orgUri)) {
@@ -56,12 +70,14 @@ public final class HttpUtils {
 		}
 	}
 
-	public static String getCurrentURL(final HttpServletRequest request) {
+	public static String getCurrentURL (final HttpServletRequest request) {
 		String url;
 
 		DispatcherType dispatcherType = request.getDispatcherType();
- if (dispatcherType == DispatcherType.ERROR) {
+		if (dispatcherType == DispatcherType.ERROR) {
 			url = request.getRequestURI();
+		} else if (dispatcherType == DispatcherType.INCLUDE) {
+			url = (String) request.getAttribute(RequestDispatcher.INCLUDE_REQUEST_URI);
 		} else {
 			url = getOriginalUri(request);
 		}
@@ -69,20 +85,20 @@ public final class HttpUtils {
 		return url;
 	}
 
-	public static String getOriginalFullUrl(final HttpServletRequest request) {
+	public static String getOriginalFullUrl (final HttpServletRequest request) {
 		return getFullUrl(request, getOriginalUri(request));
 	}
 
-	public static String getFullUrl(final HttpServletRequest request, final String location) {
+	public static String getFullUrl (final HttpServletRequest request, final String location) {
 		String contextPath = "/".equals(request.getContextPath()) ? "" : request.getContextPath();
 		return String.format("%s://%s:%d%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), contextPath, location);
 	}
 
-	public static HttpServletRequest currentRequest() {
+	public static HttpServletRequest getCurrentRequest () {
 		return ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 	}
 
-	public static String createPathFromUri(String uri, int level) {
+	public static String createPathFromUri (String uri, int level) {
 		StringBuilder searchPath = new StringBuilder("");
 		String[] paths = uri.split("/");
 
@@ -106,7 +122,7 @@ public final class HttpUtils {
 	 * If the client is behind a proxy it should be the 1st ip address in the
 	 * HTTP_X_FORWARDED_FOR header if not we use the REMOTE_ADDR header
 	 */
-	private static String getClientIP(final HttpServletRequest request) {
+	private static String getClientIP (final HttpServletRequest request) {
 		String clientIP;
 
 		String s = request.getHeader("HTTP_X_FORWARDED_FOR");
@@ -118,7 +134,7 @@ public final class HttpUtils {
 		return clientIP;
 	}
 
-	public static boolean isLocalDomainRequest(final HttpServletRequest request) {
+	public static boolean isLocalDomainRequest (final HttpServletRequest request) throws UnknownHostException {
 		return isLocalDomainAddress(getClientIP(request));
 	}
 
@@ -132,8 +148,9 @@ public final class HttpUtils {
 	 *     127.0.0.1
 	 * </pre>
 	 */
-	private static boolean isLocalDomainAddress(final String ipAddress) {
-		return LOCAL_DOMAIN_ADDRESS_PATTERN.matcher(ipAddress).matches();
+	private static boolean isLocalDomainAddress (final String ipAddress) throws UnknownHostException {
+		final InetAddress inetAddress = InetAddress.getByName(ipAddress);
+		return inetAddress.isAnyLocalAddress() || inetAddress.isLinkLocalAddress() || inetAddress.isMulticastAddress() || inetAddress.isSiteLocalAddress();
 	}
 
 	/**
@@ -144,7 +161,7 @@ public final class HttpUtils {
 	 * @param url , the url used to detect the content type or mime type
 	 * @return the content type, e.g. text/plain, text/html or text/xml
 	 */
-	public static String getContentTypeByExtension(final String url) {
+	public static String getContentTypeByExtension (final String url) {
 		String extension = url.substring(url.lastIndexOf('.') + 1);
 
 		if ("txt".equalsIgnoreCase(extension)) {
@@ -159,11 +176,11 @@ public final class HttpUtils {
 		return "text/html";
 	}
 
-	public static void appendAttribute(StringBuilder sb, String name, String value) {
+	public static void appendAttribute (StringBuilder sb, String name, String value) {
 		appendAttribute(sb, name, value, true);
 	}
 
-	public static void appendAttribute(StringBuilder sb, String name, String value, boolean suppressIfEmpty) {
+	public static void appendAttribute (StringBuilder sb, String name, String value, boolean suppressIfEmpty) {
 		String attributeValue = "";
 		if (value != null) {
 			attributeValue = value;
@@ -177,7 +194,7 @@ public final class HttpUtils {
 	/**
 	 * Parse a query string (e.g. <code>"abc=123&cde=456"</code>) into a list of name/value pairs.
 	 */
-	public static List<NameValuePair> parseQueryParams(final String queryString) {
+	public static List<NameValuePair> parseQueryParams (final String queryString) {
 
 		if (StringUtils.isEmpty(queryString)) {
 			return Collections.emptyList();
@@ -196,7 +213,7 @@ public final class HttpUtils {
 		return result;
 	}
 
-	public static URI parseUri(String uriStr) {
+	public static URI parseUri (String uriStr) {
 		if (StringUtils.isEmpty(uriStr)) {
 			return null;
 		}
@@ -209,8 +226,8 @@ public final class HttpUtils {
 		}
 	}
 
-	public static Cookie findCookieByName(String name) {
-		HttpServletRequest request = currentRequest();
+	public static Cookie findCookieByName (String name) {
+		HttpServletRequest request = getCurrentRequest();
 		if (request == null) {
 			return null;
 		}
@@ -227,7 +244,7 @@ public final class HttpUtils {
 		return null;
 	}
 
-	public static String SetUrlSchema(String input, String prepend) {
+	public static String setSchemaForUrl (String input, String prepend) {
 		if (StringUtils.isEmpty(input)) {
 			return "";
 		}
@@ -242,7 +259,10 @@ public final class HttpUtils {
 		return input;
 	}
 
-	public static String appendDefaultPageIfRequired(String url) {
+	public static String appendDefaultPageIfRequired (String url) {
+		if (StringUtils.isEmpty(url)) {
+			return "";
+		}
 		String ext = FilenameUtils.getExtension(url);
 
 		if (StringUtils.isEmpty(ext)) {
@@ -255,12 +275,13 @@ public final class HttpUtils {
 
 		return url;
 	}
-	public static String normalizeUrl(String url) {
+
+	public static String normalizeUrl (String url) {
 		return url == null ? null : url.replaceAll("//+", "/");
 	}
 
 
-	public static Locale buildLocale(String url) {
+	public static Locale buildLocale (String url) {
 		Locale pageLocale = null;
 		try {
 			Path path = Paths.get(url);
@@ -276,11 +297,11 @@ public final class HttpUtils {
 		return pageLocale;
 	}
 
-	public static String removeNonAlphaNumeric(String key) {
+	public static String removeNonAlphaNumeric (String key) {
 		return replaceNonAlphaNumeric(key, "");
 	}
 
-	public static String replaceNonAlphaNumeric(String key, String replacement) {
+	public static String replaceNonAlphaNumeric (String key, String replacement) {
 		if (key == null) {
 			return "";
 		}
@@ -290,5 +311,25 @@ public final class HttpUtils {
 		}
 
 		return key.replaceAll("\\W+", replacement);
+	}
+
+	/*
+			Looks up the Preview Session token from the cookie in the request
+			*/
+	public static String getSessionPreviewToken (HttpServletRequest request) {
+		if (request == null) {
+			return null;
+		}
+
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie cookie : cookies) {
+				if (TridionUtils.PREVIEW_SESSION_TOKEN.equals(cookie.getName())) {
+					return cookie.getValue();
+				}
+			}
+		}
+
+		return null;
 	}
 }

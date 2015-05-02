@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2015 Radagio
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.databind.builder;
 
 import org.apache.commons.lang3.StringUtils;
@@ -8,7 +24,7 @@ import org.dd4t.contentmodel.Field;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.ModelConverter;
 import org.dd4t.databind.annotations.ViewModel;
-import org.dd4t.databind.util.Constants;
+import org.dd4t.databind.util.DataBindConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -18,8 +34,8 @@ import org.springframework.core.type.filter.AnnotationTypeFilter;
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -81,6 +97,26 @@ public abstract class BaseDataBinder {
 		this.renderDefaultComponentsIfNoModelFound = renderDefaultComponentsIfNoModelFound;
 	}
 
+	public boolean isRenderDefaultComponentModelsOnly () {
+		return renderDefaultComponentModelsOnly;
+	}
+
+	public boolean isRenderDefaultComponentsIfNoModelFound () {
+		return renderDefaultComponentsIfNoModelFound;
+	}
+
+	public Class<ComponentPresentation> getConcreteComponentPresentationImpl () {
+		return concreteComponentPresentationImpl;
+	}
+
+	public Class<ComponentTemplate> getConcreteComponentTemplateImpl () {
+		return concreteComponentTemplateImpl;
+	}
+
+	public Class<Component> getConcreteComponentImpl () {
+		return concreteComponentImpl;
+	}
+
 	public void setConcreteFieldImpl (final Class<Field> concreteFieldImpl) {
 		this.concreteFieldImpl = concreteFieldImpl;
 	}
@@ -109,7 +145,7 @@ public abstract class BaseDataBinder {
 		return concreteFieldImpl;
 	}
 
-	protected static BaseViewModel getModelOrNullForExistingEntry (Hashtable<String, BaseViewModel> models, Class modelClass) {
+	protected static BaseViewModel getModelOrNullForExistingEntry (Map<String, BaseViewModel> models, Class modelClass) {
 		for (BaseViewModel baseViewModel : models.values()) {
 			LOG.debug(baseViewModel.getClass().getName() + "==" + modelClass.getName());
 			if (baseViewModel.getClass().equals(modelClass)) {
@@ -124,13 +160,13 @@ public abstract class BaseDataBinder {
 
 	protected void checkViewModelConfiguration() {
 		if (StringUtils.isEmpty(viewModelMetaKeyName)) {
-			this.viewModelMetaKeyName = Constants.VIEW_MODEL_DEFAULT_META_KEY;
-			LOG.warn("Setting meta key to default: " + Constants.VIEW_MODEL_DEFAULT_META_KEY);
+			this.viewModelMetaKeyName = DataBindConstants.VIEW_MODEL_DEFAULT_META_KEY;
+			LOG.warn("Setting meta key to default: " + DataBindConstants.VIEW_MODEL_DEFAULT_META_KEY);
 		}
 
 		if (StringUtils.isEmpty(viewModelPackageRoot)) {
-			this.viewModelPackageRoot = Constants.VIEW_MODEL_DEFAULT_NAMESPACE;
-			LOG.warn("No package root configured for view models. Using the default package: " + Constants.VIEW_MODEL_DEFAULT_NAMESPACE);
+			this.viewModelPackageRoot = DataBindConstants.VIEW_MODEL_DEFAULT_NAMESPACE;
+			LOG.warn("No package root configured for view models. Using the default package: " + DataBindConstants.VIEW_MODEL_DEFAULT_NAMESPACE);
 		}
 
 		LOG.info("View model key name is: " + this.viewModelMetaKeyName);
@@ -204,9 +240,9 @@ public abstract class BaseDataBinder {
 			LOG.info("Storing viewModelName: {}, for class: {}", viewModelName, model.toString());
 			if (VIEW_MODELS.containsKey(viewModelName)) {
 				LOG.warn("Key: {} already exists! Model for key is: {}", viewModelName, model.toString());
+			} else {
+				VIEW_MODELS.put(viewModelName, model);
 			}
-			// TODO: fix unchecked assignment
-			VIEW_MODELS.putIfAbsent(viewModelName, model);
 		}
 	}
 }

@@ -7,36 +7,42 @@ import java.text.ParseException;
 
 public class TCMURITest extends TestCase{
 
+    public static final int PUBLICATION_ID = 12;
+    public static final int ITEM_ID = 14;
+    public static final int ITEM_TYPE = 16;
+    public static final int VERSION = 2;
+    public static final String EXPECTED = "tcm:12-14-16";
+
     @Test
     public void testToString() throws ParseException {
-        TCMURI tcmUri = new TCMURI(12, 14, 6, 2);
-        assertEquals("tcm:12-14-6", tcmUri.toString());
+        TCMURI tcmUri = new TCMURI(PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
+        assertEquals(EXPECTED, tcmUri.toString());
 
-        TCMURI tcmUriByString = new TCMURI("tcm:12-14-6");
-        assertEquals("tcm:12-14-6", tcmUriByString.toString());
+        TCMURI tcmUriByString = new TCMURI(EXPECTED);
+        assertEquals(EXPECTED, tcmUriByString.toString());
     }
 
     @Test
     public void testGetItemType() throws ParseException {
-        TCMURI tcmUri = new TCMURI(12, 14, 6, 2);
-        assertEquals(6, tcmUri.getItemType());
+        TCMURI tcmUri = new TCMURI(PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
+        assertEquals(ITEM_TYPE, tcmUri.getItemType());
     }
 
     @Test
     public void testGetItemId() throws ParseException {
-        TCMURI tcmUri = new TCMURI(12, 14, 6, 2);
-        assertEquals(14, tcmUri.getItemId());
+        TCMURI tcmUri = new TCMURI(PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
+        assertEquals(ITEM_ID, tcmUri.getItemId());
     }
 
     @Test
     public void testGetPublicationId() throws ParseException {
-        TCMURI tcmUri = new TCMURI(12, 14, 6, 2);
-        assertEquals(12, tcmUri.getPublicationId());
+        TCMURI tcmUri = new TCMURI(PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
+        assertEquals(PUBLICATION_ID, tcmUri.getPublicationId());
     }
 
     @Test
     public void testGetVersion() throws ParseException {
-        TCMURI tcmUri = new TCMURI(12, 14, 6, 2);
-        assertEquals(2, tcmUri.getVersion());
+        TCMURI tcmUri = new TCMURI(PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
+        assertEquals(VERSION, tcmUri.getVersion());
     }
 }

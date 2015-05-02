@@ -1,95 +1,111 @@
+/*
+ * Copyright (c) 2015 SDL, Radagio & R. Oudshoorn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.core.factories.impl;
 
-import org.dd4t.contentmodel.Binary;
 import org.dd4t.contentmodel.Item;
-import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.filters.Filter;
-import org.dd4t.core.exceptions.FilterException;
-import org.dd4t.core.filters.LinkResolverFilter;
-import org.dd4t.core.filters.impl.BaseFilter;
-import org.dd4t.core.serializers.impl.SerializerFactory;
-import org.dd4t.databind.DataBindFactory;
-import org.dd4t.providers.CacheProvider;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.dd4t.core.exceptions.ProcessorException;
+import org.dd4t.core.processors.Processor;
+import org.dd4t.core.processors.RunPhase;
+import org.dd4t.core.request.RequestContext;
+import org.dd4t.core.util.HttpRequestContext;
+import org.dd4t.providers.PayloadCacheProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base class for all factories. All factories have a list of filters and a
+ * Base class for all factories. All factories have a list of processors and a
  * default cache agent.
  *
  * @author bjornl, rai
  */
 public abstract class BaseFactory {
+	private static final Logger LOG = LoggerFactory.getLogger(BaseFactory.class);
+    protected PayloadCacheProvider cacheProvider;
+    private List<Processor> processors;
+	private Class requestContextClass;
 
-    @Autowired
-    protected CacheProvider cacheProvider;
-    private List<Filter> filters;
-
-    public List<Filter> getFilters() {
-        if (filters == null) {
-            this.filters = new ArrayList<>();
+    public List<Processor> getProcessors () {
+        if (processors == null) {
+            this.processors = new ArrayList<>();
         }
-        return filters;
+        return processors;
     }
 
-    public void setFilters(List<Filter> filters) {
-        this.filters = new ArrayList<>();
+    /**
+     * Configure through Spring
+     * @param processors list of Processors to run
+     */
+    public void setProcessors (List<Processor> processors) {
+        this.processors = new ArrayList<>();
 
-        for (Filter filter : filters) {
-            this.filters.add(filter);
+        for (Processor processor : processors) {
+            this.processors.add(processor);
         }
     }
 
     /**
-     * Runs all the filters on an item. If the cachingAllowed is true it will
-     * only run the filters where the result is allowed to be cached.
+     * Runs all the processors on an item. If cachingAllowed is true it will
+     * only run the processors where the result is allowed to be cached.
      *
      * @param item The DD4T Item
-     * @throws FilterException
-     * @throws SerializationException
+     * @throws org.dd4t.core.exceptions.ProcessorException
      */
-    public void doFilters(Item item, BaseFilter.RunPhase runPhase) throws FilterException, SerializationException {
+    public void executeProcessors (Item item, RunPhase runPhase, RequestContext context) throws ProcessorException {
         if (item != null) {
-            for (Filter filter : getFilters()) {
-                if (runPhase == BaseFilter.RunPhase.BOTH) {
-                    this.doFilter(filter, item);
-                } else if (runPhase == BaseFilter.RunPhase.BEFORE_CACHING && filter.getCachingAllowed()) {
-                    this.doFilter(filter, item);
-                } else if (runPhase == BaseFilter.RunPhase.AFTER_CACHING && !filter.getCachingAllowed()) {
-                    this.doFilter(filter, item);
+            for (Processor processor : getProcessors()) {
+                if (runPhase == processor.getRunPhase() || processor.getRunPhase() == RunPhase.BOTH) {
+                    this.execute(processor, item, context);
                 }
             }
         }
     }
 
-    private void doFilter(Filter filter, Item item) throws FilterException, SerializationException {
-        // link resolving is not needed for the simple objects or binary
-        if (filter instanceof LinkResolverFilter && item instanceof Binary) {
-            return;
-        }
-
-        filter.doFilter(item);
+    private void execute (Processor processor, Item item, RequestContext context) throws ProcessorException {
+        processor.execute(item,context);
     }
 
     /**
      * Set the cache agent.
      */
-    public void setCacheProvider(CacheProvider cacheAgent) {
+    public void setCacheProvider(PayloadCacheProvider cacheAgent) {
         cacheProvider = cacheAgent;
     }
 
-    /**
-     * Deserializes a JSON encoded String into an object of the given type
-     *
-     * @param source String representing the JSON encoded object
-     * @param clazz  Class representing the implementation type to deserialize into
-     * @return the deserialized object
-     */
-    protected <T extends Item> T deserialize(String source, Class<? extends T> clazz) throws SerializationException {
+	protected RequestContext getRequestContext() {
 
+        if (requestContextClass == null) {
+            requestContextClass = HttpRequestContext.class;
+        }
 
-        return SerializerFactory.deserialize(source, clazz);
+		if (RequestContext.class.isAssignableFrom(requestContextClass)) {
+			try {
+				return (RequestContext) requestContextClass.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				LOG.error(e.getLocalizedMessage(), e);
+			}
+		}
+		LOG.error("Class {} does not extend from AbstractRequestContext!", requestContextClass.getCanonicalName());
+		return null;
+	}
+
+    public void setRequestContextClass (final Class requestContextClass) {
+        this.requestContextClass = requestContextClass;
     }
 }

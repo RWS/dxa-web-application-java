@@ -1,10 +1,11 @@
 package org.dd4t.providers.rs;
 
-import org.dd4t.core.factories.impl.PropertiesServiceFactory;
 import org.dd4t.core.services.PropertiesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -23,13 +24,14 @@ import javax.ws.rs.client.WebTarget;
  * ensure the correct amount of dependencies are loaded from either the
  * J2EE container or in this POM.
  *
+ * TODO: test new setup
+ *
  * @author Mihai Cadariu
  */
 public enum JAXRSClient {
 
 	INSTANCE;
 
-	// TODO: change tridionservice.url
 	private static final String SERVICE_URL = "tridionservice.url";
 	private static final String BINARY_WRAPPER_BY_ID = "providers/binary/getwrapperbyid";
 	private static final String BINARY_WRAPPER_BY_URL = "providers/binary/getwrapperbyurl";
@@ -48,35 +50,42 @@ public enum JAXRSClient {
 	private static final String QUERY_COMPONENT_BY_SCHEMA = "providers/query/getcomponentsbyschema";
 	private static final String QUERY_COMPONENT_BY_SCHEMA_IN_KEYWORD = "providers/query/getcomponentsbyschemainkeyword";
 
-	private final Logger LOG = LoggerFactory.getLogger(JAXRSClient.class);
+	private static final Logger LOG = LoggerFactory.getLogger(JAXRSClient.class);
 
-	private final WebTarget binaryWrapperByIdTarget;
-	private final WebTarget binaryWrapperByURLTarget;
-	private final WebTarget componentByIdTarget;
-	private final WebTarget discoverPublicationByPublicationURLTarget;
-	private final WebTarget discoverPublicationByImagesURLTarget;
-	private final WebTarget pageCheckExists;
-	private final WebTarget pageContentByIdTarget;
-	private final WebTarget pageContentByURLTarget;
-	private final WebTarget pageListByPublicationTarget;
-	private final WebTarget resolveComponentFromPageTarget;
-	private final WebTarget resolveComponentTarget;
-	private final WebTarget taxonomyBySchemaTarget;
-	private final WebTarget taxonomyByURITarget;
-	private final WebTarget queryComponentByCustomMeta;
-	private final WebTarget queryComponentBySchema;
-	private final WebTarget queryComponentsBySchemaInKeyword;
+	// TODO: wire up in remote scenario
+	@Resource
+	private PropertiesService propertiesService;
+
+	private WebTarget binaryWrapperByIdTarget;
+	private WebTarget binaryWrapperByURLTarget;
+	private WebTarget componentByIdTarget;
+	private WebTarget discoverPublicationByPublicationURLTarget;
+	private WebTarget discoverPublicationByImagesURLTarget;
+	private WebTarget pageCheckExists;
+	private WebTarget pageContentByIdTarget;
+	private WebTarget pageContentByURLTarget;
+	private WebTarget pageListByPublicationTarget;
+	private WebTarget resolveComponentFromPageTarget;
+	private WebTarget resolveComponentTarget;
+	private WebTarget taxonomyBySchemaTarget;
+	private WebTarget taxonomyByURITarget;
+	private WebTarget queryComponentByCustomMeta;
+	private WebTarget queryComponentBySchema;
+	private WebTarget queryComponentsBySchemaInKeyword;
 
 
 	/**
 	 * Private constructor reads the Service URL location from properties file, initializes the JAX RS client, and
 	 * creates the WebTargets for each service method.
 	 */
-	private JAXRSClient () {
-		PropertiesServiceFactory factory = PropertiesServiceFactory.getInstance();
-		PropertiesService service = factory.getPropertiesService();
+	JAXRSClient () {
 
-		String serviceUrlProperty = service.getProperty(SERVICE_URL);
+	}
+
+	@PostConstruct
+	private void init() {
+
+		String serviceUrlProperty = propertiesService.getProperty(SERVICE_URL);
 		if (!serviceUrlProperty.endsWith("/")) {
 			serviceUrlProperty += "/";
 		}
@@ -101,7 +110,6 @@ public enum JAXRSClient {
 		queryComponentByCustomMeta = baseTarget.path(QUERY_COMPONENT_BY_CUSTOMMETA);
 		queryComponentBySchema = baseTarget.path(QUERY_COMPONENT_BY_SCHEMA);
 		queryComponentsBySchemaInKeyword = baseTarget.path(QUERY_COMPONENT_BY_SCHEMA_IN_KEYWORD);
-
 	}
 
 	/**

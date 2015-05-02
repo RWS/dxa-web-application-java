@@ -12,12 +12,12 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.resolvers.LinkResolver;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.core.util.TridionUtils;
-import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.LinkProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -30,15 +30,16 @@ import java.util.regex.Pattern;
  * Load this class through the LinkResolverFactory!
  * <p/>
  *
- * TODO: this class is not thread safe, yet it's a singleton factory!
  * TODO: redo this
  */
 public class DefaultLinkResolver implements LinkResolver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultLinkResolver.class);
 
-	@Autowired private LinkProvider linkProvider;
-	@Autowired private PayloadCacheProvider cacheProvider;
+	@Resource
+	private LinkProvider linkProvider;
+	@Resource
+	private PayloadCacheProvider cacheProvider;
 	private Map<String, String> schemaToUrlMappings;
 	private String schemaKey;
 	private boolean encodeUrl = true;

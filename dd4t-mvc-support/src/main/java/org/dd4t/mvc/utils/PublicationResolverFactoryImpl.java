@@ -1,4 +1,4 @@
-package org.dd4t.core.factories.impl;
+package org.dd4t.mvc.utils;
 
 import org.dd4t.core.factories.PublicationResolverFactory;
 import org.dd4t.core.resolvers.PublicationResolver;
@@ -8,6 +8,9 @@ import org.slf4j.LoggerFactory;
 /**
  * PublicationResolverFactoryImpl hides actual implementation
  * Configured through Spring beans
+ *
+ * This is needed for allowing static access in PublicationUrl.java,
+ * an EL function.
  *
  * @author Mihai Cadariu
  */

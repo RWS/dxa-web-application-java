@@ -1,22 +1,22 @@
-package org.dd4t.core.caching.impl;
-
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.concurrent.ConcurrentSkipListSet;
+package org.dd4t.core.providers;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
-
 import org.dd4t.core.caching.Cachable;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.CacheInvalidator;
+import org.dd4t.core.caching.impl.CacheElementImpl;
 import org.dd4t.core.util.TridionUtils;
 import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.Serializable;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * EH Cache implementation
@@ -39,8 +39,7 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator,
 	private final Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
 	private final Cache dependencyCache = CacheManager.create().getCache(CACHE_NAME_DEPENDENCY);
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(EHCacheProvider.class);
+	private static final Logger LOG = LoggerFactory.getLogger(EHCacheProvider.class);
 
 	public static final int ADJUST_TTL = 2;
 	
@@ -110,8 +109,7 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator,
 					currentElement = oldElement;
 				}
 			}
-			CacheElement<T> cacheElement = (CacheElement<T>) currentElement
-					.getObjectValue();
+			CacheElement<T> cacheElement = (CacheElement<T>) currentElement.getObjectValue();
 			String dependencyKey = cacheElement.getDependentKey();
 			if (dependencyKey != null) {
 				Element dependencyElement = dependencyCache.get(dependencyKey); // update

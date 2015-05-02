@@ -2,6 +2,7 @@ package org.dd4t.databind.viewmodel.base;
 
 import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.core.util.TCMURI;
+import org.dd4t.databind.annotations.ViewModel;
 import org.joda.time.DateTime;
 
 import java.util.HashMap;
@@ -22,8 +23,16 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 	private TCMURI templateUri;
 	private DateTime lastModifiedDate;
 	private DateTime lastPublishDate;
+	private boolean setGenericComponentOnComponentPresentation;
 
 	private transient Map<String, XPMInfo> fieldMap = new HashMap<String, XPMInfo>();
+
+	@Override
+	protected void setGenericParameters () {
+		super.setGenericParameters();
+		final ViewModel viewModelAnnotation = this.getClass().getAnnotation(ViewModel.class);
+		this.setGenericComponentOnComponentPresentation = viewModelAnnotation.setComponentObject();
+	}
 
 	@Override public TCMURI getTcmUri () {
 		return this.itemTcmUri;
@@ -55,6 +64,10 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 
 	@Override public void setLastPublishDate (final DateTime lastPublishDate) {
 		this.lastPublishDate = lastPublishDate;
+	}
+
+	@Override public boolean setGenericComponentOnComponentPresentation () {
+		return setGenericComponentOnComponentPresentation;
 	}
 
 	public String getXPath(final String fieldName) {

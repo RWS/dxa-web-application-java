@@ -1,4 +1,4 @@
-package org.dd4t.core.services.impl;
+package org.dd4t.mvc.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package org.dd4t.core.services.impl;
+package org.dd4t.mvc.utils;
 
 import org.dd4t.core.services.PropertiesService;
 

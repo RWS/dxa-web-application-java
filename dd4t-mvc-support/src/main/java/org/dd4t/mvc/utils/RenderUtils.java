@@ -1,4 +1,4 @@
-package org.dd4t.core.util;
+package org.dd4t.mvc.utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
@@ -10,6 +10,8 @@ import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.RenderException;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
+import org.dd4t.core.util.Constants;
+import org.dd4t.core.util.TCMURI;
 import org.dd4t.databind.util.DataBindConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -197,18 +199,6 @@ public class RenderUtils {
 	 */
 	public static String fixUrl (String url) {
 		return url.replace(' ', '-').toLowerCase();
-	}
-
-	/**
-	 * Utility method to fix a constant value (probably a CMS-able value from
-	 * Tridion), so it can be used inside a URL: lower case and all spaces and
-	 * underscores are replaced by dashes (-).
-	 */
-	public static String stringToDashCase (String value) {
-		if (value == null) {
-			return "";
-		}
-		return value.replaceAll("[^a-zA-Z0-9]", "_").replaceAll("([_]+)", "_").toLowerCase();
 	}
 
 	/**

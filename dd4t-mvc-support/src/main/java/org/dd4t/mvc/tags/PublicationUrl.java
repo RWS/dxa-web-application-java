@@ -1,6 +1,6 @@
 package org.dd4t.mvc.tags;
 import org.apache.commons.lang3.StringUtils;
-import org.dd4t.core.factories.impl.PublicationResolverFactoryImpl;
+import org.dd4t.mvc.utils.PublicationResolverFactoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

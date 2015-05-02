@@ -1,13 +1,17 @@
 package org.dd4t.core.processors.impl;
 
-import org.dd4t.contentmodel.*;
-import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.FieldSet;
+import org.dd4t.contentmodel.Item;
+import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.ComponentLinkField;
 import org.dd4t.contentmodel.impl.EmbeddedField;
 import org.dd4t.contentmodel.impl.XhtmlField;
-import org.dd4t.core.factories.impl.LinkResolverFactory;
+import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.ProcessorException;
+import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.processors.LinkResolverProcessor;
 import org.dd4t.core.request.RequestContext;
 import org.dd4t.core.resolvers.LinkResolver;
@@ -16,8 +20,13 @@ import org.dd4t.core.util.XSLTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import javax.xml.transform.TransformerException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,14 +43,11 @@ public class DefaultLinkResolver extends BaseProcessor implements LinkResolverPr
     private final XSLTransformer xslTransformer = XSLTransformer.getInstance();
     private final Pattern xsltPattern = Pattern.compile("</?ddtmproot>");
     private final Pattern regExpPattern = Pattern.compile("href=\"" + TridionUtils.TCM_REGEX + "\"");
+
+    @Resource
     private LinkResolver linkResolver;
     private String contextPath;
     private Map<String, Object> params = new HashMap<>();
-
-    public DefaultLinkResolver () {
-        LinkResolverFactory factory = LinkResolverFactory.getInstance();
-        setLinkResolver(factory.getLinkResolver());
-    }
 
     /**
      * Recursively resolves all components links.
@@ -174,10 +180,6 @@ public class DefaultLinkResolver extends BaseProcessor implements LinkResolverPr
 
     public LinkResolver getLinkResolver() {
         return linkResolver;
-    }
-
-    public void setLinkResolver(LinkResolver linkResolver) {
-        this.linkResolver = linkResolver;
     }
 
     @Override

@@ -23,7 +23,6 @@ public abstract class ViewModelBase implements BaseViewModel {
 	private static final Logger LOG = LoggerFactory.getLogger(ViewModelBase.class);
 	private final List<String> viewModelNames;
 	private Map<String,Object> modelProperties;
-	private boolean setGenericComponentOnComponentPresentation;
 	private boolean setRawDataOnModel;
 	private Object rawData;
 
@@ -40,7 +39,7 @@ public abstract class ViewModelBase implements BaseViewModel {
 		setFieldParameters();
 	}
 
-	private void setGenericParameters () {
+	protected void setGenericParameters () {
 		LOG.trace("Setting generic parameters on model.");
 		final ViewModel viewModelAnnotation = this.getClass().getAnnotation(ViewModel.class);
 		if (null != viewModelAnnotation) {
@@ -54,7 +53,7 @@ public abstract class ViewModelBase implements BaseViewModel {
 			if (!viewModels.isEmpty()) {
 				this.viewModelNames.addAll(viewModels);
 			}
-			this.setGenericComponentOnComponentPresentation = viewModelAnnotation.setComponentObject();
+
 			this.setRawDataOnModel = viewModelAnnotation.setRawData();
 		}
 	}
@@ -94,9 +93,7 @@ public abstract class ViewModelBase implements BaseViewModel {
 		return null;
 	}
 
-	@Override public boolean setGenericComponentOnComponentPresentation () {
-		return setGenericComponentOnComponentPresentation;
-	}
+
 
 	public Map<String,Object> getModelProperties() {
 		return this.modelProperties;

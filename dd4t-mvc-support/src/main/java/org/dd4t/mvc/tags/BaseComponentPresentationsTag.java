@@ -4,7 +4,7 @@ import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.util.Constants;
-import org.dd4t.core.util.RenderUtils;
+import org.dd4t.mvc.utils.RenderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

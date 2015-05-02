@@ -18,62 +18,50 @@
     </bean>
 
     <bean id="publicationProvider" class="org.dd4t.providers.impl.BrokerPublicationProvider">
-        <property name="publicationDescriptor" value="org.dd4t.core.util.TridionPublicationDescriptor" />
+        <property name="publicationDescriptor" value="org.dd4t.contentmodel.impl.PublicationDescriptorImpl" />
     </bean>
 
-    <bean id="publicationResolver" scope="singleton" class="org.dd4t.core.resolvers.impl.UrlPublicationResolver">
+    <bean id="publicationResolver" class="org.dd4t.core.resolvers.impl.UrlPublicationResolver">
         <property name="publicationProvider" ref="publicationProvider" />
     </bean>
 
-    <bean id="propertiesService" scope="singleton" class="org.dd4t.core.services.impl.PropertiesServiceImpl">
+    <bean id="propertiesService" class="org.dd4t.mvc.utils.PropertiesServiceImpl">
         <property name="location" value="dd4t.properties"/>
     </bean>
 
-    <bean id="propertiesServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.PropertiesServiceFactory"
-          factory-method="getInstance"/>
-
-    <bean id="publicationResolverFactory" scope="singleton" factory-method="getInstance" class="org.dd4t.core.factories.impl.PublicationResolverFactoryImpl">
+    <bean id="publicationResolverFactory" factory-method="getInstance" class="org.dd4t.mvc.utils.PublicationResolverFactoryImpl">
         <property name="publicationResolver" ref="publicationResolver" />
     </bean>
 
     <!-- DD4T Provider beans -->
-    <bean id="binaryProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerBinaryProvider">
+    <bean id="binaryProvider" class="org.dd4t.providers.impl.BrokerBinaryProvider">
         <property name="contentIsCompressed" value="true"/>
     </bean>
 
-    <bean id="componentPresentationProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerComponentPresentationProvider">
+    <bean id="componentPresentationProvider" class="org.dd4t.providers.impl.BrokerComponentPresentationProvider">
         <property name="contentIsCompressed" value="true"/>
         <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
         <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
     </bean>
 
-    <bean id="pageProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerPageProvider"
-          factory-bean="pageProviderFactory">
+    <bean id="pageProvider" class="org.dd4t.providers.impl.BrokerPageProvider">
         <property name="contentIsCompressed" value="true"/>
     </bean>
 
-    <bean id="pageProviderFactory" scope="singleton" class="org.dd4t.core.factories.impl.PageProviderFactory"
-          factory-method="getInstance"/>
-
-    <bean id="linkProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerLinkProvider">
+    <bean id="linkProvider" class="org.dd4t.providers.impl.BrokerLinkProvider">
         <property name="contentIsCompressed" value="true"/>
     </bean>
 
-    <bean id="cacheProvider" scope="singleton" class="org.dd4t.core.caching.impl.EHCacheProvider"
-          depends-on="propertiesServiceFactory"/>
+    <bean id="cacheProvider" class="org.dd4t.core.providers.EHCacheProvider" />
 
-    <bean id="cacheProviderFactory" scope="singleton" factory-method="getInstance"
-          class="org.dd4t.core.factories.impl.CacheProviderFactoryImpl"/>
 
-    <!-- DD4T Factories -->
-    <bean id="linkResolver" scope="singleton" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver"/>
+    <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver"/>
 
-    <bean id="linkResolverFactory" scope="singleton" class="org.dd4t.core.factories.impl.LinkResolverFactory"
-          factory-method="getInstance"/>
-    <bean id="componentFactory" scope="singleton" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl"
+    <bean id="componentFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl"
           factory-method="getInstance">
     </bean>
 
+    <!-- DD4T Factories -->
     <bean id="pageFactory" scope="singleton" class="org.dd4t.core.factories.impl.PageFactoryImpl"
           factory-method="getInstance">
         <property name="pageProvider" ref="pageProvider" />
@@ -100,26 +88,22 @@
         <property name="componentViewPath" value="components/"/>
     </bean>
 
-    <bean id="binaryController" scope="singleton" class="org.dd4t.test.web.controller.SpringBinaryController">
-        <!-- TODO -->
+    <bean id="binaryController" class="org.dd4t.test.web.controller.SpringBinaryController">
         <property name="binaryRootFolder" value="/media"/>
     </bean>
 
     <bean id="serializer" class="org.dd4t.core.serializers.impl.json.JSONSerializer"/>
-    <bean id="serializerFactory" scope="singleton" class="org.dd4t.core.serializers.impl.SerializerFactory">
+    <bean id="serializerFactory" class="org.dd4t.core.serializers.impl.SerializerFactory">
         <constructor-arg name="serializerInstance" ref="serializer"/>
     </bean>
 
     <!-- Taxonomy Stuff -->
-    <bean id="taxonomyProvider" scope="singleton" class="org.dd4t.providers.impl.BrokerTaxonomyProvider"/>
+    <bean id="taxonomyProvider" class="org.dd4t.providers.impl.BrokerTaxonomyProvider"/>
 
-    <bean id="taxonomyFactory" scope="singleton" class="org.dd4t.core.factories.impl.TaxonomyFactoryImpl" factory-method="getInstance">
+    <bean id="taxonomyFactory" class="org.dd4t.core.factories.impl.TaxonomyFactoryImpl" factory-method="getInstance">
         <property name="taxonomyProvider" ref="taxonomyProvider" />
         <property name="cacheProvider" ref="cacheProvider" />
     </bean>
-
-    <bean id="taxonomyServiceFactory" scope="singleton" class="org.dd4t.core.factories.impl.TaxonomyServiceFactoryImpl"
-          factory-method="getInstance"/>
 
     <!-- Databind stuff.-->
     <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />

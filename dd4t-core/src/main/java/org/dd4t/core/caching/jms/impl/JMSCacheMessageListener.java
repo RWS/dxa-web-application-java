@@ -1,4 +1,4 @@
-package org.dd4t.core.caching.impl;
+package org.dd4t.core.caching.jms.impl;
 
 import com.tridion.cache.CacheEvent;
 import org.dd4t.core.caching.CacheInvalidator;

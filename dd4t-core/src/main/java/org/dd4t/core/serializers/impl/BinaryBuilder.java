@@ -10,7 +10,6 @@ import org.dd4t.providers.transport.BinaryWrapper;
  * Builds a Binary object from a BinaryWrapper object.
  *
  * @author Mihai Cadariu
- * @since 10.06.2014
  */
 public class BinaryBuilder {
 

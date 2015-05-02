@@ -1,7 +1,8 @@
-package org.dd4t.core.util;
+package org.dd4t.mvc.utils;
 
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.databind.BaseViewModel;
+import org.dd4t.core.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

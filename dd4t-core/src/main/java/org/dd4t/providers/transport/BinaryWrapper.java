@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * Java bean representing a wrapper for a Binary object and a binary content.
- * <p/>
+ *
  * The Binary is JSONed, then GZipped, then Base64 encoded. The binary content is a raw byte array.
  *
  * @author Mihai Cadariu

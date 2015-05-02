@@ -228,6 +228,7 @@
 		</dependency>
 
 		<!-- Closed source third party dependencies (poms from maven4 tridion) -->
+		<!-- TODO: move to groupid com.vs -->
 		<dependency>
 			<groupId>easylicense</groupId>
 			<artifactId>easylicense</artifactId>

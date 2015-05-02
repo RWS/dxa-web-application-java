@@ -1,5 +1,6 @@
-package org.dd4t.core.util;
+package org.dd4t.mvc.utils;
 
+import org.dd4t.core.util.HttpUtils;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.support.RequestContextUtils;
 

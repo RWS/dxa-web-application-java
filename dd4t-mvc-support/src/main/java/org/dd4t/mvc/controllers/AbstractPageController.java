@@ -6,12 +6,11 @@ import org.dd4t.contentmodel.Page;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
-import org.dd4t.core.factories.impl.PropertiesServiceFactory;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.dd4t.core.services.PropertiesService;
 import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.HttpUtils;
-import org.dd4t.core.util.RenderUtils;
+import org.dd4t.mvc.utils.RenderUtils;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.annotation.Resource;
 import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -46,9 +46,15 @@ public abstract class AbstractPageController {
 	private static final String LAST_MODIFIED = "Last-Modified";
 	private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
 
-	// Set through Spring
+	@Resource
 	protected PageFactoryImpl pageFactory;
+
+	@Resource
 	protected PublicationResolver publicationResolver;
+
+	@Resource
+	protected PropertiesService propertiesService;
+
 	private String pageViewPath = "";
 	/**
 	 * Boolean indicating if context path on the page URL should be removed, defaults to true
@@ -116,7 +122,7 @@ public abstract class AbstractPageController {
 	}
 
 	private String getDefaultPublicationUrl() {
-		return getPropertiesService().getProperty(Constants.DEFAULT_PUBLICATION_URL_CONFIGURATION_KEY);
+		return propertiesService.getProperty(Constants.DEFAULT_PUBLICATION_URL_CONFIGURATION_KEY);
 	}
 
 
@@ -174,9 +180,9 @@ public abstract class AbstractPageController {
 		return publicationResolver;
 	}
 
-	public void setPublicationResolver (final PublicationResolver publicationResolver) {
-		this.publicationResolver = publicationResolver;
-	}
+//	public void setPublicationResolver (final PublicationResolver publicationResolver) {
+//		this.publicationResolver = publicationResolver;
+//	}
 
 	/**
 	 * Create Date format for last-modified headers. Note that a constant
@@ -186,9 +192,5 @@ public abstract class AbstractPageController {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
 		dateFormat.setTimeZone(GMT);
 		return dateFormat;
-	}
-
-	private PropertiesService getPropertiesService() {
-		return PropertiesServiceFactory.getInstance().getPropertiesService();
 	}
 }

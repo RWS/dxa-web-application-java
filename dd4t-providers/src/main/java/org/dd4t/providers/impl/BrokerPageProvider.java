@@ -20,15 +20,14 @@ import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.factories.impl.CacheProviderFactoryImpl;
 import org.dd4t.core.providers.BaseBrokerProvider;
-import org.dd4t.core.util.IOUtils;
 import org.dd4t.core.util.TCMURI;
-import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.PageProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.List;
@@ -40,7 +39,8 @@ import java.util.List;
 public class BrokerPageProvider extends BaseBrokerProvider implements PageProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerPageProvider.class);
-	private final PayloadCacheProvider cacheProvider = CacheProviderFactoryImpl.getInstance().getCacheProvider();
+	@Resource
+	private PayloadCacheProvider cacheProvider;
 	/**
 	 * Retrieves content of a Page by looking the page up by its item id and Publication id.
 	 *
@@ -64,7 +64,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 			throw new ItemNotFoundException("Unable to find page by id '" + id + "' and publication '" + publication + "'.");
 		}
 		try {
-			return decodeAndDecompressContent(IOUtils.convertStreamToString(data.getInputStream()));
+			return decodeAndDecompressContent(convertStreamToString(data.getInputStream()));
 		} catch (IOException e) {
 			throw new SerializationException(e);
 		}

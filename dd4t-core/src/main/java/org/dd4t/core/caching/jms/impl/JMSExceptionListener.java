@@ -1,4 +1,4 @@
-package org.dd4t.core.caching.impl;
+package org.dd4t.core.caching.jms.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

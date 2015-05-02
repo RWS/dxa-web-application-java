@@ -1,11 +1,13 @@
-package org.dd4t.core.util;
+package org.dd4t.contentmodel.impl;
+
+import org.dd4t.core.util.PublicationDescriptor;
 
 /**
  * dd4t-2
  *
  * @author Q. Slings, R. Kempees
  */
-public class TridionPublicationDescriptor implements PublicationDescriptor {
+public class PublicationDescriptorImpl implements PublicationDescriptor {
 	private int id;
 	private String key;
 	private String title;
@@ -14,7 +16,7 @@ public class TridionPublicationDescriptor implements PublicationDescriptor {
 	private String publicationUrl;
 	private String publicationPath;
 
-	public TridionPublicationDescriptor (final int id, final String key, final String title, final String multimediaPath, final String multimediaUrl, final String publicationUrl, final String publicationPath) {
+	public PublicationDescriptorImpl (final int id, final String key, final String title, final String multimediaPath, final String multimediaUrl, final String publicationUrl, final String publicationPath) {
 		this.id = id;
 		this.key = key;
 		this.title = title;
@@ -24,7 +26,7 @@ public class TridionPublicationDescriptor implements PublicationDescriptor {
 		this.publicationPath = publicationPath;
 	}
 
-	public TridionPublicationDescriptor () {
+	public PublicationDescriptorImpl () {
 
 	}
 

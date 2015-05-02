@@ -13,10 +13,8 @@ import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-
 import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.Constants;
-import org.dd4t.core.util.RenderUtils;
 import org.dd4t.providers.ComponentPresentationProvider;
 import org.dd4t.providers.util.DaoUtils;
 import org.joda.time.DateTime;
@@ -146,7 +144,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 			// include CT data.
 
 			final List<String> values = new ArrayList<>();
-			values.add(RenderUtils.stringToDashCase(componentTemplate.getTitle()));
+			values.add(stringToDashCase(componentTemplate.getTitle()));
 
 			TextField field = new TextField();
 			field.setName(Constants.VIEW_NAME_FIELD);
@@ -160,6 +158,19 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 			LOG.error(e.getLocalizedMessage(), e);
 		}
 		return null;
+	}
+
+	// TODO: move away from this.
+	/**
+	 * Utility method to fix a constant value (probably a CMS-able value from
+	 * Tridion), so it can be used inside a URL: lower case and all spaces and
+	 * underscores are replaced by dashes (-).
+	 */
+	public static String stringToDashCase (String value) {
+		if (value == null) {
+			return "";
+		}
+		return value.replaceAll("[^a-zA-Z0-9]", "_").replaceAll("([_]+)", "_").toLowerCase();
 	}
 
 

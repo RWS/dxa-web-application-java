@@ -52,12 +52,7 @@
 	<bean id="richTextWithLinksResolverFilter"
 		class="org.dd4t.core.processors.impl.RichTextWithLinksResolver">
 		<property name="linkResolver"><ref bean="LinkResolver" /></property>		
-	</bean>	
-
-    <bean id="linkResolverFactory" scope="singleton" class="org.dd4t.core.factories.impl.LinkResolverFactory"
-          factory-method="getInstance">
-		<property name="linkResolver"><ref bean="LinkResolver" /></property>          
-    </bean>
+	</bean>
           
 	<!-- Note that the factory is prepped for hybrid publishing -->
 	<bean id="genericPageFactory"

@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Enumeration;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -61,8 +60,6 @@ public abstract class AbstractPageController {
 	 */
 	private boolean removeContextPath = false;
 
-
-
 	/**
 	 * All page requests are handled by this method. The page meta XML is
 	 * queried based on the request URI, the page meta XML contains the actual
@@ -73,13 +70,6 @@ public abstract class AbstractPageController {
 		final String urlToFetch = HttpUtils.appendDefaultPageIfRequired(HttpUtils.getCurrentURL(request));
 		String url = adjustLocalErrorUrl(request, urlToFetch);
 		url = HttpUtils.normalizeUrl(url);
-		if (request.getDispatcherType() == DispatcherType.ERROR) {
-			Enumeration<String> headers = request.getHeaderNames();
-			while (headers.hasMoreElements()) {
-				String header = headers.nextElement();
-				LOG.debug("{}:{}",header,request.getHeader(header));
-			}
-		}
 
 		String publicationUrl = publicationResolver.getPublicationUrl();
 
@@ -110,7 +100,6 @@ public abstract class AbstractPageController {
 		} catch (FactoryException e) {
 			if (e.getCause() instanceof ItemNotFoundException) {
 				LOG.warn("Page with url '{}' could not be found.", url);
-				response.setHeader("X-PU",publicationUrl);
 				response.sendError(HttpServletResponse.SC_NOT_FOUND);
 			} else {
 				LOG.error("Factory Error.", e);
@@ -180,9 +169,9 @@ public abstract class AbstractPageController {
 		return publicationResolver;
 	}
 
-//	public void setPublicationResolver (final PublicationResolver publicationResolver) {
-//		this.publicationResolver = publicationResolver;
-//	}
+	public void setPublicationResolver (final PublicationResolver publicationResolver) {
+		this.publicationResolver = publicationResolver;
+	}
 
 	/**
 	 * Create Date format for last-modified headers. Note that a constant

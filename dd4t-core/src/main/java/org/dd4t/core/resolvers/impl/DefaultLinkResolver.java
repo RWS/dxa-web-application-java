@@ -27,10 +27,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Load this class through the LinkResolverFactory!
- * <p/>
  *
- * TODO: redo this
  */
 public class DefaultLinkResolver implements LinkResolver {
 

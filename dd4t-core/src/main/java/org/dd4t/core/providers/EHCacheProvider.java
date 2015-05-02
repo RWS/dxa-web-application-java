@@ -21,8 +21,6 @@ import java.util.concurrent.ConcurrentSkipListSet;
 /**
  * EH Cache implementation
  * 
- * TODO: this class has bugs! Only use for Tridion Object invalidation!
- * 
  * @author R. Kempees, Mihai Cadariu, Rogier Oudshoorn
  */
 public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator,
@@ -42,11 +40,15 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator,
 	private static final Logger LOG = LoggerFactory.getLogger(EHCacheProvider.class);
 
 	public static final int ADJUST_TTL = 2;
-	
+
 	private int expiredTTL = 299;
 	private int cacheDependencyTTL = 299;
 	private int cacheTTL = 3599;
 	private boolean checkForPreview = false;
+
+	EHCacheProvider() {
+		LOG.debug("Starting cache provider");
+	}
 
 	public boolean doCheckForPreview() {
 		return checkForPreview;

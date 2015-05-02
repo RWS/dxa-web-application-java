@@ -12,9 +12,9 @@ public interface Processor {
      * @param item the Tridion item
      * @throws org.dd4t.core.exceptions.ProcessorException
      */
-	public void execute(Item item, RequestContext requestContext) throws ProcessorException;
+	void execute(Item item, RequestContext requestContext) throws ProcessorException;
 
-    public void setRunPhase(RunPhase phase);
+    void setRunPhase(RunPhase phase);
 
-    public RunPhase getRunPhase();
+    RunPhase getRunPhase();
 }

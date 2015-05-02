@@ -1,4 +1,4 @@
-package org.dd4t.core.serializers.impl;
+package org.dd4t.core.util;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;

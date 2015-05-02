@@ -3,10 +3,12 @@ package org.dd4t.core.providers;
 import org.apache.commons.codec.binary.Base64;
 import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.serializers.impl.CompressionUtils;
+import org.dd4t.core.util.CompressionUtils;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,6 +28,8 @@ public abstract class BaseBrokerProvider {
 	// Set these values in Spring configuration
 	protected boolean contentIsCompressed = true;
 	protected final boolean contentIsBase64Encoded = true;
+	@Resource
+	protected PayloadCacheProvider cacheProvider;
 
 	public static String convertStreamToString(InputStream is) throws IOException {
         /*
@@ -124,5 +128,10 @@ public abstract class BaseBrokerProvider {
 	 */
 	protected String getKey(CacheType type, String url) {
 		return String.format("%s-%s", type, url);
+	}
+
+
+	public void setCacheProvider (final PayloadCacheProvider cacheProvider) {
+		this.cacheProvider = cacheProvider;
 	}
 }

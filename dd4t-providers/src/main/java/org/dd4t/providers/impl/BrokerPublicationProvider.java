@@ -9,12 +9,9 @@ import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.PublicationDescriptor;
-import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.PublicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.annotation.Resource;
 
 /**
  * dd4t-2
@@ -26,8 +23,6 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 	private static final PublicationMetaFactory PUBLICATION_META_FACTORY = new PublicationMetaFactory();
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerPublicationProvider.class);
 
-	@Resource
-	private PayloadCacheProvider cacheProvider;
 	private Class publicationDescriptor;
 
 

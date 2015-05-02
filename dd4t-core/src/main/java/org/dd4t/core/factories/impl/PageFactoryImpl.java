@@ -15,8 +15,8 @@ import org.dd4t.databind.DataBindFactory;
 import org.dd4t.providers.PageProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.text.ParseException;
 
 // TODO: refactor duplicate code
@@ -24,7 +24,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageFactoryImpl.class);
     private static final PageFactoryImpl INSTANCE = new PageFactoryImpl();
-    @Autowired
+    @Resource
     protected PageProvider pageProvider;
 
     protected PageFactoryImpl() {

@@ -2,7 +2,7 @@ package org.dd4t.providers.rs;
 
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.serializers.impl.CompressionUtils;
+import org.dd4t.core.util.CompressionUtils;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.PageProvider;
 import org.slf4j.Logger;

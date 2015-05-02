@@ -4,14 +4,12 @@ import org.dd4t.contentmodel.Item;
 import org.dd4t.core.exceptions.ProcessorException;
 import org.dd4t.core.processors.Processor;
 import org.dd4t.core.processors.RunPhase;
-import org.dd4t.core.request.AbstractRequestContext;
 import org.dd4t.core.request.RequestContext;
-import org.dd4t.core.util.HttpUtils;
+import org.dd4t.core.util.HttpRequestContext;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +23,7 @@ public abstract class BaseFactory {
 	private static final Logger LOG = LoggerFactory.getLogger(BaseFactory.class);
     protected PayloadCacheProvider cacheProvider;
     private List<Processor> processors;
-	private Class requestClass;
+	private Class requestContextClass;
 
     public List<Processor> getProcessors () {
         if (processors == null) {
@@ -47,7 +45,7 @@ public abstract class BaseFactory {
     }
 
     /**
-     * Runs all the processors on an item. If the cachingAllowed is true it will
+     * Runs all the processors on an item. If cachingAllowed is true it will
      * only run the processors where the result is allowed to be cached.
      *
      * @param item The DD4T Item
@@ -56,7 +54,7 @@ public abstract class BaseFactory {
     public void executeProcessors (Item item, RunPhase runPhase, RequestContext context) throws ProcessorException {
         if (item != null) {
             for (Processor processor : getProcessors()) {
-                if (runPhase == processor.getRunPhase()) {
+                if (runPhase == processor.getRunPhase() || processor.getRunPhase() == RunPhase.BOTH) {
                     this.execute(processor, item, context);
                 }
             }
@@ -74,17 +72,24 @@ public abstract class BaseFactory {
         cacheProvider = cacheAgent;
     }
 
-	// TODO: only HttpServletRequest supported for now.
-	// TODO: configure a concrete Class through Spring
 	protected RequestContext getRequestContext() {
-		if (RequestContext.class.isAssignableFrom(requestClass) && AbstractRequestContext.class.isAssignableFrom(requestClass)) {
+
+        if (requestContextClass == null) {
+            requestContextClass = HttpRequestContext.class;
+        }
+
+		if (RequestContext.class.isAssignableFrom(requestContextClass)) {
 			try {
-				return (RequestContext) requestClass.getDeclaredConstructor(Object.class).newInstance(HttpUtils.getCurrentRequest());
-			} catch (InvocationTargetException | InstantiationException | NoSuchMethodException | IllegalAccessException e) {
+				return (RequestContext) requestContextClass.newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
 				LOG.error(e.getLocalizedMessage(), e);
 			}
 		}
-		LOG.error("Class {} does not extend from AbstractRequestContext!", requestClass.getCanonicalName());
+		LOG.error("Class {} does not extend from AbstractRequestContext!", requestContextClass.getCanonicalName());
 		return null;
 	}
+
+    public void setRequestContextClass (final Class requestContextClass) {
+        this.requestContextClass = requestContextClass;
+    }
 }

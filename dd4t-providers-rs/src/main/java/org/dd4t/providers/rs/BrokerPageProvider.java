@@ -185,4 +185,11 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 
 		return exists == 1;
 	}
+
+	// TODO
+	@Override
+	public TCMURI getPageIdForUrl (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
+		LOG.error("Not implemented yet!");
+		return null;
+	}
 }

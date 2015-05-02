@@ -2,6 +2,7 @@ package org.dd4t.providers;
 
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.util.TCMURI;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -11,7 +12,7 @@ import java.text.ParseException;
  */
 public interface PageProvider extends BaseProvider {
 
-	public String getPageContentById (int id, int publication) throws IOException, ItemNotFoundException, SerializationException;
+	String getPageContentById (int id, int publication) throws IOException, ItemNotFoundException, SerializationException;
 
 	/**
      * Retrieves a Page by its Publication and URL. It returns JSON representing a Page model object.
@@ -22,7 +23,7 @@ public interface PageProvider extends BaseProvider {
      * @throws ItemNotFoundException  if said page cannot be found
      * @throws SerializationException if response from service does not represent a serialized Page
      */
-    public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, SerializationException;
+    String getPageContentByURL(String url, int publication) throws ItemNotFoundException, SerializationException;
 
     /**
      * Retrieves a Page by its TCMURI. It returns JSON representing a Page model object.
@@ -33,7 +34,7 @@ public interface PageProvider extends BaseProvider {
      * @throws ParseException         if given parameter does not represent a TCMURI
      * @throws SerializationException if response from service does not represent a serialized Page
      */
-    public String getPageContentById(String tcmUri) throws ItemNotFoundException, ParseException, SerializationException;
+    String getPageContentById(String tcmUri) throws ItemNotFoundException, ParseException, SerializationException;
 
 	/**
 	 * Retrieves a list of published page URLs as one String.
@@ -44,7 +45,7 @@ public interface PageProvider extends BaseProvider {
 	 * @throws SerializationException
 	 */
 
-	public String getPageListByPublicationId(int publication) throws ItemNotFoundException, SerializationException;
+	String getPageListByPublicationId(int publication) throws ItemNotFoundException, SerializationException;
 
     /**
      * Checks whether a page exists (published from Tridion) by querying its URL
@@ -55,5 +56,7 @@ public interface PageProvider extends BaseProvider {
      * @throws ItemNotFoundException  if said page cannot be found
      * @throws SerializationException if there was an error communicating with the service
      */
-    public Boolean checkPageExists(final String url, final int publicationId) throws ItemNotFoundException, SerializationException;
+    Boolean checkPageExists(final String url, final int publicationId) throws ItemNotFoundException, SerializationException;
+
+    TCMURI getPageIdForUrl(final String url, final int publicationId) throws ItemNotFoundException, SerializationException;
 }

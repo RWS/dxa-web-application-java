@@ -23,6 +23,15 @@ import java.text.ParseException;
 public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
 	private static final Logger LOG = LoggerFactory.getLogger(PageFactoryImpl.class);
+	private static final PageFactoryImpl INSTANCE = new PageFactoryImpl();
+
+	protected PageFactoryImpl () {
+		LOG.debug("Create new instance");
+	}
+
+	public static PageFactoryImpl getInstance () {
+		return INSTANCE;
+	}
 
 	@Resource
 	protected PageProvider pageProvider;

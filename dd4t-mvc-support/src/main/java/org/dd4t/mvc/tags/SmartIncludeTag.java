@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2015 SDL, Radagio & R. Oudshoorn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.mvc.tags;
 
 import org.dd4t.core.factories.PageFactory;
@@ -47,7 +63,7 @@ public class SmartIncludeTag extends TagSupport {
 	private PublicationResolverFactory publicationResolverFactory = PublicationResolverFactoryImpl.getInstance();
 	private PublicationResolver publicationResolver = publicationResolverFactory.getPublicationResolver();
 
-	public int doStartTag() throws JspException {
+	public int doStartTag () throws JspException {
 		final HttpServletRequest currentRequest = (HttpServletRequest) pageContext.getRequest();
 
 		if (currentRequest.getDispatcherType() == DispatcherType.INCLUDE || currentRequest.getAttribute(Constants.SMART_INCLUDE_URL) != null) {
@@ -74,15 +90,11 @@ public class SmartIncludeTag extends TagSupport {
 				testPath = testPath.substring(0, testPath.lastIndexOf("/"));
 			}
 
-			if (testPath.equals("/"))
-			{
-				if (!includeUrl.startsWith("/"))
-				{
-					includeUrl = "/" + includeUrl;
-				}
+			if (testPath.equals("/") && !includeUrl.startsWith("/")) {
+				includeUrl = "/" + includeUrl;
 			}
 
-			if (includeUrl.startsWith("/") ) {
+			if (includeUrl.startsWith("/")) {
 				pageFound = pageFactory.isPagePublished(includeUrl, publicationId);
 			} else {
 				LOG.debug("Current path={}", testPath);
@@ -131,8 +143,7 @@ public class SmartIncludeTag extends TagSupport {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	private void includePage(final HttpServletRequest currentRequest, final String includeUrl)
-			throws ServletException, IOException {
+	private void includePage (final HttpServletRequest currentRequest, final String includeUrl) throws ServletException, IOException {
 		pageContext.getRequest().setAttribute(Constants.SMART_INCLUDE_URL, includeUrl);
 		LOG.debug(">> Including: {}", includeUrl);
 
@@ -149,7 +160,7 @@ public class SmartIncludeTag extends TagSupport {
 	 * @see super.doEndTag()
 	 */
 	@Override
-	public int doEndTag() throws JspException {
+	public int doEndTag () throws JspException {
 		return SKIP_BODY;
 	}
 
@@ -158,7 +169,7 @@ public class SmartIncludeTag extends TagSupport {
 	 *
 	 * @return String the URL
 	 */
-	public String getPage() {
+	public String getPage () {
 		return page;
 	}
 
@@ -167,7 +178,7 @@ public class SmartIncludeTag extends TagSupport {
 	 *
 	 * @param page the page URL to include
 	 */
-	public void setPage(final String page) {
+	public void setPage (final String page) {
 		this.page = page;
 	}
 }

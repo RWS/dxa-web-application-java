@@ -7,7 +7,7 @@
     <groupId>org.dd4t</groupId>
     <artifactId>dd4t-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.0-SNAPSHOT</version>
+    <version>2.0.1-beta</version>
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Parent for all DD4T projects.</description>
@@ -41,18 +41,6 @@
         <url>git@github.com:/dd4t/dd4t-2-java.git</url>
     </scm>
 
-    <modules>
-        <module>dd4t-api</module>
-        <module>dd4t-core</module>
-        <module>dd4t-compatibility</module>		
-        <module>dd4t-databind</module>
-        <module>dd4t-providers</module>
-        <module>dd4t-providers-rs</module>
-        <module>dd4t-test</module>
-        <module>dd4t-mvc-support</module>
-        <module>dd4t-test-spring-web</module>
-		<module>dd4t-example-site</module>
-    </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -280,6 +268,7 @@
          - dd4t-mvc-support
          TODO: add dd4t-providers-rs when done.
 
+        Please do read: http://central.sonatype.org/pages/apache-maven.html
 
         For deploying a snapshot use:
         - mvn clean deploy -Prelease-central
@@ -288,6 +277,25 @@
         2.
     -->
     <profiles>
+        <profile>
+            <id>default</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>dd4t-api</module>
+                <module>dd4t-core</module>
+                <module>dd4t-compatibility</module>
+                <module>dd4t-databind</module>
+                <module>dd4t-providers</module>
+                <module>dd4t-providers-rs</module>
+                <module>dd4t-test</module>
+                <module>dd4t-mvc-support</module>
+                <module>dd4t-test-spring-web</module>
+                <module>dd4t-example-site</module>
+            </modules>
+
+        </profile>
         <profile>
             <id>release-central</id>
             <distributionManagement>

@@ -268,4 +268,97 @@
         </dependency>
     </dependencies>
     </dependencyManagement>
+
+    <!--
+        Release profile for deploying the core jars to Maven Central.
+        Note: ONLY deploy the following:
+         - dd4t-api
+         - dd4t-core
+         - dd4t-compatibility
+         - dd4t-databind
+         - dd4t-providers
+         - dd4t-mvc-support
+         TODO: add dd4t-providers-rs when done.
+
+
+        For deploying a snapshot use:
+        - mvn clean deploy -Prelease-central
+        For deploying a release use (Will be automated through a buildserver):
+        1. mvn versions:set -DnewVersion=2.0.1
+        2.
+    -->
+    <profiles>
+        <profile>
+            <id>release-central</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+            </distributionManagement>
+            <modules>
+                <module>dd4t-api</module>
+                <module>dd4t-core</module>
+                <module>dd4t-compatibility</module>
+                <module>dd4t-databind</module>
+                <module>dd4t-providers</module>
+                <module>dd4t-mvc-support</module>
+            </modules>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.5</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>

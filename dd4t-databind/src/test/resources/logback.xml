@@ -3,7 +3,7 @@
     <!-- Properties -->
     <property name="log.pattern" value="%date %-5level %t %logger{0} - %message%n"/>
     <property name="log.history" value="1"/>
-    <property name="log.folder" value="/Users/rai/logs"/>
+    <property name="log.folder" value="/var/log/dd4t"/>
     <property name="log.level" value="DEBUG"/>
 
     <!-- Appenders -->
@@ -41,10 +41,6 @@
         <appender-ref ref="stdout"/>
     </logger>
 
-    <logger name="com.radagio" level="${log.level}" additivity="false">
-        <appender-ref ref="rollingDeserializerLog"/>
-        <appender-ref ref="stdout"/>
-    </logger>
     <root level="${log.level}">
         <appender-ref ref="rollingDeserializerLog"/>
         <appender-ref ref="stdout"/>

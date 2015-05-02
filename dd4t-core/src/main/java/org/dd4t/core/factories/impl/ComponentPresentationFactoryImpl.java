@@ -19,9 +19,17 @@ import java.text.ParseException;
 
 public class ComponentPresentationFactoryImpl extends BaseFactory implements ComponentPresentationFactory {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ComponentPresentationFactoryImpl.class);
+	private static final ComponentPresentationFactoryImpl INSTANCE = new ComponentPresentationFactoryImpl();
 	protected ComponentPresentationProvider componentPresentationProvider;
 
-	private static final Logger LOG = LoggerFactory.getLogger(ComponentPresentationFactoryImpl.class);
+	protected ComponentPresentationFactoryImpl () {
+		LOG.debug("Create new instance");
+	}
+
+	public static ComponentPresentationFactoryImpl getInstance () {
+		return INSTANCE;
+	}
 
 	/**
 	 * Get the component by the component uri and template uri.

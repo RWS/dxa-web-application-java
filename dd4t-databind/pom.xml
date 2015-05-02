@@ -11,7 +11,37 @@
     </parent>
 
     <artifactId>dd4t-databind</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
+    <description>Contains deserialization functionality of datasources.</description>
+    <url>https://github.com/dd4t</url>
 
+    <licenses>
+        <license>
+            <name>The Apache License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Rogier Oudshoorn</name>
+            <email>rogier.oudshoorn@gmail.com</email>
+            <organization>DD4T</organization>
+            <organizationUrl>https://github.com/dd4t</organizationUrl>
+        </developer>
+        <developer>
+            <name>Raimond Kempees</name>
+            <email>kempees@radagio.com</email>
+            <organization>DD4T</organization>
+            <organizationUrl>https://github.com/dd4t</organizationUrl>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:git@github.com:/dd4t/dd4t-2-java.git</connection>
+        <developerConnection>scm:git:git@github.com:/dd4t/dd4t-2-java.git</developerConnection>
+        <url>git@github.com:/dd4t/dd4t-2-java.git</url>
+    </scm>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>

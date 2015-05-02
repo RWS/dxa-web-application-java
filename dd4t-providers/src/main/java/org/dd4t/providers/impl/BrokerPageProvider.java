@@ -167,7 +167,8 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	}
 
 	// TODO: introduce ProviderException
-	@Override public Boolean checkPageExists (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
+	@Override
+	public Boolean checkPageExists (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
 
 		LOG.debug("Checking whether Page with url: {} exists", url);
 
@@ -215,5 +216,14 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 		}
 
 		return result != null && (result == 1);
+	}
+
+	@Override
+	public TCMURI getPageIdForUrl (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
+		PageMeta pageMeta = getPageMetaByURL(url,publicationId);
+		if (pageMeta != null) {
+			return new TCMURI(publicationId,pageMeta.getItemId(),pageMeta.getItemType(),pageMeta.getMajorVersion());
+		}
+		throw new ItemNotFoundException("Page Id for URL not found.");
 	}
 }

@@ -26,17 +26,12 @@ import java.text.ParseException;
 public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(TaxonomyFactoryImpl.class);
-    private static final TaxonomyFactoryImpl INSTANCE = new TaxonomyFactoryImpl();
 
     private TaxonomyProvider taxonomyProvider;
     private PayloadCacheProvider cacheProvider;
 
     private TaxonomyFactoryImpl() {
         LOG.debug("Create new instance");
-    }
-
-    public static TaxonomyFactoryImpl getInstance() {
-        return INSTANCE;
     }
 
     /**

@@ -2,8 +2,7 @@ package org.dd4t.core.factories;
 
 import org.dd4t.contentmodel.Page;
 import org.dd4t.core.exceptions.FactoryException;
-import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.util.TCMURI;
 
 public interface PageFactory extends Factory {
 
@@ -30,10 +29,30 @@ public interface PageFactory extends Factory {
     /**
      * Find the source of the Page by Url. The url and publication id are specified.
      *
-     * @return XML as string
+     * @return The page source as string
      * @throws FactoryException
      */
     String findSourcePageByUrl(String url, int publicationId) throws FactoryException;
+
+    /**
+     * Find the source of the Page by Tcm Id.
+     *
+     * @param tcmId the Tcm Id of the page
+     * @return The page source as String
+     * @throws FactoryException
+     */
+    String findSourcePageByTcmId(String tcmId) throws FactoryException;
+
+    /**
+     * Find the TCM Uri of a page by URL
+     *
+     * @param url the URL
+     * @param publicationId the Publication Id
+     * @return a TCMURI if found.
+     * @throws FactoryException
+     */
+    TCMURI findPageIdByUrl(String url, int publicationId ) throws FactoryException;
+
     /**
      * Deserializes a JSON encoded String into an object of the given type, which must
      * derive from the Page interface
@@ -49,8 +68,6 @@ public interface PageFactory extends Factory {
      * @param url the URL to check
      * @param publicationId the publication Id for the url
      * @return true if the page url exists in the broker
-     * @throws SerializationException
-     * @throws ItemNotFoundException
      */
     Boolean isPagePublished(String url, int publicationId);
 }

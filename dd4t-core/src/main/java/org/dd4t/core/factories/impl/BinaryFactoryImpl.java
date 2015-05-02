@@ -1,39 +1,47 @@
+/*
+ * Copyright (c) 2015 SDL, Radagio & R. Oudshoorn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.core.factories.impl;
 
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.BinaryFactory;
-import org.dd4t.core.filters.Filter;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.BinaryProvider;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * TODO
- * @author R.S. Kempees
+ *
  */
-public class BinaryFactoryImpl implements BinaryFactory {
+public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(BinaryFactoryImpl.class);
     // Singleton implementation
     private static final BinaryFactoryImpl INSTANCE = new BinaryFactoryImpl();
 
-    @Autowired
-    private CacheProvider cacheProvider;
-    @Autowired
+    private PayloadCacheProvider cacheProvider;
     private BinaryProvider binaryProvider;
 
-    private BinaryFactoryImpl() {
+    protected BinaryFactoryImpl() {
         LOG.debug("Create new instance");
     }
 
@@ -53,7 +61,7 @@ public class BinaryFactoryImpl implements BinaryFactory {
     public Binary getBinaryByURI(final String tcmUri) throws FactoryException {
         LOG.debug("Enter getBinaryByURI with uri: {}", tcmUri);
 
-        CacheElement<Binary> cacheElement = cacheProvider.loadFromLocalCache(tcmUri);
+        CacheElement<Binary> cacheElement = cacheProvider.loadPayloadFromLocalCache(tcmUri);
         Binary binary;
 
         if (cacheElement.isExpired()) {
@@ -66,10 +74,10 @@ public class BinaryFactoryImpl implements BinaryFactory {
 		                    TCMURI binaryURI = new TCMURI(tcmUri);
 		                    cacheProvider.storeInItemCache(tcmUri, cacheElement, binaryURI.getPublicationId(), binaryURI.getItemId());
                         LOG.debug("Added binary with uri: {} to cache", tcmUri);
-                    } catch (ItemNotFoundException |SerializationException | ParseException e) {
+                    } catch (ParseException e) {
                         cacheElement.setPayload(null);
                         cacheProvider.storeInItemCache(tcmUri, cacheElement);
-                        throw new FactoryException(e);
+                        throw new ItemNotFoundException(e);
                     }
                 } else {
                     LOG.debug("Return a binary with uri: {} from cache", tcmUri);
@@ -96,11 +104,10 @@ public class BinaryFactoryImpl implements BinaryFactory {
      */
     @Override
     public Binary getBinaryByURL(final String url, final int publicationId) throws FactoryException {
-        // TODO: check if in File cache here. This means it needs to be moved away from the binary controller
         LOG.debug("Enter getBinaryByURL with url: {} and publicationId: {}", url, publicationId);
 
         String key = getCacheKey(url, publicationId);
-        CacheElement<Binary> cacheElement = cacheProvider.loadFromLocalCache(key);
+        CacheElement<Binary> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
         Binary binary;
 
         if (cacheElement.isExpired()) {
@@ -114,8 +121,8 @@ public class BinaryFactoryImpl implements BinaryFactory {
                         TCMURI tcmUri = new TCMURI(binary.getId());
                         cacheProvider.storeInItemCache(key, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
                         LOG.debug("Added binary with url: {} to cache", url);
-                    } catch (ItemNotFoundException |SerializationException |ParseException e) {
-                        throw new FactoryException(e);
+                    } catch (ParseException e) {
+                        throw new ItemNotFoundException(e);
                     }
                 } else {
                     LOG.debug("Return a binary with url: {} from cache", url);
@@ -131,18 +138,7 @@ public class BinaryFactoryImpl implements BinaryFactory {
     }
 
     @Override
-    public List<Filter> getFilters() {
-        // TODO: Not implemented yet
-        return new ArrayList<>();
-    }
-
-    @Override
-    public void setFilters(final List<Filter> filters) {
-        // TODO: Not implemented yet
-    }
-
-    @Override
-    public void setCacheProvider(final CacheProvider cacheAgent) {
+    public void setCacheProvider(final PayloadCacheProvider cacheAgent) {
         cacheProvider = cacheAgent;
     }
 

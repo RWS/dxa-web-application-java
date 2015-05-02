@@ -1,17 +1,33 @@
+/*
+ * Copyright (c) 2015 SDL, Radagio & R. Oudshoorn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.core.factories.impl;
 
 import org.dd4t.contentmodel.Keyword;
-import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.contentmodel.impl.KeywordImpl;
 import org.dd4t.core.caching.CacheElement;
+import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.TaxonomyFactory;
+import org.dd4t.core.serializers.impl.SerializerFactory;
 import org.dd4t.core.util.TCMURI;
-import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.TaxonomyProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -28,10 +44,8 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
     private static final Logger LOG = LoggerFactory.getLogger(TaxonomyFactoryImpl.class);
     private static final TaxonomyFactoryImpl INSTANCE = new TaxonomyFactoryImpl();
 
-    @Autowired
     private TaxonomyProvider taxonomyProvider;
-    @Autowired
-    private CacheProvider cacheProvider;
+    private PayloadCacheProvider cacheProvider;
 
     private TaxonomyFactoryImpl() {
         LOG.debug("Create new instance");
@@ -53,7 +67,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
     public Keyword getTaxonomy(String taxonomyURI) throws IOException {
         LOG.debug("Enter getTaxonomy with uri: {}", taxonomyURI);
 
-        CacheElement<Keyword> cacheElement = cacheProvider.loadFromLocalCache(taxonomyURI);
+        CacheElement<Keyword> cacheElement = cacheProvider.loadPayloadFromLocalCache(taxonomyURI);
         Keyword taxonomy;
 
         if (cacheElement.isExpired()) {
@@ -95,6 +109,10 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         return taxonomy;
     }
 
+    private Keyword deserialize (final String taxonomySource, final Class<KeywordImpl> keywordClass) throws SerializationException {
+        return SerializerFactory.deserialize(taxonomySource,keywordClass);
+    }
+
     /**
      * Returns the root Keyword of Taxonomy by reading the specified taxonomy from the local cache or from the
      * Taxonomy provider, if not found in cache.
@@ -111,7 +129,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         LOG.debug("Enter getTaxonomyFilterBySchema with uri: {} and schema: {}", taxonomyURI, schemaURI);
 
         String key = taxonomyURI + schemaURI;
-        CacheElement<Keyword> cacheElement = cacheProvider.loadFromLocalCache(key);
+        CacheElement<Keyword> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
         Keyword taxonomy;
 
         if (cacheElement.isExpired()) {
@@ -157,7 +175,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         return taxonomy;
     }
 
-    public void setCacheProvider(CacheProvider cacheProvider) {
+    public void setCacheProvider(PayloadCacheProvider cacheProvider) {
         this.cacheProvider = cacheProvider;
     }
 

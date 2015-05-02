@@ -17,6 +17,13 @@ public class DateUtilsTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DateUtilsTest.class);
     public static final String EXPECTED_DATE_STAMP = "2014-06-24T15:45:32.325";
+    public static final int TEST_YEAR = 2014;
+    public static final int TEST_MONTH = 5;
+    public static final int TEST_DAY = 24;
+    public static final int TEST_HOUR = 15;
+    public static final int TEST_MINUTE = 45;
+    public static final int TEST_SECOND = 32;
+    public static final int TEST_MILLIS = 325;
     private DateTime beginTime;
     private DateTime endTime;
 
@@ -35,14 +42,14 @@ public class DateUtilsTest {
         Calendar calendar = Calendar.getInstance();
 
         // 2014-06-24T15:45:32.325 give it a fixed date
-        calendar.set(Calendar.YEAR, 2014);
-        calendar.set(Calendar.MONTH, 5);
-        calendar.set(Calendar.DAY_OF_MONTH, 24);
+        calendar.set(Calendar.YEAR, TEST_YEAR);
+        calendar.set(Calendar.MONTH, TEST_MONTH);
+        calendar.set(Calendar.DAY_OF_MONTH, TEST_DAY);
 
-        calendar.set(Calendar.HOUR_OF_DAY, 15);
-        calendar.set(Calendar.MINUTE, 45);
-        calendar.set(Calendar.SECOND, 32);
-        calendar.set(Calendar.MILLISECOND, 325);
+        calendar.set(Calendar.HOUR_OF_DAY, TEST_HOUR);
+        calendar.set(Calendar.MINUTE, TEST_MINUTE);
+        calendar.set(Calendar.SECOND, TEST_SECOND);
+        calendar.set(Calendar.MILLISECOND, TEST_MILLIS);
 
         // Call the actual method
         String result = DateUtils.convertDateToString(new DateTime(calendar));
@@ -58,14 +65,14 @@ public class DateUtilsTest {
         Calendar calendar = Calendar.getInstance();
 
         // 2014-06-24T15:45:32.325 give it a fixed date
-        calendar.set(Calendar.YEAR, 2014);
-        calendar.set(Calendar.MONTH, 5);
-        calendar.set(Calendar.DAY_OF_MONTH, 24);
+        calendar.set(Calendar.YEAR, TEST_YEAR);
+        calendar.set(Calendar.MONTH, TEST_MONTH);
+        calendar.set(Calendar.DAY_OF_MONTH, TEST_DAY);
 
-        calendar.set(Calendar.HOUR_OF_DAY, 15);
-        calendar.set(Calendar.MINUTE, 45);
-        calendar.set(Calendar.SECOND, 32);
-        calendar.set(Calendar.MILLISECOND, 325);
+        calendar.set(Calendar.HOUR_OF_DAY, TEST_HOUR);
+        calendar.set(Calendar.MINUTE, TEST_MINUTE);
+        calendar.set(Calendar.SECOND, TEST_SECOND);
+        calendar.set(Calendar.MILLISECOND, TEST_MILLIS);
 
         // Call the actual method
         String result = DateUtils.convertSqlTimestampToString(new Timestamp(calendar.getTimeInMillis()));
@@ -82,14 +89,14 @@ public class DateUtilsTest {
         Calendar cal = date.toGregorianCalendar();
 
 
-        Assert.assertEquals(2014, cal.get(Calendar.YEAR));
-        Assert.assertEquals(5, cal.get(Calendar.MONTH));
-        Assert.assertEquals(24, cal.get(Calendar.DAY_OF_MONTH));
+        Assert.assertEquals(TEST_YEAR, cal.get(Calendar.YEAR));
+        Assert.assertEquals(TEST_MONTH, cal.get(Calendar.MONTH));
+        Assert.assertEquals(TEST_DAY, cal.get(Calendar.DAY_OF_MONTH));
 
-        Assert.assertEquals(15, cal.get(Calendar.HOUR_OF_DAY));
-        Assert.assertEquals(45, cal.get(Calendar.MINUTE));
-        Assert.assertEquals(32, cal.get(Calendar.SECOND));
-        Assert.assertEquals(325, cal.get(Calendar.MILLISECOND));
+        Assert.assertEquals(TEST_HOUR, cal.get(Calendar.HOUR_OF_DAY));
+        Assert.assertEquals(TEST_MINUTE, cal.get(Calendar.MINUTE));
+        Assert.assertEquals(TEST_SECOND, cal.get(Calendar.SECOND));
+        Assert.assertEquals(TEST_MILLIS, cal.get(Calendar.MILLISECOND));
     }
 
     @Test

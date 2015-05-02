@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2015 Radagio
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.databind.util;
 
 import org.dd4t.core.databind.BaseViewModel;
@@ -20,10 +36,12 @@ public class TypeUtils {
 	}
 
 	public static Type getRuntimeTypeOfTypeParameter (Type type) {
-		Type[] genericTypes = ((ParameterizedType)type).getActualTypeArguments();
-		if (genericTypes != null && genericTypes.length > 0) {
-			LOG.debug("Type was List. Runtime Parametrized type is: {}" ,genericTypes[0].toString());
-			return genericTypes[0];
+		if (type instanceof ParameterizedType) {
+			Type[] genericTypes = ((ParameterizedType) type).getActualTypeArguments();
+			if (genericTypes != null && genericTypes.length > 0) {
+				LOG.debug("Type was List. Runtime Parametrized type is: {}", genericTypes[0].toString());
+				return genericTypes[0];
+			}
 		}
 		return Object.class;
 	}

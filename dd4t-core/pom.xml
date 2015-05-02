@@ -93,7 +93,6 @@
             <groupId>javax.jms</groupId>
             <artifactId>jms-api</artifactId>
         </dependency>
-
         <!-- Test dependencies -->
         <dependency>
             <groupId>junit</groupId>

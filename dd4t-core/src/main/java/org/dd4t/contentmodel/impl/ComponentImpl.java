@@ -1,19 +1,26 @@
+/*
+ * Copyright (c) 2015 SDL, Radagio & R. Oudshoorn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.dd4t.contentmodel.Category;
-import org.dd4t.contentmodel.Field;
-import org.dd4t.contentmodel.GenericComponent;
-import org.dd4t.contentmodel.HasContent;
-import org.dd4t.contentmodel.HasMetadata;
-import org.dd4t.contentmodel.HasMultimedia;
-import org.dd4t.contentmodel.Multimedia;
-import org.dd4t.core.util.DateUtils;
+import org.dd4t.contentmodel.*;
 
-import org.joda.time.DateTime;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ComponentImpl extends BaseComponent implements GenericComponent, HasContent, HasMetadata, HasMultimedia {
@@ -21,81 +28,11 @@ public class ComponentImpl extends BaseComponent implements GenericComponent, Ha
 	@JsonProperty("ComponentType") @JsonDeserialize(as = ComponentImpl.ComponentType.class)
     protected ComponentType componentType;
 
-    @JsonProperty("LastPublishedDate")
-    protected String lastPublishedDateAsString;
-
-    @JsonProperty("RevisionDate")
-    protected String revisionDateAsString;
-
-    @JsonProperty("Version")
-    protected int version;
-
-	@JsonProperty("MetadataFields") @JsonDeserialize(contentAs = BaseField.class)
-    private Map<String, Field> metadata;
-
 	@JsonProperty("Fields") @JsonDeserialize(contentAs = BaseField.class)
     private Map<String, Field> content;
 
 	@JsonProperty("Multimedia") @JsonDeserialize(as = MultimediaImpl.class)
     private Multimedia multimedia;
-
-	@JsonProperty("Categories") @JsonDeserialize(contentAs = CategoryImpl.class)
-    private List<Category> categories;
-
-    @Override
-    public DateTime getLastPublishedDate() {
-        if (lastPublishedDateAsString == null || lastPublishedDateAsString.equals("")) {
-            return new DateTime();
-        }
-        return DateUtils.convertStringToDate(lastPublishedDateAsString);
-    }
-
-    @Override
-    public void setLastPublishedDate(DateTime date) {
-        this.lastPublishedDateAsString = DateUtils.convertDateToString(date);
-    }
-
-    @Override
-    public DateTime getRevisionDate() {
-        if (revisionDateAsString == null || revisionDateAsString.equals("")) {
-            return new DateTime();
-        }
-        return DateUtils.convertStringToDate(revisionDateAsString);
-    }
-
-    @Override
-    public void setRevisionDate(DateTime date) {
-        this.revisionDateAsString = DateUtils.convertDateToString(date);
-    }
-
-    public int getVersion() {
-
-        return version;
-    }
-
-    public void setVersion(int version) {
-
-        this.version = version;
-    }
-
-    /**
-     * Get the metadata
-     *
-     * @return a map of field objects representing the metadata
-     */
-    public Map<String, Field> getMetadata() {
-        if (metadata == null) {
-            metadata = new HashMap<String, Field>();
-        }
-        return metadata;
-    }
-
-    /**
-     * Set the metadata
-     */
-    public void setMetadata(Map<String, Field> metadata) {
-        this.metadata = metadata;
-    }
 
     /**
      * Get the content
@@ -150,13 +87,5 @@ public class ComponentImpl extends BaseComponent implements GenericComponent, Ha
     @Override
     public void setMultimedia(Multimedia multimedia) {
         this.multimedia = multimedia;
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public void setCategories(List<Category> categories) {
-        this.categories = categories;
     }
 }

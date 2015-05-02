@@ -19,7 +19,7 @@
     </appender>
     <appender name="rollingDd4tLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.folder}/hammerfest.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>${log.folder}/dd4t.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>${log.history}</maxHistory>
         </rollingPolicy>
         <encoder>
@@ -74,16 +74,18 @@
     </appender>
 
     <!-- Loggers -->
-    <logger name="com.tridion" level="${log.level}"/>
-    <logger name="com.tridion.cache" level="${log.level}" additivity="false">
-        <appender-ref ref="rollingCachingLog"/>
+    <logger name="com.tridion" level="${log.level}" additivity="false">
+        <appender-ref ref="rollingCoreLog"/>
         <appender-ref ref="stdout"/>
+    </logger>
+    <logger name="com.tridion.cache" level="${log.level}" additivity="false">
+
     </logger>
     <logger name="org.hibernate" level="ERROR" additivity="false">
         <appender-ref ref="rollingHibernateLog"/>
         <appender-ref ref="stdout"/>
     </logger>
-    <logger name="org.springframework" level="OFF" additivity="false">
+    <logger name="org.springframework" level="INFO" additivity="false">
         <appender-ref ref="rollingSpringLog"/>
         <appender-ref ref="stdout"/>
     </logger>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:jms="http://www.springframework.org/schema/jms"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/jms
+        http://www.springframework.org/schema/jms/spring-jms.xsd">
+    <!-- Change this to the base-package where your overridden controllers are -->
+    <context:component-scan base-package="org.dd4t.test.web.controller" annotation-config="true"/>
+
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <bean id="publicationResolver" class="org.dd4t.core.resolvers.impl.UrlPublicationResolver">
+        <property name="publicationProvider" ref="publicationProvider" />
+    </bean>
+
+    <bean id="propertiesService" class="org.dd4t.mvc.utils.PropertiesServiceImpl">
+        <property name="location" value="dd4t.properties"/>
+    </bean>
+
+    <bean id="publicationResolverFactory" factory-method="getInstance" class="org.dd4t.mvc.utils.PublicationResolverFactoryImpl">
+        <property name="publicationResolver" ref="publicationResolver" />
+    </bean>
+
+    <!-- DD4T Provider beans -->
+    <bean id="cacheProvider" class="org.dd4t.core.providers.EHCacheProvider" />
+
+    <bean id="binaryProvider" class="org.dd4t.providers.impl.BrokerBinaryProvider">
+        <property name="contentIsCompressed" value="true"/>
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+
+    <bean id="componentPresentationProvider" class="org.dd4t.providers.impl.BrokerComponentPresentationProvider">
+        <property name="contentIsCompressed" value="true"/>
+        <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+
+    <bean id="pageProvider" class="org.dd4t.providers.impl.BrokerPageProvider">
+        <property name="contentIsCompressed" value="true"/>
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+
+    <bean id="linkProvider" class="org.dd4t.providers.impl.BrokerLinkProvider">
+        <property name="contentIsCompressed" value="true"/>
+    </bean>
+
+    <bean id="publicationProvider" class="org.dd4t.providers.impl.BrokerPublicationProvider">
+        <property name="publicationDescriptor" value="org.dd4t.contentmodel.impl.PublicationDescriptorImpl" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+
+    <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver"/>
+
+    <bean id="componentFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl"
+          factory-method="getInstance">
+    </bean>
+
+    <!-- DD4T Factories -->
+    <bean id="pageFactory" class="org.dd4t.core.factories.impl.PageFactoryImpl"
+          factory-method="getInstance">
+        <property name="pageProvider" ref="pageProvider" />
+        <property name="cacheProvider" ref="cacheProvider" />
+        <property name="requestContextClass" value="org.dd4t.core.util.HttpRequestContext" />
+    </bean>
+    <bean id="componentPresentationFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl" factory-method="getInstance">
+        <property name="componentPresentationProvider" ref="componentPresentationProvider" />
+        <property name="cacheProvider" ref="cacheProvider" />
+        <property name="requestContextClass" value="org.dd4t.core.util.HttpRequestContext" />
+    </bean>
+
+    <bean id="binaryFactory" class="org.dd4t.core.factories.impl.BinaryFactoryImpl" factory-method="getInstance">
+        <property name="binaryProvider" ref="binaryProvider" />
+        <property name="cacheProvider" ref="cacheProvider" />
+        <property name="requestContextClass" value="org.dd4t.core.util.HttpRequestContext" />
+    </bean>
+
+    <!-- DD4T Controllers -->
+    <bean id="pageController" class="org.dd4t.test.web.controller.SpringPageController">
+        <property name="pageViewPath" value="pages/"/>
+        <property name="publicationResolver" ref="publicationResolver" />
+        <property name="pageFactory" ref="pageFactory"/>
+    </bean>
+
+    <bean id="componentPresentationController" class="org.dd4t.test.web.controller.SpringComponentPresentationController">
+        <property name="componentViewPath" value="components/"/>
+    </bean>
+
+    <bean id="binaryController" class="org.dd4t.test.web.controller.SpringBinaryController">
+        <property name="binaryRootFolder" value="/media"/>
+    </bean>
+
+    <bean id="serializer" class="org.dd4t.core.serializers.impl.json.JSONSerializer"/>
+    <bean id="serializerFactory" class="org.dd4t.core.serializers.impl.SerializerFactory">
+        <constructor-arg name="serializerInstance" ref="serializer"/>
+    </bean>
+
+    <!-- Taxonomy Stuff -->
+    <bean id="taxonomyProvider" class="org.dd4t.providers.impl.BrokerTaxonomyProvider"/>
+
+    <bean id="taxonomyFactory" class="org.dd4t.core.factories.impl.TaxonomyFactoryImpl" factory-method="getInstance">
+        <property name="taxonomyProvider" ref="taxonomyProvider" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+
+    <!-- Databind stuff.-->
+    <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
+    <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
+        <!-- Set this value to your own models package root -->
+        <property name="viewModelPackageRoot" value="org.dd4t.test.web.models" />
+        <property name="viewModelMetaKeyName" value="viewName" />
+        <!-- Set these to your need. If you only want regular Components set to true -->
+        <property name="renderDefaultComponentModelsOnly" value="false" />
+        <property name="renderDefaultComponentsIfNoModelFound" value="true" />
+        <property name="converter" ref="modelConverter" />
+        <!-- override these if you want your own implementations -->
+        <property name="concreteComponentPresentationImpl" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
+        <property name="concreteComponentImpl" value="org.dd4t.contentmodel.impl.ComponentImpl" />
+        <property name="concreteFieldImpl" value="org.dd4t.contentmodel.impl.BaseField"/>
+    </bean>
+
+    <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="getInstance">
+        <property name="dataBinder" ref="dataBinder" />
+    </bean>
+
+    <!--
+        JMS Caching. Only turn this on if your deployer is configured to use JMS.
+        This implementation also requires a dependency on org.apache.activemq.
+    -->
+
+    <bean id="cacheMessageListener" class="org.dd4t.core.caching.jms.impl.JMSCacheMessageListener"/>
+    <bean id="jmsExceptionListener" class="org.dd4t.core.caching.jms.impl.JMSExceptionListener"/>
+    <bean id="jmsCacheMonitor" class="org.dd4t.core.caching.jms.impl.JMSCacheMonitor" />
+
+    <!-- Make sure to set the proper JMS variables -->
+    <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
+        <property name="brokerURL" value="tcp://localhost:61616?wireFormat.maxInactivityDuration=60000"/>
+        <property name="exceptionListener" ref="jmsExceptionListener"/>
+        <property name="userName" value="[JMS-USERNAME]"/>
+        <property name="password" value="[JMS-PASSWORD]"/>
+    </bean>
+
+    <!-- Make sure to set jms.topic -->
+    <jms:listener-container container-type="default" destination-type="topic" connection-factory="connectionFactory" acknowledge="auto">
+        <jms:listener destination="[JMS-TOPIC]" ref="cacheMessageListener" method="onMessage"/>
+    </jms:listener-container>
+</beans>

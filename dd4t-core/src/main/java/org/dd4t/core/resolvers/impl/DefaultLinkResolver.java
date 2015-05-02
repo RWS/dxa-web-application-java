@@ -1,23 +1,39 @@
+/*
+ * Copyright (c) 2015 SDL, Radagio & R. Oudshoorn
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.core.resolvers.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
-import org.dd4t.contentmodel.GenericComponent;
+import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.Schema;
-import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.contentmodel.impl.PublicationImpl;
 import org.dd4t.core.caching.CacheElement;
+import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.resolvers.LinkResolver;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.core.util.TridionUtils;
-import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.LinkProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.ParseException;
@@ -27,18 +43,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Load this class through the LinkResolverFactory!
- * <p/>
- * TODO: this class is not thread safe, yet it's a singleton factory!
+ *
  */
 public class DefaultLinkResolver implements LinkResolver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(DefaultLinkResolver.class);
 
-	@Autowired
+	@Resource
 	private LinkProvider linkProvider;
-	@Autowired
-	private CacheProvider cacheProvider;
+	@Resource
+	private PayloadCacheProvider cacheProvider;
 	private Map<String, String> schemaToUrlMappings;
 	private String schemaKey;
 	private boolean encodeUrl = true;
@@ -49,23 +63,25 @@ public class DefaultLinkResolver implements LinkResolver {
 	}
 
 	@Override
-	public String resolve (Component component) throws ItemNotFoundException, SerializationException {
+	public String resolve(ComponentPresentation cp)
+			throws ItemNotFoundException, SerializationException {
+		return resolve(cp.getComponent(), null);
+	}
+	
+	@Override public String resolve (Component component) throws ItemNotFoundException, SerializationException {
 		return resolve(component, null);
 	}
 
-	@Override
-	public String resolve (Component component, Page page) throws ItemNotFoundException, SerializationException {
+	@Override public String resolve (Component component, Page page) throws ItemNotFoundException, SerializationException {
 		LOG.debug("Resolving link to component: {} from page: {}", component, page);
 		String resolvedUrl = null;
 		if (component == null) {
 			return null;
 		}
 		// option 1 - handle multimedia
-		if (component instanceof GenericComponent) {
-			GenericComponent comp = (GenericComponent) component;
-			if (comp.getMultimedia() != null) {
-				resolvedUrl = comp.getMultimedia().getUrl();
-			}
+
+		if (component.getMultimedia() != null) {
+			resolvedUrl = component.getMultimedia().getUrl();
 		}
 
 		Schema schema = component.getSchema();
@@ -97,10 +113,6 @@ public class DefaultLinkResolver implements LinkResolver {
 		if (contextPath != null && contextPath.length() > 0) {
 			resolvedUrl = contextPath + resolvedUrl;
 		}
-
-		component.setResolvedUrl(resolvedUrl);
-
-
 		return resolvedUrl;
 	}
 
@@ -115,8 +127,7 @@ public class DefaultLinkResolver implements LinkResolver {
 		}
 	}
 
-	@Override
-	public String resolve (String componentURI) throws ItemNotFoundException, SerializationException {
+	@Override public String resolve (String componentURI) throws ItemNotFoundException, SerializationException {
 		return resolve(componentURI, null);
 	}
 
@@ -132,15 +143,14 @@ public class DefaultLinkResolver implements LinkResolver {
 		return true;
 	}
 
-	@Override
-	public String resolve (String componentURI, String pageURI) throws ItemNotFoundException, SerializationException {
+	@Override public String resolve (String componentURI, String pageURI) throws ItemNotFoundException, SerializationException {
 		String key;
 		if (!StringUtils.isEmpty(pageURI)) {
 			key = getCacheKey(componentURI, pageURI);
 		} else {
 			key = getCacheKey(componentURI);
 		}
-		CacheElement<String> cacheElement = cacheProvider.loadFromLocalCache(key);
+		CacheElement<String> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
 		String result;
 
 		if (!validInCache(cacheElement)) {
@@ -255,13 +265,11 @@ public class DefaultLinkResolver implements LinkResolver {
 		this.encodeUrl = encodeUrl;
 	}
 
-	@Override
-	public String getContextPath () {
+	@Override public String getContextPath () {
 		return contextPath;
 	}
 
-	@Override
-	public void setContextPath (String contextPath) {
+	@Override public void setContextPath (String contextPath) {
 		this.contextPath = contextPath;
 	}
 
@@ -273,11 +281,12 @@ public class DefaultLinkResolver implements LinkResolver {
 		this.linkProvider = linkProvider;
 	}
 
-	public CacheProvider getCacheProvider () {
+	public PayloadCacheProvider getCacheProvider () {
 		return cacheProvider;
 	}
 
-	public void setCacheProvider (CacheProvider cacheProvider) {
+	public void setCacheProvider (PayloadCacheProvider cacheProvider) {
 		this.cacheProvider = cacheProvider;
 	}
+
 }

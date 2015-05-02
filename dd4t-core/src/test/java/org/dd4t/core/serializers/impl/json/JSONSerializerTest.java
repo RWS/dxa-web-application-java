@@ -8,6 +8,8 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.reflections.Reflections;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Modifier;
 import java.util.Set;
@@ -17,6 +19,7 @@ import static org.junit.Assert.assertNotNull;
 
 public class JSONSerializerTest {
 
+    private static final Logger LOG = LoggerFactory.getLogger(JSONSerializerTest.class);
     private Set<Class<? extends Field>> fields;
     private Set<Class<? extends Item>> items;
 
@@ -39,16 +42,16 @@ public class JSONSerializerTest {
     @Test
     public void testSerializationJItems() throws SerializationException, IllegalAccessException, InstantiationException {
         for (Class<? extends Item> item :items) {
-            System.err.println("Test Item: " + item);
+            LOG.info("Test Item: " + item);
 
             if (Modifier.isAbstract(item.getModifiers())) {
-                System.out.println(item + " is an abstract class, skipping in test");
+                LOG.info(item + " is an abstract class, skipping in test");
                 continue;
             }
 
             Item itemInstance = item.newInstance();
             String serialized = serializer.serialize(itemInstance);
-            System.out.println(serialized);
+            LOG.info(serialized);
 
             Item deserializedItem = serializer.deserialize(serialized, item);
 
@@ -65,12 +68,12 @@ public class JSONSerializerTest {
         for (Class<? extends Field> field: fields) {
 
             if (Modifier.isAbstract(field.getModifiers())) {
-                System.out.println(field + " is an abstract class, skipping in test");
+                LOG.info(field + " is an abstract class, skipping in test");
                 continue;
             }
 
             if (field.equals(MultimediaImpl.class)) {
-                System.out.println("Skipping " + MultimediaImpl.class);
+                LOG.info("Skipping " + MultimediaImpl.class);
                 continue;
             }
 
@@ -85,7 +88,7 @@ public class JSONSerializerTest {
             try {
                 deserializedItem = serializer.deserialize(serialized, field);
             } catch (SerializationException e) {
-                System.out.println(e.getMessage());
+                LOG.error(e.getMessage());
             }
             assertNotNull(deserializedItem);
 

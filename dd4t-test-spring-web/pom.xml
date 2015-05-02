@@ -11,12 +11,76 @@
 
     <artifactId>dd4t-test-spring-web</artifactId>
 
-    <packaging>jar</packaging>
+    <packaging>war</packaging>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <!-- Versions for the Tridion CD stack. Can be removed in a remote scenario -->
+        <hibernate-version>4.0.1.Final</hibernate-version>
+        <hibernate-jpa-2.0-version>1.0.1.Final</hibernate-jpa-2.0-version>
+        <commons-dbcp-version>1.4</commons-dbcp-version>
+        <commons-pool-version>1.5.3</commons-pool-version>
+        <easylicense-version>2.5</easylicense-version>
+        <json-smart-version>1.1.1</json-smart-version>
+        <xalan-version>2.7.1</xalan-version>
+        <sqljdbc4-version>4.0.0</sqljdbc4-version>
     </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <archiveClasses>true</archiveClasses>
+                    <webResources>
+                        <resource>
+                            <directory>src/main/resources/WEB-INF</directory>
+                            <targetPath>WEB-INF</targetPath>
+                            <filtering>true</filtering>
+                            <includes>
+                                <include>**/**</include>
+                            </includes>
+                        </resource>
+                        <resource>
+                            <filtering>true</filtering>
+                            <directory>webapp/</directory>
+                            <includes>
+                                <include>**/**</include>
+                            </includes>
+                        </resource>
+
+                    </webResources>
+                    <webXml>webapp/WEB-INF/web.xml</webXml>
+                    <failOnMissingWebXml>true</failOnMissingWebXml>
+                    <includeEmptyDirectories>true</includeEmptyDirectories>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default-war</id>
+                        <phase>none</phase>
+                    </execution>
+                    <execution>
+                        <id>war-exploded</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>exploded</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>custom-war</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>war</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <dependencies>
+        <!-- dd4t-core has a dependency on dd4t-databind-->
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-core</artifactId>
@@ -49,6 +113,184 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <!-- Logging: SLF4J and Logback -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+
+        <!--
+            If you use the Tridion Stack inside the web app,
+            include these dependencies. They are for 2013SP1
+        -->
+
+        <!-- Tridion Content Delivery (CD) -->
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_ambient</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_broker</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_cache</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_core</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_datalayer</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <!-- TODO
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_dynamic</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_linking</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_model</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_preview_ambient</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_session</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <!-- TODO
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_tcdl</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.contentdelivery</groupId>
+            <artifactId>cd_wai</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_wrapper</artifactId>
+            <version>${tridion.version}</version>
+        </dependency>
+
+        <!-- Third-party libraries used by Tridion Content Delivery -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
+        <!-- Hibernate -->
+        <dependency>
+            <groupId>org.hibernate.javax.persistence</groupId>
+            <artifactId>hibernate-jpa-2.0-api</artifactId>
+            <version>${hibernate-jpa-2.0-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+            <version>${commons-dbcp-version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+            <version>${commons-pool-version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.vs</groupId>
+            <artifactId>easylicense</artifactId>
+            <version>${easylicense-version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.minidev</groupId>
+            <artifactId>json-smart</artifactId>
+            <version>${json-smart-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+            <version>${xalan-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+            <version>${sqljdbc4-version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+
+        <!--
+            Caching configuration. For JMS,
+            use this dependency.
+        -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+        </dependency>
+
+
     </dependencies>
 
 </project>

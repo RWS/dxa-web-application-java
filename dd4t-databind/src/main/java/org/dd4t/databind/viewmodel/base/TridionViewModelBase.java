@@ -1,7 +1,24 @@
+/*
+ * Copyright (c) 2015 Radagio
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.databind.viewmodel.base;
 
 import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.core.util.TCMURI;
+import org.dd4t.databind.annotations.ViewModel;
 import org.joda.time.DateTime;
 
 import java.util.HashMap;
@@ -22,8 +39,16 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 	private TCMURI templateUri;
 	private DateTime lastModifiedDate;
 	private DateTime lastPublishDate;
+	private boolean setGenericComponentOnComponentPresentation;
 
 	private transient Map<String, XPMInfo> fieldMap = new HashMap<String, XPMInfo>();
+
+	@Override
+	protected void setGenericParameters () {
+		super.setGenericParameters();
+		final ViewModel viewModelAnnotation = this.getClass().getAnnotation(ViewModel.class);
+		this.setGenericComponentOnComponentPresentation = viewModelAnnotation.setComponentObject();
+	}
 
 	@Override public TCMURI getTcmUri () {
 		return this.itemTcmUri;
@@ -57,6 +82,10 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 		this.lastPublishDate = lastPublishDate;
 	}
 
+	@Override public boolean setGenericComponentOnComponentPresentation () {
+		return setGenericComponentOnComponentPresentation;
+	}
+
 	public String getXPath(final String fieldName) {
 		XPMInfo xpmInfo = fieldMap.get(fieldName);
 		if (xpmInfo != null) {
@@ -70,11 +99,11 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 		fieldMap.put(fieldName, new XPMInfo(xpath, multiValued));
 	}
 
-	private Map<String, XPMInfo> getFieldMap() {
+	public Map<String, XPMInfo> getFieldMap() {
 		return fieldMap;
 	}
 
-	protected static class XPMInfo {
+	public static class XPMInfo {
 		private final String xpath;
 		private final boolean multiValued;
 
@@ -83,11 +112,11 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 			this.multiValued = multiValued;
 		}
 
-		String getXpath() {
+		public String getXpath() {
 			return xpath;
 		}
 
-		boolean isMultiValued() {
+		public boolean isMultiValued() {
 			return multiValued;
 		}
 	}

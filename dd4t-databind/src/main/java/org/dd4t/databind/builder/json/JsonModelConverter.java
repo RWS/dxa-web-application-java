@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2015 Radagio
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.dd4t.databind.builder.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,14 +52,15 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
 	}
 
-	@Override public <T extends BaseViewModel> T convertSource (final Object data, final T model) throws SerializationException {
+	@Override
+	public <T extends BaseViewModel> T convertSource (final Object data, final T model) throws SerializationException {
 
 		if (!JsonUtils.isValidJsonNode(data)) {
 			LOG.debug("No data or not a JsonNode - nothing to do.");
 			return null;
 		}
 
-		final JsonNode rawJsonData = (JsonNode)data;
+		final JsonNode rawJsonData = (JsonNode) data;
 
 		LOG.info("Conversion start.");
 		this.concreteFieldImpl = JsonDataBinder.getInstance().getConcreteFieldImpl();
@@ -64,11 +81,8 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			if (rawJsonData.has(DataBindConstants.COMPONENT_FIELDS)) {
 				contentFields = rawJsonData.get(DataBindConstants.COMPONENT_FIELDS);
 			}
-		} else if (componentType == Component.ComponentType.Multimedia) {
-			if (rawJsonData.has(DataBindConstants.MULTIMEDIA)) {
-				LOG.debug(">> MM");
-				contentFields = rawJsonData.get(DataBindConstants.MULTIMEDIA);
-			}
+		} else if (componentType == Component.ComponentType.Multimedia && rawJsonData.has(DataBindConstants.MULTIMEDIA)) {
+			contentFields = rawJsonData.get(DataBindConstants.MULTIMEDIA);
 		}
 
 		if (rawJsonData.has(DataBindConstants.METADATA_FIELDS)) {
@@ -91,7 +105,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 				final String fieldName = entry.getKey();
 				LOG.debug("Key:{}", fieldName);
 
-				ModelFieldMapping m = (ModelFieldMapping)entry.getValue();
+				ModelFieldMapping m = (ModelFieldMapping) entry.getValue();
 
 				String fieldKey;
 				fieldKey = getFieldKeyForModelProperty(fieldName, m);
@@ -111,14 +125,14 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 	 * Searches for the Json node to set on the model field in the Json data.
 	 *
 	 * @param entityFieldName The annotated model property. Used to search the Json node
-	 * @param rawJsonData The Json data representing a node inside a child node of a component. Used for
-	 *                    embedded fields and component link fields
+	 * @param rawJsonData     The Json data representing a node inside a child node of a component. Used for
+	 *                        embedded fields and component link fields
 	 * @param isRootComponent A flag to check whether the current Json node is the component node. If it is
 	 *                        the case, then a choice is made whether to fetch the metadata or the normal content
 	 *                        node.
-	 * @param contentFields The content node
-	 * @param metadataFields The metadata node
-	 * @param m The current model field that is parsing at the moment
+	 * @param contentFields   The content node
+	 * @param metadataFields  The metadata node
+	 * @param m               The current model field that is parsing at the moment
 	 * @return the Json node found under the entityFieldName key or null
 	 */
 	private static JsonNode getJsonNodeToParse (final String entityFieldName, final JsonNode rawJsonData, final boolean isRootComponent, final JsonNode contentFields, final JsonNode metadataFields, final ModelFieldMapping m) {
@@ -233,12 +247,13 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
 	/**
 	 * Deserializes in a Strongly Typed Model.
-	 * @param model the model to build
-	 * @param fieldName the current field name
-	 * @param currentField the current Json node
-	 * @param modelField the model property
+	 *
+	 * @param model           the model to build
+	 * @param fieldName       the current field name
+	 * @param currentField    the current Json node
+	 * @param modelField      the model property
 	 * @param modelClassToUse the Model class
-	 * @param <T> the model class extending from BaseViewModel
+	 * @param <T>             the model class extending from BaseViewModel
 	 * @throws SerializationException
 	 * @throws IllegalAccessException
 	 */
@@ -272,8 +287,8 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
 		if (currentField.has(DataBindConstants.COMPONENT_TYPE)) {
 			LOG.debug("Building a linked Component or Multimedia component");
-			final Component component = JsonDataBinder.getInstance().buildComponent(currentField,JsonDataBinder.getInstance().getConcreteComponentImpl());
-			setFieldValue(model,f,component);
+			final Component component = JsonDataBinder.getInstance().buildComponent(currentField, JsonDataBinder.getInstance().getConcreteComponentImpl());
+			setFieldValue(model, f, component);
 		} else {
 			final org.dd4t.contentmodel.Field renderedField = JsonUtils.renderComponentField(currentField, this.concreteFieldImpl);
 			LOG.trace("Rendered Field is: {} ", renderedField.toString());

@@ -251,7 +251,6 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <!-- TODO: use normal name -->
             <groupId>com.vs</groupId>
             <artifactId>easylicense</artifactId>
             <version>${easylicense-version}</version>
@@ -281,6 +280,15 @@
             <scope>runtime</scope>
         </dependency>
 
+
+        <!--
+            Caching configuration. For JMS,
+            use this dependency.
+        -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+        </dependency>
 
 
     </dependencies>

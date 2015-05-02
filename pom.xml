@@ -68,6 +68,7 @@
         <xml-apis.version>1.4.01</xml-apis.version>
         <selenium.version>1.0.1</selenium.version>
         <jersey.version>2.8</jersey.version>
+        <activemq.version>5.10.0</activemq.version>
     </properties>
     <build>
         <plugins>
@@ -224,6 +225,13 @@
             <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-client</artifactId>
             <version>${jersey.version}</version>
+        </dependency>
+
+        <!-- Only used for JMS cache invalidation -->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>${activemq.version}</version>
         </dependency>
     </dependencies>
     </dependencyManagement>

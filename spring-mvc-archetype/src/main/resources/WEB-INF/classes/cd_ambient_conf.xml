@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               Version="6.1"
+               xsi:noNamespaceSchemaLocation="../../schemas/cd_ambient_conf.xsd">
+
+    <ExcludedPaths>
+        <Path>/</Path>
+    </ExcludedPaths>
+
+</Configuration>

@@ -1,3 +1,6 @@
+#set( $symbol_pound = '#' )
+#set( $symbol_dollar = '$' )
+#set( $symbol_escape = '\' )
 /*
  * Copyright (c) 2015 SDL, Radagio & R. Oudshoorn
  *
@@ -14,7 +17,7 @@
  * limitations under the License.
  */
 
-package org.dd4t.springmvc.controllers;
+package ${package}.controllers;
 
 
 import org.dd4t.mvc.controllers.AbstractComponentPresentationController;

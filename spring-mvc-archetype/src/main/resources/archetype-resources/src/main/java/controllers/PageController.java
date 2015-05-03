@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dd4t.springmvc.archetype.controllers;
+package org.dd4t.springmvc.controllers;
 
 import org.dd4t.contentmodel.Page;
 import org.dd4t.mvc.controllers.AbstractPageController;

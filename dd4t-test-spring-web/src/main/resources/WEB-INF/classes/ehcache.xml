@@ -1,5 +1,5 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="../../schemas/ehcache.xsd">
+         xsi:noNamespaceSchemaLocation="../../../../../../spring-mvc-archetype/src/main/resources/archetype-resources/src/main/resources/schemas/ehcache.xsd">
     <!--
         Items that depend on other items stay in cache eternally. They are expired by (un-)publishing the dependent item.
         Items that don't depend on other items stay in cache for TTL & TTI defined below.

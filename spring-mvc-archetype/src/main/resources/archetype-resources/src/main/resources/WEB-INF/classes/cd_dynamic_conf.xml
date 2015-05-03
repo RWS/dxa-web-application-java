@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                Version="6.1"
-               xsi:noNamespaceSchemaLocation="../../schemas/cd_dynamic_conf.xsd">
+               xsi:noNamespaceSchemaLocation="../../archetype-resources/src/main/resources/schemas/cd_dynamic_conf.xsd">
     <!-- The URLMappings define the relation between publication id's and domain names. -->
     <URLMappings>
         <StaticMappings>

@@ -7,7 +7,6 @@
 dd4t-test-spring-web/src/main/resources/WEB-INF/classes/cd_*.xml
 dd4t-example-site/src/main/webapp/lib
 target
-META-INF
 Servers
 changeemail.sh
 pom.xml.versionsBackup

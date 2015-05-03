@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dd4t.springmvc.archetype.models;
+package org.dd4t.springmvc.models;
 
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.annotations.ViewModelProperty;

@@ -3,7 +3,7 @@
  to enable the linking functionality.                                   -->
 <Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                Version="6.1"
-               xsi:noNamespaceSchemaLocation="../../schemas/cd_link_conf.xsd">
+               xsi:noNamespaceSchemaLocation="../../../../../../spring-mvc-archetype/src/main/resources/archetype-resources/src/main/resources/schemas/cd_link_conf.xsd">
     <!-- The Publications element is a container for separate Publication elements. -->
     <Publications>
         <!-- The publication element allows you to specify Publication specific settings.

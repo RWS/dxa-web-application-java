@@ -84,17 +84,17 @@
     </bean>
 
     <!-- DD4T Controllers -->
-    <bean id="pageController" class="org.dd4t.springmvc.archetype.controllers.PageController">
+    <bean id="pageController" class="src.main.java.archetype.controllers.PageController">
         <property name="pageViewPath" value="pages/"/>
         <property name="publicationResolver" ref="publicationResolver" />
         <property name="pageFactory" ref="pageFactory"/>
     </bean>
 
-    <bean id="componentPresentationController" class="org.dd4t.springmvc.archetype.controllers.ComponentPresentationController">
+    <bean id="componentPresentationController" class="src.main.java.archetype.controllers.ComponentPresentationController">
         <property name="componentViewPath" value="components/"/>
     </bean>
 
-    <bean id="binaryController" class="org.dd4t.springmvc.archetype.controllers.BinaryController">
+    <bean id="binaryController" class="src.main.java.archetype.controllers.BinaryController">
         <property name="binaryRootFolder" value="/media"/>
     </bean>
 

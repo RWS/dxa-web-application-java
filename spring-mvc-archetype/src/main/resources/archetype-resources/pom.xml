@@ -4,10 +4,8 @@
     <version>${version}</version>
     <groupId>${groupId}</groupId>
     <artifactId>${artifactId}</artifactId>
-    <name>org.dd4t:dd4t-spring-mvc-archetype</name>
-    <description>DD4T Spring MVC Archetype for Maven</description>
-    <url>https://github.com/dd4t</url>
-
+    <name>${artifactId}</name>
+    <description>${artifactId}</description>
     <licenses>
         <license>
             <name>The Apache License, Version 2.0</name>
@@ -230,13 +228,11 @@
             <artifactId>cd_datalayer</artifactId>
             <version>${tridion.version}</version>
         </dependency>
-        <!-- TODO
         <dependency>
             <groupId>com.tridion.contentdelivery</groupId>
             <artifactId>cd_dynamic</artifactId>
             <version>${tridion.version}</version>
         </dependency>
-        -->
         <dependency>
             <groupId>com.tridion.contentdelivery</groupId>
             <artifactId>cd_linking</artifactId>

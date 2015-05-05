@@ -17,7 +17,7 @@
  * limitations under the License.
  */
 
-package ${package}.controllers;;
+package ${package}.models;
 
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.annotations.ViewModelProperty;

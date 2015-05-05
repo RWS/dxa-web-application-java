@@ -16,35 +16,96 @@
 
 package org.dd4t.test.web.models;
 
+import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.FieldType;
+import org.dd4t.contentmodel.Keyword;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.annotations.ViewModelProperty;
 import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
 
 import java.util.List;
 
-/**
- * dd4t-2
- *
- * Example. REMOVE when building
- *
- * Explanation:
- * - Always extend from TridionViewModelBase if content comes from Tridion
- * - Always set the @ViewModel annotation on the class. The
- *    viewModelNames match the names of the Component JSP views
- * - Set the @ViewModelProperty annotation in case field names differ from the Json names
- *
- * @author R. Kempees
- */
-@ViewModel(viewModelNames = {"footnote","product-details"}, setComponentObject = true)
+@ViewModel(
+		viewModelNames = {"footnote","product-details"},
+		rootElementNames = {"article"},
+		setComponentObject = true)
 public class GenericTextField extends TridionViewModelBase {
-	@ViewModelProperty(entityFieldName = "textfield")
-	private List<String> textFields;
 
-	public List<String> getTextFields () {
-		return textFields;
+	@ViewModelProperty(entityFieldName = "author", isMetadata = true)
+	private String author;
+
+	@ViewModelProperty(entityFieldName = "heading")
+	private String heading;
+
+	@ViewModelProperty(entityFieldName = "events")
+	private List<Component> events;
+
+	// Reference another View Model
+	@ViewModelProperty(entityFieldName = "reference")
+	private Reference reference;
+
+	@ViewModelProperty(entityFieldName = "heroImage", tridionFieldType = FieldType.MULTIMEDIALINK)
+	private Component heroImage;
+
+	@ViewModelProperty(entityFieldName = "multimedia")
+	private List<Component> multimedia;
+
+	@ViewModelProperty(entityFieldName = "tags")
+	private List<Keyword> keywords;
+
+	public String getAuthor () {
+		return author;
 	}
 
-	public void setTextFields (final List<String> textFields) {
-		this.textFields = textFields;
+	public void setAuthor (final String author) {
+		this.author = author;
+	}
+
+	public String getHeading () {
+		return heading;
+	}
+
+	public void setHeading (final String heading) {
+		this.heading = heading;
+	}
+
+	public List<Component> getEvents () {
+		return events;
+	}
+
+	public void setEvents (final List<Component> events) {
+		this.events = events;
+	}
+
+	public Reference getReference () {
+		return reference;
+	}
+
+	public void setReference (final Reference reference) {
+		this.reference = reference;
+	}
+
+	public Component getHeroImage () {
+		return heroImage;
+	}
+
+	public void setHeroImage (final Component heroImage) {
+		this.heroImage = heroImage;
+	}
+
+	public List<Component> getMultimedia () {
+		return multimedia;
+	}
+
+	public void setMultimedia (final List<Component> multimedia) {
+		this.multimedia = multimedia;
+	}
+
+	public List<Keyword> getKeywords () {
+		return keywords;
+	}
+
+	public void setKeywords (final List<Keyword> keywords) {
+		this.keywords = keywords;
 	}
 }

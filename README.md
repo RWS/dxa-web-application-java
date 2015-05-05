@@ -3,7 +3,7 @@ dd4t-2-java
 
  - Current stable version: **2.0.1-beta**
  - Maven Central: [org.dd4t](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.dd4t%22)
- - Current stable archetype version: [1.2](http://search.maven.org/#artifactdetails%7Corg.dd4t%7Cdd4t-spring-mvc-archetype%7C1.2%7Cmaven-archetype)
+ - Current stable archetype version: [1.3](http://search.maven.org/#artifactdetails%7Corg.dd4t%7Cdd4t-spring-mvc-archetype%7C1.3%7Cmaven-archetype)
 
 
 ##Prerequisites
@@ -12,7 +12,22 @@ dd4t-2-java
 2. Install all Tridion dependencies (aka JAR files) in your local Maven repository as these are not available in Maven Central. The general command to do this is:
 
 		mvn -q install:install-file -DgroupId=com.tridion.contentdelivery -DartifactId=cd_broker -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_broker-7.1.0.jar
+		
+	Repeat for all other Tridion jar files.
+	
+	Note that if you use SQL server, you need to install the jar dependency as follows:
+	
+		mvn -q install:install-file -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0.0 -Dpackaging=jar -Dfile=sqljdbc4-4.0.0.jar
 
+
+	If you do not use SQL server, remove the following dependency:
+	
+	    <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+            <version>${sqljdbc4-version}</version>
+            <scope>runtime</scope>
+        </dependency>
 
  In the above example, we install the Tridion 2013 SP1 Jar files, **to which we have appended the version number.** For older versions or for other version type (eg. -Dversion=2013SP1), you have to change the version property on your POM as well:
  
@@ -105,7 +120,7 @@ To create a complete, but minimal Spring MVC web application to develop with, cr
 1. Create an empty directory where you want to develop the web application in
 2. Execute the following command after replacing the parameters in between the brackets ([com.example] and [mywebapp]):
 
-		mvn archetype:generate -DgroupId=[com.example] -DartifactId=[mywebapp] -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.2  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo.maven.org/maven2
+		mvn archetype:generate -DgroupId=[com.example] -DartifactId=[mywebapp] -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.3  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
 
 3. Enter the requested information. Maven will ask you to specify a version (defaults to 1.0-SNAPSHOT) and will then ask you to confirm the settings.
 
@@ -113,7 +128,7 @@ To create a complete, but minimal Spring MVC web application to develop with, cr
 4. The web application project is created if you see the following Maven output:
 
 
-		$ mvn archetype:generate -DgroupId=com.example -DartifactId=mywebapp -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.2  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
+		$ mvn archetype:generate -DgroupId=com.example -DartifactId=mywebapp -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.3  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
 		[INFO] Scanning for projects...
 		[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
                                                                          
@@ -138,7 +153,7 @@ To create a complete, but minimal Spring MVC web application to develop with, cr
         package: com.example
         Y: : Y
         [INFO] ----------------------------------------------------------------------------
-        [INFO] Using following parameters for creating project from Archetype: dd4t-spring-mvc-archetype:1.2
+        [INFO] Using following parameters for creating project from Archetype: dd4t-spring-mvc-archetype:1.3
         [INFO] ----------------------------------------------------------------------------
         [INFO] Parameter: groupId, Value: com.example
         [INFO] Parameter: artifactId, Value: mywebapp
@@ -164,7 +179,7 @@ For setting up a webapp based on the dd4t-2-java through your IDE, you will need
 
 2. Archetype ArtifactId=**dd4t-spring-mvc-archetype**
 
-3. ArchetypeVersion=**1.2**
+3. ArchetypeVersion=**1.3**
 
  - For **Eclipse** you need the **m2eclipse** plugin. A nice guide on how to fully integrate can be found here: http://www.theserverside.com/news/1363817/Introduction-to-m2eclipse
  
@@ -224,7 +239,7 @@ DD4T 2 requires quite a few sub dependencies. Depending on your need, you will n
 In addition to dd4t-2's native dependencies, your web application and embedded Tridion stack may require extra dependencies. You can check the set dependencies in the following projects as a guide for establishing your set:
 
  - https://raw.githubusercontent.com/dd4t/dd4t-2-java/release/dd4t-example-site/pom.xml
- - https://github.com/dd4t/dd4t-2-java/blob/develop/spring-mvc-archetype/src/main/resources/archetype-resources/pom.xml
+ - https://raw.githubusercontent.com/dd4t/dd4t-2-java/develop/spring-mvc-archetype/src/main/resources/archetype-resources/pom.xml
  
 
 

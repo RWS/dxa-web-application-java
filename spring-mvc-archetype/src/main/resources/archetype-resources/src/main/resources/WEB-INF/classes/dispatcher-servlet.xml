@@ -10,7 +10,7 @@
         http://www.springframework.org/schema/jms
         http://www.springframework.org/schema/jms/spring-jms.xsd">
     <!-- Change this to the base-package where your overridden controllers are -->
-    <context:component-scan base-package="org.dd4t.springmvc.archetype.controllers" annotation-config="true"/>
+    <context:component-scan base-package="${package}.controllers" annotation-config="true"/>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/"/>
@@ -84,17 +84,17 @@
     </bean>
 
     <!-- DD4T Controllers -->
-    <bean id="pageController" class="src.main.java.archetype.controllers.PageController">
+    <bean id="pageController" class="${package}.controllers.PageController">
         <property name="pageViewPath" value="pages/"/>
         <property name="publicationResolver" ref="publicationResolver" />
         <property name="pageFactory" ref="pageFactory"/>
     </bean>
 
-    <bean id="componentPresentationController" class="src.main.java.archetype.controllers.ComponentPresentationController">
+    <bean id="componentPresentationController" class="${package}.controllers.ComponentPresentationController">
         <property name="componentViewPath" value="components/"/>
     </bean>
 
-    <bean id="binaryController" class="src.main.java.archetype.controllers.BinaryController">
+    <bean id="binaryController" class="${package}.controllers.BinaryController">
         <property name="binaryRootFolder" value="/media"/>
     </bean>
 
@@ -115,7 +115,7 @@
     <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
     <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
         <!-- Set this value to your own models package root -->
-        <property name="viewModelPackageRoot" value="org.dd4t.test.web.models" />
+        <property name="viewModelPackageRoot" value="${package}.models" />
         <property name="viewModelMetaKeyName" value="viewName" />
         <!-- Set these to your need. If you only want regular Components set to true -->
         <property name="renderDefaultComponentModelsOnly" value="false" />

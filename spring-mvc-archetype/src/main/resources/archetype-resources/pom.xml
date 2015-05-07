@@ -96,14 +96,14 @@
                         </resource>
                         <resource>
                             <filtering>true</filtering>
-                            <directory>webapp/</directory>
+                            <directory>src/main/webapp/</directory>
                             <includes>
                                 <include>**/**</include>
                             </includes>
                         </resource>
 
                     </webResources>
-                    <webXml>webapp/WEB-INF/web.xml</webXml>
+                    <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
                     <failOnMissingWebXml>true</failOnMissingWebXml>
                     <includeEmptyDirectories>true</includeEmptyDirectories>
                 </configuration>
@@ -171,6 +171,7 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${javax.servlet-api.version}</version>
+            <scope>provided</scope>
         </dependency>
         <!-- Logging: SLF4J and Logback -->
         <dependency>

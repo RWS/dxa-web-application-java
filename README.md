@@ -3,7 +3,7 @@ dd4t-2-java
 
  - Current stable version: **2.0.1-beta**
  - Maven Central: [org.dd4t](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.dd4t%22)
- - Current stable archetype version: [1.3](http://search.maven.org/#artifactdetails%7Corg.dd4t%7Cdd4t-spring-mvc-archetype%7C1.3%7Cmaven-archetype)
+ - Current stable archetype version: [1.4](http://search.maven.org/#artifactdetails%7Corg.dd4t%7Cdd4t-spring-mvc-archetype%7C1.4%7Cmaven-archetype)
 
 
 ##Prerequisites
@@ -120,7 +120,7 @@ To create a complete, but minimal Spring MVC web application to develop with, cr
 1. Create an empty directory where you want to develop the web application in
 2. Execute the following command after replacing the parameters in between the brackets ([com.example] and [mywebapp]):
 
-		mvn archetype:generate -DgroupId=[com.example] -DartifactId=[mywebapp] -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.3  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
+		mvn archetype:generate -DgroupId=[com.example] -DartifactId=[mywebapp] -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.4  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
 
 3. Enter the requested information. Maven will ask you to specify a version (defaults to 1.0-SNAPSHOT) and will then ask you to confirm the settings.
 
@@ -128,7 +128,7 @@ To create a complete, but minimal Spring MVC web application to develop with, cr
 4. The web application project is created if you see the following Maven output:
 
 
-		$ mvn archetype:generate -DgroupId=com.example -DartifactId=mywebapp -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.3  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
+		$ mvn archetype:generate -DgroupId=com.example -DartifactId=mywebapp -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.4  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
 		[INFO] Scanning for projects...
 		[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
                                                                          
@@ -153,7 +153,7 @@ To create a complete, but minimal Spring MVC web application to develop with, cr
         package: com.example
         Y: : Y
         [INFO] ----------------------------------------------------------------------------
-        [INFO] Using following parameters for creating project from Archetype: dd4t-spring-mvc-archetype:1.3
+        [INFO] Using following parameters for creating project from Archetype: dd4t-spring-mvc-archetype:1.4
         [INFO] ----------------------------------------------------------------------------
         [INFO] Parameter: groupId, Value: com.example
         [INFO] Parameter: artifactId, Value: mywebapp
@@ -179,7 +179,7 @@ For setting up a webapp based on the dd4t-2-java through your IDE, you will need
 
 2. Archetype ArtifactId=**dd4t-spring-mvc-archetype**
 
-3. ArchetypeVersion=**1.3**
+3. ArchetypeVersion=**1.4**
 
  - For **Eclipse** you need the **m2eclipse** plugin. A nice guide on how to fully integrate can be found here: http://www.theserverside.com/news/1363817/Introduction-to-m2eclipse
  

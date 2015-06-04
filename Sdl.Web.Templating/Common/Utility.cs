@@ -20,19 +20,19 @@ namespace Sdl.Web.Tridion.Common
 
         public static string GetKeyFromTaxonomy(Category taxonomy)
         {
-            var key = taxonomy.XmlName;
+            string key = taxonomy.XmlName;
             return key.Substring(0, 1).ToLower() + key.Substring(1);
         }
 
         public static string GetKeyFromTemplate(ComponentTemplate template)
         {
-            var key = Regex.Replace(template.Title, @"[\[\]\s\.]", "");
+            string key = Regex.Replace(template.Title, @"[\[\]\s\.]", "");
             return key.Substring(0, 1).ToLower() + key.Substring(1);
         }
 
         public static string GetKeyFromSchema(Schema schema)
         {
-            var key = schema.RootElementName;
+            string key = schema.RootElementName;
             if (String.IsNullOrEmpty(key))
             {
                 key = Regex.Replace(schema.Title.Trim(), @"[^A-Za-z0-9.]+", "");

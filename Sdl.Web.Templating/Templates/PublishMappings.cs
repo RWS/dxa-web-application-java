@@ -49,8 +49,8 @@ namespace Sdl.Web.Tridion.Templates
         {
             Initialize(engine, package);
             //The core configuration component should be the one being processed by the template
-            var coreConfigComponent = GetComponent();
-            var sg = GetSystemStructureGroup("mappings");
+            Component coreConfigComponent = GetComponent();
+            StructureGroup sg = GetSystemStructureGroup("mappings");
             //_moduleRoot = GetModulesRoot(coreConfigComponent);
 
             //Get all the active modules
@@ -68,12 +68,12 @@ namespace Sdl.Web.Tridion.Templates
             bool containsDefaultVocabulary = false;
 
             // generate a list of vocabulary prefix and name from appdata
-            var res = new Dictionary<string, List<string>> { { VocabulariesConfigName, new List<string>() } };
+            Dictionary<string, List<string>> res = new Dictionary<string, List<string>> { { VocabulariesConfigName, new List<string>() } };
             ApplicationData globalAppData = Engine.GetSession().SystemManager.LoadGlobalApplicationData(VocabulariesAppDataId);
             if (globalAppData != null)
             {
                 XElement vocabulariesXml = XElement.Parse(Encoding.Unicode.GetString(globalAppData.Data));
-                foreach (var vocabulary in vocabulariesXml.Elements())
+                foreach (XElement vocabulary in vocabulariesXml.Elements())
                 {
                     string prefix = vocabulary.Attribute("prefix").Value;
                     res[VocabulariesConfigName].Add(String.Format("{{\"Prefix\":{0},\"Vocab\":{1}}}", JsonEncode(prefix), JsonEncode(vocabulary.Attribute("name").Value)));
@@ -90,7 +90,7 @@ namespace Sdl.Web.Tridion.Templates
             }
 
             // generate a list of schema + id, separated by module
-            var schemaFilter = new RepositoryItemsFilter(Engine.GetSession())
+            RepositoryItemsFilter schemaFilter = new RepositoryItemsFilter(Engine.GetSession())
             {
                 Recursive = true,
                 ItemTypes = new List<ItemType> { ItemType.Schema },
@@ -99,13 +99,13 @@ namespace Sdl.Web.Tridion.Templates
             res.Add(SchemasConfigName, new List<string>());
             foreach (XmlElement item in GetPublication().GetListItems(schemaFilter).ChildNodes)
             {
-                var type = item.GetAttribute("Type");
-                var subType = item.GetAttribute("SubType");
+                string type = item.GetAttribute("Type");
+                string subType = item.GetAttribute("SubType");
                 // we consider normal schemas (type=8 subtype=0) and multimedia schemas (type=8 subtype=1)
                 if ((type == "8" && (subType == "0" || subType == "1")))
                 {
-                    var id = item.GetAttribute("ID");
-                    var schema = (Schema)Engine.GetObject(id);
+                    string id = item.GetAttribute("ID");
+                    Schema schema = (Schema)Engine.GetObject(id);
                     
                     // multimedia schemas don't have a root element name, so lets use its title without any invalid characters
                     string rootElementName = schema.RootElementName;
@@ -142,14 +142,14 @@ namespace Sdl.Web.Tridion.Templates
             }
 
             // get region mappings for all templates
-            var regions = BuildRegionMappings();
+            Dictionary<string, List<string>> regions = BuildRegionMappings();
             res.Add(RegionConfigName, new List<string>());
 
-            foreach (var region in regions)
+            foreach (KeyValuePair<string, List<string>> region in regions)
             {
                 StringBuilder allowedComponentTypes = new StringBuilder();
                 bool first = true;
-                foreach (var componentType in region.Value)
+                foreach (string componentType in region.Value)
                 {
                     if (first)
                     {
@@ -172,12 +172,12 @@ namespace Sdl.Web.Tridion.Templates
             // format:  region { schema, template } 
             Dictionary<string, List<string>> regions = new Dictionary<string, List<string>>();
 
-            var templateFilter = new ComponentTemplatesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
+            ComponentTemplatesFilter templateFilter = new ComponentTemplatesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
             foreach (XmlElement item in GetPublication().GetListComponentTemplates(templateFilter).ChildNodes)
             {
-                var id = item.GetAttribute("ID");
-                var template = (ComponentTemplate)Engine.GetObject(id);
-                var region = GetRegionFromTemplate(template);
+                string id = item.GetAttribute("ID");
+                ComponentTemplate template = (ComponentTemplate)Engine.GetObject(id);
+                string region = GetRegionFromTemplate(template);
                 
                 if (!regions.ContainsKey(region))
                 {
@@ -186,7 +186,7 @@ namespace Sdl.Web.Tridion.Templates
 
                 StringBuilder allowedComponentTypes = new StringBuilder();
                 bool first = true;
-                foreach (var schema in template.RelatedSchemas)
+                foreach (Schema schema in template.RelatedSchemas)
                 {
                     if (first)
                     {
@@ -212,7 +212,7 @@ namespace Sdl.Web.Tridion.Templates
         {
             // load namespace manager with schema namespaces
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(nameTable);
-            foreach (var item in _namespaces)
+            foreach (KeyValuePair<string, string> item in _namespaces)
             {
                 nsmgr.AddNamespace(item.Key, item.Value);
             }
@@ -361,7 +361,7 @@ namespace Sdl.Web.Tridion.Templates
                 // input = "s:Article" but can also be "s:Article,x:Something"
                 string[] values = input.Split(',');
                 bool first = true;
-                foreach (var value in values)
+                foreach (string value in values)
                 {
                     if (first)
                     {
@@ -389,7 +389,7 @@ namespace Sdl.Web.Tridion.Templates
             {
                 // entity = "s:Article" but can also be "s:Article,x:Something"
                 string[] values = entity.Split(',');
-                foreach (var value in values)
+                foreach (string value in values)
                 {
                     string[] parts = value.Split(':');
                     entities.Add(parts[0], parts[1]);
@@ -397,7 +397,7 @@ namespace Sdl.Web.Tridion.Templates
 
                 // input = "s:headline" but can also be "s:headline,x:something"
                 string[] properties = input.Split(',');
-                foreach (var value in properties)
+                foreach (string value in properties)
                 {
                     string[] parts = value.Split(':');
                     if (entities.ContainsKey(parts[0]))
@@ -419,28 +419,28 @@ namespace Sdl.Web.Tridion.Templates
         protected virtual List<string> ReadPageTemplateIncludes()
         {
             //Generate a list of Page Templates which have includes in the metadata
-            var res = new List<string>();
-            var templateFilter = new RepositoryItemsFilter(Engine.GetSession())
+            List<string> res = new List<string>();
+            RepositoryItemsFilter templateFilter = new RepositoryItemsFilter(Engine.GetSession())
             {
                 ItemTypes = new List<ItemType> {ItemType.PageTemplate},
                 Recursive = true
             };
             foreach (XmlElement item in GetPublication().GetListItems(templateFilter).ChildNodes)
             {
-                var id = item.GetAttribute("ID");
-                var template = (PageTemplate)Engine.GetObject(id);
+                string id = item.GetAttribute("ID");
+                PageTemplate template = (PageTemplate)Engine.GetObject(id);
                 if (template.MetadataSchema != null && template.Metadata != null)
                 {
                     ItemFields meta = new ItemFields(template.Metadata, template.MetadataSchema);
-                    var values = meta.GetTextValues("includes");
+                    IEnumerable<string> values = meta.GetTextValues("includes");
                     if (values != null)
                     {
-                        var includes = new List<string>();
-                        foreach (var val in values)
+                        List<string> includes = new List<string>();
+                        foreach (string val in values)
                         {
                             includes.Add(JsonEncode(val));
                         }
-                        var json = String.Format("\"{0}\":[{1}]", template.Id.ItemId, String.Join(",\n", includes));
+                        string json = String.Format("\"{0}\":[{1}]", template.Id.ItemId, String.Join(",\n", includes));
                         res.Add(json);
                     }
                 }

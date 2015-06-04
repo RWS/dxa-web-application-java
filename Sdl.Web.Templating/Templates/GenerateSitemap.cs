@@ -49,15 +49,15 @@ namespace Sdl.Web.Tridion.Templates
             NavigationConfig res = new NavigationConfig {NavType = NavigationType.Simple};
             if (component.Metadata != null)
             {
-                var meta = new ItemFields(component.Metadata, component.MetadataSchema);
-                var type = meta.GetKeywordValue("navigationType");
+                ItemFields meta = new ItemFields(component.Metadata, component.MetadataSchema);
+                Keyword type = meta.GetKeywordValue("navigationType");
                 switch (type.Key.ToLower())
                 {
                     case "localizable":
                         res.NavType = NavigationType.Localizable;
                         break;
                 }
-                var navTextFields = meta.GetSingleFieldValue("navigationTextFieldPaths");
+                string navTextFields = meta.GetSingleFieldValue("navigationTextFieldPaths");
                 if (!String.IsNullOrEmpty(navTextFields))
                 {
                     res.NavTextFieldPaths = navTextFields.Split(',').Select(s => s.Trim()).ToList();
@@ -82,8 +82,8 @@ namespace Sdl.Web.Tridion.Templates
 
         private SitemapItem GenerateStructureGroupNavigation(StructureGroup startPoint)
         {
-            var root = GenerateFolderNode(startPoint);
-            var orderedDocument = GetItemsInFolderAsAList(startPoint);
+            SitemapItem root = GenerateFolderNode(startPoint);
+            IEnumerable<XElement> orderedDocument = GetItemsInFolderAsAList(startPoint);
 
             foreach (XElement pgNode in orderedDocument)
             {
@@ -152,8 +152,8 @@ namespace Sdl.Web.Tridion.Templates
 
         private static string GetPublishedDate(Page page, PublicationTarget target )
         {
-            var publishInfos = PublishEngine.GetPublishInfo(page);
-            foreach (var publishInfo in publishInfos)
+            ICollection<PublishInfo> publishInfos = PublishEngine.GetPublishInfo(page);
+            foreach (PublishInfo publishInfo in publishInfos)
             {
                 if (publishInfo.PublicationTarget == target)
                 {
@@ -176,7 +176,7 @@ namespace Sdl.Web.Tridion.Templates
         private string GetNavTextFromPageComponents(Page page)
         {
             string title = null;
-            foreach (var cp in page.ComponentPresentations)
+            foreach (ComponentPresentation cp in page.ComponentPresentations)
             {
                 title = GetNavTitleFromComponent(cp.Component);
                 if (!String.IsNullOrEmpty(title))
@@ -198,11 +198,9 @@ namespace Sdl.Web.Tridion.Templates
             {
                 data.Add(component.Metadata);
             }
-            //var meta = component.Metadata;
-            //var content = component.Content;
-            foreach (var fieldname in _config.NavTextFieldPaths)
+            foreach (string fieldname in _config.NavTextFieldPaths)
             {
-                var title = GetNavTitleFromField(fieldname, data);
+                string title = GetNavTitleFromField(fieldname, data);
                 if (!String.IsNullOrEmpty(title))
                 {
                     return title;
@@ -214,9 +212,9 @@ namespace Sdl.Web.Tridion.Templates
         private static string GetNavTitleFromField(string fieldname, IEnumerable<XmlElement> data)
         {
             string xpath = GetXPathFromFieldName(fieldname);
-            foreach (var fieldData in data)
+            foreach (XmlElement fieldData in data)
             {
-                var field = fieldData.SelectSingleNode(xpath);
+                XmlNode field = fieldData.SelectSingleNode(xpath);
                 if (field != null)
                 {
                     return field.InnerText;
@@ -227,13 +225,13 @@ namespace Sdl.Web.Tridion.Templates
 
         private static string GetXPathFromFieldName(string fieldname)
         {
-            var bits = fieldname.Split('/');
+            string[] bits = fieldname.Split('/');
             return "//" + String.Join("/", bits.Select(f => String.Format("*[local-name()='{0}']", f)));
         }
 
         private string GetRegionFromComponentPresentation(ComponentPresentation cp)
         {
-            var match = Regex.Match(cp.ComponentTemplate.Title, @".*?\[(.*?)\]");
+            Match match = Regex.Match(cp.ComponentTemplate.Title, @".*?\[(.*?)\]");
             if (match.Success)
             {
                 return match.Groups[1].Value;
@@ -251,7 +249,7 @@ namespace Sdl.Web.Tridion.Templates
                 if (mainComp.Metadata != null)
                 {
                     ItemFields meta = new ItemFields(mainComp.Metadata, mainComp.MetadataSchema);
-                    var embedMeta = meta.GetEmbeddedField("standardMeta");
+                    ItemFields embedMeta = meta.GetEmbeddedField("standardMeta");
                     if (embedMeta != null)
                     {
                         title = embedMeta.GetTextValue("name");
@@ -271,8 +269,8 @@ namespace Sdl.Web.Tridion.Templates
             String url = page.PublishLocationUrl;
             if (_config.ExternalUrlTemplate.ToLower() == page.PageTemplate.Title.ToLower() && page.Metadata != null)
             {
-                var meta = new ItemFields(page.Metadata,page.MetadataSchema);
-                var link = meta.GetEmbeddedField("redirect");
+                ItemFields meta = new ItemFields(page.Metadata,page.MetadataSchema);
+                ItemFields link = meta.GetEmbeddedField("redirect");
                 url = link.GetExternalLink("externalLink");
                 if (String.IsNullOrEmpty(url))
                 {
@@ -284,7 +282,7 @@ namespace Sdl.Web.Tridion.Templates
 
         private IEnumerable<XElement> GetItemsInFolderAsAList(StructureGroup startPoint)
         {
-            var filter = new OrganizationalItemItemsFilter(Engine.GetSession())
+            OrganizationalItemItemsFilter filter = new OrganizationalItemItemsFilter(Engine.GetSession())
                 {
                     ItemTypes = new List<ItemType> {ItemType.Page, ItemType.StructureGroup},
                     BaseColumns = ListBaseColumns.Extended
@@ -296,7 +294,7 @@ namespace Sdl.Web.Tridion.Templates
             rootDocument.LoadXml(pagesXml.OuterXml);
             XDocument pageDoc = XDocument.Parse(rootDocument.OuterXml);
 
-            var orderedDocument = (from XElement el in pageDoc.Root.Descendants()
+            List<XElement> orderedDocument = (from XElement el in pageDoc.Root.Descendants()
                                    orderby el.Attribute("Title").Value
                                    select el).ToList();
             return orderedDocument;

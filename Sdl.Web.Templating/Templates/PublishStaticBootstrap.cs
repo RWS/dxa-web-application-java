@@ -1,5 +1,7 @@
 ﻿using Sdl.Web.Tridion.Common;
 using System.Collections.Generic;
+using Tridion.ContentManager.CommunicationManagement;
+using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
@@ -18,8 +20,8 @@ namespace Sdl.Web.Tridion.Templates
             Initialize(engine, package);
             
             //The core configuration component should be the one being processed by the template
-            var coreConfigComponent = GetComponent();
-            var sg = GetSystemStructureGroup();
+            Component coreConfigComponent = GetComponent();
+            StructureGroup sg = GetSystemStructureGroup();
 
             //Publish the boostrap list, this is used by the web application to load in all other static files
             PublishBootstrapJson(GetBootstrapFiles(), coreConfigComponent, sg, "statics-");
@@ -28,7 +30,7 @@ namespace Sdl.Web.Tridion.Templates
         private List<string> GetBootstrapFiles()
         {
             List<string> files = new List<string>();
-            foreach (var item in Package.GetEntries())
+            foreach (KeyValuePair<string, Item> item in Package.GetEntries())
             {
                 if (item.Key.EndsWith(BootstrapFilename + JsonExtension))
                 {

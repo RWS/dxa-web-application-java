@@ -22,8 +22,8 @@ namespace Sdl.Web.Tridion.Templates
             Initialize(engine, package);
             
             //The core configuration component should be the one being processed by the template
-            var coreConfigComponent = GetComponent();
-            var sg = GetSystemStructureGroup("resources");
+            Component coreConfigComponent = GetComponent();
+            StructureGroup sg = GetSystemStructureGroup("resources");
             //_moduleRoot = GetModulesRoot(coreConfigComponent);
 
             //Get all the active modules
@@ -31,7 +31,7 @@ namespace Sdl.Web.Tridion.Templates
             List<string> filesCreated = new List<string>();
             
             //For each active module, publish the config and add the filename(s) to the bootstrap list
-            foreach (var module in moduleComponents)
+            foreach (KeyValuePair<string, Component> module in moduleComponents)
             {
                 filesCreated.Add(ProcessModule(module.Key, module.Value, sg));
             }
@@ -45,7 +45,7 @@ namespace Sdl.Web.Tridion.Templates
             Dictionary<string, string> data = new Dictionary<string, string>();
             ItemFields fields = new ItemFields(module.Content, module.Schema);
 
-            foreach (var configComp in fields.GetComponentValues("resource"))
+            foreach (Component configComp in fields.GetComponentValues("resource"))
             {
                 data = MergeData(data, ReadComponentData(configComp));
             }

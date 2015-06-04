@@ -33,8 +33,8 @@ namespace Sdl.Web.Tridion.Templates
             Initialize(engine, package);
             
             //The core configuration component should be the one being processed by the template
-            var coreConfigComponent = GetComponent();
-            var sg = GetSystemStructureGroup("config");
+            Component coreConfigComponent = GetComponent();
+            StructureGroup sg = GetSystemStructureGroup("config");
             _moduleRoot = GetModulesRoot(coreConfigComponent);
 
             //Get all the active modules
@@ -42,7 +42,7 @@ namespace Sdl.Web.Tridion.Templates
             List<string> filesCreated = new List<string>();
             
             //For each active module, publish the config and add the filename(s) to the bootstrap list
-            foreach (var module in moduleComponents)
+            foreach (KeyValuePair<string, Component> module in moduleComponents)
             {
                 filesCreated.Add(ProcessModule(module.Key, module.Value, sg));
             }
@@ -57,7 +57,7 @@ namespace Sdl.Web.Tridion.Templates
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
             ItemFields fields = new ItemFields(module.Content, module.Schema);
-            foreach (var configComp in fields.GetComponentValues("furtherConfiguration"))
+            foreach (Component configComp in fields.GetComponentValues("furtherConfiguration"))
             {
                 data = MergeData(data, ReadComponentData(configComp));
                 if (configComp.Title == "Localization Configuration")
@@ -71,13 +71,13 @@ namespace Sdl.Web.Tridion.Templates
         protected virtual Dictionary<string, List<string>> ReadTaxonomiesData()
         {
             //Generate a list of taxonomy + id
-            var res = new Dictionary<string, List<string>>();
-            var settings = new List<string>();
-            var taxFilter = new TaxonomiesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
+            Dictionary<string, List<string>> res = new Dictionary<string, List<string>>();
+            List<string> settings = new List<string>();
+            TaxonomiesFilter taxFilter = new TaxonomiesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
             foreach (XmlElement item in GetPublication().GetListTaxonomies(taxFilter).ChildNodes)
             {
-                var id = item.GetAttribute("ID");
-                var taxonomy = (Category)Engine.GetObject(id);
+                string id = item.GetAttribute("ID");
+                Category taxonomy = (Category)Engine.GetObject(id);
                 settings.Add(String.Format("{0}:{1}", JsonEncode(Utility.GetKeyFromTaxonomy(taxonomy)), JsonEncode(taxonomy.Id.ItemId)));
             }
             res.Add("core." + TaxonomiesConfigName, settings);
@@ -87,8 +87,8 @@ namespace Sdl.Web.Tridion.Templates
         protected virtual Dictionary<string, List<string>> ReadSchemaData()
         {
             //Generate a list of schema + mapping details, separated by module
-            var res = new Dictionary<string, List<string>>();
-            var schemaFilter = new RepositoryItemsFilter(Engine.GetSession())
+            Dictionary<string, List<string>> res = new Dictionary<string, List<string>>();
+            RepositoryItemsFilter schemaFilter = new RepositoryItemsFilter(Engine.GetSession())
             {
                 Recursive = true,
                 ItemTypes = new List<ItemType> { ItemType.Schema },
@@ -96,17 +96,17 @@ namespace Sdl.Web.Tridion.Templates
             };
             foreach (XmlElement item in GetPublication().GetListItems(schemaFilter).ChildNodes)
             {
-                var type = item.GetAttribute("Type");
-                var subType = item.GetAttribute("SubType");
+                string type = item.GetAttribute("Type");
+                string subType = item.GetAttribute("SubType");
                 //We only consider normal schemas (type=8 subtype=0)
                 if ((type == "8" && subType == "0"))
                 {
-                    var id = item.GetAttribute("ID");
-                    var schema = (Schema)Engine.GetObject(id);
-                    var module = GetModuleNameFromItem(schema, _moduleRoot);
+                    string id = item.GetAttribute("ID");
+                    Schema schema = (Schema)Engine.GetObject(id);
+                    string module = GetModuleNameFromItem(schema, _moduleRoot);
                     if (module != null)
                     {
-                        var key = module + "." + SchemasConfigName;
+                        string key = module + "." + SchemasConfigName;
                         if (!res.ContainsKey(key))
                         {
                             res.Add(key, new List<string>());
@@ -121,19 +121,19 @@ namespace Sdl.Web.Tridion.Templates
         protected virtual Dictionary<string, List<string>> ReadTemplateData()
         {
             //Generate a list of dynamic CT + id, separated by module
-            var res = new Dictionary<string, List<string>>();
-            var templateFilter = new ComponentTemplatesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
+            Dictionary<string, List<string>> res = new Dictionary<string, List<string>>();
+            ComponentTemplatesFilter templateFilter = new ComponentTemplatesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
             foreach (XmlElement item in GetPublication().GetListComponentTemplates(templateFilter).ChildNodes)
             {
-                var id = item.GetAttribute("ID");
-                var template = (ComponentTemplate)Engine.GetObject(id);
+                string id = item.GetAttribute("ID");
+                ComponentTemplate template = (ComponentTemplate)Engine.GetObject(id);
                 //Only consider dynamic CTs
                 if (template.IsRepositoryPublishable)
                 {
-                    var module = GetModuleNameFromItem(template, _moduleRoot);
+                    string module = GetModuleNameFromItem(template, _moduleRoot);
                     if (module != null)
                     {
-                        var key = module + "." + TemplateConfigName;
+                        string key = module + "." + TemplateConfigName;
                         if (!res.ContainsKey(key))
                         {
                             res.Add(key, new List<string>());
@@ -151,8 +151,8 @@ namespace Sdl.Web.Tridion.Templates
             {
                 Logger.Warning("Could not find 'Localization Configuration' component, cannot publish language data");
             }
-            var sitePubs = LoadSitePublications(GetPublication());
-            var isMaster = sitePubs.Where(p => p.Id == GetPublication().Id.ItemId.ToString(CultureInfo.InvariantCulture)).FirstOrDefault().IsMaster;
+            IEnumerable<PublicationDetails> sitePubs = LoadSitePublications(GetPublication());
+            bool isMaster = sitePubs.Where(p => p.Id == GetPublication().Id.ItemId.ToString(CultureInfo.InvariantCulture)).FirstOrDefault().IsMaster;
             List<string> additionalData = new List<string>
                 {
                     String.Format("\"defaultLocalization\":{0}", JsonEncode(isMaster)),
@@ -165,11 +165,11 @@ namespace Sdl.Web.Tridion.Templates
 
         private Publication GetMasterPublication(Publication contextPublication)
         {
-            var siteId = GetSiteIdFromPublication(contextPublication);
+            string siteId = GetSiteIdFromPublication(contextPublication);
             List<Publication> validParents = new List<Publication>();
             if (siteId != null && siteId!="multisite-master")
             {
-                foreach (var item in contextPublication.Parents)
+                foreach (Repository item in contextPublication.Parents)
                 {
                     Publication parent = (Publication)item;
                     if (IsCandidateMaster(parent, siteId))
@@ -190,7 +190,7 @@ namespace Sdl.Web.Tridion.Templates
             //A publication is a valid master if:
             //a) Its siteId is "multisite-master" or
             //b) Its siteId matches the passed (child) siteId
-            var siteId = GetSiteIdFromPublication(pub);
+            string siteId = GetSiteIdFromPublication(pub);
             return siteId == "multisite-master" || childId == siteId;
         }
 
@@ -198,7 +198,7 @@ namespace Sdl.Web.Tridion.Templates
         private IEnumerable<PublicationDetails> LoadSitePublications(Publication contextPublication)
         {
             string siteId = GetSiteIdFromPublication(contextPublication);
-            var master = GetMasterPublication(contextPublication);
+            Publication master = GetMasterPublication(contextPublication);
             Logger.Debug(String.Format("Master publication is : {0}, siteId is {1}", master.Title, siteId));
             List<PublicationDetails> pubs = new List<PublicationDetails>();
             bool masterAdded = false;
@@ -215,8 +215,8 @@ namespace Sdl.Web.Tridion.Templates
             //in which case we set the context publication as the master
             if (!pubs.Any(p => p.IsMaster))
             {
-                var currentPubId = GetPublication().Id.ItemId.ToString(CultureInfo.InvariantCulture);
-                foreach (var pub in pubs)
+                string currentPubId = GetPublication().Id.ItemId.ToString(CultureInfo.InvariantCulture);
+                foreach (PublicationDetails pub in pubs)
                 {
                     if (pub.Id==currentPubId)
                     {
@@ -229,15 +229,15 @@ namespace Sdl.Web.Tridion.Templates
 
         private PublicationDetails GetPublicationDetails(Publication pub, bool isMaster = false)
         {
-            var pubData = new PublicationDetails { Id = pub.Id.ItemId.ToString(CultureInfo.InvariantCulture), Path = pub.PublicationUrl, IsMaster = isMaster};
+            PublicationDetails pubData = new PublicationDetails { Id = pub.Id.ItemId.ToString(CultureInfo.InvariantCulture), Path = pub.PublicationUrl, IsMaster = isMaster};
             if (_localizationConfigurationComponent != null)
             {
-                var localUri = new TcmUri(_localizationConfigurationComponent.Id.ItemId,ItemType.Component,pub.Id.ItemId);
-                var locComp = (Component)Engine.GetObject(localUri);
+                TcmUri localUri = new TcmUri(_localizationConfigurationComponent.Id.ItemId,ItemType.Component,pub.Id.ItemId);
+                Component locComp = (Component)Engine.GetObject(localUri);
                 if (locComp != null)
                 {
                     ItemFields fields = new ItemFields(locComp.Content, locComp.Schema);
-                    foreach (var field in fields.GetEmbeddedFields("settings"))
+                    foreach (ItemFields field in fields.GetEmbeddedFields("settings"))
                     {
                         if (field.GetTextValue("name") == "language")
                         {
@@ -253,12 +253,12 @@ namespace Sdl.Web.Tridion.Templates
         private IEnumerable<PublicationDetails> GetChildPublicationDetails(Publication master, string siteId, bool masterAdded)
         {
             List<PublicationDetails> pubs = new List<PublicationDetails>();
-            var filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };
+            UsingItemsFilter filter = new UsingItemsFilter(Engine.GetSession()) { ItemTypes = new List<ItemType> { ItemType.Publication } };
             foreach (XmlElement item in master.GetListUsingItems(filter).ChildNodes)
             {
-                var id = item.GetAttribute("ID");
-                var child = (Publication)Engine.GetObject(id);
-                var childSiteId = GetSiteIdFromPublication(child);
+                string id = item.GetAttribute("ID");
+                Publication child = (Publication)Engine.GetObject(id);
+                string childSiteId = GetSiteIdFromPublication(child);
                 if (childSiteId == siteId)
                 {
                     Logger.Debug(String.Format("Found valid descendent {0} with site ID {1} ", child.Title, childSiteId));
@@ -278,7 +278,7 @@ namespace Sdl.Web.Tridion.Templates
         {
             if (startPublication.Metadata!=null)
             {
-                var meta = new ItemFields(startPublication.Metadata, startPublication.MetadataSchema);
+                ItemFields meta = new ItemFields(startPublication.Metadata, startPublication.MetadataSchema);
                 return meta.GetTextValue("siteId");
             }
             return null;

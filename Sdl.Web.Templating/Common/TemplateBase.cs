@@ -228,8 +228,8 @@ namespace Sdl.Web.Tridion.Common
         {
             if (publication.Metadata != null)
             {
-                var meta = new ItemFields(publication.Metadata, publication.MetadataSchema);
-                var isMaster = meta.GetTextValue("isMaster");
+                ItemFields meta = new ItemFields(publication.Metadata, publication.MetadataSchema);
+                string isMaster = meta.GetTextValue("isMaster");
                 if (!String.IsNullOrEmpty(isMaster))
                 {
                     return true;
@@ -263,7 +263,7 @@ namespace Sdl.Web.Tridion.Common
         #region TOM.NET Helper functions
         protected List<KeyValuePair<TcmUri, string>> GetOrganizationalItemContents(OrganizationalItem orgItem, ItemType itemType, bool recursive)
         {
-            var filter = new OrganizationalItemItemsFilter(orgItem.Session)
+            OrganizationalItemItemsFilter filter = new OrganizationalItemItemsFilter(orgItem.Session)
                 {
                     ItemTypes = new List<ItemType> { itemType },
                     Recursive = recursive
@@ -273,7 +273,7 @@ namespace Sdl.Web.Tridion.Common
 
         protected OrganizationalItem GetChildOrganizationalItem(OrganizationalItem root, string title)
         {
-            foreach (var child in GetOrganizationalItemContents(root, root is Folder ? ItemType.Folder : ItemType.StructureGroup, false))
+            foreach (KeyValuePair<TcmUri, string> child in GetOrganizationalItemContents(root, root is Folder ? ItemType.Folder : ItemType.StructureGroup, false))
             {
                 if (child.Value.ToLower() == title.ToLower())
                 {
@@ -326,7 +326,7 @@ namespace Sdl.Web.Tridion.Common
         protected List<string> PublishJsonData(Dictionary<string, List<string>> settings, Component relatedComponent, string variantName, StructureGroup sg, bool isArray = false)
         {
             List<string> files = new List<string>();
-            foreach (var key in settings.Keys)
+            foreach (string key in settings.Keys)
             {
                 files.Add(PublishJsonData(settings[key], relatedComponent, key, variantName+key, sg, isArray));
             }
@@ -365,24 +365,24 @@ namespace Sdl.Web.Tridion.Common
         protected string PublishJson(string json, Component relatedComponent, StructureGroup sg, string filename, string variantName)
         {
             Item jsonItem = Package.CreateStringItem(ContentType.Text, json);
-            var binary = Engine.PublishingContext.RenderedItem.AddBinary(jsonItem.GetAsStream(), filename + JsonExtension, sg, variantName, relatedComponent, JsonMimetype);
+            Binary binary = Engine.PublishingContext.RenderedItem.AddBinary(jsonItem.GetAsStream(), filename + JsonExtension, sg, variantName, relatedComponent, JsonMimetype);
             Package.PushItem(binary.Url, jsonItem);
             return JsonEncode(binary.Url);
         }
 
         protected Dictionary<string, string> ReadComponentData(Component comp)
         {
-            var settings = new Dictionary<string, string>();
+            Dictionary<string, string> settings = new Dictionary<string, string>();
             if (comp.Content!=null)
             {
-                var fields = new ItemFields(comp.Content, comp.Schema);
-                var configFields = fields.GetEmbeddedFields("settings");
+                ItemFields fields = new ItemFields(comp.Content, comp.Schema);
+                IEnumerable<ItemFields> configFields = fields.GetEmbeddedFields("settings");
                 if (configFields.Any())
                 {
                     //either schema is a generic multival embedded name/value
-                    foreach (var setting in configFields)
+                    foreach (ItemFields setting in configFields)
                     {
-                        var key = setting.GetTextValue("name");
+                        string key = setting.GetTextValue("name");
                         if (!String.IsNullOrEmpty(key) && !settings.ContainsKey(key))
                         {
                             settings.Add(key, setting.GetTextValue("value"));
@@ -396,10 +396,10 @@ namespace Sdl.Web.Tridion.Common
                 else
                 {
                     //... or its a custom schema with individual fields
-                    foreach (var field in fields)
+                    foreach (ItemField field in fields)
                     {
                         //TODO - do we need to be smarter about date/number type fields?
-                        var key = field.Name;
+                        string key = field.Name;
                         settings.Add(key, fields.GetSingleFieldValue(key));
                     }
                 }
@@ -409,7 +409,7 @@ namespace Sdl.Web.Tridion.Common
 
         protected string JsonEncode(object json)
         {
-            var serializer = new JavaScriptSerializer();
+            JavaScriptSerializer serializer = new JavaScriptSerializer();
             return serializer.Serialize(json);
         }
 
@@ -419,8 +419,8 @@ namespace Sdl.Web.Tridion.Common
 
         protected StructureGroup GetSystemStructureGroup(string subStructureGroupTitle=null)
         {
-            var webdavUrl = String.Format("{0}/_System{1}", GetPublication().RootStructureGroup.WebDavUrl, subStructureGroupTitle==null ? "" : "/" + subStructureGroupTitle);
-            var sg = Engine.GetObject(webdavUrl) as StructureGroup;
+            string webdavUrl = String.Format("{0}/_System{1}", GetPublication().RootStructureGroup.WebDavUrl, subStructureGroupTitle==null ? "" : "/" + subStructureGroupTitle);
+            StructureGroup sg = Engine.GetObject(webdavUrl) as StructureGroup;
             if (sg == null)
             {
                 throw new Exception(String.Format("Cannot find structure group with webdav URL: {0}", webdavUrl));
@@ -431,14 +431,14 @@ namespace Sdl.Web.Tridion.Common
         protected Dictionary<string, Component> GetActiveModules(Component coreConfigComponent = null)
         {
             Schema moduleConfigSchema = coreConfigComponent != null ? coreConfigComponent.Schema : GetModuleConfigSchema();
-            var results = new Dictionary<string, Component>();
-            foreach (var item in GetUsingItems(moduleConfigSchema, ItemType.Component))
+            Dictionary<string, Component> results = new Dictionary<string, Component>();
+            foreach (KeyValuePair<TcmUri, string> item in GetUsingItems(moduleConfigSchema, ItemType.Component))
             {
                 try
                 {
-                    var comp = (Component)Engine.GetObject(Engine.LocalizeUri(item.Key));
-                    var fields = new ItemFields(comp.Content, comp.Schema);
-                    var moduleName = GetModuleNameFromConfig(comp).ToLower();
+                    Component comp = (Component)Engine.GetObject(Engine.LocalizeUri(item.Key));
+                    ItemFields fields = new ItemFields(comp.Content, comp.Schema);
+                    string moduleName = GetModuleNameFromConfig(comp).ToLower();
                     if (fields.GetTextValue("isActive").ToLower() == "yes" && !results.ContainsKey(moduleName))
                     {
                         results.Add(moduleName, comp);
@@ -454,13 +454,13 @@ namespace Sdl.Web.Tridion.Common
 
         private Schema GetModuleConfigSchema()
         {
-            var pub = this.GetPublication();
-            var filter = new RepositoryItemsFilter(pub.Session)
+            Publication pub = GetPublication();
+            RepositoryItemsFilter filter = new RepositoryItemsFilter(pub.Session)
                 {
                     ItemTypes = new List<ItemType> { ItemType.Schema },
                     Recursive = true
                 };
-            foreach (var item in XmlElementToTcmUriList(GetPublication().GetListItems(filter)))
+            foreach (KeyValuePair<TcmUri, string> item in XmlElementToTcmUriList(GetPublication().GetListItems(filter)))
             {
                 if (item.Value == "Module Configuration")
                 {
@@ -486,12 +486,12 @@ namespace Sdl.Web.Tridion.Common
         {
             //The module name is the name of the folder within the first level of the module root folder 
             //in which the item lives
-            var fullItemWebdavUrl = item.WebDavUrl;
+            string fullItemWebdavUrl = item.WebDavUrl;
             if (fullItemWebdavUrl.StartsWith(moduleRoot))
             {
                 Logger.Debug(fullItemWebdavUrl + ":" + moduleRoot);
-                var res = fullItemWebdavUrl.Substring(moduleRoot.Length + 1);
-                var pos = res.IndexOf("/", StringComparison.Ordinal);
+                string res = fullItemWebdavUrl.Substring(moduleRoot.Length + 1);
+                int pos = res.IndexOf("/", StringComparison.Ordinal);
                 Logger.Debug(res);
                 return res.Substring(0, pos).ToLower();
             }
@@ -500,7 +500,7 @@ namespace Sdl.Web.Tridion.Common
         
         protected static string GetRegionFromTemplate(ComponentTemplate template)
         {
-            var match = Regex.Match(template.Title, @".*?\[(.*?)\]");
+            Match match = Regex.Match(template.Title, @".*?\[(.*?)\]");
             if (match.Success)
             {
                 return match.Groups[1].Value;

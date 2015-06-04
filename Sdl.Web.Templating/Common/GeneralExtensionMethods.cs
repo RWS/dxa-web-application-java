@@ -14,7 +14,7 @@ namespace Sdl.Web.Tridion.Common
 
         public static void ExtractToDirectory(this ZipArchive zip, string destinationDirectoryName, bool overwrite)
         {
-            foreach (var entry in zip.Entries)
+            foreach (ZipArchiveEntry entry in zip.Entries)
             {
                 string path = Path.Combine(destinationDirectoryName, entry.FullName);
                 string directory = Path.GetDirectoryName(path);

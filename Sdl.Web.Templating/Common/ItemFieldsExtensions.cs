@@ -119,7 +119,7 @@ namespace Sdl.Web.Tridion.Common
                 return 0;
             }
 
-            var field = fields[fieldName];
+            ItemField field = fields[fieldName];
 
             return
                 field is ComponentLinkField

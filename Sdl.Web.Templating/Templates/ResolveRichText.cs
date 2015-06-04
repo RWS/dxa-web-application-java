@@ -73,7 +73,7 @@ namespace Sdl.Web.Tridion.Templates
                 if (comp != null)
                 {
                     ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
-                    var attributes = ProcessFields(fields);
+                    string attributes = ProcessFields(fields);
                     if (!String.IsNullOrEmpty(attributes))
                     {
                         attributes = JsonEncode(attributes).Substring(1);
@@ -92,18 +92,18 @@ namespace Sdl.Web.Tridion.Templates
             if (fields!=null)
             {
                 Logger.Debug(String.Join(", ",_metaFieldNames));
-                foreach (var fieldname in _metaFieldNames)
+                foreach (string fieldname in _metaFieldNames)
                 {
                     Logger.Debug("Processing field: " + fieldname);
                     if (fields.Contains(fieldname))
                     {
-                        var attribute = String.Format(" data-{0}=\"{1}\"", fieldname, System.Net.WebUtility.HtmlEncode(fields.GetSingleFieldValue(fieldname)));
+                        string attribute = String.Format(" data-{0}=\"{1}\"", fieldname, System.Net.WebUtility.HtmlEncode(fields.GetSingleFieldValue(fieldname)));
                         Logger.Debug("Attribute:" + attribute);
                         //TODO XML encode the value
                         attributeString+=attribute;
                     }
                 }
-                foreach (var field in fields)
+                foreach (ItemField field in fields)
                 {
                     if (field is EmbeddedSchemaField)
                     {
@@ -119,7 +119,7 @@ namespace Sdl.Web.Tridion.Templates
         {
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(content);
-            var fields = doc.SelectNodes("//Field[@FieldType='Xhtml']/Values/string");
+            XmlNodeList fields = doc.SelectNodes("//Field[@FieldType='Xhtml']/Values/string");
             foreach (XmlElement field in fields)
             {
                 field.InnerXml = ResolveXhtml(field.InnerXml);
@@ -133,7 +133,7 @@ namespace Sdl.Web.Tridion.Templates
         private string ResolveXhtml(string input)
         {
             XmlDocument xhtml = new XmlDocument();
-            var nsmgr = new XmlNamespaceManager(xhtml.NameTable);
+            XmlNamespaceManager nsmgr = new XmlNamespaceManager(xhtml.NameTable);
             nsmgr.AddNamespace("xlink", XlinkNamespace);
             xhtml.LoadXml(String.Format("<root>{0}</root>", UnEscape(input)));
 
@@ -162,7 +162,7 @@ namespace Sdl.Web.Tridion.Templates
             if (fields != null)
             {
 
-                foreach (var fieldname in _metaFieldNames)
+                foreach (string fieldname in _metaFieldNames)
                 {
 
                     if (fields.Contains(fieldname))
@@ -174,7 +174,7 @@ namespace Sdl.Web.Tridion.Templates
 
                 }
 
-                foreach (var field in fields)
+                foreach (ItemField field in fields)
                 {
 
                     if (field is EmbeddedSchemaField)

@@ -1,8 +1,10 @@
 ﻿using Sdl.Web.Tridion.Common;
 using System.Text;
 using System.Text.RegularExpressions;
+using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
+using ComponentPresentation = Tridion.ContentManager.CommunicationManagement.ComponentPresentation;
 
 namespace Sdl.Web.Tridion.Templates
 {
@@ -15,11 +17,11 @@ namespace Sdl.Web.Tridion.Templates
         public override void Transform(Engine engine, Package package)
         {
             Initialize(engine, package);
-            var page = GetPage();
+            Page page = GetPage();
             StringBuilder output = new StringBuilder();
             if (page != null)
             {
-                foreach (var cp in page.ComponentPresentations)
+                foreach (ComponentPresentation cp in page.ComponentPresentations)
                 {
                     output.AppendLine(RemoveTcdl(engine.RenderComponentPresentation(cp.Component.Id, cp.ComponentTemplate.Id)));
                 }

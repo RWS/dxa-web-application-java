@@ -10,6 +10,7 @@ using Tridion.ContentManager;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
+using Tridion.ContentManager.Publishing.Rendering;
 using Tridion.ContentManager.Templating;
 using Tridion.ContentManager.Templating.Assembly;
 
@@ -68,10 +69,10 @@ namespace Sdl.Web.Tridion.Templates
             try
             {
                 // read values from Component
-                var config = GetComponent();
-                var fields = new ItemFields(config.Content, config.Schema);
-                var favicon = fields.GetMultimediaLink("favicon");
-                var version = fields.GetTextValue("version");
+                Component config = GetComponent();
+                ItemFields fields = new ItemFields(config.Content, config.Schema);
+                Component favicon = fields.GetMultimediaLink("favicon");
+                string version = fields.GetTextValue("version");
 
                 PublishJson(String.Format("{{\"version\":{0}}}", JsonEncode(version)), config, GetPublication().RootStructureGroup, "version", "version");
 
@@ -145,7 +146,7 @@ namespace Sdl.Web.Tridion.Templates
                     }
 
                     string[] files = Directory.GetFiles(dist, "*.*", SearchOption.AllDirectories);
-                    foreach (var file in files)
+                    foreach (string file in files)
                     {
                         string filename = Path.GetFileName(file);
                         string extension = Path.GetExtension(file);
@@ -169,7 +170,7 @@ namespace Sdl.Web.Tridion.Templates
                         using (FileStream fs = File.OpenRead(file))
                         {
                             Item binaryItem = Package.CreateStreamItem(GetContentType(extension), fs);
-                            var binary = engine.PublishingContext.RenderedItem.AddBinary(binaryItem.GetAsStream(), filename, sg, "dist-" + filename, config, GetMimeType(extension));
+                            Binary binary = engine.PublishingContext.RenderedItem.AddBinary(binaryItem.GetAsStream(), filename, sg, "dist-" + filename, config, GetMimeType(extension));
                             binaryItem.Properties[Item.ItemPropertyPublishedPath] = binary.Url;
                             package.PushItem(filename, binaryItem);
                             if (publishedFiles.Length > 0)
@@ -205,10 +206,10 @@ namespace Sdl.Web.Tridion.Templates
 
         protected void ProcessModules()
         {
-            var modules = GetActiveModules();
-            foreach (var module in modules)
+            Dictionary<string, Component> modules = GetActiveModules();
+            foreach (KeyValuePair<string, Component> module in modules)
             {
-                var moduleName = module.Key;
+                string moduleName = module.Key;
                 if (moduleName != "core")
                 {
                     ProcessModule(moduleName, module.Value);
@@ -217,7 +218,7 @@ namespace Sdl.Web.Tridion.Templates
             ProcessModule("core", modules["core"]);
 
             // overwrite all merged files
-            foreach (var mergeFile in _mergeFileLines)
+            foreach (KeyValuePair<string, List<string>> mergeFile in _mergeFileLines)
             {
                 string file = Path.Combine(_tempFolder, mergeFile.Key);
                 File.WriteAllText(file, String.Join(Environment.NewLine, mergeFile.Value));
@@ -227,14 +228,14 @@ namespace Sdl.Web.Tridion.Templates
 
         protected void ProcessModule(string moduleName, Component moduleComponent)
         {
-            var designConfig = GetDesignConfigComponent(moduleComponent);
+            Component designConfig = GetDesignConfigComponent(moduleComponent);
             if (designConfig != null)
             {
-                var fields = new ItemFields(designConfig.Content, designConfig.Schema);
-                var zip = fields.GetComponentValue("design");
-                var variables = fields.GetComponentValue("variables");
-                var code = fields.GetTextValue("code");
-                var customLess = GetModuleCustomLess(variables, code);
+                ItemFields fields = new ItemFields(designConfig.Content, designConfig.Schema);
+                Component zip = fields.GetComponentValue("design");
+                Component variables = fields.GetComponentValue("variables");
+                string code = fields.GetTextValue("code");
+                string customLess = GetModuleCustomLess(variables, code);
                 if (zip != null)
                 {
                     // write binary contents as zipfile to disk
@@ -242,19 +243,19 @@ namespace Sdl.Web.Tridion.Templates
                     File.WriteAllBytes(zipfile, zip.BinaryContent.GetByteArray());
 
                     // unzip
-                    using (var archive = ZipFile.OpenRead(zipfile))
+                    using (ZipArchive archive = ZipFile.OpenRead(zipfile))
                     {
                         archive.ExtractToDirectory(_tempFolder, true);
                     }
 
                     // add content from merge files if available
                     List<string> files = _mergeFileLines.Keys.Select(s => s).ToList();
-                    foreach (var mergeFile in files)
+                    foreach (string mergeFile in files)
                     {
-                        var path = Path.Combine(_tempFolder, mergeFile);
+                        string path = Path.Combine(_tempFolder, mergeFile);
                         if (File.Exists(path))
                         {
-                            foreach (var line in File.ReadAllLines(path))
+                            foreach (string line in File.ReadAllLines(path))
                             {
                                 if (!_mergeFileLines[mergeFile].Contains(line.Trim()))
                                 {
@@ -274,7 +275,7 @@ namespace Sdl.Web.Tridion.Templates
                 if (moduleName.Equals("core"))
                 {
                     // unzip build files (nodejs, npm and grunt etc.)
-                    var buildFiles = fields.GetComponentValue("build");
+                    Component buildFiles = fields.GetComponentValue("build");
                     if (buildFiles != null)
                     {
                         ProcessBuildFiles(buildFiles);
@@ -290,7 +291,7 @@ namespace Sdl.Web.Tridion.Templates
             File.WriteAllBytes(zipfile, zip.BinaryContent.GetByteArray());
 
             // unzip
-            using (var archive = ZipFile.OpenRead(zipfile))
+            using (ZipArchive archive = ZipFile.OpenRead(zipfile))
             {
                 archive.ExtractToDirectory(_tempFolder, true);
             }
@@ -298,7 +299,7 @@ namespace Sdl.Web.Tridion.Templates
 
         private static Component GetDesignConfigComponent(Component moduleComponent)
         {
-            var fields = new ItemFields(moduleComponent.Content, moduleComponent.Schema);
+            ItemFields fields = new ItemFields(moduleComponent.Content, moduleComponent.Schema);
             return fields.GetComponentValue("designConfiguration");
         }
 
@@ -311,8 +312,8 @@ namespace Sdl.Web.Tridion.Templates
             if (variables != null)
             {
                 // assuming all fields are text fields with a single value
-                var itemFields = new ItemFields(variables.Content, variables.Schema);
-                foreach (var itemField in itemFields)
+                ItemFields itemFields = new ItemFields(variables.Content, variables.Schema);
+                foreach (ItemField itemField in itemFields)
                 {
                     string value = ((TextField)itemField).Value;
                     if (!String.IsNullOrEmpty(value))

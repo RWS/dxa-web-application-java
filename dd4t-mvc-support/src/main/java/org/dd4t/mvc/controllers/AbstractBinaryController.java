@@ -295,8 +295,8 @@ public class AbstractBinaryController {
 				LOG.error("Failed to close output stream!", ex);
 			}
 		}
-		LOG.info("Binary is stored in '" + binaryFile.getPath() + "'");
 
+		LOG.info("Binary is stored in '{}'", binaryFile.getPath());
 	}
 
 	public void setBinaryRootFolder(final String binaryRootFolder) {

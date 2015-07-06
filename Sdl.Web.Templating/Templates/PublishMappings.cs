@@ -1,4 +1,5 @@
-﻿using Sdl.Web.Tridion.Common;
+﻿using System.Linq;
+using Sdl.Web.Tridion.Common;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -93,52 +94,44 @@ namespace Sdl.Web.Tridion.Templates
             RepositoryItemsFilter schemaFilter = new RepositoryItemsFilter(Engine.GetSession())
             {
                 Recursive = true,
-                ItemTypes = new List<ItemType> { ItemType.Schema },
+                ItemTypes = new [] { ItemType.Schema },
+                // NOTE: including SchemaPurpose.Metadata for Page Metadata
+                SchemaPurposes = new [] { SchemaPurpose.Component, SchemaPurpose.Multimedia, SchemaPurpose.Metadata },
                 BaseColumns = ListBaseColumns.Extended
             };
             res.Add(SchemasConfigName, new List<string>());
-            foreach (XmlElement item in GetPublication().GetListItems(schemaFilter).ChildNodes)
+            foreach (Schema schema in GetPublication().GetItems(schemaFilter).Cast<Schema>())
             {
-                string type = item.GetAttribute("Type");
-                string subType = item.GetAttribute("SubType");
-                // we consider normal schemas (type=8 subtype=0) and multimedia schemas (type=8 subtype=1)
-                if ((type == "8" && (subType == "0" || subType == "1")))
+                string rootElementName = schema.RootElementName;
+                if (String.IsNullOrEmpty(rootElementName))
                 {
-                    string id = item.GetAttribute("ID");
-                    Schema schema = (Schema)Engine.GetObject(id);
-                    
-                    // multimedia schemas don't have a root element name, so lets use its title without any invalid characters
-                    string rootElementName = schema.RootElementName;
-                    if (String.IsNullOrEmpty(rootElementName))
-                    {
-                        rootElementName = Regex.Replace(schema.Title.Trim(), @"[^A-Za-z0-9.]+", "");
-                    }
-                    // add schema typeof using tridion standard implementation vocabulary prefix
-                    string typeOf = String.Format("{0}:{1}", DefaultVocabularyPrefix, rootElementName);
-                    StringBuilder schemaSemantics = new StringBuilder();
-                    // append schema typeof from appdata 
-                    ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
-                    if (appData != null)
-                    {
-                        typeOf += "," + ExtractTypeOfAppData(appData);
-                    }
-                    schemaSemantics.Append(BuildSchemaSemanticsJson(typeOf));
-
-                    // TODO: serialize schema fields xml to json in a smart way
-                    // field: {"Name":"something","Path":"/something","IsMultiValue":true,"Semantics":[],"Fields":[]}
-                    // field semantics: {"Prefix":"s","Entity";"Article","Property":"headline"}
-                    StringBuilder fields = new StringBuilder();
-
-                    // load namespace manager with schema namespaces
-                    XmlNamespaceManager nsmgr = SchemaNamespaceManager(schema.Xsd.OwnerDocument.NameTable);
-
-                    // build field elements from schema
-                    string path = "/" + rootElementName;
-                    fields.Append(BuildSchemaFieldsJson(schema, path, typeOf, nsmgr));
-
-                    res[SchemasConfigName].Add(String.Format("{{\"Id\":{0},\"RootElement\":{1},\"Fields\":[{2}],\"Semantics\":[{3}]}}", JsonEncode(schema.Id.ItemId), JsonEncode(rootElementName), fields, schemaSemantics));
-                    
+                    // multimedia/metadata schemas don't have a root element name, so lets use its title without any invalid characters
+                    rootElementName = Regex.Replace(schema.Title.Trim(), @"[^A-Za-z0-9.]+", "");
                 }
+                // add schema typeof using tridion standard implementation vocabulary prefix
+                string typeOf = String.Format("{0}:{1}", DefaultVocabularyPrefix, rootElementName);
+                StringBuilder schemaSemantics = new StringBuilder();
+                // append schema typeof from appdata 
+                ApplicationData appData = schema.LoadApplicationData(TypeOfAppDataId);
+                if (appData != null)
+                {
+                    typeOf += "," + ExtractTypeOfAppData(appData);
+                }
+                schemaSemantics.Append(BuildSchemaSemanticsJson(typeOf));
+
+                // TODO: serialize schema fields xml to json in a smart way
+                // field: {"Name":"something","Path":"/something","IsMultiValue":true,"Semantics":[],"Fields":[]}
+                // field semantics: {"Prefix":"s","Entity";"Article","Property":"headline"}
+                StringBuilder fields = new StringBuilder();
+
+                // load namespace manager with schema namespaces
+                XmlNamespaceManager nsmgr = SchemaNamespaceManager(schema.Xsd.OwnerDocument.NameTable);
+
+                // build field elements from schema
+                string path = "/" + rootElementName;
+                fields.Append(BuildSchemaFieldsJson(schema, path, typeOf, nsmgr));
+
+                res[SchemasConfigName].Add(String.Format("{{\"Id\":{0},\"RootElement\":{1},\"Fields\":[{2}],\"Semantics\":[{3}]}}", JsonEncode(schema.Id.ItemId), JsonEncode(rootElementName), fields, schemaSemantics));
             }
 
             // get region mappings for all templates

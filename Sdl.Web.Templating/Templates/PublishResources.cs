@@ -1,4 +1,6 @@
-﻿using Sdl.Web.Tridion.Common;
+﻿using System;
+using System.Text;
+using Sdl.Web.Tridion.Common;
 using System.Collections.Generic;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
@@ -15,6 +17,12 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Publish Resources")]
     public class PublishResources : TemplateBase
     {
+        // template builder log
+        private static readonly TemplatingLogger Log = TemplatingLogger.GetLogger(typeof(PublishStaticBootstrap));
+
+        // json content in page
+        private const string JsonOutputFormat = "{{\"name\":\"Publish Resources\",\"status\":\"Success\",\"files\":[{0}]}}";
+
         //private string _moduleRoot;
 
         public override void Transform(Engine engine, Package package)
@@ -38,6 +46,27 @@ namespace Sdl.Web.Tridion.Templates
 
             //Publish the boostrap list, this is used by the web application to load in all other resource files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "resource-");
+
+            StringBuilder publishedFiles = new StringBuilder();
+            foreach (string file in filesCreated)
+            {
+                if (!String.IsNullOrEmpty(file))
+                {
+                    publishedFiles.AppendCommaSeparated(file);
+                    Log.Info("Published " + file);                    
+                }
+            }
+
+            // append json result to output
+            string output = String.Format(JsonOutputFormat, publishedFiles);
+            Item outputItem = package.GetByName(Package.OutputName);
+            if (outputItem != null)
+            {
+                package.Remove(outputItem);
+                // TODO: don't just blindly append to the previous output but generate valid json (note: it is only there for preview)
+                output = outputItem.GetAsString() + Environment.NewLine + output;
+            }
+            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, output));
         }
 
         protected string ProcessModule(string moduleName, Component module, StructureGroup sg)

@@ -73,6 +73,7 @@
     <Compile Include="Common\GeneralExtensionMethods.cs" />
     <Compile Include="Common\ItemFieldsExtensions.cs" />
     <Compile Include="Common\ObjectExtensions.cs" />
+    <Compile Include="Common\StringBuilderExtensions.cs" />
     <Compile Include="Common\Utility.cs" />
     <Compile Include="Templates\GenerateSitemap.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

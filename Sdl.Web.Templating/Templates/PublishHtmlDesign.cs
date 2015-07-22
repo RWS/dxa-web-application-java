@@ -30,7 +30,7 @@ namespace Sdl.Web.Tridion.Templates
         private const string SystemSgName = "_System";
  
         // json content in page
-        private const string JsonOutputFormat = "{{\"status\":\"Success\",\"files\":[{0}]}}";
+        private const string JsonOutputFormat = "{{\"name\":\"Publish HTML Design\",\"status\":\"Success\",\"files\":[{0}]}}";
         
         // set of files to merge across modules
         private readonly Dictionary<string, List<string>> _mergeFileLines = new Dictionary<string, List<string>>();
@@ -74,7 +74,9 @@ namespace Sdl.Web.Tridion.Templates
                 Component favicon = fields.GetMultimediaLink("favicon");
                 string version = fields.GetTextValue("version");
 
-                PublishJson(String.Format("{{\"version\":{0}}}", JsonEncode(version)), config, GetPublication().RootStructureGroup, "version", "version");
+                string url = PublishJson(String.Format("{{\"version\":{0}}}", JsonEncode(version)), config, GetPublication().RootStructureGroup, "version", "version");
+                publishedFiles.AppendCommaSeparated(url);
+                Log.Info("Published " + url);
 
                 // create temp folder
                 Directory.CreateDirectory(_tempFolder);
@@ -173,11 +175,8 @@ namespace Sdl.Web.Tridion.Templates
                             Binary binary = engine.PublishingContext.RenderedItem.AddBinary(binaryItem.GetAsStream(), filename, sg, "dist-" + filename, config, GetMimeType(extension));
                             binaryItem.Properties[Item.ItemPropertyPublishedPath] = binary.Url;
                             package.PushItem(filename, binaryItem);
-                            if (publishedFiles.Length > 0)
-                            {
-                                publishedFiles.Append(",");
-                            }
-                            publishedFiles.AppendFormat("\"{0}\"", binary.Url);
+
+                            publishedFiles.AppendCommaSeparated("\"{0}\"", binary.Url);
                             Log.Info("Published " + binary.Url);
                         }                            
                     }
@@ -200,6 +199,7 @@ namespace Sdl.Web.Tridion.Templates
                     Log.Debug("Did not cleanup " + _tempFolder);
                 }
             }
+
             // output json result
             package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(JsonOutputFormat, publishedFiles)));
         }

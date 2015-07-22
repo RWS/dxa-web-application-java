@@ -22,6 +22,12 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Publish Mappings")]
     public class PublishMappings : TemplateBase
     {
+        // template builder log
+        private static readonly TemplatingLogger Log = TemplatingLogger.GetLogger(typeof(PublishStaticBootstrap));
+
+        // json content in page
+        private const string JsonOutputFormat = "{{\"name\":\"Publish Mappings\",\"status\":\"Success\",\"files\":[{0}]}}";
+
         private const string SchemasConfigName = "schemas";
         //private const string MappingsConfigName = "mappings";
         private const string RegionConfigName = "regions";
@@ -62,6 +68,27 @@ namespace Sdl.Web.Tridion.Templates
             
             //Publish the boostrap list, this is used by the web application to load in all other mapping files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "mapping-");
+
+            StringBuilder publishedFiles = new StringBuilder();
+            foreach (string file in filesCreated)
+            {
+                if (!String.IsNullOrEmpty(file))
+                {
+                    publishedFiles.AppendCommaSeparated(file);
+                    Log.Info("Published " + file);
+                }
+            }
+
+            // append json result to output
+            string output = String.Format(JsonOutputFormat, publishedFiles);
+            Item outputItem = package.GetByName(Package.OutputName);
+            if (outputItem != null)
+            {
+                package.Remove(outputItem);
+                // TODO: don't just blindly append to the previous output but generate valid json (note: it is only there for preview)
+                output = outputItem.GetAsString() + Environment.NewLine + output;
+            }
+            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, output));
         }
 
         private Dictionary<string, List<string>> ReadMappingsData()

@@ -11,8 +11,7 @@ namespace Sdl.Web.Tridion.Common
             {
                 sb.Append(",");
             }
-            string value = String.Format(format, arguments);
-            sb.Append(value);
+            sb.AppendFormat(format, arguments);
             return sb;
         }
     }

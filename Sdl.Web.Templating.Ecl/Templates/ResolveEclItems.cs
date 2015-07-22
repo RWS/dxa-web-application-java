@@ -31,7 +31,7 @@ namespace Sdl.Web.Tridion.Templates
 
         public override void Transform(Engine engine, Package package)
         {
-            Initialize(engine, package);
+            Init(engine, package);
             Component comp = GetComponent();
             if (IsPageTemplate() || comp == null)
             {
@@ -113,18 +113,22 @@ namespace Sdl.Web.Tridion.Templates
         {
             Logger.Debug(String.Format("Multimedia Component XML [{0}]", multimediaComponentElement.OuterXml));
 
-            string id = multimediaComponentElement.SelectSingleNode("Id").IfNotNull(i => i.InnerText);
-            if (!String.IsNullOrEmpty(id))
+            string tcmUri = multimediaComponentElement.SelectSingleNode("Id").IfNotNull(i => i.InnerText);
+            if (!String.IsNullOrEmpty(tcmUri))
             {
+                Logger.Debug(String.Format("Multimedia Component Id: {0}", tcmUri));
                 XmlNode urlNode = multimediaComponentElement.SelectSingleNode("Multimedia/Url");
                 if (urlNode != null)
                 {
-                    if (_eclFunctions.IsExternalContentLibraryComponent(id))
+                    if (_eclFunctions.IsExternalContentLibraryComponent(tcmUri))
                     {
                         // TODO: should we consider using the template fragment somehow?
                         // TODO: direct link could be null, then content is available and we should add a binary to the package and publish that
                         // in case of the latter, shouldn't this be handled in the DD4T Publish binaries for component TBB? 
-                        urlNode.InnerText = _eclFunctions.GetExternalContentLibraryDirectLink(id);
+                        string directLink = _eclFunctions.GetExternalContentLibraryDirectLink(tcmUri);
+                        Logger.Debug(String.Format("ECL Component direct link: {0}", directLink));
+                        Logger.Debug(String.Format("ECL Component template fragment: {0}", _eclFunctions.GetExternalContentLibraryHtmlFragment(tcmUri)));
+                        urlNode.InnerText = directLink;
                     }
                 }
             }

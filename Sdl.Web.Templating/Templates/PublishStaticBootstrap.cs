@@ -15,9 +15,6 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Publish Static Bootstrap")]
     public class PublishStaticBootstrap : TemplateBase
     {
-        // template builder log
-        private static readonly TemplatingLogger Log = TemplatingLogger.GetLogger(typeof(PublishStaticBootstrap));
-
         // json content in page
         private const string JsonOutputFormat = "{{\"name\":\"Publish Static Bootstrap\",\"status\":\"Success\",\"files\":[{0}]}}";
 
@@ -39,19 +36,28 @@ namespace Sdl.Web.Tridion.Templates
             foreach (string file in files)
             {
                 publishedFiles.AppendCommaSeparated(file);
-                Log.Info("Published " + file);
+                Logger.Info("Published " + file);
             }
 
             // append json result to output
-            string output = String.Format(JsonOutputFormat, publishedFiles);
+            string json = String.Format(JsonOutputFormat, publishedFiles);
             Item outputItem = package.GetByName(Package.OutputName);
             if (outputItem != null)
             {
                 package.Remove(outputItem);
-                // TODO: don't just blindly append to the previous output but generate valid json (note: it is only there for preview)
-                output = outputItem.GetAsString() + Environment.NewLine + output;
+                string output = outputItem.GetAsString();
+                if (output.StartsWith("["))
+                {
+                    // insert new json object
+                    json = String.Format("{0},{1}{2}]", output.TrimEnd(']'), Environment.NewLine, json);
+                }
+                else
+                {
+                    // append new json object
+                    json = String.Format("[{0},{1}{2}]", output, Environment.NewLine, json);
+                }
             }
-            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, output));
+            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, json));
         }
 
         private List<string> GetBootstrapFiles()
@@ -66,6 +72,5 @@ namespace Sdl.Web.Tridion.Templates
             }
             return files;
         }
-
     }
 }

@@ -1,4 +1,6 @@
-﻿using Sdl.Web.Tridion.Common;
+﻿using System;
+using System.Text;
+using Sdl.Web.Tridion.Common;
 using System.Collections.Generic;
 using Tridion.ContentManager.CommunicationManagement;
 using Tridion.ContentManager.ContentManagement;
@@ -13,6 +15,9 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Publish Static Bootstrap")]
     public class PublishStaticBootstrap : TemplateBase
     {
+        // json content in page
+        private const string JsonOutputFormat = "{{\"name\":\"Publish Static Bootstrap\",\"status\":\"Success\",\"files\":[{0}]}}";
+
         //private string _moduleRoot = String.Empty;
 
         public override void Transform(Engine engine, Package package)
@@ -24,7 +29,35 @@ namespace Sdl.Web.Tridion.Templates
             StructureGroup sg = GetSystemStructureGroup();
 
             //Publish the boostrap list, this is used by the web application to load in all other static files
-            PublishBootstrapJson(GetBootstrapFiles(), coreConfigComponent, sg, "statics-");
+            List<string> files = GetBootstrapFiles();
+            PublishBootstrapJson(files, coreConfigComponent, sg, "statics-");
+
+            StringBuilder publishedFiles = new StringBuilder();
+            foreach (string file in files)
+            {
+                publishedFiles.AppendCommaSeparated(file);
+                Logger.Info("Published " + file);
+            }
+
+            // append json result to output
+            string json = String.Format(JsonOutputFormat, publishedFiles);
+            Item outputItem = package.GetByName(Package.OutputName);
+            if (outputItem != null)
+            {
+                package.Remove(outputItem);
+                string output = outputItem.GetAsString();
+                if (output.StartsWith("["))
+                {
+                    // insert new json object
+                    json = String.Format("{0},{1}{2}]", output.TrimEnd(']'), Environment.NewLine, json);
+                }
+                else
+                {
+                    // append new json object
+                    json = String.Format("[{0},{1}{2}]", output, Environment.NewLine, json);
+                }
+            }
+            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, json));
         }
 
         private List<string> GetBootstrapFiles()
@@ -39,6 +72,5 @@ namespace Sdl.Web.Tridion.Templates
             }
             return files;
         }
-
     }
 }

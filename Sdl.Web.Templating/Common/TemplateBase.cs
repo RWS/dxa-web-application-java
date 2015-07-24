@@ -366,6 +366,7 @@ namespace Sdl.Web.Tridion.Common
         {
             Item jsonItem = Package.CreateStringItem(ContentType.Text, json);
             Binary binary = Engine.PublishingContext.RenderedItem.AddBinary(jsonItem.GetAsStream(), filename + JsonExtension, sg, variantName, relatedComponent, JsonMimetype);
+            jsonItem.Properties[Item.ItemPropertyPublishedPath] = binary.Url;
             Package.PushItem(binary.Url, jsonItem);
             return JsonEncode(binary.Url);
         }

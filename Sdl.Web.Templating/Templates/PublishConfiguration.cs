@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using System.Text;
 using Sdl.Web.Tridion.Common;
 using System;
 using System.Collections.Generic;
@@ -22,12 +23,16 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Publish Configuration")]
     public class PublishConfiguration : TemplateBase
     {
+        // json content in page
+        private const string JsonOutputFormat = "{{\"name\":\"Publish Configuration\",\"status\":\"Success\",\"files\":[{0}]}}";
+
         private const string TemplateConfigName = "templates";
         private const string SchemasConfigName = "schemas";
         private const string TaxonomiesConfigName = "taxonomies";
 
         private string _moduleRoot = String.Empty;
         private Component _localizationConfigurationComponent;
+
         public override void Transform(Engine engine, Package package)
         {
             Initialize(engine, package);
@@ -49,8 +54,39 @@ namespace Sdl.Web.Tridion.Templates
             filesCreated.AddRange(PublishJsonData(ReadSchemaData(), coreConfigComponent, "schemas", sg));
             filesCreated.AddRange(PublishJsonData(ReadTemplateData(), coreConfigComponent, "templates", sg));
             filesCreated.AddRange(PublishJsonData(ReadTaxonomiesData(), coreConfigComponent, "taxonomies", sg));
+            
             //Publish the boostrap list, this is used by the web application to load in all other configuration files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "config-", BuildAdditionalData());
+
+            StringBuilder publishedFiles = new StringBuilder();
+            foreach (string file in filesCreated)
+            {
+                if (!String.IsNullOrEmpty(file))
+                {
+                    publishedFiles.AppendCommaSeparated(file);
+                    Logger.Info("Published " + file);
+                }
+            }
+
+            // append json result to output
+            string json = String.Format(JsonOutputFormat, publishedFiles);
+            Item outputItem = package.GetByName(Package.OutputName);
+            if (outputItem != null)
+            {
+                package.Remove(outputItem);
+                string output = outputItem.GetAsString();
+                if (output.StartsWith("["))
+                {
+                    // insert new json object
+                    json = String.Format("{0},{1}{2}]", output.TrimEnd(']'), Environment.NewLine, json);
+                }
+                else
+                {
+                    // append new json object
+                    json = String.Format("[{0},{1}{2}]", output, Environment.NewLine, json);
+                }
+            }
+            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, json));
         }
 
         protected virtual string ProcessModule(string moduleName, Component module, StructureGroup sg)

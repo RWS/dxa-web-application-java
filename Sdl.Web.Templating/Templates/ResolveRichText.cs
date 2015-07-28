@@ -20,6 +20,11 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateParameterSchema("resource:Sdl.Web.Tridion.Resources.ResolveRichTextParameters.xsd")]
     public class ResolveRichText : TemplateBase
     {
+        private const string LinkPattern = @"xlink:href=\\""(tcm\:\d+\-\d+)\\""";
+        private const string XhtmlPattern = " xmlns=\\\"http://www.w3.org/1999/xhtml\\\"";
+        private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
+        private const string XlinkNamespace = "http://www.w3.org/1999/xlink";
+
         private List<string> _metaFieldNames = new List<string>();
             
         public override void Transform(Engine engine, Package package)
@@ -38,6 +43,7 @@ namespace Sdl.Web.Tridion.Templates
                 return;
             }
             _metaFieldNames = (package.GetValue("multimediaLinkAttributes") ?? String.Empty).Split(',').Select(s => s.Trim()).ToList();
+
             // resolve rich text fields
             string output = outputItem.GetAsString();
             package.Remove(outputItem); 
@@ -55,13 +61,11 @@ namespace Sdl.Web.Tridion.Templates
             }
         }
 
-        private const string LinkPattern = @"xlink:href=\\""(tcm\:\d+\-\d+)\\""";
-        private const string XhtmlPattern = " xmlns=\\\"http://www.w3.org/1999/xhtml\\\"";
-
         private string ResolveJsonContent(string content)
         {
             //remove XHTML namespace
-            content = content.Replace(XhtmlPattern, "");
+            content = content.Replace(XhtmlPattern, String.Empty);
+
             //add data attributes to component links
             content = Regex.Replace(content, LinkPattern, delegate(Match match)
             {
@@ -88,10 +92,10 @@ namespace Sdl.Web.Tridion.Templates
 
         private string ProcessFields(ItemFields fields)
         {
-            String attributeString = "";
+            string attributeString = String.Empty;
             if (fields!=null)
             {
-                Logger.Debug(String.Join(", ",_metaFieldNames));
+                Logger.Debug(String.Join(", ", _metaFieldNames));
                 foreach (string fieldname in _metaFieldNames)
                 {
                     Logger.Debug("Processing field: " + fieldname);
@@ -99,10 +103,11 @@ namespace Sdl.Web.Tridion.Templates
                     {
                         string attribute = String.Format(" data-{0}=\"{1}\"", fieldname, System.Net.WebUtility.HtmlEncode(fields.GetSingleFieldValue(fieldname)));
                         Logger.Debug("Attribute:" + attribute);
-                        //TODO XML encode the value
-                        attributeString+=attribute;
+                        // TODO: XML encode the value
+                        attributeString += attribute;
                     }
                 }
+
                 foreach (ItemField field in fields)
                 {
                     if (field is EmbeddedSchemaField)
@@ -126,9 +131,6 @@ namespace Sdl.Web.Tridion.Templates
             }
             return doc;
         }
-
-        private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
-        private const string XlinkNamespace = "http://www.w3.org/1999/xlink";
 
         private string ResolveXhtml(string input)
         {
@@ -161,31 +163,21 @@ namespace Sdl.Web.Tridion.Templates
         {
             if (fields != null)
             {
-
                 foreach (string fieldname in _metaFieldNames)
                 {
-
                     if (fields.Contains(fieldname))
                     {
-
                         link.SetAttribute("data-" + fieldname, fields.GetSingleFieldValue(fieldname));
-
                     }
-
                 }
 
                 foreach (ItemField field in fields)
                 {
-
                     if (field is EmbeddedSchemaField)
                     {
-
                         ProcessFields(((EmbeddedSchemaField)field).Value, link);
-
                     }
-
                 }
-
             }
         }
 

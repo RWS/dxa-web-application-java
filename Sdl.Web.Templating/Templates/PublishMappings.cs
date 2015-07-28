@@ -22,6 +22,9 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateTitle("Publish Mappings")]
     public class PublishMappings : TemplateBase
     {
+        // json content in page
+        private const string JsonOutputFormat = "{{\"name\":\"Publish Mappings\",\"status\":\"Success\",\"files\":[{0}]}}";
+
         private const string SchemasConfigName = "schemas";
         //private const string MappingsConfigName = "mappings";
         private const string RegionConfigName = "regions";
@@ -62,6 +65,36 @@ namespace Sdl.Web.Tridion.Templates
             
             //Publish the boostrap list, this is used by the web application to load in all other mapping files
             PublishBootstrapJson(filesCreated, coreConfigComponent, sg, "mapping-");
+
+            StringBuilder publishedFiles = new StringBuilder();
+            foreach (string file in filesCreated)
+            {
+                if (!String.IsNullOrEmpty(file))
+                {
+                    publishedFiles.AppendCommaSeparated(file);
+                    Logger.Info("Published " + file);
+                }
+            }
+
+            // append json result to output
+            string json = String.Format(JsonOutputFormat, publishedFiles);
+            Item outputItem = package.GetByName(Package.OutputName);
+            if (outputItem != null)
+            {
+                package.Remove(outputItem);
+                string output = outputItem.GetAsString();
+                if (output.StartsWith("["))
+                {
+                    // insert new json object
+                    json = String.Format("{0},{1}{2}]", output.TrimEnd(']'), Environment.NewLine, json);
+                }
+                else
+                {
+                    // append new json object
+                    json = String.Format("[{0},{1}{2}]", output, Environment.NewLine, json);
+                }
+            }
+            package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, json));
         }
 
         private Dictionary<string, List<string>> ReadMappingsData()
@@ -408,7 +441,6 @@ namespace Sdl.Web.Tridion.Templates
             return semantics.ToString();
         }
 
-
         protected virtual List<string> ReadPageTemplateIncludes()
         {
             //Generate a list of Page Templates which have includes in the metadata
@@ -440,7 +472,6 @@ namespace Sdl.Web.Tridion.Templates
             }
             return res;
         }
-
 
         private static string ExtractTypeOfAppData(ApplicationData appData)
         {

@@ -23,14 +23,11 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateParameterSchema("resource:Sdl.Web.Tridion.Resources.PublishHtmlDesignParameters.xsd")]
     public class PublishHtmlDesign : TemplateBase
     {
-        // template builder log
-        private static readonly TemplatingLogger Log = TemplatingLogger.GetLogger(typeof(PublishHtmlDesign));
-
         // name of system structure group
         private const string SystemSgName = "_System";
  
         // json content in page
-        private const string JsonOutputFormat = "{{\"status\":\"Success\",\"files\":[{0}]}}";
+        private const string JsonOutputFormat = "{{\"name\":\"Publish HTML Design\",\"status\":\"Success\",\"files\":[{0}]}}";
         
         // set of files to merge across modules
         private readonly Dictionary<string, List<string>> _mergeFileLines = new Dictionary<string, List<string>>();
@@ -74,11 +71,13 @@ namespace Sdl.Web.Tridion.Templates
                 Component favicon = fields.GetMultimediaLink("favicon");
                 string version = fields.GetTextValue("version");
 
-                PublishJson(String.Format("{{\"version\":{0}}}", JsonEncode(version)), config, GetPublication().RootStructureGroup, "version", "version");
+                string url = PublishJson(String.Format("{{\"version\":{0}}}", JsonEncode(version)), config, GetPublication().RootStructureGroup, "version", "version");
+                publishedFiles.AppendCommaSeparated(url);
+                Logger.Info("Published " + url);
 
                 // create temp folder
                 Directory.CreateDirectory(_tempFolder);
-                Log.Debug("Created " + _tempFolder);
+                Logger.Debug("Created " + _tempFolder);
                 
                 // unzip and merge files
                 ProcessModules();                
@@ -106,7 +105,7 @@ namespace Sdl.Web.Tridion.Templates
                         string output = reader.ReadToEnd();
                         if (!String.IsNullOrEmpty(output))
                         {
-                            Log.Info(output);
+                            Logger.Info(output);
 
                             // TODO: check for errors in standard output and throw exception
                         }
@@ -142,7 +141,7 @@ namespace Sdl.Web.Tridion.Templates
                     {
                         string ico = Path.Combine(dist, "favicon.ico");
                         File.WriteAllBytes(ico, favicon.BinaryContent.GetByteArray());
-                        Log.Debug("Saved " + ico);
+                        Logger.Debug("Saved " + ico);
                     }
 
                     string[] files = Directory.GetFiles(dist, "*.*", SearchOption.AllDirectories);
@@ -150,16 +149,16 @@ namespace Sdl.Web.Tridion.Templates
                     {
                         string filename = Path.GetFileName(file);
                         string extension = Path.GetExtension(file);
-                        Log.Debug("Found " + file);
+                        Logger.Debug("Found " + file);
 
                         // determine correct structure group
                         Publication pub = (Publication)config.ContextRepository;
                         string relativeFolderPath = file.Substring(dist.Length, file.LastIndexOf('\\') - dist.Length);
-                        Log.Debug("Relative path: " + relativeFolderPath);
+                        Logger.Debug("Relative path: " + relativeFolderPath);
                         relativeFolderPath = relativeFolderPath.Replace("system", SystemSgName).Replace('\\', '/');
                         string pubSgWebDavUrl = pub.RootStructureGroup.WebDavUrl;
                         string publishSgWebDavUrl = pubSgWebDavUrl + relativeFolderPath;
-                        Log.Debug("Structure Group WebDAV URL: " + publishSgWebDavUrl);
+                        Logger.Debug("Structure Group WebDAV URL: " + publishSgWebDavUrl);
                         StructureGroup sg = engine.GetObject(publishSgWebDavUrl) as StructureGroup;
                         if (sg == null)
                         {
@@ -173,12 +172,9 @@ namespace Sdl.Web.Tridion.Templates
                             Binary binary = engine.PublishingContext.RenderedItem.AddBinary(binaryItem.GetAsStream(), filename, sg, "dist-" + filename, config, GetMimeType(extension));
                             binaryItem.Properties[Item.ItemPropertyPublishedPath] = binary.Url;
                             package.PushItem(filename, binaryItem);
-                            if (publishedFiles.Length > 0)
-                            {
-                                publishedFiles.Append(",");
-                            }
-                            publishedFiles.AppendFormat("\"{0}\"", binary.Url);
-                            Log.Info("Published " + binary.Url);
+
+                            publishedFiles.AppendCommaSeparated("\"{0}\"", binary.Url);
+                            Logger.Info("Published " + binary.Url);
                         }                            
                     }
                 }
@@ -193,13 +189,14 @@ namespace Sdl.Web.Tridion.Templates
                 {
                     // cleanup workfolder
                     Directory.Delete(_tempFolder, true);
-                    Log.Debug("Removed " + _tempFolder);
+                    Logger.Debug("Removed " + _tempFolder);
                 }
                 else
                 {
-                    Log.Debug("Did not cleanup " + _tempFolder);
+                    Logger.Debug("Did not cleanup " + _tempFolder);
                 }
             }
+
             // output json result
             package.PushItem(Package.OutputName, package.CreateStringItem(ContentType.Text, String.Format(JsonOutputFormat, publishedFiles)));
         }
@@ -222,7 +219,7 @@ namespace Sdl.Web.Tridion.Templates
             {
                 string file = Path.Combine(_tempFolder, mergeFile.Key);
                 File.WriteAllText(file, String.Join(Environment.NewLine, mergeFile.Value));
-                Log.Debug("Saved " + file);
+                Logger.Debug("Saved " + file);
             }   
         }
 

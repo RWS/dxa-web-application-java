@@ -74,7 +74,7 @@ namespace Sdl.Web.Tridion.Templates
                 string replaced = match.Value;
                 Component comp = (Component)Engine.GetObject(compId);
                 // resolve metadata into additional data-attributes
-                if (comp != null)
+                if (comp != null && comp.Metadata != null)
                 {
                     ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
                     string attributes = ProcessFields(fields);

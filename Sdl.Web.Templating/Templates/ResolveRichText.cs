@@ -79,10 +79,10 @@ namespace Sdl.Web.Tridion.Templates
                 string replaced = match.Value;
                 Component comp = (Component)Engine.GetObject(compId);
 
-                // add semantic schema attribute for model mapping
-                if (comp != null)
+                // add attributes for model mapping
+                if (comp != null && comp.BinaryContent != null)
                 {
-                    // set base attributes for multimedia component
+                    // set attributes for multimedia component
                     string attributes = String.Empty;
                     StringBuilder attributesBuilder = new StringBuilder();
                     attributesBuilder.AppendFormat(" {0}=\"{1}\"", SchemaUriAttribute, comp.Schema.Id);
@@ -170,9 +170,9 @@ namespace Sdl.Web.Tridion.Templates
                     Component comp = (Component)Engine.GetObject(uri);
 
                     // resolve multimedia component
-                    if (comp != null)
+                    if (comp != null && comp.BinaryContent != null)
                     {
-                        // set base attributes for multimedia component
+                        // set attributes for multimedia component
                         link.SetAttribute(SchemaUriAttribute, comp.Schema.Id);
                         link.SetAttribute(FileNameAttribute, comp.BinaryContent.Filename);
                         link.SetAttribute(FileSizeAttribute, comp.BinaryContent.Size.ToString(CultureInfo.InvariantCulture));

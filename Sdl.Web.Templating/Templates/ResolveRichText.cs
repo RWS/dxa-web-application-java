@@ -76,6 +76,10 @@ namespace Sdl.Web.Tridion.Templates
                 // resolve metadata into additional data-attributes
                 if (comp != null && comp.Metadata != null)
                 {
+                    // TODO: add data-semanticSchema attribute here too 
+                    // multimedia/metadata schemas don't have a root element name, so lets use its title without any invalid characters
+                    //link.SetAttribute("data-semanticSchema", Regex.Replace(comp.MetadataSchema.Title.Trim(), @"[^A-Za-z0-9.]+", String.Empty));
+
                     ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
                     string attributes = ProcessFields(fields);
                     if (!String.IsNullOrEmpty(attributes))

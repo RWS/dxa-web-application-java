@@ -21,8 +21,7 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateParameterSchema("resource:Sdl.Web.Tridion.Resources.ResolveRichTextParameters.xsd")]
     public class ResolveRichText : TemplateBase
     {
-        private const string SemanticSchemaAttribute = "data-semanticSchema";
-        private const string InvalidCharactersPattern = @"[^A-Za-z0-9.]+";
+        private const string SchemaUriAttribute = "data-schemaUri";
         private const string LinkPattern = @"xlink:href=\\""(tcm\:\d+\-\d+)\\""";
         private const string XhtmlPattern = " xmlns=\\\"http://www.w3.org/1999/xhtml\\\"";
 
@@ -79,7 +78,7 @@ namespace Sdl.Web.Tridion.Templates
                 if (comp != null)
                 {
                     // multimedia schemas don't have a root element name, so lets use its title without any invalid characters
-                    string attributes = String.Format(" {0}=\"{1}\"", SemanticSchemaAttribute, System.Net.WebUtility.HtmlEncode(Regex.Replace(comp.Schema.Title.Trim(), InvalidCharactersPattern, String.Empty)));
+                    string attributes = String.Format(" {0}=\"{1}\"", SchemaUriAttribute, comp.Schema.Id);
 
                     // resolve metadata into additional data-attributes
                     if (comp.Metadata != null)
@@ -163,7 +162,7 @@ namespace Sdl.Web.Tridion.Templates
                     if (comp != null)
                     {
                         // multimedia schemas don't have a root element name, so lets use its title without any invalid characters
-                        link.SetAttribute(SemanticSchemaAttribute, Regex.Replace(comp.Schema.Title.Trim(), InvalidCharactersPattern, String.Empty));
+                        link.SetAttribute(SchemaUriAttribute, comp.Schema.Id);
 
                         if (comp.Metadata != null)
                         {

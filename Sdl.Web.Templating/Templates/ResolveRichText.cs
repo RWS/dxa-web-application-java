@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Text;
 using Sdl.Web.Tridion.Common;
 using System;
 using System.Collections.Generic;
@@ -24,6 +25,7 @@ namespace Sdl.Web.Tridion.Templates
     {
         private const string SchemaUriAttribute = "data-schemaUri";
         private const string FileNameAttribute = "data-multimediaFileName";
+        private const string FileSizeAttribute = "data-multimediaFileSize";
         private const string MimeTypeAttribute = "data-multimediaMimeType";
         private const string LinkPattern = @"xlink:href=\\""(tcm\:\d+\-\d+)\\""";
         private const string XhtmlPattern = " xmlns=\\\"http://www.w3.org/1999/xhtml\\\"";
@@ -85,6 +87,7 @@ namespace Sdl.Web.Tridion.Templates
                     StringBuilder attributesBuilder = new StringBuilder();
                     attributesBuilder.AppendFormat(" {0}=\"{1}\"", SchemaUriAttribute, comp.Schema.Id);
                     attributesBuilder.AppendFormat(" {0}=\"{1}\"", FileNameAttribute, comp.BinaryContent.Filename);
+                    attributesBuilder.AppendFormat(" {0}=\"{1}\"", FileSizeAttribute, comp.BinaryContent.Size);
                     attributesBuilder.AppendFormat(" {0}=\"{1}\"", MimeTypeAttribute, comp.BinaryContent.MultimediaType.MimeType);
 
                     // resolve metadata into additional data-attributes
@@ -172,6 +175,7 @@ namespace Sdl.Web.Tridion.Templates
                         // set base attributes for multimedia component
                         link.SetAttribute(SchemaUriAttribute, comp.Schema.Id);
                         link.SetAttribute(FileNameAttribute, comp.BinaryContent.Filename);
+                        link.SetAttribute(FileSizeAttribute, comp.BinaryContent.Size.ToString(CultureInfo.InvariantCulture));
                         link.SetAttribute(MimeTypeAttribute, comp.BinaryContent.MultimediaType.MimeType);
 
                         // resolve metadata into additional data-attributes

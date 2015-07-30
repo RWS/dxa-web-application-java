@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Tridion;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
@@ -20,10 +21,10 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateParameterSchema("resource:Sdl.Web.Tridion.Resources.ResolveRichTextParameters.xsd")]
     public class ResolveRichText : TemplateBase
     {
+        private const string SemanticSchemaAttribute = "data-semanticSchema";
+        private const string InvalidCharactersPattern = @"[^A-Za-z0-9.]+";
         private const string LinkPattern = @"xlink:href=\\""(tcm\:\d+\-\d+)\\""";
         private const string XhtmlPattern = " xmlns=\\\"http://www.w3.org/1999/xhtml\\\"";
-        private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
-        private const string XlinkNamespace = "http://www.w3.org/1999/xlink";
 
         private List<string> _metaFieldNames = new List<string>();
             
@@ -73,15 +74,20 @@ namespace Sdl.Web.Tridion.Templates
                 string compId = match.Groups[1].Value;
                 string replaced = match.Value;
                 Component comp = (Component)Engine.GetObject(compId);
-                // resolve metadata into additional data-attributes
-                if (comp != null && comp.Metadata != null)
-                {
-                    // TODO: add data-semanticSchema attribute here too 
-                    // multimedia/metadata schemas don't have a root element name, so lets use its title without any invalid characters
-                    //link.SetAttribute("data-semanticSchema", Regex.Replace(comp.MetadataSchema.Title.Trim(), @"[^A-Za-z0-9.]+", String.Empty));
 
-                    ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
-                    string attributes = ProcessFields(fields);
+                // add semantic schema attribute for model mapping
+                if (comp != null)
+                {
+                    // multimedia schemas don't have a root element name, so lets use its title without any invalid characters
+                    string attributes = String.Format(" {0}=\"{1}\"", SemanticSchemaAttribute, System.Net.WebUtility.HtmlEncode(Regex.Replace(comp.Schema.Title.Trim(), InvalidCharactersPattern, String.Empty)));
+
+                    // resolve metadata into additional data-attributes
+                    if (comp.Metadata != null)
+                    {
+                        ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
+                        attributes += ProcessFields(fields);
+                    }
+
                     if (!String.IsNullOrEmpty(attributes))
                     {
                         attributes = JsonEncode(attributes).Substring(1);
@@ -140,7 +146,7 @@ namespace Sdl.Web.Tridion.Templates
         {
             XmlDocument xhtml = new XmlDocument();
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(xhtml.NameTable);
-            nsmgr.AddNamespace("xlink", XlinkNamespace);
+            nsmgr.AddNamespace(Constants.XlinkPrefix, Constants.XlinkNamespace);
             xhtml.LoadXml(String.Format("<root>{0}</root>", UnEscape(input)));
 
             // locate linked components
@@ -152,14 +158,18 @@ namespace Sdl.Web.Tridion.Templates
                 if (!string.IsNullOrEmpty(uri))
                 {
                     Component comp = (Component)Engine.GetObject(uri);
+
                     // resolve multimedia component
                     if (comp != null)
                     {
-                        // multimedia/metadata schemas don't have a root element name, so lets use its title without any invalid characters
-                        link.SetAttribute("data-semanticSchema", Regex.Replace(comp.MetadataSchema.Title.Trim(), @"[^A-Za-z0-9.]+", String.Empty));
+                        // multimedia schemas don't have a root element name, so lets use its title without any invalid characters
+                        link.SetAttribute(SemanticSchemaAttribute, Regex.Replace(comp.Schema.Title.Trim(), InvalidCharactersPattern, String.Empty));
 
-                        ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
-                        ProcessFields(fields, link);
+                        if (comp.Metadata != null)
+                        {
+                            ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
+                            ProcessFields(fields, link);
+                        }
                     }
                 }
             }
@@ -196,7 +206,7 @@ namespace Sdl.Web.Tridion.Templates
         private static string Escape(string input)
         {
             // escape angle brackets and remove xhtml namespace
-            string xmlns = String.Format(" xmlns=\"{0}\"", XhtmlNamespace);
+            string xmlns = String.Format(" {0}=\"{1}\"", Constants.XhtmlPrefix, Constants.XhtmlNamespace);
             return input.Replace("<", "&lt;").Replace(">", "&gt;").Replace(xmlns, String.Empty);
         }
     }

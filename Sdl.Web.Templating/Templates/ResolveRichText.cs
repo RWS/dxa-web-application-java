@@ -148,9 +148,12 @@ namespace Sdl.Web.Tridion.Templates
                 if (!string.IsNullOrEmpty(uri))
                 {
                     Component comp = (Component)Engine.GetObject(uri);
-                    // resolve youtube video
+                    // resolve multimedia component
                     if (comp != null)
                     {
+                        // multimedia/metadata schemas don't have a root element name, so lets use its title without any invalid characters
+                        link.SetAttribute("data-semanticSchema", Regex.Replace(comp.MetadataSchema.Title.Trim(), @"[^A-Za-z0-9.]+", String.Empty));
+
                         ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
                         ProcessFields(fields, link);
                     }

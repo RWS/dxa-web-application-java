@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<context-knowledge version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="schemas/cwd_engine_vocabulary_conf.xsd">
+
+    <!-- Example custom vocabulary configuration -->
+    <vocabulary>
+        <aspects>
+            <aspect name="browser">
+                <properties>
+                    <property name="modelAndOS" type="String" expressionTrust="90"
+                        expression="os.model + ' ' + browser.model"/>
+                </properties>
+            </aspect>
+            <aspect name="ui">
+                <properties>
+                    <property name="android" type="Boolean" expressionTrust="90"
+                        expression="os.model == 'Android'"/>
+                    <property name="largeBrowser" type="Boolean" expressionTrust="90"
+                        expression="browser.displayHeight gt 600 and browser.displayWidth gt 800"/>
+                </properties>
+            </aspect>
+            <aspect name="userHttp">
+                <properties>
+                    <property name="cacheControl" type="String"/>
+                </properties>
+            </aspect>
+            <aspect name="userServer">
+                <properties>
+                    <property name="remoteUser" type="String"/>
+                    <property name="serverPort" type="String"/>
+                </properties>
+            </aspect>
+            <aspect name="userRequest">
+                <properties>
+                    <property name="fullUrl" type="String"/>
+                </properties>
+            </aspect>
+        </aspects>
+    </vocabulary>
+</context-knowledge>

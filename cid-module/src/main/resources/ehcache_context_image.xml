@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ehcache name="context-image" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false">
+    <diskStore path="java.io.tmpdir"/>
+    <!--
+        For details on caching configuration options read
+        http://ehcache.org/documentation/2.4/user-guide/storage-options
+        -->
+    <cache
+        name="com.sdl.context.image.api.ImageTransformer"
+        maxEntriesLocalHeap="1000"
+        maxBytesLocalDisk="100M"
+        eternal="false"
+        timeToIdleSeconds="3600"
+        timeToLiveSeconds="86400"
+        overflowToDisk="true"
+        />
+    <cache
+        name="com.sdl.context.image.ImageUpdateTimeStamp"
+        maxEntriesLocalHeap="10000"
+        eternal="false"
+        timeToIdleSeconds="3600"
+        timeToLiveSeconds="86400"
+        overflowToDisk="false"
+        />
+</ehcache>

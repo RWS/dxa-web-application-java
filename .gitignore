@@ -1,0 +1,8 @@
+.classpath
+.project
+.checkstyle
+*.iml
+.idea
+.settings/
+target/
+cd_licenses.xml

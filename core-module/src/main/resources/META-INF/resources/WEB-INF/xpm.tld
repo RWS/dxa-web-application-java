@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.1">
+
+    <tlib-version>1.0</tlib-version>
+    <short-name>tridion-xpm</short-name>
+    <uri>http://www.sdl.com/tridion-xpm</uri>
+
+    <tag>
+        <name>if-enabled</name>
+        <tag-class>com.sdl.webapp.main.taglib.xpm.XpmIfEnabledTag</tag-class>
+        <body-content>JSP</body-content>
+    </tag>
+
+    <tag>
+        <name>page</name>
+        <tag-class>com.sdl.webapp.main.taglib.xpm.XpmPageMarkupTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>page</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.sdl.webapp.common.api.model.Page</type>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>region</name>
+        <tag-class>com.sdl.webapp.main.taglib.xpm.XpmRegionMarkupTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>region</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.sdl.webapp.common.api.model.Region</type>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>entity</name>
+        <tag-class>com.sdl.webapp.main.taglib.xpm.XpmEntityMarkupTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>entity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.sdl.webapp.common.api.model.Entity</type>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>property</name>
+        <tag-class>com.sdl.webapp.main.taglib.xpm.XpmPropertyMarkupTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>entity</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.sdl.webapp.common.api.model.Entity</type>
+        </attribute>
+        <attribute>
+            <name>property</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>index</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+    </tag>
+</taglib>

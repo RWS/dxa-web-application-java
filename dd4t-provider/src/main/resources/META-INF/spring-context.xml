@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:annotation-config/>
+    <context:component-scan base-package="com.sdl.webapp.dd4t"/>
+
+    <bean id="linkProvider" class="org.dd4t.providers.impl.BrokerLinkProvider">
+        <property name="contentIsCompressed" value="false"/>
+    </bean>
+
+    <!-- Cache provider is now set in the main spring context file for the webapp -->
+    <!--
+    <bean id="cacheProvider" class="org.dd4t.core.caching.impl.EHCacheProvider"/>
+    -->
+    <!--
+    <bean id="cacheProvider" class="org.dd4t.core.caching.impl.NoCacheProvider"/>
+    -->
+
+    <bean id="pageProvider" class="org.dd4t.providers.impl.BrokerPageProvider">
+        <!-- TODO: CHANGE!!! -->
+        <property name="contentIsCompressed" value="false"/>
+    </bean>
+
+    <bean id="componentPresentationProvider" class="com.sdl.webapp.dd4t.BrokerComponentPresentationProvider">
+        <!-- TODO: CHANGE!!! -->
+        <property name="contentIsCompressed" value="false"/>
+
+        <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
+        <property name="cacheProvider" ref="cacheProvider" />
+
+    </bean>
+
+    <!-- TODO: Needed for DD4T v2 ?? -->
+    <bean id="serializer" class="org.dd4t.core.serializers.impl.json.JSONSerializer"/>
+    <bean class="org.dd4t.core.serializers.impl.SerializerFactory">
+        <constructor-arg name="serializerInstance" ref="serializer"/>
+    </bean>
+
+    <bean id="componentPresentationFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl">
+        <property name="componentPresentationProvider" ref="componentPresentationProvider"/>
+        <property name="cacheProvider" ref="cacheProvider"/>
+    </bean>
+
+    <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver">
+        <property name="contextPath" value=""/>
+        <property name="linkProvider" ref="linkProvider"/>
+    </bean>
+
+    <bean id="richTextWithLinksResolver" class="org.dd4t.core.processors.impl.RichTextWithLinksResolver">
+        <property name="linkResolver" ref="linkResolver"/>
+    </bean>
+
+    <bean id="pageFactory" class="org.dd4t.core.factories.impl.PageFactoryImpl">
+        <property name="pageProvider" ref="pageProvider"/>
+        <property name="cacheProvider" ref="cacheProvider"/>
+    </bean>
+
+    <!-- Taxonomy Stuff -->
+    <bean id="taxonomyProvider" class="org.dd4t.providers.impl.BrokerTaxonomyProvider"/>
+
+    <bean id="taxonomyFactory" class="org.dd4t.core.factories.impl.TaxonomyFactoryImpl" factory-method="getInstance">
+        <property name="taxonomyProvider" ref="taxonomyProvider" />
+        <property name="cacheProvider" ref="cacheProvider" />
+    </bean>
+
+    <!-- Databind stuff.-->
+    <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
+    <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
+        <!-- Set these to your need. If you only want regular Components set to true -->
+        <property name="renderDefaultComponentModelsOnly" value="true" />
+        <property name="renderDefaultComponentsIfNoModelFound" value="true" />
+        <property name="converter" ref="modelConverter" />
+        <!-- override these if you want your own implementations -->
+        <property name="concreteComponentPresentationImpl" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
+        <property name="concreteComponentImpl" value="org.dd4t.contentmodel.impl.ComponentImpl" />
+        <property name="concreteFieldImpl" value="org.dd4t.contentmodel.impl.BaseField"/>
+    </bean>
+    <bean id="dcpDataBinderWrapper" class="com.sdl.webapp.dd4t.DCPDataBinderWrapper">
+        <property name="dataBinder" ref="dataBinder"/>
+    </bean>
+
+    <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="getInstance">
+        <property name="dataBinder" ref="dcpDataBinderWrapper" />
+    </bean>
+</beans>

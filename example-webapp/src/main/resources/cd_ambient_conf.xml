@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Configuration Version="7.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:noNamespaceSchemaLocation="schemas/cd_ambient_conf.xsd">
+    <Security>
+        <WhiteList>
+            <IPAddresses>
+                <!-- WARNING: this range should be changed as in this state accepts claims from any IP -->
+                <Ip>0.0.0.0-255.255.255.255</Ip>
+            </IPAddresses>
+        </WhiteList>
+        <GloballyAcceptedClaims>
+            <Claim Uri="taf:claim:ambientdata:sessioncartridge:useragent:browser"/>
+            <Claim Uri="taf:claim:ambientdata:footprintcartridge:acceptlanguage"/>
+            <Claim Uri="taf:claim:ambientdata:footprintcartridge:recurringvisitor"/>
+            <Claim Uri="taf:claim:ambientdata:sessioncartridge:useragent:os"/>
+            <Claim Uri="taf:claim:ambientdata:footprintcartridge:searchquery"/>
+            <Claim Uri="taf:claim:ambientdata:sessioncartridge:session:lifetime"/>
+            <Claim Uri="taf:claim:ambientdata:sessioncartridge:refererdomain"/>
+        </GloballyAcceptedClaims>
+    </Security>
+    <ExcludedPaths>
+        <!-- NOTE: Uncomment this if you want to use CID -->
+        <!--<Path>/cid</Path>-->
+    </ExcludedPaths>
+    <Cartridges>
+        <!--<Cartridge File="cd_webservice_preview_cartridge.xml"/>-->
+        <!--<Cartridge File="footprint_cartridge_conf.xml"/>-->
+
+        <!-- NOTE: Uncomment this if you want to use CID -->
+        <!--<Cartridge File="cwd_engine_cartridge_conf.xml"/>-->
+    </Cartridges>
+</Configuration>

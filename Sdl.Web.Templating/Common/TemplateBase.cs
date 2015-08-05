@@ -501,6 +501,7 @@ namespace Sdl.Web.Tridion.Common
         
         protected static string GetRegionFromTemplate(ComponentTemplate template)
         {
+            // TODO: check CT metadata first
             Match match = Regex.Match(template.Title, @".*?\[(.*?)\]");
             if (match.Success)
             {

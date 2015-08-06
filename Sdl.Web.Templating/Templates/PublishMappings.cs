@@ -200,10 +200,8 @@ namespace Sdl.Web.Tridion.Templates
             Dictionary<string, List<string>> regions = new Dictionary<string, List<string>>();
 
             ComponentTemplatesFilter templateFilter = new ComponentTemplatesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
-            foreach (XmlElement item in GetPublication().GetListComponentTemplates(templateFilter).ChildNodes)
+            foreach (ComponentTemplate template in GetPublication().GetComponentTemplates(templateFilter))
             {
-                string id = item.GetAttribute("ID");
-                ComponentTemplate template = (ComponentTemplate)Engine.GetObject(id);
                 string region = GetRegionFromTemplate(template);
                 
                 if (!regions.ContainsKey(region))

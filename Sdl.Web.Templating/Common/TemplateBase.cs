@@ -501,13 +501,25 @@ namespace Sdl.Web.Tridion.Common
         
         protected static string GetRegionFromTemplate(ComponentTemplate template)
         {
-            // TODO: check CT metadata first
+            // check CT metadata
+            if (template.MetadataSchema != null && template.Metadata != null)
+            {
+                ItemFields meta = new ItemFields(template.Metadata, template.MetadataSchema);
+                string region = meta.GetTextValue("regionView");
+                if (!String.IsNullOrEmpty(region))
+                {
+                    return region;
+                }
+            }
+
+            // fallback use template title
             Match match = Regex.Match(template.Title, @".*?\[(.*?)\]");
             if (match.Success)
             {
                 return match.Groups[1].Value;
             }
-            //default region name
+
+            // default region name
             return "Main";
         }
         #endregion

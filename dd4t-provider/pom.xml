@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>dd4t-provider</artifactId>
+
+    <parent>
+        <groupId>com.sdl</groupId>
+        <artifactId>webapp-reference-impl</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <htmlcleaner-version>2.10</htmlcleaner-version>
+    </properties>
+
+    <profiles>
+        <!--
+        <profile>
+            <id>cd-8.0.0</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config_api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config_legacy</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_util</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        -->
+    </profiles>
+
+    <dependencies>
+        <!-- Tridion Reference Implementation -->
+        <dependency>
+            <groupId>com.sdl</groupId>
+            <artifactId>common-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl</groupId>
+            <artifactId>tridion-provider</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!-- Spring Framework -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
+            <version>2.2.2</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- Servlet API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+
+        <!-- Google Guava -->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+
+        <!-- Joda Time -->
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <!-- Jackson -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- HtmlCleaner -->
+        <dependency>
+            <groupId>net.sourceforge.htmlcleaner</groupId>
+            <artifactId>htmlcleaner</artifactId>
+            <version>${htmlcleaner-version}</version>
+        </dependency>
+
+        <!-- Commons Codec (needed by DD4T) -->
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- DD4T 1.x -->
+        <!--
+        <dependency>
+            <groupId>org.dynamicdelivery</groupId>
+            <artifactId>dd4t-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dynamicdelivery</groupId>
+            <artifactId>dd4t-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dynamicdelivery</groupId>
+            <artifactId>dd4t-providers</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        -->
+
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-api</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.tridion.contentdelivery</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-core</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.tridion.contentdelivery</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-databind</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.tridion.contentdelivery</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-providers</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.tridion.contentdelivery</groupId>
+                    <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- Tridion Content Delivery -->
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_datalayer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_model</artifactId>
+        </dependency>
+
+        <!-- Third-party libraries used by Tridion Content Delivery -->
+        <dependency>
+            <groupId>com.vs.ezlicrun</groupId>
+            <artifactId>easylicense</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-dbcp</groupId>
+            <artifactId>commons-dbcp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+        </dependency>
+    </dependencies>
+</project>

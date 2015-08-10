@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Configuration Version="7.1">
+    <Global>
+        <ObjectCache Enabled="false">
+            <Policy Type="LRU" Class="com.tridion.cache.LRUPolicy">
+                <Param Name="MemSize" Value="16mb"/>
+            </Policy>
+            <Features>
+                <Feature Type="DependencyTracker" Class="com.tridion.cache.DependencyTracker"/>
+            </Features>
+        </ObjectCache>
+        <Storages>
+            <Storage Type="persistence" Id="defaultdb" dialect="MSSQL"
+                     Class="com.tridion.storage.persistence.JPADAOFactory">
+                <Pool Type="jdbc" Size="10" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120"/>
+                <DataSource Class="com.microsoft.sqlserver.jdbc.SQLServerDataSource">
+                    <Property Name="serverName" Value="devqadb01.ams.dev\mssql2012"/>
+                    <Property Name="portNumber" Value="1435"/>
+                    <Property Name="databaseName" Value="Tridion_Broker_sj01_staging"/>
+                    <Property Name="user" Value="TridionBrokerUser_sj01_staging"/>
+                    <Property Name="password" Value="Tr1d10n"/>
+                </DataSource>
+            </Storage>
+        </Storages>
+    </Global>
+    <ItemTypes defaultStorageId="defaultdb" cached="false">
+    </ItemTypes>
+</Configuration>

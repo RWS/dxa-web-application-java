@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.1">
+
+    <tlib-version>1.0</tlib-version>
+    <short-name>tridion-reference-impl</short-name>
+    <uri>http://www.sdl.com/tridion-reference-impl</uri>
+
+    <!-- Include a page -->
+    <tag>
+        <name>page</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.PageTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>viewName</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Include a specific region -->
+    <tag>
+        <name>region</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.RegionTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>name</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>placeholder</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Include all regions on the page, except excluded ones -->
+    <tag>
+        <name>regions</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.RegionsTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>exclude</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Include a specific entity -->
+    <tag>
+        <name>entity</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.EntityTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>region</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>entityId</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>entity</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Include all entities in a region -->
+    <tag>
+        <name>entities</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.EntitiesTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>region</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Insert media: an image, YouTube video or download link -->
+    <tag>
+        <name>media</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.MediaTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>media</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.sdl.webapp.common.api.model.entity.MediaItem</type>
+        </attribute>
+        <attribute>
+            <name>widthFactor</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>aspect</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>double</type>
+        </attribute>
+        <attribute>
+            <name>cssClass</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>containerSize</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+    </tag>
+
+    <!-- Insert a link -->
+    <tag>
+        <name>link</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.LinkTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>link</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.sdl.webapp.common.api.model.entity.Link</type>
+        </attribute>
+        <attribute>
+            <name>cssClass</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Insert a resource text -->
+    <tag>
+        <name>resource</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.ResourceTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>key</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>arg1</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>arg2</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Insert a static Google map -->
+    <tag>
+        <name>googlestaticmap</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.GoogleStaticMapTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>latitude</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>double</type>
+        </attribute>
+        <attribute>
+            <name>longitude</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>double</type>
+        </attribute>
+        <attribute>
+            <name>markerName</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>mapWidth</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+        <attribute>
+            <name>mapHeight</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+    </tag>
+
+    <!-- Insert a Google map -->
+    <tag>
+        <name>googlemap</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.GoogleMapTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>latitude</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>double</type>
+        </attribute>
+        <attribute>
+            <name>longitude</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>double</type>
+        </attribute>
+        <attribute>
+            <name>markerName</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+            <name>mapWidth</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+        <attribute>
+            <name>mapHeight</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+    </tag>
+
+    <!-- Insert pluggable markup -->
+    <tag>
+        <name>pluggableMarkup</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.PluggableMarkupTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>label</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+
+    <!-- Define pluggable markup -->
+    <tag>
+        <name>definePluggableMarkup</name>
+        <tag-class>com.sdl.webapp.main.taglib.tri.DefinePluggableMarkupTag</tag-class>
+        <body-content>JSP</body-content>
+        <attribute>
+            <name>label</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
+</taglib>

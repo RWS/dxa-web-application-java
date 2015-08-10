@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration Version="7.1"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:noNamespaceSchemaLocation="schemas/cd_dynamic_conf.xsd">
+    <URLMappings>
+        <StaticMappings>
+            <Publications>
+                <Publication Id="8">
+                    <Host Protocol="http" Domain="localhost" Port="8080" Path=""/>
+                </Publication>
+            </Publications>
+        </StaticMappings>
+        <StorageMapping IdentifyPublicationByProperty="publicationUrl"/>
+    </URLMappings>
+    <TCDLEngine>
+        <Properties>
+        </Properties>
+    </TCDLEngine>
+</Configuration>

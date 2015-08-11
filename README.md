@@ -20,7 +20,7 @@ If you encounter problems, reach out to the community: http://tridion.stackexcha
 Sources
 -------
 
-The official v1.1 release (downloadable on https://community.sdl.com/developers/tridion_developer/m/mediagallery/852) contains only the **Site** project in the web-application Visual Studio solution, since only that part of the source is considered public API (as in, you are expected to change that). This repository contains the full source of all the `Sdl.Web.*` DLLs to give you insight in how the solution is built and what is there available for you to extend. You are free to use these sources under the terms and conditions of the license mentioned below, however we suggest you only change the code of the **Site** project and make use of the compiled `Sdl.Web.Common.dll`, `Sdl.Web.Mvc.dll` and `Sdl.Web.Tridion.dll` from the SDL Community site. 
+tbd.
 
 
 Documentation
@@ -34,10 +34,10 @@ Repositories
 
 The following repositories with source code are available:
 
- - **content-management** - DXA Core Template Building Blocks
- - **modules** - DXA Modules
- - **web-application-dotnet** - DXA .NET MVC web application
- - **web-application-java** - DXA Java Spring MVC web application
+ - https://github.com/sdl/dxa-content-management - Core Template Building Blocks
+ - https://github.com/sdl/dxa-modules - Modules
+ - https://github.com/sdl/dxa-web-application-dotnet - .NET MVC web application
+ - https://github.com/sdl/dxa-web-application-java - Java Spring MVC web application
 
 
 License

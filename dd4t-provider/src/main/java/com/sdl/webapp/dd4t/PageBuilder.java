@@ -217,8 +217,9 @@ final class PageBuilder {
             pageMeta.put("description", !Strings.isNullOrEmpty(description) ? description : title);
         }
 
-        return title + " " + localization.getResource("core.pageTitleSeparator") + " " +
-                localization.getResource("core.pageTitlePostfix");
+        String titlePostfix = localization.getResource("core.pageTitleSeparator") + localization.getResource("core.pageTitlePostfix");
+        
+        return title + titlePostfix;
     }
 
     private void processMetadataField(Field field, Map<String, String> pageMeta) {

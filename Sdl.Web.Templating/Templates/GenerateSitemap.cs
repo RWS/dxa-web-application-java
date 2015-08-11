@@ -1,4 +1,5 @@
-﻿using Sdl.Web.Tridion.Common;
+﻿using System.IO;
+using Sdl.Web.Tridion.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -266,10 +267,11 @@ namespace Sdl.Web.Tridion.Templates
 
         protected string GetUrl(Page page)
         {
-            String url = page.PublishLocationUrl;
-            if (_config.ExternalUrlTemplate.ToLower() == page.PageTemplate.Title.ToLower() && page.Metadata != null)
+            String url;
+            if (page.PageTemplate.Title.Equals(_config.ExternalUrlTemplate, StringComparison.InvariantCultureIgnoreCase) && page.Metadata != null)
             {
-                ItemFields meta = new ItemFields(page.Metadata,page.MetadataSchema);
+                // The Page is a "Redirect Page"; obtain the URL from its metadata.
+                ItemFields meta = new ItemFields(page.Metadata, page.MetadataSchema);
                 ItemFields link = meta.GetEmbeddedField("redirect");
                 url = link.GetExternalLink("externalLink");
                 if (String.IsNullOrEmpty(url))
@@ -277,7 +279,17 @@ namespace Sdl.Web.Tridion.Templates
                     url = link.GetSingleFieldValue("internalLink");
                 }
             }
-            return System.Web.HttpUtility.UrlDecode(url);
+            else
+            {
+                url = GetExtensionlessUrl(page.PublishLocationUrl);
+            }
+            return url;
+        }
+
+        private static string GetExtensionlessUrl(string url)
+        {
+            string extension = Path.GetExtension(url);
+            return String.IsNullOrEmpty(extension) ? url : url.Substring(0, url.Length - extension.Length);
         }
 
         private IEnumerable<XElement> GetItemsInFolderAsAList(StructureGroup startPoint)
@@ -338,8 +350,6 @@ namespace Sdl.Web.Tridion.Templates
 
     internal class SitemapItem
     {
-        private string _url;
-
         public SitemapItem()
         {
             Items = new List<SitemapItem>();
@@ -355,14 +365,8 @@ namespace Sdl.Web.Tridion.Templates
 
         public string Url
         {
-            get { return _url; }
-            set { _url = RemoveNonRequiredExtensions(value); }
-        }
-
-        private string RemoveNonRequiredExtensions(string value)
-        {
-            //TODO make this configurable with TBB parameters
-            return value.Replace(".html","");
+            get;
+            set;
         }
 
         public string Id { get; set; }

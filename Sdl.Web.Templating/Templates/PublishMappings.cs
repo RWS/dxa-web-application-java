@@ -25,6 +25,7 @@ namespace Sdl.Web.Tridion.Templates
         // json content in page
         private const string JsonOutputFormat = "{{\"name\":\"Publish Mappings\",\"status\":\"Success\",\"files\":[{0}]}}";
 
+        private const string InvalidCharactersPattern = @"[^A-Za-z0-9.]+";
         private const string SchemasConfigName = "schemas";
         //private const string MappingsConfigName = "mappings";
         private const string RegionConfigName = "regions";
@@ -139,7 +140,7 @@ namespace Sdl.Web.Tridion.Templates
                 if (String.IsNullOrEmpty(rootElementName))
                 {
                     // multimedia/metadata schemas don't have a root element name, so lets use its title without any invalid characters
-                    rootElementName = Regex.Replace(schema.Title.Trim(), @"[^A-Za-z0-9.]+", "");
+                    rootElementName = Regex.Replace(schema.Title.Trim(), InvalidCharactersPattern, String.Empty);
                 }
                 // add schema typeof using tridion standard implementation vocabulary prefix
                 string typeOf = String.Format("{0}:{1}", DefaultVocabularyPrefix, rootElementName);
@@ -199,10 +200,8 @@ namespace Sdl.Web.Tridion.Templates
             Dictionary<string, List<string>> regions = new Dictionary<string, List<string>>();
 
             ComponentTemplatesFilter templateFilter = new ComponentTemplatesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
-            foreach (XmlElement item in GetPublication().GetListComponentTemplates(templateFilter).ChildNodes)
+            foreach (ComponentTemplate template in GetPublication().GetComponentTemplates(templateFilter))
             {
-                string id = item.GetAttribute("ID");
-                ComponentTemplate template = (ComponentTemplate)Engine.GetObject(id);
                 string region = GetRegionFromTemplate(template);
                 
                 if (!regions.ContainsKey(region))
@@ -336,7 +335,7 @@ namespace Sdl.Web.Tridion.Templates
             XmlNode embeddedSchemaNode = fieldNode.SelectSingleNode("xsd:annotation/xsd:appinfo/tcm:EmbeddedSchema", nsmgr);
             if (embeddedSchemaNode != null)
             {
-                string uri = embeddedSchemaNode.Attributes["href", "http://www.w3.org/1999/xlink"].Value;
+                string uri = embeddedSchemaNode.Attributes["href", Constants.XlinkNamespace].Value;
                 Schema embeddedSchema = (Schema)Engine.GetObject(uri);
                 string embeddedTypeOf = String.Format("{0}:{1}", DefaultVocabularyPrefix, embeddedSchema.RootElementName);
 

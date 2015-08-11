@@ -1,9 +1,12 @@
-﻿using Sdl.Web.Tridion.Common;
+﻿using System.Globalization;
+using System.Text;
+using Sdl.Web.Tridion.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Xml;
+using Tridion;
 using Tridion.ContentManager.ContentManagement;
 using Tridion.ContentManager.ContentManagement.Fields;
 using Tridion.ContentManager.Templating;
@@ -20,10 +23,12 @@ namespace Sdl.Web.Tridion.Templates
     [TcmTemplateParameterSchema("resource:Sdl.Web.Tridion.Resources.ResolveRichTextParameters.xsd")]
     public class ResolveRichText : TemplateBase
     {
+        private const string SchemaUriAttribute = "data-schemaUri";
+        private const string FileNameAttribute = "data-multimediaFileName";
+        private const string FileSizeAttribute = "data-multimediaFileSize";
+        private const string MimeTypeAttribute = "data-multimediaMimeType";
         private const string LinkPattern = @"xlink:href=\\""(tcm\:\d+\-\d+)\\""";
         private const string XhtmlPattern = " xmlns=\\\"http://www.w3.org/1999/xhtml\\\"";
-        private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
-        private const string XlinkNamespace = "http://www.w3.org/1999/xlink";
 
         private List<string> _metaFieldNames = new List<string>();
             
@@ -73,14 +78,29 @@ namespace Sdl.Web.Tridion.Templates
                 string compId = match.Groups[1].Value;
                 string replaced = match.Value;
                 Component comp = (Component)Engine.GetObject(compId);
-                // resolve metadata into additional data-attributes
-                if (comp != null)
+
+                // add attributes for model mapping
+                if (comp != null && comp.BinaryContent != null)
                 {
-                    ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
-                    string attributes = ProcessFields(fields);
-                    if (!String.IsNullOrEmpty(attributes))
+                    // set attributes for multimedia component
+                    string attributes = String.Empty;
+                    StringBuilder attributesBuilder = new StringBuilder();
+                    attributesBuilder.AppendFormat(" {0}=\"{1}\"", SchemaUriAttribute, comp.Schema.Id);
+                    attributesBuilder.AppendFormat(" {0}=\"{1}\"", FileNameAttribute, comp.BinaryContent.Filename);
+                    attributesBuilder.AppendFormat(" {0}=\"{1}\"", FileSizeAttribute, comp.BinaryContent.Size);
+                    attributesBuilder.AppendFormat(" {0}=\"{1}\"", MimeTypeAttribute, comp.BinaryContent.MultimediaType.MimeType);
+
+                    // resolve metadata into additional data-attributes
+                    if (comp.Metadata != null)
                     {
-                        attributes = JsonEncode(attributes).Substring(1);
+                        ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
+                        attributesBuilder.Append(ProcessFields(fields));
+                    }
+
+                    // encode and strip first and last character (quotes added by encode)
+                    if (attributesBuilder.Length > 0)
+                    {
+                        attributes = JsonEncode(attributesBuilder.ToString()).Substring(1);
                         attributes = attributes.Substring(0, attributes.Length - 1);
                     }
                     replaced = replaced + attributes;
@@ -92,7 +112,7 @@ namespace Sdl.Web.Tridion.Templates
 
         private string ProcessFields(ItemFields fields)
         {
-            string attributeString = String.Empty;
+            StringBuilder attributesBuilder = new StringBuilder(); 
             if (fields!=null)
             {
                 Logger.Debug(String.Join(", ", _metaFieldNames));
@@ -104,7 +124,7 @@ namespace Sdl.Web.Tridion.Templates
                         string attribute = String.Format(" data-{0}=\"{1}\"", fieldname, System.Net.WebUtility.HtmlEncode(fields.GetSingleFieldValue(fieldname)));
                         Logger.Debug("Attribute:" + attribute);
                         // TODO: XML encode the value
-                        attributeString += attribute;
+                        attributesBuilder.Append(attribute);
                     }
                 }
 
@@ -112,12 +132,12 @@ namespace Sdl.Web.Tridion.Templates
                 {
                     if (field is EmbeddedSchemaField)
                     {
-                        attributeString+=ProcessFields(((EmbeddedSchemaField)field).Value);
+                        attributesBuilder.Append(ProcessFields(((EmbeddedSchemaField)field).Value));
                     }
                 }
             }
-            Logger.Debug("attributes:" + attributeString);
-            return attributeString;
+            Logger.Debug("attributes:" + attributesBuilder);
+            return attributesBuilder.ToString();
         }
 
         private XmlDocument ResolveXmlContent(string content)
@@ -136,7 +156,7 @@ namespace Sdl.Web.Tridion.Templates
         {
             XmlDocument xhtml = new XmlDocument();
             XmlNamespaceManager nsmgr = new XmlNamespaceManager(xhtml.NameTable);
-            nsmgr.AddNamespace("xlink", XlinkNamespace);
+            nsmgr.AddNamespace(Constants.XlinkPrefix, Constants.XlinkNamespace);
             xhtml.LoadXml(String.Format("<root>{0}</root>", UnEscape(input)));
 
             // locate linked components
@@ -148,11 +168,22 @@ namespace Sdl.Web.Tridion.Templates
                 if (!string.IsNullOrEmpty(uri))
                 {
                     Component comp = (Component)Engine.GetObject(uri);
-                    // resolve youtube video
-                    if (comp != null)
+
+                    // resolve multimedia component
+                    if (comp != null && comp.BinaryContent != null)
                     {
-                        ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
-                        ProcessFields(fields, link);
+                        // set attributes for multimedia component
+                        link.SetAttribute(SchemaUriAttribute, comp.Schema.Id);
+                        link.SetAttribute(FileNameAttribute, comp.BinaryContent.Filename);
+                        link.SetAttribute(FileSizeAttribute, comp.BinaryContent.Size.ToString(CultureInfo.InvariantCulture));
+                        link.SetAttribute(MimeTypeAttribute, comp.BinaryContent.MultimediaType.MimeType);
+
+                        // resolve metadata into additional data-attributes
+                        if (comp.Metadata != null)
+                        {
+                            ItemFields fields = new ItemFields(comp.Metadata, comp.MetadataSchema);
+                            ProcessFields(fields, link);
+                        }
                     }
                 }
             }
@@ -189,7 +220,7 @@ namespace Sdl.Web.Tridion.Templates
         private static string Escape(string input)
         {
             // escape angle brackets and remove xhtml namespace
-            string xmlns = String.Format(" xmlns=\"{0}\"", XhtmlNamespace);
+            string xmlns = String.Format(" {0}=\"{1}\"", Constants.XhtmlPrefix, Constants.XhtmlNamespace);
             return input.Replace("<", "&lt;").Replace(">", "&gt;").Replace(xmlns, String.Empty);
         }
     }

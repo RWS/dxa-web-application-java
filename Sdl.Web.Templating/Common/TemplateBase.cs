@@ -501,13 +501,42 @@ namespace Sdl.Web.Tridion.Common
         
         protected static string GetRegionFromTemplate(ComponentTemplate template)
         {
+            // check CT metadata
+            if (template.MetadataSchema != null && template.Metadata != null)
+            {
+                ItemFields meta = new ItemFields(template.Metadata, template.MetadataSchema);
+                string region = meta.GetTextValue("regionView");
+                if (!String.IsNullOrEmpty(region))
+                {
+                    // strip module from fully qualified name
+                    // since we need just the region name here as the web application can't deal with fully qualified region names yet
+                    return StripModuleFromName(region);
+                }
+            }
+
+            // fallback use template title
             Match match = Regex.Match(template.Title, @".*?\[(.*?)\]");
             if (match.Success)
             {
-                return match.Groups[1].Value;
+                // strip module from fully qualified name
+                // since we need just the region name here as the web application can't deal with fully qualified region names yet
+                return StripModuleFromName(match.Groups[1].Value);
             }
-            //default region name
+
+            // default region name
             return "Main";
+        }
+
+        private static string StripModuleFromName(string name)
+        {
+            // split fully qualified view name on colon, use last part as unqualified view name
+            string[] nameParts = name.Trim().Split(':');
+            if (nameParts.Length > 1)
+            {
+                return nameParts[1];
+            }
+
+            return name;
         }
         #endregion
 

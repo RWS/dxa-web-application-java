@@ -18,88 +18,64 @@ package org.dd4t.core.util;
 
 import java.io.Serializable;
 import java.text.ParseException;
-import java.util.StringTokenizer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TCMURI implements Serializable {
 
     public static final String URI_NAMESPACE = "tcm:";
     protected static final String SEPARATOR = "-";
-    protected static final String DELIM_VERSION = "v";
 
-    private int itemType;
-    private int itemId;
-    private int pubId;
-    private int version;
+    protected int itemType;
+    protected int itemId;
+    protected int pubId;
+    protected int version;
 
+    @Deprecated
     public TCMURI() {
     }
 
+    @Deprecated
     public TCMURI(String uri) throws ParseException {
-        this.itemType = 0;
-        this.itemId = -1;
-        this.pubId = -1;
-        this.version = -1;
-        load(uri);
+        this(new Builder().with(uri));
     }
 
+    //added because of custom code, next release can be deleted?
+    @Deprecated
+    public TCMURI(String uri, int version) throws ParseException {
+        this(new Builder()
+                .with(uri)
+                .version(version));
+    }
+
+    //make it private instead of delete on next release
+    @Deprecated
     public TCMURI(int publicationId, int itemId, int itemType, int version) {
-        this.itemType = itemType;
-        this.itemId = itemId;
-        this.pubId = publicationId;
-        this.version = version;
+        this(new Builder()
+                .publicationId(publicationId)
+                .itemId(itemId)
+                .itemType(itemType)
+                .version(version));
+    }
+
+    public TCMURI(Builder builder) {
+        this.itemType = builder.itemType;
+        this.itemId = builder.itemId;
+        this.pubId = builder.pubId;
+        this.version = builder.version;
     }
 
     public static boolean isValid(String tcmUri) {
         return tcmUri != null && tcmUri.startsWith(URI_NAMESPACE);
     }
 
+    @Deprecated
     protected void load(String uriString) throws ParseException {
-        if (uriString != null) {
-            int namespaceLength = URI_NAMESPACE.length();
-            int uriStringLength = uriString.length();
-            int currentPosition = uriStringLength;
-            if ((uriStringLength < namespaceLength) || (!uriString.startsWith(URI_NAMESPACE))) {
-                throw new ParseException("URI string " + uriString + " does not start with " + URI_NAMESPACE, currentPosition);
-            }
-
-            String uri = uriString.substring(namespaceLength, uriStringLength);
-            StringTokenizer st = new StringTokenizer(uri, "-");
-            if (st.countTokens() < 2) {
-                throw new ParseException("URI string " + uriString + " does not contain enough ID's", currentPosition);
-            }
-            try {
-                String token = st.nextToken();
-                currentPosition += token.length();
-                this.pubId = Integer.parseInt(token);
-
-                token = st.nextToken();
-                currentPosition += token.length();
-                this.itemId = Integer.parseInt(token);
-
-                if (!st.hasMoreTokens()) {
-                    this.itemType = 16;
-                } else {
-                    token = st.nextToken();
-                    currentPosition += token.length();
-                    if (!token.startsWith(DELIM_VERSION)) {
-                        this.itemType = Integer.parseInt(token);
-                    } else {
-                        this.version = Integer.parseInt(token.substring(1, token.length()));
-                        this.itemType = 16;
-                    }
-
-                    if (st.hasMoreTokens()) {
-                        token = st.nextToken();
-                        currentPosition += token.length();
-                        this.version = Integer.parseInt(token.substring(1, token.length()));
-                    }
-                }
-            } catch (NumberFormatException e) {
-                throw new ParseException("Invalid ID (not an integer) in URI string " + uriString, currentPosition);
-            }
-        } else {
-            throw new ParseException("Invalid TCMURI String, string cannot be null", 0);
-        }
+        Builder builder = new Builder().with(uriString);
+        this.itemType = builder.itemType;
+        this.itemId = builder.itemId;
+        this.pubId = builder.pubId;
+        this.version = builder.version;
     }
 
     public static int safeLongToInt(long l) {
@@ -125,11 +101,9 @@ public class TCMURI implements Serializable {
         return this.itemType;
     }
 
-
     public int getItemId() {
         return this.itemId;
     }
-
 
     public int getPublicationId() {
         return this.pubId;
@@ -137,5 +111,72 @@ public class TCMURI implements Serializable {
 
     public int getVersion() {
         return this.version;
+    }
+
+    public static class Builder {
+        private int pubId;
+        private int itemId;
+        private int itemType;
+        private int version = -1;
+
+        public Builder publicationId(int pubId) {
+            this.pubId = pubId;
+            return this;
+        }
+
+        public Builder itemId(int itemId) {
+            this.itemId = itemId;
+            return this;
+        }
+
+        public Builder itemType(int itemType) {
+            this.itemType = itemType;
+            return this;
+        }
+
+        public Builder version(int version) {
+            this.version = version;
+            return this;
+        }
+
+        private void validatePatternOf(String uri) {
+            if (uri == null) {
+                throw new IllegalArgumentException("Invalid TCMURI String, string cannot be null");
+            }
+
+            if (!uri.startsWith(URI_NAMESPACE)) {
+                throw new IllegalArgumentException(String.format("URI string %s does not start with %s",
+                        uri, URI_NAMESPACE));
+            }
+        }
+
+        private void extractItemsFrom(String uri) {
+            Pattern p = Pattern.compile("^tcm:(?<pubId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))*(-v(?<version>\\d+))*$");
+            Matcher m = p.matcher(uri);
+
+            if (!m.find()) {
+                throw new IllegalArgumentException(String.format("URI %s does not match the pattern", uri));
+            }
+
+            this.pubId = Integer.parseInt(m.group("pubId"));
+            this.itemId = Integer.parseInt(m.group("itemId"));
+            this.itemType = m.group("itemType") == null ? 16 : Integer.parseInt(m.group("itemType"));
+            this.version = m.group("version") == null ? -1 : Integer.parseInt(m.group("version"));
+        }
+
+        public Builder with(String uri) throws ParseException {
+            try {
+                validatePatternOf(uri);
+                extractItemsFrom(uri);
+            } catch (IllegalArgumentException iae) {
+                throw new ParseException(iae.getMessage(), 0);
+            }
+
+            return this;
+        }
+
+        public TCMURI create() {
+            return new TCMURI(pubId, itemId, itemType, version);
+        }
     }
 }

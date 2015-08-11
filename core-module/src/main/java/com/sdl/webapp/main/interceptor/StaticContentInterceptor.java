@@ -1,12 +1,13 @@
 package com.sdl.webapp.main.interceptor;
 
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
-import com.sdl.webapp.common.api.content.StaticContentProvider;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.util.MimeUtils;
 import com.sdl.webapp.common.util.StreamUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
@@ -33,13 +35,13 @@ import java.net.URL;
 public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);
 
-    private final StaticContentProvider staticContentProvider;
+    private final ContentProvider contentProvider;
 
     private final WebRequestContext webRequestContext;
 
     @Autowired
-    public StaticContentInterceptor(StaticContentProvider staticContentProvider, WebRequestContext webRequestContext) {
-        this.staticContentProvider = staticContentProvider;
+    public StaticContentInterceptor(ContentProvider contentProvider, WebRequestContext webRequestContext) {
+        this.contentProvider = contentProvider;
         this.webRequestContext = webRequestContext;
     }
 
@@ -62,7 +64,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
             try {
 
-                final StaticContentItem staticContentItem = staticContentProvider.getStaticContent(requestPath,
+                final StaticContentItem staticContentItem = contentProvider.getStaticContent(requestPath,
                         localization.getId(), localization.getPath());
 
                 if (staticContentItem.getLastModified() > req.getHeaders().getIfModifiedSince() + 1000L) {

@@ -34,8 +34,8 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.sdl.webapp.dd4t.DD4TContentProvider.DEFAULT_PAGE_EXTENSION;
-import static com.sdl.webapp.dd4t.DD4TContentProvider.DEFAULT_PAGE_NAME;
+import static com.sdl.webapp.dd4t.DefaultContentProvider.DEFAULT_PAGE_EXTENSION;
+import static com.sdl.webapp.dd4t.DefaultContentProvider.DEFAULT_PAGE_NAME;
 
 @Component
 public class DD4TContentResolver implements ContentResolver {

@@ -1,11 +1,12 @@
 package com.sdl.webapp.main;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.StaticContentProvider;
+import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.main.interceptor.LocalizationResolverInterceptor;
 import com.sdl.webapp.main.interceptor.StaticContentInterceptor;
 import com.sdl.webapp.main.interceptor.ThreadLocalInterceptor;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -34,7 +35,7 @@ public class WebAppConfiguration extends WebMvcConfigurerAdapter {
     private LocalizationResolver localizationResolver;
 
     @Autowired
-    private StaticContentProvider staticContentProvider;
+    private ContentProvider contentProvider;
 
     @Autowired
     private WebRequestContext webRequestContext;
@@ -61,7 +62,7 @@ public class WebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptor staticContentInterceptor() {
-        return new StaticContentInterceptor(staticContentProvider, webRequestContext);
+        return new StaticContentInterceptor(contentProvider, webRequestContext);
     }
 
     @Bean

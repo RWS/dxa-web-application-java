@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.entity.ContentList;
+
 import org.springframework.cglib.core.Local;
 
 import java.io.InputStream;
@@ -53,4 +54,16 @@ public interface ContentProvider {
      * @throws ContentProviderException If an error occurred so that the content of the list could not be retrieved.
      */
     void populateDynamicList(ContentList contentList, Localization localization) throws ContentProviderException;
+    
+    /**
+     * Gets a static content item by path for a specific localization.
+     *
+     * @param path The path of the static content item.
+     * @param localizationId The localization ID.
+     * @param localizationPath The localization path.
+     * @return The {@code StaticContentItem}.
+     * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
+     */
+    StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
+            throws ContentProviderException;
 }

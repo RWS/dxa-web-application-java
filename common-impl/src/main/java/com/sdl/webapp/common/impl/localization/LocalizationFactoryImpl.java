@@ -4,15 +4,16 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
-import com.sdl.webapp.common.api.content.StaticContentProvider;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.impl.localization.semantics.JsonSchema;
 import com.sdl.webapp.common.impl.localization.semantics.JsonVocabulary;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,16 +62,16 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private static final String FILES_NODE_NAME = "files";
 
-    private final StaticContentProvider staticContentProvider;
+    private final ContentProvider contentProvider;
 
     private final WebApplicationContext webApplicationContext;
 
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public LocalizationFactoryImpl(StaticContentProvider staticContentProvider,
+    public LocalizationFactoryImpl(ContentProvider contentProvider,
                                    WebApplicationContext webApplicationContext, ObjectMapper objectMapper) {
-        this.staticContentProvider = staticContentProvider;
+        this.contentProvider = contentProvider;
         this.webApplicationContext = webApplicationContext;
         this.objectMapper = objectMapper;
     }
@@ -87,10 +88,10 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         loadVersion(id, path, builder);
         loadResources(id, path, builder);
 
-        final List<JsonSchema> semanticSchemas = parseJsonFileObject(staticContentProvider,
+        final List<JsonSchema> semanticSchemas = parseJsonFileObject(contentProvider,
                 SEMANTIC_SCHEMAS_PATH, id, path, new TypeReference<List<JsonSchema>>() { });
 
-        final List<JsonVocabulary> semanticVocabularies = parseJsonFileObject(staticContentProvider,
+        final List<JsonVocabulary> semanticVocabularies = parseJsonFileObject(contentProvider,
                 SEMANTIC_VOCABULARIES_PATH, id, path, new TypeReference<List<JsonVocabulary>>() { });
 
         builder.addSemanticSchemas(convertSemantics(semanticSchemas, semanticVocabularies));
@@ -105,12 +106,12 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private void loadMainConfiguration(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
-        final JsonNode configRootNode = parseJsonFileTree(staticContentProvider, CONFIG_BOOTSTRAP_PATH, id, path);
+        final JsonNode configRootNode = parseJsonFileTree(contentProvider, CONFIG_BOOTSTRAP_PATH, id, path);
         builder.setMediaRoot(configRootNode.get(MEDIA_ROOT_NODE_NAME).asText(DEFAULT_MEDIA_ROOT))
                 .setDefault(configRootNode.get(DEFAULT_LOCALIZATION_NODE_NAME).asBoolean(false))
                 .setStaging(configRootNode.get(STAGING_NODE_NAME).asBoolean(false))
                 .addSiteLocalizations(loadSiteLocalizations(configRootNode))
-                .addConfiguration(parseJsonSubFiles(staticContentProvider, configRootNode, id, path));
+                .addConfiguration(parseJsonSubFiles(contentProvider, configRootNode, id, path));
     }
 
     private List<SiteLocalizationImpl> loadSiteLocalizations(JsonNode configRootNode) {
@@ -121,7 +122,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     private void loadVersion(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
         try {
-            StaticContentItem item = staticContentProvider.getStaticContent(VERSION_PATH, id, path);
+            StaticContentItem item = contentProvider.getStaticContent(VERSION_PATH, id, path);
             try (final InputStream in = item.getContent()) {
                 builder.setVersion(objectMapper.readTree(in).get("version").asText());
                 return;
@@ -149,13 +150,13 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private void loadResources(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
-        final JsonNode resourcesRootNode = parseJsonFileTree(staticContentProvider, RESOURCES_BOOTSTRAP_PATH, id, path);
-        builder.addResources(parseJsonSubFiles(staticContentProvider, resourcesRootNode, id, path));
+        final JsonNode resourcesRootNode = parseJsonFileTree(contentProvider, RESOURCES_BOOTSTRAP_PATH, id, path);
+        builder.addResources(parseJsonSubFiles(contentProvider, resourcesRootNode, id, path));
     }
 
     private void loadIncludes(String id, String path, LocalizationImpl.Builder builder)
             throws LocalizationFactoryException {
-        final JsonNode includesRootNode = parseJsonFileTree(staticContentProvider, INCLUDES_PATH, id, path);
+        final JsonNode includesRootNode = parseJsonFileTree(contentProvider, INCLUDES_PATH, id, path);
         final Iterator<Map.Entry<String, JsonNode>> i = includesRootNode.fields();
         while (i.hasNext()) {
             final Map.Entry<String, JsonNode> entry = i.next();
@@ -166,11 +167,11 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         }
     }
 
-    public <T> T parseJsonFileObject(StaticContentProvider staticContentProvider, String filePath, String locId,
+    public <T> T parseJsonFileObject(ContentProvider contentProvider, String filePath, String locId,
                                             String locPath, TypeReference<T> resultType)
             throws LocalizationFactoryException {
         try {
-            final StaticContentItem item = staticContentProvider.getStaticContent(filePath, locId, locPath);
+            final StaticContentItem item = contentProvider.getStaticContent(filePath, locId, locPath);
             try (final InputStream in = item.getContent()) {
                 return objectMapper.readValue(in, resultType);
             }
@@ -180,11 +181,11 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         }
     }
 
-    public JsonNode parseJsonFileTree(StaticContentProvider staticContentProvider, String filePath, String locId,
+    public JsonNode parseJsonFileTree(ContentProvider contentProvider, String filePath, String locId,
                                              String locPath)
             throws LocalizationFactoryException {
         try {
-            final StaticContentItem item = staticContentProvider.getStaticContent(filePath, locId, locPath);
+            final StaticContentItem item = contentProvider.getStaticContent(filePath, locId, locPath);
             try (final InputStream in = item.getContent()) {
                 return objectMapper.readTree(in);
             }
@@ -194,7 +195,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         }
     }
 
-    public Map<String, String> parseJsonSubFiles(StaticContentProvider staticContentProvider, JsonNode rootNode,
+    public Map<String, String> parseJsonSubFiles(ContentProvider contentProvider, JsonNode rootNode,
                                                         String locId, String locPath)
             throws LocalizationFactoryException {
         final Map<String, String> map = new HashMap<>();
@@ -207,7 +208,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                     final String prefix = subFilePath.substring(subFilePath.lastIndexOf('/') + 1,
                             subFilePath.lastIndexOf('.') + 1);
 
-                    final Iterator<Map.Entry<String, JsonNode>> i = parseJsonFileTree(staticContentProvider,
+                    final Iterator<Map.Entry<String, JsonNode>> i = parseJsonFileTree(contentProvider,
                             subFilePath, locId,  locPath).fields();
                     while (i.hasNext()) {
                         final Map.Entry<String, JsonNode> entry = i.next();

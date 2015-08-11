@@ -2,7 +2,7 @@ package com.sdl.webapp.common.api.content;
 
 /**
  * Content provider for static content.
- */
+ *//*
 public interface StaticContentProvider {
 
     /**
@@ -13,7 +13,8 @@ public interface StaticContentProvider {
      * @param localizationPath The localization path.
      * @return The {@code StaticContentItem}.
      * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
-     */
+     *//*
     StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
             throws ContentProviderException;
 }
+*/

@@ -2,10 +2,11 @@ package com.sdl.webapp.tridion.xpm;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
-import com.sdl.webapp.common.api.content.StaticContentProvider;
 import com.sdl.webapp.common.api.localization.Localization;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,13 @@ public class XpmRegionConfig {
 
     private final Map<String, Map<String, XpmRegion>> regionsByLocalization = new HashMap<>();
 
-    private final StaticContentProvider staticContentProvider;
+    private final ContentProvider contentProvider;
 
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public XpmRegionConfig(StaticContentProvider staticContentProvider, ObjectMapper objectMapper) {
-        this.staticContentProvider = staticContentProvider;
+    public XpmRegionConfig(ContentProvider contentProvider, ObjectMapper objectMapper) {
+        this.contentProvider = contentProvider;
         this.objectMapper = objectMapper;
     }
 
@@ -51,7 +52,7 @@ public class XpmRegionConfig {
     private List<XpmRegion> loadXpmRegions(Localization localization) {
         final StaticContentItem item;
         try {
-            item = staticContentProvider.getStaticContent(REGIONS_PATH, localization.getId(), localization.getPath());
+            item = contentProvider.getStaticContent(REGIONS_PATH, localization.getId(), localization.getPath());
         } catch (ContentProviderException e) {
             LOG.error("Exception while reading XPM regions configuration", e);
             return null;

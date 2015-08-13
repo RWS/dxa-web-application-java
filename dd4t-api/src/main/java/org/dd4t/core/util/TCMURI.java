@@ -37,23 +37,20 @@ public class TCMURI implements Serializable {
 
     @Deprecated
     public TCMURI(String uri) throws ParseException {
-        this(new Builder().with(uri));
+        this(new Builder(uri));
     }
 
     //added because of custom code, next release can be deleted?
     @Deprecated
     public TCMURI(String uri, int version) throws ParseException {
-        this(new Builder()
-                .with(uri)
+        this(new Builder(uri)
                 .version(version));
     }
 
     //make it private instead of delete on next release
     @Deprecated
     public TCMURI(int publicationId, int itemId, int itemType, int version) {
-        this(new Builder()
-                .publicationId(publicationId)
-                .itemId(itemId)
+        this(new Builder(publicationId, itemId)
                 .itemType(itemType)
                 .version(version));
     }
@@ -71,7 +68,7 @@ public class TCMURI implements Serializable {
 
     @Deprecated
     protected void load(String uriString) throws ParseException {
-        Builder builder = new Builder().with(uriString);
+        Builder builder = new Builder(uriString);
         this.itemType = builder.itemType;
         this.itemId = builder.itemId;
         this.pubId = builder.pubId;
@@ -87,14 +84,9 @@ public class TCMURI implements Serializable {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(URI_NAMESPACE);
-        sb.append(this.pubId);
-        sb.append(SEPARATOR);
-        sb.append(this.itemId);
-        sb.append(SEPARATOR);
-        sb.append(this.itemType);
-        return sb.toString();
+        return URI_NAMESPACE + this.pubId
+                + SEPARATOR + this.itemId
+                + SEPARATOR + this.itemType;
     }
 
     public int getItemType() {
@@ -114,19 +106,26 @@ public class TCMURI implements Serializable {
     }
 
     public static class Builder {
+        private static final Pattern PATTERN = Pattern.compile(
+                "^tcm:(?<pubId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?(-v(?<version>\\d+))?$");
+
         private int pubId;
         private int itemId;
-        private int itemType;
+        private int itemType = 16;
         private int version = -1;
 
-        public Builder publicationId(int pubId) {
+        public Builder(int pubId, int itemId) {
             this.pubId = pubId;
-            return this;
+            this.itemId = itemId;
         }
 
-        public Builder itemId(int itemId) {
-            this.itemId = itemId;
-            return this;
+        public Builder(String uri) throws ParseException {
+            try {
+                validatePatternOf(uri);
+                extractItemsFrom(uri);
+            } catch (IllegalArgumentException iae) {
+                throw new ParseException(iae.getMessage(), 0);
+            }
         }
 
         public Builder itemType(int itemType) {
@@ -151,8 +150,7 @@ public class TCMURI implements Serializable {
         }
 
         private void extractItemsFrom(String uri) {
-            Pattern p = Pattern.compile("^tcm:(?<pubId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))*(-v(?<version>\\d+))*$");
-            Matcher m = p.matcher(uri);
+            Matcher m = PATTERN.matcher(uri);
 
             if (!m.find()) {
                 throw new IllegalArgumentException(String.format("URI %s does not match the pattern", uri));
@@ -160,23 +158,18 @@ public class TCMURI implements Serializable {
 
             this.pubId = Integer.parseInt(m.group("pubId"));
             this.itemId = Integer.parseInt(m.group("itemId"));
-            this.itemType = m.group("itemType") == null ? 16 : Integer.parseInt(m.group("itemType"));
-            this.version = m.group("version") == null ? -1 : Integer.parseInt(m.group("version"));
-        }
 
-        public Builder with(String uri) throws ParseException {
-            try {
-                validatePatternOf(uri);
-                extractItemsFrom(uri);
-            } catch (IllegalArgumentException iae) {
-                throw new ParseException(iae.getMessage(), 0);
+            if (m.group("itemType") != null) {
+                this.itemType = Integer.parseInt(m.group("itemType"));
             }
 
-            return this;
+            if (m.group("version") != null) {
+                this.version = Integer.parseInt(m.group("version"));
+            }
         }
 
         public TCMURI create() {
-            return new TCMURI(pubId, itemId, itemType, version);
+            return new TCMURI(this);
         }
     }
 }

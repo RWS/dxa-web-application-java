@@ -88,7 +88,7 @@ public class TCMURITest {
     }
 
     @Test public void
-    build_with_only_mandatory_parameters_and_put_default() throws ParseException {
+    build_when_url_only_mandatory_parameters_and_put_default() throws ParseException {
         final String uri = String.format("tcm:%s-%s", PUBLICATION_ID, ITEM_ID);
 
         TCMURI tcmUri = new TCMURI();
@@ -148,7 +148,7 @@ public class TCMURITest {
     create_tcmUri_with_builder() throws ParseException {
         final String uri = String.format("tcm:%s-%s-%s-v%s", PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
 
-        TCMURI tcmUri = new TCMURI.Builder().with(uri).create();
+        TCMURI tcmUri = new TCMURI.Builder(uri).create();
 
         assertThat(tcmUri.getPublicationId(), is(PUBLICATION_ID));
         assertThat(tcmUri.getItemId(), is(ITEM_ID));
@@ -161,12 +161,35 @@ public class TCMURITest {
         final String uri = String.format("tcm:%s-%s-%s-v%s", PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
         final int version = 4;
 
-        TCMURI tcmUri = new TCMURI.Builder().with(uri).version(version).create();
+        TCMURI tcmUri = new TCMURI.Builder(uri)
+                .version(version)
+                .create();
 
         assertThat(tcmUri.getPublicationId(), is(PUBLICATION_ID));
         assertThat(tcmUri.getItemId(), is(ITEM_ID));
         assertThat(tcmUri.getItemType(), is(ITEM_TYPE));
         assertThat(tcmUri.getVersion(), is(version));
+    }
+
+    @Test public void
+    build_with_only_mandatory_fields_and_default() throws ParseException {
+        TCMURI tcmUri = new TCMURI.Builder(PUBLICATION_ID, ITEM_ID)
+                .create();
+
+        assertThat(tcmUri.getPublicationId(), is(PUBLICATION_ID));
+        assertThat(tcmUri.getItemId(), is(ITEM_ID));
+        assertThat(tcmUri.getItemType(), is(DEFAULT_ITEM_TYPE));
+        assertThat(tcmUri.getVersion(), is(DEFAULT_VERSION));
+    }
+
+    @Test public void
+    create_using_uri_and_version() throws ParseException {
+        final String uri = String.format("tcm:%s-%s-v%s", PUBLICATION_ID, ITEM_ID, VERSION);
+        final int version = 4;
+
+        TCMURI tcmUri = new TCMURI(uri, version);
+        assertThat(tcmUri.getItemType(), is(16));
+        assertThat(tcmUri.getVersion(), is(4));
     }
 
 

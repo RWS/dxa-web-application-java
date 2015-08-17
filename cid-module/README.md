@@ -1,7 +1,7 @@
 Contextual Image Delivery
 =============================
 
-This is an optional module for the Tridion Reference Implementation Java web application. It contains an implementation
+This is an optional module for the SDL Digital Experience Accelerator Java web application. It contains an implementation
 of interface `MediaHelper` that uses Tridion Contextual Image Delivery (CID) to resize images on the server side.
 
 Note that in order to use Tridion CID, you need a license. If you do not have a license for CID or if you are not sure,

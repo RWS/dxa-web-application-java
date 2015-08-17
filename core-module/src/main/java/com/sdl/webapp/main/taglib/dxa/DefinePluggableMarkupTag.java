@@ -1,4 +1,4 @@
-package com.sdl.webapp.main.taglib.tri;
+package com.sdl.webapp.main.taglib.dxa;
 
 import com.sdl.webapp.common.markup.PluggableMarkupRegistry;
 import com.sdl.webapp.common.markup.html.HtmlNode;

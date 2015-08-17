@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
+<%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %> 
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Place" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
@@ -11,7 +11,7 @@
     <c:choose>
         <c:when test="${not empty entity.image and screenWidth != 'EXTRA_SMALL'}">
             <div class="hero" ${markup.property(entity, "image")}>
-                <tri:media media="${entity.image}" aspect="3.3"/>
+                <dxa:media media="${entity.image}" aspect="3.3"/>
                 <div class="overlay overlay-tl ribbon">
                     <h1 ${markup.property(entity, "name")}>${entity.name}</h1>
                 </div>
@@ -27,7 +27,7 @@
         <div id="location-tile" class="row">
             <c:if test="${not empty entity.location}">
                 <div class="col-sm-6">
-                    <tri:googlemap latitude="${entity.location.latitude}" longitude="${entity.location.longitude}"
+                    <dxa:googlemap latitude="${entity.location.latitude}" longitude="${entity.location.longitude}"
                                    markerName="${entity.name}" mapHeight="300"/>
                 </div>
             </c:if>

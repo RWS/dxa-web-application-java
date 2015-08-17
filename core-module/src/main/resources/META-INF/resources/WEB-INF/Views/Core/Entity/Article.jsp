@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
+<%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %> 
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Article" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
@@ -10,7 +10,7 @@
     <c:choose>
         <c:when test="${not empty entity.image and screenWidth != 'EXTRA_SMALL'}">
             <div class="hero" ${markup.property(entity, "image")}>
-                <tri:media media="${entity.image}" aspect="3.3"/>
+                <dxa:media media="${entity.image}" aspect="3.3"/>
                 <div class="overlay overlay-tl ribbon">
                     <h1 ${markup.property(entity, "headline")}>${entity.headline}</h1>
                 </div>
@@ -36,7 +36,7 @@
                 </c:if>
                 <c:if test="${not empty para.media}">
                     <figure ${markup.property(para, "media")}>
-                        <tri:media media="${para.media}" widthFactor="100%"/>
+                        <dxa:media media="${para.media}" widthFactor="100%"/>
                         <c:if test="${not empty para.caption}">
                             <figcaption ${markup.property(para, "caption")}>${para.caption}</figcaption>
                         </c:if>

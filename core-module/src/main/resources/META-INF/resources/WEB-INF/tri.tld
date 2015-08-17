@@ -5,13 +5,13 @@
         version="2.1">
 
     <tlib-version>1.0</tlib-version>
-    <short-name>tridion-reference-impl</short-name>
-    <uri>http://www.sdl.com/tridion-reference-impl</uri>
+    <short-name>tridion-dxa</short-name>
+    <uri>http://www.sdl.com/tridion-dxa</uri>
 
     <!-- Include a page -->
     <tag>
         <name>page</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.PageTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.PageTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -28,7 +28,7 @@
     <!-- Include a specific region -->
     <tag>
         <name>region</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.RegionTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.RegionTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
@@ -45,7 +45,7 @@
     <!-- Include all regions on the page, except excluded ones -->
     <tag>
         <name>regions</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.RegionsTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.RegionsTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>exclude</name>
@@ -57,7 +57,7 @@
     <!-- Include a specific entity -->
     <tag>
         <name>entity</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.EntityTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.EntityTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>region</name>
@@ -79,7 +79,7 @@
     <!-- Include all entities in a region -->
     <tag>
         <name>entities</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.EntitiesTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.EntitiesTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>region</name>
@@ -91,7 +91,7 @@
     <!-- Insert media: an image, YouTube video or download link -->
     <tag>
         <name>media</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.MediaTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.MediaTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>media</name>
@@ -126,7 +126,7 @@
     <!-- Insert a link -->
     <tag>
         <name>link</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.LinkTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.LinkTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>link</name>
@@ -144,7 +144,7 @@
     <!-- Insert a resource text -->
     <tag>
         <name>resource</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.ResourceTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.ResourceTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>key</name>
@@ -166,7 +166,7 @@
     <!-- Insert a static Google map -->
     <tag>
         <name>googlestaticmap</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.GoogleStaticMapTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.GoogleStaticMapTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>latitude</name>
@@ -202,7 +202,7 @@
     <!-- Insert a Google map -->
     <tag>
         <name>googlemap</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.GoogleMapTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.GoogleMapTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>latitude</name>
@@ -238,7 +238,7 @@
     <!-- Insert pluggable markup -->
     <tag>
         <name>pluggableMarkup</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.PluggableMarkupTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.PluggableMarkupTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
             <name>label</name>
@@ -250,7 +250,7 @@
     <!-- Define pluggable markup -->
     <tag>
         <name>definePluggableMarkup</name>
-        <tag-class>com.sdl.webapp.main.taglib.tri.DefinePluggableMarkupTag</tag-class>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.DefinePluggableMarkupTag</tag-class>
         <body-content>JSP</body-content>
         <attribute>
             <name>label</name>

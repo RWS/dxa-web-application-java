@@ -43,7 +43,7 @@
     </profiles>
 
     <dependencies>
-        <!-- Tridion Reference Implementation -->
+        <!-- SDL Digital Experience Accelerator -->
         <dependency>
             <groupId>com.sdl</groupId>
             <artifactId>common-api</artifactId>

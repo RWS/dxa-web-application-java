@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="tri" uri="http://www.sdl.com/tridion-reference-impl" %>
+<%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %> 
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Teaser" scope="request"/>
@@ -12,7 +12,7 @@
 <div class="teaser ${formatOptions['style']}" ${markup.entity(entity)}>
     <c:if test="${not empty entity.media}">
         <div ${markup.property(entity, "media")}>
-            <tri:media media="${entity.media}" aspect="1.62" widthFactor="${screenWidth == 'EXTRA_SMALL' ? '160px' : '100%'}" cssClass="teaser-img loader-img"/>
+            <dxa:media media="${entity.media}" aspect="1.62" widthFactor="${screenWidth == 'EXTRA_SMALL' ? '160px' : '100%'}" cssClass="teaser-img loader-img"/>
         </div>
     </c:if>
     <h3 class="teaser-heading ${formatOptions['headingStyle']}" ${markup.property(entity, "headline")}>
@@ -35,7 +35,7 @@
                     ${entity.link.linkText}
                 </c:when>
                 <c:otherwise>
-                    <tri:resource key="core.readMoreLinkText"/>
+                    <dxa:resource key="core.readMoreLinkText"/>
                 </c:otherwise>
             </c:choose>
             <c:if test="${not fn:contains(linkStyle, 'btn')}">

@@ -1,4 +1,4 @@
-package com.sdl.webapp.main.taglib.tri;
+package com.sdl.webapp.main.taglib.dxa;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.Page;

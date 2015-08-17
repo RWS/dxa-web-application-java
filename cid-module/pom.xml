@@ -14,7 +14,7 @@
     </parent>
 
     <dependencies>
-        <!-- Tridion Reference Implementation -->
+        <!-- SDL Digital Experience Accelerator -->
         <dependency>
             <groupId>com.sdl</groupId>
             <artifactId>common-api</artifactId>
@@ -140,6 +140,8 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-ehcache</artifactId>
         </dependency>
+        <!-- Hibernate EHCache -->
 
+		
     </dependencies>
 </project>

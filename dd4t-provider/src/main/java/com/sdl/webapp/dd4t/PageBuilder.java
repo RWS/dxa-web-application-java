@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.RegionBuilder;
@@ -14,8 +15,8 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;
 import com.sdl.webapp.common.api.model.page.PageImpl;
-import org.dd4t.contentmodel.*;
 
+import org.dd4t.contentmodel.*;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.contentmodel.impl.BaseField;
@@ -59,6 +60,8 @@ final class PageBuilder {
 
     private final LinkResolver linkResolver;
 
+    private final ConditionalEntityEvaluator conditionalEntityEvaluator;
+    
     private final WebRequestContext webRequestContext;
 
     private final RegionBuilder regionBuilder;
@@ -99,11 +102,13 @@ final class PageBuilder {
     PageBuilder(EntityBuilder entityBuilder,
                 RegionBuilder regionBuilder,
                 LinkResolver linkResolver,
+                ConditionalEntityEvaluator conditionalEntityEvaluator,
                 ComponentPresentationFactory dd4tComponentPresentationFactory,
                 WebRequestContext webRequestContext) {
         this.entityBuilder = entityBuilder;
         this.regionBuilder = regionBuilder;
         this.linkResolver = linkResolver;
+        this.conditionalEntityEvaluator = conditionalEntityEvaluator;
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
         this.webRequestContext = webRequestContext;
     }
@@ -138,7 +143,7 @@ final class PageBuilder {
         page.setPageData(createPageData(genericPage, localization));
         page.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
 
-        final Map<String, Region> regions = this.regionBuilder.buildRegions(page, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
+        final Map<String, Region> regions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
         final Map<String, Region> regionMap = new LinkedHashMap<>();
         regionMap.putAll(regions);
         page.setRegions(regionMap);

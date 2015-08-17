@@ -2,6 +2,7 @@ package com.sdl.webapp.common.impl;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.DefaultImplementation;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.RegionBuilderCallback;
 import com.sdl.webapp.common.api.content.RegionBuilder;
@@ -10,6 +11,7 @@ import com.sdl.webapp.common.api.model.Entity;
 import com.sdl.webapp.common.api.model.Page;
 import com.sdl.webapp.common.api.model.Region;
 import com.sdl.webapp.common.api.model.region.RegionImpl;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -35,6 +37,7 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
 
     @Override
     public Map<String,Region> buildRegions(Page page,
+			   							   ConditionalEntityEvaluator conditionalEntityEvaluator,
                                            List<?> sourceList,
                                            RegionBuilderCallback callback,
                                            Localization localization) throws ContentProviderException {
@@ -55,8 +58,11 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
 
                     regions.put(regionName, region);
                 }
-
-                region.addEntity(entity);
+                if (conditionalEntityEvaluator == null || conditionalEntityEvaluator.IncludeEntity(entity))
+                {
+                	region.addEntity(entity);
+                }
+                
             }
         }
         return regions;

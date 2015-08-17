@@ -25,6 +25,7 @@ public interface RegionBuilder {
      * @throws ContentProviderException
      */
     public Map<String,Region> buildRegions(Page page,
+			   							   ConditionalEntityEvaluator conditionalEntityEvaluator,
                                            List<?> sourceList,
                                            RegionBuilderCallback callback,
                                            Localization localization) throws ContentProviderException;

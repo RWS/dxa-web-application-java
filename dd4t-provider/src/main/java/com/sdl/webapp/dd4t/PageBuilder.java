@@ -14,7 +14,9 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.page.PageImpl;
+import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 
 import org.dd4t.contentmodel.*;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -144,8 +146,8 @@ final class PageBuilder {
         page.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
 
         final Map<String, RegionModel> regions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
-        final Map<String, RegionModel> regionMap = new LinkedHashMap<>();
-        regionMap.putAll(regions);
+        RegionModelSet regionMap = new RegionModelSetImpl();
+        regionMap.addAll(regions.values());
         page.setRegions(regionMap);
 
         return page;

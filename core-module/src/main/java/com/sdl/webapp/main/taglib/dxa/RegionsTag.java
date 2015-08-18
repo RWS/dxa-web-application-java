@@ -39,7 +39,7 @@ public class RegionsTag extends AbstractMarkupTag {
             excludes.addAll(Arrays.asList(exclude.split("\\s*,\\s*")));
         }
 
-        for (RegionModel region : page.getRegions().values()) {
+        for (RegionModel region : page.getRegions()) {
             String name = region.getName();
             if (excludes.contains(name)) {
                 LOG.debug("Excluding region: {}", name);

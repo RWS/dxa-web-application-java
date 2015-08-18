@@ -3,6 +3,8 @@ package com.sdl.webapp.common.api.model.page;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,7 +19,7 @@ public class PageImpl implements PageModel {
     private String title;
     private Map<String, String> meta = new HashMap<>();
     private Map<String, PageModel> includes = new HashMap<>();
-    private Map<String, RegionModel> regions = new HashMap<>();
+    private RegionModelSet regions = new RegionModelSetImpl();
     private Map<String, String> pageData = new HashMap<>();
     private MvcData mvcData;
 
@@ -67,11 +69,11 @@ public class PageImpl implements PageModel {
     }
 
     @Override
-    public Map<String, RegionModel> getRegions() {
+    public RegionModelSet getRegions() {
         return regions;
     }
 
-    public void setRegions(Map<String, RegionModel> regions) {
+    public void setRegions(RegionModelSet regions) {
         this.regions = regions;
     }
 

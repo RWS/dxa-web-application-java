@@ -37,16 +37,6 @@ public interface ContentProvider {
     EntityModel getEntityModel(String id, String templateId, Localization localization) throws ContentProviderException;
 
     /**
-     * Gets an {@code InputStream} from which the raw content of a page can be read.
-     *
-     * @param path The path of the page.
-     * @param localization The localization.
-     * @return An {@code InputStream} from which the raw content of a page can be read.
-     * @throws ContentProviderException If an error occurred so that the content of the page could be retrieved.
-     */
-    InputStream getPageContent(String path, Localization localization) throws ContentProviderException;
-
-    /**
      * Populates a dynamic list.
      *
      * @param contentList The list to populate.

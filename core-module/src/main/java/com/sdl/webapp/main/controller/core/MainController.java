@@ -118,25 +118,11 @@ public class MainController {
     public void handleGetPageJSON(HttpServletResponse response) throws IOException {
         final ServletServerHttpResponse res = new ServletServerHttpResponse(response);
 
-        // Only handle this if explicitly enabled (by an environment property)
-        if (!allowJsonResponse) {
-            res.setStatusCode(HttpStatus.NOT_ACCEPTABLE);
-            res.close();
-            return;
-        }
-
-        final String requestPath = webRequestContext.getRequestPath();
-        LOG.trace("handleGetPageJSON: requestPath={}", requestPath);
-
-        res.setStatusCode(HttpStatus.OK);
-        res.getHeaders().setContentType(MediaType.APPLICATION_JSON);
-
-        final Localization localization = webRequestContext.getLocalization();
-        try (final InputStream in = getPageContent(requestPath, localization); final OutputStream out = res.getBody()) {
-            StreamUtils.copy(in, out);
-        }
-
+        //Todo : remove this function. It should not directly make json data accessible outside of the DXA internal implementation
+        res.setStatusCode(HttpStatus.NOT_ACCEPTABLE);
         res.close();
+        return;
+       
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/resolve/{itemId}")
@@ -207,18 +193,6 @@ public class MainController {
     private PageModel getPageModel(String path, Localization localization) {
         try {
             return contentProvider.getPageModel(path, localization);
-        } catch (PageNotFoundException e) {
-            LOG.error("Page not found: {}", path, e);
-            throw new NotFoundException("Page not found: " + path, e);
-        } catch (ContentProviderException e) {
-            LOG.error("An unexpected error occurred", e);
-            throw new InternalServerErrorException("An unexpected error occurred", e);
-        }
-    }
-
-    private InputStream getPageContent(String path, Localization localization) {
-        try {
-            return contentProvider.getPageContent(path, localization);
         } catch (PageNotFoundException e) {
             LOG.error("Page not found: {}", path, e);
             throw new NotFoundException("Page not found: " + path, e);

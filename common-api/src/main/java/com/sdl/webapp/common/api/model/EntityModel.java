@@ -9,7 +9,5 @@ public interface EntityModel extends ViewModel {
 
     String getId();
 
-    Map<String, String> getEntityData();
-
     Map<String, String> getPropertyData();
 }

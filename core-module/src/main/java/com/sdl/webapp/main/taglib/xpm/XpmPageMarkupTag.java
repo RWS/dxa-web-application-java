@@ -28,7 +28,7 @@ public class XpmPageMarkupTag extends XpmMarkupTag {
 
     @Override
     protected HtmlNode generateXpmMarkup() {
-        final Map<String, String> pageData = page.getPageData();
+        final Map<String, String> pageData = page.getXpmMetadata();
 
         final String pageId = pageData.get("PageID");
         final String pageModified = pageData.get("PageModified");

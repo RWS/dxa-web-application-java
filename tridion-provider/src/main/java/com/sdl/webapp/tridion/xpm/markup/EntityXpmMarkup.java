@@ -112,7 +112,7 @@ public class EntityXpmMarkup implements MarkupDecorator {
     }
 
     private HtmlNode buildXpmMarkup(EntityModel entity) {
-        final Map<String, String> entityData = entity.getEntityData();
+        final Map<String, String> entityData = entity.getXpmMetadata();
 
         final String componentId = entityData.get("ComponentID");
         if (Strings.isNullOrEmpty(componentId)) {

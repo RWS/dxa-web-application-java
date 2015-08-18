@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.region;
 
+import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RegionModel;
@@ -15,7 +16,7 @@ public class RegionImpl implements RegionModel {
 
     private String name;
     private Map<String, EntityModel> entities = new LinkedHashMap<>();
-    private Map<String, String> regionData = new HashMap<>();
+    private Map<String, String> xpmMetadata = new HashMap<>();
     private MvcData mvcData;
 
     @Override
@@ -46,12 +47,12 @@ public class RegionImpl implements RegionModel {
     }
 
     @Override
-    public Map<String, String> getRegionData() {
-        return regionData;
+    public Map<String, String> getXpmMetadata() {
+        return xpmMetadata;
     }
 
-    public void setRegionData(Map<String, String> regionData) {
-        this.regionData = regionData;
+    public void setXpmMetadata(Map<String, String> xpmMetadata) {
+        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
     }
 
     @Override

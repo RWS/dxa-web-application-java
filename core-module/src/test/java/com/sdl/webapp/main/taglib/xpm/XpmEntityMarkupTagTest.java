@@ -51,7 +51,7 @@ public class XpmEntityMarkupTagTest {
 
     private XpmEntityMarkupTag setup(Map<String, String> entityData) {
         final EntityModel entity = mock(EntityModel.class);
-        when(entity.getEntityData()).thenReturn(entityData);
+        when(entity.getXpmMetadata()).thenReturn(entityData);
 
         final XpmEntityMarkupTag tag = new XpmEntityMarkupTag();
         tag.setEntity(entity);

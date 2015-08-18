@@ -15,23 +15,13 @@ public class RegionModelSetImpl extends HashSet<RegionModel> implements RegionMo
 	@Override
 	public RegionModel get(String name) {
 		// TODO Auto-generated method stub
-		RegionModel region = null;
-		this.tryGetValue(name,  region);
-		return region;		
-	}
-
-	@Override
-	public Boolean tryGetValue(String name, RegionModel region) {
+		
 		Collection<RegionModel> c = CollectionUtils.select(this, new RegionsPredicate(name));
-		if(c.isEmpty())
+		if(!c.isEmpty())
 		{
-			return false;
+			return c.iterator().next();
 		}
-		else
-		{
-			region = c.iterator().next();
-			return true;
-		}		
+		return null;
 	}
 
 	@Override

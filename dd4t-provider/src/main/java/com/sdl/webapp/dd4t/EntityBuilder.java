@@ -114,21 +114,21 @@ final class EntityBuilder {
         final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
 
-        ImmutableMap.Builder<String, String> entityDataBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
 
         if ( entity instanceof EclItem ) {
-            entityDataBuilder.put("ComponentID", ((EclItem) entity).getEclUrl());
+        	xpmMetaDataBuilder.put("ComponentID", ((EclItem) entity).getEclUrl());
         }
         else {
-            entityDataBuilder.put("ComponentID", component.getId());
+        	xpmMetaDataBuilder.put("ComponentID", component.getId());
         }
-        entityDataBuilder.put("ComponentModified",
+        xpmMetaDataBuilder.put("ComponentModified",
                 ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
-        entityDataBuilder.put("ComponentTemplateID", componentTemplate.getId());
-        entityDataBuilder.put("ComponentTemplateModified",
+        xpmMetaDataBuilder.put("ComponentTemplateID", componentTemplate.getId());
+        xpmMetaDataBuilder.put("ComponentTemplateModified",
                 ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
 
-        entity.setEntityData(entityDataBuilder.build());
+        entity.setXpmMetadata(xpmMetaDataBuilder.build());
 
     }
 

@@ -18,6 +18,4 @@ public interface PageModel extends ViewModel {
     Map<String, PageModel> getIncludes();
 
     RegionModelSet getRegions();
-
-    Map<String, String> getPageData();
 }

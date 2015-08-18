@@ -97,7 +97,7 @@ public class NavigationController extends AbstractController {
         }
 
         if (navigationLinks != null) {
-            navigationLinks.setEntityData(entity.getEntityData());
+            navigationLinks.setXpmMetadata(entity.getXpmMetadata());
             navigationLinks.setPropertyData(entity.getPropertyData());
             request.setAttribute(ENTITY_MODEL, navigationLinks);
         }
@@ -125,7 +125,7 @@ public class NavigationController extends AbstractController {
         final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
 
         final SitemapItem navigationModel = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
-        navigationModel.setEntityData(entity.getEntityData());
+        navigationModel.setXpmMetadata(entity.getXpmMetadata());
         navigationModel.setPropertyData(entity.getPropertyData());
         request.setAttribute(ENTITY_MODEL, navigationModel);
 

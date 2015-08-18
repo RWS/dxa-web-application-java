@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.page;
 
+import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
@@ -20,7 +21,7 @@ public class PageImpl implements PageModel {
     private Map<String, String> meta = new HashMap<>();
     private Map<String, PageModel> includes = new HashMap<>();
     private RegionModelSet regions = new RegionModelSetImpl();
-    private Map<String, String> pageData = new HashMap<>();
+    private Map<String, String> xpmMetadata = new HashMap<>();
     private MvcData mvcData;
 
     @Override
@@ -78,12 +79,12 @@ public class PageImpl implements PageModel {
     }
 
     @Override
-    public Map<String, String> getPageData() {
-        return pageData;
+    public Map<String, String> getXpmMetadata() {
+        return xpmMetadata;
     }
 
-    public void setPageData(Map<String, String> pageData) {
-        this.pageData = pageData;
+    public void setXpmMetadata(Map<String, String> xpmMetadata) {
+        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);;
     }
 
     @Override

@@ -46,7 +46,7 @@ public class XpmPageMarkupTagTest {
 
     private XpmPageMarkupTag setup(Map<String, String> pageData) {
         final PageModel page = mock(PageModel.class);
-        when(page.getPageData()).thenReturn(pageData);
+        when(page.getXpmMetadata()).thenReturn(pageData);
 
         final XpmPageMarkupTag tag = new XpmPageMarkupTag();
         tag.setPage(page);

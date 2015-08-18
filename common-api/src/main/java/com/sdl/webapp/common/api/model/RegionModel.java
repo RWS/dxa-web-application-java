@@ -11,7 +11,5 @@ public interface RegionModel extends ViewModel {
 
     Map<String, EntityModel> getEntities();
 
-    Map<String, String> getRegionData();
-
     EntityModel getEntity(String entityId);
 }

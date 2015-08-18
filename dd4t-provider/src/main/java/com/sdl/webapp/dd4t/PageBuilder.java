@@ -142,7 +142,7 @@ final class PageBuilder {
             page.getIncludes().put(includePage.getName(), includePage);
         }
 
-        page.setPageData(createPageData(genericPage, localization));
+        page.setXpmMetadata(createXpmMetaData(genericPage, localization));
         page.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
 
         final Map<String, RegionModel> regions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
@@ -280,19 +280,19 @@ final class PageBuilder {
         return null;
     }
 
-    private Map<String, String> createPageData(org.dd4t.contentmodel.Page page, Localization localization) {
+    private Map<String, String> createXpmMetaData(org.dd4t.contentmodel.Page page, Localization localization) {
         final PageTemplate pageTemplate = page.getPageTemplate();
 
-        ImmutableMap.Builder<String, String> pageDataBuilder = ImmutableMap.builder();
-        pageDataBuilder.put("PageID", page.getId());
-        pageDataBuilder.put("PageModified", ISODateTimeFormat.dateHourMinuteSecond().print(page.getRevisionDate()));
-        pageDataBuilder.put("PageTemplateID", pageTemplate.getId());
-        pageDataBuilder.put("PageTemplateModified",
+        ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
+        xpmMetaDataBuilder.put("PageID", page.getId());
+        xpmMetaDataBuilder.put("PageModified", ISODateTimeFormat.dateHourMinuteSecond().print(page.getRevisionDate()));
+        xpmMetaDataBuilder.put("PageTemplateID", pageTemplate.getId());
+        xpmMetaDataBuilder.put("PageTemplateModified",
                 ISODateTimeFormat.dateHourMinuteSecond().print(pageTemplate.getRevisionDate()));
 
-        pageDataBuilder.put("CmsUrl", localization.getConfiguration("core.cmsurl"));
+        xpmMetaDataBuilder.put("CmsUrl", localization.getConfiguration("core.cmsurl"));
 
-        return pageDataBuilder.build();
+        return xpmMetaDataBuilder.build();
     }
 
     private MvcData createPageMvcData(PageTemplate pageTemplate) {

@@ -6,8 +6,8 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
-import com.sdl.webapp.common.api.model.Entity;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.markup.Markup;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
@@ -56,14 +56,14 @@ public class MarkupImpl implements Markup {
     }
 
     @Override
-    public String region(Region region) {
+    public String region(RegionModel region) {
         return Joiner.on(' ').join(Arrays.asList(
                 TYPEOF_REGION_ATTR.toHtml(),
                 new HtmlAttribute("resource", region.getName()).toHtml()));
     }
 
     @Override
-    public String entity(Entity entity) {
+    public String entity(EntityModel entity) {
         final List<String> vocabularies = new ArrayList<>();
         final List<String> entityTypes = new ArrayList<>();
 
@@ -86,14 +86,14 @@ public class MarkupImpl implements Markup {
     }
 
     @Override
-    public String property(Entity entity, String fieldName) {
+    public String property(EntityModel entity, String fieldName) {
         return property(entity, fieldName, 0);
     }
 
     @Override
-    public String property(Entity entity, String fieldName, int index) {
+    public String property(EntityModel entity, String fieldName, int index) {
 
-        final Class<? extends Entity> entityClass = entity.getClass();
+        final Class<? extends EntityModel> entityClass = entity.getClass();
 
         final Field field = ReflectionUtils.findField(entityClass, fieldName);
         if (field == null) {

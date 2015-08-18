@@ -1,9 +1,9 @@
 package com.sdl.webapp.common.controller;
 
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,8 +23,8 @@ public abstract class AbstractController {
     @Autowired
     protected ViewResolver viewResolver;
 
-    protected Page getPageFromRequest(HttpServletRequest request) {
-        final Page page = (Page) request.getAttribute(PAGE_MODEL);
+    protected PageModel getPageFromRequest(HttpServletRequest request) {
+        final PageModel page = (PageModel) request.getAttribute(PAGE_MODEL);
         if (page == null) {
             LOG.error("Page not found in request attributes");
             throw new NotFoundException();
@@ -32,9 +32,9 @@ public abstract class AbstractController {
         return page;
     }
 
-    protected Page getIncludePageFromRequest(HttpServletRequest request, String includePageName) {
-        final Page page = getPageFromRequest(request);
-        final Page includePage = page.getIncludes().get(includePageName);
+    protected PageModel getIncludePageFromRequest(HttpServletRequest request, String includePageName) {
+        final PageModel page = getPageFromRequest(request);
+        final PageModel includePage = page.getIncludes().get(includePageName);
         if (includePage == null) {
             LOG.error("Include page not found on page: {}", includePageName);
             throw new NotFoundException("Include page not found on page: " + includePageName);
@@ -42,14 +42,14 @@ public abstract class AbstractController {
         return includePage;
     }
 
-    protected Region getRegionFromRequest(HttpServletRequest request, String regionName) {
-        final Page page = getPageFromRequest(request);
-        Region region = page.getRegions().get(regionName);
+    protected RegionModel getRegionFromRequest(HttpServletRequest request, String regionName) {
+        final PageModel page = getPageFromRequest(request);
+        RegionModel region = page.getRegions().get(regionName);
         if (region == null) {
 
             // Check if the region is active on the request
             //
-            region = (Region) request.getAttribute("_region_" + regionName);
+            region = (RegionModel) request.getAttribute("_region_" + regionName);
 
             if ( region == null ) {
                 LOG.error("Region not found on page: {}", regionName);
@@ -59,9 +59,9 @@ public abstract class AbstractController {
         return region;
     }
 
-    protected Entity getEntityFromRequest(HttpServletRequest request, String regionName, String entityId) {
-        final Region region = getRegionFromRequest(request, regionName);
-        final Entity entity = region.getEntity(entityId); // region.getEntities().get(entityId);
+    protected EntityModel getEntityFromRequest(HttpServletRequest request, String regionName, String entityId) {
+        final RegionModel region = getRegionFromRequest(request, regionName);
+        final EntityModel entity = region.getEntity(entityId); // region.getEntities().get(entityId);
         if (entity == null) {
             LOG.error("Entity not found in region: {}/{}", regionName, entityId);
             throw new NotFoundException("Entity not found in region: " + regionName + "/" + entityId);

@@ -2,7 +2,7 @@ package com.sdl.webapp.tridion.xpm.markup;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.markup.MarkupDecorator;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
@@ -36,7 +36,7 @@ public class EntityXpmMarkup implements MarkupDecorator {
     public HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext) {
 
         if ( webRequestContext.isPreview() ) {
-            Entity entity = (Entity) model;
+            EntityModel entity = (EntityModel) model;
 
             boolean markupInjected = false;
 
@@ -111,7 +111,7 @@ public class EntityXpmMarkup implements MarkupDecorator {
         return 1;
     }
 
-    private HtmlNode buildXpmMarkup(Entity entity) {
+    private HtmlNode buildXpmMarkup(EntityModel entity) {
         final Map<String, String> entityData = entity.getEntityData();
 
         final String componentId = entityData.get("ComponentID");

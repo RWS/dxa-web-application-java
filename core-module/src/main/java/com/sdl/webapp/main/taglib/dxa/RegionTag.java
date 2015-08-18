@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.taglib.dxa;
 
-import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.region.RegionImpl;
 import com.sdl.webapp.common.api.model.region.SimpleRegionMvcData;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
@@ -31,13 +31,13 @@ public class RegionTag extends AbstractMarkupTag {
 
     @Override
     public int doStartTag() throws JspException {
-        final Page page = (Page) pageContext.getRequest().getAttribute(PAGE_MODEL);
+        final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
         if (page == null) {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
 
-        Region region = page.getRegions().get(name);
+        RegionModel region = page.getRegions().get(name);
         if ( region == null && placeholder == true ) {
             // Render the region even if it is not present on the page, so XPM region markup etc can be generated
             //

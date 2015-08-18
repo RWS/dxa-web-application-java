@@ -2,7 +2,7 @@ package com.sdl.webapp.main.taglib.xpm;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.tridion.xpm.ComponentType;
@@ -19,9 +19,9 @@ public class XpmRegionMarkupTag extends XpmMarkupTag {
 
     private static final String COMPONENT_TYPE_PATTERN = "%s{schema:\"%s\",template:\"%s\"}";
 
-    private Region region;
+    private RegionModel region;
 
-    public void setRegion(Region region) {
+    public void setRegion(RegionModel region) {
         this.region = region;
     }
 

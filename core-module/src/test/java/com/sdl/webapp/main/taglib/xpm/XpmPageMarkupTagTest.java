@@ -1,6 +1,6 @@
 package com.sdl.webapp.main.taglib.xpm;
 
-import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.markup.html.*;
 import org.junit.Test;
 
@@ -45,7 +45,7 @@ public class XpmPageMarkupTagTest {
     }
 
     private XpmPageMarkupTag setup(Map<String, String> pageData) {
-        final Page page = mock(Page.class);
+        final PageModel page = mock(PageModel.class);
         when(page.getPageData()).thenReturn(pageData);
 
         final XpmPageMarkupTag tag = new XpmPageMarkupTag();

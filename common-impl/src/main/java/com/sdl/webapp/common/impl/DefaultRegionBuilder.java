@@ -7,9 +7,9 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.RegionBuilderCallback;
 import com.sdl.webapp.common.api.content.RegionBuilder;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.Entity;
-import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.region.RegionImpl;
 
 import org.slf4j.Logger;
@@ -36,15 +36,15 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
     }
 
     @Override
-    public Map<String,Region> buildRegions(Page page,
+    public Map<String,RegionModel> buildRegions(PageModel page,
 			   							   ConditionalEntityEvaluator conditionalEntityEvaluator,
                                            List<?> sourceList,
                                            RegionBuilderCallback callback,
                                            Localization localization) throws ContentProviderException {
 
-        Map<String,Region> regions = new HashMap<>();
+        Map<String,RegionModel> regions = new HashMap<>();
         for (Object source : sourceList) {
-            final Entity entity = callback.buildEntity(source, localization);
+            final EntityModel entity = callback.buildEntity(source, localization);
 
             String regionName = callback.getRegionName(source);
             if (!Strings.isNullOrEmpty(regionName)) {

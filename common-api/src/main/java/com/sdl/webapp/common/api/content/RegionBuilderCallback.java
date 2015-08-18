@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.content;
 
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 
 /**
@@ -18,7 +18,7 @@ public interface RegionBuilderCallback {
      * @return entity
      * @throws ContentProviderException
      */
-    public Entity buildEntity(Object source, Localization localization) throws ContentProviderException;
+    public EntityModel buildEntity(Object source, Localization localization) throws ContentProviderException;
 
     /**
      * Get region name from content provider specific source

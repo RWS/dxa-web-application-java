@@ -10,10 +10,10 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.RegionBuilder;
 import com.sdl.webapp.common.api.content.RegionBuilderCallback;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.page.PageImpl;
 
 import org.dd4t.contentmodel.*;
@@ -70,7 +70,7 @@ final class PageBuilder {
 
     class DD4TRegionBuilderCallback implements RegionBuilderCallback {
         @Override
-        public Entity buildEntity(Object source, Localization localization) throws ContentProviderException {
+        public EntityModel buildEntity(Object source, Localization localization) throws ContentProviderException {
 
             ComponentPresentation componentPresentation = (ComponentPresentation) source;
             if ( componentPresentation.isDynamic() ) {
@@ -113,7 +113,7 @@ final class PageBuilder {
         this.webRequestContext = webRequestContext;
     }
 
-    Page createPage(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider)
+    PageModel createPage(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider)
             throws ContentProviderException {
         final PageImpl page = new PageImpl();
 
@@ -136,15 +136,15 @@ final class PageBuilder {
         final String pageTypeId = genericPage.getPageTemplate().getId().split("-")[1];
         for (String include : localization.getIncludes(pageTypeId)) {
             final String includeUrl = localizationPath + include;
-            final Page includePage = contentProvider.getPageModel(includeUrl, localization);
+            final PageModel includePage = contentProvider.getPageModel(includeUrl, localization);
             page.getIncludes().put(includePage.getName(), includePage);
         }
 
         page.setPageData(createPageData(genericPage, localization));
         page.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
 
-        final Map<String, Region> regions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
-        final Map<String, Region> regionMap = new LinkedHashMap<>();
+        final Map<String, RegionModel> regions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
+        final Map<String, RegionModel> regionMap = new LinkedHashMap<>();
         regionMap.putAll(regions);
         page.setRegions(regionMap);
 

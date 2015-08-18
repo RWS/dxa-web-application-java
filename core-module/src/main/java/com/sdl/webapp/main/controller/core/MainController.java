@@ -9,7 +9,7 @@ import com.sdl.webapp.common.api.content.ContentResolver;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.controller.ViewResolver;
 import com.sdl.webapp.common.util.StreamUtils;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
@@ -88,7 +88,7 @@ public class MainController {
         LOG.trace("handleGetPage: requestPath={}", requestPath);
 
         final Localization localization = webRequestContext.getLocalization();
-        final Page page = getPageModel(requestPath, localization);
+        final PageModel page = getPageModel(requestPath, localization);
         LOG.trace("handleGetPage: page={}", page);
 
         if (!isIncludeRequest(request)) {
@@ -204,7 +204,7 @@ public class MainController {
         return isIncludeRequest(request) ? SECTION_ERROR_VIEW : SERVER_ERROR_VIEW;
     }
 
-    private Page getPageModel(String path, Localization localization) {
+    private PageModel getPageModel(String path, Localization localization) {
         try {
             return contentProvider.getPageModel(path, localization);
         } catch (PageNotFoundException e) {

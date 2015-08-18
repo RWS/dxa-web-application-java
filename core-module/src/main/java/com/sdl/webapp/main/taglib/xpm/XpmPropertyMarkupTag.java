@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.taglib.xpm;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 
@@ -11,13 +11,13 @@ public class XpmPropertyMarkupTag extends XpmMarkupTag {
 
     private static final String FIELD_PATTERN = "Start Component Field: {\"XPath\":\"%s\"}";
 
-    private Entity entity;
+    private EntityModel entity;
 
     private String property;
 
     private int index;
 
-    public void setEntity(Entity entity) {
+    public void setEntity(EntityModel entity) {
         this.entity = entity;
     }
 

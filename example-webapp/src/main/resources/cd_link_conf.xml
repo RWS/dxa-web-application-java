@@ -3,8 +3,8 @@
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xsi:noNamespaceSchemaLocation="schemas/cd_link_conf.xsd">
     <Publications>
-        <Publication Id="8">
-            <Host Domain="localhost" Port="8080" Path=""/>
+        <Publication Id="2113">
+            <Host Domain="localhost" Port="8088" Path=""/>
         </Publication>
     </Publications>
 </Configuration>

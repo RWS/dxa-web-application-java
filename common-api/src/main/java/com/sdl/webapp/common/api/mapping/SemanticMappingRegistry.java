@@ -3,7 +3,7 @@ package com.sdl.webapp.common.api.mapping;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -33,7 +33,7 @@ public interface SemanticMappingRegistry {
      * @return A list of {@code SemanticEntityInfo} objects containing semantic entity information for the entity class.
      *      Never returns {@code null}; if there is no information for the class, an empty collection is returned.
      */
-    List<SemanticEntityInfo> getEntityInfo(Class<? extends Entity> entityClass);
+    List<SemanticEntityInfo> getEntityInfo(Class<? extends EntityModel> entityClass);
 
     /**
      * Gets semantic information for the specified field. This information is gathered from the semantic property
@@ -57,5 +57,5 @@ public interface SemanticMappingRegistry {
      *
      * @param entityClass The entity class.
      */
-    public void registerEntity(Class<? extends Entity> entityClass);
+    public void registerEntity(Class<? extends EntityModel> entityClass);
 }

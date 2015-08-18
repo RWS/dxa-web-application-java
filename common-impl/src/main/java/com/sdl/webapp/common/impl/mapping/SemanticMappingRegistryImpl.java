@@ -7,7 +7,7 @@ import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.annotations.*;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import com.sdl.webapp.common.util.PackageUtils;
 import org.slf4j.Logger;
@@ -29,7 +29,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
 
     private final ListMultimap<Field, FieldSemantics> fieldSemanticsMap = ArrayListMultimap.create();
 
-    private final ListMultimap<Class<? extends Entity>, SemanticEntityInfo> semanticEntityInfo = ArrayListMultimap.create();
+    private final ListMultimap<Class<? extends EntityModel>, SemanticEntityInfo> semanticEntityInfo = ArrayListMultimap.create();
     private final ListMultimap<Field, SemanticPropertyInfo> semanticPropertyInfo = ArrayListMultimap.create();
 
     @Override
@@ -39,15 +39,15 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     }
 
     @Override
-    public List<SemanticEntityInfo> getEntityInfo(Class<? extends Entity> entityClass) {
+    public List<SemanticEntityInfo> getEntityInfo(Class<? extends EntityModel> entityClass) {
         final List<SemanticEntityInfo> result = new ArrayList<>();
 
         // Get semantic entity info of this class and all superclasses (that implement interface Entity)
-        Class<? extends Entity> cls = entityClass;
+        Class<? extends EntityModel> cls = entityClass;
         while (cls != null) {
             result.addAll(semanticEntityInfo.get(cls));
             Class<?> superclass = cls.getSuperclass();
-            cls = Entity.class.isAssignableFrom(superclass) ? superclass.asSubclass(Entity.class) : null;
+            cls = EntityModel.class.isAssignableFrom(superclass) ? superclass.asSubclass(EntityModel.class) : null;
         }
 
         return result;
@@ -70,8 +70,8 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
                     if (!classMetadata.isInterface()) {
                         final Class<?> class_ = ClassUtils.resolveClassName(classMetadata.getClassName(),
                                 ClassUtils.getDefaultClassLoader());
-                        if (Entity.class.isAssignableFrom(class_)) {
-                            registerEntity(class_.asSubclass(Entity.class));
+                        if (EntityModel.class.isAssignableFrom(class_)) {
+                            registerEntity(class_.asSubclass(EntityModel.class));
                         }
                     }
                 }
@@ -83,7 +83,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     }
 
     @Override
-    public void registerEntity(Class<? extends Entity> entityClass) {
+    public void registerEntity(Class<? extends EntityModel> entityClass) {
         // Ignore classes that have a @SemanticMappingIgnore annotation
         if (entityClass.getAnnotation(SemanticMappingIgnore.class) != null) {
             LOG.debug("Ignoring entity class: {}", entityClass);
@@ -156,7 +156,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
      * @param entityClass The entity class.
      * @return A map with {@code SemanticEntityInfo} objects by vocabulary prefix.
      */
-    private Map<String, SemanticEntityInfo> createSemanticEntityInfo(Class<? extends Entity> entityClass) {
+    private Map<String, SemanticEntityInfo> createSemanticEntityInfo(Class<? extends EntityModel> entityClass) {
         // NOTE: LinkedHashMap because order of entries is important
         final Map<String, SemanticEntityInfo> result = new LinkedHashMap<>();
 

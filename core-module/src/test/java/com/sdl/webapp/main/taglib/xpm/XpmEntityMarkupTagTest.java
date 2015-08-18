@@ -1,6 +1,6 @@
 package com.sdl.webapp.main.taglib.xpm;
 
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import org.junit.Test;
@@ -50,7 +50,7 @@ public class XpmEntityMarkupTagTest {
     }
 
     private XpmEntityMarkupTag setup(Map<String, String> entityData) {
-        final Entity entity = mock(Entity.class);
+        final EntityModel entity = mock(EntityModel.class);
         when(entity.getEntityData()).thenReturn(entityData);
 
         final XpmEntityMarkupTag tag = new XpmEntityMarkupTag();

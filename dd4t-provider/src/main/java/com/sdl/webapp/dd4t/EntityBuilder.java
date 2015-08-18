@@ -7,7 +7,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
@@ -49,7 +49,7 @@ final class EntityBuilder {
         this.fieldConverterRegistry = fieldConverterRegistry;
     }
 
-    Entity createEntity(ComponentPresentation componentPresentation, Localization localization)
+    EntityModel createEntity(ComponentPresentation componentPresentation, Localization localization)
             throws ContentProviderException {
         final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
         final String componentId = component.getId();

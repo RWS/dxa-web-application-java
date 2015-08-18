@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.api.content;
 
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +24,7 @@ public interface RegionBuilder {
      * @return
      * @throws ContentProviderException
      */
-    public Map<String,Region> buildRegions(Page page,
+    public Map<String,RegionModel> buildRegions(PageModel page,
 			   							   ConditionalEntityEvaluator conditionalEntityEvaluator,
                                            List<?> sourceList,
                                            RegionBuilderCallback callback,

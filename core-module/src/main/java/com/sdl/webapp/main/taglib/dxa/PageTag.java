@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.taglib.dxa;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,13 +30,13 @@ public class PageTag extends TagSupport {
 
     @Override
     public int doStartTag() throws JspException {
-        final Page page = (Page) pageContext.getRequest().getAttribute(PAGE_MODEL);
+        final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
         if (page == null) {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
 
-        final Page includePage = page.getIncludes().get(name);
+        final PageModel includePage = page.getIncludes().get(name);
         if (includePage != null) {
             // Use alternate view name if specified
             if (!Strings.isNullOrEmpty(viewName)) {

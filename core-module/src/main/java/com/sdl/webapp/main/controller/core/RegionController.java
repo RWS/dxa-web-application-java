@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.controller.core;
 
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.controller.AbstractController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +39,7 @@ public class RegionController extends AbstractController {
     public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName) {
         LOG.trace("handleGetRegion: regionName={}", regionName);
 
-        final Region region = getRegionFromRequest(request, regionName);
+        final RegionModel region = getRegionFromRequest(request, regionName);
         request.setAttribute(REGION_MODEL, region);
 
         final MvcData mvcData = region.getMvcData();

@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.api.content;
 
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.Entity;
-import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.ContentList;
 
 import org.springframework.cglib.core.Local;
@@ -22,7 +22,7 @@ public interface ContentProvider {
      * @return The {@code Page}.
      * @throws ContentProviderException If an error occurred so that the content of the page could be retrieved.
      */
-    Page getPageModel(String path, Localization localization) throws ContentProviderException;
+    PageModel getPageModel(String path, Localization localization) throws ContentProviderException;
 
     /**
      * Get entity model by TCM URI and specific template
@@ -34,7 +34,7 @@ public interface ContentProvider {
      * @throws ContentProviderException
      */
     // TODO: What terminology should we use here? Is template id correct wording???
-    Entity getEntityModel(String id, String templateId, Localization localization) throws ContentProviderException;
+    EntityModel getEntityModel(String id, String templateId, Localization localization) throws ContentProviderException;
 
     /**
      * Gets an {@code InputStream} from which the raw content of a page can be read.

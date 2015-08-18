@@ -1,7 +1,7 @@
 package com.sdl.webapp.tridion.xpm.markup;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.markup.MarkupDecorator;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
@@ -36,7 +36,7 @@ public class RegionXpmMarkup implements MarkupDecorator {
     public HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext) {
 
         if ( webRequestContext.isPreview() ) {
-            Region region = (Region) model;
+            RegionModel region = (RegionModel) model;
 
             // TODO determine min occurs and max occurs for the region
             final int minOccurs = 0;
@@ -93,7 +93,7 @@ public class RegionXpmMarkup implements MarkupDecorator {
         return false;
     }
 
-    private HtmlNode buildXpmMarkup(Region region, XpmRegion xpmRegion, int minOccurs, int maxOccurs) {
+    private HtmlNode buildXpmMarkup(RegionModel region, XpmRegion xpmRegion, int minOccurs, int maxOccurs) {
         String separator = "";
         boolean first = true;
         final StringBuilder sb = new StringBuilder();

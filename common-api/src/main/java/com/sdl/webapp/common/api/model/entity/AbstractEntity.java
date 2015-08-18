@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 
 import java.util.Map;
@@ -13,7 +13,7 @@ import java.util.Map;
  * Abstract superclass for implementations of {@code Entity}.
  */
 @SemanticMappingIgnore
-public abstract class AbstractEntity implements Entity {
+public abstract class AbstractEntity implements EntityModel {
 
     @JsonProperty("Id")
     private String id;

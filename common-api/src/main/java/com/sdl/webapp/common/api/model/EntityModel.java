@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Entity model.
  */
-public interface Entity extends ViewModel {
+public interface EntityModel extends ViewModel {
 
     String getId();
 

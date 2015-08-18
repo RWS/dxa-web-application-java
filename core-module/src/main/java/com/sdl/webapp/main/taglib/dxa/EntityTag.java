@@ -1,8 +1,8 @@
 package com.sdl.webapp.main.taglib.dxa;
 
-import com.sdl.webapp.common.api.model.Entity;
-import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ public class EntityTag extends AbstractMarkupTag {
 
     private String entityId;
 
-    private Entity entityRef;
+    private EntityModel entityRef;
 
     public void setRegion(String regionName) {
         this.regionName = regionName;
@@ -31,20 +31,20 @@ public class EntityTag extends AbstractMarkupTag {
         this.entityId = entityId;
     }
 
-    public void setEntity(Entity entity) { this.entityRef = entity; }
+    public void setEntity(EntityModel entity) { this.entityRef = entity; }
 
     @Override
     public int doStartTag() throws JspException {
-        final Page page = (Page) pageContext.getRequest().getAttribute(PAGE_MODEL);
+        final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
 
         if (page == null) {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
 
-        final Entity entity;
+        final EntityModel entity;
         if ( entityId != null ) {
-            final Region region = page.getRegions().get(regionName);
+            final RegionModel region = page.getRegions().get(regionName);
             if (region == null) {
                 LOG.debug("Region not found on page: {}", regionName);
                 return SKIP_BODY;

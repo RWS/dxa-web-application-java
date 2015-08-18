@@ -4,7 +4,7 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.NavigationProvider;
 import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
@@ -70,7 +70,7 @@ public class NavigationController extends AbstractController {
             throws NavigationProviderException {
         LOG.trace("handleGetNavigation: regionName={}, entityId={}", regionName, entityId);
 
-        final Entity entity = getEntityFromRequest(request, regionName, entityId);
+        final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
         request.setAttribute(ENTITY_MODEL, entity);
 
         final String requestPath = webRequestContext.getRequestPath();
@@ -122,7 +122,7 @@ public class NavigationController extends AbstractController {
                                    @PathVariable String entityId) throws NavigationProviderException {
         LOG.trace("handleGetSiteMap: regionName={}, entityId={}", regionName, entityId);
 
-        final Entity entity = getEntityFromRequest(request, regionName, entityId);
+        final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
 
         final SitemapItem navigationModel = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
         navigationModel.setEntityData(entity.getEntityData());

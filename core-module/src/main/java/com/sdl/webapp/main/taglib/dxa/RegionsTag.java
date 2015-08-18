@@ -1,8 +1,8 @@
 package com.sdl.webapp.main.taglib.dxa;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class RegionsTag extends AbstractMarkupTag {
 
     @Override
     public int doStartTag() throws JspException {
-        final Page page = (Page) pageContext.getRequest().getAttribute(PAGE_MODEL);
+        final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
         if (page == null) {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
@@ -39,7 +39,7 @@ public class RegionsTag extends AbstractMarkupTag {
             excludes.addAll(Arrays.asList(exclude.split("\\s*,\\s*")));
         }
 
-        for (Region region : page.getRegions().values()) {
+        for (RegionModel region : page.getRegions().values()) {
             String name = region.getName();
             if (excludes.contains(name)) {
                 LOG.debug("Excluding region: {}", name);

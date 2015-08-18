@@ -1,6 +1,6 @@
 package com.sdl.webapp.main.taglib.xpm;
 
-import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlMultiNode;
@@ -20,9 +20,9 @@ public class XpmPageMarkupTag extends XpmMarkupTag {
 
     private static final String SCRIPT_ID = "tridion.siteedit";
 
-    private Page page;
+    private PageModel page;
 
-    public void setPage(Page page) {
+    public void setPage(PageModel page) {
         this.page = page;
     }
 

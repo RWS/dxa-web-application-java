@@ -2,7 +2,7 @@ package com.sdl.webapp.main.controller.core;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.controller.AbstractController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +44,7 @@ public class IncludePageController extends AbstractController {
                                        @RequestParam(required = false) String viewName) {
         LOG.trace("handleGetIncludePage: includePageName={}", includePageName);
 
-        final Page includePage = getIncludePageFromRequest(request, includePageName);
+        final PageModel includePage = getIncludePageFromRequest(request, includePageName);
         request.setAttribute(PAGE_MODEL, includePage);
 
         final MvcData mvcData = includePage.getMvcData();

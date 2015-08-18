@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.markup;
 
-import com.sdl.webapp.common.api.model.Entity;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import org.joda.time.DateTime;
 
@@ -12,13 +12,13 @@ public interface Markup {
 
     public String versionedContent(String path);
 
-    public String region(Region region);
+    public String region(RegionModel region);
 
-    public String entity(Entity entity);
+    public String entity(EntityModel entity);
 
-    public String property(Entity entity, String fieldName);
+    public String property(EntityModel entity, String fieldName);
 
-    public String property(Entity entity, String fieldName, int index);
+    public String property(EntityModel entity, String fieldName, int index);
 
     public String resource(String key);
 

@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.controller.core;
 
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.controller.AbstractController;
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ public class EntityController extends AbstractController {
             throws ContentProviderException {
         LOG.trace("handleGetEntity: regionName={}, entityId={}", regionName, entityId);
 
-        final Entity entity = getEntityFromRequest(request, regionName, entityId);
+        final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
         request.setAttribute(ENTITY_MODEL, entity);
 
         final MvcData mvcData = entity.getMvcData();

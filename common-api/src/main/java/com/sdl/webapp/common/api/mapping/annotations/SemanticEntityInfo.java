@@ -2,7 +2,7 @@ package com.sdl.webapp.common.api.mapping.annotations;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 
 public final class SemanticEntityInfo {
 
@@ -18,7 +18,7 @@ public final class SemanticEntityInfo {
 
     private final boolean public_;
 
-    public SemanticEntityInfo(SemanticEntity annotation, Class<? extends Entity> entityClass) {
+    public SemanticEntityInfo(SemanticEntity annotation, Class<? extends EntityModel> entityClass) {
         String v = annotation.vocabulary();
         if (Strings.isNullOrEmpty(v)) {
             v = DEFAULT_VOCABULARY;
@@ -43,7 +43,7 @@ public final class SemanticEntityInfo {
         this.public_ = annotation.public_();
     }
 
-    public SemanticEntityInfo(Class<? extends Entity> entityClass) {
+    public SemanticEntityInfo(Class<? extends EntityModel> entityClass) {
         this.vocabulary = DEFAULT_VOCABULARY;
         this.entityName = entityClass.getSimpleName();
         this.prefix = DEFAULT_PREFIX;

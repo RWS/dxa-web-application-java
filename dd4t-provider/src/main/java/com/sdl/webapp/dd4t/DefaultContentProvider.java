@@ -8,8 +8,8 @@ import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.Entity;
-import com.sdl.webapp.common.api.model.Page;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.ContentList;
 import com.sdl.webapp.common.api.model.entity.Teaser;
 import com.sdl.webapp.tridion.query.BrokerQuery;
@@ -93,10 +93,10 @@ public final class DefaultContentProvider implements ContentProvider {
     }
 
     @Override
-    public Page getPageModel(String path, final Localization localization) throws ContentProviderException {
-        return findPage(path, localization, new TryFindPage<Page>() {
+    public PageModel getPageModel(String path, final Localization localization) throws ContentProviderException {
+        return findPage(path, localization, new TryFindPage<PageModel>() {
             @Override
-            public Page tryFindPage(String path, int publicationId) throws ContentProviderException {
+            public PageModel tryFindPage(String path, int publicationId) throws ContentProviderException {
                 final org.dd4t.contentmodel.Page genericPage;
                 try {
                     genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
@@ -114,7 +114,7 @@ public final class DefaultContentProvider implements ContentProvider {
     }
 
     @Override
-    public Entity getEntityModel(String id, String templateId, final Localization localization) throws ContentProviderException {
+    public EntityModel getEntityModel(String id, String templateId, final Localization localization) throws ContentProviderException {
 
         // TODO: Use just id's here instead of TCM-URIs
 

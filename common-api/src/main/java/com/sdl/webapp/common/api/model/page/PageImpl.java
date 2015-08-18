@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.api.model.page;
 
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,14 +10,14 @@ import java.util.Map;
 /**
  * Implementation of {@code Page}.
  */
-public class PageImpl implements Page {
+public class PageImpl implements PageModel {
 
     private String id;
     private String name;
     private String title;
     private Map<String, String> meta = new HashMap<>();
-    private Map<String, Page> includes = new HashMap<>();
-    private Map<String, Region> regions = new HashMap<>();
+    private Map<String, PageModel> includes = new HashMap<>();
+    private Map<String, RegionModel> regions = new HashMap<>();
     private Map<String, String> pageData = new HashMap<>();
     private MvcData mvcData;
 
@@ -58,20 +58,20 @@ public class PageImpl implements Page {
     }
 
     @Override
-    public Map<String, Page> getIncludes() {
+    public Map<String, PageModel> getIncludes() {
         return includes;
     }
 
-    public void setIncludes(Map<String, Page> includes) {
+    public void setIncludes(Map<String, PageModel> includes) {
         this.includes = includes;
     }
 
     @Override
-    public Map<String, Region> getRegions() {
+    public Map<String, RegionModel> getRegions() {
         return regions;
     }
 
-    public void setRegions(Map<String, Region> regions) {
+    public void setRegions(Map<String, RegionModel> regions) {
         this.regions = regions;
     }
 

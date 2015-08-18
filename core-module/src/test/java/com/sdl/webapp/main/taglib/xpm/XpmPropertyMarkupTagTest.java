@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.taglib.xpm;
 
 import com.google.common.collect.ImmutableMap;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class XpmPropertyMarkupTagTest {
     }
 
     private XpmPropertyMarkupTag setup(String propertyName, String xpath, int index) {
-        final Entity entity = mock(Entity.class);
+        final EntityModel entity = mock(EntityModel.class);
         when(entity.getPropertyData()).thenReturn(ImmutableMap.of(propertyName, xpath));
 
         final XpmPropertyMarkupTag tag = new XpmPropertyMarkupTag();

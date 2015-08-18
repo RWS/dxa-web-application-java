@@ -4,7 +4,7 @@ import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.entity.ContentList;
 import com.sdl.webapp.common.controller.AbstractController;
@@ -56,7 +56,7 @@ public class ListController extends AbstractController {
                                 @PathVariable String entityId) {
         LOG.trace("handleGetList: regionName={}, entityId={}", regionName, entityId);
 
-        final Entity entity = getEntityFromRequest(request, regionName, entityId);
+        final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
         request.setAttribute(ENTITY_MODEL, entity);
 
         if (entity instanceof ContentList) {

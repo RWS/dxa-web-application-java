@@ -1,10 +1,10 @@
 package com.sdl.webapp.common.controller;
 
 import com.google.common.base.Joiner;
-import com.sdl.webapp.common.api.model.Entity;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.Page;
-import com.sdl.webapp.common.api.model.Region;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,21 +21,21 @@ public final class ControllerUtils {
     private ControllerUtils() {
     }
 
-    public static String getIncludePath(Page page) {
+    public static String getIncludePath(PageModel page) {
         final MvcData mvcData = page.getMvcData();
         return getIncludePathPrefix(mvcData) +
                 page.getName() +
                 getQueryParameters(mvcData);
     }
 
-    public static String getIncludePath(Region region) {
+    public static String getIncludePath(RegionModel region) {
         final MvcData mvcData = region.getMvcData();
         return getIncludePathPrefix(mvcData) +
                 region.getName() +
                 getQueryParameters(mvcData);
     }
 
-    public static String getIncludePath(Entity entity) {
+    public static String getIncludePath(EntityModel entity) {
         final MvcData mvcData = entity.getMvcData();
         return getIncludePathPrefix(mvcData) +
                 mvcData.getRegionName() + "/" +

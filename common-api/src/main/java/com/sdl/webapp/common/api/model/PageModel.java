@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Page model.
  */
-public interface Page extends ViewModel {
+public interface PageModel extends ViewModel {
 
     String getId();
 
@@ -15,9 +15,9 @@ public interface Page extends ViewModel {
 
     Map<String, String> getMeta();
 
-    Map<String, Page> getIncludes();
+    Map<String, PageModel> getIncludes();
 
-    Map<String, Region> getRegions();
+    Map<String, RegionModel> getRegions();
 
     Map<String, String> getPageData();
 }

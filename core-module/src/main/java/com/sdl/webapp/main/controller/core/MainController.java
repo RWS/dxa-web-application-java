@@ -107,24 +107,6 @@ public class MainController {
         //return mvcData.getAreaName() + "/Page/" + mvcData.getViewName();
     }
 
-    /**
-     * Gets a page requested by a client in JSON format. For security reasons, this is only enabled if the system
-     * property "AllowJsonResponse" is set to {@code true}; if not, a 406 Not Acceptable status code is returned.
-     *
-     * @param response The response.
-     * @throws IOException If an I/O error occurs.
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = "application/json")
-    public void handleGetPageJSON(HttpServletResponse response) throws IOException {
-        final ServletServerHttpResponse res = new ServletServerHttpResponse(response);
-
-        //Todo : remove this function. It should not directly make json data accessible outside of the DXA internal implementation
-        res.setStatusCode(HttpStatus.NOT_ACCEPTABLE);
-        res.close();
-        return;
-       
-    }
-
     @RequestMapping(method = RequestMethod.GET, value = "/resolve/{itemId}")
     public String handleResolve(@PathVariable String itemId, @RequestParam String localizationId,
                                 @RequestParam(required = false) String defaultPath,

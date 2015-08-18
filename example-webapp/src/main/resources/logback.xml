@@ -1,5 +1,24 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+ <!-- Properties -->
+  <property name="log.pattern" value="%date %-5level %logger{0} - %message%n" />
+  <property name="log.history" value="7" />
+  <property name="log.folder" value="C:/temp/logs/DXA1.1" />
+  <property name="log.level" value="ERROR" />
+  <property name="log.encoding" value="UTF-8" />
+  <!-- Appenders -->
+  <appender name="rollingCoreLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${log.folder}/cd_core.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>${log.history}</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <charset>${log.encoding}</charset>
+      <pattern>${log.pattern}</pattern>
+    </encoder>
+    <prudent>true</prudent>
+  </appender>
+  
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -10,10 +29,22 @@
         <appender-ref ref="STDOUT"/>
     </root>
 
-    <logger name="org.hibernate" level="WARN"/>
-    <logger name="org.springframework" level="INFO"/>
-    <logger name="org.springframework.web" level="INFO"/>
-    <logger name="org.dd4t" level="INFO"/>
-    <logger name="com.tridion" level="WARN"/>
-    <logger name="com.sdl.webapp" level="INFO"/>
+    <logger name="org.hibernate" level="WARN">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="org.springframework" level="INFO">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="org.springframework.web" level="INFO">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="org.dd4t" level="INFO">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="com.tridion" level="WARN">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="com.sdl.webapp" level="DEBUG">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
 </configuration>

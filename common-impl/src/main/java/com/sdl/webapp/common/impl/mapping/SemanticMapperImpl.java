@@ -137,7 +137,7 @@ public class SemanticMapperImpl implements SemanticMapper {
         });
 
         // Set property data (used for semantic markup)
-        entity.setPropertyData(propertyDataBuilder.build());
+        entity.setXpmPropertyMetadata(propertyDataBuilder.build());
 
         LOG.trace("entity: {}", entity);
         return entity;

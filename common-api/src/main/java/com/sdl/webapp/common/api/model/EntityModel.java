@@ -9,5 +9,5 @@ public interface EntityModel extends ViewModel {
 
     String getId();
 
-    Map<String, String> getPropertyData();
+    Map<String, String> getXpmPropertyMetadata();
 }

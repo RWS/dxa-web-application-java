@@ -22,7 +22,7 @@ public abstract class AbstractEntity implements EntityModel {
     private Map<String, String> xpmMetadata;
 
     @JsonIgnore
-    private Map<String, String> propertyData;
+    private Map<String, String> xpmPropertyMetadata;
 
     @JsonIgnore
     private MvcData mvcData;
@@ -46,12 +46,12 @@ public abstract class AbstractEntity implements EntityModel {
     }
 
     @Override
-    public Map<String, String> getPropertyData() {
-        return propertyData;
+    public Map<String, String> getXpmPropertyMetadata() {
+        return xpmPropertyMetadata;
     }
 
-    public void setPropertyData(Map<String, String> propertyData) {
-        this.propertyData = ImmutableMap.copyOf(propertyData);
+    public void setXpmPropertyMetadata(Map<String, String> propertyData) {
+        this.xpmPropertyMetadata = ImmutableMap.copyOf(propertyData);
     }
 
     @Override

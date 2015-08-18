@@ -30,7 +30,7 @@ public class XpmPropertyMarkupTagTest {
 
     private XpmPropertyMarkupTag setup(String propertyName, String xpath, int index) {
         final EntityModel entity = mock(EntityModel.class);
-        when(entity.getPropertyData()).thenReturn(ImmutableMap.of(propertyName, xpath));
+        when(entity.getXpmPropertyMetadata()).thenReturn(ImmutableMap.of(propertyName, xpath));
 
         final XpmPropertyMarkupTag tag = new XpmPropertyMarkupTag();
         tag.setEntity(entity);

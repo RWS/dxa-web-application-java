@@ -31,7 +31,7 @@ public class XpmPropertyMarkupTag extends XpmMarkupTag {
 
     @Override
     protected HtmlNode generateXpmMarkup() {
-        final Map<String, String> propertyData = entity.getPropertyData();
+        final Map<String, String> propertyData = entity.getXpmPropertyMetadata();
         if (propertyData == null) {
             return null;
         }

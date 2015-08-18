@@ -98,7 +98,7 @@ public class NavigationController extends AbstractController {
 
         if (navigationLinks != null) {
             navigationLinks.setXpmMetadata(entity.getXpmMetadata());
-            navigationLinks.setPropertyData(entity.getPropertyData());
+            navigationLinks.setXpmPropertyMetadata(entity.getXpmPropertyMetadata());
             request.setAttribute(ENTITY_MODEL, navigationLinks);
         }
 
@@ -126,7 +126,7 @@ public class NavigationController extends AbstractController {
 
         final SitemapItem navigationModel = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
         navigationModel.setXpmMetadata(entity.getXpmMetadata());
-        navigationModel.setPropertyData(entity.getPropertyData());
+        navigationModel.setXpmPropertyMetadata(entity.getXpmPropertyMetadata());
         request.setAttribute(ENTITY_MODEL, navigationModel);
 
         // Put all items that do not have any subitems under the "Home" item

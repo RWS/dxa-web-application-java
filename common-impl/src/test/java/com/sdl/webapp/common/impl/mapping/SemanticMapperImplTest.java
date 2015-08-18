@@ -97,7 +97,7 @@ public class SemanticMapperImplTest {
         assertThat(article.getHeadline(), is("HEADLINE"));
         assertThat(article.getDate(), is(dateTime));
 
-        final Map<String, String> propertyData = article.getPropertyData();
+        final Map<String, String> propertyData = article.getXpmPropertyMetadata();
         assertThat(propertyData.entrySet(), hasSize(2));
         assertThat(propertyData, hasEntry("headline", "HeadlineField"));
         assertThat(propertyData, hasEntry("date", "DateCreatedField"));

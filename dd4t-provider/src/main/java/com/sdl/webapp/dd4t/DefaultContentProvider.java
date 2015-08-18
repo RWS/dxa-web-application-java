@@ -110,7 +110,14 @@ public final class DefaultContentProvider implements ContentProvider, Navigation
             public PageModel tryFindPage(String path, int publicationId) throws ContentProviderException {
                 final org.dd4t.contentmodel.Page genericPage;
                 try {
-                    genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
+                    if(dd4tPageFactory.isPagePublished(path, publicationId))
+                    {
+                    	genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
+                    }
+                    else
+                    {
+                    	return null;
+                    }
                 } catch (ItemNotFoundException e) {
                     LOG.debug("Page not found: [{}] {}", publicationId, path);
                     return null;

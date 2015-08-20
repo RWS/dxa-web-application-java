@@ -1,7 +1,8 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
-import com.sdl.webapp.common.api.content.ContentResolver;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.model.entity.Link;
+
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,11 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.COMPONENTLINK };
 
-    private final ContentResolver contentResolver;
+    private final LinkResolver linkResolver;
 
     @Autowired
-    public ComponentLinkFieldConverter(ContentResolver contentResolver) {
-        this.contentResolver = contentResolver;
+    public ComponentLinkFieldConverter(LinkResolver linkResolver) {
+        this.linkResolver = linkResolver;
     }
 
     @Override
@@ -44,7 +45,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
     public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass)
             throws FieldConverterException {
         String componentId = component.getId();
-        final String url = contentResolver.resolveLink(componentId, null);
+        final String url = linkResolver.resolveLink(componentId, null);
 
         if (targetClass.isAssignableFrom(String.class)) {
             return url;

@@ -5,7 +5,7 @@ import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.content.ContentResolver;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -16,6 +16,7 @@ import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.markup.Markup;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +31,7 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -54,7 +56,7 @@ public class MainController {
 
     private final ContentProvider contentProvider;
 
-    private final ContentResolver contentResolver;
+    private final LinkResolver linkResolver;
 
     private final MediaHelper mediaHelper;
 
@@ -65,10 +67,10 @@ public class MainController {
     private final ViewResolver viewResolver;
 
     @Autowired
-    public MainController(ContentProvider contentProvider, ContentResolver contentResolver, MediaHelper mediaHelper,
+    public MainController(ContentProvider contentProvider, LinkResolver linkResolver, MediaHelper mediaHelper,
                           WebRequestContext webRequestContext, Markup markup, ViewResolver viewResolver) {
         this.contentProvider = contentProvider;
-        this.contentResolver = contentResolver;
+        this.linkResolver = linkResolver;
         this.mediaHelper = mediaHelper;
         this.webRequestContext = webRequestContext;
         this.markup = markup;
@@ -111,9 +113,9 @@ public class MainController {
     public String handleResolve(@PathVariable String itemId, @RequestParam String localizationId,
                                 @RequestParam(required = false) String defaultPath,
                                 @RequestParam(required = false) String defaultItem) {
-        String url = contentResolver.resolveLink(itemId, localizationId);
+        String url = linkResolver.resolveLink(itemId, localizationId);
         if (Strings.isNullOrEmpty(url)) {
-            url = contentResolver.resolveLink(defaultItem, localizationId);
+            url = linkResolver.resolveLink(defaultItem, localizationId);
         }
         if (Strings.isNullOrEmpty(url)) {
             url = Strings.isNullOrEmpty(defaultPath) ? "/" : defaultPath;

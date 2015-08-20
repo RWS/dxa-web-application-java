@@ -1,6 +1,7 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
-import com.sdl.webapp.common.api.content.ContentResolver;
+import com.sdl.webapp.common.api.content.RichTextProcessor;
+
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.slf4j.Logger;
@@ -17,11 +18,11 @@ public class XhtmlFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.XHTML };
 
-    private final ContentResolver contentResolver;
+    private final RichTextProcessor richTextProcessor;
 
     @Autowired
-    public XhtmlFieldConverter(ContentResolver contentResolver) {
-        this.contentResolver = contentResolver;
+    public XhtmlFieldConverter(RichTextProcessor richTextProcessor) {
+        this.richTextProcessor = richTextProcessor;
     }
 
     @Override
@@ -33,7 +34,7 @@ public class XhtmlFieldConverter extends AbstractFieldConverter {
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
         final List<String> fieldValues = new ArrayList<>();
         for (String textValue : field.getTextValues()) {
-            fieldValues.add(contentResolver.resolveContent(textValue));
+            fieldValues.add(richTextProcessor.resolveContent(textValue));
         }
         return fieldValues;
     }

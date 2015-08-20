@@ -21,6 +21,7 @@ import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -38,6 +39,7 @@ import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.SimpleNamespaceContext;
 import com.sdl.webapp.common.util.XMLUtils;
 
+@Component
 public class DefaultRichTextProcessor implements RichTextProcessor {
 
 	private static final Logger LOG = LoggerFactory

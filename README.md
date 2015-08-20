@@ -40,6 +40,18 @@ The following repositories with source code are available:
  - https://github.com/sdl/dxa-web-application-java - Java Spring MVC web application
 
 
+Branching model
+---------------
+
+We intend to follow Gitflow (http://nvie.com/posts/a-successful-git-branching-model/) with the following main branches:
+
+ - master - Stable 
+ - develop - Unstable
+ - release/x.y - Release version x.y
+
+Please submit your pull requests on develop. In the near future we intend to push our changes to develop and master from our internal repositories, so you can follow our development process.
+
+
 License
 -------
 Copyright (c) 2014-2015 SDL Group.

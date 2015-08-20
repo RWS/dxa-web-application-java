@@ -2,6 +2,7 @@ package com.sdl.webapp.tridion;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.xml.XMLConstants;
@@ -21,6 +22,7 @@ import org.htmlcleaner.TagNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -33,11 +35,15 @@ import com.google.common.collect.ImmutableBiMap;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
+import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.RichText;
+import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.util.NamedNodeMapAdapter;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.SimpleNamespaceContext;
 import com.sdl.webapp.common.util.XMLUtils;
 
+@Component
 public class DefaultRichTextProcessor implements RichTextProcessor {
 
 	private static final Logger LOG = LoggerFactory
@@ -99,27 +105,34 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 	private final ComponentPresentationFactory componentFactory;
 
 	@Override
-	public String resolveContent(String content) {
+	public RichText processRichText(String xhtml, Localization localization) {
 		try {
 			// Parse the document as XML
-			final Document document = XMLUtils.parse("<xhtml>" + content
+			final Document document = XMLUtils.parse("<xhtml>" + xhtml
 					+ "</xhtml>");
 
 			// Resolve links and YouTube videos
-			resolveLinks(document);
-			resolveYouTubeVideos(document);
+			return ResolveRichText(document, localization);
 
-			// Write the modified document out as XML
-			// Remove XML header and surrounding XHTML start and end tags
-			return cleanHtml(XMLUtils.format(document)
-					.replaceAll("\\A(<\\?xml.*\\?>)?\\s*<xhtml>", "")
-					.replaceAll("</xhtml>\\Z", ""));
-		} catch (SAXException | IOException | TransformerException e) {
+//			// Write the modified document out as XML
+//			// Remove XML header and surrounding XHTML start and end tags
+//			return cleanHtml(XMLUtils.format(document)
+//					.replaceAll("\\A(<\\?xml.*\\?>)?\\s*<xhtml>", "")
+//					.replaceAll("</xhtml>\\Z", ""));
+		} catch (SAXException | IOException e) {
 			LOG.warn("Exception while parsing or processing XML content", e);
-			return content;
+			return new RichText(xhtml);
 		}
 	}
 
+	 private RichText ResolveRichText(Document doc, Localization localization)
+     {
+		List<RichTextFragment> richTextFragments = new LinkedList<RichTextFragment>();
+        this.resolveLinks(doc);
+		return new RichText(richTextFragments);
+     }
+	
+	/*
 	private String cleanHtml(String input) {
 		// This is necessary to convert the XHTML to valid HTML that the browser
 		// understands;
@@ -130,7 +143,8 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 		final TagNode node = cleaner.clean(input);
 		return cleaner.getInnerHtml(node);
 	}
-
+	
+	*/
 	private void resolveLinks(Document document) {
 		try {
 			// NOTE: Put link elements in a new list to avoid problems while
@@ -196,7 +210,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 			}
 		}
 	}
-
+	
 	private String getLinkName(Element linkElement) {
 		final String componentUri = linkElement.getAttributeNS(XLINK_NS_URI,
 				"href");
@@ -253,7 +267,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 		// And finally, remove the node itself from the parent
 		parentNode.removeChild(node);
 	}
-
+/*
 	private void resolveYouTubeVideos(Document document) {
 		try {
 			// NOTE: Put link elements in a new list to avoid problems while
@@ -302,5 +316,5 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 		} catch (XPathExpressionException e) {
 			LOG.warn("Error while evaluation XPath expression", e);
 		}
-	}
+	}*/
 }

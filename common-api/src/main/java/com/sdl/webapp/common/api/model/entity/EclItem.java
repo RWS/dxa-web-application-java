@@ -60,4 +60,17 @@ public class EclItem extends MediaItem {
                 ", itemId='" + itemId + '\'' +
                 '}';
     }
+
+	@Override
+	public String toHtml(String widthFactor) {
+		// TODO implement this functionality
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+
+	@Override
+	public String toHtml(String widthFactor, double aspect, String cssClass,
+			int containerSize) {
+		// TODO implement this functionality
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
 }

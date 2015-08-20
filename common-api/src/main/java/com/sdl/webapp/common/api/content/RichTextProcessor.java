@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.api.content;
 
+import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.RichText;
+
 public interface RichTextProcessor {
 	 /**
      * Resolves links in the specified content.
@@ -7,5 +10,5 @@ public interface RichTextProcessor {
      * @param content The content which contains links to resolve.
      * @return The content, with links resolved.
      */
-    String resolveContent(String content);
+    RichText processRichText(String xhtml, Localization localization);
 }

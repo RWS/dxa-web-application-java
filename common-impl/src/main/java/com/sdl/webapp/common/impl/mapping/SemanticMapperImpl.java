@@ -5,7 +5,9 @@ import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.mapping.*;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
+import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +80,14 @@ public class SemanticMapperImpl implements SemanticMapper {
                                 }
 
                                 field.setAccessible(true);
-                                field.set(entity, fieldValue);
+                                if(field.getType().equals(RichText.class) && fieldValue.getClass().equals(String.class))
+                                {
+                                	field.set(entity, new RichText((String)fieldValue));
+                                }
+                                else
+                                {
+                                	field.set(entity, fieldValue);
+                                }
 
                                 final String propertyData = fieldData.getPropertyData();
                                 if (!Strings.isNullOrEmpty(propertyData)) {

@@ -1,5 +1,9 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
@@ -11,6 +15,9 @@ public class Image extends MediaItem {
     @SemanticProperty("s:name")
     private String alternateText;
 
+    @Autowired
+    private MediaHelper mediaHelper;
+    
     public String getAlternateText() {
         return alternateText;
     }
@@ -19,6 +26,20 @@ public class Image extends MediaItem {
         this.alternateText = alternateText;
     }
 
+    public String toHtml(String widthFactor)
+    {
+    	return this.toHtml(widthFactor, 0,"", 0); 
+    }
+    public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize)
+    {
+        String responsiveImageUrl = this.mediaHelper.getResponsiveImageUrl(getUrl(), widthFactor, aspect, containerSize);
+        String dataAspect = String.valueOf((Math.round(aspect * 100) / 100));
+        String widthAttr = Strings.isNullOrEmpty(widthFactor) ? null : String.format("width=\"{0}\"", widthFactor);
+        String classAttr = Strings.isNullOrEmpty(cssClass) ? null : String.format("class=\"{0}\"", cssClass);
+        return String.format("<img src=\"{0}\" alt=\"{1}\" data-aspect=\"{2}\" {3}{4}/>",
+            responsiveImageUrl, getAlternateText(), dataAspect, widthAttr, classAttr);
+    }
+    
     @Override
     public String toString() {
         return "Image{" +

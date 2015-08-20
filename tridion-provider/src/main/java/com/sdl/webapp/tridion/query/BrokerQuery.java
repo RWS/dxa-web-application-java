@@ -3,6 +3,7 @@ package com.sdl.webapp.tridion.query;
 import com.google.common.base.Strings;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.Teaser;
 import com.tridion.broker.StorageException;
@@ -22,6 +23,7 @@ import com.tridion.broker.querying.sorting.column.CustomMetaKeyColumn;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.CustomMeta;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -208,7 +210,7 @@ public class BrokerQuery {
         final String headline = getTextFromCustomMeta(customMeta, "name");
         result.setHeadline(headline != null ? headline : compMeta.getTitle());
 
-        result.setText(getTextFromCustomMeta(customMeta, "introText"));
+        result.setText(new RichText(getTextFromCustomMeta(customMeta, "introText")));
 
         return result;
     }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.content.ContentResolver;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.NavigationProvider;
 import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
@@ -83,14 +83,14 @@ public final class DefaultContentProvider implements ContentProvider, Navigation
     private final PageBuilder pageBuilder;
     private final EntityBuilder entityBuilder;
 
-    private final ContentResolver contentResolver;
+    private final LinkResolver linkResolver;
 
     @Autowired
     public DefaultContentProvider(PageFactory dd4tPageFactory,
                                ComponentPresentationFactory dd4tComponentPresentationFactory,
                                PageBuilder pageBuilder,
                                EntityBuilder entityBuilder,
-                               ContentResolver contentResolver,
+                               LinkResolver linkResolver,
                                ObjectMapper objectMapper,
                                WebApplicationContext webApplicationContext) {
 
@@ -98,7 +98,7 @@ public final class DefaultContentProvider implements ContentProvider, Navigation
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
         this.pageBuilder = pageBuilder;
         this.entityBuilder = entityBuilder;
-        this.contentResolver = contentResolver;
+        this.linkResolver = linkResolver;
         this.objectMapper = objectMapper;
         this.webApplicationContext = webApplicationContext;
     }
@@ -225,7 +225,7 @@ public final class DefaultContentProvider implements ContentProvider, Navigation
 
         // Resolve links
         for (Teaser item : contentList.getItemListElements()) {
-            item.getLink().setUrl(contentResolver.resolveLink(item.getLink().getUrl(), null));
+            item.getLink().setUrl(linkResolver.resolveLink(item.getLink().getUrl(), null));
         }
 
         contentList.setHasMore(brokerQuery.isHasMore());
@@ -486,7 +486,7 @@ public final class DefaultContentProvider implements ContentProvider, Navigation
     }
 
     private SitemapItem resolveLinks(SitemapItem sitemapItem, Localization localization) {
-        sitemapItem.setUrl(contentResolver.resolveLink(sitemapItem.getUrl(), localization.getId()));
+        sitemapItem.setUrl(linkResolver.resolveLink(sitemapItem.getUrl(), localization.getId()));
 
         for (SitemapItem subItem : sitemapItem.getItems()) {
             resolveLinks(subItem, localization);

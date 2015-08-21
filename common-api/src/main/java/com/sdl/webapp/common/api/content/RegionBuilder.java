@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.content;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
 
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,7 @@ public interface RegionBuilder {
      * @return
      * @throws ContentProviderException
      */
-    public Map<String,RegionModel> buildRegions(PageModel page,
+    public RegionModelSet buildRegions(PageModel page,
 			   							   ConditionalEntityEvaluator conditionalEntityEvaluator,
                                            List<?> sourceList,
                                            RegionBuilderCallback callback,

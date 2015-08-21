@@ -18,7 +18,17 @@
     </encoder>
     <prudent>true</prudent>
   </appender>
-  
+   <appender name="rollingDebugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${log.folder}/cd_debug.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>${log.history}</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <charset>${log.encoding}</charset>
+      <pattern>${log.pattern}</pattern>
+    </encoder>
+    <prudent>true</prudent>
+  </appender>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -46,5 +56,14 @@
     </logger>
     <logger name="com.sdl.webapp" level="DEBUG">
         <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="com.sdl.webapp.common.impl" level="DEBUG">
+        <appender-ref ref="rollingDebugLog"/>
+    </logger>
+    <logger name="com.sdl.webapp.main.taglib.dxa" level="DEBUG">
+        <appender-ref ref="rollingDebugLog"/>
+    </logger>
+    <logger name="com.sdl.webapp.main.controller.core" level="DEBUG">
+        <appender-ref ref="rollingDebugLog"/>
     </logger>
 </configuration>

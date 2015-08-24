@@ -1,18 +1,23 @@
-package com.sdl.webapp.dd4t;
+package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-final class MvcDataImpl implements MvcData {
+/**
+ * SimpleRegionMvcData
+ *
+ * @author hho
+ */
+public class MediaItemMvcData implements MvcData {
 
-    private String controllerAreaName;
-    private String controllerName;
-    private String actionName;
-
-    private String areaName;
+    private String controllerAreaName = "Core";
+    private String controllerName = "Entity";
+    private String actionName = "Region";
+    private String areaName = "Core";
     private String viewName;
 
     private String regionAreaName;
@@ -20,11 +25,33 @@ final class MvcDataImpl implements MvcData {
 
     private Map<String, String> routeValues = new HashMap<>();
     private Map<String,Object> metadata = new HashMap<>();
+    
+    public MediaItemMvcData(String qualifiedViewName) throws DxaException
+    {
+        String[] qualifiedViewNameParts = qualifiedViewName.split(":");
+        switch (qualifiedViewNameParts.length)
+        {
+            case 1:
+                this.setAreaName("core");
+                this.setViewName(qualifiedViewNameParts[0]);
+                break;
+            case 2:
+            	this.setAreaName(qualifiedViewNameParts[0]);
+            	this.setViewName(qualifiedViewNameParts[1]);
+                break;
+            case 3:
+            	this.setAreaName(qualifiedViewNameParts[0]);
+            	this.setControllerName(qualifiedViewNameParts[1]);
+            	this.setViewName(qualifiedViewNameParts[2]);
+                break;
+            default:
+                throw new DxaException(
+                    String.format("Invalid format for Qualified View Name: '{0}'. Format must be 'ViewName' or 'AreaName:ViewName' or 'AreaName:ControllerName:Vieweame.'", 
+                        qualifiedViewName)
+                        );
+        }
+    }
 
-    
-   
-    
-    
     @Override
     public String getControllerAreaName() {
         return controllerAreaName;
@@ -108,7 +135,7 @@ final class MvcDataImpl implements MvcData {
 
     @Override
     public String toString() {
-        return "MvcDataImpl{" +
+        return "MediaItemMvcData{" +
                 "controllerAreaName='" + controllerAreaName + '\'' +
                 ", controllerName='" + controllerName + '\'' +
                 ", actionName='" + actionName + '\'' +

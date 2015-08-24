@@ -2,6 +2,9 @@ package com.sdl.webapp.common.api.model.entity;
 
 import java.util.HashMap;
 
+import org.w3c.dom.Node;
+
+import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
@@ -93,6 +96,20 @@ public abstract class MediaItem extends AbstractEntity {
 
     public abstract String toHtml(String widthFactor, double aspect, String cssClass, int containerSize);
 
+    public void readFromXhtmlElement(Node xhtmlElement)
+    {
+        // Return the Item (Reference) ID part of the TCM URI.
+        this.setId(xhtmlElement.getAttributes().getNamedItem("xlink:href").getNodeValue().split("-")[1]);
+        this.setUrl(xhtmlElement.getAttributes().getNamedItem("src").getNodeValue());
+        this.setFileName(xhtmlElement.getAttributes().getNamedItem("data-multimediaFileName").getNodeValue());
+        String fileSize = xhtmlElement.getAttributes().getNamedItem("data-multimediaFileSize").getNodeValue();
+        if (!Strings.isNullOrEmpty(fileSize))
+        {
+            this.setFileSize(Integer.parseInt(fileSize));
+        }
+        this.setMimeType(xhtmlElement.getAttributes().getNamedItem("data-multimediaMimeType").getNodeValue());
+        this.setIsEmbedded(true);
+    }
     
     private static final HashMap<String, String> FontAwesomeMimeTypeToIconClassMapping;
     static

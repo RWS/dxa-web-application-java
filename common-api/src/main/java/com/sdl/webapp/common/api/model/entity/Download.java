@@ -1,9 +1,12 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import org.w3c.dom.Node;
+
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.exceptions.DxaException;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
@@ -53,5 +56,17 @@ public class Download extends MediaItem {
             .append("</div>")
             .append("</div>").toString();
 		 return s;
+    }
+	
+	@Override
+    public  void readFromXhtmlElement(Node xhtmlElement)
+    {
+        super.readFromXhtmlElement(xhtmlElement);
+
+        try {
+    		this.setMvcData(new MediaItemMvcData("Core:Entity:Image"));
+    	} catch (DxaException e) {
+
+    	}
     }
 }

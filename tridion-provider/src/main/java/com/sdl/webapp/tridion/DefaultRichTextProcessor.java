@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
@@ -28,16 +30,25 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableBiMap;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.RichTextFragment;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
+import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.util.NamedNodeMapAdapter;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.SimpleNamespaceContext;
@@ -86,14 +97,27 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 			}
 		}
 	};
-
+	private static final ThreadLocal<XPathExpression> XPATH_IMAGES = new ThreadLocal<XPathExpression>() {
+		@Override
+		protected XPathExpression initialValue() {
+			try {
+				final XPath xpath = XPathFactory.newInstance().newXPath();
+				xpath.setNamespaceContext(NAMESPACE_CONTEXT);
+				return xpath.compile("//img[@data-schemaUri]");
+			} catch (XPathExpressionException e) {
+				throw new RuntimeException(
+						"Error while creating XPath expression", e);
+			}
+		}
+	};
     @Autowired
     public DefaultRichTextProcessor(MediaHelper mediaHelper, WebRequestContext webRequestContext,
-                               TridionLinkResolver linkResolver, ComponentPresentationFactory componentFactory) {
+                               TridionLinkResolver linkResolver, ComponentPresentationFactory componentFactory, ViewModelRegistry viewModelRegistry) {
         this.mediaHelper = mediaHelper;
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
         this.componentFactory = componentFactory;
+        this.viewModelRegistry = viewModelRegistry;
     }
 	
 	private final MediaHelper mediaHelper;
@@ -101,9 +125,12 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 	private final WebRequestContext webRequestContext;
 
 	private final TridionLinkResolver linkResolver;
+	
+	private final ViewModelRegistry viewModelRegistry;
 
 	private final ComponentPresentationFactory componentFactory;
 
+	private final String EmbeddedEntityProcessingInstructionName = "EmbeddedEntity";
 	@Override
 	public RichText processRichText(String xhtml, Localization localization) {
 		try {
@@ -122,13 +149,107 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 		} catch (SAXException | IOException e) {
 			LOG.warn("Exception while parsing or processing XML content", e);
 			return new RichText(xhtml);
+		} catch (ContentProviderException e) {
+			LOG.warn("Exception while parsing or processing XML content", e);
+			return new RichText(xhtml);
+		} catch (SemanticMappingException e) {
+			LOG.warn("Exception while parsing or processing XML content", e);
+			return new RichText(xhtml);
 		}
 	}
 
-	 private RichText ResolveRichText(Document doc, Localization localization)
+	 private <T extends AbstractEntity> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
+	        if (LOG.isTraceEnabled()) {
+	            LOG.trace("entityClass: {}", entityClass.getName());
+	        }
+	        try {
+	            return entityClass.newInstance();
+	        } catch (InstantiationException | IllegalAccessException e) {
+	            throw new SemanticMappingException("Exception while creating instance of entity class: " +
+	                    entityClass.getName(), e);
+	        }
+	    }
+
+	 private RichText ResolveRichText(Document doc, Localization localization) throws ContentProviderException, SemanticMappingException
      {
 		List<RichTextFragment> richTextFragments = new LinkedList<RichTextFragment>();
         this.resolveLinks(doc);
+        
+        List<EntityModel> embeddedEntities = new LinkedList<EntityModel>();
+        
+        List<Node> entityElements = null;
+		try {
+			entityElements = new ArrayList<>(
+					new NodeListAdapter((NodeList) XPATH_IMAGES.get().evaluate(
+							doc, XPathConstants.NODESET)));
+		} catch (XPathExpressionException e) {
+			LOG.warn("Error while evaluation XPath expression", e);
+		}
+
+		for (Node imgElement : entityElements) {
+			String[] schemaTcmUriParts = imgElement.getAttributes().getNamedItem("data-schemaUri").getNodeValue().split("-");
+	        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaTcmUriParts[1]));
+	        
+	        String viewName = semanticSchema.getRootElement();
+	        final Class<? extends AbstractEntity> entityClass = viewModelRegistry.getViewEntityClass(viewName);
+	        if (entityClass == null) {
+	            throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
+	                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+	        }
+
+			MediaItem mediaItem = (MediaItem)createInstance(entityClass);
+			mediaItem.readFromXhtmlElement(imgElement);
+			embeddedEntities.add(mediaItem);
+			
+			imgElement.getParentNode().replaceChild(doc.createProcessingInstruction(EmbeddedEntityProcessingInstructionName, ""), imgElement);
+		}
+		
+		
+		String xhtml;
+		try {
+			xhtml = XMLUtils.format(doc);
+			
+			 int lastFragmentIndex = 0;
+	         int i = 0;
+			
+	         
+	         Pattern pattern = Pattern.compile("<\\?EmbeddedEntity\\s\\?>");
+	         Matcher matcher = pattern.matcher(xhtml);
+	         while (matcher.find()) {
+	             String match = matcher.group();
+	             
+	         }
+			
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+         
+                
+		/*
+		 *  // Split the XHTML into fragments based on marker XML processing instructions.
+            string xhtml = doc.DocumentElement.InnerXml;
+            IList<IRichTextFragment> richTextFragments = new List<IRichTextFragment>();
+            int lastFragmentIndex = 0;
+            int i = 0;
+            foreach (Match embeddedEntityMatch in EmbeddedEntityProcessingInstructionRegex.Matches(xhtml))
+            {
+                int embeddedEntityIndex = embeddedEntityMatch.Index;
+                if (embeddedEntityIndex > lastFragmentIndex)
+                {
+                    richTextFragments.Add(new RichTextFragment(xhtml.Substring(lastFragmentIndex, embeddedEntityIndex - lastFragmentIndex)));
+                }
+                richTextFragments.Add(embeddedEntities[i++]);
+                lastFragmentIndex = embeddedEntityIndex + embeddedEntityMatch.Length;
+            }
+            if (lastFragmentIndex < xhtml.Length)
+            {
+                // Final text fragment
+                richTextFragments.Add(new RichTextFragment(xhtml.Substring(lastFragmentIndex)));
+            }
+		 */
+		
 		return new RichText(richTextFragments);
      }
 	

@@ -4,9 +4,11 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.w3c.dom.Node;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.common.exceptions.DxaException;
 
 public class YouTubeVideo extends MediaItem {
 
@@ -69,7 +71,21 @@ public class YouTubeVideo extends MediaItem {
                 ", height=" + height +
                 '}';
     }
+    
+    @Override
+    public void readFromXhtmlElement(Node xhtmlElement)
+    {
+    	super.readFromXhtmlElement(xhtmlElement);
+    	this.setYouTubeId(xhtmlElement.getAttributes().getNamedItem("data-youTubeId").getNodeValue());
+    	this.setHeadline(xhtmlElement.getAttributes().getNamedItem("data-headline").getNodeValue());
 
+    	try {
+    		this.setMvcData(new MediaItemMvcData("Core:Entity:YouTubeVideo"));
+    	} catch (DxaException e) {
+
+    	}
+    }
+    
 	@Override
 	public String toHtml(String widthFactor) {
 		return toHtml(widthFactor, 0, "", 0);

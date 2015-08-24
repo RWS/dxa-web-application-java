@@ -26,6 +26,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     .put("FooterLinks", LinkList.class)
                     .put("HeaderLinks", LinkList.class)
                     .put("HeaderLogo", Teaser.class)
+                    .put("Image", Image.class)
                     .put("LeftNavigation", NavigationLinks.class)
                     .put("LanguageSelector", Configuration.class)
                     .put("List", ContentList.class)

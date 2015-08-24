@@ -1,11 +1,13 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.w3c.dom.Node;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.exceptions.DxaException;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
@@ -26,10 +28,13 @@ public class Image extends MediaItem {
         this.alternateText = alternateText;
     }
 
+    @Override
     public String toHtml(String widthFactor)
     {
     	return this.toHtml(widthFactor, 0,"", 0); 
     }
+    
+    @Override
     public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize)
     {
         String responsiveImageUrl = this.mediaHelper.getResponsiveImageUrl(getUrl(), widthFactor, aspect, containerSize);
@@ -38,6 +43,19 @@ public class Image extends MediaItem {
         String classAttr = Strings.isNullOrEmpty(cssClass) ? null : String.format("class=\"{0}\"", cssClass);
         return String.format("<img src=\"{0}\" alt=\"{1}\" data-aspect=\"{2}\" {3}{4}/>",
             responsiveImageUrl, getAlternateText(), dataAspect, widthAttr, classAttr);
+    }
+    
+    @Override
+    public  void readFromXhtmlElement(Node xhtmlElement)
+    {
+        super.readFromXhtmlElement(xhtmlElement);
+
+        this.setAlternateText(xhtmlElement.getAttributes().getNamedItem("alt").getNodeValue());
+        try {
+    		this.setMvcData(new MediaItemMvcData("Core:Entity:Image"));
+    	} catch (DxaException e) {
+
+    	}
     }
     
     @Override

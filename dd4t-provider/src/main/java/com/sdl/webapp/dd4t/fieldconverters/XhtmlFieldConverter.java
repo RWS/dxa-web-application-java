@@ -1,7 +1,6 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.ContentResolver;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.model.RichText;
 

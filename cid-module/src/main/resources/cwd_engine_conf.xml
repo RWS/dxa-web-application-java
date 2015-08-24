@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<context version="1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="schemas/cwd_engine_conf.xsd">
+
+  <http>
+    <pooling>
+      <maxTotal>300</maxTotal>
+      <defaultMaxPerRoute>100</defaultMaxPerRoute>
+    </pooling>
+    <connectionTimeout>20000</connectionTimeout>
+    <socketTimeout>20000</socketTimeout>
+    <redirecting>false</redirecting>
+    <ssl>
+      <enabled>true</enabled>
+      <secure>true</secure>
+    </ssl>
+  </http>
+
+  <image>
+    <whitelist>
+      <enabled>false</enabled>
+      <urls>
+        <localhost>http://localhost**</localhost>
+      </urls>
+    </whitelist>
+    <sources>
+      <urls>
+        <site>http://localhost:8080</site>
+      </urls>
+    </sources>
+  </image>
+  <cache>
+    <image>
+      <configurationResourceName>classpath:ehcache_context_image.xml</configurationResourceName>
+      <recheckSource>true</recheckSource>
+      <checkPeriod>100000</checkPeriod>
+    </image>
+    <enabled>true</enabled>
+  </cache>
+</context>

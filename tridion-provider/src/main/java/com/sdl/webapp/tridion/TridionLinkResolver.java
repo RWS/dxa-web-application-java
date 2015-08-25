@@ -22,8 +22,12 @@ public class TridionLinkResolver implements LinkResolver{
     
     @Override
     public String resolveLink(String url, String localizationId) {
+    	return resolveLink(url, localizationId, false);
+    }
+    @Override
+    public String resolveLink(String url, String localizationId, boolean resolveToBinary) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
-        String resolvedUrl = resolveLink(url, publicationId, false);
+        String resolvedUrl = resolveLink(url, publicationId, resolveToBinary);
 
         if (!Strings.isNullOrEmpty(resolvedUrl)) {
             if (resolvedUrl.endsWith(DEFAULT_PAGE_EXTENSION)) {
@@ -36,8 +40,6 @@ public class TridionLinkResolver implements LinkResolver{
 
         return resolvedUrl;
     }
-    
-    
     
     public String resolveLink(String uri, int publicationId, boolean isBinary) {
         if (uri == null || !uri.startsWith("tcm:")) {
@@ -58,8 +60,11 @@ public class TridionLinkResolver implements LinkResolver{
 
         switch (itemType) {
             case 16:
-                return isBinary ? resolveBinaryLink(uri, publicationId) : resolveComponentLink(uri, publicationId, itemId);
-
+                if(isBinary)
+            	{
+            		String resolvedLink = resolveBinaryLink(uri, publicationId); 
+            		return resolvedLink.equals("") ? resolveComponentLink(uri, publicationId, itemId) : resolvedLink;
+            	}
             case 64:
                 return resolvePageLink(uri, publicationId, itemId);
 

@@ -7,6 +7,7 @@ import org.w3c.dom.Node;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.markup.html.HtmlElement;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
@@ -90,11 +91,13 @@ public abstract class MediaItem extends AbstractEntity {
             len = len / 1024;
         }
 
-        return String.format("{0} {1}", Math.ceil(len), sizes[order]);
+        return String.format("%s %s", Math.ceil(len), sizes[order]);
     }
     public abstract String toHtml(String widthFactor);
 
     public abstract String toHtml(String widthFactor, double aspect, String cssClass, int containerSize);
+    
+    public abstract HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath);
 
     public void readFromXhtmlElement(Node xhtmlElement)
     {

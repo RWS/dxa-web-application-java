@@ -100,6 +100,7 @@ public class MainController {
         request.setAttribute(PAGE_MODEL, page);
         request.setAttribute(LOCALIZATION, localization);
         request.setAttribute(MARKUP, markup);
+        request.setAttribute(MEDIAHELPER, mediaHelper);
         request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
 
         final MvcData mvcData = page.getMvcData();

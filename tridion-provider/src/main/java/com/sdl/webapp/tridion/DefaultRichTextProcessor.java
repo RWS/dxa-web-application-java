@@ -46,6 +46,7 @@ import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.RichTextFragment;
+import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntity;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
@@ -213,42 +214,32 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 	         int i = 0;
 			
 	         
-	         Pattern pattern = Pattern.compile("<\\?EmbeddedEntity\\s\\?>");
+	         Pattern pattern = Pattern.compile("<\\?EmbeddedEntity\\s?\\?>");
 	         Matcher matcher = pattern.matcher(xhtml);
+	         
 	         while (matcher.find()) {
 	             String match = matcher.group();
 	             
+	             int embeddedEntityIndex = matcher.start();
+	             
+	                if (embeddedEntityIndex > lastFragmentIndex)
+	                {
+	                    richTextFragments.add(new RichTextFragmentImpl(xhtml.substring(lastFragmentIndex, embeddedEntityIndex - lastFragmentIndex)));
+	                }
+	                richTextFragments.add((RichTextFragment)embeddedEntities.get(i++));
+	                lastFragmentIndex = matcher.end();
 	         }
+	         
+	        if (lastFragmentIndex < xhtml.length())
+            {
+                // Final text fragment
+                richTextFragments.add(new RichTextFragmentImpl(xhtml.substring(lastFragmentIndex)));
+            }
 			
 		} catch (TransformerException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-         
-                
-		/*
-		 *  // Split the XHTML into fragments based on marker XML processing instructions.
-            string xhtml = doc.DocumentElement.InnerXml;
-            IList<IRichTextFragment> richTextFragments = new List<IRichTextFragment>();
-            int lastFragmentIndex = 0;
-            int i = 0;
-            foreach (Match embeddedEntityMatch in EmbeddedEntityProcessingInstructionRegex.Matches(xhtml))
-            {
-                int embeddedEntityIndex = embeddedEntityMatch.Index;
-                if (embeddedEntityIndex > lastFragmentIndex)
-                {
-                    richTextFragments.Add(new RichTextFragment(xhtml.Substring(lastFragmentIndex, embeddedEntityIndex - lastFragmentIndex)));
-                }
-                richTextFragments.Add(embeddedEntities[i++]);
-                lastFragmentIndex = embeddedEntityIndex + embeddedEntityMatch.Length;
-            }
-            if (lastFragmentIndex < xhtml.Length)
-            {
-                // Final text fragment
-                richTextFragments.Add(new RichTextFragment(xhtml.Substring(lastFragmentIndex)));
-            }
-		 */
 		
 		return new RichText(richTextFragments);
      }
@@ -289,7 +280,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 					// Resolve a dynamic component link
 					linkUrl = linkResolver.resolveLink(
 							linkElement.getAttributeNS(XLINK_NS_URI, "href"),
-							null);
+							null, true);
 				}
 
 				if (!Strings.isNullOrEmpty(linkUrl)) {

@@ -5,5 +5,14 @@
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Download" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <div ${markup.entity(entity)}>
-    <dxa:media media="${entity}"/>
+   <div class="download-list">
+   <i class="fa ${entity.iconClass}"></i>
+    <div>
+     	<a href="${entity.url}">${entity.fileName}</a> 
+     	 <small class="size" ${markup.property(entity, "fileSize")}>(${entity.getFriendlyFileSize()})</small>
+     	  <c:if test="${not empty entity.description}">
+	        <small ${markup.property(entity, "description")}>${entity.description}</small>
+		  </c:if>
+    </div>
+   </div>
 </div>

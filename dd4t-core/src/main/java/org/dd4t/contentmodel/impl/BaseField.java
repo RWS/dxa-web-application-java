@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-@JsonIgnoreProperties({"Value"})
+@JsonIgnoreProperties({"Value", "KeywordValues"})
 public abstract class BaseField implements Field {
 
     @JsonProperty("Name")

@@ -8,9 +8,9 @@
     <artifactId>dd4t-parent</artifactId>
     <packaging>pom</packaging>
     <version>2.0.2-SNAPSHOT</version>
-    <modules>
+    <!--<modules>
         <module>spring-mvc-archetype</module>
-    </modules>
+    </modules>-->
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Parent for all DD4T projects.</description>
@@ -297,7 +297,7 @@
                 <module>dd4t-mvc-support</module>
                 <module>dd4t-test-spring-web</module>
                 <module>dd4t-example-site</module>
-                <module>spring-mvc-archetype</module>
+                <!--<module>spring-mvc-archetype</module>-->
             </modules>
 
         </profile>

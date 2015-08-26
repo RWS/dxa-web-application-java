@@ -12,7 +12,7 @@ import com.sdl.webapp.common.markup.html.HtmlElement;
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
 @SemanticEntity(entityName = "MediaObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
-public abstract class MediaItem extends AbstractEntity {
+public abstract class MediaItem extends AbstractEntityModel {
 
     @SemanticProperty("s:contentUrl")
     private String url;

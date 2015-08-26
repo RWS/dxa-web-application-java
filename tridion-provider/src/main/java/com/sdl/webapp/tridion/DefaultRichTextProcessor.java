@@ -48,7 +48,7 @@ import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.util.NamedNodeMapAdapter;
 import com.sdl.webapp.common.util.NodeListAdapter;
@@ -159,7 +159,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 		}
 	}
 
-	 private <T extends AbstractEntity> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
+	 private <T extends AbstractEntityModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
 	        if (LOG.isTraceEnabled()) {
 	            LOG.trace("entityClass: {}", entityClass.getName());
 	        }
@@ -192,7 +192,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 	        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaTcmUriParts[1]));
 	        
 	        String viewName = semanticSchema.getRootElement();
-	        final Class<? extends AbstractEntity> entityClass = viewModelRegistry.getViewEntityClass(viewName);
+	        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.getViewEntityClass(viewName);
 	        if (entityClass == null) {
 	            throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
 	                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");

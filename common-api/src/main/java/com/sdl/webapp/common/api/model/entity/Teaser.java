@@ -17,7 +17,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
         @SemanticEntity(entityName = "LinkedContent", vocabulary = SDL_CORE, prefix = "c"),
         @SemanticEntity(entityName = "StandardMetadata", vocabulary = SDL_CORE, prefix = "m")
 })
-public class Teaser extends AbstractEntity {
+public class Teaser extends AbstractEntityModel {
 
     @SemanticProperties({
             @SemanticProperty("a:_self"),

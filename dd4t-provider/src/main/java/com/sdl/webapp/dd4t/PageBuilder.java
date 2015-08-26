@@ -15,7 +15,7 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
-import com.sdl.webapp.common.api.model.page.PageImpl;
+import com.sdl.webapp.common.api.model.page.PageModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 
 import org.dd4t.contentmodel.*;
@@ -117,7 +117,7 @@ final class PageBuilder {
 
     PageModel createPage(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider)
             throws ContentProviderException {
-        final PageImpl page = new PageImpl();
+        final PageModelImpl page = new PageModelImpl();
 
         page.setId(genericPage.getId());
 

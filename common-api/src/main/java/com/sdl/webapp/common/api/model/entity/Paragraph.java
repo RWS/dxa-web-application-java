@@ -2,7 +2,7 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.model.RichText;
 
-public class Paragraph extends AbstractEntity {
+public class Paragraph extends AbstractEntityModel {
 
     private String subheading;
 

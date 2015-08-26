@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Implementation of {@code Page}.
  */
-public class PageImpl implements PageModel {
+public class PageModelImpl implements PageModel {
 
     private String id;
     private String name;

@@ -7,7 +7,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
 
 @SemanticEntity(entityName = "NotificationBar", vocabulary = SDL_CORE, prefix = "nb")
-public class Notification extends AbstractEntity {
+public class Notification extends AbstractEntityModel {
 
     @SemanticProperty("nb:headline")
     private String headline;

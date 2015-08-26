@@ -12,7 +12,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
         @SemanticEntity(entityName = "LinkList", vocabulary = SDL_CORE),
         @SemanticEntity(entityName = "SocialLinks", vocabulary = SDL_CORE, prefix = "s")
 })
-public class TagLinkList extends AbstractEntity {
+public class TagLinkList extends AbstractEntityModel {
 
     private String headline;
 

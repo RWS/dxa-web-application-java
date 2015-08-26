@@ -15,7 +15,7 @@ import java.util.Map;
  * Abstract superclass for implementations of {@code Entity}.
  */
 @SemanticMappingIgnore
-public abstract class AbstractEntity implements EntityModel, RichTextFragment {
+public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
 
     @JsonProperty("Id")
     private String id;

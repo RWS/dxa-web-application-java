@@ -2,7 +2,7 @@ package com.sdl.webapp.main.taglib.dxa;
 
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
-import com.sdl.webapp.common.api.model.region.RegionImpl;
+import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.SimpleRegionMvcData;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
@@ -42,7 +42,7 @@ public class RegionTag extends AbstractMarkupTag {
             // Render the region even if it is not present on the page, so XPM region markup etc can be generated
             //
 
-            RegionImpl placeholderRegion = new RegionImpl();
+            RegionModelImpl placeholderRegion = new RegionModelImpl();
             placeholderRegion.setName(name);
             placeholderRegion.setMvcData(new SimpleRegionMvcData(name));
             region = placeholderRegion;

@@ -8,7 +8,7 @@ import com.sdl.webapp.common.api.mapping.annotations.*;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.util.PackageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,7 +140,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         }
         List<Field> declaredFields = new ArrayList<>();
         Class clazz = entityClass;
-        while ( ! clazz.equals(AbstractEntity.class) && ! clazz.equals(Object.class) ) {
+        while ( ! clazz.equals(AbstractEntityModel.class) && ! clazz.equals(Object.class) ) {
             for ( Field field : clazz.getDeclaredFields() ) {
                 declaredFields.add(field);
             }

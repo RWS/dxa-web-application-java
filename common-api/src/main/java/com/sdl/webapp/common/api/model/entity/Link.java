@@ -7,7 +7,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
 
 @SemanticEntity(entityName = "EmbeddedLink", vocabulary = SDL_CORE, prefix = "e")
-public class Link extends AbstractEntity {
+public class Link extends AbstractEntityModel {
 
     @SemanticProperties({
             @SemanticProperty("internalLink"),

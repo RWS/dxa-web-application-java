@@ -6,7 +6,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;
 
 import java.util.List;
@@ -30,7 +30,7 @@ public class SemanticMappingRegistryImplTest {
             @SemanticEntity(entityName = "TestOne", vocabulary = SDL_TEST, prefix = "t"),
             @SemanticEntity(entityName = "CoreOne", vocabulary = SDL_CORE, prefix = "c")
     })
-    public static class TestEntity1 extends AbstractEntity {
+    public static class TestEntity1 extends AbstractEntityModel {
 
         @SemanticProperties({
                 @SemanticProperty(propertyName = "t:F1"),

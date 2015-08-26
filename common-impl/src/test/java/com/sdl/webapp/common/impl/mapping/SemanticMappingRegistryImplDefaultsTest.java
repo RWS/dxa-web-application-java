@@ -3,7 +3,7 @@ package com.sdl.webapp.common.impl.mapping;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;
 
 import java.util.List;
@@ -19,13 +19,13 @@ import static org.junit.Assert.assertThat;
  */
 public class SemanticMappingRegistryImplDefaultsTest {
 
-    public static class TestEntity1 extends AbstractEntity {
+    public static class TestEntity1 extends AbstractEntityModel {
         private String field1;
         private int field2;
     }
 
     @SemanticEntity(entityName = "TE2", vocabulary = SDL_CORE, prefix = "x")
-    public static class TestEntity2 extends AbstractEntity {
+    public static class TestEntity2 extends AbstractEntityModel {
         @SemanticProperty("x:F1")
         private String field1;
 
@@ -34,7 +34,7 @@ public class SemanticMappingRegistryImplDefaultsTest {
     }
 
     @SemanticEntity(entityName = "TE3", vocabulary = SCHEMA_ORG)
-    public static class TestEntity3 extends AbstractEntity {
+    public static class TestEntity3 extends AbstractEntityModel {
         @SemanticProperty("F1")
         private String field1;
     }

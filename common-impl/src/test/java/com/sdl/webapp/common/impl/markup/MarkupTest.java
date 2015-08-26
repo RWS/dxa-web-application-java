@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.impl.markup;
 
-import com.sdl.webapp.common.api.model.region.RegionImpl;
+import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.markup.Markup;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -37,7 +37,7 @@ public class MarkupTest {
 
     @Test
     public void testRegion() {
-        final RegionImpl region = new RegionImpl();
+        final RegionModelImpl region = new RegionModelImpl();
         region.setName("TestRegion");
         assertThat(markup.region(region), is("typeof=\"Region\" resource=\"TestRegion\""));
     }

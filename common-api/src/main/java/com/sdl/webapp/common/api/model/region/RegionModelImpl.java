@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * Implementation of {@code Region}.
  */
-public class RegionImpl implements RegionModel {
+public class RegionModelImpl implements RegionModel {
 
     private String name;
     private Map<String, EntityModel> entities = new LinkedHashMap<>();

@@ -65,6 +65,10 @@ public class TridionLinkResolver implements LinkResolver{
             		String resolvedLink = resolveBinaryLink(uri, publicationId); 
             		return resolvedLink.equals("") ? resolveComponentLink(uri, publicationId, itemId) : resolvedLink;
             	}
+                else
+                {
+                	return resolveComponentLink(uri, publicationId, itemId);
+                }
             case 64:
                 return resolvePageLink(uri, publicationId, itemId);
 

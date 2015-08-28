@@ -40,6 +40,11 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+         <attribute>
+         	<name>parentRegion</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
     <!-- Include all regions on the page, except excluded ones -->
@@ -49,6 +54,11 @@
         <body-content>empty</body-content>
         <attribute>
             <name>exclude</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+         <attribute>
+         	<name>parentRegion</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -74,6 +84,11 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+         	<name>parentRegion</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
     <!-- Include all entities in a region -->
@@ -86,6 +101,11 @@
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+        <attribute>
+         	<name>parentRegion</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>       
     </tag>
 
     <!-- Insert media: an image, YouTube video or download link -->

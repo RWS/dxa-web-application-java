@@ -3,6 +3,13 @@
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="region" type="com.sdl.webapp.common.api.model.RegionModel" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
-<div class="navbar-collapse collapse" ${markup.region(region)}>
-    <dxa:entities  parentRegion="${region}"  region="Nav"/>
-</div>
+    
+<xpm:button region="${region}" />
+    
+<footer id="page-footer" class="page-row">
+    <div class="container-fluid page-border">
+        <dxa:regions parentRegion="${region}" exclude="Links"/>
+        <hr/>
+        <dxa:region parentRegion="${region}"  name="Links"/>
+    </div>
+</footer>

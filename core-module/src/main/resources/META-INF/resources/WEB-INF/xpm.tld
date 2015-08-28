@@ -9,11 +9,22 @@
     <uri>http://www.sdl.com/tridion-xpm</uri>
 
     <tag>
+        <name>button</name>
+        <tag-class>com.sdl.webapp.main.taglib.xpm.XpmButtonTag</tag-class>
+        <body-content>JSP</body-content>
+         <attribute>
+            <name>region</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>com.sdl.webapp.common.api.model.RegionModel</type>
+        </attribute>
+    </tag>
+    
+	<tag>
         <name>if-enabled</name>
         <tag-class>com.sdl.webapp.main.taglib.xpm.XpmIfEnabledTag</tag-class>
         <body-content>JSP</body-content>
     </tag>
-
     <tag>
         <name>page</name>
         <tag-class>com.sdl.webapp.main.taglib.xpm.XpmPageMarkupTag</tag-class>
@@ -22,7 +33,7 @@
             <name>page</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>com.sdl.webapp.common.api.model.Page</type>
+            <type>com.sdl.webapp.common.api.model.PageModel</type>
         </attribute>
     </tag>
 
@@ -34,7 +45,7 @@
             <name>region</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>com.sdl.webapp.common.api.model.Region</type>
+            <type>com.sdl.webapp.common.api.model.RegionModel</type>
         </attribute>
     </tag>
 
@@ -46,7 +57,7 @@
             <name>entity</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>com.sdl.webapp.common.api.model.Entity</type>
+            <type>com.sdl.webapp.common.api.model.EntityModel</type>
         </attribute>
     </tag>
 
@@ -58,7 +69,7 @@
             <name>entity</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>com.sdl.webapp.common.api.model.Entity</type>
+            <type>com.sdl.webapp.common.api.model.EntityModel</type>
         </attribute>
         <attribute>
             <name>property</name>

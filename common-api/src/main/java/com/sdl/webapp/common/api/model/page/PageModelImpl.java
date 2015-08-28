@@ -19,7 +19,6 @@ public class PageModelImpl implements PageModel {
     private String name;
     private String title;
     private Map<String, String> meta = new HashMap<>();
-    private Map<String, PageModel> includes = new HashMap<>();
     private RegionModelSet regions = new RegionModelSetImpl();
     private Map<String, String> xpmMetadata = new HashMap<>();
     private MvcData mvcData;
@@ -58,15 +57,6 @@ public class PageModelImpl implements PageModel {
 
     public void setMeta(Map<String, String> meta) {
         this.meta = meta;
-    }
-
-    @Override
-    public Map<String, PageModel> getIncludes() {
-        return includes;
-    }
-
-    public void setIncludes(Map<String, PageModel> includes) {
-        this.includes = includes;
     }
 
     @Override

@@ -20,7 +20,8 @@ public class RegionTag extends AbstractMarkupTag {
 
     private String name;
     private boolean placeholder;
-
+    private RegionModel parentRegion;
+    
     public void setName(String name) {
         this.name = name;
     }
@@ -28,7 +29,11 @@ public class RegionTag extends AbstractMarkupTag {
     public void setPlaceholder(boolean placeholder) {
         this.placeholder = placeholder;
     }
-
+    public void setParentRegion(RegionModel parent)
+    {
+    	this.parentRegion = parent;
+    }
+    
     @Override
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
@@ -38,6 +43,11 @@ public class RegionTag extends AbstractMarkupTag {
         }
 
         RegionModel region = page.getRegions().get(name);
+        if(parentRegion != null)
+        {
+        	region = parentRegion.getRegions().get(name);
+        }
+        
         if ( region == null && placeholder == true ) {
             // Render the region even if it is not present on the page, so XPM region markup etc can be generated
             //
@@ -54,6 +64,9 @@ public class RegionTag extends AbstractMarkupTag {
             try {
 
                 //pageContext.include(ControllerUtils.getIncludePath(region));
+            	
+            	pageContext.getRequest().setAttribute("_region_" + name, region);
+            	
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
 
             } catch (ServletException | IOException e) {

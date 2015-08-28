@@ -32,7 +32,7 @@ public class MediaItemMvcData implements MvcData {
         switch (qualifiedViewNameParts.length)
         {
             case 1:
-                this.setAreaName("core");
+                this.setAreaName(areaName);
                 this.setViewName(qualifiedViewNameParts[0]);
                 break;
             case 2:

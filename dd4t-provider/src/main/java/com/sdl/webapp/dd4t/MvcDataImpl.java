@@ -21,8 +21,35 @@ final class MvcDataImpl implements MvcData {
     private Map<String, String> routeValues = new HashMap<>();
     private Map<String,Object> metadata = new HashMap<>();
 
+    public MvcDataImpl() 
+    {
     
-   
+    }
+    public MvcDataImpl(String qualifiedViewName) throws DxaException
+    {
+        String[] qualifiedViewNameParts = qualifiedViewName.split(":");
+        switch (qualifiedViewNameParts.length)
+        {
+            case 1:
+                this.setAreaName("Core");
+                this.setViewName(qualifiedViewNameParts[0]);
+                break;
+            case 2:
+            	this.setAreaName(qualifiedViewNameParts[0]);
+            	this.setViewName(qualifiedViewNameParts[1]);
+                break;
+            case 3:
+            	this.setAreaName(qualifiedViewNameParts[0]);
+            	this.setControllerName(qualifiedViewNameParts[1]);
+            	this.setViewName(qualifiedViewNameParts[2]);
+                break;
+            default:
+                throw new DxaException(
+                    String.format("Invalid format for Qualified View Name: '{0}'. Format must be 'ViewName' or 'AreaName:ViewName' or 'AreaName:ControllerName:Vieweame.'", 
+                        qualifiedViewName)
+                        );
+        }
+    }
     
     
     @Override

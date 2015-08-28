@@ -14,5 +14,7 @@ public interface LinkResolver {
      * @param localizationId The localization to use.
      * @return The translated URL.
      */
+    String resolveLink(String url, String localizationId, boolean resolveToBinary);
+    
     String resolveLink(String url, String localizationId);
 }

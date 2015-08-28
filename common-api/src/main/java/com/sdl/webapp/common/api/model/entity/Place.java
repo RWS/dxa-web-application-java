@@ -6,7 +6,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
 @SemanticEntity(entityName = "Place", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
-public class Place extends AbstractEntity {
+public class Place extends AbstractEntityModel {
 
     @SemanticProperty("s:name")
     private String name;

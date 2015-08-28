@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 
 import java.util.List;
 
-public class SitemapItem extends AbstractEntity {
+public class SitemapItem extends AbstractEntityModel {
 
     @JsonProperty("Title")
     private String title;

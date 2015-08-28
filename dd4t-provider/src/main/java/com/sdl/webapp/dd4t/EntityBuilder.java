@@ -10,7 +10,7 @@ import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.dd4t.fieldconverters.FieldConverterRegistry;
@@ -67,7 +67,7 @@ final class EntityBuilder {
             return null;
         }
 
-        final Class<? extends AbstractEntity> entityClass = viewModelRegistry.getViewEntityClass(viewName);
+        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.getViewEntityClass(viewName);
         if (entityClass == null) {
             throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
                     "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
@@ -76,7 +76,7 @@ final class EntityBuilder {
         final SemanticSchema semanticSchema = localization.getSemanticSchemas()
                 .get(Long.parseLong(component.getSchema().getId().split("-")[1]));
 
-        final AbstractEntity entity;
+        final AbstractEntityModel entity;
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
                     new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry));
@@ -110,7 +110,7 @@ final class EntityBuilder {
         return entity;
     }
 
-    private void createEntityData(AbstractEntity entity, ComponentPresentation componentPresentation) {
+    private void createEntityData(AbstractEntityModel entity, ComponentPresentation componentPresentation) {
         final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
 

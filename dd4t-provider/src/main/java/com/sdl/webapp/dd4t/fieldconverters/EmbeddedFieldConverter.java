@@ -3,7 +3,7 @@ package com.sdl.webapp.dd4t.fieldconverters;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.dd4t.DD4TSemanticFieldDataProvider;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
@@ -59,11 +59,11 @@ public class EmbeddedFieldConverter implements FieldConverter {
                                  DD4TSemanticFieldDataProvider semanticFieldDataProvider) throws FieldConverterException {
         final Class<?> targetClass = targetType.getObjectType();
 
-        if (AbstractEntity.class.isAssignableFrom(targetClass)) {
+        if (AbstractEntityModel.class.isAssignableFrom(targetClass)) {
             try {
                 semanticFieldDataProvider.pushEmbeddingLevel(fieldSet.getContent());
 
-                return semanticMapper.createEntity(targetClass.asSubclass(AbstractEntity.class),
+                return semanticMapper.createEntity(targetClass.asSubclass(AbstractEntityModel.class),
                         semanticField.getEmbeddedFields(), semanticFieldDataProvider);
             } catch (SemanticMappingException e) {
                 throw new FieldConverterException("Exception while creating entity for embedded field: " +

@@ -14,8 +14,8 @@ import java.util.Map;
 @Component
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
-    private static final Map<String, Class<? extends AbstractEntity>> CORE_VIEW_ENTITY_CLASS_MAP =
-            ImmutableMap.<String, Class<? extends AbstractEntity>>builder()
+    private static final Map<String, Class<? extends AbstractEntityModel>> CORE_VIEW_ENTITY_CLASS_MAP =
+            ImmutableMap.<String, Class<? extends AbstractEntityModel>>builder()
                     .put("Accordion", ItemList.class)
                     .put("Article", Article.class)
                     .put("Breadcrumb", NavigationLinks.class)
@@ -26,6 +26,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     .put("FooterLinks", LinkList.class)
                     .put("HeaderLinks", LinkList.class)
                     .put("HeaderLogo", Teaser.class)
+                    .put("Image", Image.class)
                     .put("LeftNavigation", NavigationLinks.class)
                     .put("LanguageSelector", Configuration.class)
                     .put("List", ContentList.class)
@@ -47,19 +48,19 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     .put("YouTubeVideo", YouTubeVideo.class)
                     .build();
 
-    private final Map<String, Class<? extends AbstractEntity>> viewEntityClassMap = new HashMap<>();
+    private final Map<String, Class<? extends AbstractEntityModel>> viewEntityClassMap = new HashMap<>();
 
     public ViewModelRegistryImpl() {
         viewEntityClassMap.putAll(CORE_VIEW_ENTITY_CLASS_MAP);
     }
 
     @Override
-    public void registerViewEntityClass(String viewName, Class<? extends AbstractEntity> entityClass) {
+    public void registerViewEntityClass(String viewName, Class<? extends AbstractEntityModel> entityClass) {
         viewEntityClassMap.put(viewName, entityClass);
     }
 
     @Override
-    public Class<? extends AbstractEntity> getViewEntityClass(String viewName) {
+    public Class<? extends AbstractEntityModel> getViewEntityClass(String viewName) {
         return viewEntityClassMap.get(viewName);
     }
 }

@@ -8,7 +8,7 @@ import java.util.List;
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
 @SemanticEntity(entityName = "ItemList", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
-public class ItemList extends AbstractEntity {
+public class ItemList extends AbstractEntityModel {
 
     @SemanticProperty("s:headline")
     private String headline;

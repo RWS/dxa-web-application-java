@@ -16,7 +16,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
         @SemanticEntity(entityName = "ItemList", vocabulary = SDL_CORE, prefix = "i"),
         @SemanticEntity(entityName = "ContentQuery", vocabulary = SDL_CORE, prefix = "q")
 })
-public class ContentList extends AbstractEntity {
+public class ContentList extends AbstractEntityModel {
 
     @SemanticProperties({
             @SemanticProperty("s:headline"),

@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.impl.mapping;
 
 import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class SemanticMappingRegistryFactory extends AbstractFactoryBean<Semantic
         SemanticMappingRegistryImpl semanticMappingRegistry = new SemanticMappingRegistryImpl();
 
         // Register all entity classes in the same package (and subpackages) as AbstractEntity
-        semanticMappingRegistry.registerEntities(AbstractEntity.class.getPackage().getName());
+        semanticMappingRegistry.registerEntities(AbstractEntityModel.class.getPackage().getName());
 
         return semanticMappingRegistry;
     }

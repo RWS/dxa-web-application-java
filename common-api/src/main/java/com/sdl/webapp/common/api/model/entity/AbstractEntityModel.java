@@ -6,6 +6,8 @@ import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.RichTextFragment;
+import com.sdl.webapp.common.markup.html.HtmlElement;
 
 import java.util.Map;
 
@@ -13,7 +15,7 @@ import java.util.Map;
  * Abstract superclass for implementations of {@code Entity}.
  */
 @SemanticMappingIgnore
-public abstract class AbstractEntity implements EntityModel {
+public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
 
     @JsonProperty("Id")
     private String id;
@@ -61,5 +63,16 @@ public abstract class AbstractEntity implements EntityModel {
 
     public void setMvcData(MvcData mvcData) {
         this.mvcData = mvcData;
+    }
+    
+    @Override
+    public String toHtml()
+    {
+        throw new UnsupportedOperationException(
+            String.format("Direct rendering of View Model type '{0}' to HTML is not supported." + 
+            " Consider using View Model property of type RichText in combination with DxaRichText() in view code to avoid direct rendering to HTML." +
+            " Alternatively, override method {0}.toHtml().", 
+            getClass().getName())
+            );
     }
 }

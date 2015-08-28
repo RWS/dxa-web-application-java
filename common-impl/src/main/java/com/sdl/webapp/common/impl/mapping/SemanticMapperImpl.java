@@ -5,7 +5,9 @@ import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.mapping.*;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.RichText;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,7 @@ public class SemanticMapperImpl implements SemanticMapper {
     }
 
     @Override
-    public <T extends AbstractEntity> T createEntity(Class<? extends T> entityClass,
+    public <T extends AbstractEntityModel> T createEntity(Class<? extends T> entityClass,
                                                      final Map<FieldSemantics, SemanticField> semanticFields,
                                                      final SemanticFieldDataProvider fieldDataProvider)
             throws SemanticMappingException {
@@ -78,7 +80,14 @@ public class SemanticMapperImpl implements SemanticMapper {
                                 }
 
                                 field.setAccessible(true);
-                                field.set(entity, fieldValue);
+                                if(field.getType().equals(RichText.class) && fieldValue.getClass().equals(String.class))
+                                {
+                                	field.set(entity, new RichText((String)fieldValue));
+                                }
+                                else
+                                {
+                                	field.set(entity, fieldValue);
+                                }
 
                                 final String propertyData = fieldData.getPropertyData();
                                 if (!Strings.isNullOrEmpty(propertyData)) {
@@ -143,7 +152,7 @@ public class SemanticMapperImpl implements SemanticMapper {
         return entity;
     }
 
-    private <T extends AbstractEntity> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
+    private <T extends AbstractEntityModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("entityClass: {}", entityClass.getName());
         }

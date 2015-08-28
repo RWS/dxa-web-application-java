@@ -27,28 +27,28 @@
     <![endif]-->
 </head>
 <body>
-<dxa:page name="Header" viewName="Shared/Header"/>
+<dxa:region name="Header" />
 <main class="page-row page-row-expanded" role="main">
     <div class="container-fluid page-border">
         <%
-            boolean hasLeftBar = pageModel.getIncludes().containsKey("Left Navigation") ||
+            boolean hasLeftBar = pageModel.getRegions().containsKey("Left-Navigation") ||
                     pageModel.getRegions().containsKey("Left");
             int mainContainerSize = hasLeftBar ? 9 : 12;
         %>
         <dxa:region name="Hero"/>
-        <dxa:page name="Content Tools"/>
+        <dxa:region name="Content-Tools"/>
         <div class="row">
             <% if (hasLeftBar) { %>
                 <div class="col-sm-12 col-md-3">
-                    <dxa:page name="Left Navigation"/>
+                    <dxa:region name="Left-Navigation"/>
                     <dxa:region name="Left"/>
                 </div>
             <% } %>
-            <div class="col-sm-12 col-md-<%= mainContainerSize %>"><dxa:regions exclude="Hero,Left"/></div>
+            <div class="col-sm-12 col-md-<%= mainContainerSize %>"><dxa:regions exclude="Hero,Left,Left-Navigation,Header,Footer,Content-Tools"/></div>
         </div>
     </div>
 </main>
-<dxa:page name="Footer" viewName="Shared/Footer"/>
+<dxa:region name="Footer" />
 <script src="${markup.versionedContent('/assets/scripts/main.js')}"></script>
 <xpm:if-enabled><script src="${markup.versionedContent('/assets/scripts/xpm.js')}"></script></xpm:if-enabled>
 <dxa:pluggableMarkup label="bottom-js"/>

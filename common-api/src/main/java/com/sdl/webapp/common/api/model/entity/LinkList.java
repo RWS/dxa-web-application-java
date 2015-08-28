@@ -2,7 +2,7 @@ package com.sdl.webapp.common.api.model.entity;
 
 import java.util.List;
 
-public class LinkList extends AbstractEntity {
+public class LinkList extends AbstractEntityModel {
 
     private String headline;
 

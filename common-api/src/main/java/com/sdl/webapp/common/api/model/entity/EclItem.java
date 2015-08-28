@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.markup.html.HtmlElement;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -60,4 +61,23 @@ public class EclItem extends MediaItem {
                 ", itemId='" + itemId + '\'' +
                 '}';
     }
+
+	@Override
+	public String toHtml(String widthFactor) {
+		// TODO implement this functionality
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+
+	@Override
+	public String toHtml(String widthFactor, double aspect, String cssClass,
+			int containerSize) {
+		// TODO implement this functionality
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
+	
+	@Override
+	public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
+		// TODO implement this functionality
+		throw new UnsupportedOperationException("Not yet implemented");
+	}
 }

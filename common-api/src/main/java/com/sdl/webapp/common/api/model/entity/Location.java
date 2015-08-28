@@ -12,7 +12,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
         @SemanticEntity(entityName = "GeoCoordinates", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true),
         @SemanticEntity(entityName = "LocationMeta", vocabulary = SDL_CORE, prefix = "lm")
 })
-public class Location extends AbstractEntity {
+public class Location extends AbstractEntityModel {
 
     @SemanticProperties({
             @SemanticProperty("s:latitude"),

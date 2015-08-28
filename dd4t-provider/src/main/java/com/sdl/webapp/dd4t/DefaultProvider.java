@@ -66,8 +66,8 @@ import javax.imageio.ImageIO;
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
  */
 @Component
-public final class DefaultContentProvider implements ContentProvider, NavigationProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultContentProvider.class);
+public final class DefaultProvider implements ContentProvider, NavigationProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultProvider.class);
 
     public static final String DEFAULT_PAGE_NAME = "index";
     public static final String DEFAULT_PAGE_EXTENSION = ".html";
@@ -86,7 +86,7 @@ public final class DefaultContentProvider implements ContentProvider, Navigation
     private final LinkResolver linkResolver;
 
     @Autowired
-    public DefaultContentProvider(PageFactory dd4tPageFactory,
+    public DefaultProvider(PageFactory dd4tPageFactory,
                                ComponentPresentationFactory dd4tComponentPresentationFactory,
                                PageBuilder pageBuilder,
                                EntityBuilder entityBuilder,
@@ -126,7 +126,7 @@ public final class DefaultContentProvider implements ContentProvider, Navigation
                             "] " + path, e);
                 }
 
-                return pageBuilder.createPage(genericPage, localization, DefaultContentProvider.this);
+                return pageBuilder.createPage(genericPage, localization, DefaultProvider.this);
             }
         });
     }

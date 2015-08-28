@@ -15,8 +15,10 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
-import com.sdl.webapp.common.api.model.page.PageImpl;
+import com.sdl.webapp.common.api.model.page.PageModelImpl;
+import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
+import com.sdl.webapp.common.exceptions.DxaException;
 
 import org.dd4t.contentmodel.*;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -114,10 +116,50 @@ final class PageBuilder {
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
         this.webRequestContext = webRequestContext;
     }
+    
+    private RegionModel getRegionFromIncludePage(PageModel page, String includeFileName)
+    {
+    	try {
+			String regionName = page.getName().replace(" ", "-");
+    		MvcDataImpl regionMvcData = new MvcDataImpl(regionName);
+			regionMvcData = InitializeRegionMvcData(regionMvcData);
+			RegionModelImpl region = new RegionModelImpl();
+			region.setName(regionName);
+			region.setMvcData(regionMvcData);
+			ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
+  		    
+			xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageIdXpmMetadataKey, page.getId());
+			xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageTitleXpmMetadataKey, page.getTitle());
+			xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey, includeFileName);
+		        
+			region.setRegions(new RegionModelSetImpl());
+			region.setXpmMetadata(xpmMetaDataBuilder.build());
+			return region;
+			
+		} catch (DxaException e) {
+			LOG.error("Error creating new MvcData from includepage", e);
+			return null;
+		}
+    }
 
-    PageModel createPage(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider)
+    private MvcDataImpl InitializeRegionMvcData(MvcDataImpl regionMvcData) {
+    	 if (Strings.isNullOrEmpty(regionMvcData.getControllerName()))
+         {
+             regionMvcData.setControllerName(REGION_CONTROLLER_NAME);
+             regionMvcData.setControllerAreaName(DEFAULT_AREA_NAME);
+         }
+         else if (Strings.isNullOrEmpty(regionMvcData.getControllerAreaName()))
+         {
+             regionMvcData.setControllerAreaName(regionMvcData.getAreaName());
+         }
+         regionMvcData.setActionName(REGION_ACTION_NAME);
+         
+         return regionMvcData;
+	}
+    
+	PageModel createPage(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider)
             throws ContentProviderException {
-        final PageImpl page = new PageImpl();
+        final PageModelImpl page = new PageModelImpl();
 
         page.setId(genericPage.getId());
 
@@ -134,21 +176,71 @@ final class PageBuilder {
             localizationPath = localizationPath + "/";
         }
 
+        // = new RegionModelSetImpl();
+        final RegionModelSet regionMap = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
+   
+        
         // Get and add includes
         final String pageTypeId = genericPage.getPageTemplate().getId().split("-")[1];
         for (String include : localization.getIncludes(pageTypeId)) {
             final String includeUrl = localizationPath + include;
-            final PageModel includePage = contentProvider.getPageModel(includeUrl, localization);
-            page.getIncludes().put(includePage.getName(), includePage);
+            PageModel includePageModel = contentProvider.getPageModel(includeUrl, localization);
+            final RegionModel includePageRegion = getRegionFromIncludePage(includePageModel, include);
+            
+            RegionModel existingRegion;
+            if(regionMap.containsKey(includePageRegion.getName()))
+            {
+            	// Region with same name already exists; merge include Page Region.
+            	existingRegion = regionMap.get(includePageRegion.getName());
+            	
+            	existingRegion.getRegions().addAll(includePageModel.getRegions());
+            	
+            	if (existingRegion.getXpmMetadata() != null)
+                {
+                    existingRegion.getXpmMetadata().remove(RegionModelImpl.IncludedFromPageIdXpmMetadataKey);
+                    existingRegion.getXpmMetadata().remove(RegionModelImpl.IncludedFromPageTitleXpmMetadataKey);
+                    existingRegion.getXpmMetadata().remove(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey);
+                }
+            	 LOG.info("Merged Include Page [%s] into Region [%s]. Note that merged Regions can't be edited properly in XPM (yet).",
+                         includePageModel, existingRegion);
+            }
+            else
+            {
+            	  includePageRegion.getRegions().addAll(includePageModel.getRegions());
+            	  regionMap.add(includePageRegion);
+            }
+            /*
+             *   RegionModel existingRegion;
+                        if (regions.TryGetValue(includePageRegion.Name, out existingRegion))
+                        {
+                            // Region with same name already exists; merge include Page Region.
+                            existingRegion.Regions.UnionWith(includePageModel.Regions);
+
+                            if (existingRegion.XpmMetadata != null)
+                            {
+                                existingRegion.XpmMetadata.Remove(RegionModel.IncludedFromPageIdXpmMetadataKey);
+                                existingRegion.XpmMetadata.Remove(RegionModel.IncludedFromPageTitleXpmMetadataKey);
+                                existingRegion.XpmMetadata.Remove(RegionModel.IncludedFromPageFileNameXpmMetadataKey);
+                            }
+
+                            Log.Info("Merged Include Page [{0}] into Region [{1}]. Note that merged Regions can't be edited properly in XPM (yet).",
+                                includePageModel, existingRegion);
+                        }
+                        else
+                        {
+                            includePageRegion.Regions.UnionWith(includePageModel.Regions);
+                            regions.Add(includePageRegion);
+                        }
+             */
+            
+            //regionMap.add(includePage);
         }
 
         page.setXpmMetadata(createXpmMetaData(genericPage, localization));
         page.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
 
         
-        // = new RegionModelSetImpl();
-        final RegionModelSet regionMap = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
-        
+          
         //regionMap.addAll(regions.values());
         page.setRegions(regionMap);
 

@@ -35,6 +35,7 @@ Repositories
 The following repositories with source code are available:
 
  - https://github.com/sdl/dxa-content-management - Core Template Building Blocks
+ - https://github.com/sdl/dxa-html-design - Whitelabel HTML Design
  - https://github.com/sdl/dxa-modules - Modules
  - https://github.com/sdl/dxa-web-application-dotnet - .NET MVC web application
  - https://github.com/sdl/dxa-web-application-java - Java Spring MVC web application

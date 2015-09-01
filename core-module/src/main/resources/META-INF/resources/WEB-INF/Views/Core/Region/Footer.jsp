@@ -8,7 +8,7 @@
     
 <footer id="page-footer" class="page-row">
     <div class="container-fluid page-border">
-        <dxa:regions parentRegion="${region}" exclude="Links"/>
+        <dxa:regions parentRegion="${region}" exclude="Links" containerSize="12"/>
         <hr/>
         <dxa:region parentRegion="${region}"  name="Links"/>
     </div>

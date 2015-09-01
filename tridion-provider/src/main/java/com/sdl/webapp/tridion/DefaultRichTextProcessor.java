@@ -379,54 +379,5 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 		// And finally, remove the node itself from the parent
 		parentNode.removeChild(node);
 	}
-/*
-	private void resolveYouTubeVideos(Document document) {
-		try {
-			// NOTE: Put link elements in a new list to avoid problems while
-			// editing
-			final List<Node> youTubeElements = new ArrayList<>(
-					new NodeListAdapter((NodeList) XPATH_YOUTUBE_VIDEOS.get()
-							.evaluate(document, XPathConstants.NODESET)));
 
-			for (Node youTubeNode : youTubeElements) {
-				final Element youTubeElement = (Element) youTubeNode;
-
-				final String url = youTubeElement.getAttributeNS(XLINK_NS_URI,
-						"href");
-				if (!Strings.isNullOrEmpty(url)) {
-					final String youTubeId = youTubeElement
-							.getAttribute("data-youTubeId");
-					final String headline = youTubeElement
-							.getAttribute("data-headline");
-					final String src = youTubeElement.getAttribute("src");
-
-					final String placeholderImageUrl = mediaHelper
-							.getResponsiveImageUrl(src, "100%", 0.0, 0);
-
-					final Element span = document.createElement("span");
-					span.setAttribute("class", "embed-video");
-
-					final Element img = document.createElement("img");
-					img.setAttribute("src", webRequestContext.getContextPath()
-							+ placeholderImageUrl);
-					img.setAttribute("alt", headline);
-					span.appendChild(img);
-
-					final Element button = document.createElement("button");
-					button.setAttribute("data-video", youTubeId);
-					final Element playButtonOverlay = document
-							.createElement("i");
-					playButtonOverlay
-							.setAttribute("class", "fa fa-play-circle");
-					button.appendChild(playButtonOverlay);
-					span.appendChild(button);
-
-					youTubeElement.getParentNode().replaceChild(span,
-							youTubeElement);
-				}
-			}
-		} catch (XPathExpressionException e) {
-			LOG.warn("Error while evaluation XPath expression", e);
-		}
-	}*/
 }

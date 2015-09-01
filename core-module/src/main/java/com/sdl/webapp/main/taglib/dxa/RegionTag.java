@@ -21,6 +21,7 @@ public class RegionTag extends AbstractMarkupTag {
     private String name;
     private boolean placeholder;
     private RegionModel parentRegion;
+    private int containerSize;
     
     public void setName(String name) {
         this.name = name;
@@ -34,6 +35,10 @@ public class RegionTag extends AbstractMarkupTag {
     	this.parentRegion = parent;
     }
     
+    public void setContainerSize(int containerSize)
+    {
+    	this.containerSize = containerSize;
+    }
     @Override
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
@@ -66,6 +71,7 @@ public class RegionTag extends AbstractMarkupTag {
                 //pageContext.include(ControllerUtils.getIncludePath(region));
             	
             	pageContext.getRequest().setAttribute("_region_" + name, region);
+            	pageContext.getRequest().setAttribute("_containersize_" + name, containerSize);
             	
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
 

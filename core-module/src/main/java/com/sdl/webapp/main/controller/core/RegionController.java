@@ -3,6 +3,7 @@ package com.sdl.webapp.main.controller.core;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.controller.AbstractController;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -28,7 +29,7 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.REGION_CONTR
 public class RegionController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(RegionController.class);
 
-    /**
+     /**
      * Handles a request for a region.
      *
      * @param request The request.
@@ -36,15 +37,21 @@ public class RegionController extends AbstractController {
      * @return The name of the region view that should be rendered for this request.
      */
     @RequestMapping(method = RequestMethod.GET, value = REGION_ACTION_NAME + "/{regionName}")
-    public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName) {
+    public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName ) {
         LOG.trace("handleGetRegion: regionName={}", regionName);
 
+        int containerSize = 0;
+        if(request.getAttribute("_containersize_" + regionName) != null)
+        {
+        	containerSize = (int) request.getAttribute("_containersize_" + regionName);
+        }
+        
         final RegionModel region = getRegionFromRequest(request, regionName);
         request.setAttribute(REGION_MODEL, region);
 
         final MvcData mvcData = region.getMvcData();
         LOG.trace("Region MvcData: {}", mvcData);
-        return resolveView(mvcData, "Region", request);
+        return resolveView(mvcData, "Region", containerSize, request);
         //return mvcData.getAreaName() + "/Region/" + mvcData.getViewName();
     }
 }

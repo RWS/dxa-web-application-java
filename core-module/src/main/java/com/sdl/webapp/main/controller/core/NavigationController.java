@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.controller.AbstractController;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,7 @@ public class NavigationController extends AbstractController {
         this.navigationProvider = navigationProvider;
     }
 
+   
     /**
      * Handles a request for navigation data, for example for the top navigation menu, left-side navigation or
      * breadcrumb bar.
@@ -60,6 +62,7 @@ public class NavigationController extends AbstractController {
      * @param request The request.
      * @param regionName The name of the region.
      * @param entityId The name of the entity.
+     * @param containerSize the Container Size.
      * @param navType Navigation type.
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
@@ -76,6 +79,12 @@ public class NavigationController extends AbstractController {
         final String requestPath = webRequestContext.getRequestPath();
         final Localization localization = webRequestContext.getLocalization();
 
+        int containerSize = 0;
+        if(request.getAttribute("_containersize_" + regionName + entityId) != null)
+        {
+        	containerSize = (int) request.getAttribute("_containersize_" + regionName + entityId);
+        }
+        
         final NavigationLinks navigationLinks;
         switch (navType) {
             case NAV_TYPE_TOP:
@@ -104,7 +113,7 @@ public class NavigationController extends AbstractController {
 
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);
-        return resolveView(mvcData, "Entity", request);
+        return resolveView(mvcData, "Entity", containerSize, request);
         //return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
     }
 

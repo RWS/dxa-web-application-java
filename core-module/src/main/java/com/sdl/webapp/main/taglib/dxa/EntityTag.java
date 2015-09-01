@@ -24,7 +24,9 @@ public class EntityTag extends AbstractMarkupTag {
     private RegionModel parentRegion;
     
     private EntityModel entityRef;
-
+    
+    private int containerSize;
+    
     public void setRegion(String regionName) {
         this.regionName = regionName;
     }
@@ -36,6 +38,11 @@ public class EntityTag extends AbstractMarkupTag {
     {
     	this.parentRegion = parent;
     }
+    public void setContainerSize(int containerSize)
+    {
+    	this.containerSize = containerSize;
+    }
+    
     public void setEntity(EntityModel entity) { this.entityRef = entity; }
 
     @Override
@@ -73,6 +80,7 @@ public class EntityTag extends AbstractMarkupTag {
             LOG.debug("Including entity: {}/{}", regionName, entity.getId());
             try {
             	pageContext.getRequest().setAttribute("_region_" + regionName, region);
+            	pageContext.getRequest().setAttribute("_containersize_" + regionName + entity.getId(), containerSize);
                 //pageContext.include(ControllerUtils.getIncludePath(entity));
                 this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
             } catch (ServletException | IOException e) {

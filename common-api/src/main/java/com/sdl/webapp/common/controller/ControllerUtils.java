@@ -32,7 +32,7 @@ public final class ControllerUtils {
     public static String getIncludePath(RegionModel region) {
         final MvcData mvcData = region.getMvcData();
         return getIncludePathPrefix(mvcData) +
-                region.getName() +
+                region.getName() + "/" + 
                 getQueryParameters(mvcData);
     }
 

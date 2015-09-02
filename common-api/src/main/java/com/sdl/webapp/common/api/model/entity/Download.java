@@ -15,7 +15,7 @@ import com.sdl.webapp.common.markup.html.builders.SimpleElementBuilder;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
-@SemanticEntity(entityName = "MediaObject", vocabulary = SCHEMA_ORG, prefix = "s")
+@SemanticEntity(entityName = "DataDownload", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Download extends MediaItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(Download.class);

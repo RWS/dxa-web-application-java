@@ -19,7 +19,7 @@ import com.sdl.webapp.common.util.ApplicationContextHolder;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
-@SemanticEntity(entityName = "MediaObject", vocabulary = SCHEMA_ORG, prefix = "s")
+@SemanticEntity(entityName = "ImageObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Image extends MediaItem {
 
     @SemanticProperty("s:name")

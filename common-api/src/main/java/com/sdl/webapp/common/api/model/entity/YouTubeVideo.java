@@ -1,5 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
+
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -10,12 +12,14 @@ import org.w3c.dom.Node;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 
+@SemanticEntity(entityName = "VideoObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class YouTubeVideo extends MediaItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(YouTubeVideo.class);

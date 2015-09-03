@@ -1,6 +1,8 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
 import com.google.common.base.Strings;
+import com.sdl.webapp.dd4t.EntityBuilder;
+
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.joda.time.DateTime;
@@ -20,7 +22,7 @@ public class DateFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, EntityBuilder builder) throws FieldConverterException {
         final List<DateTime> dateTimeValues = new ArrayList<>();
 
         for (String value : field.getDateTimeValues()) {

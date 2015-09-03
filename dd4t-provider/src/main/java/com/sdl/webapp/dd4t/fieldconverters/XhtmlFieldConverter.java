@@ -3,6 +3,7 @@ package com.sdl.webapp.dd4t.fieldconverters;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.model.RichText;
+import com.sdl.webapp.dd4t.EntityBuilder;
 
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
@@ -34,7 +35,7 @@ public class XhtmlFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, EntityBuilder builder) throws FieldConverterException {
         final List<RichText> fieldValues = new ArrayList<>();
         for (String textValue : field.getTextValues()) {
             fieldValues.add(richTextProcessor.processRichText(textValue, this.webRequestContext.getLocalization()));

@@ -1,6 +1,7 @@
 package com.sdl.webapp.dd4t;
 
 import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.FieldData;
 import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
@@ -9,6 +10,7 @@ import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.dd4t.fieldconverters.*;
+
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
@@ -35,13 +37,16 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
 
     private final FieldConverterRegistry fieldConverterRegistry;
 
+    private final EntityBuilder builder;
+    
     private int embeddingLevel = 0;
 
     private final Stack<Map<String, Field>> embeddedFieldsStack = new Stack<>();
 
-    public DD4TSemanticFieldDataProvider(org.dd4t.contentmodel.Component component, FieldConverterRegistry fieldConverterRegistry) {
+    public DD4TSemanticFieldDataProvider(org.dd4t.contentmodel.Component component, FieldConverterRegistry fieldConverterRegistry, EntityBuilder builder) {
         this.component = component;
         this.fieldConverterRegistry = fieldConverterRegistry;
+        this.builder = builder;
     }
 
     public void pushEmbeddingLevel(Map<String, Field> embeddedFields) {
@@ -81,7 +86,7 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
         LOG.trace("Found DD4T field: [{}] {}", field.getFieldType(), field.getName());
 
         final Object fieldValue = fieldConverterRegistry.getFieldConverterFor(field.getFieldType())
-                .getFieldValue(semanticField, (BaseField) field, targetType, this);
+                .getFieldValue(semanticField, (BaseField) field, targetType, this, this.builder);
 
         return new FieldData(fieldValue, field.getXPath());
     }
@@ -90,13 +95,11 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
     public Object getSelfFieldData(TypeDescriptor targetType) throws SemanticMappingException {
         final Class<?> targetClass = targetType.getObjectType();
 
-        if (MediaItem.class.isAssignableFrom(targetClass)) {
-            return ((MultimediaLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
-                    FieldType.MULTIMEDIALINK)).createMediaItem(component, targetClass);
-        } else if (Link.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
-            return ((ComponentLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
-                    FieldType.COMPONENTLINK)).createComponentLink(component, targetClass);
-        } else {
+        if (MediaItem.class.isAssignableFrom(targetClass) || Link.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
+        	 return ((ComponentLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
+                     FieldType.COMPONENTLINK)).createComponentLink(component, targetClass, this.builder);
+        }  
+        else {
             throw new UnsupportedTargetTypeException(targetType);
         }
     }

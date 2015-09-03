@@ -22,4 +22,12 @@ public interface ViewModelRegistry {
      * @return The type of the entity that this entity view needs.
      */
     Class<? extends AbstractEntityModel> getViewEntityClass(String viewName);
+
+    /**
+     * Returns the entity type to use for a sepecific semantic type
+     *
+     * @param viewNsemanticTypeNameame The name of the semantic type.
+     * @return The type of the entity that this semantic type needs.
+     */
+    Class<? extends AbstractEntityModel> GetMappedModelTypes(String semanticTypeName);
 }

@@ -4,6 +4,8 @@ import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.springframework.stereotype.Component;
 
+import com.sdl.webapp.dd4t.EntityBuilder;
+
 import java.util.List;
 
 @Component
@@ -17,7 +19,7 @@ public class MultiLineTextFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, EntityBuilder builder) throws FieldConverterException {
         return field.getTextValues();
     }
 }

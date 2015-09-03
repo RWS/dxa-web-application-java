@@ -63,4 +63,19 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     public Class<? extends AbstractEntityModel> getViewEntityClass(String viewName) {
         return viewEntityClassMap.get(viewName);
     }
+
+    @Override
+    public Class<? extends AbstractEntityModel> GetMappedModelTypes(String semanticTypeName)
+    {
+    	for(String key : CORE_VIEW_ENTITY_CLASS_MAP.keySet())
+    	{
+    		if(key.equalsIgnoreCase(semanticTypeName)){
+	    		Class<? extends AbstractEntityModel> modelclass = CORE_VIEW_ENTITY_CLASS_MAP.get(key);
+	    		return modelclass;
+    		}
+    	}
+    	
+    	return null;
+    }
+    
 }

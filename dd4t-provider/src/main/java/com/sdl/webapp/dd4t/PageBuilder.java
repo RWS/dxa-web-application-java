@@ -177,6 +177,7 @@ final class PageBuilder {
         }
 
         // = new RegionModelSetImpl();
+        page.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
         final RegionModelSet regionMap = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
    
         
@@ -237,9 +238,6 @@ final class PageBuilder {
         }
 
         page.setXpmMetadata(createXpmMetaData(genericPage, localization));
-        page.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
-
-        
           
         //regionMap.addAll(regions.values());
         page.setRegions(regionMap);

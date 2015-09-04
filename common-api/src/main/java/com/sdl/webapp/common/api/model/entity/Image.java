@@ -48,8 +48,8 @@ public class Image extends MediaItem {
     {
         String responsiveImageUrl = this.mediaHelper.getResponsiveImageUrl(getUrl(), widthFactor, aspect, containerSize);
         String dataAspect = String.valueOf((Math.round(aspect * 100) / 100));
-        String widthAttr = Strings.isNullOrEmpty(widthFactor) ? null : String.format("width=\"{0}\"", widthFactor);
-        String classAttr = Strings.isNullOrEmpty(cssClass) ? null : String.format("class=\"{0}\"", cssClass);
+        String widthAttr = Strings.isNullOrEmpty(widthFactor) ? null : String.format("width=\"%s\"", widthFactor);
+        String classAttr = Strings.isNullOrEmpty(cssClass) ? null : String.format("class=\"%s\"", cssClass);
         return String.format("<img src=\"%s\" alt=\"%s\" data-aspect=\"%s\" %s%s/>",
             responsiveImageUrl, getAlternateText(), dataAspect, widthAttr, classAttr);
     }

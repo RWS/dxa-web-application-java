@@ -224,7 +224,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 	             
 	                if (embeddedEntityIndex > lastFragmentIndex)
 	                {
-	                    richTextFragments.add(new RichTextFragmentImpl(xhtml.substring(lastFragmentIndex, embeddedEntityIndex - lastFragmentIndex)));
+	                    richTextFragments.add(new RichTextFragmentImpl(xhtml.substring(lastFragmentIndex, embeddedEntityIndex)));
 	                }
 	                richTextFragments.add((RichTextFragment)embeddedEntities.get(i++));
 	                lastFragmentIndex = matcher.end();

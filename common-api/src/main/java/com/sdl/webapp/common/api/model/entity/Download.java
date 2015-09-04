@@ -53,7 +53,7 @@ public class Download extends MediaItem {
 	@Override
 	public String toHtml(String widthFactor, double aspect , String cssClass , int containerSize )
     {
-        String descriptionHtml = Strings.isNullOrEmpty(getDescription()) ? null : String.format("<small>{0}</small>", getDescription());
+        String descriptionHtml = Strings.isNullOrEmpty(getDescription()) ? null : String.format("<small>%s</small>", getDescription());
         String s = new StringBuilder()
             .append("<div class=\"download-list\">")
             .append(String.format("<i class=\"fa %s\"></i>", this.getIconClass()))

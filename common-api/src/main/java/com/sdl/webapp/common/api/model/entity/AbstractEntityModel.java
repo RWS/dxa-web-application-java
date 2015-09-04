@@ -69,9 +69,9 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     public String toHtml()
     {
         throw new UnsupportedOperationException(
-            String.format("Direct rendering of View Model type '{0}' to HTML is not supported." + 
+            String.format("Direct rendering of View Model type '%s' to HTML is not supported." + 
             " Consider using View Model property of type RichText in combination with DxaRichText() in view code to avoid direct rendering to HTML." +
-            " Alternatively, override method {0}.toHtml().", 
+            " Alternatively, override method %s.toHtml().", 
             getClass().getName())
             );
     }

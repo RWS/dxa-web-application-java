@@ -93,7 +93,16 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         	
         	
 			try {
-				return builder.createEntity(component, localization);
+				Object retval = builder.createEntity(component, localization);
+				if(targetClass.isAssignableFrom(retval.getClass()))
+				{
+					return retval;
+				}
+				else
+				{
+					return null;
+				}
+				
 			} catch (ContentProviderException e) {
 				// TODO Auto-generated catch block
 				throw new SemanticMappingException(e);

@@ -45,7 +45,7 @@ final class MvcDataImpl implements MvcData {
                 break;
             default:
                 throw new DxaException(
-                    String.format("Invalid format for Qualified View Name: '{0}'. Format must be 'ViewName' or 'AreaName:ViewName' or 'AreaName:ControllerName:Vieweame.'", 
+                    String.format("Invalid format for Qualified View Name: '%s'. Format must be 'ViewName' or 'AreaName:ViewName' or 'AreaName:ControllerName:Vieweame.'", 
                         qualifiedViewName)
                         );
         }

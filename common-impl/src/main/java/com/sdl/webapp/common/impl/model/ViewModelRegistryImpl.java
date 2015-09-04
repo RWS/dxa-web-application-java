@@ -45,6 +45,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     .put("TeaserMap", Teaser.class)
                     .put("ThumbnailList", ContentList.class)
                     .put("TopNavigation", NavigationLinks.class)
+                    .put("VimeoVideo", VimeoVideo.class)
                     .put("YouTubeVideo", YouTubeVideo.class)
                     .build();
 

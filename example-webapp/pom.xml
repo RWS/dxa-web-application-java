@@ -131,12 +131,6 @@
             <artifactId>core-module</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>cid-module</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
-        </dependency>
 
         <!-- Spring Framework -->
         <dependency>

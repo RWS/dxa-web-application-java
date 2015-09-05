@@ -83,12 +83,12 @@ public abstract class AbstractController {
         return ControllerUtils.SECTION_ERROR_VIEW;
     }
 
-    protected String resolveView(MvcData mvcData, String type, int containerSize, HttpServletRequest request) {
-        return this.viewResolver.resolveView(mvcData, type, containerSize, request);
+    protected String resolveView(MvcData mvcData, String type, HttpServletRequest request) {
+        return this.viewResolver.resolveView(mvcData, type, request);
     }
 
-    protected String resolveView(String viewBaseDir, String view, MvcData mvcData, int containerSize, HttpServletRequest request) {
-        return this.viewResolver.resolveView(viewBaseDir, view, mvcData, containerSize, request);
+    protected String resolveView(String viewBaseDir, String view, MvcData mvcData, HttpServletRequest request) {
+        return this.viewResolver.resolveView(viewBaseDir, view, mvcData, request);
     }
 
 }

@@ -54,12 +54,12 @@ public class IncludePageController extends AbstractController {
 
         // If view name not specified in request, use view name from page model
         if (Strings.isNullOrEmpty(viewName)) {
-            return resolveView(mvcData, "Page", 0, request);
+            return resolveView(mvcData, "Page", request);
             //return mvcData.getAreaName() + "/Page/" + mvcData.getViewName();
         }
 
         String[] viewParts = viewName.split("/");
-        return resolveView(viewParts[0], viewParts[1], mvcData, 0, request);
+        return resolveView(viewParts[0], viewParts[1], mvcData, request);
 
         //return viewName;
     }

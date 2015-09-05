@@ -1,16 +1,19 @@
 package com.sdl.webapp.common.impl;
 
+import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.tridion.ambientdata.AmbientDataContext;
 import com.tridion.ambientdata.claimstore.ClaimStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.Stack;
 
 /**
  * Implementation of {@code WebRequestContext}.
@@ -39,6 +42,11 @@ public class WebRequestContextImpl implements WebRequestContext {
     private Integer displayWidth;
     private Double pixelRatio;
     private Integer maxMediaWidth;
+
+    private Stack<Integer> containerSizeStack = new Stack<>();
+
+    @Autowired
+    private MediaHelper mediaHelper;
 
     @Override
     public String getBaseUrl() {
@@ -137,5 +145,28 @@ public class WebRequestContextImpl implements WebRequestContext {
             maxMediaWidth = (int) (Math.max(1.0, getPixelRatio()) * Math.min(getDisplayWidth(), MAX_WIDTH));
         }
         return maxMediaWidth;
+    }
+
+    @Override
+    public int getContainerSize() {
+        return this.containerSizeStack.peek();
+    }
+
+    @Override
+    public void popContainerSize() {
+        this.containerSizeStack.pop();
+    }
+
+    @Override
+    public void pushContainerSize(int containerSize) {
+
+        if ( containerSize == 0 ) {
+            containerSize = this.mediaHelper.getGridSize();
+        }
+        if ( this.containerSizeStack.size() > 0 ) {
+            int parentContainerSize = this.containerSizeStack.peek();
+            containerSize = containerSize * parentContainerSize/this.mediaHelper.getGridSize();
+        }
+        this.containerSizeStack.push(containerSize);
     }
 }

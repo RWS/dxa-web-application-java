@@ -1,5 +1,6 @@
 package com.sdl.webapp.main.taglib.dxa;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
@@ -77,14 +78,18 @@ public class EntityTag extends AbstractMarkupTag {
             entity = entityRef;
         }
         if (entity != null) {
+            WebRequestContext webRequestContext = this.getWebRequestContext();
             LOG.debug("Including entity: {}/{}", regionName, entity.getId());
             try {
             	pageContext.getRequest().setAttribute("_region_" + regionName, region);
-            	pageContext.getRequest().setAttribute("_containersize_" + regionName + entity.getId(), containerSize);
+                webRequestContext.pushContainerSize(containerSize);
                 //pageContext.include(ControllerUtils.getIncludePath(entity));
                 this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);
+            }
+            finally {
+                webRequestContext.popContainerSize();
             }
         } else {
             LOG.debug("Entity not found in region: {}/{}", regionName, entity.getId());

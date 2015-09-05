@@ -1,5 +1,6 @@
 package com.sdl.webapp.main.taglib.dxa;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
@@ -39,6 +40,7 @@ public class RegionTag extends AbstractMarkupTag {
     {
     	this.containerSize = containerSize;
     }
+
     @Override
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
@@ -66,17 +68,20 @@ public class RegionTag extends AbstractMarkupTag {
 
         if (region != null) {
             LOG.debug("Including region: {}", name);
-            try {
 
+            WebRequestContext webRequestContext = this.getWebRequestContext();
+            try {
                 //pageContext.include(ControllerUtils.getIncludePath(region));
-            	
             	pageContext.getRequest().setAttribute("_region_" + name, region);
-            	pageContext.getRequest().setAttribute("_containersize_" + name, containerSize);
-            	
+            	webRequestContext.pushContainerSize(containerSize);
+
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
 
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing region tag: " + name, e);
+            }
+            finally {
+                webRequestContext.popContainerSize();
             }
         } else {
             LOG.debug("Region not found on page: {}", name);

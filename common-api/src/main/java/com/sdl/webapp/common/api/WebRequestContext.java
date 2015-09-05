@@ -101,4 +101,23 @@ public interface WebRequestContext {
      * @return The maximum media width of the current request.
      */
     int getMaxMediaWidth();
+
+    /**
+     * Get current container size in the context of current region.
+     *
+     * @return container size
+     */
+    int getContainerSize();
+
+    /**
+     * Push container size for current context (rendering of a region or entity)
+     *
+     * @param containerSize
+     */
+    void pushContainerSize(int containerSize);
+
+    /**
+     * Pop container size back to previous context
+     */
+    void popContainerSize();
 }

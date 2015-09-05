@@ -1,6 +1,7 @@
 package com.sdl.webapp.main.taglib.dxa;
 
 import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
@@ -68,15 +69,18 @@ public class RegionsTag extends AbstractMarkupTag {
             }
 
             LOG.debug("Including region: {}", name);
+
+            WebRequestContext webRequestContext = this.getWebRequestContext();
             try {
                 //pageContext.include(ControllerUtils.getIncludePath(region));
-            	
             	pageContext.getRequest().setAttribute("_region_" + name, region);
-            	pageContext.getRequest().setAttribute("_containersize_" + name, containerSize);
-            	
+                webRequestContext.pushContainerSize(containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing regions tag", e);
+            }
+            finally {
+                webRequestContext.popContainerSize();
             }
         }
 

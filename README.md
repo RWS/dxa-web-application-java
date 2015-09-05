@@ -43,20 +43,20 @@ Build the project with Maven:
 
     mvn clean package
 
-If you want to use Contextual Image Delivery, edit the file `webapp-main\src\main\resources\cd_ambient_conf.xml` and
+If you want to use Contextual Image Delivery in the example webapp, edit the file `webapp-main\src\main\resources\cd_ambient_conf.xml` and
 compile the project with the profile `cid` enabled:
 
     mvn clean package -P cid
 
-(see the README in the module `webapp-cid` for more information).
+(see the README in the module `cid-module` for more information).
 
-If no errors occur, you will find the resulting file `webapp-main.war` in the directory `webapp-main\target`.
+If no errors occur, you will find the resulting file `example-webapp.war` in the directory `example-webapp\target`.
 
 ## Running the project
 
 To deploy the project in Tomcat, you'll need to do a number of things.
 
-. Unpack the `webapp-main.war` file in a subdirectory of Tomcat's `webapps` directory. If you want to deploy the web
+. Unpack the `example-webapp.war` file in a subdirectory of Tomcat's `webapps` directory. If you want to deploy the web
 application into the root context, the name of the subdirectory must be `ROOT`. 
 . Add a `cd_licenses.xml` with valid Tridion licenses to the directory `%TOMCAT_HOME%\webapps\<webappdir>\WEB-INF\classes`.
 . Edit the configuration files in `%TOMCAT_HOME%\webapps\<webappdir>\WEB-INF\classes` (see below).

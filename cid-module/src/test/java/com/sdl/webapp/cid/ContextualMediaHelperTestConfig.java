@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.impl.WebRequestContextImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * Spring configuration for {@code ContextualMediaHelperTest}.
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class ContextualMediaHelperTestConfig {
 
     @Bean
+    @Lazy
     public ContextualMediaHelper mediaHelper() {
         return new ContextualMediaHelper(webRequestContext());
     }

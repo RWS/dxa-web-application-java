@@ -19,7 +19,7 @@ import com.sdl.webapp.common.util.ApplicationContextHolder;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
-@SemanticEntity(entityName = "MediaObject", vocabulary = SCHEMA_ORG, prefix = "s")
+@SemanticEntity(entityName = "ImageObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Image extends MediaItem {
 
     @SemanticProperty("s:name")
@@ -48,8 +48,8 @@ public class Image extends MediaItem {
     {
         String responsiveImageUrl = this.mediaHelper.getResponsiveImageUrl(getUrl(), widthFactor, aspect, containerSize);
         String dataAspect = String.valueOf((Math.round(aspect * 100) / 100));
-        String widthAttr = Strings.isNullOrEmpty(widthFactor) ? null : String.format("width=\"{0}\"", widthFactor);
-        String classAttr = Strings.isNullOrEmpty(cssClass) ? null : String.format("class=\"{0}\"", cssClass);
+        String widthAttr = Strings.isNullOrEmpty(widthFactor) ? null : String.format("width=\"%s\"", widthFactor);
+        String classAttr = Strings.isNullOrEmpty(cssClass) ? null : String.format("class=\"%s\"", cssClass);
         return String.format("<img src=\"%s\" alt=\"%s\" data-aspect=\"%s\" %s%s/>",
             responsiveImageUrl, getAlternateText(), dataAspect, widthAttr, classAttr);
     }

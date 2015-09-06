@@ -1,5 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
+
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -10,12 +12,14 @@ import org.w3c.dom.Node;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 
+@SemanticEntity(entityName = "VideoObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class YouTubeVideo extends MediaItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(YouTubeVideo.class);
@@ -118,8 +122,8 @@ public class YouTubeVideo extends MediaItem {
         String placeholderImageUrl = Strings.isNullOrEmpty(getUrl()) ? null : this.mediaHelper.getResponsiveImageUrl(getUrl(), widthFactor, aspect, containerSize);
 
         return String.format(
-                "<{4} class=\"embed-video\"><img src=\"{1}\" alt=\"{2}\"><button type=\"button\" data-video=\"{0}\" class=\"{3}\"><i class=\"fa fa-play-circle\"></i></button></{4}>",
-                getYouTubeId(), placeholderImageUrl, getHeadline(), (String) null, htmlTagName
+                "<%s class=\"embed-video\"><img src=\"%s\" alt=\"%s\"><button type=\"button\" data-video=\"%s\" class=\"%s\"><i class=\"fa fa-play-circle\"></i></button></%s>",
+                htmlTagName,placeholderImageUrl,getHeadline(),  getYouTubeId(),  (String) null, htmlTagName
                 );
 	}
 	

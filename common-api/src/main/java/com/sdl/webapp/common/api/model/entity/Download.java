@@ -15,7 +15,7 @@ import com.sdl.webapp.common.markup.html.builders.SimpleElementBuilder;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
-@SemanticEntity(entityName = "MediaObject", vocabulary = SCHEMA_ORG, prefix = "s")
+@SemanticEntity(entityName = "DataDownload", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Download extends MediaItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(Download.class);
@@ -53,7 +53,7 @@ public class Download extends MediaItem {
 	@Override
 	public String toHtml(String widthFactor, double aspect , String cssClass , int containerSize )
     {
-        String descriptionHtml = Strings.isNullOrEmpty(getDescription()) ? null : String.format("<small>{0}</small>", getDescription());
+        String descriptionHtml = Strings.isNullOrEmpty(getDescription()) ? null : String.format("<small>%s</small>", getDescription());
         String s = new StringBuilder()
             .append("<div class=\"download-list\">")
             .append(String.format("<i class=\"fa %s\"></i>", this.getIconClass()))

@@ -10,7 +10,7 @@
 <%
     final int cols = 2;
     final int rows = (int) Math.ceil(region.getEntities().size() / (double) cols);
-    final Iterator<EntityModel> iterator = region.getEntities().values().iterator();
+    final Iterator<EntityModel> iterator = region.getEntities().iterator();
 
     for (int row = 0; row < rows; row++) {
         %><div class="row"><%

@@ -57,7 +57,7 @@ public class EntitiesTag extends AbstractMarkupTag {
             return SKIP_BODY;
         }
 
-        for (EntityModel entity : region.getEntities().values()) {
+        for (EntityModel entity : region.getEntities()) {
             try {
             	pageContext.getRequest().setAttribute("_region_" + regionName, region);
             	pageContext.getRequest().setAttribute("_containersize_" + regionName + entity.getId(), containerSize);

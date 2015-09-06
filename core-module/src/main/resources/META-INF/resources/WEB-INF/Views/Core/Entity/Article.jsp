@@ -25,11 +25,6 @@
             ${markup.formatDate(entity.date)}
         </div>
     </c:if>
-     <c:if test="${not empty entity.video}">
-        <div class="meta" ${markup.property(entity, "video")}>
-            <dxa:media media="${entity.video}" aspect="3.3"/>
-        </div>
-    </c:if>
     <div class="content">
         <c:forEach var="para" items="${entity.articleBody}" varStatus="status">
             <div ${markup.property(entity, "articleBody", status.index)}>

@@ -60,7 +60,7 @@ public class EntitiesTag extends AbstractMarkupTag {
         }
 
         WebRequestContext webRequestContext = this.getWebRequestContext();
-        for (EntityModel entity : region.getEntities().values()) {
+        for (EntityModel entity : region.getEntities()) {
             try {
             	pageContext.getRequest().setAttribute("_region_" + regionName, region);
                 webRequestContext.pushContainerSize(containerSize);

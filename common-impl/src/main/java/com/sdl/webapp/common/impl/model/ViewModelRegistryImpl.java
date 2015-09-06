@@ -47,6 +47,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     .put("TopNavigation", NavigationLinks.class)
                     .put("VimeoVideo", VimeoVideo.class)
                     .put("YouTubeVideo", YouTubeVideo.class)
+                    .put("DefaultMultimediaSchema", Image.class)
                     .build();
 
     private final Map<String, Class<? extends AbstractEntityModel>> viewEntityClassMap = new HashMap<>();

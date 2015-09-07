@@ -60,8 +60,9 @@ public class XpmButtonTag extends XpmMarkupTag {
 		}
 		else
 		{
+			String path = this.pageContext.getServletContext().getContextPath();
 			String title = "Edit " + this.region.getXpmMetadata().get(RegionModelImpl.IncludedFromPageTitleXpmMetadataKey);
-			String editUrl = "/system/include/" + this.region.getXpmMetadata().get(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey);
+			String editUrl = "/" + path + this.region.getXpmMetadata().get(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey);
 		   return HtmlBuilders.div()
 				   	.withClass("xpm-button")
 	                .withContent(HtmlBuilders.a(editUrl)

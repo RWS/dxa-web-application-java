@@ -10,10 +10,11 @@ import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.dd4t.fieldconverters.FieldConverterRegistry;
+
 import org.dd4t.contentmodel.*;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
@@ -27,7 +28,7 @@ import java.util.Map;
 import static com.sdl.webapp.dd4t.fieldconverters.FieldUtils.getStringValue;
 
 @Component
-final class EntityBuilder {
+public final class EntityBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(EntityBuilder.class);
 
     private static final String DEFAULT_AREA_NAME = "Core";
@@ -67,7 +68,7 @@ final class EntityBuilder {
             return null;
         }
 
-        final Class<? extends AbstractEntity> entityClass = viewModelRegistry.getViewEntityClass(viewName);
+        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.getViewEntityClass(viewName);
         if (entityClass == null) {
             throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
                     "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
@@ -76,10 +77,10 @@ final class EntityBuilder {
         final SemanticSchema semanticSchema = localization.getSemanticSchemas()
                 .get(Long.parseLong(component.getSchema().getId().split("-")[1]));
 
-        final AbstractEntity entity;
+        final AbstractEntityModel entity;
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
-                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry));
+                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }
@@ -110,7 +111,55 @@ final class EntityBuilder {
         return entity;
     }
 
-    private void createEntityData(AbstractEntity entity, ComponentPresentation componentPresentation) {
+    public EntityModel createEntity(org.dd4t.contentmodel.Component component, Localization localization)
+            throws ContentProviderException {
+       // final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
+        final String componentId = component.getId();
+        LOG.debug("Creating entity for component: {}", componentId);
+        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
+             
+        String semanticTypeName = semanticSchema.getRootElement();
+        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.GetMappedModelTypes(semanticTypeName);
+        if (entityClass == null) {
+            throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
+                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+        }
+
+        final AbstractEntityModel entity;
+        try {
+            entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
+                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this));
+        } catch (SemanticMappingException e) {
+            throw new ContentProviderException(e);
+        }
+
+        entity.setId(componentId.split("-")[1]);
+
+        // Special handling for media items
+        if (entity instanceof MediaItem && component.getMultimedia() != null &&
+                !Strings.isNullOrEmpty(component.getMultimedia().getUrl())) {
+            final Multimedia multimedia = component.getMultimedia();
+            final MediaItem mediaItem = (MediaItem) entity;
+            mediaItem.setUrl(multimedia.getUrl());
+            mediaItem.setFileName(multimedia.getFileName());
+            mediaItem.setFileSize(multimedia.getSize());
+            mediaItem.setMimeType(multimedia.getMimeType());
+
+            // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
+            //
+            if ( entity instanceof EclItem ) {
+                final EclItem eclItem = (EclItem) entity;
+                eclItem.setEclUrl(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+            }
+        }
+
+        //createEntityData(entity, componentPresentation);
+        //entity.setMvcData(createMvcData(componentPresentation));
+
+        return entity;
+    }
+    
+    private void createEntityData(AbstractEntityModel entity, ComponentPresentation componentPresentation) {
         final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
 

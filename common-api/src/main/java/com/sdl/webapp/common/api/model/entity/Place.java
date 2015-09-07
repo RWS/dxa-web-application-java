@@ -2,11 +2,12 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.model.RichText;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
 @SemanticEntity(entityName = "Place", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
-public class Place extends AbstractEntity {
+public class Place extends AbstractEntityModel {
 
     @SemanticProperty("s:name")
     private String name;
@@ -15,7 +16,7 @@ public class Place extends AbstractEntity {
     private Image image;
 
     @SemanticProperty("s:address")
-    private String address;
+    private RichText address;
 
     @SemanticProperty("s:telephone")
     private String telephone;
@@ -45,11 +46,11 @@ public class Place extends AbstractEntity {
         this.image = image;
     }
 
-    public String getAddress() {
+    public RichText getAddress() {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(RichText address) {
         this.address = address;
     }
 

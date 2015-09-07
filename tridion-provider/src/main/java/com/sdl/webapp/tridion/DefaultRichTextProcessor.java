@@ -2,7 +2,10 @@ package com.sdl.webapp.tridion;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
@@ -27,13 +30,26 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableBiMap;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
+import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.RichText;
+import com.sdl.webapp.common.api.model.RichTextFragment;
+import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
+import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.util.NamedNodeMapAdapter;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.SimpleNamespaceContext;
@@ -82,14 +98,27 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 			}
 		}
 	};
-
+	private static final ThreadLocal<XPathExpression> XPATH_IMAGES = new ThreadLocal<XPathExpression>() {
+		@Override
+		protected XPathExpression initialValue() {
+			try {
+				final XPath xpath = XPathFactory.newInstance().newXPath();
+				xpath.setNamespaceContext(NAMESPACE_CONTEXT);
+				return xpath.compile("//img[@data-schemaUri]");
+			} catch (XPathExpressionException e) {
+				throw new RuntimeException(
+						"Error while creating XPath expression", e);
+			}
+		}
+	};
     @Autowired
     public DefaultRichTextProcessor(MediaHelper mediaHelper, WebRequestContext webRequestContext,
-                               TridionLinkResolver linkResolver, ComponentPresentationFactory componentFactory) {
+                               TridionLinkResolver linkResolver, ComponentPresentationFactory componentFactory, ViewModelRegistry viewModelRegistry) {
         this.mediaHelper = mediaHelper;
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
         this.componentFactory = componentFactory;
+        this.viewModelRegistry = viewModelRegistry;
     }
 	
 	private final MediaHelper mediaHelper;
@@ -97,31 +126,125 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 	private final WebRequestContext webRequestContext;
 
 	private final TridionLinkResolver linkResolver;
+	
+	private final ViewModelRegistry viewModelRegistry;
 
 	private final ComponentPresentationFactory componentFactory;
 
+	private final String EmbeddedEntityProcessingInstructionName = "EmbeddedEntity";
 	@Override
-	public String resolveContent(String content) {
+	public RichText processRichText(String xhtml, Localization localization) {
 		try {
 			// Parse the document as XML
-			final Document document = XMLUtils.parse("<xhtml>" + content
+			final Document document = XMLUtils.parse("<xhtml>" + xhtml
 					+ "</xhtml>");
 
 			// Resolve links and YouTube videos
-			resolveLinks(document);
-			resolveYouTubeVideos(document);
+			return ResolveRichText(document, localization);
 
-			// Write the modified document out as XML
-			// Remove XML header and surrounding XHTML start and end tags
-			return cleanHtml(XMLUtils.format(document)
-					.replaceAll("\\A(<\\?xml.*\\?>)?\\s*<xhtml>", "")
-					.replaceAll("</xhtml>\\Z", ""));
-		} catch (SAXException | IOException | TransformerException e) {
+//			// Write the modified document out as XML
+//			// Remove XML header and surrounding XHTML start and end tags
+//			return cleanHtml(XMLUtils.format(document)
+//					.replaceAll("\\A(<\\?xml.*\\?>)?\\s*<xhtml>", "")
+//					.replaceAll("</xhtml>\\Z", ""));
+		} catch (SAXException | IOException e) {
 			LOG.warn("Exception while parsing or processing XML content", e);
-			return content;
+			return new RichText(xhtml);
+		} catch (ContentProviderException e) {
+			LOG.warn("Exception while parsing or processing XML content", e);
+			return new RichText(xhtml);
+		} catch (SemanticMappingException e) {
+			LOG.warn("Exception while parsing or processing XML content", e);
+			return new RichText(xhtml);
 		}
 	}
 
+	 private <T extends AbstractEntityModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
+	        if (LOG.isTraceEnabled()) {
+	            LOG.trace("entityClass: {}", entityClass.getName());
+	        }
+	        try {
+	            return entityClass.newInstance();
+	        } catch (InstantiationException | IllegalAccessException e) {
+	            throw new SemanticMappingException("Exception while creating instance of entity class: " +
+	                    entityClass.getName(), e);
+	        }
+	    }
+
+	 private RichText ResolveRichText(Document doc, Localization localization) throws ContentProviderException, SemanticMappingException
+     {
+		List<RichTextFragment> richTextFragments = new LinkedList<RichTextFragment>();
+        this.resolveLinks(doc);
+        
+        List<EntityModel> embeddedEntities = new LinkedList<EntityModel>();
+        
+        List<Node> entityElements = null;
+		try {
+			entityElements = new ArrayList<>(
+					new NodeListAdapter((NodeList) XPATH_IMAGES.get().evaluate(
+							doc, XPathConstants.NODESET)));
+		} catch (XPathExpressionException e) {
+			LOG.warn("Error while evaluation XPath expression", e);
+		}
+
+		for (Node imgElement : entityElements) {
+			String[] schemaTcmUriParts = imgElement.getAttributes().getNamedItem("data-schemaUri").getNodeValue().split("-");
+	        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaTcmUriParts[1]));
+	        
+	        String viewName = semanticSchema.getRootElement();
+	        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.getViewEntityClass(viewName);
+	        if (entityClass == null) {
+	            throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
+	                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+	        }
+
+			MediaItem mediaItem = (MediaItem)createInstance(entityClass);
+			mediaItem.readFromXhtmlElement(imgElement);
+			embeddedEntities.add(mediaItem);
+			
+			imgElement.getParentNode().replaceChild(doc.createProcessingInstruction(EmbeddedEntityProcessingInstructionName, ""), imgElement);
+		}
+		
+		
+		String xhtml;
+		try {
+			xhtml = XMLUtils.format(doc);
+			
+			 int lastFragmentIndex = 0;
+	         int i = 0;
+			
+	         
+	         Pattern pattern = Pattern.compile("<\\?EmbeddedEntity\\s?\\?>");
+	         Matcher matcher = pattern.matcher(xhtml);
+	         
+	         while (matcher.find()) {
+	             String match = matcher.group();
+	             
+	             int embeddedEntityIndex = matcher.start();
+	             
+	                if (embeddedEntityIndex > lastFragmentIndex)
+	                {
+	                    richTextFragments.add(new RichTextFragmentImpl(xhtml.substring(lastFragmentIndex, embeddedEntityIndex)));
+	                }
+	                richTextFragments.add((RichTextFragment)embeddedEntities.get(i++));
+	                lastFragmentIndex = matcher.end();
+	         }
+	         
+	        if (lastFragmentIndex < xhtml.length())
+            {
+                // Final text fragment
+                richTextFragments.add(new RichTextFragmentImpl(xhtml.substring(lastFragmentIndex)));
+            }
+			
+		} catch (TransformerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new RichText(richTextFragments);
+     }
+	
+	/*
 	private String cleanHtml(String input) {
 		// This is necessary to convert the XHTML to valid HTML that the browser
 		// understands;
@@ -132,7 +255,8 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 		final TagNode node = cleaner.clean(input);
 		return cleaner.getInnerHtml(node);
 	}
-
+	
+	*/
 	private void resolveLinks(Document document) {
 		try {
 			// NOTE: Put link elements in a new list to avoid problems while
@@ -156,7 +280,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 					// Resolve a dynamic component link
 					linkUrl = linkResolver.resolveLink(
 							linkElement.getAttributeNS(XLINK_NS_URI, "href"),
-							null);
+							null, true);
 				}
 
 				if (!Strings.isNullOrEmpty(linkUrl)) {
@@ -198,7 +322,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 			}
 		}
 	}
-
+	
 	private String getLinkName(Element linkElement) {
 		final String componentUri = linkElement.getAttributeNS(XLINK_NS_URI,
 				"href");
@@ -256,53 +380,4 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 		parentNode.removeChild(node);
 	}
 
-	private void resolveYouTubeVideos(Document document) {
-		try {
-			// NOTE: Put link elements in a new list to avoid problems while
-			// editing
-			final List<Node> youTubeElements = new ArrayList<>(
-					new NodeListAdapter((NodeList) XPATH_YOUTUBE_VIDEOS.get()
-							.evaluate(document, XPathConstants.NODESET)));
-
-			for (Node youTubeNode : youTubeElements) {
-				final Element youTubeElement = (Element) youTubeNode;
-
-				final String url = youTubeElement.getAttributeNS(XLINK_NS_URI,
-						"href");
-				if (!Strings.isNullOrEmpty(url)) {
-					final String youTubeId = youTubeElement
-							.getAttribute("data-youTubeId");
-					final String headline = youTubeElement
-							.getAttribute("data-headline");
-					final String src = youTubeElement.getAttribute("src");
-
-					final String placeholderImageUrl = mediaHelper
-							.getResponsiveImageUrl(src, "100%", 0.0, 0);
-
-					final Element span = document.createElement("span");
-					span.setAttribute("class", "embed-video");
-
-					final Element img = document.createElement("img");
-					img.setAttribute("src", webRequestContext.getContextPath()
-							+ placeholderImageUrl);
-					img.setAttribute("alt", headline);
-					span.appendChild(img);
-
-					final Element button = document.createElement("button");
-					button.setAttribute("data-video", youTubeId);
-					final Element playButtonOverlay = document
-							.createElement("i");
-					playButtonOverlay
-							.setAttribute("class", "fa fa-play-circle");
-					button.appendChild(playButtonOverlay);
-					span.appendChild(button);
-
-					youTubeElement.getParentNode().replaceChild(span,
-							youTubeElement);
-				}
-			}
-		} catch (XPathExpressionException e) {
-			LOG.warn("Error while evaluation XPath expression", e);
-		}
-	}
 }

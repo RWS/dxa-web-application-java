@@ -18,11 +18,22 @@ public class EntitiesTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(EntitiesTag.class);
 
     private String regionName;
-
+    private RegionModel parentRegion;
+    private int containerSize;
+    
     public void setRegion(String regionName) {
         this.regionName = regionName;
     }
 
+    public void setParentRegion(RegionModel parent)
+    {
+    	this.parentRegion = parent;
+    }
+    public void setContainerSize(int containerSize)
+    {
+    	this.containerSize = containerSize;
+    }
+    
     @Override
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
@@ -31,15 +42,27 @@ public class EntitiesTag extends AbstractMarkupTag {
             return SKIP_BODY;
         }
 
-        final RegionModel region = page.getRegions().get(regionName);
+        RegionModel region = null;
+        if(parentRegion != null)
+        {
+        	region = parentRegion;	
+        }
+        else
+        {
+        	region = page.getRegions().get(regionName);
+        }
+        
         if (region == null) {
             LOG.debug("Region not found on page: {}", regionName);
             return SKIP_BODY;
         }
 
-        for (EntityModel entity : region.getEntities().values()) {
+        for (EntityModel entity : region.getEntities()) {
             try {
-                this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
+            	pageContext.getRequest().setAttribute("_region_" + regionName, region);
+            	pageContext.getRequest().setAttribute("_containersize_" + regionName + entity.getId(), containerSize);
+                
+            	this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
                 //pageContext.include(ControllerUtils.getIncludePath(entity));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);

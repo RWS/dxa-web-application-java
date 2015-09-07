@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.mapping.annotations;
 
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.when;
  */
 public class SemanticPropertyInfoTest {
 
-    public static class TestEntity extends AbstractEntity {
+    public static class TestEntity extends AbstractEntityModel {
         private String testField;
         private List<String> someList;
         private List<String> apples;

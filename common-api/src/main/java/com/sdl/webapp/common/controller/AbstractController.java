@@ -4,7 +4,9 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +34,9 @@ public abstract class AbstractController {
         return page;
     }
 
-    protected PageModel getIncludePageFromRequest(HttpServletRequest request, String includePageName) {
+    protected RegionModel getIncludePageFromRequest(HttpServletRequest request, String includePageName) {
         final PageModel page = getPageFromRequest(request);
-        final PageModel includePage = page.getIncludes().get(includePageName);
+        final RegionModel includePage = page.getRegions().get(includePageName);
         if (includePage == null) {
             LOG.error("Include page not found on page: {}", includePageName);
             throw new NotFoundException("Include page not found on page: " + includePageName);
@@ -44,7 +46,13 @@ public abstract class AbstractController {
 
     protected RegionModel getRegionFromRequest(HttpServletRequest request, String regionName) {
         final PageModel page = getPageFromRequest(request);
+        //final RegionModelSet regionSet = (RegionModelSet) request.getAttribute(REGIONSET_MODEL);
         RegionModel region = page.getRegions().get(regionName);
+        /*if(regionSet != null)
+        {
+        	region = regionSet.get(regionName);
+        }*/
+        
         if (region == null) {
 
             // Check if the region is active on the request
@@ -75,12 +83,12 @@ public abstract class AbstractController {
         return ControllerUtils.SECTION_ERROR_VIEW;
     }
 
-    protected String resolveView(MvcData mvcData, String type, HttpServletRequest request) {
-        return this.viewResolver.resolveView(mvcData, type, request);
+    protected String resolveView(MvcData mvcData, String type, int containerSize, HttpServletRequest request) {
+        return this.viewResolver.resolveView(mvcData, type, containerSize, request);
     }
 
-    protected String resolveView(String viewBaseDir, String view, MvcData mvcData, HttpServletRequest request) {
-        return this.viewResolver.resolveView(viewBaseDir, view, mvcData, request);
+    protected String resolveView(String viewBaseDir, String view, MvcData mvcData, int containerSize, HttpServletRequest request) {
+        return this.viewResolver.resolveView(viewBaseDir, view, mvcData, containerSize, request);
     }
 
 }

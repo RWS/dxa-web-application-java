@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.impl.mapping;
 
 import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,7 +18,7 @@ public class SemanticMapperImplTestConfig {
 
     public SemanticMappingRegistry semanticMappingRegistry() {
         SemanticMappingRegistryImpl semanticMappingRegistry = new SemanticMappingRegistryImpl();
-        semanticMappingRegistry.registerEntities(AbstractEntity.class.getPackage().getName());
+        semanticMappingRegistry.registerEntities(AbstractEntityModel.class.getPackage().getName());
         return semanticMappingRegistry;
     }
 }

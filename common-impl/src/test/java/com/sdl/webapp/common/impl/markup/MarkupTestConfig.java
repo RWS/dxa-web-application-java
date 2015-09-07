@@ -8,7 +8,7 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.markup.Markup;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
 @Configuration
 public class MarkupTestConfig {
 
-    public static class TestEntity extends AbstractEntity {
+    public static class TestEntity extends AbstractEntityModel {
         private String testField;
         private String hiddenField;
     }

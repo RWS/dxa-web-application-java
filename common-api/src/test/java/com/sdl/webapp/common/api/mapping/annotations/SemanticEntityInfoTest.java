@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.mapping.annotations;
 
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -13,7 +13,7 @@ import static org.mockito.Mockito.when;
  */
 public class SemanticEntityInfoTest {
 
-    public static class TestEntity extends AbstractEntity {
+    public static class TestEntity extends AbstractEntityModel {
     }
 
     @Test

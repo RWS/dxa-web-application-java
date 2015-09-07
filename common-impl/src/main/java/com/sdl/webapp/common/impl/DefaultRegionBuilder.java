@@ -11,7 +11,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
-import com.sdl.webapp.common.api.model.region.RegionImpl;
+import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 
 import org.slf4j.Logger;
@@ -50,10 +50,10 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
 
             String regionName = callback.getRegionName(source);
             if (!Strings.isNullOrEmpty(regionName)) {
-                RegionImpl region = (RegionImpl) regions.get(regionName);
+                RegionModelImpl region = (RegionModelImpl) regions.get(regionName);
                 if (region == null) {
                     LOG.debug("Creating region: {}", regionName);
-                    region = new RegionImpl();
+                    region = new RegionModelImpl();
 
                     region.setName(regionName);
                     region.setMvcData(callback.getRegionMvcData(source));

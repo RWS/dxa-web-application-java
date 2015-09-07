@@ -2,7 +2,7 @@ package com.sdl.webapp.common.impl.mapping;
 
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
-import com.sdl.webapp.common.api.model.entity.AbstractEntity;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;
 
 import java.util.List;
@@ -18,12 +18,12 @@ import static org.junit.Assert.assertThat;
 public class SemanticMappingRegistryImplIgnoreTest {
 
     @SemanticMappingIgnore
-    public static class TestEntity1 extends AbstractEntity {
+    public static class TestEntity1 extends AbstractEntityModel {
         private String field1;
         private int field2;
     }
 
-    public static class TestEntity2 extends AbstractEntity {
+    public static class TestEntity2 extends AbstractEntityModel {
         @SemanticMappingIgnore
         private String field1;
         private int field2;

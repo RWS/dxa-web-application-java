@@ -1,10 +1,12 @@
 package com.sdl.webapp.common.api.model.entity;
 
-public class Paragraph extends AbstractEntity {
+import com.sdl.webapp.common.api.model.RichText;
+
+public class Paragraph extends AbstractEntityModel {
 
     private String subheading;
 
-    private String content;
+    private RichText content;
 
     private MediaItem media;
 
@@ -18,11 +20,11 @@ public class Paragraph extends AbstractEntity {
         this.subheading = subheading;
     }
 
-    public String getContent() {
+    public RichText getContent() {
         return content;
     }
 
-    public void setContent(String content) {
+    public void setContent(RichText content) {
         this.content = content;
     }
 

@@ -14,7 +14,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
  * @author nic
  */
 @SemanticEntity(entityName = "GenericWidget", vocabulary = SDL_CORE, prefix = "gw", public_ = true)
-public class GenericWidget extends AbstractEntity {
+public class GenericWidget extends AbstractEntityModel {
 
     @SemanticProperty("gw:parameters")
     private Map<String,String> parameters;

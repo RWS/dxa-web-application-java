@@ -3,13 +3,16 @@ package com.sdl.webapp.main.taglib.dxa;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -22,8 +25,19 @@ public class RegionsTag extends AbstractMarkupTag {
 
     private String exclude;
 
+    private RegionModel parentRegion;
+    private int containerSize;
+        
     public void setExclude(String exclude) {
         this.exclude = exclude;
+    }
+    public void setParentRegion(RegionModel parent)
+    {
+    	this.parentRegion = parent;
+    }
+    public void setContainerSize(int containerSize)
+    {
+    	this.containerSize = containerSize;
     }
 
     @Override
@@ -39,7 +53,14 @@ public class RegionsTag extends AbstractMarkupTag {
             excludes.addAll(Arrays.asList(exclude.split("\\s*,\\s*")));
         }
 
-        for (RegionModel region : page.getRegions()) {
+        RegionModelSet regions = page.getRegions();
+        if(parentRegion != null)
+        {
+        	regions = parentRegion.getRegions();
+        }
+        
+        
+        for (RegionModel region : regions) {
             String name = region.getName();
             if (excludes.contains(name)) {
                 LOG.debug("Excluding region: {}", name);
@@ -49,6 +70,10 @@ public class RegionsTag extends AbstractMarkupTag {
             LOG.debug("Including region: {}", name);
             try {
                 //pageContext.include(ControllerUtils.getIncludePath(region));
+            	
+            	pageContext.getRequest().setAttribute("_region_" + name, region);
+            	pageContext.getRequest().setAttribute("_containersize_" + name, containerSize);
+            	
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing regions tag", e);

@@ -4,6 +4,8 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.model.RichText;
+
 import org.joda.time.DateTime;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
@@ -15,7 +17,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
         @SemanticEntity(entityName = "LinkedContent", vocabulary = SDL_CORE, prefix = "c"),
         @SemanticEntity(entityName = "StandardMetadata", vocabulary = SDL_CORE, prefix = "m")
 })
-public class Teaser extends AbstractEntity {
+public class Teaser extends AbstractEntityModel {
 
     @SemanticProperties({
             @SemanticProperty("a:_self"),
@@ -48,7 +50,7 @@ public class Teaser extends AbstractEntity {
             @SemanticProperty("c:content"),
             @SemanticProperty("m:introText"),
     })
-    private String text;
+    private RichText text;
 
     @SemanticProperties({
             @SemanticProperty("c:date"),
@@ -86,11 +88,11 @@ public class Teaser extends AbstractEntity {
         this.media = media;
     }
 
-    public String getText() {
+    public RichText getText() {
         return text;
     }
 
-    public void setText(String text) {
+    public void setText(RichText text) {
         this.text = text;
     }
 

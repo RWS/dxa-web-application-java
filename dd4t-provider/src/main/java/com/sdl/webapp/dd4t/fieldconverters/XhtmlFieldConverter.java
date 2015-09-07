@@ -1,6 +1,9 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
+import com.sdl.webapp.common.api.model.RichText;
+import com.sdl.webapp.dd4t.EntityBuilder;
 
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
@@ -19,10 +22,11 @@ public class XhtmlFieldConverter extends AbstractFieldConverter {
     private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.XHTML };
 
     private final RichTextProcessor richTextProcessor;
-
+    private final WebRequestContext webRequestContext;
     @Autowired
-    public XhtmlFieldConverter(RichTextProcessor richTextProcessor) {
+    public XhtmlFieldConverter(RichTextProcessor richTextProcessor, WebRequestContext webRequestContext) {
         this.richTextProcessor = richTextProcessor;
+        this.webRequestContext = webRequestContext;
     }
 
     @Override
@@ -31,10 +35,10 @@ public class XhtmlFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
-        final List<String> fieldValues = new ArrayList<>();
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, EntityBuilder builder) throws FieldConverterException {
+        final List<RichText> fieldValues = new ArrayList<>();
         for (String textValue : field.getTextValues()) {
-            fieldValues.add(richTextProcessor.resolveContent(textValue));
+            fieldValues.add(richTextProcessor.processRichText(textValue, this.webRequestContext.getLocalization()));
         }
         return fieldValues;
     }

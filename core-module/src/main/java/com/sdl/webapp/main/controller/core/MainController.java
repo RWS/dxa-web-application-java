@@ -100,12 +100,14 @@ public class MainController {
         request.setAttribute(PAGE_MODEL, page);
         request.setAttribute(LOCALIZATION, localization);
         request.setAttribute(MARKUP, markup);
+        request.setAttribute(MEDIAHELPER, mediaHelper);
         request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
-
+        request.setAttribute(SOCIALSHARE_URL, webRequestContext.getFullUrl());
+        
         final MvcData mvcData = page.getMvcData();
         LOG.trace("Page MvcData: {}", mvcData);
 
-        return this.viewResolver.resolveView(mvcData, "Page", request);
+        return this.viewResolver.resolveView(mvcData, "Page", 0, request);
         //return mvcData.getAreaName() + "/Page/" + mvcData.getViewName();
     }
 

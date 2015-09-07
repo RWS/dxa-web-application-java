@@ -32,7 +32,9 @@
                     <h3 ${markup.property(para, "subheading")}>${para.subheading}</h3>
                 </c:if>
                 <c:if test="${not empty para.content}">
-                    <div ${markup.property(para, "content")}>${para.content}</div>
+                    <div ${markup.property(para, "content")}>
+                    	<dxa:richtext  content="${para.content}" />
+                    </div>
                 </c:if>
                 <c:if test="${not empty para.media}">
                     <figure ${markup.property(para, "media")}>

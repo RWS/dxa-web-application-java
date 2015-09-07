@@ -7,7 +7,6 @@
 <jsp:useBean id="mediaHelper" type="com.sdl.webapp.common.api.MediaHelper" scope="request"/>
 
 <% pageContext.setAttribute("uuid", java.util.UUID.randomUUID().toString().replaceAll("-", "")); %>
-
     <c:choose>
     <c:when test="${entity.isEmbedded}">
 	    <div class="embed-video">

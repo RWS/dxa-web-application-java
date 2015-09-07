@@ -26,7 +26,7 @@
         </c:choose>
     </h3>
     <p class="teaser-description ${formatOptions['descriptionStyle']}" ${markup.property(entity, "text")}>
-        ${entity.text}
+        <dxa:richtext content="${entity.text}"/>
     </p>
     <c:if test="${not empty entity.link.url}">
         <a class="${linkStyle}" href="${entity.link.url}" title="${entity.link.alternateText}" ${markup.property(entity, "link")}>

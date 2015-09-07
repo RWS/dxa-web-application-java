@@ -5,10 +5,17 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.region.RegionModelSetImpl.RegionsPredicate;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
+
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 
 /**
  * Implementation of {@code Region}.
@@ -16,7 +23,7 @@ import java.util.Map;
 public class RegionModelImpl implements RegionModel {
 
     private String name;
-    private Map<String, EntityModel> entities = new LinkedHashMap<>();
+    private ArrayList<EntityModel> entities = new ArrayList<EntityModel>();
     private Map<String, String> xpmMetadata = new HashMap<>();
     private MvcData mvcData;
     private RegionModelSet regions;
@@ -46,21 +53,27 @@ public class RegionModelImpl implements RegionModel {
     }
 
     @Override
-    public Map<String, EntityModel> getEntities() {
+    public ArrayList<EntityModel> getEntities() {
         return entities;
     }
 
-    public void setEntities(Map<String, EntityModel> entities) {
+    public void setEntities(ArrayList<EntityModel> entities) {
         this.entities = entities;
     }
 
     public void addEntity(EntityModel entity) {
-        this.entities.put(entity.getId(), entity);
+        this.entities.add(entity);
     }
 
     @Override
     public EntityModel getEntity(String entityId) {
-        return this.entities.get(entityId);
+        /*return this.entities.(entityId);*/
+    	Collection<EntityModel> c = CollectionUtils.select(this.entities, new EntityPredicate(entityId));
+		if(!c.isEmpty())
+		{
+			return c.iterator().next();
+		}
+		return null;
     }
 
     @Override
@@ -102,4 +115,18 @@ public class RegionModelImpl implements RegionModel {
                 ", regions='" + regions + '\'' +
                 '}';
     }
+    
+	class EntityPredicate implements Predicate{
+		private final String entityId;
+		public EntityPredicate(String id)
+		{
+			entityId = id;
+		}
+		
+		public boolean evaluate(Object r)
+		{
+			EntityModel m = (EntityModel)r;
+			return m.getId().equals(entityId);	
+		}
+	}
 }

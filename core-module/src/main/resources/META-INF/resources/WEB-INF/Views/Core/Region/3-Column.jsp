@@ -12,13 +12,14 @@
 <%
     final int cols = screenWidth == ScreenWidth.SMALL ? 2 : 3;
     final int rows = (int) Math.ceil(region.getEntities().size() / (double) cols);
-    final Iterator<EntityModel> iterator = region.getEntities().values().iterator();
-
+    final Iterator<EntityModel> iterator = region.getEntities().iterator();
+    int containerSize = 12/cols;
     for (int row = 0; row < rows; row++) {
         %><div class="row"><%
         for (int col = 0; col < cols && iterator.hasNext(); col++) {
             final EntityModel entity = iterator.next();
-            %><div class="col-sm-6 col-md-4"><dxa:entity  parentRegion="${region}"  region="3-Column" entityId="<%= entity.getId() %>"/></div><%
+            
+            %><div class="col-sm-6 col-md-4"><dxa:entity  parentRegion="${region}" containerSize="${containerSize}"  region="3-Column" entityId="<%= entity.getId() %>"/></div><%
         }
         %></div><%
     }

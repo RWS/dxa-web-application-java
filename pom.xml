@@ -243,6 +243,27 @@
                         <artifactId>odata_tridion_common</artifactId>
                         <version>${tridion-cd-version}</version>
                     </dependency>
+                
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_ambient</artifactId>
+                        <version>${tridion-cd-version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_web</artifactId>
+                        <version>${tridion-cd-version}</version>
+                </dependency>
+                 <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_session</artifactId>
+                        <version>${tridion-cd-version}</version>
+                </dependency>
+                 <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_wrapper</artifactId>
+                        <version>${tridion-cd-version}</version>
+                </dependency>
                     <dependency>
                         <groupId>javax.cache</groupId>
                         <artifactId>cache-api</artifactId>

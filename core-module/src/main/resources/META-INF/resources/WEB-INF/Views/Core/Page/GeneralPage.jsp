@@ -40,11 +40,11 @@
         <div class="row">
             <% if (hasLeftBar) { %>
                 <div class="col-sm-12 col-md-3">
-                    <dxa:region name="Left-Navigation"/>
-                    <dxa:region name="Left"/>
+                    <dxa:region name="Left-Navigation" containerSize="3"/>
+                    <dxa:region name="Left"  containerSize="3"/>
                 </div>
             <% } %>
-            <div class="col-sm-12 col-md-<%= mainContainerSize %>"><dxa:regions exclude="Hero,Left,Left-Navigation,Header,Footer,Content-Tools"/></div>
+            <div class="col-sm-12 col-md-<%= mainContainerSize %>"><dxa:regions exclude="Hero,Left,Left-Navigation,Header,Footer,Content-Tools" containerSize="${mainContainerSize}"/></div>
         </div>
     </div>
 </main>

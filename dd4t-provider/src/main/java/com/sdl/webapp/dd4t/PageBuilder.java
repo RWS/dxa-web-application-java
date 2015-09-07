@@ -209,31 +209,6 @@ final class PageBuilder {
             	  includePageRegion.getRegions().addAll(includePageModel.getRegions());
             	  regionMap.add(includePageRegion);
             }
-            /*
-             *   RegionModel existingRegion;
-                        if (regions.TryGetValue(includePageRegion.Name, out existingRegion))
-                        {
-                            // Region with same name already exists; merge include Page Region.
-                            existingRegion.Regions.UnionWith(includePageModel.Regions);
-
-                            if (existingRegion.XpmMetadata != null)
-                            {
-                                existingRegion.XpmMetadata.Remove(RegionModel.IncludedFromPageIdXpmMetadataKey);
-                                existingRegion.XpmMetadata.Remove(RegionModel.IncludedFromPageTitleXpmMetadataKey);
-                                existingRegion.XpmMetadata.Remove(RegionModel.IncludedFromPageFileNameXpmMetadataKey);
-                            }
-
-                            Log.Info("Merged Include Page [{0}] into Region [{1}]. Note that merged Regions can't be edited properly in XPM (yet).",
-                                includePageModel, existingRegion);
-                        }
-                        else
-                        {
-                            includePageRegion.Regions.UnionWith(includePageModel.Regions);
-                            regions.Add(includePageRegion);
-                        }
-             */
-            
-            //regionMap.add(includePage);
         }
 
         page.setXpmMetadata(createXpmMetaData(genericPage, localization));

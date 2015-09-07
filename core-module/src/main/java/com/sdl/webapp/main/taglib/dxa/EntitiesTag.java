@@ -19,6 +19,7 @@ public class EntitiesTag extends AbstractMarkupTag {
 
     private String regionName;
     private RegionModel parentRegion;
+    private int containerSize;
     
     public void setRegion(String regionName) {
         this.regionName = regionName;
@@ -28,7 +29,10 @@ public class EntitiesTag extends AbstractMarkupTag {
     {
     	this.parentRegion = parent;
     }
-    
+    public void setContainerSize(int containerSize)
+    {
+    	this.containerSize = containerSize;
+    }
     
     @Override
     public int doStartTag() throws JspException {
@@ -53,11 +57,12 @@ public class EntitiesTag extends AbstractMarkupTag {
             return SKIP_BODY;
         }
 
-        for (EntityModel entity : region.getEntities().values()) {
+        for (EntityModel entity : region.getEntities()) {
             try {
             	pageContext.getRequest().setAttribute("_region_" + regionName, region);
-            	
-                this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
+            	pageContext.getRequest().setAttribute("_containersize_" + regionName + entity.getId(), containerSize);
+                
+            	this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
                 //pageContext.include(ControllerUtils.getIncludePath(entity));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);

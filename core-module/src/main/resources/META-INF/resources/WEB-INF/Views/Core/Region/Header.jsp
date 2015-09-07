@@ -17,7 +17,7 @@
                     </button>
                     <dxa:region parentRegion="${region}" name="Logo"/>
                 </div>
-                <dxa:regions parentRegion="${region}" exclude="Logo,Info"/>
+                <dxa:regions parentRegion="${region}" exclude="Logo,Info" containerSize="12"/>
             </div>
         </div>
     </div>

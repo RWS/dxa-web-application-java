@@ -32,7 +32,7 @@
         <body-content>empty</body-content>
         <attribute>
             <name>name</name>
-            <required>true</required>
+            <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
@@ -40,7 +40,13 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
-         <attribute>
+        <attribute>
+        	<name>containerSize</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
+        <attribute>
          	<name>parentRegion</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
@@ -61,6 +67,12 @@
          	<name>parentRegion</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
+        	<name>containerSize</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
         </attribute>
     </tag>
 
@@ -89,6 +101,12 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
+         <attribute>
+        	<name>containerSize</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>
     </tag>
 
     <!-- Include all entities in a region -->
@@ -105,7 +123,13 @@
          	<name>parentRegion</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
-        </attribute>       
+        </attribute>   
+         <attribute>
+        	<name>containerSize</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>int</type>
+        </attribute>    
     </tag>
 
     <!-- Insert media: an image, YouTube video or download link -->

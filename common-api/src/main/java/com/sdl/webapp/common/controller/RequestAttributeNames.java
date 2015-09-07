@@ -15,4 +15,6 @@ public interface RequestAttributeNames {
     String MEDIAHELPER = "mediaHelper";
 
     String SCREEN_WIDTH = "screenWidth";
+    
+    String SOCIALSHARE_URL = "socialshareUrl";
 }

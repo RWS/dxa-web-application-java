@@ -1,12 +1,34 @@
-Digital Experience Accelerator (DXA) Early Access
-===========================================================
+dxa-web-application-java
+===
+SDL Digital Experience Accelerator Java Spring MVC web application
 
-This project contains the Digital Experience Accelerator (DXA) for Java. It's a Spring Web MVC web application
-that demonstrates how you can create a web application that uses content from Tridion.
 
-## Prerequisites
+About
+-----
+The SDL Digital Experience Accelerator (formerly known as the SDL Tridion Reference Implementation) is a reference implementation of SDL Tridion intended to help you create, design and publish an SDL Tridion-based Web site quickly.
 
-### For building
+You can find more details and a download of the entire release on https://community.sdl.com/developers/tridion_developer/m/mediagallery/852
+
+
+Support
+---------------
+The SDL Digital Experience Accelerator is intended as a toolkit to help the SDL Tridion community and is not an officially supported SDL Tridion product.
+
+If you encounter problems, reach out to the community: http://tridion.stackexchange.com/
+
+
+Sources
+-------
+
+In the `develop` branch you can find our unstable progress, once we have a stable build we will merge that into the `master` branch.
+
+
+Documentation
+-------------
+
+### Prerequisites
+
+#### For building
 
 To build this project, you will need to have the following software installed:
 
@@ -20,17 +42,17 @@ After installing the JDK and unzipping Maven in a directory of your choice, set 
 
 Include `%JAVA_HOME%\bin` and `%M2_HOME%\bin` in your `PATH`.
 
-### For running
+#### For running
 
 To run the web application, you will need to have the following software installed:
 
 * http://tomcat.apache.org/[Apache Tomcat 8.x]
 
-NOTE: There is no need to install Tomcat as a service; it's easier to download and extract the zip version. If you
+*NOTE: There is no need to install Tomcat as a service; it's easier to download and extract the zip version. If you
 unzip it into your "Program Files" folder, you will have permissions issues with writing log files, so it's better to
-install it somewhere else outside your "Program Files" folder.
+install it somewhere else outside your "Program Files" folder.*
 
-## Building the project
+### Building the project
 
 Before building the project, follow these steps (you only need to do this once, not every time you want to build the
 project):
@@ -52,7 +74,7 @@ compile the project with the profile `cid` enabled:
 
 If no errors occur, you will find the resulting file `webapp-main.war` in the directory `webapp-main\target`.
 
-## Running the project
+### Running the project
 
 To deploy the project in Tomcat, you'll need to do a number of things.
 
@@ -63,11 +85,11 @@ application into the root context, the name of the subdirectory must be `ROOT`.
 . Start Tomcat by executing `%TOMCAT_HOME%\bin\startup.bat`.
 . Use your browser to access the web application.
 
-NOTE: The example Tridion content contains CSS and JavaScript files that assume that the web application is deployed
+*NOTE: The example Tridion content contains CSS and JavaScript files that assume that the web application is deployed
 into the root context, so if you are using this example content, then you must deploy the web application in the
-directory `%TOMCAT_HOME%\webapps\ROOT`.
+directory `%TOMCAT_HOME%\webapps\ROOT`.*
 
-### Configuration
+#### Configuration
 
 The directory `%TOMCAT_HOME%\webapps\<webappdir>\WEB-INF\classes` contains a number of XML configuration files. You
 will need to edit at least the following files:
@@ -79,5 +101,43 @@ publications.
 * `cwd_engine_conf.xml` - The Tridion Contextual Web Delivery engine configuration. This is used when you use
 Contextual Image Delivery (CID) for serving images.
 
-NOTE: Contextual Image Delivery (CID) is an optional component. For using Contextual Image Delivery, you need an
-additional license. Contact SDL if you with to use CID and you do not have such a license (or if you are not sure).
+*NOTE: Contextual Image Delivery (CID) is an optional component. For using Contextual Image Delivery, you need an
+additional license. Contact SDL if you with to use CID and you do not have such a license (or if you are not sure).*
+
+
+Repositories
+------------
+
+The following repositories with source code are available:
+
+ - https://github.com/sdl/dxa-content-management - Core Template Building Blocks
+ - https://github.com/sdl/dxa-html-design - Whitelabel HTML Design
+ - https://github.com/sdl/dxa-modules - Modules
+ - https://github.com/sdl/dxa-web-application-dotnet - .NET MVC web application
+ - https://github.com/sdl/dxa-web-application-java - Java Spring MVC web application
+
+
+Branching model
+---------------
+
+We intend to follow Gitflow (http://nvie.com/posts/a-successful-git-branching-model/) with the following main branches:
+
+ - master - Stable 
+ - develop - Unstable
+ - release/x.y - Release version x.y
+
+Please submit your pull requests on develop. In the near future we intend to push our changes to develop and master from our internal repositories, so you can follow our development process.
+
+
+License
+-------
+Copyright (c) 2014-2015 SDL Group.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+	http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and limitations under the License.

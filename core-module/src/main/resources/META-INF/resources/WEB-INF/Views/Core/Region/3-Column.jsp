@@ -19,7 +19,7 @@
         for (int col = 0; col < cols && iterator.hasNext(); col++) {
             final EntityModel entity = iterator.next();
             
-            %><div class="col-sm-6 col-md-4"><dxa:entity  parentRegion="${region}" containerSize="${containerSize}"  region="3-Column" entityId="<%= entity.getId() %>"/></div><%
+            %><div class="col-sm-6 col-md-4"><dxa:entity containerSize="${containerSize}"  region="3-Column" entityId="<%= entity.getId() %>"/></div><%
         }
         %></div><%
     }

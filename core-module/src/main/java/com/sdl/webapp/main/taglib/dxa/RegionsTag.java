@@ -47,7 +47,13 @@ public class RegionsTag extends AbstractMarkupTag {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
-
+        
+        Object parentModel = pageContext.getRequest().getAttribute("ParentModel");
+        if(parentModel != null && parentModel instanceof RegionModel)
+        {
+        	this.setParentRegion((RegionModel)parentModel);
+        }
+        
         Set<String> excludes = new HashSet<>();
         if (!Strings.isNullOrEmpty(exclude)) {
             excludes.addAll(Arrays.asList(exclude.split("\\s*,\\s*")));

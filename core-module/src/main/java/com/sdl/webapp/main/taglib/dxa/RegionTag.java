@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.model.region.SimpleRegionMvcData;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
 
+import org.dd4t.core.request.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.WebUtils;
@@ -51,6 +52,13 @@ public class RegionTag extends AbstractMarkupTag {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
+       
+        Object parentModel = pageContext.getRequest().getAttribute("ParentModel");
+        if(parentModel != null && parentModel instanceof RegionModel)
+        {
+        	this.setParentRegion((RegionModel)parentModel);
+        }
+        
         RegionModel region = null;
         if(Strings.isNullOrEmpty(name) || page.getMvcData().getViewName().equals("IncludePage")){
         	//special case where we wish to render an include page as region

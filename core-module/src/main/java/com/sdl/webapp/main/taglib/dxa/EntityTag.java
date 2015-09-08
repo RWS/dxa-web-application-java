@@ -5,11 +5,13 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
+
 import java.io.IOException;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
@@ -53,6 +55,12 @@ public class EntityTag extends AbstractMarkupTag {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
+        Object parentModel = pageContext.getRequest().getAttribute("ParentModel");
+        if(parentModel != null && parentModel instanceof RegionModel)
+        {
+        	this.setParentRegion((RegionModel)parentModel);
+        }
+        
         RegionModel region = null;
         final EntityModel entity;
         if ( entityId != null ) {

@@ -4,7 +4,7 @@
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Download" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
-<div class="${entity.HtmlClasses}" ${markup.entity(entity)}>
+<div class="${entity.htmlClasses}" ${markup.entity(entity)}>
    <div class="download-list">
    <i class="fa ${entity.iconClass}"></i>
     <div>

@@ -9,7 +9,7 @@
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
 <c:set var="linkStyle" value="${formatOptions['linkStyle']}"/>
 <c:if test="${empty linkStyle}"><c:set var="linkStyle" value="teaser-link"/></c:if>
-<div class="teaser ${formatOptions['style']} ${entity.HtmlClasses}" ${markup.entity(entity)}>
+<div class="teaser ${formatOptions['style']} ${entity.htmlClasses}" ${markup.entity(entity)}>
     <c:if test="${not empty entity.media}">
         <div ${markup.property(entity, "media")}>
             <dxa:media media="${entity.media}" aspect="1.62" widthFactor="${screenWidth == 'EXTRA_SMALL' ? '160px' : '100%'}" cssClass="teaser-img loader-img"/>

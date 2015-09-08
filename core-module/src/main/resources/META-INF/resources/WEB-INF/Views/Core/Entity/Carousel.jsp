@@ -5,7 +5,7 @@
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.ItemList" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <c:set var="carouselId" value="carousel-${entity.id}"/>
-<div id="${carouselId}" class="carousel slide ${entity.HtmlClasses}" data-ride="carousel" data-interval="5000" ${markup.entity(entity)}>
+<div id="${carouselId}" class="carousel slide ${entity.htmlClasses}" data-ride="carousel" data-interval="5000" ${markup.entity(entity)}>
     <ol class="carousel-indicators">
         <c:forEach var="indicator" varStatus="status" items="${entity.itemListElements}">
             <c:choose>

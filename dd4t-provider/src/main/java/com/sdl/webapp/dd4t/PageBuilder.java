@@ -215,7 +215,7 @@ final class PageBuilder {
         page.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
 
         String htmlClasses = getStringValue(genericPage.getPageTemplate().getMetadata(), "htmlClasses");
-        if (Strings.isNullOrEmpty(htmlClasses)) {
+        if (!Strings.isNullOrEmpty(htmlClasses)) {
             page.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
         }
           

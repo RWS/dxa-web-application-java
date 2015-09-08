@@ -4,7 +4,7 @@
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.TagLinkList" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
-<div class="icon-list ${entity.HtmlClasses}" ${markup.entity(entity)}>
+<div class="icon-list ${entity.htmlClasses}" ${markup.entity(entity)}>
     <c:forEach var="link" items="${entity.links}" varStatus="status">
         <a href="${link.url}" class="fa-stack fa-lg"
            title="<dxa:resource key="core.visitUsSocialLinkTitle" arg1="${link.tag.displayText}"/>" ${markup.property(entity, "links", status.index)}>

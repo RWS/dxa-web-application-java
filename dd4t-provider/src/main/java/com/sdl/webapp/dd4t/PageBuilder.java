@@ -214,7 +214,10 @@ final class PageBuilder {
         page.setXpmMetadata(createXpmMetaData(genericPage, localization));
         page.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
 
-        
+        String htmlClasses = getStringValue(genericPage.getPageTemplate().getMetadata(), "htmlClasses");
+        if (Strings.isNullOrEmpty(htmlClasses)) {
+            page.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
+        }
           
         //regionMap.addAll(regions.values());
         page.setRegions(regionMap);

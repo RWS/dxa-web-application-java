@@ -6,7 +6,7 @@
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Article" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
-<article class="rich-text" ${markup.entity(entity)}>
+<article class="rich-text ${entity.HtmlClasses}" ${markup.entity(entity)}>
     <c:choose>
         <c:when test="${not empty entity.image and screenWidth != 'EXTRA_SMALL'}">
             <div class="hero" ${markup.property(entity, "image")}>

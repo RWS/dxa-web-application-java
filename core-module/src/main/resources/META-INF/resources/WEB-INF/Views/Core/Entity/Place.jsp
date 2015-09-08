@@ -7,7 +7,7 @@
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
 <c:set var="width" value="${not empty entity.location ? 6 : 12}"/>
 <c:set var="daddr" value="${not empty entity.location ? (not empty entity.location.query ? entity.location.query : (entity.location.latitude + ',' + entity.location.longitude)) : ''}"/>
-<div ${markup.entity(entity)}>
+<div class="${entity.HtmlClasses}" ${markup.entity(entity)}>
     <c:choose>
         <c:when test="${not empty entity.image and screenWidth != 'EXTRA_SMALL'}">
             <div class="hero" ${markup.property(entity, "image")}>

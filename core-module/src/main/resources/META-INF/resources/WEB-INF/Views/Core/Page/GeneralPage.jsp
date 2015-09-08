@@ -28,7 +28,7 @@
 </head>
 <body>
 <dxa:region name="Header" />
-<main class="page-row page-row-expanded" role="main">
+<main class="page-row page-row-expanded ${pageModel.HtmlClasses}" role="main">
     <div class="container-fluid page-border">
         <%
             boolean hasLeftBar = pageModel.getRegions().containsKey("Left-Navigation") ||

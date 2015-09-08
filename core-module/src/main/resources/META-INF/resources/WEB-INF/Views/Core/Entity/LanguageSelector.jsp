@@ -33,7 +33,7 @@
 %>
 <c:set var="defaultItem" value="${entity.settings['defaultContentLink']}"/>
 <c:if test="${not empty filteredLocalizations and filteredLocalizations.size() > 1}">
-    <div ${markup.entity(entity)}>
+    <div class="${entity.HtmlClasses}" ${markup.entity(entity)}>
         <select class="selectpicker" data-width="auto">
             <c:forEach var="loc" items="${filteredLocalizations}">
                 <c:set var="params" value="?localizationId=${loc.id}&defaultPath=${loc.path}${not empty defaultItem ? ('&defaultItem='.concat(defaultItem)) : ''}"/>

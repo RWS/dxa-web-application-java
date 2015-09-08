@@ -4,7 +4,7 @@
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.ContentList" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
-<div ${markup.entity(entity)}>
+<div class="${entity.HtmlClasses}" ${markup.entity(entity)}>
     <c:if test="${not empty entity.headline}">
         <h3 ${markup.property(entity, "headline")}>${entity.headline}</h3>
     </c:if>

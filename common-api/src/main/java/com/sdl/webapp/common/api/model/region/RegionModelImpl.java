@@ -104,7 +104,10 @@ public class RegionModelImpl implements RegionModel {
     }
 
     
-        
+    @Override
+    public String getHtmlClasses() {
+        throw new UnsupportedOperationException("Not implemented yet");
+    }
     
     @Override
     public String toString() {

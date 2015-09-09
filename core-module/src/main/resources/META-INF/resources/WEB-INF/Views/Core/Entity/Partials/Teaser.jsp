@@ -9,7 +9,7 @@
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
 <c:set var="linkStyle" value="${formatOptions['linkStyle']}"/>
 <c:if test="${empty linkStyle}"><c:set var="linkStyle" value="teaser-link"/></c:if>
-<div class="teaser ${formatOptions['style']}" ${markup.entity(entity)}>
+<div class="teaser ${formatOptions['style']} ${entity.htmlClasses}" ${markup.entity(entity)}>
     <c:if test="${not empty entity.media}">
         <div ${markup.property(entity, "media")}>
             <dxa:media media="${entity.media}" aspect="1.62" widthFactor="${screenWidth == 'EXTRA_SMALL' ? '160px' : '100%'}" cssClass="teaser-img loader-img"/>
@@ -26,7 +26,7 @@
         </c:choose>
     </h3>
     <p class="teaser-description ${formatOptions['descriptionStyle']}" ${markup.property(entity, "text")}>
-        ${entity.text}
+        <dxa:richtext content="${entity.text}"/>
     </p>
     <c:if test="${not empty entity.link.url}">
         <a class="${linkStyle}" href="${entity.link.url}" title="${entity.link.alternateText}" ${markup.property(entity, "link")}>

@@ -25,6 +25,21 @@ public class AbstractMarkupTag extends TagSupport {
         return this.getClass().getSimpleName().replace("Tag", "");
     }
 
+    protected String processInclude(String include, ViewModel model) throws IOException, ServletException {
+
+        // TODO: Consider to replace with an annotation instead
+
+        StringWriter sw = new StringWriter();
+        pageContext.pushBody(sw);
+        pageContext.include(include);
+        String renderedHtml = sw.toString();
+        ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);
+        HtmlNode decoratedMarkup = this.decorateMarkup(markup, model);
+        pageContext.popBody();
+        //pageContext.getOut().write(decoratedMarkup.toHtml());
+        return decoratedMarkup.toHtml();
+    }
+    
     protected void decorateInclude(String include, ViewModel model) throws IOException, ServletException {
 
         // TODO: Consider to replace with an annotation instead

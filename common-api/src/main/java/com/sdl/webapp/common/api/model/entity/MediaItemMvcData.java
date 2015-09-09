@@ -16,7 +16,7 @@ public class MediaItemMvcData implements MvcData {
 
     private String controllerAreaName = "Core";
     private String controllerName = "Entity";
-    private String actionName = "Region";
+    private String actionName = "Entity";
     private String areaName = "Core";
     private String viewName;
 

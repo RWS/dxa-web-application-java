@@ -4,7 +4,7 @@
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Notification" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <!--[if lt IE 8]>
-<div id="incompability" class="container-fluid page-border" ${markup.entity(entity)}>
+<div id="incompability" class="container-fluid page-border ${entity.htmlClasses}" ${markup.entity(entity)}>
     <div class="row">
         <div class="col-sm-9">
             <div class="h4" ${markup.property(entity, "headline")}>${entity.headline}</div>

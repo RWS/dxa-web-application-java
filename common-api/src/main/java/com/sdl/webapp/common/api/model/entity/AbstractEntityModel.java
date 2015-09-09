@@ -29,6 +29,10 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     @JsonIgnore
     private MvcData mvcData;
 
+    @JsonIgnore
+    private String htmlClasses;
+
+    
     @Override
     public String getId() {
         return id;
@@ -64,6 +68,17 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     public void setMvcData(MvcData mvcData) {
         this.mvcData = mvcData;
     }
+    
+    @Override
+    public String getHtmlClasses()
+    {
+    	return this.htmlClasses;
+    }
+    public void setHtmlClasses(String htmlClasses)
+    {
+    	this.htmlClasses = htmlClasses;
+    }
+    
     
     @Override
     public String toHtml()

@@ -206,7 +206,17 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
-
+<!-- Insert a richtext field -->
+    <tag>
+        <name>richtext</name>
+        <tag-class>com.sdl.webapp.main.taglib.dxa.RichTextTag</tag-class>
+        <body-content>empty</body-content>
+         <attribute>
+            <name>content</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+    </tag>
     <!-- Insert a static Google map -->
     <tag>
         <name>googlestaticmap</name>

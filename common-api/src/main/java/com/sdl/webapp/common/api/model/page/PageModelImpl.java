@@ -18,6 +18,7 @@ public class PageModelImpl implements PageModel {
     private String id;
     private String name;
     private String title;
+    private String htmlClasses;
     private Map<String, String> meta = new HashMap<>();
     private RegionModelSet regions = new RegionModelSetImpl();
     private Map<String, String> xpmMetadata = new HashMap<>();
@@ -85,7 +86,16 @@ public class PageModelImpl implements PageModel {
     public void setMvcData(MvcData mvcData) {
         this.mvcData = mvcData;
     }
-
+    @Override
+    public String getHtmlClasses()
+    {
+    	return this.htmlClasses;
+    }
+    public void setHtmlClasses(String htmlClasses)
+    {
+    	this.htmlClasses = htmlClasses;
+    }
+    
     @Override
     public String toString() {
         return "PageImpl{" +

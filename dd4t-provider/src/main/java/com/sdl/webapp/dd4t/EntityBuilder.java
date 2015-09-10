@@ -109,6 +109,11 @@ public final class EntityBuilder {
         createEntityData(entity, componentPresentation);
         entity.setMvcData(createMvcData(componentPresentation));
 
+        String htmlClasses = getStringValue(componentPresentation.getComponentTemplate().getMetadata(), "htmlClasses");
+        if (!Strings.isNullOrEmpty(htmlClasses)) {
+        	entity.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
+        }
+        
         return entity;
     }
 
@@ -170,6 +175,7 @@ public final class EntityBuilder {
         //createEntityData(entity, componentPresentation);
         //entity.setMvcData(createMvcData(componentPresentation));
 
+             
         return entity;
     }
     

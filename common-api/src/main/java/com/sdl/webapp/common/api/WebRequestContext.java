@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api;
 
+import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.localization.Localization;
 
 /**
@@ -120,4 +121,29 @@ public interface WebRequestContext {
      * Pop container size back to previous context
      */
     void popContainerSize();
+
+    /**
+     * Gets the contextengine of the current request.
+     *
+     * @return The contextengine of the current request.
+     */
+    ContextEngine getContextEngine();
+
+    // TODO: Should we have setters in this interface??
+    
+	boolean getHasNoLocalization();
+
+	void setHasNoLocalization(boolean value);
+
+	String getPageId();
+
+	void setPageId(String value);
+
+	boolean isDeveloperMode();
+
+	boolean getIsInclude();
+
+	void setIsInclude(boolean value);
+
+	void setIsDeveloperMode(boolean value);
 }

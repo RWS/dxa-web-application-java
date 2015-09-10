@@ -122,7 +122,10 @@
             <groupId>com.tridion</groupId>
             <artifactId>cd_model</artifactId>
         </dependency>
-        
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_ambient</artifactId>
+        </dependency>
         
            <dependency>
             <groupId>org.dd4t</groupId>

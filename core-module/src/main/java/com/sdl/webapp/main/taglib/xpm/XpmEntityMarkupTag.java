@@ -2,6 +2,7 @@ package com.sdl.webapp.main.taglib.xpm;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 
@@ -23,11 +24,11 @@ public class XpmEntityMarkupTag extends XpmMarkupTag {
     public HtmlNode generateXpmMarkup() {
         final Map<String, String> entityData = entity.getXpmMetadata();
 
-        final String componentId = entityData.get("ComponentID");
+        final String componentId = entity instanceof EclItem ?((EclItem)entity).getEclUrl():entityData.get("ComponentID");
         if (Strings.isNullOrEmpty(componentId)) {
             return null;
         }
-
+        
         final String componentModified = entityData.get("ComponentModified");
         final String templateId = entityData.get("ComponentTemplateID");
         final String templateModified = entityData.get("ComponentTemplateModified");

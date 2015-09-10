@@ -11,4 +11,6 @@ public interface ViewModel {
     
     Map<String, String> getXpmMetadata();
     
+    String getHtmlClasses();
+    
 }

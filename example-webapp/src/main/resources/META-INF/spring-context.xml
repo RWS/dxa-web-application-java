@@ -19,5 +19,4 @@
     <!-- Uncomment this if you want to disable the cache in DD4T -->
     <!-- bean id="cacheProvider" class="org.dd4t.providers.impl.NoCacheProvider"/ -->
 
-
 </beans>

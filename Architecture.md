@@ -1,7 +1,7 @@
 Application Architecture
 ==========================
 
-This document describes the architecture of the Tridion Reference Implementation Java web application.
+This document describes the architecture of the SDL Digital Experience Accelerator Java web application.
 
 The web application is a http://docs.spring.io/spring/docs/3.2.12.RELEASE/spring-framework-reference/htmlsingle/#spring-web[Spring Web MVC]
 web application. It consists of the following modules:
@@ -104,4 +104,3 @@ used to get data for a request. It also contains functionality for doing broker 
 
 This optional module contains an implementation of interface `MediaHelper` that transforms image URLs so that they will
 be handled by the `ImageTransformerServlet` that is part of Contextual Image Delivery.
-

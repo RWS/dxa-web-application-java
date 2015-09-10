@@ -46,7 +46,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     .put("ThumbnailList", ContentList.class)
                     .put("TopNavigation", NavigationLinks.class)
                     .put("YouTubeVideo", YouTubeVideo.class)
-                    .put("DefaultMultimediaSchema", Image.class)   // TODO: Should Default Multimedia schema be here? It is not present in the .NET version
                     .build();
 
     private final Map<String, Class<? extends AbstractEntityModel>> viewEntityClassMap = new HashMap<>();

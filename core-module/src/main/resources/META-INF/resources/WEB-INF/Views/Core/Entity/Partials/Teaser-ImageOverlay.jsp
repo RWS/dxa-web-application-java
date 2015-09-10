@@ -41,7 +41,9 @@
                 <h2 ${markup.property(item, "headline")}>${item.headline}</h2>
             </c:if>
             <c:if test="${not empty item.text}">
-                <div ${markup.property(item, "text")}>${markup.replaceLineEndsWithHtmlBreaks(item.text)}</div>
+                <div ${markup.property(item, "text")}>
+                	<dxa:richtext content="${item.text}"/>
+                </div>
             </c:if>
         </div>
     </c:if>

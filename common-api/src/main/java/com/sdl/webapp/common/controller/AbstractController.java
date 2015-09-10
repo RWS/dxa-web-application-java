@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.controller;
 
+import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -68,7 +69,18 @@ public abstract class AbstractController {
     }
 
     protected EntityModel getEntityFromRequest(HttpServletRequest request, String regionName, String entityId) {
-        final RegionModel region = getRegionFromRequest(request, regionName);
+    	if(regionName.equals("null"))
+    	{
+    		final EntityModel entity = (EntityModel) request.getAttribute("_entity_" + entityId);
+    		if(entity != null){
+    			return entity;
+			}
+    		else{
+    			LOG.error("Entity not found in request: {}", entityId);
+                throw new NotFoundException("Entity not found in request: " + entityId);
+    		}
+    	}
+    	final RegionModel region = getRegionFromRequest(request, regionName);
         final EntityModel entity = region.getEntity(entityId); // region.getEntities().get(entityId);
         if (entity == null) {
             LOG.error("Entity not found in region: {}/{}", regionName, entityId);

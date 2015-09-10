@@ -1,19 +1,30 @@
 package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.common.api.ScreenWidth;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
+import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.impl.contextengine.BrowserClaims;
+import com.sdl.webapp.common.impl.contextengine.ContextEngineImpl;
+import com.sdl.webapp.common.impl.contextengine.DeviceClaims;
+import com.sdl.webapp.common.util.ApplicationContextHolder;
 import com.tridion.ambientdata.AmbientDataContext;
 import com.tridion.ambientdata.claimstore.ClaimStore;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.WebUtils;
 
 import java.net.URI;
 import java.util.Stack;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Implementation of {@code WebRequestContext}.
@@ -24,30 +35,102 @@ import java.util.Stack;
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class WebRequestContextImpl implements WebRequestContext {
     private static final Logger LOG = LoggerFactory.getLogger(WebRequestContextImpl.class);
-
-    private static final URI URI_BROWSER_DISPLAY_WIDTH = URI.create("taf:claim:context:browser:displayWidth");
-    private static final URI URI_DEVICE_PIXEL_RATIO = URI.create("taf:claim:context:device:pixelRatio");
-
-    private static final int DEFAULT_WIDTH = 1024;
-    private static final int MAX_WIDTH = 1024;
-
+    
+    private Localization localization;
+    private boolean hasNoLocalization;
+    private Integer maxMediaWidth;
+    private Double pixelRatio;
+    private ScreenWidth screenwidth;
+    private boolean contextCookiePresent;
+    private Integer displayWidth;
     private String baseUrl;
     private String contextPath;
     private String requestPath;
-
-    private boolean contextCookiePresent;
-
-    private Localization localization;
-
-    private Integer displayWidth;
-    private Double pixelRatio;
-    private Integer maxMediaWidth;
-
+    private String pageId;
+    private Boolean isDeveloperMode;
+    private Boolean isInclude;
+    
+    
+    private static final int DEFAULT_WIDTH = 1024;
+    private static final int MAX_WIDTH = 1024;
+    
+    private final MediaHelper mediaHelper;
+    
     private Stack<Integer> containerSizeStack = new Stack<>();
 
     @Autowired
-    private MediaHelper mediaHelper;
+    private ContextEngine contextEngine;
+    
+    @Autowired
+    public WebRequestContextImpl(MediaHelper mediaHelper)
+    {
+    	this.mediaHelper = mediaHelper;
+    }
+    
+    public WebRequestContextImpl()
+    {
+        this.mediaHelper = null;
+    }
+    
+    @Override
+    public Localization getLocalization() {
+        return localization;
+    }
 
+    @Override
+    public void setLocalization(Localization localization) {
+        this.localization = localization;
+    }
+    
+    @Override
+    public boolean getHasNoLocalization(){
+    	return hasNoLocalization;
+    }
+    
+    @Override
+    public void setHasNoLocalization(boolean value){
+    	hasNoLocalization = value;
+    }
+    
+    @Override
+    public int getMaxMediaWidth() {
+        if (maxMediaWidth == null) {
+            maxMediaWidth = (int) (Math.max(1.0, getPixelRatio()) * Math.min(getDisplayWidth(), MAX_WIDTH));
+        }
+        return maxMediaWidth;
+    }
+    
+    @Override
+    public double getPixelRatio() {
+        if (pixelRatio == null) {
+            pixelRatio = this.getContextEngine().getClaims(DeviceClaims.class).getPixelRatio();
+            if (pixelRatio == null) {
+                pixelRatio = 1.0;
+                LOG.debug("Pixel ratio ADF claim not available - using default value: {}", pixelRatio);
+            }
+        }
+        return pixelRatio;
+    }
+ 
+    public ScreenWidth getScreenWidth()
+    {
+        if(screenwidth == null)
+        {
+        	screenwidth = calculateScreenWidth();
+        }
+        return screenwidth;
+    }
+    
+    @Override
+    public boolean isContextCookiePresent() {
+        return contextCookiePresent;
+    }
+
+    @Override
+    public void setContextCookiePresent(boolean present) {
+        this.contextCookiePresent = present;
+    }
+    
     @Override
     public String getBaseUrl() {
         return baseUrl;
@@ -82,40 +165,68 @@ public class WebRequestContextImpl implements WebRequestContext {
     public String getFullUrl() {
         return baseUrl + contextPath + requestPath;
     }
-
+    
+    
     @Override
-    public boolean isContextCookiePresent() {
-        return contextCookiePresent;
+    public ContextEngine getContextEngine() {
+       return this.contextEngine;
+    }
+    
+    @Override
+    public String getPageId()
+    {
+    	return pageId;
+    }
+    
+    @Override
+    public void setPageId(String value)
+    {
+    	this.pageId = value;
+    }
+    
+    @Override
+    public boolean isDeveloperMode()
+    {
+        if(this.isDeveloperMode == null){
+        	this.isDeveloperMode = getIsDeveloperMode();
+        }
+        return this.isDeveloperMode();        	
     }
 
-    @Override
-    public void setContextCookiePresent(boolean present) {
-        this.contextCookiePresent = present;
+    private boolean getIsDeveloperMode()
+    {
+    	return this.isDeveloperMode;
     }
-
     @Override
-    public Localization getLocalization() {
-        return localization;
+    public void setIsDeveloperMode(boolean value)
+    {
+    	this.isDeveloperMode = value;
     }
-
     @Override
-    public void setLocalization(Localization localization) {
-        this.localization = localization;
+    public boolean getIsInclude()
+    {
+    	return this.isInclude;
     }
-
+    
+    @Override
+    public void setIsInclude(boolean value)
+    {
+    	this.isInclude = value;
+    }
+    
     @Override
     public boolean isPreview() {
         // Should return true if the request is from XPM (NOTE currently always true for staging as we cannot reliably
         // distinguish XPM requests)
         return localization.isStaging();
     }
-
+    
     @Override
-    public int getDisplayWidth() {
-        if (displayWidth == null) {
-            final ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
-            displayWidth = (Integer) currentClaimStore.get(URI_BROWSER_DISPLAY_WIDTH);
-            if (displayWidth == null) {
+    public int getDisplayWidth(){
+    	if (displayWidth == null) {
+        	
+        	this.displayWidth = this.getContextEngine().getClaims(BrowserClaims.class).getDisplayWidth();
+        	if (displayWidth == null) {
                 displayWidth = DEFAULT_WIDTH;
             }
 
@@ -126,25 +237,25 @@ public class WebRequestContextImpl implements WebRequestContext {
         }
         return displayWidth;
     }
-
-    @Override
-    public double getPixelRatio() {
-        if (pixelRatio == null) {
-            pixelRatio = (Double) AmbientDataContext.getCurrentClaimStore().get(URI_DEVICE_PIXEL_RATIO);
-            if (pixelRatio == null) {
-                pixelRatio = 1.0;
-                LOG.debug("Pixel ratio ADF claim not available - using default value: {}", pixelRatio);
-            }
+    
+    
+    
+    protected ScreenWidth calculateScreenWidth()
+    {
+        int width = isContextCookiePresent() ? this.getDisplayWidth():MAX_WIDTH;
+        if (width < this.mediaHelper.getSmallScreenBreakpoint())
+        {
+            return ScreenWidth.EXTRA_SMALL;
         }
-        return pixelRatio;
-    }
-
-    @Override
-    public int getMaxMediaWidth() {
-        if (maxMediaWidth == null) {
-            maxMediaWidth = (int) (Math.max(1.0, getPixelRatio()) * Math.min(getDisplayWidth(), MAX_WIDTH));
+        if (width < this.mediaHelper.getMediumScreenBreakpoint())
+        {
+            return ScreenWidth.SMALL;
         }
-        return maxMediaWidth;
+        if (width < this.mediaHelper.getLargeScreenBreakpoint())
+        {
+            return ScreenWidth.MEDIUM;
+        }
+        return ScreenWidth.LARGE;
     }
 
     @Override
@@ -169,4 +280,5 @@ public class WebRequestContextImpl implements WebRequestContext {
         }
         this.containerSizeStack.push(containerSize);
     }
+      
 }

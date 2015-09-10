@@ -47,24 +47,23 @@ public class WebRequestContextImpl implements WebRequestContext {
     private String requestPath;
     private String pageId;
     private Boolean isDeveloperMode;
+    private Boolean isInclude;
+    private Boolean isPreview;
     
     
     private static final int DEFAULT_WIDTH = 1024;
     private static final int MAX_WIDTH = 1024;
     
     private final MediaHelper mediahelper;
-    private final HttpServletRequest request;
     
     @Autowired
-    public WebRequestContextImpl(MediaHelper mediaHelper, HttpServletRequest request)
+    public WebRequestContextImpl(MediaHelper mediaHelper)
     {
     	this.mediahelper = mediaHelper;
-    	this.request = request;
     }
     
     public WebRequestContextImpl()
     {
-    	this.request = null;
     	this.mediahelper = null;
     }
     
@@ -194,17 +193,23 @@ public class WebRequestContextImpl implements WebRequestContext {
 
     private boolean getIsDeveloperMode()
     {
-    	if(this.request != null && this.request.getRequestURI() != null)
-    	{
-    		return this.request.getRequestURI().contains("//localhost");
-    	}
-    	return false;
+    	return this.isDeveloperMode;
     }
-    
+    @Override
+    public void setIsDeveloperMode(boolean value)
+    {
+    	this.isDeveloperMode = value;
+    }
     @Override
     public boolean getIsInclude()
     {
-    	return request != null && request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null;
+    	return this.isInclude;
+    }
+    
+    @Override
+    public void setIsInclude(boolean value)
+    {
+    	this.isInclude = value;
     }
     
     @Override
@@ -252,36 +257,3 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
       
 }
-
-
-/*
-using System.Net;
-using Sdl.Web.Common.Configuration;
-using Sdl.Web.Mvc.Context;
-using System;
-using System.Web;
-
-namespace Sdl.Web.Mvc.Configuration
-{
-    /// <summary>
-    /// Container for request level context data, wraps the HttpContext.Items dictionary, which is used for this purpose
-    /// </summary>
-    public class WebRequestContext
-    {
-       
-     
-    
-        /// <summary>
-        /// String array of client-supported MIME accept types
-        /// </summary>
-        public static string[] AcceptTypes
-        {
-            get 
-            { 
-                return HttpContext.Current.Request.AcceptTypes;
-            }
-        }
-
-       
-
-      */

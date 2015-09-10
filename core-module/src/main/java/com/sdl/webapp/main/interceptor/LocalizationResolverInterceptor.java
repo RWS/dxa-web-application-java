@@ -3,11 +3,13 @@ package com.sdl.webapp.main.interceptor;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import org.springframework.web.util.UrlPathHelper;
+import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -43,6 +45,9 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
         webRequestContext.setBaseUrl(getBaseUrl(request));
         webRequestContext.setContextPath(urlPathHelper.getOriginatingContextPath(request));
         webRequestContext.setRequestPath(urlPathHelper.getOriginatingRequestUri(request));
+        
+        webRequestContext.setIsInclude(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null);
+        webRequestContext.setIsDeveloperMode(request.getRequestURI().contains("//localhost"));
 
         // Check if the cookie set by CID is present
         webRequestContext.setContextCookiePresent(false);

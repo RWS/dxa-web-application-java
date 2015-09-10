@@ -121,4 +121,8 @@ public interface WebRequestContext {
 	boolean isDeveloperMode();
 
 	boolean getIsInclude();
+
+	void setIsInclude(boolean value);
+
+	void setIsDeveloperMode(boolean value);
 }

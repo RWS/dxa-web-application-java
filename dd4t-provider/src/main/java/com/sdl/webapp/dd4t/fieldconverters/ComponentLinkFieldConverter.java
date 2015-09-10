@@ -1,6 +1,7 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -28,7 +29,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
     private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.COMPONENTLINK, FieldType.MULTIMEDIALINK };
 
     private final LinkResolver linkResolver;
-        private final WebRequestContext webRequestContext;
+    private final WebRequestContext webRequestContext;
 
     @Autowired
     public ComponentLinkFieldConverter(LinkResolver linkResolver, WebRequestContext webRequestContext) {
@@ -90,22 +91,30 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
             return link;
         } else if (AbstractEntityModel.class.isAssignableFrom(targetClass)){
         	Localization localization = this.webRequestContext.getLocalization(); 
-        	
-        	
+
 			try {
+
+                // Map using view model name
+                //
 				Object retval = builder.createEntity(component, localization);
-				if(targetClass.isAssignableFrom(retval.getClass()))
-				{
+				if ( targetClass.isAssignableFrom(retval.getClass()) ) {
 					return retval;
-				}
-				else
+				} else
 				{
 					return null;
 				}
 				
 			} catch (ContentProviderException e) {
-				// TODO Auto-generated catch block
-				throw new SemanticMappingException(e);
+
+                // Try to map using model field type
+                //
+                try {
+                    Object retval = builder.createEntity(component, localization, (Class<AbstractEntityModel>) targetClass);
+                    return retval;
+                }
+                catch ( ContentProviderException e2 ) {
+                    throw new SemanticMappingException(e);
+                }
 			}
   			//        	return semanticMapper.createEntity(targetClass.asSubclass(AbstractEntityModel.class), semanticSchema.getSemanticFields(), new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry));
         }

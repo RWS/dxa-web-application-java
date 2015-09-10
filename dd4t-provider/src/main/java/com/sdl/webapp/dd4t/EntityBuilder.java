@@ -20,6 +20,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -111,20 +112,32 @@ public final class EntityBuilder {
         return entity;
     }
 
+
+    public EntityModel createEntity(org.dd4t.contentmodel.Component component, Localization localization, Class<AbstractEntityModel> entityClass)
+            throws ContentProviderException {
+
+        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
+        return createEntity(component, localization,entityClass, semanticSchema);
+    }
+
     public EntityModel createEntity(org.dd4t.contentmodel.Component component, Localization localization)
             throws ContentProviderException {
-       // final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
-        final String componentId = component.getId();
-        LOG.debug("Creating entity for component: {}", componentId);
+
         final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-             
         String semanticTypeName = semanticSchema.getRootElement();
         final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.GetMappedModelTypes(semanticTypeName);
         if (entityClass == null) {
             throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
                     "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
         }
+        return createEntity(component, localization, entityClass, semanticSchema);
+    }
 
+    private EntityModel createEntity(org.dd4t.contentmodel.Component component, Localization localization, Class<? extends AbstractEntityModel> entityClass, SemanticSchema semanticSchema)
+            throws ContentProviderException {
+
+        final String componentId = component.getId();
+        LOG.debug("Creating entity for component: {}", componentId);
         final AbstractEntityModel entity;
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
@@ -136,6 +149,7 @@ public final class EntityBuilder {
         entity.setId(componentId.split("-")[1]);
 
         // Special handling for media items
+        //
         if (entity instanceof MediaItem && component.getMultimedia() != null &&
                 !Strings.isNullOrEmpty(component.getMultimedia().getUrl())) {
             final Multimedia multimedia = component.getMultimedia();

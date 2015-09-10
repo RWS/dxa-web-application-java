@@ -46,6 +46,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     .put("ThumbnailList", ContentList.class)
                     .put("TopNavigation", NavigationLinks.class)
                     .put("YouTubeVideo", YouTubeVideo.class)
+                    .put("DefaultMultimediaSchema", Image.class)  // TODO: Remove as soon all content is not using this schema
                     .build();
 
     private final Map<String, Class<? extends AbstractEntityModel>> viewEntityClassMap = new HashMap<>();

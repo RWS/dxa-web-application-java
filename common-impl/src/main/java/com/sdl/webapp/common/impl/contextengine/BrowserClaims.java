@@ -11,7 +11,7 @@ public class BrowserClaims extends ContextClaims {
             return "browser";
         }
 
-        public boolean getCookieSupport()
+        public Boolean getCookieSupport()
         {
             // BUG: Returns false on desktop FF, IE, Safari
             return getClaimValue("cookieSupport", Boolean.class);
@@ -22,17 +22,17 @@ public class BrowserClaims extends ContextClaims {
             return getClaimValue("cssVersion", String.class); 
         }
 
-        public int getDisplayColorDepth()
+        public Integer getDisplayColorDepth()
         {
             return getClaimValue("displayColorDepth", Integer.class); 
         }
 
-        public int getDisplayHeight()
+        public Integer getDisplayHeight()
         {
             return getClaimValue("displayHeight", Integer.class); 
         }
 
-        public int getDisplayWidth() 
+        public Integer getDisplayWidth()
         { 
             return getClaimValue("displayWidth", Integer.class); 
         }

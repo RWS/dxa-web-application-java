@@ -192,7 +192,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 	        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaTcmUriParts[1]));
 	        
 	        String viewName = semanticSchema.getRootElement();
-	        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.GetMappedModelTypes(viewName);
+	        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.getMappedModelTypes(viewName);
 	        if (entityClass == null) {
 	            throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
 	                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");

@@ -29,15 +29,16 @@ public class TridionLinkResolver implements LinkResolver{
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
         String resolvedUrl = resolveLink(url, publicationId, resolveToBinary);
 
-        if (!Strings.isNullOrEmpty(resolvedUrl)) {
-            if (resolvedUrl.endsWith(DEFAULT_PAGE_EXTENSION)) {
-                resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_EXTENSION.length());
-            }
-            if (resolvedUrl.endsWith("/" + DEFAULT_PAGE_NAME)) {
-                resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_NAME.length());
+        if(url.startsWith("tcm:")) {
+            if (!Strings.isNullOrEmpty(resolvedUrl)) {
+                if (resolvedUrl.endsWith(DEFAULT_PAGE_EXTENSION)) {
+                    resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_EXTENSION.length());
+                }
+                if (resolvedUrl.endsWith("/" + DEFAULT_PAGE_NAME)) {
+                    resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_NAME.length());
+                }
             }
         }
-
         return resolvedUrl;
     }
     

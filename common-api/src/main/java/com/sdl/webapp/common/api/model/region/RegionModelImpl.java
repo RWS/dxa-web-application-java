@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.region;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -14,6 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
@@ -50,6 +52,21 @@ public class RegionModelImpl implements RegionModel {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public RegionModelImpl(String name) throws DxaException {
+        if(Strings.isNullOrEmpty(name))
+        {
+            throw new DxaException("Region must have a non-empty name.");
+        }
+        this.setName(name);
+    }
+
+    public RegionModelImpl(String name, String qualifiedViewName) throws DxaException {
+        this(name);
+        MvcData data = new SimpleRegionMvcData(qualifiedViewName);
+        this.setMvcData(data);
     }
 
     @Override
@@ -108,7 +125,23 @@ public class RegionModelImpl implements RegionModel {
     public String getHtmlClasses() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
-    
+
+    @Override
+    public boolean equals(Object obj)
+    {
+        if(obj instanceof RegionModel)
+        {
+            return ((RegionModel) obj).getName().equals(this.getName());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return this.getName().hashCode();
+    }
+
     @Override
     public String toString() {
         return "RegionImpl{" +

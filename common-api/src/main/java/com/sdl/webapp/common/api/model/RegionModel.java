@@ -15,4 +15,6 @@ public interface RegionModel extends ViewModel {
     EntityModel getEntity(String entityId);
     
     RegionModelSet getRegions();
+
+    void setMvcData(MvcData value);
 }

@@ -124,7 +124,7 @@ public final class EntityBuilder {
         final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
              
         String semanticTypeName = semanticSchema.getRootElement();
-        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.GetMappedModelTypes(semanticTypeName);
+        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.getMappedModelTypes(semanticTypeName);
         if (entityClass == null) {
             throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
                     "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");

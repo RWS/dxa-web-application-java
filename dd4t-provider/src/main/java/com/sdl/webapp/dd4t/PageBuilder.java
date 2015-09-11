@@ -10,14 +10,11 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.RegionBuilder;
 import com.sdl.webapp.common.api.content.RegionBuilderCallback;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.PageModel;
-import com.sdl.webapp.common.api.model.RegionModel;
-import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.*;
 import com.sdl.webapp.common.api.model.page.PageModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
+import com.sdl.webapp.common.api.model.region.SimpleRegionMvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
 
 import org.dd4t.contentmodel.*;
@@ -44,9 +41,14 @@ final class PageBuilder {
 
     private static final String REGION_FOR_PAGE_TITLE_COMPONENT = "Main";
     private static final String STANDARD_METADATA_FIELD_NAME = "standardMeta";
+
     private static final String STANDARD_METADATA_TITLE_FIELD_NAME = "name";
     private static final String STANDARD_METADATA_DESCRIPTION_FIELD_NAME = "description";
     private static final String COMPONENT_PAGE_TITLE_FIELD_NAME = "headline";
+
+    private static final String REGIONS_METADATA_FIELD_NAME = "regions";
+    private static final String REGIONS_METADATA_FIELD_NAME_VIEW = "view";
+
 
     private static final String DEFAULT_AREA_NAME = "Core";
 
@@ -65,8 +67,10 @@ final class PageBuilder {
     private final LinkResolver linkResolver;
 
     private final ConditionalEntityEvaluator conditionalEntityEvaluator;
-    
+
     private final WebRequestContext webRequestContext;
+
+    private final ViewModelRegistry viewModelRegistry;
 
     private final RegionBuilder regionBuilder;
 
@@ -108,56 +112,58 @@ final class PageBuilder {
                 LinkResolver linkResolver,
                 ConditionalEntityEvaluator conditionalEntityEvaluator,
                 ComponentPresentationFactory dd4tComponentPresentationFactory,
-                WebRequestContext webRequestContext) {
+                WebRequestContext webRequestContext,
+                ViewModelRegistry viewModelRegistry) {
         this.entityBuilder = entityBuilder;
         this.regionBuilder = regionBuilder;
         this.linkResolver = linkResolver;
         this.conditionalEntityEvaluator = conditionalEntityEvaluator;
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
         this.webRequestContext = webRequestContext;
+        this.viewModelRegistry = viewModelRegistry;
     }
-    
+
     private RegionModel getRegionFromIncludePage(PageModel page, String includeFileName)
     {
-    	try {
-			String regionName = page.getName().replace(" ", "-");
-    		MvcDataImpl regionMvcData = new MvcDataImpl(regionName);
-			regionMvcData = InitializeRegionMvcData(regionMvcData);
-			RegionModelImpl region = new RegionModelImpl();
-			region.setName(regionName);
-			region.setMvcData(regionMvcData);
-			ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
-  		    
-			xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageIdXpmMetadataKey, page.getId());
-			xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageTitleXpmMetadataKey, page.getTitle());
-			xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey, includeFileName);
-		        
-			region.setRegions(new RegionModelSetImpl());
-			region.setXpmMetadata(xpmMetaDataBuilder.build());
-			return region;
-			
-		} catch (DxaException e) {
-			LOG.error("Error creating new MvcData from includepage", e);
-			return null;
-		}
+        try {
+            String regionName = page.getName().replace(" ", "-");
+            MvcDataImpl regionMvcData = new MvcDataImpl(regionName);
+            regionMvcData = InitializeRegionMvcData(regionMvcData);
+            RegionModelImpl region = new RegionModelImpl(regionName);
+            region.setName(regionName);
+            region.setMvcData(regionMvcData);
+            ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
+
+            xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageIdXpmMetadataKey, page.getId());
+            xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageTitleXpmMetadataKey, page.getTitle());
+            xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey, includeFileName);
+
+            region.setRegions(new RegionModelSetImpl());
+            region.setXpmMetadata(xpmMetaDataBuilder.build());
+            return region;
+
+        } catch (DxaException e) {
+            LOG.error("Error creating new MvcData from includepage", e);
+            return null;
+        }
     }
 
     private MvcDataImpl InitializeRegionMvcData(MvcDataImpl regionMvcData) {
-    	 if (Strings.isNullOrEmpty(regionMvcData.getControllerName()))
-         {
-             regionMvcData.setControllerName(REGION_CONTROLLER_NAME);
-             regionMvcData.setControllerAreaName(DEFAULT_AREA_NAME);
-         }
-         else if (Strings.isNullOrEmpty(regionMvcData.getControllerAreaName()))
-         {
-             regionMvcData.setControllerAreaName(regionMvcData.getAreaName());
-         }
-         regionMvcData.setActionName(REGION_ACTION_NAME);
-         
-         return regionMvcData;
-	}
-    
-	PageModel createPage(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider)
+        if (Strings.isNullOrEmpty(regionMvcData.getControllerName()))
+        {
+            regionMvcData.setControllerName(REGION_CONTROLLER_NAME);
+            regionMvcData.setControllerAreaName(DEFAULT_AREA_NAME);
+        }
+        else if (Strings.isNullOrEmpty(regionMvcData.getControllerAreaName()))
+        {
+            regionMvcData.setControllerAreaName(regionMvcData.getAreaName());
+        }
+        regionMvcData.setActionName(REGION_ACTION_NAME);
+
+        return regionMvcData;
+    }
+
+    PageModel createPage(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider)
             throws ContentProviderException {
         final PageModelImpl page = new PageModelImpl();
 
@@ -177,39 +183,43 @@ final class PageBuilder {
         }
 
         // = new RegionModelSetImpl();
+
         final RegionModelSet regionMap = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
-   
-        
+
+        final RegionModelSet predefinedRegions = this.createPredefinedRegions(genericPage.getPageTemplate());
+
         // Get and add includes
         final String pageTypeId = genericPage.getPageTemplate().getId().split("-")[1];
         for (String include : localization.getIncludes(pageTypeId)) {
             final String includeUrl = localizationPath + include;
             PageModel includePageModel = contentProvider.getPageModel(includeUrl, localization);
             final RegionModel includePageRegion = getRegionFromIncludePage(includePageModel, include);
-            
+
             RegionModel existingRegion;
             if(regionMap.containsKey(includePageRegion.getName()))
             {
-            	// Region with same name already exists; merge include Page Region.
-            	existingRegion = regionMap.get(includePageRegion.getName());
-            	
-            	existingRegion.getRegions().addAll(includePageModel.getRegions());
-            	
-            	if (existingRegion.getXpmMetadata() != null)
+                // Region with same name already exists; merge include Page Region.
+                existingRegion = regionMap.get(includePageRegion.getName());
+
+                existingRegion.getRegions().addAll(includePageModel.getRegions());
+
+                if (existingRegion.getXpmMetadata() != null)
                 {
                     existingRegion.getXpmMetadata().remove(RegionModelImpl.IncludedFromPageIdXpmMetadataKey);
                     existingRegion.getXpmMetadata().remove(RegionModelImpl.IncludedFromPageTitleXpmMetadataKey);
                     existingRegion.getXpmMetadata().remove(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey);
                 }
-            	 LOG.info("Merged Include Page [%s] into Region [%s]. Note that merged Regions can't be edited properly in XPM (yet).",
-                         includePageModel, existingRegion);
+                LOG.info("Merged Include Page [%s] into Region [%s]. Note that merged Regions can't be edited properly in XPM (yet).",
+                        includePageModel, existingRegion);
             }
             else
             {
-            	  includePageRegion.getRegions().addAll(includePageModel.getRegions());
-            	  regionMap.add(includePageRegion);
+                includePageRegion.getRegions().addAll(includePageModel.getRegions());
+                regionMap.add(includePageRegion);
             }
         }
+
+
 
         page.setXpmMetadata(createXpmMetaData(genericPage, localization));
         page.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
@@ -218,11 +228,74 @@ final class PageBuilder {
         if (!Strings.isNullOrEmpty(htmlClasses)) {
             page.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
         }
-          
+
         //regionMap.addAll(regions.values());
         page.setRegions(regionMap);
 
         return page;
+    }
+
+    private RegionModelSet createPredefinedRegions(PageTemplate pageTemplate) {
+
+        final Map<String, Field> pageTemplateMeta = pageTemplate.getMetadata();
+
+        RegionModelSet regions = new RegionModelSetImpl();
+
+        if(pageTemplateMeta == null || pageTemplateMeta.containsKey(REGIONS_METADATA_FIELD_NAME))// TODO: "region" instead of "regions"
+        {
+            LOG.debug("No Region metadata defined for Page Template '%s'.", pageTemplate.getId());
+            return null;
+        }
+
+        BaseField regionsMetaField = (BaseField) pageTemplateMeta.get(REGIONS_METADATA_FIELD_NAME);
+        if (regionsMetaField != null && !regionsMetaField.getEmbeddedValues().isEmpty()) {
+            for(FieldSet regionField : regionsMetaField.getEmbeddedValues())
+            {
+                Map<String, Field> region = regionField.getContent();
+                if(!region.containsKey(REGIONS_METADATA_FIELD_NAME_VIEW))
+                {
+                    LOG.warn("Region metadata without 'view' field encountered in metadata of Page Template '%s'.", pageTemplate.getId());
+                    continue;
+                }
+                String view = getStringValue(region, REGIONS_METADATA_FIELD_NAME_VIEW);
+                MvcDataImpl regionMvcData = null;
+                try {
+                    regionMvcData = new MvcDataImpl(view);
+                } catch (DxaException e) {
+                    LOG.error("Could not instantiate MvcData for view '%s'.", view, e);
+                    continue;
+                }
+                regionMvcData = InitializeRegionMvcData(regionMvcData);
+                RegionModel regionModel = null;
+                try {
+                    regionModel = CreateRegionModel(regionMvcData);
+                } catch (IllegalAccessException e) {
+                    LOG.error("Error creating region for view '%s'.", view, e);
+                    continue;
+                } catch (InstantiationException e) {
+                    LOG.error("Error creating region for view '%s'.", view, e);
+                    continue;
+                }
+                regions.add(regionModel);
+            }
+        }
+        return regions;
+    }
+
+    private RegionModel CreateRegionModel(MvcDataImpl regionMvcData) throws IllegalAccessException, InstantiationException {
+        /*  private static RegionModel CreateRegionModel(MvcData regionMvcData)
+        {
+            Type regionModelType = ModelTypeRegistry.GetViewModelType(regionMvcData);
+            RegionModel regionModel = (RegionModel) Activator.CreateInstance(regionModelType, regionMvcData.ViewName);
+            regionModel.MvcData = regionMvcData;
+            return regionModel;
+        }
+        */
+//        Class regionModelType = this.viewModelRegistry.getViewModelType(regionMvcData);
+//        RegionModel regionModel = (RegionModel) regionModelType.newInstance();
+//        regionModel.setMvcData(regionMvcData);
+//        return regionModel;
+        return null;
     }
 
     private String processPageMetadata(org.dd4t.contentmodel.Page page, Map<String, String> pageMeta, Localization localization) {
@@ -297,7 +370,7 @@ final class PageBuilder {
         }
 
         String titlePostfix = localization.getResource("core.pageTitleSeparator") + localization.getResource("core.pageTitlePostfix");
-        
+
         return title + titlePostfix;
     }
 
@@ -425,7 +498,7 @@ final class PageBuilder {
         Map<String,Field> metadataFields = pageTemplate.getMetadata();
         for ( String fieldName : metadataFields.keySet() ) {
             if ( fieldName.equals("view") ||
-                 fieldName.equals("includes")) {
+                    fieldName.equals("includes")) {
                 continue;
             }
             Field field = metadataFields.get(fieldName);

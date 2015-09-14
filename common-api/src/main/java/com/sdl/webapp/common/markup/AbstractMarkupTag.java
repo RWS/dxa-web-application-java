@@ -31,6 +31,7 @@ public class AbstractMarkupTag extends TagSupport {
 
         StringWriter sw = new StringWriter();
         pageContext.pushBody(sw);
+        pageContext.getRequest().setAttribute("ParentModel", model);
         pageContext.include(include);
         String renderedHtml = sw.toString();
         ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);
@@ -46,6 +47,7 @@ public class AbstractMarkupTag extends TagSupport {
 
         StringWriter sw = new StringWriter();
         pageContext.pushBody(sw);
+        pageContext.getRequest().setAttribute("ParentModel", model);
         pageContext.include(include);
         String renderedHtml = sw.toString();
         ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);

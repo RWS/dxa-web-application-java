@@ -6,11 +6,14 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.RegionModel;
+<<<<<<< HEAD
 import com.sdl.webapp.common.impl.contextengine.BrowserClaims;
 import com.sdl.webapp.common.impl.contextengine.ContextEngineImpl;
 import com.sdl.webapp.common.impl.contextengine.DeviceClaims;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
+=======
+import com.sdl.webapp.common.api.model.RegionModel;
+>>>>>>> change_parent_region_logic
 import com.tridion.ambientdata.AmbientDataContext;
 import com.tridion.ambientdata.claimstore.ClaimStore;
 
@@ -260,6 +263,10 @@ public class WebRequestContextImpl implements WebRequestContext {
         }
         return ScreenWidth.LARGE;
     }
+<<<<<<< HEAD
+      
+}
+=======
 
     @Override
     public RegionModel getParentRegion() {
@@ -279,3 +286,4 @@ public class WebRequestContextImpl implements WebRequestContext {
         this.parentRegionstack.push(parentRegion);
     }
 }
+>>>>>>> change_parent_region_logic

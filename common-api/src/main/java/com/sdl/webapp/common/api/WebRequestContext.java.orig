@@ -104,6 +104,7 @@ public interface WebRequestContext {
      */
     int getMaxMediaWidth();
 
+<<<<<<< HEAD
     /**
      * Gets the contextengine of the current request.
      *
@@ -126,9 +127,10 @@ public interface WebRequestContext {
 	void setIsInclude(boolean value);
 
 	void setIsDeveloperMode(boolean value);
-
+=======
 
     RegionModel getParentRegion();
     void pushParentRegion(RegionModel value);
     void popParentRegion();
+>>>>>>> change_parent_region_logic
 }

@@ -1,12 +1,14 @@
 package com.sdl.webapp.main.taglib.dxa;
 
 import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
 
+import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,18 +29,17 @@ public class RegionsTag extends AbstractMarkupTag {
 
     private RegionModel parentRegion;
     private int containerSize;
-        
+
+    private final WebRequestContext webRequestContext = ApplicationContextHolder.getContext().getBean(WebRequestContext.class);
+
     public void setExclude(String exclude) {
         this.exclude = exclude;
-    }
-    public void setParentRegion(RegionModel parent)
-    {
-    	this.parentRegion = parent;
     }
     public void setContainerSize(int containerSize)
     {
     	this.containerSize = containerSize;
     }
+
 
     @Override
     public int doStartTag() throws JspException {
@@ -47,7 +48,9 @@ public class RegionsTag extends AbstractMarkupTag {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
-
+        
+        parentRegion = webRequestContext.getParentRegion();
+        
         Set<String> excludes = new HashSet<>();
         if (!Strings.isNullOrEmpty(exclude)) {
             excludes.addAll(Arrays.asList(exclude.split("\\s*,\\s*")));
@@ -72,9 +75,12 @@ public class RegionsTag extends AbstractMarkupTag {
                 //pageContext.include(ControllerUtils.getIncludePath(region));
             	
             	pageContext.getRequest().setAttribute("_region_" + name, region);
-            	pageContext.getRequest().setAttribute("_containersize_" + name, containerSize);
-            	
+                webRequestContext.pushParentRegion(region);
+
+                pageContext.getRequest().setAttribute("_containersize_" + name, containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
+
+                webRequestContext.popParentRegion();
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing regions tag", e);
             }

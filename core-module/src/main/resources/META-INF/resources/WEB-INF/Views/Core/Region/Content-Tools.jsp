@@ -7,5 +7,5 @@
 <xpm:button region="${region}" />
 
 <div ${markup.region(region)}>
-    <dxa:regions parentRegion="${region}" />
+    <dxa:regions />
 </div>

@@ -1,11 +1,13 @@
 package com.sdl.webapp.main.taglib.dxa;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
 
+import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,15 +24,14 @@ public class EntitiesTag extends AbstractMarkupTag {
     private String regionName;
     private RegionModel parentRegion;
     private int containerSize;
-    
+
+    private final WebRequestContext webRequestContext = ApplicationContextHolder.getContext().getBean(WebRequestContext.class);
+
     public void setRegion(String regionName) {
         this.regionName = regionName;
     }
 
-    public void setParentRegion(RegionModel parent)
-    {
-    	this.parentRegion = parent;
-    }
+
     public void setContainerSize(int containerSize)
     {
     	this.containerSize = containerSize;
@@ -43,13 +44,9 @@ public class EntitiesTag extends AbstractMarkupTag {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
-        Object parentModel = pageContext.getRequest().getAttribute("ParentModel");
-        if(parentModel != null && parentModel instanceof RegionModel)
-        {
-        	this.setParentRegion((RegionModel)parentModel);
-        }
-        
+
         RegionModel region = null;
+        parentRegion = webRequestContext.getParentRegion();
         if(parentRegion != null)
         {
         	region = parentRegion;	
@@ -68,8 +65,11 @@ public class EntitiesTag extends AbstractMarkupTag {
             try {
             	pageContext.getRequest().setAttribute("_region_" + regionName, region);
             	pageContext.getRequest().setAttribute("_containersize_" + regionName + entity.getId(), containerSize);
-                
+                webRequestContext.pushParentRegion(region);
+
             	this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
+
+                webRequestContext.popParentRegion();
                 //pageContext.include(ControllerUtils.getIncludePath(entity));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);

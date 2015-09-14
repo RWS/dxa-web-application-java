@@ -2,6 +2,7 @@ package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.tridion.ambientdata.AmbientDataContext;
 import com.tridion.ambientdata.claimstore.ClaimStore;
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
+import java.util.Stack;
 
 /**
  * Implementation of {@code WebRequestContext}.
@@ -39,6 +41,9 @@ public class WebRequestContextImpl implements WebRequestContext {
     private Integer displayWidth;
     private Double pixelRatio;
     private Integer maxMediaWidth;
+
+    private Stack<RegionModel> parentRegionstack = new Stack<>();
+
 
     @Override
     public String getBaseUrl() {
@@ -137,5 +142,23 @@ public class WebRequestContextImpl implements WebRequestContext {
             maxMediaWidth = (int) (Math.max(1.0, getPixelRatio()) * Math.min(getDisplayWidth(), MAX_WIDTH));
         }
         return maxMediaWidth;
+    }
+
+    @Override
+    public RegionModel getParentRegion() {
+        if(!parentRegionstack.isEmpty()) {
+            return this.parentRegionstack.peek();
+        }
+        return null;
+    }
+
+    @Override
+    public void popParentRegion() {
+        this.parentRegionstack.pop();
+    }
+
+    @Override
+    public void pushParentRegion(RegionModel parentRegion) {
+        this.parentRegionstack.push(parentRegion);
     }
 }

@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api;
 
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.RegionModel;
 
 /**
  * Provides information relevant for the current request.
@@ -101,4 +102,9 @@ public interface WebRequestContext {
      * @return The maximum media width of the current request.
      */
     int getMaxMediaWidth();
+
+
+    RegionModel getParentRegion();
+    void pushParentRegion(RegionModel value);
+    void popParentRegion();
 }

@@ -1,11 +1,13 @@
 package com.sdl.webapp.main.taglib.dxa;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
 
+import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +30,9 @@ public class EntityTag extends AbstractMarkupTag {
     private EntityModel entityRef;
     
     private int containerSize;
-    
+
+    private final WebRequestContext webRequestContext = ApplicationContextHolder.getContext().getBean(WebRequestContext.class);
+
     public void setRegion(String regionName) {
         this.regionName = regionName;
     }
@@ -36,11 +40,7 @@ public class EntityTag extends AbstractMarkupTag {
     public void setEntityId(String entityId) {
         this.entityId = entityId;
     }
-    public void setParentRegion(RegionModel parent)
-    {
-    	this.parentRegion = parent;
-    }
-    public void setContainerSize(int containerSize)
+        public void setContainerSize(int containerSize)
     {
     	this.containerSize = containerSize;
     }
@@ -55,16 +55,13 @@ public class EntityTag extends AbstractMarkupTag {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
-        Object parentModel = pageContext.getRequest().getAttribute("ParentModel");
-        if(parentModel != null && parentModel instanceof RegionModel)
-        {
-        	this.setParentRegion((RegionModel)parentModel);
-        }
-        
+
         RegionModel region = null;
         final EntityModel entity;
         if ( entityId != null ) {
-        	 
+
+            parentRegion = webRequestContext.getParentRegion();
+
              if(parentRegion != null)
              {
              	region = parentRegion;	

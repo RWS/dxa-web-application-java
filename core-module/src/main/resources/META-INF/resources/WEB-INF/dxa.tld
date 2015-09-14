@@ -46,11 +46,6 @@
             <rtexprvalue>true</rtexprvalue>
             <type>int</type>
         </attribute>
-        <attribute>
-         	<name>parentRegion</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
     </tag>
 
     <!-- Include all regions on the page, except excluded ones -->
@@ -60,11 +55,6 @@
         <body-content>empty</body-content>
         <attribute>
             <name>exclude</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-         <attribute>
-         	<name>parentRegion</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -97,11 +87,6 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-         	<name>parentRegion</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-         <attribute>
         	<name>containerSize</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
@@ -120,11 +105,6 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-         	<name>parentRegion</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>   
-         <attribute>
         	<name>containerSize</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>

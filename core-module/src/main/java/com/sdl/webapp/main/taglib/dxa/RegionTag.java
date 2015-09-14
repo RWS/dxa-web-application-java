@@ -1,6 +1,7 @@
 package com.sdl.webapp.main.taglib.dxa;
 
 import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
@@ -9,6 +10,7 @@ import com.sdl.webapp.common.api.model.region.SimpleRegionMvcData;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
 
+import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.dd4t.core.request.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,8 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 public class RegionTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionTag.class);
 
+    private final WebRequestContext webRequestContext = ApplicationContextHolder.getContext().getBean(WebRequestContext.class);
+
     private String name;
     private boolean placeholder;
     private RegionModel parentRegion;
@@ -36,17 +40,16 @@ public class RegionTag extends AbstractMarkupTag {
     public void setPlaceholder(boolean placeholder) {
         this.placeholder = placeholder;
     }
-    public void setParentRegion(RegionModel parent)
-    {
-    	this.parentRegion = parent;
-    }
-    
+
     public void setContainerSize(int containerSize)
     {
     	this.containerSize = containerSize;
     }
     @Override
     public int doStartTag() throws JspException {
+
+        parentRegion = webRequestContext.getParentRegion();
+
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
         if (page == null) {
             LOG.debug("Page not found in request attributes");
@@ -54,11 +57,8 @@ public class RegionTag extends AbstractMarkupTag {
         }
        
         Object parentModel = pageContext.getRequest().getAttribute("ParentModel");
-        if(parentModel != null && parentModel instanceof RegionModel)
-        {
-        	this.setParentRegion((RegionModel)parentModel);
-        }
-        
+
+
         RegionModel region = null;
         if(Strings.isNullOrEmpty(name) || page.getMvcData().getViewName().equals("IncludePage")){
         	//special case where we wish to render an include page as region
@@ -98,11 +98,14 @@ public class RegionTag extends AbstractMarkupTag {
             try {
 
                 //pageContext.include(ControllerUtils.getIncludePath(region));
-            	
-            	pageContext.getRequest().setAttribute("_region_" + name, region);
-            	pageContext.getRequest().setAttribute("_containersize_" + name, containerSize);
-            	
+                pageContext.getRequest().setAttribute("_region_" + name, region);
+                webRequestContext.pushParentRegion(region);
+
+                pageContext.getRequest().setAttribute("_containersize_" + name, containerSize);
+
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
+
+                webRequestContext.popParentRegion();
 
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing region tag: " + name, e);

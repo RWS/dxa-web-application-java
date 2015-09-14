@@ -16,7 +16,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
  * @author nic
  */
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
-public class EclItem extends MediaItem {
+public abstract class EclItem extends MediaItem {
 
     private String eclUrl;
     private String itemId;

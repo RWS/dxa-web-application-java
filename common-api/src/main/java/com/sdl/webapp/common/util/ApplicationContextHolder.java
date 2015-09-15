@@ -11,7 +11,7 @@ public class ApplicationContextHolder implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        context = applicationContext;   
+        context = applicationContext;
     }
 
     public static ApplicationContext getContext() {

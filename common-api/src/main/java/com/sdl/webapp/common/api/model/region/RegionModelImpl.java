@@ -42,7 +42,7 @@ public class RegionModelImpl implements RegionModel {
      * The XPM metadata key used for the file name of the (Include) Page from which the Region originates. Avoid using this in implementation code because it may change in a future release.
      */
     public static final String IncludedFromPageFileNameXpmMetadataKey = "IncludedFromPageFileName";
-    
+
     @Override
     public String getName() {
         return name;
@@ -68,12 +68,11 @@ public class RegionModelImpl implements RegionModel {
     @Override
     public EntityModel getEntity(String entityId) {
         /*return this.entities.(entityId);*/
-    	Collection<EntityModel> c = CollectionUtils.select(this.entities, new EntityPredicate(entityId));
-		if(!c.isEmpty())
-		{
-			return c.iterator().next();
-		}
-		return null;
+        Collection<EntityModel> c = CollectionUtils.select(this.entities, new EntityPredicate(entityId));
+        if (!c.isEmpty()) {
+            return c.iterator().next();
+        }
+        return null;
     }
 
     @Override
@@ -103,12 +102,12 @@ public class RegionModelImpl implements RegionModel {
         this.regions = mvcData;
     }
 
-    
+
     @Override
     public String getHtmlClasses() {
         throw new UnsupportedOperationException("Not implemented yet");
     }
-    
+
     @Override
     public String toString() {
         return "RegionImpl{" +
@@ -118,18 +117,17 @@ public class RegionModelImpl implements RegionModel {
                 ", regions='" + regions + '\'' +
                 '}';
     }
-    
-	class EntityPredicate implements Predicate{
-		private final String entityId;
-		public EntityPredicate(String id)
-		{
-			entityId = id;
-		}
-		
-		public boolean evaluate(Object r)
-		{
-			EntityModel m = (EntityModel)r;
-			return m.getId().equals(entityId);	
-		}
-	}
+
+    class EntityPredicate implements Predicate {
+        private final String entityId;
+
+        public EntityPredicate(String id) {
+            entityId = id;
+        }
+
+        public boolean evaluate(Object r) {
+            EntityModel m = (EntityModel) r;
+            return m.getId().equals(entityId);
+        }
+    }
 }

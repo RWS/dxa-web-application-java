@@ -48,8 +48,7 @@ public abstract class EclItem extends MediaItem {
 
         try {
             return URLDecoder.decode(itemId.replace("!", "%").replace(";", ""), "UTF8");
-        }
-        catch ( UnsupportedEncodingException e ) {
+        } catch (UnsupportedEncodingException e) {
             return itemId;
         }
     }
@@ -63,22 +62,22 @@ public abstract class EclItem extends MediaItem {
                 '}';
     }
 
-	@Override
-	public String toHtml(String widthFactor) {
-		// TODO implement this functionality
-		throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
-	}
+    @Override
+    public String toHtml(String widthFactor) {
+        // TODO implement this functionality
+        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
+    }
 
-	@Override
-	public String toHtml(String widthFactor, double aspect, String cssClass,
-			int containerSize) {
-		// TODO implement this functionality
-		throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
-	}
-	
-	@Override
-	public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
-		// TODO implement this functionality
-		throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
-	}
+    @Override
+    public String toHtml(String widthFactor, double aspect, String cssClass,
+                         int containerSize) {
+        // TODO implement this functionality
+        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
+    }
+
+    @Override
+    public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
+        // TODO implement this functionality
+        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
+    }
 }

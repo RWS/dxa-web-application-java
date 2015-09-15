@@ -12,7 +12,7 @@ public interface StaticContentItem {
      * Returns a timestamp which indicates when this static content item was last modified.
      *
      * @return A timestamp which indicates when this static content item was last modified as a number of milliseconds
-     *      since the epoch (01-01-1970, 00:00:00 UTC).
+     * since the epoch (01-01-1970, 00:00:00 UTC).
      */
     long getLastModified();
 

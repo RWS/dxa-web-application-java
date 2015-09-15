@@ -3,7 +3,7 @@ package com.sdl.webapp.common.api.mapping;
 /**
  * Field data, which consists of a field value and property data for a field. This is returned by
  * {@code SemanticFieldDataProvider}.
- *
+ * <p/>
  * The field value is the actual value for the field of an entity. The property data is extra data which is stored in
  * the entity and which is used for semantic markup.
  */

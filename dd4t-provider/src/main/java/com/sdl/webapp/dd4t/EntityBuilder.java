@@ -99,7 +99,7 @@ public final class EntityBuilder {
 
             // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
             //
-            if ( entity instanceof EclItem ) {
+            if (entity instanceof EclItem) {
                 final EclItem eclItem = (EclItem) entity;
                 eclItem.setEclUrl(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
             }
@@ -110,19 +110,19 @@ public final class EntityBuilder {
 
         String htmlClasses = getStringValue(componentPresentation.getComponentTemplate().getMetadata(), "htmlClasses");
         if (!Strings.isNullOrEmpty(htmlClasses)) {
-        	entity.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
+            entity.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
         }
-        
+
         return entity;
     }
 
     public EntityModel createEntity(org.dd4t.contentmodel.Component component, Localization localization)
             throws ContentProviderException {
-       // final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
+        // final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
         final String componentId = component.getId();
         LOG.debug("Creating entity for component: {}", componentId);
         final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-             
+
         String semanticTypeName = semanticSchema.getRootElement();
         final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.GetMappedModelTypes(semanticTypeName);
         if (entityClass == null) {
@@ -152,7 +152,7 @@ public final class EntityBuilder {
 
             // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
             //
-            if ( entity instanceof EclItem ) {
+            if (entity instanceof EclItem) {
                 final EclItem eclItem = (EclItem) entity;
                 eclItem.setEclUrl(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
             }
@@ -161,21 +161,20 @@ public final class EntityBuilder {
         //createEntityData(entity, componentPresentation);
         //entity.setMvcData(createMvcData(componentPresentation));
 
-             
+
         return entity;
     }
-    
+
     private void createEntityData(AbstractEntityModel entity, ComponentPresentation componentPresentation) {
         final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
 
         ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
 
-        if ( entity instanceof EclItem ) {
-        	xpmMetaDataBuilder.put("ComponentID", ((EclItem) entity).getEclUrl());
-        }
-        else {
-        	xpmMetaDataBuilder.put("ComponentID", component.getId());
+        if (entity instanceof EclItem) {
+            xpmMetaDataBuilder.put("ComponentID", ((EclItem) entity).getEclUrl());
+        } else {
+            xpmMetaDataBuilder.put("ComponentID", component.getId());
         }
         xpmMetaDataBuilder.put("ComponentModified",
                 ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
@@ -253,25 +252,25 @@ public final class EntityBuilder {
 
     private String[] splitName(String name) {
         final String[] parts = name.split(":");
-        return parts.length > 1 ? parts : new String[] { DEFAULT_AREA_NAME, name };
+        return parts.length > 1 ? parts : new String[]{DEFAULT_AREA_NAME, name};
     }
 
-    private Map<String,Object> getMvcMetadata(ComponentTemplate componentTemplate) {
+    private Map<String, Object> getMvcMetadata(ComponentTemplate componentTemplate) {
 
         // TODO: Move this code into a generic MvcDataHelper class
 
-        Map<String,Object> metadata = new HashMap<>();
-        Map<String,Field> metadataFields = componentTemplate.getMetadata();
-        for ( String fieldName : metadataFields.keySet() ) {
-            if ( fieldName.equals("view") ||
+        Map<String, Object> metadata = new HashMap<>();
+        Map<String, Field> metadataFields = componentTemplate.getMetadata();
+        for (String fieldName : metadataFields.keySet()) {
+            if (fieldName.equals("view") ||
                     fieldName.equals("regionView") ||
                     fieldName.equals("controller") ||
                     fieldName.equals("action") ||
-                    fieldName.equals("routeValues") ) {
+                    fieldName.equals("routeValues")) {
                 continue;
             }
             Field field = metadataFields.get(fieldName);
-            if ( field.getValues().size() > 0 ) {
+            if (field.getValues().size() > 0) {
                 metadata.put(fieldName, field.getValues().get(0).toString()); // Assume single-value text fields for template metadata
             }
         }

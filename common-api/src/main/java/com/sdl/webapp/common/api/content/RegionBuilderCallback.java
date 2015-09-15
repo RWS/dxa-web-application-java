@@ -13,6 +13,7 @@ public interface RegionBuilderCallback {
 
     /**
      * Build entity based on content provider specific source
+     *
      * @param source
      * @param localization
      * @return entity

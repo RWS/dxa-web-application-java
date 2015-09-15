@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Localization resolver interceptor. This interceptor determines the localization for the request and stores it in the
  * {@code WebRequestContext} so that it is available for other components when processing the request.
- *
+ * <p/>
  * This should be the first interceptor to be called for requests that are being handled by the Spring
  * {@code DispatcherServlet}.
  */
@@ -45,7 +45,7 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
         webRequestContext.setBaseUrl(getBaseUrl(request));
         webRequestContext.setContextPath(urlPathHelper.getOriginatingContextPath(request));
         webRequestContext.setRequestPath(urlPathHelper.getOriginatingRequestUri(request));
-        
+
         webRequestContext.setIsInclude(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null);
         webRequestContext.setIsDeveloperMode(request.getRequestURI().contains("//localhost"));
 
@@ -67,7 +67,7 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
         final Localization localization = localizationResolver.getLocalization(fullUrl);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Localization for {} is: [{}] {}",
-                    new Object[] { fullUrl, localization.getId(), localization.getPath() });
+                    new Object[]{fullUrl, localization.getId(), localization.getPath()});
         }
         webRequestContext.setLocalization(localization);
 

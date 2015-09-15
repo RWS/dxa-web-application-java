@@ -32,7 +32,7 @@ public class RegionTag extends AbstractMarkupTag {
     private boolean placeholder;
     private RegionModel parentRegion;
     private int containerSize;
-    
+
     public void setName(String name) {
         this.name = name;
     }
@@ -41,10 +41,10 @@ public class RegionTag extends AbstractMarkupTag {
         this.placeholder = placeholder;
     }
 
-    public void setContainerSize(int containerSize)
-    {
-    	this.containerSize = containerSize;
+    public void setContainerSize(int containerSize) {
+        this.containerSize = containerSize;
     }
+
     @Override
     public int doStartTag() throws JspException {
 
@@ -55,34 +55,31 @@ public class RegionTag extends AbstractMarkupTag {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
-       
+
         Object parentModel = pageContext.getRequest().getAttribute("ParentModel");
 
 
         RegionModel region = null;
-        if(Strings.isNullOrEmpty(name) || page.getMvcData().getViewName().equals("IncludePage")){
-        	//special case where we wish to render an include page as region
-        	this.pageContext.setAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE, "1");
-        	   // Create a new Region Model which reflects the Page Model
+        if (Strings.isNullOrEmpty(name) || page.getMvcData().getViewName().equals("IncludePage")) {
+            //special case where we wish to render an include page as region
+            this.pageContext.setAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE, "1");
+            // Create a new Region Model which reflects the Page Model
             name = page.getName().replace(" ", "-");
             MvcData mvcData = new SimpleRegionMvcData(name);
-            
+
             RegionModelImpl includeregion = new RegionModelImpl();
             includeregion.setMvcData(mvcData);
             includeregion.setName(name);
             includeregion.setRegions(page.getRegions());
             region = includeregion;
+        } else {
+            region = page.getRegions().get(name);
         }
-        else
-        {
-        	region = page.getRegions().get(name);
+        if (parentRegion != null) {
+            region = parentRegion.getRegions().get(name);
         }
-        if(parentRegion != null)
-        {
-        	region = parentRegion.getRegions().get(name);
-        }
-        
-        if ( region == null && placeholder == true ) {
+
+        if (region == null && placeholder == true) {
             // Render the region even if it is not present on the page, so XPM region markup etc can be generated
             //
 
@@ -113,7 +110,7 @@ public class RegionTag extends AbstractMarkupTag {
         } else {
             LOG.debug("Region not found on page: {}", name);
         }
-        
+
         return SKIP_BODY;
     }
 

@@ -21,7 +21,7 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.REGION_CONTR
 
 /**
  * Region controller for the Core area.
- *
+ * <p/>
  * This handles include requests to /system/mvc/Core/Region/{regionName}
  */
 @Controller
@@ -29,23 +29,22 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.REGION_CONTR
 public class RegionController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(RegionController.class);
 
-     /**
+    /**
      * Handles a request for a region.
      *
-     * @param request The request.
+     * @param request    The request.
      * @param regionName The region name.
      * @return The name of the region view that should be rendered for this request.
      */
     @RequestMapping(method = RequestMethod.GET, value = REGION_ACTION_NAME + "/{regionName}")
-    public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName ) {
+    public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName) {
         LOG.trace("handleGetRegion: regionName={}", regionName);
 
         int containerSize = 0;
-        if(request.getAttribute("_containersize_" + regionName) != null)
-        {
-        	containerSize = (int) request.getAttribute("_containersize_" + regionName);
+        if (request.getAttribute("_containersize_" + regionName) != null) {
+            containerSize = (int) request.getAttribute("_containersize_" + regionName);
         }
-        
+
         final RegionModel region = getRegionFromRequest(request, regionName);
         request.setAttribute(REGION_MODEL, region);
 

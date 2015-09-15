@@ -24,11 +24,11 @@ public class XpmEntityMarkupTag extends XpmMarkupTag {
     public HtmlNode generateXpmMarkup() {
         final Map<String, String> entityData = entity.getXpmMetadata();
 
-        final String componentId = entity instanceof EclItem ?((EclItem)entity).getEclUrl():entityData.get("ComponentID");
+        final String componentId = entity instanceof EclItem ? ((EclItem) entity).getEclUrl() : entityData.get("ComponentID");
         if (Strings.isNullOrEmpty(componentId)) {
             return null;
         }
-        
+
         final String componentModified = entityData.get("ComponentModified");
         final String templateId = entityData.get("ComponentTemplateID");
         final String templateModified = entityData.get("ComponentTemplateModified");

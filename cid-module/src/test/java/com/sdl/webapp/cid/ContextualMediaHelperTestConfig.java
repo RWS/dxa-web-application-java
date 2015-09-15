@@ -16,12 +16,12 @@ public class ContextualMediaHelperTestConfig {
     public ContextualMediaHelper mediaHelper() {
         return new ContextualMediaHelper(webRequestContext());
     }
-    
+
     @Bean
     public MockContextEngine contextEngine() {
         return new MockContextEngine(new MockContextClaimsProvider());
     }
-    
+
     @Bean
     public WebRequestContext webRequestContext() {
         return new WebRequestContextImpl() {

@@ -26,13 +26,13 @@ public final class ControllerUtils {
         return getIncludePathPrefix(mvcData) +
                 page.getName() +
                 getQueryParameters(mvcData);*/
-    	throw new UnsupportedOperationException("getIncludePath with parameter PageModel is no longer supported"); 
+        throw new UnsupportedOperationException("getIncludePath with parameter PageModel is no longer supported");
     }
 
     public static String getIncludePath(RegionModel region) {
         final MvcData mvcData = region.getMvcData();
         return getIncludePathPrefix(mvcData) +
-                region.getName() + "/" + 
+                region.getName() + "/" +
                 getQueryParameters(mvcData);
     }
 

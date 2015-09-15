@@ -5,9 +5,9 @@ import com.sdl.webapp.common.impl.contextengine.ContextEngineImpl;
 
 public class MockContextEngine extends ContextEngineImpl {
 
-	public MockContextEngine(ContextClaimsProvider provider) {
-		super(provider);
-		// TODO Auto-generated constructor stub
-	}
+    public MockContextEngine(ContextClaimsProvider provider) {
+        super(provider);
+        // TODO Auto-generated constructor stub
+    }
 
 }

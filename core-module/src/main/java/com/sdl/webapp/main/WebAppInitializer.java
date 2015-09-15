@@ -15,7 +15,7 @@ import java.util.EnumSet;
 
 /**
  * Web application initializer which configures the web application by registering listeners, filters and servlets.
- *
+ * <p/>
  * Initialization and configuration for this web application is done purely in code, and not with a {@code web.xml}
  * deployment descriptor. Doing it in code provides more flexibility; for example, this enables the web application
  * to automatically detect and register the Contextual Image Delivery {@code ImageTransformerServlet} if it is present
@@ -111,7 +111,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
     }
 
     private void registerPreviewSessionListener(ServletContext servletContext) {
-        if (ClassUtils.isPresent(PREVIEW_SESSION_LISTENER_CLASS_NAME, ClassUtils.getDefaultClassLoader()) ) {
+        if (ClassUtils.isPresent(PREVIEW_SESSION_LISTENER_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
             LOG.debug("Registering Preview Session Listener");
             servletContext.addListener(PREVIEW_SESSION_LISTENER_CLASS_NAME);
         }

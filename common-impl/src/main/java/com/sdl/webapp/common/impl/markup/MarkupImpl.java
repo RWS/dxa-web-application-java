@@ -123,7 +123,7 @@ public class MarkupImpl implements Markup {
         if (!propertyTypes.isEmpty()) {
             markup += new HtmlAttribute("property", Joiner.on(' ').join(propertyTypes)).toHtml();
         }
-        if ( webRequestContext.isPreview() ) {
+        if (webRequestContext.isPreview()) {
             final Map<String, String> propertyData = entity.getXpmPropertyMetadata();
             String xpath = propertyData.get(fieldName);
             if (!Strings.isNullOrEmpty(xpath)) {

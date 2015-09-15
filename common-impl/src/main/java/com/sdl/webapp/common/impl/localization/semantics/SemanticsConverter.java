@@ -9,7 +9,7 @@ import java.util.*;
 
 /**
  * Semantics converter.
- *
+ * <p/>
  * The web application needs the semantics configuration information in a different format than what is provided in
  * the JSON configuration files for the localization. This class converts the semantics into the format that the web
  * application needs.
@@ -24,7 +24,7 @@ public final class SemanticsConverter {
      * Converts semantics configuration information from the configuration files into the format that the web
      * application needs.
      *
-     * @param jsonSchemas A list of {@code JsonSchema} objects from the localization configuration.
+     * @param jsonSchemas      A list of {@code JsonSchema} objects from the localization configuration.
      * @param jsonVocabularies A list of {@code JsonVocabulary} objects from the localization configuration.
      * @return A list of {@code SemanticSchema} objects.
      * @throws LocalizationFactoryException If there is an error in the configuration data.
@@ -59,10 +59,10 @@ public final class SemanticsConverter {
      * Creates a set of {@code EntitySemantics} for the schema semantics in the configuration data.
      *
      * @param jsonSchemaSemanticsList Schema semantics from the configuration data.
-     * @param vocabularies The map of vocabularies by prefix.
+     * @param vocabularies            The map of vocabularies by prefix.
      * @return A set of {@code EntitySemantics}.
      * @throws LocalizationFactoryException If there are schema semantics which use a prefix for which there is no
-     *      vocabulary.
+     *                                      vocabulary.
      */
     private static Set<EntitySemantics> createEntitySemantics(List<JsonSchemaSemantics> jsonSchemaSemanticsList,
                                                               Map<String, SemanticVocabulary> vocabularies)
@@ -91,10 +91,10 @@ public final class SemanticsConverter {
      * Creates a map of semantic fields by field semantics for the schema fields in the configuration data.
      *
      * @param jsonSchemaFields Schema fields from the configuration data.
-     * @param vocabularies The map of vocabularies by prefix.
+     * @param vocabularies     The map of vocabularies by prefix.
      * @return A map of {@code SemanticField} objects by {@code FieldSemantics}.
      * @throws LocalizationFactoryException If there are field semantics which use a prefix for which there is no
-     *      vocabulary.
+     *                                      vocabulary.
      */
     private static Map<FieldSemantics, SemanticField> createSemanticFields(List<JsonSchemaField> jsonSchemaFields,
                                                                            Map<String, SemanticVocabulary> vocabularies)

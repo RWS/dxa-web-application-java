@@ -13,6 +13,7 @@ import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.dd4t.fieldconverters.FieldConverterRegistry;
 
 import org.dd4t.contentmodel.*;
@@ -68,11 +69,18 @@ public final class EntityBuilder {
             return null;
         }
 
-        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.getViewEntityClass(viewName);
-        if (entityClass == null) {
+        final Class<? extends AbstractEntityModel> entityClass;
+        try {
+            entityClass = viewModelRegistry.getViewEntityClass(viewName);
+            if (entityClass == null) {
+                throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
+                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+            }
+        } catch (DxaException e) {
             throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
-                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
         }
+
 
         final SemanticSchema semanticSchema = localization.getSemanticSchemas()
                 .get(Long.parseLong(component.getSchema().getId().split("-")[1]));
@@ -124,11 +132,18 @@ public final class EntityBuilder {
         final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
              
         String semanticTypeName = semanticSchema.getRootElement();
-        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.getMappedModelTypes(semanticTypeName);
-        if (entityClass == null) {
+        final Class<? extends AbstractEntityModel> entityClass;
+        try {
+            entityClass = viewModelRegistry.getMappedModelTypes(semanticTypeName);
+            if (entityClass == null) {
+                throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
+                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+            }
+        } catch (DxaException e) {
             throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
-                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
         }
+
 
         final AbstractEntityModel entity;
         try {

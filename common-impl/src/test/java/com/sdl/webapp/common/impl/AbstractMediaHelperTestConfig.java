@@ -21,7 +21,7 @@ public class AbstractMediaHelperTestConfig {
     public MockWebRequestContext webRequestContext() {
         return new MockWebRequestContext();
     }
-    
+
     @Bean
     public MockContextEngine contextEngine() {
         return new MockContextEngine(new MockContextClaimsProvider());

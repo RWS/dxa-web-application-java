@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t;
+package com.sdl.webapp.common.impl.mapping;
 
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -19,39 +19,37 @@ public final class MvcDataImpl implements MvcData {
     private String regionName;
 
     private Map<String, String> routeValues = new HashMap<>();
-    private Map<String,Object> metadata = new HashMap<>();
+    private Map<String, Object> metadata = new HashMap<>();
 
-    public MvcDataImpl() 
-    {
-    
+    public MvcDataImpl() {
+
     }
-    public MvcDataImpl(String qualifiedViewName) throws DxaException
-    {
+
+    public MvcDataImpl(String qualifiedViewName) throws DxaException {
         String[] qualifiedViewNameParts = qualifiedViewName.split(":");
-        switch (qualifiedViewNameParts.length)
-        {
+        switch (qualifiedViewNameParts.length) {
             case 1:
                 this.setAreaName("Core");
                 this.setViewName(qualifiedViewNameParts[0]);
                 break;
             case 2:
-            	this.setAreaName(qualifiedViewNameParts[0]);
-            	this.setViewName(qualifiedViewNameParts[1]);
+                this.setAreaName(qualifiedViewNameParts[0]);
+                this.setViewName(qualifiedViewNameParts[1]);
                 break;
             case 3:
-            	this.setAreaName(qualifiedViewNameParts[0]);
-            	this.setControllerName(qualifiedViewNameParts[1]);
-            	this.setViewName(qualifiedViewNameParts[2]);
+                this.setAreaName(qualifiedViewNameParts[0]);
+                this.setControllerName(qualifiedViewNameParts[1]);
+                this.setViewName(qualifiedViewNameParts[2]);
                 break;
             default:
                 throw new DxaException(
-                    String.format("Invalid format for Qualified View Name: '%s'. Format must be 'ViewName' or 'AreaName:ViewName' or 'AreaName:ControllerName:Vieweame.'", 
-                        qualifiedViewName)
-                        );
+                        String.format("Invalid format for Qualified View Name: '%s'. Format must be 'ViewName' or 'AreaName:ViewName' or 'AreaName:ControllerName:Vieweame.'",
+                                qualifiedViewName)
+                );
         }
     }
-    
-    
+
+
     @Override
     public String getControllerAreaName() {
         return controllerAreaName;
@@ -131,6 +129,16 @@ public final class MvcDataImpl implements MvcData {
 
     public void setMetadata(Map<String, Object> metadata) {
         this.metadata = metadata;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        return this.toString().equals(that.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
     }
 
     @Override

@@ -40,12 +40,12 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
 
     @Override
     public RegionModelSet buildRegions(PageModel page,
-			   							   ConditionalEntityEvaluator conditionalEntityEvaluator,
-                                           List<?> sourceList,
-                                           RegionBuilderCallback callback,
-                                           Localization localization) throws ContentProviderException {
+                                       ConditionalEntityEvaluator conditionalEntityEvaluator,
+                                       List<?> sourceList,
+                                       RegionBuilderCallback callback,
+                                       Localization localization) throws ContentProviderException {
 
-    	RegionModelSet regions = new RegionModelSetImpl();
+        RegionModelSet regions = new RegionModelSetImpl();
         for (Object source : sourceList) {
             final EntityModel entity = callback.buildEntity(source, localization);
 
@@ -64,11 +64,10 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
 
                     regions.add(region);
                 }
-                if (conditionalEntityEvaluator == null || conditionalEntityEvaluator.IncludeEntity(entity))
-                {
-                	region.addEntity(entity);
+                if (conditionalEntityEvaluator == null || conditionalEntityEvaluator.IncludeEntity(entity)) {
+                    region.addEntity(entity);
                 }
-                
+
             }
         }
         return regions;

@@ -38,8 +38,8 @@ public class SemanticMapperImpl implements SemanticMapper {
 
     @Override
     public <T extends AbstractEntityModel> T createEntity(Class<? extends T> entityClass,
-                                                     final Map<FieldSemantics, SemanticField> semanticFields,
-                                                     final SemanticFieldDataProvider fieldDataProvider)
+                                                          final Map<FieldSemantics, SemanticField> semanticFields,
+                                                          final SemanticFieldDataProvider fieldDataProvider)
             throws SemanticMappingException {
         final T entity = createInstance(entityClass);
 
@@ -80,13 +80,10 @@ public class SemanticMapperImpl implements SemanticMapper {
                                 }
 
                                 field.setAccessible(true);
-                                if(field.getType().equals(RichText.class) && fieldValue.getClass().equals(String.class))
-                                {
-                                	field.set(entity, new RichText((String)fieldValue));
-                                }
-                                else
-                                {
-                                	field.set(entity, fieldValue);
+                                if (field.getType().equals(RichText.class) && fieldValue.getClass().equals(String.class)) {
+                                    field.set(entity, new RichText((String) fieldValue));
+                                } else {
+                                    field.set(entity, fieldValue);
                                 }
 
                                 final String propertyData = fieldData.getPropertyData();

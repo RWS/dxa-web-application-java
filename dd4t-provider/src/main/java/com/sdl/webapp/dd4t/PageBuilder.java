@@ -14,7 +14,6 @@ import com.sdl.webapp.common.api.model.*;
 import com.sdl.webapp.common.api.model.page.PageModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
-import com.sdl.webapp.common.api.model.region.SimpleRegionMvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
 
 import org.dd4t.contentmodel.*;
@@ -241,7 +240,7 @@ final class PageBuilder {
 
         RegionModelSet regions = new RegionModelSetImpl();
 
-        if(pageTemplateMeta == null || pageTemplateMeta.containsKey(REGIONS_METADATA_FIELD_NAME))// TODO: "region" instead of "regions"
+        if(pageTemplateMeta == null || !pageTemplateMeta.containsKey(REGIONS_METADATA_FIELD_NAME))// TODO: "region" instead of "regions"
         {
             LOG.debug("No Region metadata defined for Page Template '%s'.", pageTemplate.getId());
             return null;
@@ -275,6 +274,9 @@ final class PageBuilder {
                 } catch (InstantiationException e) {
                     LOG.error("Error creating region for view '%s'.", view, e);
                     continue;
+                } catch (DxaException e) {
+                    LOG.error("Error creating region for view '%s'.", view, e);
+                    continue;
                 }
                 regions.add(regionModel);
             }
@@ -282,20 +284,11 @@ final class PageBuilder {
         return regions;
     }
 
-    private RegionModel CreateRegionModel(MvcDataImpl regionMvcData) throws IllegalAccessException, InstantiationException {
-        /*  private static RegionModel CreateRegionModel(MvcData regionMvcData)
-        {
-            Type regionModelType = ModelTypeRegistry.GetViewModelType(regionMvcData);
-            RegionModel regionModel = (RegionModel) Activator.CreateInstance(regionModelType, regionMvcData.ViewName);
-            regionModel.MvcData = regionMvcData;
-            return regionModel;
-        }
-        */
-//        Class regionModelType = this.viewModelRegistry.getViewModelType(regionMvcData);
-//        RegionModel regionModel = (RegionModel) regionModelType.newInstance();
-//        regionModel.setMvcData(regionMvcData);
-//        return regionModel;
-        return null;
+    private RegionModel CreateRegionModel(MvcDataImpl regionMvcData) throws IllegalAccessException, InstantiationException, DxaException {
+        Class regionModelType = this.viewModelRegistry.getViewModelType(regionMvcData);
+        RegionModel regionModel = (RegionModel) regionModelType.newInstance();
+        regionModel.setMvcData(regionMvcData);
+        return regionModel;
     }
 
     private String processPageMetadata(org.dd4t.contentmodel.Page page, Map<String, String> pageMeta, Localization localization) {

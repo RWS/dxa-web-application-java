@@ -29,14 +29,14 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Implementation of {@code WebRequestContext}.
- *
+ * <p/>
  * This implementation gets information about the display width etc. from the Ambient Data Framework.
  */
 @Component
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class WebRequestContextImpl implements WebRequestContext {
     private static final Logger LOG = LoggerFactory.getLogger(WebRequestContextImpl.class);
-    
+
     private Localization localization;
     private boolean hasNoLocalization;
     private Integer maxMediaWidth;
@@ -51,27 +51,25 @@ public class WebRequestContextImpl implements WebRequestContext {
     private Boolean isDeveloperMode;
     private Boolean isInclude;
     private Boolean isPreview;
-    
-    
+
+
     private static final int DEFAULT_WIDTH = 1024;
     private static final int MAX_WIDTH = 1024;
-    
+
     private final MediaHelper mediahelper;
-    
+
     @Autowired
-    public WebRequestContextImpl(MediaHelper mediaHelper)
-    {
-    	this.mediahelper = mediaHelper;
+    public WebRequestContextImpl(MediaHelper mediaHelper) {
+        this.mediahelper = mediaHelper;
     }
-    
-    public WebRequestContextImpl()
-    {
-    	this.mediahelper = null;
+
+    public WebRequestContextImpl() {
+        this.mediahelper = null;
     }
-    
+
     @Autowired
     private ContextEngine contextEngine;
-    
+
     @Override
     public Localization getLocalization() {
         return localization;
@@ -81,17 +79,17 @@ public class WebRequestContextImpl implements WebRequestContext {
     public void setLocalization(Localization localization) {
         this.localization = localization;
     }
-    
+
     @Override
-    public boolean getHasNoLocalization(){
-    	return hasNoLocalization;
+    public boolean getHasNoLocalization() {
+        return hasNoLocalization;
     }
-    
+
     @Override
-    public void setHasNoLocalization(boolean value){
-    	hasNoLocalization = value;
+    public void setHasNoLocalization(boolean value) {
+        hasNoLocalization = value;
     }
-    
+
     @Override
     public int getMaxMediaWidth() {
         if (maxMediaWidth == null) {
@@ -99,7 +97,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         }
         return maxMediaWidth;
     }
-    
+
     @Override
     public double getPixelRatio() {
         if (pixelRatio == null) {
@@ -111,16 +109,14 @@ public class WebRequestContextImpl implements WebRequestContext {
         }
         return pixelRatio;
     }
- 
-    public ScreenWidth getScreenWidth()
-    {
-        if(screenwidth == null)
-        {
-        	screenwidth = calculateScreenWidth();
+
+    public ScreenWidth getScreenWidth() {
+        if (screenwidth == null) {
+            screenwidth = calculateScreenWidth();
         }
         return screenwidth;
     }
-    
+
     @Override
     public boolean isContextCookiePresent() {
         return contextCookiePresent;
@@ -133,7 +129,7 @@ public class WebRequestContextImpl implements WebRequestContext {
     public void setContextCookiePresent(boolean present) {
         this.contextCookiePresent = present;
     }
-    
+
     @Override
     public String getBaseUrl() {
         return baseUrl;
@@ -168,68 +164,63 @@ public class WebRequestContextImpl implements WebRequestContext {
     public String getFullUrl() {
         return baseUrl + contextPath + requestPath;
     }
-    
-    
+
+
     @Override
     public ContextEngine getContextEngine() {
-       return this.contextEngine;
-    }
-    
-    @Override
-    public String getPageId()
-    {
-    	return pageId;
-    }
-    
-    @Override
-    public void setPageId(String value)
-    {
-    	this.pageId = value;
-    }
-    
-    @Override
-    public boolean isDeveloperMode()
-    {
-        if(this.isDeveloperMode == null){
-        	this.isDeveloperMode = getIsDeveloperMode();
-        }
-        return this.isDeveloperMode();        	
+        return this.contextEngine;
     }
 
-    private boolean getIsDeveloperMode()
-    {
-    	return this.isDeveloperMode;
-    }
     @Override
-    public void setIsDeveloperMode(boolean value)
-    {
-    	this.isDeveloperMode = value;
+    public String getPageId() {
+        return pageId;
     }
+
     @Override
-    public boolean getIsInclude()
-    {
-    	return this.isInclude;
+    public void setPageId(String value) {
+        this.pageId = value;
     }
-    
+
     @Override
-    public void setIsInclude(boolean value)
-    {
-    	this.isInclude = value;
+    public boolean isDeveloperMode() {
+        if (this.isDeveloperMode == null) {
+            this.isDeveloperMode = getIsDeveloperMode();
+        }
+        return this.isDeveloperMode();
     }
-    
+
+    private boolean getIsDeveloperMode() {
+        return this.isDeveloperMode;
+    }
+
+    @Override
+    public void setIsDeveloperMode(boolean value) {
+        this.isDeveloperMode = value;
+    }
+
+    @Override
+    public boolean getIsInclude() {
+        return this.isInclude;
+    }
+
+    @Override
+    public void setIsInclude(boolean value) {
+        this.isInclude = value;
+    }
+
     @Override
     public boolean isPreview() {
         // Should return true if the request is from XPM (NOTE currently always true for staging as we cannot reliably
         // distinguish XPM requests)
         return localization.isStaging();
     }
-    
+
     @Override
-    public int getDisplayWidth(){
-    	if (displayWidth == null) {
-        	
-        	this.displayWidth = this.getContextEngine().getClaims(BrowserClaims.class).getDisplayWidth();
-        	if (displayWidth == null) {
+    public int getDisplayWidth() {
+        if (displayWidth == null) {
+
+            this.displayWidth = this.getContextEngine().getClaims(BrowserClaims.class).getDisplayWidth();
+            if (displayWidth == null) {
                 displayWidth = DEFAULT_WIDTH;
             }
 
@@ -240,22 +231,17 @@ public class WebRequestContextImpl implements WebRequestContext {
         }
         return displayWidth;
     }
-    
-    
-    
-    protected ScreenWidth calculateScreenWidth()
-    {
-        int width = isContextCookiePresent() ? this.getDisplayWidth():MAX_WIDTH;
-        if (width < this.mediahelper.getSmallScreenBreakpoint())
-        {
+
+
+    protected ScreenWidth calculateScreenWidth() {
+        int width = isContextCookiePresent() ? this.getDisplayWidth() : MAX_WIDTH;
+        if (width < this.mediahelper.getSmallScreenBreakpoint()) {
             return ScreenWidth.EXTRA_SMALL;
         }
-        if (width < this.mediahelper.getMediumScreenBreakpoint())
-        {
+        if (width < this.mediahelper.getMediumScreenBreakpoint()) {
             return ScreenWidth.SMALL;
         }
-        if (width < this.mediahelper.getLargeScreenBreakpoint())
-        {
+        if (width < this.mediahelper.getLargeScreenBreakpoint()) {
             return ScreenWidth.MEDIUM;
         }
         return ScreenWidth.LARGE;
@@ -263,7 +249,7 @@ public class WebRequestContextImpl implements WebRequestContext {
 
     @Override
     public RegionModel getParentRegion() {
-        if(!parentRegionstack.isEmpty()) {
+        if (!parentRegionstack.isEmpty()) {
             return this.parentRegionstack.peek();
         }
         return null;

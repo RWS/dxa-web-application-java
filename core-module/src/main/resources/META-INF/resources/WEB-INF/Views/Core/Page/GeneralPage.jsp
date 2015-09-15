@@ -48,6 +48,7 @@
         </div>
     </div>
 </main>
+<dxa:region name="TestView" />
 <dxa:region name="Footer" />
 <script src="${markup.versionedContent('/assets/scripts/main.js')}"></script>
 <xpm:if-enabled><script src="${markup.versionedContent('/assets/scripts/xpm.js')}"></script></xpm:if-enabled>

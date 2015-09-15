@@ -2,6 +2,7 @@ package com.sdl.webapp.main.modules.googleanalytics;
 
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.Configuration;
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,10 @@ public class GoogleAnalyticsModuleInitializer {
 
     @PostConstruct
     public void registerViewModelEntityClasses() {
-        viewModelRegistry.registerViewEntityClass("GoogleAnalytics:GoogleAnalytics", Configuration.class);
+        try {
+            viewModelRegistry.registerViewEntityClass("GoogleAnalytics:GoogleAnalytics", Configuration.class);
+        } catch (DxaException e) {
+            e.printStackTrace();
+        }
     }
 }

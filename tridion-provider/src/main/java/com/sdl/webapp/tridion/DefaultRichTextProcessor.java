@@ -16,6 +16,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.sdl.webapp.common.api.model.*;
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
@@ -44,11 +45,6 @@ import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
-import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.RichText;
-import com.sdl.webapp.common.api.model.RichTextFragment;
-import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
-import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.util.NamedNodeMapAdapter;
@@ -195,7 +191,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
             String viewName = semanticSchema.getRootElement();
             final Class<? extends AbstractEntityModel> entityClass;
             try {
-                entityClass = viewModelRegistry.getMappedModelTypes(viewName);
+                entityClass = (Class<? extends AbstractEntityModel>)viewModelRegistry.getMappedModelTypes(viewName);
                 if (entityClass == null) {
                     throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
                             "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");

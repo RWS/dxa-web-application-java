@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.ContentList;
 
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.springframework.cglib.core.Local;
 
 import java.io.InputStream;
@@ -25,16 +26,15 @@ public interface ContentProvider {
     PageModel getPageModel(String path, Localization localization) throws ContentProviderException;
 
     /**
-     * Get entity model by TCM URI and specific template
+     * Get entity model by TCM URI
      *
      * @param id
-     * @param templateId
      * @param localization
      * @return  the {@code Entity}
      * @throws ContentProviderException
      */
     // TODO: What terminology should we use here? Is template id correct wording???
-    EntityModel getEntityModel(String id, String templateId, Localization localization) throws ContentProviderException;
+    EntityModel getEntityModel(String id, Localization localization) throws ContentProviderException, DxaException;
 
     /**
      * Populates a dynamic list.

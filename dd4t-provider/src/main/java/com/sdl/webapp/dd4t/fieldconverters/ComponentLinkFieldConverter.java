@@ -61,10 +61,10 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         return componentLinks;
     }
 
-  /*  public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass)
+    public Object createPageLink(org.dd4t.contentmodel.Page page, Class<?> targetClass)
             throws FieldConverterException {
-        String componentId = component.getId();
-        final String url = linkResolver.resolveLink(componentId, null);
+        String pageId = page.getId();
+        final String url = linkResolver.resolveLink(pageId, null);
 
         if (targetClass.isAssignableFrom(String.class)) {
             return url;
@@ -76,7 +76,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
             throw new UnsupportedTargetTypeException(targetClass);
         }
     }
-    */
+
     public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass, EntityBuilder builder)
             throws SemanticMappingException {
         String componentId = component.getId();
@@ -93,7 +93,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         	
         	
 			try {
-				Object retval = builder.createEntity(component, localization);
+				Object retval = builder.createEntity(component,null, localization);
 				if(targetClass.isAssignableFrom(retval.getClass()))
 				{
 					return retval;

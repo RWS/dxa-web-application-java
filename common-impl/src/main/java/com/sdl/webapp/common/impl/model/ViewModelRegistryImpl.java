@@ -1,11 +1,18 @@
 package com.sdl.webapp.common.impl.model;
 
+import com.google.common.base.Predicate;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
 import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.*;
+import com.sdl.webapp.common.api.model.page.AbstractPageModelImpl;
+import com.sdl.webapp.common.api.model.page.PageModelImpl;
+import com.sdl.webapp.common.api.model.region.RegionModelImpl;
+import com.sdl.webapp.common.api.model.region.SimpleRegionMvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.impl.mapping.MvcDataImpl;
 import com.sun.deploy.util.StringUtils;
@@ -26,12 +33,13 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewModelRegistryImpl.class);
 
-    private final Map<MvcData, Class<? extends AbstractEntityModel>> viewEntityClassMap = new HashMap<>();
-    private final Map<Class<? extends AbstractEntityModel>, SemanticInfo> modelTypeToSemanticInfoMapping = new HashMap<>();
-    private final Map<String, List<Class<? extends AbstractEntityModel>>> semanticTypeToModelTypesMapping = new HashMap<>();
+    private final Map<MvcData, Class<? extends ViewModel>> viewEntityClassMap = new HashMap<>();
+    private final Map<Class<? extends ViewModel>, SemanticInfo> modelTypeToSemanticInfoMapping = new HashMap<>();
+    private final Map<String, List<Class<? extends ViewModel>>> semanticTypeToModelTypesMapping = new HashMap<>();
 
     private Lock lock;
 
+    //TODO : initialize these in the core module
     public ViewModelRegistryImpl() {
         this.lock = new ReentrantLock();
         try {
@@ -64,9 +72,26 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             this.registerViewEntityClass("ThumbnailList", ContentList.class);
             this.registerViewEntityClass("TopNavigation", NavigationLinks.class);
             this.registerViewEntityClass("YouTubeVideo", YouTubeVideo.class);
+            this.registerPageViewModel("GeneralPage", PageModelImpl.class);
+            this.registerPageViewModel("IncludePage", PageModelImpl.class);
+            this.registerPageViewModel("RedirectPage", PageModelImpl.class);
+
         } catch (DxaException e) {
             e.printStackTrace();
         }
+    }
+
+
+    private static final String DEFAULT_AREA_NAME = "Core";
+    private static final String PAGE_CONTROLLER_NAME = "Page";
+    private static final String PAGE_ACTION_NAME = "Page";
+
+    private void registerPageViewModel(String viewName, Class<? extends ViewModel> pageModelClass) throws DxaException {
+        MvcDataImpl mvcData = new MvcDataImpl(viewName);
+        mvcData.setControllerAreaName(DEFAULT_AREA_NAME);
+        mvcData.setControllerName(PAGE_CONTROLLER_NAME);
+        mvcData.setActionName(PAGE_ACTION_NAME);
+        registerViewModel(mvcData, pageModelClass);
     }
 
     private class SemanticInfo {
@@ -77,7 +102,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     }
 
     @Override
-    public void registerViewModel(MvcData viewData, Class<? extends AbstractEntityModel> entityClass) {
+    public void registerViewModel(MvcData viewData, Class<? extends ViewModel> entityClass) {
         try {
             if (lock.tryLock(10, TimeUnit.SECONDS)) {
                 if (viewData != null) {
@@ -100,14 +125,14 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         }
     }
 
-    private SemanticInfo RegisterModelType(Class<? extends AbstractEntityModel> modelType) {
+    private SemanticInfo RegisterModelType(Class<? extends ViewModel> modelType) {
         SemanticInfo semanticInfo = ExtractSemanticInfo(modelType);
         modelTypeToSemanticInfoMapping.put(modelType, semanticInfo);
 
         for (String semanticTypeName : semanticInfo.MappedSemanticTypes) {
-            List<Class<? extends AbstractEntityModel>> mappedModelTypes;
+            List<Class<? extends ViewModel>> mappedModelTypes;
             if (!semanticTypeToModelTypesMapping.containsKey(semanticTypeName)) {
-                mappedModelTypes = new ArrayList<Class<? extends AbstractEntityModel>>();
+                mappedModelTypes = new ArrayList<Class<? extends ViewModel>>();
                 this.semanticTypeToModelTypesMapping.put(semanticTypeName, mappedModelTypes);
             } else {
                 mappedModelTypes = semanticTypeToModelTypesMapping.get(semanticTypeName);
@@ -124,7 +149,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         return semanticInfo;
     }
 
-    private SemanticInfo ExtractSemanticInfo(Class<? extends AbstractEntityModel> modelType) {
+    private SemanticInfo ExtractSemanticInfo(Class<? extends ViewModel> modelType) {
         return new SemanticInfo();
 //        SemanticInfo semanticInfo = new SemanticInfo();
 //
@@ -207,32 +232,59 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     }
 
     @Override
-    public Class<? extends AbstractEntityModel> getViewModelType(MvcData viewData) throws DxaException {
+    public Class<? extends ViewModel> getViewModelType(final MvcData viewData) throws DxaException {
         Class modelType = null;
-        MvcData bareMvcData = new MvcDataImpl(viewData.getAreaName() + ":" + viewData.getControllerName() + ":" + viewData.getViewName());
-        if (!this.viewEntityClassMap.containsKey(bareMvcData)) {
-            throw new DxaException(String.format("No View Model registered for View '%s'. Check that you have registered this View in the '%s' area registration.", viewData, viewData.getAreaName()));
+
+        Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>> keyNamePredicate =
+                new Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>>() {
+                    @Override
+                    public boolean apply(Map.Entry<MvcData, Class<? extends ViewModel>> input) {
+                        MvcData thisKey = input.getKey();
+                        return thisKey.getViewName().equals(viewData.getViewName()) &&
+                                ((thisKey.getControllerAreaName() == null && viewData.getControllerAreaName() == null ) ||(thisKey.getControllerAreaName().equals(viewData.getControllerAreaName()))) &&
+                                ((thisKey.getControllerName() == null && viewData.getControllerName() == null ) ||(thisKey.getControllerName().equals(viewData.getControllerName()))) &&
+                                thisKey.getAreaName().equals(viewData.getAreaName());
+                    }
+                };
+        Map<MvcData, Class<? extends ViewModel>> possibleValues = Maps.filterEntries(this.viewEntityClassMap, keyNamePredicate);
+        if (possibleValues.isEmpty()) {
+            throw new DxaException(String.format("Could not find a view model for the view data %s", viewData));
         } else {
-            return this.viewEntityClassMap.get(bareMvcData);
+            return possibleValues.entrySet().iterator().next().getValue();
         }
     }
 
     @Override
-    public Class<? extends AbstractEntityModel> getMappedModelTypes(String semanticTypeName) throws DxaException {
+    public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) throws DxaException {
         MvcData mvcData = new MvcDataImpl(semanticTypeName);
         return getViewModelType(mvcData);
         //TODO : implement this correctly, based on semantics
     }
 
     @Override
-    public Class<? extends AbstractEntityModel> getViewEntityClass(String viewName) throws DxaException {
-        MvcData mvcData = new MvcDataImpl(viewName);
-        return getViewModelType(mvcData);
+    public Class<? extends ViewModel> getViewEntityClass(final String viewName) throws DxaException {
+
+        Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>> keyNamePredicate =
+                new Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>>() {
+                    @Override
+                    public boolean apply(Map.Entry<MvcData, Class<? extends ViewModel>> input) {
+                        return input.getKey().getViewName().equals(viewName);
+                    }
+                };
+
+
+        Map<MvcData, Class<? extends ViewModel>> possibleValues = Maps.filterEntries(this.viewEntityClassMap, keyNamePredicate);
+        if (possibleValues.isEmpty()) {
+            throw new DxaException(String.format("Could not find a view model for the view name %s", viewName));
+        } else {
+            return possibleValues.entrySet().iterator().next().getValue();
+        }
+
     }
 
-    @Override
-    public void registerViewEntityClass(String viewName, Class<? extends AbstractEntityModel> entityClass) throws DxaException {
 
+    @Override
+    public void registerViewEntityClass(String viewName, Class<? extends ViewModel> entityClass) throws DxaException {
         MvcData mvcData = new MvcDataImpl(viewName);
         registerViewModel(mvcData, entityClass);
     }

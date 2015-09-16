@@ -18,9 +18,19 @@ import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.Teaser;
+import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.tridion.query.BrokerQuery;
 import com.sdl.webapp.tridion.query.BrokerQueryException;
 import com.tridion.broker.StorageException;
+import com.tridion.broker.querying.CriteriaFactory;
+import com.tridion.broker.querying.Query;
+import com.tridion.broker.querying.criteria.Criteria;
+import com.tridion.broker.querying.criteria.content.ItemReferenceCriteria;
+import com.tridion.broker.querying.criteria.content.ItemTypeCriteria;
+import com.tridion.broker.querying.criteria.content.PublicationCriteria;
+import com.tridion.meta.Item;
+import com.tridion.meta.TemplateMeta;
 import com.tridion.storage.BinaryContent;
 import com.tridion.storage.BinaryMeta;
 import com.tridion.storage.BinaryVariant;
@@ -32,10 +42,13 @@ import com.tridion.storage.dao.BinaryVariantDAO;
 import com.tridion.storage.dao.ItemDAO;
 
 import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.PageFactory;
+import org.dd4t.core.util.TCMURI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,9 +67,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
@@ -80,24 +95,28 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
     private final ComponentPresentationFactory dd4tComponentPresentationFactory;
 
-    private final PageBuilder pageBuilder;
-    private final EntityBuilder entityBuilder;
+//    private final PageBuilder pageBuilder;
+//    private final EntityBuilder entityBuilder;
+
+    @Autowired
+    private ModelBuilderPipeline modelBuilderPipeline;
 
     private final LinkResolver linkResolver;
 
     @Autowired
     public DefaultProvider(PageFactory dd4tPageFactory,
                                ComponentPresentationFactory dd4tComponentPresentationFactory,
-                               PageBuilder pageBuilder,
-                               EntityBuilder entityBuilder,
+                               //PageBuilder pageBuilder,
+                               //EntityBuilder entityBuilder,
                                LinkResolver linkResolver,
                                ObjectMapper objectMapper,
                                WebApplicationContext webApplicationContext) {
 
         this.dd4tPageFactory = dd4tPageFactory;
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
-        this.pageBuilder = pageBuilder;
-        this.entityBuilder = entityBuilder;
+        //this.pageBuilder = pageBuilder;
+        //this.entityBuilder = entityBuilder;
+
         this.linkResolver = linkResolver;
         this.objectMapper = objectMapper;
         this.webApplicationContext = webApplicationContext;
@@ -126,29 +145,32 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                             "] " + path, e);
                 }
 
-                return pageBuilder.createPage(genericPage, localization, DefaultProvider.this);
+                return modelBuilderPipeline.CreatePageModel(genericPage, localization, DefaultProvider.this);
             }
         });
     }
 
     @Override
-    public EntityModel getEntityModel(String id, String templateId, final Localization localization) throws ContentProviderException {
+    public EntityModel getEntityModel(String id, final Localization localization) throws DxaException {
 
-        // TODO: Use just id's here instead of TCM-URIs
-
+        String [] idParts = id.split("-");
+        if(idParts.length != 2)
+        {
+            throw new DxaException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", id));
+        }
+        String componentUri = String.format("tcm:{0}-{1}", localization.getId(), idParts[0]);
+        String templateUri = String.format("tcm:{0}-{1}-32", localization.getId(), idParts[1]);
         try {
-            final ComponentPresentation componentPresentation = this.dd4tComponentPresentationFactory.getComponentPresentation(id, templateId);
-            return this.entityBuilder.createEntity(componentPresentation, localization);
-        }
-        catch ( ItemNotFoundException e ) {
-            LOG.debug("Dynamic component not found: ID: {} Template ID: {}", id, templateId);
-            return null;
-        }
-        catch (FactoryException e) {
-            throw new ContentProviderException("Exception while getting entity model for: " + id, e);
+            final ComponentPresentation componentPresentation = this.dd4tComponentPresentationFactory.getComponentPresentation(componentUri, templateUri);
+            return modelBuilderPipeline.CreateEntityModel(componentPresentation, localization);
+
+        } catch (FactoryException e) {
+            throw new DxaItemNotFoundException(id);
+        } catch (ContentProviderException e) {
+            throw new DxaException("Problem building entity model", e);
         }
     }
-    
+
     private InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
         return findPage(path, localization, new TryFindPage<InputStream>() {
             @Override

@@ -17,12 +17,19 @@ public class SimpleRegionMvcData implements MvcData {
     private String actionName = "Region";
     private String areaName = "Core";
     private String regionName;
+    private String viewName;
 
     private Map<String, Object> metadata = Collections.emptyMap();
     private Map<String, String> routeValues = Collections.emptyMap();
 
     public SimpleRegionMvcData(String regionName) {
         this.regionName = regionName;
+        this.viewName = regionName;
+    }
+
+    public SimpleRegionMvcData(String regionName, String viewName) {
+        this.regionName = regionName;
+        this.viewName = viewName;
     }
 
     @Override
@@ -47,7 +54,7 @@ public class SimpleRegionMvcData implements MvcData {
 
     @Override
     public String getViewName() {
-        return this.regionName;
+        return this.viewName;
     }
 
     @Override

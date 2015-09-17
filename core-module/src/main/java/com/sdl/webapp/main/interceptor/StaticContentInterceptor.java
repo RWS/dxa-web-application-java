@@ -28,7 +28,7 @@ import java.net.URL;
  * Static content interceptor. This interceptor checks if the request is for static content, and if it is, it sends
  * an appropriate response to the client; in that case the request will not be processed further by Spring's
  * {@code DispatcherServlet} (it will not reach any of the controllers).
- *
+ * <p/>
  * This should be configured to be called after the {@code LocalizationResolverInterceptor} for requests that are
  * being handled by the Spring {@code DispatcherServlet}.
  */
@@ -77,15 +77,14 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
                 } else {
                     res.setStatusCode(HttpStatus.NOT_MODIFIED);
                 }
-            }
-            catch ( StaticContentNotFoundException e ) {
+            } catch (StaticContentNotFoundException e) {
                 LOG.debug("Static resource not found in static content provider. Fallback to webapp content...");
 
                 URL contentResource = request.getServletContext().getResource(requestPath);
-                if ( contentResource == null ) {
+                if (contentResource == null) {
                     contentResource = request.getServletContext().getClassLoader().getResource(requestPath);
                 }
-                if ( contentResource != null ) {
+                if (contentResource != null) {
 
                     res.setStatusCode(HttpStatus.OK);
                     // TODO: Set last modified on these resources as well!!
@@ -97,8 +96,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
                     try (final InputStream in = contentResource.openStream(); final OutputStream out = res.getBody()) {
                         StreamUtils.copy(in, out);
                     }
-                }
-                else {
+                } else {
                     throw e;
                 }
             }

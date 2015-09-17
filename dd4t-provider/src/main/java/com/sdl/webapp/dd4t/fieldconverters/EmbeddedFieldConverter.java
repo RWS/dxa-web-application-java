@@ -22,7 +22,7 @@ import java.util.List;
 @Component
 public class EmbeddedFieldConverter implements FieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.EMBEDDED };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.EMBEDDED};
 
     private final SemanticMapper semanticMapper;
 

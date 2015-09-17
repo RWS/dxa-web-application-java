@@ -25,10 +25,10 @@ import java.util.Map;
 @Component
 public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.COMPONENTLINK, FieldType.MULTIMEDIALINK };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.COMPONENTLINK, FieldType.MULTIMEDIALINK};
 
     private final LinkResolver linkResolver;
-        private final WebRequestContext webRequestContext;
+    private final WebRequestContext webRequestContext;
 
     @Autowired
     public ComponentLinkFieldConverter(LinkResolver linkResolver, WebRequestContext webRequestContext) {
@@ -47,15 +47,15 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
         for (org.dd4t.contentmodel.Component component : field.getLinkedComponentValues()) {
             Object componentLink;
-			try {
-				componentLink = createComponentLink(component, targetClass, builder);
-				 if (componentLink != null) {
-	                componentLinks.add(componentLink);
-	            }
-			} catch (SemanticMappingException e) {
-				// TODO Auto-generated catch block
-				throw new FieldConverterException(e);
-			}
+            try {
+                componentLink = createComponentLink(component, targetClass, builder);
+                if (componentLink != null) {
+                    componentLinks.add(componentLink);
+                }
+            } catch (SemanticMappingException e) {
+                // TODO Auto-generated catch block
+                throw new FieldConverterException(e);
+            }
         }
 
         return componentLinks;
@@ -111,7 +111,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         }
         else
         {
-        	throw new UnsupportedTargetTypeException(targetClass);
+            throw new UnsupportedTargetTypeException(targetClass);
         }
     }
 }

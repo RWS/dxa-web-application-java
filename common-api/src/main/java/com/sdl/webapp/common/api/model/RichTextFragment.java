@@ -4,5 +4,5 @@ import com.sdl.webapp.common.markup.html.HtmlElement;
 
 public interface RichTextFragment {
 
-	String toHtml();
+    String toHtml();
 }

@@ -21,7 +21,7 @@ public interface NavigationProvider {
     /**
      * Gets navigation links for the top navigation menu for the specified request path.
      *
-     * @param requestPath The request path.
+     * @param requestPath  The request path.
      * @param localization The localization.
      * @return A {@code NavigationLinks} object containing navigation links.
      * @throws NavigationProviderException If an error occurred so that the navigation links could not be retrieved.
@@ -32,7 +32,7 @@ public interface NavigationProvider {
     /**
      * Gets navigation links for the context navigation panel for the specified request path.
      *
-     * @param requestPath The request path.
+     * @param requestPath  The request path.
      * @param localization The localization.
      * @return A {@code NavigationLinks} object containing navigation links.
      * @throws NavigationProviderException If an error occurred so that the navigation links could not be retrieved.
@@ -43,7 +43,7 @@ public interface NavigationProvider {
     /**
      * Gets navigation links for the breadcrumb bar for the specified request path.
      *
-     * @param requestPath The request path.
+     * @param requestPath  The request path.
      * @param localization The localization.
      * @return A {@code NavigationLinks} object containing navigation links.
      * @throws NavigationProviderException If an error occurred so that the navigation links could not be retrieved.

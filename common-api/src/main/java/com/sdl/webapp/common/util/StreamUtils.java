@@ -17,7 +17,7 @@ public final class StreamUtils {
     /**
      * Copies all dat from an {@code InputStream} to an {@code OutputStream}.
      *
-     * @param in The {@code InputStream} to read from.
+     * @param in  The {@code InputStream} to read from.
      * @param out The {@code OutputStream} to write to.
      * @throws IOException When an I/O error occurs.
      */

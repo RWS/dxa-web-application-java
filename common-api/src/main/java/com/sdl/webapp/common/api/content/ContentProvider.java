@@ -18,7 +18,7 @@ public interface ContentProvider {
     /**
      * Gets a page by path for a specific localization.
      *
-     * @param path The path of the page.
+     * @param path         The path of the page.
      * @param localization The localization.
      * @return The {@code Page}.
      * @throws ContentProviderException If an error occurred so that the content of the page could be retrieved.
@@ -30,7 +30,7 @@ public interface ContentProvider {
      *
      * @param id
      * @param localization
-     * @return  the {@code Entity}
+     * @return the {@code Entity}
      * @throws ContentProviderException
      */
     // TODO: What terminology should we use here? Is template id correct wording???
@@ -39,17 +39,17 @@ public interface ContentProvider {
     /**
      * Populates a dynamic list.
      *
-     * @param contentList The list to populate.
+     * @param contentList  The list to populate.
      * @param localization The localization.
      * @throws ContentProviderException If an error occurred so that the content of the list could not be retrieved.
      */
     void populateDynamicList(ContentList contentList, Localization localization) throws ContentProviderException;
-    
+
     /**
      * Gets a static content item by path for a specific localization.
      *
-     * @param path The path of the static content item.
-     * @param localizationId The localization ID.
+     * @param path             The path of the static content item.
+     * @param localizationId   The localization ID.
      * @param localizationPath The localization path.
      * @return The {@code StaticContentItem}.
      * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.

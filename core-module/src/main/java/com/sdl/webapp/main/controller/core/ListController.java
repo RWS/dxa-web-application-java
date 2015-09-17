@@ -25,7 +25,7 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.*;
 
 /**
  * List controller for the Core area.
- *
+ * <p/>
  * This handles include requests to /system/mvc/Core/List/{regionName}/{entityId}
  */
 @Controller
@@ -46,9 +46,9 @@ public class ListController extends AbstractController {
     /**
      * Handles a request to fill a dynamic list with data.
      *
-     * @param request The request.
+     * @param request    The request.
      * @param regionName The region name.
-     * @param entityId The entity id.
+     * @param entityId   The entity id.
      * @return The name of the entity view that should be rendered for this request.
      */
     @RequestMapping(method = RequestMethod.GET, value = LIST_ACTION_NAME + "/{regionName}/{entityId}")
@@ -59,9 +59,8 @@ public class ListController extends AbstractController {
         final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
         request.setAttribute(ENTITY_MODEL, entity);
         int containerSize = 0;
-        if(request.getAttribute("_containersize_" + regionName + entityId) != null)
-        {
-        	containerSize = (int) request.getAttribute("_containersize_" + regionName + entityId);
+        if (request.getAttribute("_containersize_" + regionName + entityId) != null) {
+            containerSize = (int) request.getAttribute("_containersize_" + regionName + entityId);
         }
         if (entity instanceof ContentList) {
             final ContentList contentList = (ContentList) entity;

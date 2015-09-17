@@ -35,9 +35,9 @@ public class RegionsTag extends AbstractMarkupTag {
     public void setExclude(String exclude) {
         this.exclude = exclude;
     }
-    public void setContainerSize(int containerSize)
-    {
-    	this.containerSize = containerSize;
+
+    public void setContainerSize(int containerSize) {
+        this.containerSize = containerSize;
     }
 
 
@@ -48,21 +48,20 @@ public class RegionsTag extends AbstractMarkupTag {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
-        
+
         parentRegion = webRequestContext.getParentRegion();
-        
+
         Set<String> excludes = new HashSet<>();
         if (!Strings.isNullOrEmpty(exclude)) {
             excludes.addAll(Arrays.asList(exclude.split("\\s*,\\s*")));
         }
 
         RegionModelSet regions = page.getRegions();
-        if(parentRegion != null)
-        {
-        	regions = parentRegion.getRegions();
+        if (parentRegion != null) {
+            regions = parentRegion.getRegions();
         }
-        
-        
+
+
         for (RegionModel region : regions) {
             String name = region.getName();
             if (excludes.contains(name)) {
@@ -73,8 +72,8 @@ public class RegionsTag extends AbstractMarkupTag {
             LOG.debug("Including region: {}", name);
             try {
                 //pageContext.include(ControllerUtils.getIncludePath(region));
-            	
-            	pageContext.getRequest().setAttribute("_region_" + name, region);
+
+                pageContext.getRequest().setAttribute("_region_" + name, region);
                 webRequestContext.pushParentRegion(region);
 
                 pageContext.getRequest().setAttribute("_containersize_" + name, containerSize);

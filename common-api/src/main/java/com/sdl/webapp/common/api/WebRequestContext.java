@@ -111,24 +111,26 @@ public interface WebRequestContext {
      */
     ContextEngine getContextEngine();
 
-	boolean getHasNoLocalization();
+    boolean getHasNoLocalization();
 
-	void setHasNoLocalization(boolean value);
+    void setHasNoLocalization(boolean value);
 
-	String getPageId();
+    String getPageId();
 
-	void setPageId(String value);
+    void setPageId(String value);
 
-	boolean isDeveloperMode();
+    boolean isDeveloperMode();
 
-	boolean getIsInclude();
+    boolean getIsInclude();
 
-	void setIsInclude(boolean value);
+    void setIsInclude(boolean value);
 
-	void setIsDeveloperMode(boolean value);
+    void setIsDeveloperMode(boolean value);
 
 
     RegionModel getParentRegion();
+
     void pushParentRegion(RegionModel value);
+
     void popParentRegion();
 }

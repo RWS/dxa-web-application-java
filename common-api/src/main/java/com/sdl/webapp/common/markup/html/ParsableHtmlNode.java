@@ -25,7 +25,7 @@ public class ParsableHtmlNode extends HtmlNode {
     // TODO: Wrap JSoup API totally here...???
 
     public Element getHtmlElement() {
-        if ( this.html == null ) {
+        if (this.html == null) {
             Element htmlElement = null;
             Document doc = Jsoup.parse(this.htmlText);
             List<Node> htmlNodes = doc.childNodes();
@@ -49,10 +49,9 @@ public class ParsableHtmlNode extends HtmlNode {
 
     @Override
     protected String renderHtml() {
-        if ( this.html != null ) {
+        if (this.html != null) {
             return this.html.outerHtml();
-        }
-        else {
+        } else {
             return this.htmlText;
         }
     }

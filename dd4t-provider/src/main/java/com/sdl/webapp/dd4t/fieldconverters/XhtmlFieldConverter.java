@@ -19,10 +19,11 @@ import java.util.List;
 public class XhtmlFieldConverter extends AbstractFieldConverter {
     private static final Logger LOG = LoggerFactory.getLogger(XhtmlFieldConverter.class);
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.XHTML };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.XHTML};
 
     private final RichTextProcessor richTextProcessor;
     private final WebRequestContext webRequestContext;
+
     @Autowired
     public XhtmlFieldConverter(RichTextProcessor richTextProcessor, WebRequestContext webRequestContext) {
         this.richTextProcessor = richTextProcessor;

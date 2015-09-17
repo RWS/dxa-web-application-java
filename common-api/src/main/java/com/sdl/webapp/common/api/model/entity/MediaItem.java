@@ -18,7 +18,7 @@ public abstract class MediaItem extends AbstractEntityModel {
     private String url;
 
     private Boolean isEmbedded;
-    
+
     private String fileName;
 
     @SemanticProperty("s:contentSize")
@@ -30,11 +30,10 @@ public abstract class MediaItem extends AbstractEntityModel {
         return url;
     }
 
-    public void setIsEmbedded(Boolean isEmbedded)
-    {
-    	this.isEmbedded = isEmbedded;
+    public void setIsEmbedded(Boolean isEmbedded) {
+        this.isEmbedded = isEmbedded;
     }
-    
+
     public void setUrl(String url) {
         this.url = url;
     }
@@ -46,13 +45,12 @@ public abstract class MediaItem extends AbstractEntityModel {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-    
-	public Boolean getIsEmbedded()
-	{
-		return this.isEmbedded;
-	}
-    
-	public int getFileSize() {
+
+    public Boolean getIsEmbedded() {
+        return this.isEmbedded;
+    }
+
+    public int getFileSize() {
         return fileSize;
     }
 
@@ -67,75 +65,70 @@ public abstract class MediaItem extends AbstractEntityModel {
     public void setMimeType(String mimeType) {
         this.mimeType = mimeType;
     }
-    
+
     @Override
-    public String toHtml()
-    {
+    public String toHtml() {
         return this.toHtml("100%");
     }
-    
-    public String getIconClass()
-    {
-        String fileType = FontAwesomeMimeTypeToIconClassMapping.containsKey(this.getMimeType())?FontAwesomeMimeTypeToIconClassMapping.get(this.getMimeType()):null;
+
+    public String getIconClass() {
+        String fileType = FontAwesomeMimeTypeToIconClassMapping.containsKey(this.getMimeType()) ? FontAwesomeMimeTypeToIconClassMapping.get(this.getMimeType()) : null;
         return fileType == null ? String.format("fa-file-%s-o", fileType) : "fa-file";
     }
-    
-    public String getFriendlyFileSize()
-    {
-        String[] sizes = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
+
+    public String getFriendlyFileSize() {
+        String[] sizes = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
         double len = getFileSize();
         int order = 0;
-        while (len >= 1024 && order + 1 < sizes.length)
-        {
+        while (len >= 1024 && order + 1 < sizes.length) {
             order++;
             len = len / 1024;
         }
 
         return String.format("%s %s", Math.ceil(len), sizes[order]);
     }
+
     public abstract String toHtml(String widthFactor);
 
     public abstract String toHtml(String widthFactor, double aspect, String cssClass, int containerSize);
-    
+
     public abstract HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath);
 
-    public void readFromXhtmlElement(Node xhtmlElement)
-    {
+    public void readFromXhtmlElement(Node xhtmlElement) {
         // Return the Item (Reference) ID part of the TCM URI.
         this.setId(xhtmlElement.getAttributes().getNamedItem("xlink:href").getNodeValue().split("-")[1]);
         this.setUrl(xhtmlElement.getAttributes().getNamedItem("src").getNodeValue());
         this.setFileName(xhtmlElement.getAttributes().getNamedItem("data-multimediaFileName").getNodeValue());
         String fileSize = xhtmlElement.getAttributes().getNamedItem("data-multimediaFileSize").getNodeValue();
-        if (!Strings.isNullOrEmpty(fileSize))
-        {
+        if (!Strings.isNullOrEmpty(fileSize)) {
             this.setFileSize(Integer.parseInt(fileSize));
         }
         this.setMimeType(xhtmlElement.getAttributes().getNamedItem("data-multimediaMimeType").getNodeValue());
         this.setIsEmbedded(true);
     }
-    
+
     private static final HashMap<String, String> FontAwesomeMimeTypeToIconClassMapping;
-    static
-    {
-    	FontAwesomeMimeTypeToIconClassMapping = new HashMap<String, String>();
-    	
-    	FontAwesomeMimeTypeToIconClassMapping.put("application/ms-excel", "excel");
-    	FontAwesomeMimeTypeToIconClassMapping.put("application/pdf", "pdf");
-    	FontAwesomeMimeTypeToIconClassMapping.put("application/x-wav", "audio");
-    	FontAwesomeMimeTypeToIconClassMapping.put("audio/x-mpeg", "audio");
-    	FontAwesomeMimeTypeToIconClassMapping.put("application/msword", "word");
-    	FontAwesomeMimeTypeToIconClassMapping.put("text/rtf", "word");
-    	FontAwesomeMimeTypeToIconClassMapping.put("application/zip", "archive");
-    	FontAwesomeMimeTypeToIconClassMapping.put("image/gif", "image");
-    	FontAwesomeMimeTypeToIconClassMapping.put("image/jpeg", "image");
-    	FontAwesomeMimeTypeToIconClassMapping.put("image/png", "image");
-    	FontAwesomeMimeTypeToIconClassMapping.put("image/x-bmp", "image");
-    	FontAwesomeMimeTypeToIconClassMapping.put("text/plain", "text");
-    	FontAwesomeMimeTypeToIconClassMapping.put("text/css", "code");
-    	FontAwesomeMimeTypeToIconClassMapping.put("application/x-javascript", "code");
-    	FontAwesomeMimeTypeToIconClassMapping.put("application/ms-powerpoint", "powerpoint");
-    	FontAwesomeMimeTypeToIconClassMapping.put("video/vnd.rn-realmedia", "video");
-    	FontAwesomeMimeTypeToIconClassMapping.put("video/quicktime", "video");
-    	FontAwesomeMimeTypeToIconClassMapping.put("video/mpeg", "video");
+
+    static {
+        FontAwesomeMimeTypeToIconClassMapping = new HashMap<String, String>();
+
+        FontAwesomeMimeTypeToIconClassMapping.put("application/ms-excel", "excel");
+        FontAwesomeMimeTypeToIconClassMapping.put("application/pdf", "pdf");
+        FontAwesomeMimeTypeToIconClassMapping.put("application/x-wav", "audio");
+        FontAwesomeMimeTypeToIconClassMapping.put("audio/x-mpeg", "audio");
+        FontAwesomeMimeTypeToIconClassMapping.put("application/msword", "word");
+        FontAwesomeMimeTypeToIconClassMapping.put("text/rtf", "word");
+        FontAwesomeMimeTypeToIconClassMapping.put("application/zip", "archive");
+        FontAwesomeMimeTypeToIconClassMapping.put("image/gif", "image");
+        FontAwesomeMimeTypeToIconClassMapping.put("image/jpeg", "image");
+        FontAwesomeMimeTypeToIconClassMapping.put("image/png", "image");
+        FontAwesomeMimeTypeToIconClassMapping.put("image/x-bmp", "image");
+        FontAwesomeMimeTypeToIconClassMapping.put("text/plain", "text");
+        FontAwesomeMimeTypeToIconClassMapping.put("text/css", "code");
+        FontAwesomeMimeTypeToIconClassMapping.put("application/x-javascript", "code");
+        FontAwesomeMimeTypeToIconClassMapping.put("application/ms-powerpoint", "powerpoint");
+        FontAwesomeMimeTypeToIconClassMapping.put("video/vnd.rn-realmedia", "video");
+        FontAwesomeMimeTypeToIconClassMapping.put("video/quicktime", "video");
+        FontAwesomeMimeTypeToIconClassMapping.put("video/mpeg", "video");
     }
 }

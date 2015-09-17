@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class MultiLineTextFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.MULTILINETEXT };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.MULTILINETEXT};
 
     @Override
     public FieldType[] supportedFieldTypes() {

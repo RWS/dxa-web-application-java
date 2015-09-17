@@ -35,21 +35,21 @@ public class EntityXpmMarkup implements MarkupDecorator {
     @Override
     public HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext) {
 
-        if ( webRequestContext.isPreview() ) {
+        if (webRequestContext.isPreview()) {
             EntityModel entity = (EntityModel) model;
 
             boolean markupInjected = false;
 
-            if ( markup instanceof ParsableHtmlNode ) {
+            if (markup instanceof ParsableHtmlNode) {
 
                 // Inject the XPM markup inside the entity markup
                 //
                 ParsableHtmlNode entityMarkup = (ParsableHtmlNode) markup;
                 Element html = entityMarkup.getHtmlElement();
-                if ( html != null ) {   // If an HTML element (not a comment etc)
+                if (html != null) {   // If an HTML element (not a comment etc)
                     html.prepend(buildXpmMarkup(entity).toHtml());
                     Elements properties = html.select("[data-entity-property-xpath]");
-                    for ( Element property : properties ) {
+                    for (Element property : properties) {
                         processProperty(property);
                     }
 
@@ -57,8 +57,7 @@ public class EntityXpmMarkup implements MarkupDecorator {
                 }
             }
 
-            if ( !markupInjected )
-            {
+            if (!markupInjected) {
                 // Surround the entity markup with the XPM markup
                 //
                 markup = HtmlBuilders.span()
@@ -75,13 +74,12 @@ public class EntityXpmMarkup implements MarkupDecorator {
         String xpath = propertyElement.attr("data-entity-property-xpath");
 
         HtmlNode xpmMarkup = new HtmlCommentNode(String.format(FIELD_PATTERN, xpath));
-        if ( propertyElement.childNodes().size()  > 0 ) {
+        if (propertyElement.childNodes().size() > 0) {
 
-            if ( !propertyXpmMarkupAlreadyGenerated(propertyElement) ) {
+            if (!propertyXpmMarkupAlreadyGenerated(propertyElement)) {
                 propertyElement.prepend(xpmMarkup.toHtml());
             }
-        }
-        else {
+        } else {
             propertyElement.before(xpmMarkup.toHtml());
         }
         propertyElement.removeAttr("data-entity-property-xpath");
@@ -90,16 +88,16 @@ public class EntityXpmMarkup implements MarkupDecorator {
     protected boolean propertyXpmMarkupAlreadyGenerated(Element propertyElement) {
         int index = 0;
         Node node = null;
-        while ( index < propertyElement.childNodes().size() ) {
+        while (index < propertyElement.childNodes().size()) {
             node = propertyElement.childNode(index);
-            if ( !(node instanceof TextNode) ) {
+            if (!(node instanceof TextNode)) {
                 break;
             }
             index++;
         }
-        if ( node != null  && node instanceof Comment) {
-            Comment comment = (Comment)node;
-            if ( comment.getData().contains("Start Component Field:") ) {
+        if (node != null && node instanceof Comment) {
+            Comment comment = (Comment) node;
+            if (comment.getData().contains("Start Component Field:")) {
                 return true;
             }
         }

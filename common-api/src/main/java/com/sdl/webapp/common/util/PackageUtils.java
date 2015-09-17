@@ -40,7 +40,7 @@ public final class PackageUtils {
      * specified package.
      *
      * @param basePackage The package in which to search for classes.
-     * @param callback The callback to be called for each class that is found.
+     * @param callback    The callback to be called for each class that is found.
      * @throws IOException When an I/O error occurs.
      */
     public static void doWithClasses(String basePackage, ClassCallback callback) throws IOException {
@@ -51,9 +51,9 @@ public final class PackageUtils {
      * Calls the specified callback for all classes that are found in the specified package and optionally all the
      * subpackages of the specified package.
      *
-     * @param basePackage The package in which to search for classes.
+     * @param basePackage        The package in which to search for classes.
      * @param includeSubPackages {@code true} if subpackages should be included, {@code false} otherwise.
-     * @param callback The callback to be called for each class that is found.
+     * @param callback           The callback to be called for each class that is found.
      * @throws IOException When an I/O error occurs.
      */
     public static void doWithClasses(String basePackage, boolean includeSubPackages, ClassCallback callback)

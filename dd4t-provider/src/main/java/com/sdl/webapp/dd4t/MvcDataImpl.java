@@ -19,39 +19,37 @@ public final class MvcDataImpl implements MvcData {
     private String regionName;
 
     private Map<String, String> routeValues = new HashMap<>();
-    private Map<String,Object> metadata = new HashMap<>();
+    private Map<String, Object> metadata = new HashMap<>();
 
-    public MvcDataImpl() 
-    {
-    
+    public MvcDataImpl() {
+
     }
-    public MvcDataImpl(String qualifiedViewName) throws DxaException
-    {
+
+    public MvcDataImpl(String qualifiedViewName) throws DxaException {
         String[] qualifiedViewNameParts = qualifiedViewName.split(":");
-        switch (qualifiedViewNameParts.length)
-        {
+        switch (qualifiedViewNameParts.length) {
             case 1:
                 this.setAreaName("Core");
                 this.setViewName(qualifiedViewNameParts[0]);
                 break;
             case 2:
-            	this.setAreaName(qualifiedViewNameParts[0]);
-            	this.setViewName(qualifiedViewNameParts[1]);
+                this.setAreaName(qualifiedViewNameParts[0]);
+                this.setViewName(qualifiedViewNameParts[1]);
                 break;
             case 3:
-            	this.setAreaName(qualifiedViewNameParts[0]);
-            	this.setControllerName(qualifiedViewNameParts[1]);
-            	this.setViewName(qualifiedViewNameParts[2]);
+                this.setAreaName(qualifiedViewNameParts[0]);
+                this.setControllerName(qualifiedViewNameParts[1]);
+                this.setViewName(qualifiedViewNameParts[2]);
                 break;
             default:
                 throw new DxaException(
-                    String.format("Invalid format for Qualified View Name: '%s'. Format must be 'ViewName' or 'AreaName:ViewName' or 'AreaName:ControllerName:Vieweame.'", 
-                        qualifiedViewName)
-                        );
+                        String.format("Invalid format for Qualified View Name: '%s'. Format must be 'ViewName' or 'AreaName:ViewName' or 'AreaName:ControllerName:Vieweame.'",
+                                qualifiedViewName)
+                );
         }
     }
-    
-    
+
+
     @Override
     public String getControllerAreaName() {
         return controllerAreaName;

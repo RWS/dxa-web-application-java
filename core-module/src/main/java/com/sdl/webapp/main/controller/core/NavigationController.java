@@ -31,7 +31,7 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.*;
 
 /**
  * Navigation controller for the Core area.
- *
+ * <p/>
  * This handles include requests to /system/mvc/Core/Navigation/Navigation/{regionName}/{entityId}
  * and /system/mvc/Core/Navigation/SiteMap/{regionName}/{entityId}
  */
@@ -54,16 +54,16 @@ public class NavigationController extends AbstractController {
         this.navigationProvider = navigationProvider;
     }
 
-   
+
     /**
      * Handles a request for navigation data, for example for the top navigation menu, left-side navigation or
      * breadcrumb bar.
      *
-     * @param request The request.
-     * @param regionName The name of the region.
-     * @param entityId The name of the entity.
+     * @param request       The request.
+     * @param regionName    The name of the region.
+     * @param entityId      The name of the entity.
      * @param containerSize the Container Size.
-     * @param navType Navigation type.
+     * @param navType       Navigation type.
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
@@ -80,11 +80,10 @@ public class NavigationController extends AbstractController {
         final Localization localization = webRequestContext.getLocalization();
 
         int containerSize = 0;
-        if(request.getAttribute("_containersize_" + regionName + entityId) != null)
-        {
-        	containerSize = (int) request.getAttribute("_containersize_" + regionName + entityId);
+        if (request.getAttribute("_containersize_" + regionName + entityId) != null) {
+            containerSize = (int) request.getAttribute("_containersize_" + regionName + entityId);
         }
-        
+
         final NavigationLinks navigationLinks;
         switch (navType) {
             case NAV_TYPE_TOP:
@@ -120,9 +119,9 @@ public class NavigationController extends AbstractController {
     /**
      * Handles a request to get the sitemap (in HTML).
      *
-     * @param request The request.
+     * @param request    The request.
      * @param regionName The name of the region.
-     * @param entityId The name of the entity.
+     * @param entityId   The name of the entity.
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */

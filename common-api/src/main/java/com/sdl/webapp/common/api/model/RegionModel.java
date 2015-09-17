@@ -13,7 +13,7 @@ public interface RegionModel extends ViewModel {
     ArrayList<EntityModel> getEntities();
 
     EntityModel getEntity(String entityId);
-    
+
     RegionModelSet getRegions();
 
     void setMvcData(MvcData value);

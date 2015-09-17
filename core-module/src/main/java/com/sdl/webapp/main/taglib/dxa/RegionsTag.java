@@ -32,10 +32,6 @@ public class RegionsTag extends AbstractMarkupTag {
     public void setExclude(String exclude) {
         this.exclude = exclude;
     }
-    public void setParentRegion(RegionModel parent)
-    {
-    	this.parentRegion = parent;
-    }
     public void setContainerSize(int containerSize)
     {
     	this.containerSize = containerSize;

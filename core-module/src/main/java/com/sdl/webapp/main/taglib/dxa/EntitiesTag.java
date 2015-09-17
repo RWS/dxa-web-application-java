@@ -26,14 +26,9 @@ public class EntitiesTag extends AbstractMarkupTag {
         this.regionName = regionName;
     }
 
-    public void setParentRegion(RegionModel parent)
-    {
-    	this.parentRegion = parent;
-    }
 
-    public void setContainerSize(int containerSize)
-    {
-    	this.containerSize = containerSize;
+    public void setContainerSize(int containerSize) {
+        this.containerSize = containerSize;
     }
     
     @Override
@@ -45,24 +40,24 @@ public class EntitiesTag extends AbstractMarkupTag {
         }
 
         RegionModel region = null;
-        if(parentRegion != null)
-        {
-        	region = parentRegion;	
+        WebRequestContext webRequestContext = this.getWebRequestContext();
+
+        parentRegion = webRequestContext.getParentRegion();
+        if (parentRegion != null) {
+            region = parentRegion;
+        } else {
+            region = page.getRegions().get(regionName);
         }
-        else
-        {
-        	region = page.getRegions().get(regionName);
-        }
-        
+
         if (region == null) {
             LOG.debug("Region not found on page: {}", regionName);
             return SKIP_BODY;
         }
 
-        WebRequestContext webRequestContext = this.getWebRequestContext();
         for (EntityModel entity : region.getEntities()) {
             try {
             	pageContext.getRequest().setAttribute("_region_" + regionName, region);
+                webRequestContext.pushParentRegion(region);
                 webRequestContext.pushContainerSize(containerSize);
             	this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
                 //pageContext.include(ControllerUtils.getIncludePath(entity));
@@ -70,6 +65,7 @@ public class EntitiesTag extends AbstractMarkupTag {
                 throw new JspException("Error while processing entity tag", e);
             }
             finally {
+                webRequestContext.popParentRegion();
                 webRequestContext.popContainerSize();
             }
         }

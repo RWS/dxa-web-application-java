@@ -26,9 +26,9 @@ public interface RegionBuilder {
      * @throws ContentProviderException
      */
     public RegionModelSet buildRegions(PageModel page,
-			   							   ConditionalEntityEvaluator conditionalEntityEvaluator,
-                                           List<?> sourceList,
-                                           RegionBuilderCallback callback,
-                                           Localization localization) throws ContentProviderException;
+                                       ConditionalEntityEvaluator conditionalEntityEvaluator,
+                                       List<?> sourceList,
+                                       RegionBuilderCallback callback,
+                                       Localization localization) throws ContentProviderException;
 
 }

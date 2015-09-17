@@ -28,7 +28,7 @@ public abstract class DefaultImplementation<T> extends AbstractFactoryBean<T> im
     }
 
     protected T createProxy() {
-        return (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[] {this.getObjectType()}, this);
+        return (T) Proxy.newProxyInstance(this.getClass().getClassLoader(), new Class[]{this.getObjectType()}, this);
     }
 
     @Override

@@ -35,13 +35,9 @@ public class EntityTag extends AbstractMarkupTag {
     public void setEntityId(String entityId) {
         this.entityId = entityId;
     }
-    public void setParentRegion(RegionModel parent)
-    {
-    	this.parentRegion = parent;
-    }
-    public void setContainerSize(int containerSize)
-    {
-    	this.containerSize = containerSize;
+
+    public void setContainerSize(int containerSize) {
+        this.containerSize = containerSize;
     }
     
     public void setEntity(EntityModel entity) { this.entityRef = entity; }
@@ -54,18 +50,20 @@ public class EntityTag extends AbstractMarkupTag {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
+
         RegionModel region = null;
         final EntityModel entity;
-        if ( entityId != null ) {
-        	 
-             if(parentRegion != null)
-             {
-             	region = parentRegion;	
-             }
-             else
-             {
-             	region = page.getRegions().get(regionName);
-             }
+        WebRequestContext webRequestContext = this.getWebRequestContext();
+        
+        if (entityId != null) {
+
+            parentRegion = webRequestContext.getParentRegion();
+
+            if (parentRegion != null) {
+                region = parentRegion;
+            } else {
+                region = page.getRegions().get(regionName);
+            }
             if (region == null) {
                 LOG.debug("Region not found on page: {}", regionName);
                 return SKIP_BODY;
@@ -78,7 +76,6 @@ public class EntityTag extends AbstractMarkupTag {
             entity = entityRef;
         }
         if (entity != null) {
-            WebRequestContext webRequestContext = this.getWebRequestContext();
             LOG.debug("Including entity: {}/{}", regionName, entity.getId());
             try {
             	pageContext.getRequest().setAttribute("_region_" + regionName, region);

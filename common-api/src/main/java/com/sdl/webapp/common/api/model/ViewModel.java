@@ -8,9 +8,9 @@ import java.util.Map;
 public interface ViewModel {
 
     MvcData getMvcData();
-    
+
     Map<String, String> getXpmMetadata();
-    
+
     String getHtmlClasses();
-    
+
 }

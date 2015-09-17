@@ -18,7 +18,7 @@ public class ParsableHtmlNodeTest {
 
         String htmlTxt = "<div id='region'><p>Hello there!!!</p><a href='#'>LINK</a></div>";
         ParsableHtmlNode markup = new ParsableHtmlNode(htmlTxt);
-        Element html =  markup.getHtmlElement();
+        Element html = markup.getHtmlElement();
         String xpmMarkup = "<!-- Start Component Presentation -->";
         html.prepend(xpmMarkup);
 

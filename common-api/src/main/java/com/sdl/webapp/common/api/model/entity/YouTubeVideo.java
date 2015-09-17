@@ -24,17 +24,17 @@ public class YouTubeVideo extends MediaItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(YouTubeVideo.class);
 
-	
+
     private static final HtmlAttribute CLASS_EMBED_VIDEO_ATTR = new HtmlAttribute("class", "embed-video");
     private static final HtmlElement PLAY_BUTTON_OVERLAY = HtmlBuilders.i().withClass("fa fa-play-circle").build();
     private static final HtmlAttribute ALLOWFULLSCREEN_ATTR = new HtmlAttribute("allowfullscreen", "true");
     private static final HtmlAttribute FRAMEBORDER_ATTR = new HtmlAttribute("frameborder", "0");
-		
+
     private static final int DEFAULT_WIDTH = 640;
     private static final int DEFAULT_HEIGHT = 390;
 
     final MediaHelper mediaHelper = ApplicationContextHolder.getContext().getBean(MediaHelper.class);
-    
+
     private String headline;
 
     private String youTubeId;
@@ -88,34 +88,32 @@ public class YouTubeVideo extends MediaItem {
                 ", height=" + height +
                 '}';
     }
-    
+
     @Override
-    public void readFromXhtmlElement(Node xhtmlElement)
-    {
-    	super.readFromXhtmlElement(xhtmlElement);
-    	this.setYouTubeId(xhtmlElement.getAttributes().getNamedItem("data-youTubeId").getNodeValue());
-    	this.setHeadline(xhtmlElement.getAttributes().getNamedItem("data-headline").getNodeValue());
+    public void readFromXhtmlElement(Node xhtmlElement) {
+        super.readFromXhtmlElement(xhtmlElement);
+        this.setYouTubeId(xhtmlElement.getAttributes().getNamedItem("data-youTubeId").getNodeValue());
+        this.setHeadline(xhtmlElement.getAttributes().getNamedItem("data-headline").getNodeValue());
 
-    	try {
-    		this.setMvcData(new MediaItemMvcData("Core:Entity:YouTubeVideo"));
-    	} catch (DxaException e) {
+        try {
+            this.setMvcData(new MediaItemMvcData("Core:Entity:YouTubeVideo"));
+        } catch (DxaException e) {
 
-    	}
+        }
     }
-    
-	@Override
-	public String toHtml(String widthFactor) {
-		return toHtml(widthFactor, 0, "", 0);
-	}
 
-	@Override
-	public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) {
-		if (Strings.isNullOrEmpty(getUrl()))
-        {
+    @Override
+    public String toHtml(String widthFactor) {
+        return toHtml(widthFactor, 0, "", 0);
+    }
+
+    @Override
+    public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) {
+        if (Strings.isNullOrEmpty(getUrl())) {
             return String.format(
                     "<iframe src=\"https://www.youtube.com/embed/%s?version=3&enablejsapi=1\" id=\"video%s\" class=\"%s\"/>",
                     this.getYouTubeId(), UUID.randomUUID().toString().replaceAll("-", ""), null
-                    );
+            );
         }
 
         String htmlTagName = this.getIsEmbedded() ? "span" : "div";
@@ -123,14 +121,14 @@ public class YouTubeVideo extends MediaItem {
 
         return String.format(
                 "<%s class=\"embed-video\"><img src=\"%s\" alt=\"%s\"><button type=\"button\" data-video=\"%s\" class=\"%s\"><i class=\"fa fa-play-circle\"></i></button></%s>",
-                htmlTagName,placeholderImageUrl,getHeadline(),  getYouTubeId(),  (String) null, htmlTagName
-                );
-	}
-	
-	
-	@Override
+                htmlTagName, placeholderImageUrl, getHeadline(), getYouTubeId(), (String) null, htmlTagName
+        );
+    }
+
+
+    @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
-        
+
         if (Strings.isNullOrEmpty(this.getYouTubeId())) {
             LOG.warn("Skipping YouTube video with empty YouTube ID: {}", this);
             return null;
@@ -140,7 +138,7 @@ public class YouTubeVideo extends MediaItem {
     }
 
     private HtmlElement getYouTubePlaceholder(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
-        
+
         final double imageAspect = aspect == 0.0 ? mediaHelper.getDefaultMediaAspect() : aspect;
 
         final String placeholderImageUrl = mediaHelper.getResponsiveImageUrl(this.getUrl(), widthFactor, imageAspect,
@@ -167,5 +165,5 @@ public class YouTubeVideo extends MediaItem {
                 .build();
     }
 
-	
+
 }

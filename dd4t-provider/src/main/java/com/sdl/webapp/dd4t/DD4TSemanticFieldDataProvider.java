@@ -38,7 +38,7 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
     private final FieldConverterRegistry fieldConverterRegistry;
 
     private final EntityBuilder builder;
-    
+
     private int embeddingLevel = 0;
 
     private final Stack<Map<String, Field>> embeddedFieldsStack = new Stack<>();
@@ -96,10 +96,9 @@ public class DD4TSemanticFieldDataProvider implements SemanticFieldDataProvider 
         final Class<?> targetClass = targetType.getObjectType();
 
         if (MediaItem.class.isAssignableFrom(targetClass) || Link.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
-        	 return ((ComponentLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
-                     FieldType.COMPONENTLINK)).createComponentLink(component, targetClass, this.builder);
-        }  
-        else {
+            return ((ComponentLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
+                    FieldType.COMPONENTLINK)).createComponentLink(component, targetClass, this.builder);
+        } else {
             throw new UnsupportedTargetTypeException(targetType);
         }
     }

@@ -20,10 +20,9 @@ public abstract class AbstractFieldConverter implements FieldConverter {
         return semanticField.isMultiValue() ? fieldValues :
                 (fieldValues != null && !fieldValues.isEmpty() ? fieldValues.get(0) : null);
     }
-    
-    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException
-    {
-    	return getFieldValues(field, targetClass, null);
+
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass) throws FieldConverterException {
+        return getFieldValues(field, targetClass, null);
     }
 
     protected abstract List<?> getFieldValues(BaseField field, Class<?> targetClass, EntityBuilder builder) throws FieldConverterException;

@@ -11,10 +11,10 @@ public interface RequestAttributeNames {
     String LOCALIZATION = "localization";
 
     String MARKUP = "markup";
-    
+
     String MEDIAHELPER = "mediaHelper";
 
     String SCREEN_WIDTH = "screenWidth";
-    
+
     String SOCIALSHARE_URL = "socialshareUrl";
 }

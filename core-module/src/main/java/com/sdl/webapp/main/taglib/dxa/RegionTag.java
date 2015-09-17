@@ -36,41 +36,43 @@ public class RegionTag extends AbstractMarkupTag {
     public void setPlaceholder(boolean placeholder) {
         this.placeholder = placeholder;
     }
-    public void setParentRegion(RegionModel parent)
-    {
-    	this.parentRegion = parent;
+
+    public void setContainerSize(int containerSize) {
+        this.containerSize = containerSize;
     }
     
-    public void setContainerSize(int containerSize)
-    {
-    	this.containerSize = containerSize;
-    }
-
     @Override
     public int doStartTag() throws JspException {
+        WebRequestContext webRequestContext = this.getWebRequestContext();
+        
+        parentRegion = webRequestContext.getParentRegion();
+
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
         if (page == null) {
             LOG.debug("Page not found in request attributes");
             return SKIP_BODY;
         }
+
+        Object parentModel = pageContext.getRequest().getAttribute("ParentModel");
+
+
         RegionModel region = null;
-        if(Strings.isNullOrEmpty(name) || page.getMvcData().getViewName().equals("IncludePage")){
-        	//special case where we wish to render an include page as region
-        	this.pageContext.setAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE, "1");
-        	   // Create a new Region Model which reflects the Page Model
+        if (Strings.isNullOrEmpty(name) || page.getMvcData().getViewName().equals("IncludePage")) {
+            //special case where we wish to render an include page as region
+            this.pageContext.setAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE, "1");
+            // Create a new Region Model which reflects the Page Model
             name = page.getName().replace(" ", "-");
             MvcData mvcData = new SimpleRegionMvcData(name);
-            
+
             RegionModelImpl includeregion = new RegionModelImpl();
             includeregion.setMvcData(mvcData);
             includeregion.setName(name);
             includeregion.setRegions(page.getRegions());
             region = includeregion;
+        } else {
+            region = page.getRegions().get(name);
         }
-        else
-        {
-        	region = page.getRegions().get(name);
-        }
+
         if(parentRegion != null)
         {
         	region = parentRegion.getRegions().get(name);
@@ -89,12 +91,12 @@ public class RegionTag extends AbstractMarkupTag {
 
         if (region != null) {
             LOG.debug("Including region: {}", name);
-
-            WebRequestContext webRequestContext = this.getWebRequestContext();
+            
             try {
                 //pageContext.include(ControllerUtils.getIncludePath(region));
             	pageContext.getRequest().setAttribute("_region_" + name, region);
-            	webRequestContext.pushContainerSize(containerSize);
+                webRequestContext.pushParentRegion(region);
+                webRequestContext.pushContainerSize(containerSize);
 
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
 
@@ -102,6 +104,7 @@ public class RegionTag extends AbstractMarkupTag {
                 throw new JspException("Error while processing region tag: " + name, e);
             }
             finally {
+                webRequestContext.popParentRegion();
                 webRequestContext.popContainerSize();
             }
         } else {

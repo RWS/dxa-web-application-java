@@ -17,12 +17,12 @@ public class DefaultMediaHelperTestConfig {
     public GenericMediaHelper mediaHelper() {
         return new GenericMediaHelper(webRequestContext());
     }
-    
+
     @Bean
     public MockContextEngine contextEngine() {
         return new MockContextEngine(new MockContextClaimsProvider());
     }
-    
+
     @Bean
     public WebRequestContext webRequestContext() {
         return new WebRequestContextImpl() {

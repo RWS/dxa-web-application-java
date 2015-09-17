@@ -49,18 +49,20 @@ public class RegionsTag extends AbstractMarkupTag {
             return SKIP_BODY;
         }
 
+        WebRequestContext webRequestContext = this.getWebRequestContext();
+        
+        parentRegion = webRequestContext.getParentRegion();
+
         Set<String> excludes = new HashSet<>();
         if (!Strings.isNullOrEmpty(exclude)) {
             excludes.addAll(Arrays.asList(exclude.split("\\s*,\\s*")));
         }
 
         RegionModelSet regions = page.getRegions();
-        if(parentRegion != null)
-        {
-        	regions = parentRegion.getRegions();
+        if (parentRegion != null) {
+            regions = parentRegion.getRegions();
         }
-        
-        
+
         for (RegionModel region : regions) {
             String name = region.getName();
             if (excludes.contains(name)) {
@@ -69,17 +71,18 @@ public class RegionsTag extends AbstractMarkupTag {
             }
 
             LOG.debug("Including region: {}", name);
-
-            WebRequestContext webRequestContext = this.getWebRequestContext();
+            
             try {
                 //pageContext.include(ControllerUtils.getIncludePath(region));
             	pageContext.getRequest().setAttribute("_region_" + name, region);
+                webRequestContext.pushParentRegion(region);
                 webRequestContext.pushContainerSize(containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing regions tag", e);
             }
             finally {
+                webRequestContext.popParentRegion();
                 webRequestContext.popContainerSize();
             }
         }

@@ -87,12 +87,12 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
     @Autowired
     public DefaultProvider(PageFactory dd4tPageFactory,
-                               ComponentPresentationFactory dd4tComponentPresentationFactory,
-                               PageBuilder pageBuilder,
-                               EntityBuilder entityBuilder,
-                               LinkResolver linkResolver,
-                               ObjectMapper objectMapper,
-                               WebApplicationContext webApplicationContext) {
+                           ComponentPresentationFactory dd4tComponentPresentationFactory,
+                           PageBuilder pageBuilder,
+                           EntityBuilder entityBuilder,
+                           LinkResolver linkResolver,
+                           ObjectMapper objectMapper,
+                           WebApplicationContext webApplicationContext) {
 
         this.dd4tPageFactory = dd4tPageFactory;
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
@@ -110,13 +110,10 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
             public PageModel tryFindPage(String path, int publicationId) throws ContentProviderException {
                 final org.dd4t.contentmodel.Page genericPage;
                 try {
-                    if(dd4tPageFactory.isPagePublished(path, publicationId))
-                    {
-                    	genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
-                    }
-                    else
-                    {
-                    	return null;
+                    if (dd4tPageFactory.isPagePublished(path, publicationId)) {
+                        genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
+                    } else {
+                        return null;
                     }
                 } catch (ItemNotFoundException e) {
                     LOG.debug("Page not found: [{}] {}", publicationId, path);
@@ -139,16 +136,14 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         try {
             final ComponentPresentation componentPresentation = this.dd4tComponentPresentationFactory.getComponentPresentation(id, templateId);
             return this.entityBuilder.createEntity(componentPresentation, localization);
-        }
-        catch ( ItemNotFoundException e ) {
+        } catch (ItemNotFoundException e) {
             LOG.debug("Dynamic component not found: ID: {} Template ID: {}", id, templateId);
             return null;
-        }
-        catch (FactoryException e) {
+        } catch (FactoryException e) {
             throw new ContentProviderException("Exception while getting entity model for: " + id, e);
         }
     }
-    
+
     private InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
         return findPage(path, localization, new TryFindPage<InputStream>() {
             @Override
@@ -160,7 +155,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                     LOG.debug("Page not found: [{}] {}", publicationId, path);
                     return null;
                 } catch (FactoryException e) {
-                    throw new ContentProviderException("Exception while getting page content for: [" +  publicationId +
+                    throw new ContentProviderException("Exception while getting page content for: [" + publicationId +
                             "] " + path, e);
                 }
 
@@ -249,10 +244,10 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     /* staticcontentprovider code */
     /**
      * Implementation of {@code StaticContentProvider} that uses DD4T to provide static content.
-     *
+     * <p/>
      * TODO: Should use DD4T BinaryFactory instead of calling the Tridion broker API directly.
      */
-    
+
     private static final String STATIC_FILES_DIR = "BinaryData";
 
     private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
@@ -283,7 +278,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     public StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
             throws ContentProviderException {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("getStaticContent: {} [{}] {}", new Object[] { path, localizationId, localizationPath });
+            LOG.trace("getStaticContent: {} [{}] {}", new Object[]{path, localizationId, localizationPath});
         }
 
         final String contentPath;
@@ -426,16 +421,16 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                 // the original, and if we allow stretching.
                 targetW = (pathInfo.isNoStretch() && pathInfo.getWidth() > sourceW) ?
                         sourceW : pathInfo.getWidth();
-                targetH = (int)(sourceH * ((float) targetW / (float) sourceW));
+                targetH = (int) (sourceH * ((float) targetW / (float) sourceW));
             } else {
                 targetH = (pathInfo.isNoStretch() && pathInfo.getHeight() > sourceH) ?
                         sourceH : pathInfo.getHeight();
-                targetW = (int)(sourceW * ((float) targetH / (float) sourceH));
+                targetW = (int) (sourceW * ((float) targetH / (float) sourceH));
             }
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Image: {}, cropX = {}, cropY = {}, sourceW = {}, sourceH = {}, targetW = {}, targetH = {}",
-                        new Object[]{ pathInfo.getFileName(), cropX, cropY, sourceW, sourceH, targetW, targetH });
+                        new Object[]{pathInfo.getFileName(), cropX, cropY, sourceW, sourceH, targetW, targetH});
             }
 
             if (targetW == sourceW && targetH == sourceH) {
@@ -465,15 +460,14 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
             throw new ContentProviderException("Exception while processing image data", e);
         }
     }
-    
-    
-    
+
+
     private static final String NAVIGATION_MODEL_URL = "/navigation.json";
 
     private static final String TYPE_STRUCTURE_GROUP = "StructureGroup";
 
     private final ObjectMapper objectMapper;
-   
+
     @Override
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
         try {
@@ -553,10 +547,9 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
             for (SitemapItem subItem : item.getItems()) {
                 // Fix to correct the breadcrumb
                 // TODO: Implement this propertly
-                if ( firstItem ) {
+                if (firstItem) {
                     firstItem = false;
-                }
-                else {
+                } else {
                     if (createBreadcrumbLinks(subItem, requestPath, links)) {
                         return true;
                     }
@@ -585,6 +578,6 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         link.setLinkText(item.getTitle());
         return link;
     }
-    
-    
+
+
 }

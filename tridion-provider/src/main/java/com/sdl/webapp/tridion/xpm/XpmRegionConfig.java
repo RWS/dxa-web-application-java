@@ -59,7 +59,8 @@ public class XpmRegionConfig {
         }
 
         try (final InputStream in = item.getContent()) {
-            return objectMapper.readValue(in, new TypeReference<List<XpmRegion>>() { });
+            return objectMapper.readValue(in, new TypeReference<List<XpmRegion>>() {
+            });
         } catch (IOException e) {
             LOG.error("Exception while reading XPM regions configuration", e);
             return null;

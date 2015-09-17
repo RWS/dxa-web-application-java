@@ -75,7 +75,8 @@ public class PageModelImpl implements PageModel {
     }
 
     public void setXpmMetadata(Map<String, String> xpmMetadata) {
-        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);;
+        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
+        ;
     }
 
     @Override
@@ -86,16 +87,16 @@ public class PageModelImpl implements PageModel {
     public void setMvcData(MvcData mvcData) {
         this.mvcData = mvcData;
     }
+
     @Override
-    public String getHtmlClasses()
-    {
-    	return this.htmlClasses;
+    public String getHtmlClasses() {
+        return this.htmlClasses;
     }
-    public void setHtmlClasses(String htmlClasses)
-    {
-    	this.htmlClasses = htmlClasses;
+
+    public void setHtmlClasses(String htmlClasses) {
+        this.htmlClasses = htmlClasses;
     }
-    
+
     @Override
     public String toString() {
         return "PageImpl{" +

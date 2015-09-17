@@ -22,7 +22,9 @@ public class DefinePluggableMarkupTag extends BodyTagSupport {
 
     private String label;
 
-    public void setLabel(String label) { this.label = label; }
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
     @Override
     public int doAfterBody() throws JspException {
@@ -34,7 +36,7 @@ public class DefinePluggableMarkupTag extends BodyTagSupport {
     }
 
     protected PluggableMarkupRegistry getPluggableMarkupRegistry() {
-        if ( this.registry == null ) {
+        if (this.registry == null) {
             this.registry = WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
                     .getBean(PluggableMarkupRegistry.class);
         }

@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class ExternalLinkFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.EXTERNALLINK };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.EXTERNALLINK};
 
     @Override
     public FieldType[] supportedFieldTypes() {

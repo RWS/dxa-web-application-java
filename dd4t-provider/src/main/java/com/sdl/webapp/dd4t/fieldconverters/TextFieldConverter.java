@@ -11,7 +11,7 @@ import java.util.List;
 @Component
 public class TextFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.TEXT };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.TEXT};
 
     @Override
     public FieldType[] supportedFieldTypes() {

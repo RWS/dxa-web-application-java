@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.page;
 
 import com.google.common.collect.ImmutableMap;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
@@ -10,6 +11,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class AbstractPageModelImpl implements PageModel {
+
+    private final String XpmPageSettingsMarkup = "<!-- Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\",\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"} -->";
+    private final String XpmPageScript = "<script type=\"text/javascript\" language=\"javascript\" defer=\"defer\" src=\"%s/WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js\" id=\"tridion.siteedit\"></script>";
+
 
     protected String id;
     protected String name;
@@ -100,5 +105,37 @@ public abstract class AbstractPageModelImpl implements PageModel {
     {
         this.htmlClasses = htmlClasses;
     }
+
+    @Override
+    public String getXpmMarkup(Localization localization)
+    {
+        if (getXpmMetadata() == null) {
+            return "";
+        }
+
+        String cmsUrl;
+        if (!getXpmMetadata().containsKey("CmsUrl")) {
+            cmsUrl = localization.getConfiguration("core.cmsurl");
+        }
+        else
+        {
+            cmsUrl = getXpmMetadata().get("CmsUrl");
+        }
+        if (cmsUrl.endsWith("/"))
+        {
+            // remove trailing slash from cmsUrl if present
+            cmsUrl = cmsUrl.substring(0, cmsUrl.length() - 1);
+        }
+
+        return String.format(
+                XpmPageSettingsMarkup,
+                getXpmMetadata().get("PageID"),
+                getXpmMetadata().get("PageModified"),
+                getXpmMetadata().get("PageTemplateID"),
+                getXpmMetadata().get("PageTemplateModified")
+        ) +
+                String.format(XpmPageScript, cmsUrl);
+    }
+
 
 }

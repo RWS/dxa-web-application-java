@@ -81,4 +81,11 @@ public abstract class EclItem extends MediaItem {
 		// TODO implement this functionality
 		throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
 	}
+
+    @Override
+    public String getXpmMarkup(Localization localization)
+    {
+        // replace TCM URI with ECL URI
+        return super.getXpmMarkup(localization).replace(String.format("tcm:{0}-{1}", localization.getId(), this.getId()), getEclUrl());
+    }
 }

@@ -1,11 +1,14 @@
 package com.sdl.webapp.main.taglib.xpm;
 
+import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlMultiNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.Map;
 
@@ -28,7 +31,14 @@ public class XpmPageMarkupTag extends XpmMarkupTag {
 
     @Override
     protected HtmlNode generateXpmMarkup() {
-        final Map<String, String> pageData = page.getXpmMetadata();
+
+        return new HtmlNode() {
+            @Override
+            protected String renderHtml() {
+                return page.getXpmMarkup(getLocalization());
+            }
+        };
+      /*  final Map<String, String> pageData = page.getXpmMetadata();
 
         final String pageId = pageData.get("PageID");
         final String pageModified = pageData.get("PageModified");
@@ -46,6 +56,11 @@ public class XpmPageMarkupTag extends XpmMarkupTag {
                         .withAttribute("src", cmsUrl + "/WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js")
                         .withId(SCRIPT_ID)
                         .build()
-        );
+        );*/
+    }
+
+    private Localization getLocalization() {
+        return WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
+                .getBean(WebRequestContext.class).getLocalization();
     }
 }

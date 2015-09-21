@@ -1,12 +1,17 @@
 package com.sdl.webapp.tridion.xpm;
 
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
 
+import com.sdl.webapp.common.api.xpm.ComponentType;
+import com.sdl.webapp.common.api.xpm.XpmRegion;
+import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-public class XpmRegionConfig {
-    private static final Logger LOG = LoggerFactory.getLogger(XpmRegionConfig.class);
+public class XpmRegionConfigImpl implements XpmRegionConfig {
+    private static final Logger LOG = LoggerFactory.getLogger(XpmRegionConfigImpl.class);
 
     private static final String REGIONS_PATH = "/system/mappings/regions.json";
 
@@ -31,7 +36,7 @@ public class XpmRegionConfig {
     private final ObjectMapper objectMapper;
 
     @Autowired
-    public XpmRegionConfig(ContentProvider contentProvider, ObjectMapper objectMapper) {
+    public XpmRegionConfigImpl(ContentProvider contentProvider, ObjectMapper objectMapper) {
         this.contentProvider = contentProvider;
         this.objectMapper = objectMapper;
     }
@@ -59,8 +64,10 @@ public class XpmRegionConfig {
         }
 
         try (final InputStream in = item.getContent()) {
-            return objectMapper.readValue(in, new TypeReference<List<XpmRegion>>() {
-            });
+            SimpleModule module = new SimpleModule("ComponentTypeMapper", Version.unknownVersion());
+             module.addAbstractTypeMapping(ComponentType.class, ComponentTypeImpl.class);
+            objectMapper.registerModule(module); // important, otherwise won't have any effect on mapper's configuration
+            return objectMapper.readValue(in, new TypeReference<List<XpmRegionImpl>>() { });
         } catch (IOException e) {
             LOG.error("Exception while reading XPM regions configuration", e);
             return null;

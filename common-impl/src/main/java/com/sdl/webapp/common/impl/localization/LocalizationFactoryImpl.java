@@ -90,11 +90,11 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
         final List<JsonSchema> semanticSchemas = parseJsonFileObject(contentProvider,
                 SEMANTIC_SCHEMAS_PATH, id, path, new TypeReference<List<JsonSchema>>() {
-                });
+        });
 
         final List<JsonVocabulary> semanticVocabularies = parseJsonFileObject(contentProvider,
                 SEMANTIC_VOCABULARIES_PATH, id, path, new TypeReference<List<JsonVocabulary>>() {
-                });
+        });
 
         builder.addSemanticSchemas(convertSemantics(semanticSchemas, semanticVocabularies));
 

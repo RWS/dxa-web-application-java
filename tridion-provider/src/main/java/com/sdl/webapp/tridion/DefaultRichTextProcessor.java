@@ -16,6 +16,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.sdl.webapp.common.api.model.*;
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
@@ -43,11 +45,6 @@ import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
-import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.RichText;
-import com.sdl.webapp.common.api.model.RichTextFragment;
-import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
-import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.util.NamedNodeMapAdapter;
@@ -65,7 +62,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
     private static final String XLINK_NS_URI = "http://www.w3.org/1999/xlink";
 
     private static final NamespaceContext NAMESPACE_CONTEXT = new SimpleNamespaceContext(
-            ImmutableBiMap.<String, String>builder()
+            ImmutableBiMap.<String, String> builder()
                     .put("xhtml", XHTML_NS_URI).put("xlink", XLINK_NS_URI)
                     .build());
 
@@ -111,7 +108,6 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
             }
         }
     };
-
     @Autowired
     public DefaultRichTextProcessor(MediaHelper mediaHelper, WebRequestContext webRequestContext,
                                     TridionLinkResolver linkResolver, ComponentPresentationFactory componentFactory, ViewModelRegistry viewModelRegistry) {
@@ -133,7 +129,6 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
     private final ComponentPresentationFactory componentFactory;
 
     private final String EmbeddedEntityProcessingInstructionName = "EmbeddedEntity";
-
     @Override
     public RichText processRichText(String xhtml, Localization localization) {
         try {
@@ -173,7 +168,8 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
         }
     }
 
-    private RichText ResolveRichText(Document doc, Localization localization) throws ContentProviderException, SemanticMappingException {
+    private RichText ResolveRichText(Document doc, Localization localization) throws ContentProviderException, SemanticMappingException
+    {
         List<RichTextFragment> richTextFragments = new LinkedList<RichTextFragment>();
         this.resolveLinks(doc);
 
@@ -193,13 +189,19 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
             final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaTcmUriParts[1]));
 
             String viewName = semanticSchema.getRootElement();
-            final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.GetMappedModelTypes(viewName);
-            if (entityClass == null) {
+            final Class<? extends AbstractEntityModel> entityClass;
+            try {
+                entityClass = (Class<? extends AbstractEntityModel>)viewModelRegistry.getMappedModelTypes(viewName);
+                if (entityClass == null) {
+                    throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
+                            "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+                }
+            } catch (DxaException e) {
                 throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
-                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
             }
 
-            MediaItem mediaItem = (MediaItem) createInstance(entityClass);
+            MediaItem mediaItem = (MediaItem)createInstance(entityClass);
             mediaItem.readFromXhtmlElement(imgElement);
             embeddedEntities.add(mediaItem);
 
@@ -223,14 +225,16 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 
                 int embeddedEntityIndex = matcher.start();
 
-                if (embeddedEntityIndex > lastFragmentIndex) {
+                if (embeddedEntityIndex > lastFragmentIndex)
+                {
                     richTextFragments.add(new RichTextFragmentImpl(xhtml.substring(lastFragmentIndex, embeddedEntityIndex)));
                 }
-                richTextFragments.add((RichTextFragment) embeddedEntities.get(i++));
+                richTextFragments.add((RichTextFragment)embeddedEntities.get(i++));
                 lastFragmentIndex = matcher.end();
             }
 
-            if (lastFragmentIndex < xhtml.length()) {
+            if (lastFragmentIndex < xhtml.length())
+            {
                 // Final text fragment
                 richTextFragments.add(new RichTextFragmentImpl(xhtml.substring(lastFragmentIndex)));
             }

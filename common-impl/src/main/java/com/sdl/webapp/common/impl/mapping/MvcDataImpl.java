@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t;
+package com.sdl.webapp.common.impl.mapping;
 
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -129,6 +129,16 @@ public final class MvcDataImpl implements MvcData {
 
     public void setMetadata(Map<String, Object> metadata) {
         this.metadata = metadata;
+    }
+
+    @Override
+    public boolean equals(Object that) {
+        return this.toString().equals(that.toString());
+    }
+
+    @Override
+    public int hashCode() {
+        return this.toString().hashCode();
     }
 
     @Override

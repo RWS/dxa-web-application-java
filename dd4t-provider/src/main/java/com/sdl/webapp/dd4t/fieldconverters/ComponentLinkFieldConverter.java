@@ -1,7 +1,6 @@
 package com.sdl.webapp.dd4t.fieldconverters;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -61,13 +60,12 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
         return componentLinks;
     }
-
-  /*  public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass)
+      public Object createPageLink(org.dd4t.contentmodel.Page page, Class<?> targetClass)
             throws FieldConverterException {
-        String componentId = component.getId();
-        final String url = linkResolver.resolveLink(componentId, null);
+        String pageId = page.getId();
+        final String url = linkResolver.resolveLink(pageId, null);
 
-        if (targetClass.isAssignableFrom(String.class)) {
+            if (targetClass.isAssignableFrom(String.class)) {
             return url;
         } else if (targetClass.isAssignableFrom(Link.class)) {
             final Link link = new Link();
@@ -77,7 +75,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
             throw new UnsupportedTargetTypeException(targetClass);
         }
     }
-    */
+
     public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass, EntityBuilder builder)
             throws SemanticMappingException {
         String componentId = component.getId();
@@ -89,23 +87,20 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
             final Link link = new Link();
             link.setUrl(url);
             return link;
-        } else if (AbstractEntityModel.class.isAssignableFrom(targetClass)){
-        	Localization localization = this.webRequestContext.getLocalization(); 
+        } else if (AbstractEntityModel.class.isAssignableFrom(targetClass)) {
+            Localization localization = this.webRequestContext.getLocalization();
 
-			try {
 
-                // Map using view model name
-                //
-				Object retval = builder.createEntity(component, localization);
-				if ( targetClass.isAssignableFrom(retval.getClass()) ) {
-					return retval;
-				} else
-				{
-					return null;
-				}
-				
-			} catch (ContentProviderException e) {
+            try {
+                Object retval = builder.createEntity(component, null, localization);
+                if (targetClass.isAssignableFrom(retval.getClass())) {
+                    return retval;
+                } else {
+                    return null;
+                }
 
+            } catch (ContentProviderException e) {
+                
                 // Try to map using model field type
                 //
                 try {
@@ -115,12 +110,10 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
                 catch ( ContentProviderException e2 ) {
                     throw new SemanticMappingException(e);
                 }
-			}
-  			//        	return semanticMapper.createEntity(targetClass.asSubclass(AbstractEntityModel.class), semanticSchema.getSemanticFields(), new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry));
-        }
-        else
-        {
-        	throw new UnsupportedTargetTypeException(targetClass);
+            }
+            //        	return semanticMapper.createEntity(targetClass.asSubclass(AbstractEntityModel.class), semanticSchema.getSemanticFields(), new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry));
+        } else {
+            throw new UnsupportedTargetTypeException(targetClass);
         }
     }
 }

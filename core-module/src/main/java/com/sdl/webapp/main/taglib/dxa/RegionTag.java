@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.SimpleRegionMvcData;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
 
@@ -64,9 +65,13 @@ public class RegionTag extends AbstractMarkupTag {
             name = page.getName().replace(" ", "-");
             MvcData mvcData = new SimpleRegionMvcData(name);
 
-            RegionModelImpl includeregion = new RegionModelImpl();
+            RegionModelImpl includeregion = null;
+            try {
+                includeregion = new RegionModelImpl(name);
+            } catch (DxaException e) {
+                e.printStackTrace();
+            }
             includeregion.setMvcData(mvcData);
-            includeregion.setName(name);
             includeregion.setRegions(page.getRegions());
             region = includeregion;
         } else {
@@ -82,8 +87,12 @@ public class RegionTag extends AbstractMarkupTag {
             // Render the region even if it is not present on the page, so XPM region markup etc can be generated
             //
 
-            RegionModelImpl placeholderRegion = new RegionModelImpl();
-            placeholderRegion.setName(name);
+            RegionModelImpl placeholderRegion = null;
+            try {
+                placeholderRegion = new RegionModelImpl(name);
+            } catch (DxaException e) {
+                e.printStackTrace();
+            }
             placeholderRegion.setMvcData(new SimpleRegionMvcData(name));
             region = placeholderRegion;
             pageContext.getRequest().setAttribute("_region_" + name, placeholderRegion);

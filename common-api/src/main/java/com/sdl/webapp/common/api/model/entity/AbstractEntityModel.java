@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -16,6 +17,8 @@ import java.util.Map;
  */
 @SemanticMappingIgnore
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
+
+    private final String XpmComponentPresentationMarkup = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %s} -->";
 
     @JsonProperty("Id")
     private String id;
@@ -78,6 +81,25 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
         this.htmlClasses = htmlClasses;
     }
 
+
+    @Override
+
+
+    public String getXpmMarkup(Localization localization) {
+        if (getXpmMetadata() == null) {
+            return "";
+        }
+
+        // TODO: Consider data-driven approach (i.e. just render all XpmMetadata key/value pairs)
+        return String.format(
+                XpmComponentPresentationMarkup,
+                getXpmMetadata().get("ComponentID"),
+                getXpmMetadata().get("ComponentModified"),
+                getXpmMetadata().get("ComponentTemplateID"),
+                getXpmMetadata().get("ComponentTemplateModified"),
+                getXpmMetadata().get("IsRepositoryPublished")
+        );
+    }
 
     @Override
     public String toHtml() {

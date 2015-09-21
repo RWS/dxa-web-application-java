@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -40,14 +41,17 @@ public final class EntityBuilder {
 
     private final SemanticMapper semanticMapper;
 
+    private final SemanticMappingRegistry semanticMappingRegistry;
+
     private final FieldConverterRegistry fieldConverterRegistry;
 
     @Autowired
     EntityBuilder(ViewModelRegistry viewModelRegistry, SemanticMapper semanticMapper,
-                  FieldConverterRegistry fieldConverterRegistry) {
+                  FieldConverterRegistry fieldConverterRegistry, SemanticMappingRegistry semanticMappingRegistry) {
         this.viewModelRegistry = viewModelRegistry;
         this.semanticMapper = semanticMapper;
         this.fieldConverterRegistry = fieldConverterRegistry;
+        this.semanticMappingRegistry = semanticMappingRegistry;
     }
 
     EntityModel createEntity(ComponentPresentation componentPresentation, Localization localization)
@@ -68,10 +72,18 @@ public final class EntityBuilder {
             return null;
         }
 
-        final Class<? extends AbstractEntityModel> entityClass = viewModelRegistry.getViewEntityClass(viewName);
+        Class<? extends EntityModel> entityClass = viewModelRegistry.getViewEntityClass(viewName);
+
         if (entityClass == null) {
-            throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
-                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+
+            // Get entity class through semantic mapping registry instead using implicit mapping
+            //
+            entityClass = this.semanticMappingRegistry.getEntityClass(component.getSchema().getRootElement());
+
+            if ( entityClass == null ) {
+                throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
+                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+            }
         }
 
         final SemanticSchema semanticSchema = localization.getSemanticSchemas()
@@ -79,7 +91,7 @@ public final class EntityBuilder {
 
         final AbstractEntityModel entity;
         try {
-            entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
+            entity = semanticMapper.createEntity((Class<? extends AbstractEntityModel>) entityClass, semanticSchema.getSemanticFields(),
                     new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);

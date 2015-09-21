@@ -104,7 +104,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
                 // Try to map using model field type
                 //
                 try {
-                    Object retval = builder.createEntity(component, localization, (Class<AbstractEntityModel>) targetClass);
+                    Object retval = builder.createEntity(component, null, localization, (Class<AbstractEntityModel>) targetClass);
                     return retval;
                 }
                 catch ( ContentProviderException e2 ) {

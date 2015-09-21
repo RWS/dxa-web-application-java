@@ -55,6 +55,7 @@ public class RegionModelImpl implements RegionModel {
         return name;
     }
 
+    // TODO: Should we really expose a setter for the region name when we already set that in the constructor?
     public void setName(String name) {
         this.name = name;
     }

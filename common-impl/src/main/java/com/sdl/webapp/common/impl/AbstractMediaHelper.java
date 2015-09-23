@@ -24,7 +24,7 @@ public abstract class AbstractMediaHelper implements MediaHelper {
 
     private static final String DEFAULT_MEDIA_FILL = "100%";
 
-    private static final int[] IMAGE_WIDTHS = { 160, 320, 640, 1024, 2048 };
+    private static final int[] IMAGE_WIDTHS = {160, 320, 640, 1024, 2048};
 
     private final WebRequestContext webRequestContext;
 

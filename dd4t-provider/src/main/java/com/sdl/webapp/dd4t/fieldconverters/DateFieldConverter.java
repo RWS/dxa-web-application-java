@@ -14,7 +14,7 @@ import java.util.List;
 @Component
 public class DateFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.DATE };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.DATE};
 
     @Override
     public FieldType[] supportedFieldTypes() {

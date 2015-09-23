@@ -37,13 +37,13 @@ public class PluggableMarkupRegistryImpl implements PluggableMarkupRegistry {
         List<HtmlNode> markupList = new ArrayList<>();
 
         List<HtmlNode> globalMarkupList = markupDictionary.get(label);
-        if ( globalMarkupList != null ) {
+        if (globalMarkupList != null) {
             markupList.addAll(globalMarkupList);
         }
         Map<String, List<HtmlNode>> requestMarkupDictionary = contextualMarkupDictionary.get();
-        if ( requestMarkupDictionary != null ) {
+        if (requestMarkupDictionary != null) {
             List<HtmlNode> requestMarkupList = requestMarkupDictionary.get(label);
-            if ( requestMarkupList != null ) {
+            if (requestMarkupList != null) {
                 markupList.addAll(requestMarkupList);
             }
         }
@@ -52,7 +52,7 @@ public class PluggableMarkupRegistryImpl implements PluggableMarkupRegistry {
 
     @Override
     public void registerPluggableMarkup(MarkupType markupType, HtmlNode markup) {
-       this.registerPluggableMarkup(markupType.name().toLowerCase().replace("_", "-"), markup);
+        this.registerPluggableMarkup(markupType.name().toLowerCase().replace("_", "-"), markup);
     }
 
     @Override
@@ -68,7 +68,7 @@ public class PluggableMarkupRegistryImpl implements PluggableMarkupRegistry {
     @Override
     public void registerContextualPluggableMarkup(String label, HtmlNode markup) {
         Map<String, List<HtmlNode>> markupDictionary = contextualMarkupDictionary.get();
-        if ( markupDictionary == null ) {
+        if (markupDictionary == null) {
             markupDictionary = new HashMap<>();
             contextualMarkupDictionary.set(markupDictionary);
         }
@@ -77,7 +77,7 @@ public class PluggableMarkupRegistryImpl implements PluggableMarkupRegistry {
 
     private void registerPluggableMarkup(String label, HtmlNode markup, Map<String, List<HtmlNode>> markupDictionary) {
         List<HtmlNode> markupList = markupDictionary.get(label);
-        if ( markupList == null ) {
+        if (markupList == null) {
             markupList = new ArrayList<>();
             markupDictionary.put(label, markupList);
         }

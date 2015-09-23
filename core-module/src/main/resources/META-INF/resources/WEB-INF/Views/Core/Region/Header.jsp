@@ -6,7 +6,7 @@
 
 <xpm:button region="${region}" />
 
-<dxa:region parentRegion="${region}" name="Info"/>
+<dxa:region name="Info"/>
 <header id="page-header" class="navbar navbar-default">
     <div class="container-fluid page-border">
         <div class="row">
@@ -15,9 +15,9 @@
                     <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                         <i class="fa fa-bars"></i>
                     </button>
-                    <dxa:region parentRegion="${region}" name="Logo"/>
+                    <dxa:region name="Logo"/>
                 </div>
-                <dxa:regions parentRegion="${region}" exclude="Logo,Info" containerSize="12"/>
+                <dxa:regions exclude="Logo,Info" containerSize="12"/>
             </div>
         </div>
     </div>

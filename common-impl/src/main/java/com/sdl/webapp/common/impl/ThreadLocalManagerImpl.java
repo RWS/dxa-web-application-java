@@ -27,7 +27,7 @@ public class ThreadLocalManagerImpl implements ThreadLocalManager {
     }
 
     public void clearAll() {
-        for ( ThreadLocal<?> threadLocal : this.threadLocals ) {
+        for (ThreadLocal<?> threadLocal : this.threadLocals) {
             threadLocal.remove();
         }
     }

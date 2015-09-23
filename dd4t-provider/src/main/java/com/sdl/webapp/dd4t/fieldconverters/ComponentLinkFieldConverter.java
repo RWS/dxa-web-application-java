@@ -25,10 +25,10 @@ import java.util.Map;
 @Component
 public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.COMPONENTLINK, FieldType.MULTIMEDIALINK };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.COMPONENTLINK, FieldType.MULTIMEDIALINK};
 
     private final LinkResolver linkResolver;
-        private final WebRequestContext webRequestContext;
+    private final WebRequestContext webRequestContext;
 
     @Autowired
     public ComponentLinkFieldConverter(LinkResolver linkResolver, WebRequestContext webRequestContext) {
@@ -47,24 +47,24 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
         for (org.dd4t.contentmodel.Component component : field.getLinkedComponentValues()) {
             Object componentLink;
-			try {
-				componentLink = createComponentLink(component, targetClass, builder);
-				 if (componentLink != null) {
-	                componentLinks.add(componentLink);
-	            }
-			} catch (SemanticMappingException e) {
-				// TODO Auto-generated catch block
-				throw new FieldConverterException(e);
-			}
+            try {
+                componentLink = createComponentLink(component, targetClass, builder);
+                if (componentLink != null) {
+                    componentLinks.add(componentLink);
+                }
+            } catch (SemanticMappingException e) {
+                // TODO Auto-generated catch block
+                throw new FieldConverterException(e);
+            }
         }
 
         return componentLinks;
     }
 
-  /*  public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass)
+    public Object createPageLink(org.dd4t.contentmodel.Page page, Class<?> targetClass)
             throws FieldConverterException {
-        String componentId = component.getId();
-        final String url = linkResolver.resolveLink(componentId, null);
+        String pageId = page.getId();
+        final String url = linkResolver.resolveLink(pageId, null);
 
         if (targetClass.isAssignableFrom(String.class)) {
             return url;
@@ -76,7 +76,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
             throw new UnsupportedTargetTypeException(targetClass);
         }
     }
-    */
+
     public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass, EntityBuilder builder)
             throws SemanticMappingException {
         String componentId = component.getId();
@@ -93,7 +93,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         	
         	
 			try {
-				Object retval = builder.createEntity(component, localization);
+				Object retval = builder.createEntity(component,null, localization);
 				if(targetClass.isAssignableFrom(retval.getClass()))
 				{
 					return retval;
@@ -111,7 +111,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         }
         else
         {
-        	throw new UnsupportedTargetTypeException(targetClass);
+            throw new UnsupportedTargetTypeException(targetClass);
         }
     }
 }

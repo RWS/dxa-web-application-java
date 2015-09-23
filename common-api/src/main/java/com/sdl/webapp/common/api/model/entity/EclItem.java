@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 
@@ -15,7 +16,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
  * @author nic
  */
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
-public class EclItem extends MediaItem {
+public abstract class EclItem extends MediaItem {
 
     private String eclUrl;
     private String itemId;
@@ -47,8 +48,7 @@ public class EclItem extends MediaItem {
 
         try {
             return URLDecoder.decode(itemId.replace("!", "%").replace(";", ""), "UTF8");
-        }
-        catch ( UnsupportedEncodingException e ) {
+        } catch (UnsupportedEncodingException e) {
             return itemId;
         }
     }
@@ -62,22 +62,29 @@ public class EclItem extends MediaItem {
                 '}';
     }
 
-	@Override
-	public String toHtml(String widthFactor) {
-		// TODO implement this functionality
-		throw new UnsupportedOperationException("Not yet implemented");
-	}
+    @Override
+    public String toHtml(String widthFactor) {
+        // TODO implement this functionality
+        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
+    }
 
-	@Override
-	public String toHtml(String widthFactor, double aspect, String cssClass,
-			int containerSize) {
-		// TODO implement this functionality
-		throw new UnsupportedOperationException("Not yet implemented");
-	}
-	
-	@Override
-	public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
-		// TODO implement this functionality
-		throw new UnsupportedOperationException("Not yet implemented");
-	}
+    @Override
+    public String toHtml(String widthFactor, double aspect, String cssClass,
+                         int containerSize) {
+        // TODO implement this functionality
+        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
+    }
+
+    @Override
+    public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
+        // TODO implement this functionality
+        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
+    }
+
+    @Override
+    public String getXpmMarkup(Localization localization)
+    {
+        // replace TCM URI with ECL URI
+        return super.getXpmMarkup(localization).replace(String.format("tcm:{0}-{1}", localization.getId(), this.getId()), getEclUrl());
+    }
 }

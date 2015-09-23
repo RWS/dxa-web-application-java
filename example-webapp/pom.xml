@@ -90,6 +90,13 @@
 
     <!-- Dependencies -->
     <dependencies>
+    
+   		 <!-- Tridion Content Delivery -->
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_ambient</artifactId>
+        </dependency>
+    
         <!-- SDL Digital Experience Accelerator -->
         <dependency>
             <groupId>com.sdl</groupId>
@@ -173,11 +180,7 @@
             <artifactId>joda-time</artifactId>
         </dependency>
 
-        <!-- Tridion Content Delivery -->
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_ambient</artifactId>
-        </dependency>
+        
 
         <!-- Enable this to get XPM session working
         <dependency>

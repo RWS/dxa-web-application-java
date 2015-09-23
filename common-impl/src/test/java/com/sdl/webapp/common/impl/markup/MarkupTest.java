@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.impl.markup;
 
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.Markup;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -37,9 +38,13 @@ public class MarkupTest {
 
     @Test
     public void testRegion() {
-        final RegionModelImpl region = new RegionModelImpl();
-        region.setName("TestRegion");
-        assertThat(markup.region(region), is("typeof=\"Region\" resource=\"TestRegion\""));
+        final RegionModelImpl region;
+        try {
+            region = new RegionModelImpl("TestRegion");
+            assertThat(markup.region(region), is("typeof=\"Region\" resource=\"TestRegion\""));
+        } catch (DxaException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test

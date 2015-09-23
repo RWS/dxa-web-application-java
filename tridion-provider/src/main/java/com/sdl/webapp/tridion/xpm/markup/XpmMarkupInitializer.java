@@ -1,7 +1,7 @@
 package com.sdl.webapp.tridion.xpm.markup;
 
+import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import com.sdl.webapp.common.markup.MarkupDecoratorRegistry;
-import com.sdl.webapp.tridion.xpm.XpmRegionConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

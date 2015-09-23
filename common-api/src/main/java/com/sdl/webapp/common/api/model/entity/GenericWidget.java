@@ -17,7 +17,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
 public class GenericWidget extends AbstractEntityModel {
 
     @SemanticProperty("gw:parameters")
-    private Map<String,String> parameters;
+    private Map<String, String> parameters;
 
     // Link to same widget with "full" CT
     //

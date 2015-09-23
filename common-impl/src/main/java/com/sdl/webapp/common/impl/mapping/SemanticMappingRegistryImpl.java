@@ -97,7 +97,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
 
         final Map<String, SemanticVocabulary> vocabularies = new HashMap<>();
 
-        for (Field field : this.getDeclaredFields(entityClass) ) {
+        for (Field field : this.getDeclaredFields(entityClass)) {
             final ListMultimap<String, SemanticPropertyInfo> propertyInfoMap = createSemanticPropertyInfo(field);
             semanticPropertyInfo.putAll(field, propertyInfoMap.values());
 
@@ -135,16 +135,16 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     private List<Field> getDeclaredFields(Class entityClass) {
 
         boolean followInheritanceStructure = true;
-        if ( entityClass.getAnnotation(SemanticEntity.class) == null ) {
+        if (entityClass.getAnnotation(SemanticEntity.class) == null) {
             followInheritanceStructure = false;
         }
         List<Field> declaredFields = new ArrayList<>();
         Class clazz = entityClass;
-        while ( ! clazz.equals(AbstractEntityModel.class) && ! clazz.equals(Object.class) ) {
-            for ( Field field : clazz.getDeclaredFields() ) {
+        while (!clazz.equals(AbstractEntityModel.class) && !clazz.equals(Object.class)) {
+            for (Field field : clazz.getDeclaredFields()) {
                 declaredFields.add(field);
             }
-            if ( !followInheritanceStructure ) break;
+            if (!followInheritanceStructure) break;
             clazz = clazz.getSuperclass();
         }
         return declaredFields;

@@ -26,7 +26,6 @@ public class MediaTag extends HtmlElementTag {
     private static final Logger LOG = LoggerFactory.getLogger(MediaTag.class);
 
 
-
     // TODO: configurize the mime type to Font Awesome mapping
     // filetypes supported by http://fortawesome.github.io/Font-Awesome/icons/#file-type
     private static final Map<String, String> DOWNLOAD_MIME_TYPES = ImmutableMap.<String, String>builder()
@@ -50,7 +49,7 @@ public class MediaTag extends HtmlElementTag {
             .put("video/mpeg", "video")
             .build();
 
-    private static final String[] DOWNLOAD_SIZE_UNITS = { "B", "KB", "MB", "GB", "TB", "PB", "EB" };
+    private static final String[] DOWNLOAD_SIZE_UNITS = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
 
     private MediaItem media;
     private String widthFactor;
@@ -92,19 +91,16 @@ public class MediaTag extends HtmlElementTag {
             return generateDownload();
         }
 */
-        
+
         return media.toHtmlElement(this.widthFactor, this.aspect, this.cssClass, this.containerSize, this.getContextPath());
-        
+
     }
 
-   
-
-   
 
     private String getContextPath() {
         return WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
                 .getBean(WebRequestContext.class).getContextPath();
     }
 
-    
+
 }

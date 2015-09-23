@@ -2,6 +2,7 @@ package com.sdl.webapp.cid;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.impl.WebRequestContextImpl;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +15,11 @@ public class ContextualMediaHelperTestConfig {
     @Bean
     public ContextualMediaHelper mediaHelper() {
         return new ContextualMediaHelper(webRequestContext());
+    }
+
+    @Bean
+    public MockContextEngine contextEngine() {
+        return new MockContextEngine(new MockContextClaimsProvider());
     }
 
     @Bean

@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class NumberFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.NUMBER };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.NUMBER};
 
     @Override
     public FieldType[] supportedFieldTypes() {

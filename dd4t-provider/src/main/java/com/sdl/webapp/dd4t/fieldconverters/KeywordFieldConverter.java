@@ -15,7 +15,7 @@ import java.util.List;
 @Component
 public class KeywordFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.KEYWORD };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.KEYWORD};
 
     @Override
     public FieldType[] supportedFieldTypes() {

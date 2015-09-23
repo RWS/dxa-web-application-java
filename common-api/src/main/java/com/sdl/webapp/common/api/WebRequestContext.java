@@ -1,6 +1,8 @@
 package com.sdl.webapp.common.api;
 
+import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.RegionModel;
 
 /**
  * Provides information relevant for the current request.
@@ -101,4 +103,34 @@ public interface WebRequestContext {
      * @return The maximum media width of the current request.
      */
     int getMaxMediaWidth();
+
+    /**
+     * Gets the contextengine of the current request.
+     *
+     * @return The contextengine of the current request.
+     */
+    ContextEngine getContextEngine();
+
+    boolean getHasNoLocalization();
+
+    void setHasNoLocalization(boolean value);
+
+    String getPageId();
+
+    void setPageId(String value);
+
+    boolean isDeveloperMode();
+
+    boolean getIsInclude();
+
+    void setIsInclude(boolean value);
+
+    void setIsDeveloperMode(boolean value);
+
+
+    RegionModel getParentRegion();
+
+    void pushParentRegion(RegionModel value);
+
+    void popParentRegion();
 }

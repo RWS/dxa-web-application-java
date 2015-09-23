@@ -90,4 +90,25 @@
     <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="getInstance">
         <property name="dataBinder" ref="dcpDataBinderWrapper" />
     </bean>
+
+
+    <!-- Model builder pipeline configuration -->
+
+    <bean id="PageBuilder" class="com.sdl.webapp.dd4t.PageBuilderImpl">
+    </bean>
+    <bean id="EntityBuilder" class="com.sdl.webapp.dd4t.EntityBuilderImpl">
+    </bean>
+    <bean id="ModelBuilderPipelineManager" class="com.sdl.webapp.dd4t.ModelBuilderPipeline" >
+        <property name="pageBuilderHandlers">
+            <list>
+                <ref bean="PageBuilder"/>
+            </list>
+        </property>
+
+        <property name="entityBuilderHandlers">
+            <list>
+                <ref bean="EntityBuilder"/>
+            </list>
+        </property>
+    </bean>
 </beans>

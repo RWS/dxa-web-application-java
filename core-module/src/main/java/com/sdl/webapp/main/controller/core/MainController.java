@@ -103,7 +103,7 @@ public class MainController {
         request.setAttribute(MEDIAHELPER, mediaHelper);
         request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
         request.setAttribute(SOCIALSHARE_URL, webRequestContext.getFullUrl());
-        
+
         final MvcData mvcData = page.getMvcData();
         LOG.trace("Page MvcData: {}", mvcData);
 
@@ -165,7 +165,7 @@ public class MainController {
     /**
      * Handles non-specific exceptions.
      *
-     * @param request The request.
+     * @param request   The request.
      * @param exception The exception.
      * @return The name of the view that renders the "internal server error" page.
      */

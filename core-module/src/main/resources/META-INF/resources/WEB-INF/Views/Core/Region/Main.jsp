@@ -4,5 +4,5 @@
 <jsp:useBean id="region" type="com.sdl.webapp.common.api.model.RegionModel" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <div ${markup.region(region)}>
-    <dxa:entities  parentRegion="${region}"  region="Main"/>
+    <dxa:entities region="Main"/>
 </div>

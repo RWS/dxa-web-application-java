@@ -3,14 +3,17 @@ package com.sdl.webapp.tridion.xpm.markup;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
+import com.sdl.webapp.common.api.xpm.ComponentType;
+import com.sdl.webapp.common.api.xpm.XpmRegion;
+import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import com.sdl.webapp.common.markup.MarkupDecorator;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.ParsableHtmlNode;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
-import com.sdl.webapp.tridion.xpm.ComponentType;
-import com.sdl.webapp.tridion.xpm.XpmRegion;
-import com.sdl.webapp.tridion.xpm.XpmRegionConfig;
+import com.sdl.webapp.tridion.xpm.ComponentTypeImpl;
+import com.sdl.webapp.tridion.xpm.XpmRegionConfigImpl;
+import com.sdl.webapp.tridion.xpm.XpmRegionImpl;
 import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -35,7 +38,7 @@ public class RegionXpmMarkup implements MarkupDecorator {
     @Override
     public HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext) {
 
-        if ( webRequestContext.isPreview() ) {
+        if (webRequestContext.isPreview()) {
             RegionModel region = (RegionModel) model;
 
             // TODO determine min occurs and max occurs for the region
@@ -47,19 +50,19 @@ public class RegionXpmMarkup implements MarkupDecorator {
 
                 boolean markupInjected = false;
 
-                if ( markup instanceof ParsableHtmlNode ) {
+                if (markup instanceof ParsableHtmlNode) {
 
                     // Inject the region markup with the XPM markup
                     //
                     ParsableHtmlNode regionMarkup = (ParsableHtmlNode) markup;
                     Element html = regionMarkup.getHtmlElement();
-                    if ( html != null && ! this.isFirstNodeXpmEntityXPMMarkup(html) ) {
+                    if (html != null && !this.isFirstNodeXpmEntityXPMMarkup(html)) {
                         html.prepend(buildXpmMarkup(region, xpmRegion, minOccurs, maxOccurs).toHtml());
                         markupInjected = true;
                     }
                 }
 
-                if ( !markupInjected ) {
+                if (!markupInjected) {
 
                     // Surround the region with XPM markup
                     //
@@ -79,13 +82,12 @@ public class RegionXpmMarkup implements MarkupDecorator {
 
     private boolean isFirstNodeXpmEntityXPMMarkup(Element html) {
 
-        for (Node child : html.childNodes() ) {
-            if ( child instanceof Element ) {
+        for (Node child : html.childNodes()) {
+            if (child instanceof Element) {
                 return false;
-            }
-            else if ( child instanceof Comment ) {
+            } else if (child instanceof Comment) {
                 Comment comment = (Comment) child;
-                if ( comment.getData().startsWith(" Start Component Presentation") ) {
+                if (comment.getData().startsWith(" Start Component Presentation")) {
                     return true;
                 }
             }

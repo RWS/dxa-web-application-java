@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.mapping.*;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.RichText;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 
 import org.slf4j.Logger;
@@ -36,10 +37,11 @@ public class SemanticMapperImpl implements SemanticMapper {
         this.registry = registry;
     }
 
+
     @Override
-    public <T extends AbstractEntityModel> T createEntity(Class<? extends T> entityClass,
-                                                     final Map<FieldSemantics, SemanticField> semanticFields,
-                                                     final SemanticFieldDataProvider fieldDataProvider)
+    public <T extends ViewModel> T createEntity(Class<? extends T> entityClass,
+                                                          final Map<FieldSemantics, SemanticField> semanticFields,
+                                                          final SemanticFieldDataProvider fieldDataProvider)
             throws SemanticMappingException {
         final T entity = createInstance(entityClass);
 
@@ -80,13 +82,10 @@ public class SemanticMapperImpl implements SemanticMapper {
                                 }
 
                                 field.setAccessible(true);
-                                if(field.getType().equals(RichText.class) && fieldValue.getClass().equals(String.class))
-                                {
-                                	field.set(entity, new RichText((String)fieldValue));
-                                }
-                                else
-                                {
-                                	field.set(entity, fieldValue);
+                                if (field.getType().equals(RichText.class) && fieldValue.getClass().equals(String.class)) {
+                                    field.set(entity, new RichText((String) fieldValue));
+                                } else {
+                                    field.set(entity, fieldValue);
                                 }
 
                                 final String propertyData = fieldData.getPropertyData();
@@ -146,13 +145,15 @@ public class SemanticMapperImpl implements SemanticMapper {
         });
 
         // Set property data (used for semantic markup)
-        entity.setXpmPropertyMetadata(propertyDataBuilder.build());
-
+        if(AbstractEntityModel.class.isAssignableFrom(entity.getClass())) {
+            ((AbstractEntityModel) entity).setXpmPropertyMetadata(propertyDataBuilder.build());
+        }
         LOG.trace("entity: {}", entity);
         return entity;
     }
 
-    private <T extends AbstractEntityModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
+
+    private <T extends ViewModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("entityClass: {}", entityClass.getName());
         }

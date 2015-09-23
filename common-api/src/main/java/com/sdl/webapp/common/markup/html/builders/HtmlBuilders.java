@@ -17,7 +17,9 @@ public final class HtmlBuilders {
         return element("div");
     }
 
-    public static SimpleElementBuilder span() { return element("span"); }
+    public static SimpleElementBuilder span() {
+        return element("span");
+    }
 
     public static SimpleElementBuilder i() {
         return element("i");

@@ -4,14 +4,15 @@ import java.util.StringTokenizer;
 
 /**
  * TCM Utils
- *
+ * <p/>
  * Simple utility functions to process TCM-URIs.
  *
  * @author nic
  */
 public final class TcmUtils {
 
-    private TcmUtils() {}
+    private TcmUtils() {
+    }
 
     static public String buildPublicationTcmUri(int publicationId) {
         return "tcm:0-" + publicationId + "-1";
@@ -23,7 +24,7 @@ public final class TcmUtils {
 
     static public int getItemId(String tcmUri) {
         StringTokenizer tokenizer = new StringTokenizer(tcmUri, ":-");
-        if ( tokenizer.countTokens() > 2 ) {
+        if (tokenizer.countTokens() > 2) {
             tokenizer.nextToken();
             tokenizer.nextToken();
             return Integer.parseInt(tokenizer.nextToken());
@@ -45,13 +46,13 @@ public final class TcmUtils {
     static public String localizeTcmUri(String tcmUri, int publicationId) {
         StringTokenizer tokenizer = new StringTokenizer(tcmUri, ":-");
         String localizedTcmUri = "tcm:" + publicationId;
-        tokenizer.nextToken(); tokenizer.nextToken();
-        while ( tokenizer.hasMoreTokens() ) {
+        tokenizer.nextToken();
+        tokenizer.nextToken();
+        while (tokenizer.hasMoreTokens()) {
             localizedTcmUri += "-" + tokenizer.nextToken();
         }
         return localizedTcmUri;
     }
-
 
 
 }

@@ -28,7 +28,7 @@ public class MarkupDecoratorRegistryImpl implements MarkupDecoratorRegistry {
     @Override
     public void registerDecorator(String decoratorId, MarkupDecorator decorator) {
         List<MarkupDecorator> decoratorList = this.markupDecorators.get(decoratorId);
-        if ( decoratorList == null ) {
+        if (decoratorList == null) {
             decoratorList = new ArrayList<>();
             this.markupDecorators.put(decoratorId, decoratorList);
         }
@@ -40,7 +40,7 @@ public class MarkupDecoratorRegistryImpl implements MarkupDecoratorRegistry {
     @Override
     public List<MarkupDecorator> getDecorators(String decoratorId) {
         List<MarkupDecorator> decoratorList = this.markupDecorators.get(decoratorId);
-        if ( decoratorList == null ) {
+        if (decoratorList == null) {
             decoratorList = Collections.emptyList();
         }
         return decoratorList;

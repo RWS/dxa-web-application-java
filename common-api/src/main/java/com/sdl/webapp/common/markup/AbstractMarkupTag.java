@@ -31,6 +31,7 @@ public class AbstractMarkupTag extends TagSupport {
 
         StringWriter sw = new StringWriter();
         pageContext.pushBody(sw);
+        pageContext.getRequest().setAttribute("ParentModel", model);
         pageContext.include(include);
         String renderedHtml = sw.toString();
         ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);
@@ -39,13 +40,14 @@ public class AbstractMarkupTag extends TagSupport {
         //pageContext.getOut().write(decoratedMarkup.toHtml());
         return decoratedMarkup.toHtml();
     }
-    
+
     protected void decorateInclude(String include, ViewModel model) throws IOException, ServletException {
 
         // TODO: Consider to replace with an annotation instead
 
         StringWriter sw = new StringWriter();
         pageContext.pushBody(sw);
+        pageContext.getRequest().setAttribute("ParentModel", model);
         pageContext.include(include);
         String renderedHtml = sw.toString();
         ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);
@@ -57,14 +59,14 @@ public class AbstractMarkupTag extends TagSupport {
     protected HtmlNode decorateMarkup(HtmlNode markup, ViewModel model) {
         HtmlNode processedMarkup = markup;
         List<MarkupDecorator> markupDecorators = this.getMarkupDecoratorRegistry().getDecorators(this.getDecoratorId());
-        for ( MarkupDecorator markupDecorator : markupDecorators ) {
+        for (MarkupDecorator markupDecorator : markupDecorators) {
             processedMarkup = markupDecorator.process(processedMarkup, model, this.getWebRequestContext());
         }
         return processedMarkup;
     }
 
     protected MarkupDecoratorRegistry getMarkupDecoratorRegistry() {
-        if ( markupDecoratorRegistry == null ) {
+        if (markupDecoratorRegistry == null) {
             markupDecoratorRegistry = WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
                     .getBean(MarkupDecoratorRegistry.class);
         }

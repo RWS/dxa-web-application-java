@@ -19,7 +19,9 @@ public class PluggableMarkupTag extends TagSupport {
 
     private String label;
 
-    public void setLabel(String label) { this.label = label; }
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
     @Override
     public int doStartTag() throws JspException {
@@ -28,16 +30,15 @@ public class PluggableMarkupTag extends TagSupport {
             for (HtmlNode markup : this.getPluggableMarkupRegistry().getPluggableMarkup(this.label)) {
                 pageContext.getOut().write(markup.toHtml());
             }
-        }
-        catch ( IOException e ) {
-           throw new JspException("Error while generating pluggable markup for label=" + this.label, e);
+        } catch (IOException e) {
+            throw new JspException("Error while generating pluggable markup for label=" + this.label, e);
         }
 
         return SKIP_BODY;
     }
 
     protected PluggableMarkupRegistry getPluggableMarkupRegistry() {
-        if ( this.registry == null ) {
+        if (this.registry == null) {
             this.registry = WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
                     .getBean(PluggableMarkupRegistry.class);
         }

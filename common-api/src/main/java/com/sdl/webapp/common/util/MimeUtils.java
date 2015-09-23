@@ -14,9 +14,10 @@ import java.util.HashMap;
  */
 public final class MimeUtils {
 
-    private MimeUtils() {}
+    private MimeUtils() {
+    }
 
-    static HashMap<String,String> MIME_TYPES = new HashMap<>();
+    static HashMap<String, String> MIME_TYPES = new HashMap<>();
 
     static {
 
@@ -186,12 +187,12 @@ public final class MimeUtils {
     static public String getMimeType(URL url) throws IOException {
 
         // First try to get MIME type by peeking the input stream
-        InputStream is = new BufferedInputStream( url.openStream());
+        InputStream is = new BufferedInputStream(url.openStream());
         String mimeType = URLConnection.guessContentTypeFromStream(is);
         is.close();
 
         // If not found -> fallback using the file suffix
-        if ( mimeType == null ) {
+        if (mimeType == null) {
             mimeType = getMimeType(url.getFile());
         }
 
@@ -200,8 +201,8 @@ public final class MimeUtils {
 
     static public String getMimeType(String filename) {
         int suffixIndex = filename.lastIndexOf(".");
-        if ( suffixIndex != -1 ) {
-            String suffix = filename.substring(suffixIndex+1);
+        if (suffixIndex != -1) {
+            String suffix = filename.substring(suffixIndex + 1);
             return MIME_TYPES.get(suffix);
         }
         return null;

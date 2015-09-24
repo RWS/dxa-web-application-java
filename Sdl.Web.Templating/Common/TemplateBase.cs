@@ -499,23 +499,30 @@ namespace Sdl.Web.Tridion.Common
             return null;
         }
         
-        protected static string GetRegionFromTemplate(ComponentTemplate template)
+        protected static string GetRegionName(ComponentTemplate template)
         {
             // check CT metadata
             if (template.MetadataSchema != null && template.Metadata != null)
             {
                 ItemFields meta = new ItemFields(template.Metadata, template.MetadataSchema);
-                string region = meta.GetTextValue("regionView");
-                if (!String.IsNullOrEmpty(region))
+
+                string regionName = meta.GetTextValue("regionName");
+                if (!String.IsNullOrEmpty(regionName))
+                {
+                    return regionName;
+                }
+
+                string regionViewName = meta.GetTextValue("regionView");
+                if (!String.IsNullOrEmpty(regionViewName))
                 {
                     // strip module from fully qualified name
                     // since we need just the region name here as the web application can't deal with fully qualified region names yet
-                    return StripModuleFromName(region);
+                    return StripModuleFromName(regionViewName);
                 }
             }
 
             // fallback use template title
-            Match match = Regex.Match(template.Title, @".*?\[(.*?)\]");
+            Match match = Regex.Match(template.Title, @".*?\[(.+?)\]");
             if (match.Success)
             {
                 // strip module from fully qualified name

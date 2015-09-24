@@ -202,11 +202,11 @@ namespace Sdl.Web.Tridion.Templates
             ComponentTemplatesFilter templateFilter = new ComponentTemplatesFilter(Engine.GetSession()) { BaseColumns = ListBaseColumns.Extended };
             foreach (ComponentTemplate template in GetPublication().GetComponentTemplates(templateFilter))
             {
-                string region = GetRegionFromTemplate(template);
+                string regionName = GetRegionName(template);
                 
-                if (!regions.ContainsKey(region))
+                if (!regions.ContainsKey(regionName))
                 {
-                    regions.Add(region, new List<string>());
+                    regions.Add(regionName, new List<string>());
                 }
 
                 StringBuilder allowedComponentTypes = new StringBuilder();
@@ -227,7 +227,7 @@ namespace Sdl.Web.Tridion.Templates
                 // do not append empty strings (template.RelatedSchemas can be empty)
                 if (allowedComponentTypes.Length > 0)
                 {
-                    regions[region].Add(allowedComponentTypes.ToString());
+                    regions[regionName].Add(allowedComponentTypes.ToString());
                 }
             }
             return regions;

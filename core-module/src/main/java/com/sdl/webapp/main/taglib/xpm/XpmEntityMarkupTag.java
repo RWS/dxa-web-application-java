@@ -56,6 +56,8 @@ public class XpmEntityMarkupTag extends XpmMarkupTag {
     }
 
     private Localization getLocalization() {
+        if(pageContext == null)
+            return null;
         return WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
                 .getBean(WebRequestContext.class).getLocalization();
     }

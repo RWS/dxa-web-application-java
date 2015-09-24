@@ -15,7 +15,6 @@ import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.SimpleRegionMvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.impl.mapping.MvcDataImpl;
-import com.sun.deploy.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -141,9 +140,9 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         }
 
         if (!semanticInfo.PublicSemanticTypes.isEmpty()) {
-            LOG.debug("Model type '%s' has semantic type(s) '%s'.", modelType.getName(), StringUtils.join(semanticInfo.PublicSemanticTypes, " "));
+            LOG.debug("Model type '%s' has semantic type(s) '%s'.", modelType.getName(), semanticInfo.PublicSemanticTypes); //StringUtils.join(semanticInfo.PublicSemanticTypes, " "));
             for (Map.Entry<String, List<String>> kvp : semanticInfo.SemanticProperties.entrySet()) {
-                LOG.debug("\tRegistered property '%s' as semantic property '%s'", kvp.getKey(), StringUtils.join(kvp.getValue(), " "));
+                LOG.debug("\tRegistered property '%s' as semantic property '%s'", kvp.getKey(), kvp.getValue()); //StringUtils.join(kvp.getValue(), " "));
             }
         }
         return semanticInfo;

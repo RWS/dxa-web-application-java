@@ -17,6 +17,7 @@
         <module>core-module</module>
         <module>cid-module</module>
         <module>example-webapp</module>
+        <module>dxa-testmodule</module>
     </modules>
 
     <profiles>

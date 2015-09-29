@@ -83,16 +83,26 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private static final String DEFAULT_AREA_NAME = "Core";
     private static final String PAGE_CONTROLLER_NAME = "Page";
+    private static final String REGION_CONTROLLER_NAME = "Region";
     private static final String PAGE_ACTION_NAME = "Page";
+    private static final String REGION_ACTION_NAME = "Region";
 
-    private void registerPageViewModel(String viewName, Class<? extends ViewModel> pageModelClass) throws DxaException {
+    @Override
+    public void registerPageViewModel(String viewName, Class<? extends ViewModel> pageModelClass) throws DxaException {
         MvcDataImpl mvcData = new MvcDataImpl(viewName);
         mvcData.setControllerAreaName(DEFAULT_AREA_NAME);
         mvcData.setControllerName(PAGE_CONTROLLER_NAME);
         mvcData.setActionName(PAGE_ACTION_NAME);
         registerViewModel(mvcData, pageModelClass);
     }
-
+    @Override
+    public void registerRegionViewModel(String viewName, Class<? extends ViewModel> regionModelClass) throws DxaException {
+        MvcDataImpl mvcData = new MvcDataImpl(viewName);
+        mvcData.setControllerAreaName(DEFAULT_AREA_NAME);
+        mvcData.setControllerName(REGION_CONTROLLER_NAME);
+        mvcData.setActionName(REGION_ACTION_NAME);
+        registerViewModel(mvcData, regionModelClass);
+    }
     private class SemanticInfo {
         final Map<String, String> PrefixMappings = new HashMap<>();
         final List<String> PublicSemanticTypes = new ArrayList<String>();
@@ -150,6 +160,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private SemanticInfo ExtractSemanticInfo(Class<? extends ViewModel> modelType) {
         return new SemanticInfo();
+
 //        SemanticInfo semanticInfo = new SemanticInfo();
 //
 //        // Built-in semantic type mapping
@@ -245,7 +256,21 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                                 thisKey.getAreaName().equals(viewData.getAreaName());
                     }
                 };
+        Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>> keyNamePredicateNoArea =
+                new Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>>() {
+                    @Override
+                    public boolean apply(Map.Entry<MvcData, Class<? extends ViewModel>> input) {
+                        MvcData thisKey = input.getKey();
+                        return thisKey.getViewName().equals(viewData.getViewName()) &&
+                                ((thisKey.getControllerAreaName() == null && viewData.getControllerAreaName() == null ) ||(thisKey.getControllerAreaName().equals(viewData.getControllerAreaName()))) &&
+                                ((thisKey.getControllerName() == null && viewData.getControllerName() == null ) ||(thisKey.getControllerName().equals(viewData.getControllerName())));
+                    }
+                };
         Map<MvcData, Class<? extends ViewModel>> possibleValues = Maps.filterEntries(this.viewEntityClassMap, keyNamePredicate);
+        if (possibleValues.isEmpty()) {
+            //first let's see if there is another relevant view
+            possibleValues = Maps.filterEntries(this.viewEntityClassMap, keyNamePredicateNoArea);
+        }
         if (possibleValues.isEmpty()) {
             throw new DxaException(String.format("Could not find a view model for the view data %s", viewData));
         } else {
@@ -263,11 +288,22 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Override
     public Class<? extends ViewModel> getViewEntityClass(final String viewName) throws DxaException {
 
+
         Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>> keyNamePredicate =
                 new Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>>() {
                     @Override
                     public boolean apply(Map.Entry<MvcData, Class<? extends ViewModel>> input) {
-                        return input.getKey().getViewName().equals(viewName);
+                        String[] viewNames = new String[2];
+                        if(viewName.contains(":"))
+                        {
+                            viewNames = viewName.split(":");
+                        }
+                        else
+                        {
+                            viewNames[0]="Core";
+                            viewNames[1] = viewName;
+                        }
+                        return input.getKey().getViewName().equals(viewNames[1]) && input.getKey().getAreaName().equals(viewNames[0]);
                     }
                 };
 

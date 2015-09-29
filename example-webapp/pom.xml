@@ -241,5 +241,12 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- custom modules -->
+        <dependency>
+            <groupId>com.sdl</groupId>
+            <artifactId>dxa.testmodule</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 </project>

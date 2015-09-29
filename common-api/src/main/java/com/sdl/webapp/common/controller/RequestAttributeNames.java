@@ -17,4 +17,6 @@ public interface RequestAttributeNames {
     String SCREEN_WIDTH = "screenWidth";
 
     String SOCIALSHARE_URL = "socialshareUrl";
+
+    String CONTEXTENGINE = "contextengine";
 }

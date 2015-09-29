@@ -26,6 +26,8 @@ public interface ViewModelRegistry {
      */
     Class<? extends ViewModel> getViewEntityClass(String viewName) throws DxaException;
 
+
+
     /**
      * Returns the entity type to use for a sepecific semantic type
      *
@@ -43,4 +45,8 @@ public interface ViewModelRegistry {
      * @param entityClass The class to register
      */
     void registerViewModel(MvcData viewData,  Class<? extends ViewModel> entityClass);
+
+    void registerPageViewModel(String viewName, Class<? extends ViewModel> pageModelClass) throws DxaException;
+    void registerRegionViewModel(String viewName, Class<? extends ViewModel> regionModelClass) throws DxaException;
+
 }

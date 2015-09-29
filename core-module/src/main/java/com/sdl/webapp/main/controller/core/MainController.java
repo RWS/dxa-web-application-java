@@ -103,6 +103,7 @@ public class MainController {
         request.setAttribute(MEDIAHELPER, mediaHelper);
         request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
         request.setAttribute(SOCIALSHARE_URL, webRequestContext.getFullUrl());
+        request.setAttribute(CONTEXTENGINE, webRequestContext.getContextEngine());
 
         final MvcData mvcData = page.getMvcData();
         LOG.trace("Page MvcData: {}", mvcData);

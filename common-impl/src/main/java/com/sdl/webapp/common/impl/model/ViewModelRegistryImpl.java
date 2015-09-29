@@ -80,7 +80,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         }
     }
 
-
     private static final String DEFAULT_AREA_NAME = "Core";
     private static final String PAGE_CONTROLLER_NAME = "Page";
     private static final String REGION_CONTROLLER_NAME = "Region";
@@ -288,22 +287,22 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Override
     public Class<? extends ViewModel> getViewEntityClass(final String viewName) throws DxaException {
 
-
+        final String areaName;
+        final String scopedViewName;
+        if ( !viewName.contains(":") ) { // Core module
+            areaName = "Core";
+            scopedViewName = viewName;
+        }
+        else {
+            String[] parts = viewName.split(":");
+            areaName = parts[0];
+            scopedViewName = parts[1];
+        }
         Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>> keyNamePredicate =
                 new Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>>() {
                     @Override
                     public boolean apply(Map.Entry<MvcData, Class<? extends ViewModel>> input) {
-                        String[] viewNames = new String[2];
-                        if(viewName.contains(":"))
-                        {
-                            viewNames = viewName.split(":");
-                        }
-                        else
-                        {
-                            viewNames[0]="Core";
-                            viewNames[1] = viewName;
-                        }
-                        return input.getKey().getViewName().equals(viewNames[1]) && input.getKey().getAreaName().equals(viewNames[0]);
+                        return input.getKey().getAreaName().equals(areaName) && input.getKey().getViewName().equals(scopedViewName);
                     }
                 };
 

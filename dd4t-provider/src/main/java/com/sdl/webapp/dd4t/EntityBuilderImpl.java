@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -43,12 +44,15 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
     private final FieldConverterRegistry fieldConverterRegistry;
 
+    private final SemanticMappingRegistry semanticMappingRegistry;
+
     @Autowired
     EntityBuilderImpl(ViewModelRegistry viewModelRegistry, SemanticMapper semanticMapper,
-                  FieldConverterRegistry fieldConverterRegistry) {
+                  FieldConverterRegistry fieldConverterRegistry, SemanticMappingRegistry semanticMappingRegistry) {
         this.viewModelRegistry = viewModelRegistry;
         this.semanticMapper = semanticMapper;
         this.fieldConverterRegistry = fieldConverterRegistry;
+        this.semanticMappingRegistry = semanticMappingRegistry;
     }
 
     @Override
@@ -70,16 +74,22 @@ public final class EntityBuilderImpl implements EntityBuilder {
             return null;
         }
 
-        final Class<? extends AbstractEntityModel> entityClass;
+        Class<? extends EntityModel> entityClass;
         try {
-            entityClass = (Class<? extends AbstractEntityModel>)viewModelRegistry.getViewEntityClass(viewName);
+            entityClass = (Class<? extends EntityModel>) viewModelRegistry.getViewEntityClass(viewName);
             if (entityClass == null) {
                 throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
                         "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
             }
         } catch (DxaException e) {
-            throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
-                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
+
+            // Get entity class through semantic mapping registry instead using implicit mapping
+            //
+            entityClass = this.semanticMappingRegistry.getEntityClass(component.getSchema().getRootElement());
+            if ( entityClass == null ) {
+                throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
+                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
+            }
         }
 
 
@@ -88,7 +98,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
         final AbstractEntityModel entity;
         try {
-            entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
+            entity = semanticMapper.createEntity((Class<? extends AbstractEntityModel>) entityClass, semanticSchema.getSemanticFields(),
                     new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
@@ -126,7 +136,34 @@ public final class EntityBuilderImpl implements EntityBuilder {
     }
 
     @Override
+    public EntityModel createEntity(org.dd4t.contentmodel.Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
+            throws ContentProviderException {
+        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
+        return createEntity(component, localization,entityClass, semanticSchema);
+    }
+
     public EntityModel createEntity(org.dd4t.contentmodel.Component component, EntityModel originalEntityModel, Localization localization)
+            throws ContentProviderException {
+
+        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
+        String semanticTypeName = semanticSchema.getRootElement();
+        final Class<? extends AbstractEntityModel> entityClass;
+        try {
+            entityClass = (Class<? extends AbstractEntityModel>)viewModelRegistry.getMappedModelTypes(semanticTypeName);
+            if (entityClass == null) {
+                throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
+                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+            }
+        } catch (DxaException e) {
+            throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
+                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
+        }
+
+        return createEntity(component, localization, entityClass, semanticSchema);
+    }
+
+
+    public EntityModel createEntityOLD(org.dd4t.contentmodel.Component component, EntityModel originalEntityModel, Localization localization)
             throws ContentProviderException {
        // final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
         final String componentId = component.getId();
@@ -179,6 +216,47 @@ public final class EntityBuilderImpl implements EntityBuilder {
         //entity.setMvcData(createMvcData(componentPresentation));
 
              
+        return entity;
+    }
+
+    private EntityModel createEntity(org.dd4t.contentmodel.Component component, Localization localization, Class<? extends AbstractEntityModel> entityClass, SemanticSchema semanticSchema)
+            throws ContentProviderException {
+
+        final String componentId = component.getId();
+        LOG.debug("Creating entity for component: {}", componentId);
+        final AbstractEntityModel entity;
+        try {
+            entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
+                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this));
+        } catch (SemanticMappingException e) {
+            throw new ContentProviderException(e);
+        }
+
+        entity.setId(componentId.split("-")[1]);
+
+        // Special handling for media items
+        //
+        if (entity instanceof MediaItem && component.getMultimedia() != null &&
+                !Strings.isNullOrEmpty(component.getMultimedia().getUrl())) {
+            final Multimedia multimedia = component.getMultimedia();
+            final MediaItem mediaItem = (MediaItem) entity;
+            mediaItem.setUrl(multimedia.getUrl());
+            mediaItem.setFileName(multimedia.getFileName());
+            mediaItem.setFileSize(multimedia.getSize());
+            mediaItem.setMimeType(multimedia.getMimeType());
+
+            // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
+            //
+            if (entity instanceof EclItem) {
+                final EclItem eclItem = (EclItem) entity;
+                eclItem.setEclUrl(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+            }
+        }
+
+        //createEntityData(entity, componentPresentation);
+        //entity.setMvcData(createMvcData(componentPresentation));
+
+
         return entity;
     }
     

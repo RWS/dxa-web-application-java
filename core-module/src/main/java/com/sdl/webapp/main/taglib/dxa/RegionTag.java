@@ -1,7 +1,7 @@
 package com.sdl.webapp.main.taglib.dxa;
 
-import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
@@ -11,8 +11,6 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
 
-import com.sdl.webapp.common.util.ApplicationContextHolder;
-import org.dd4t.core.request.RequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.WebUtils;
@@ -27,13 +25,11 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 public class RegionTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionTag.class);
 
-    private final WebRequestContext webRequestContext = ApplicationContextHolder.getContext().getBean(WebRequestContext.class);
-
     private String name;
     private boolean placeholder;
     private RegionModel parentRegion;
     private int containerSize;
-
+    
     public void setName(String name) {
         this.name = name;
     }
@@ -45,10 +41,11 @@ public class RegionTag extends AbstractMarkupTag {
     public void setContainerSize(int containerSize) {
         this.containerSize = containerSize;
     }
-
+    
     @Override
     public int doStartTag() throws JspException {
-
+        WebRequestContext webRequestContext = this.getWebRequestContext();
+        
         parentRegion = webRequestContext.getParentRegion();
 
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
@@ -80,11 +77,13 @@ public class RegionTag extends AbstractMarkupTag {
         } else {
             region = page.getRegions().get(name);
         }
-        if (parentRegion != null) {
-            region = parentRegion.getRegions().get(name);
-        }
 
-        if (region == null && placeholder == true) {
+        if(parentRegion != null)
+        {
+        	region = parentRegion.getRegions().get(name);
+        }
+        
+        if ( region == null && placeholder == true ) {
             // Render the region even if it is not present on the page, so XPM region markup etc can be generated
             //
 
@@ -101,25 +100,26 @@ public class RegionTag extends AbstractMarkupTag {
 
         if (region != null) {
             LOG.debug("Including region: {}", name);
+            
             try {
-
                 //pageContext.include(ControllerUtils.getIncludePath(region));
-                pageContext.getRequest().setAttribute("_region_" + name, region);
+            	pageContext.getRequest().setAttribute("_region_" + name, region);
                 webRequestContext.pushParentRegion(region);
-
-                pageContext.getRequest().setAttribute("_containersize_" + name, containerSize);
+                webRequestContext.pushContainerSize(containerSize);
 
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
-
-                webRequestContext.popParentRegion();
 
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing region tag: " + name, e);
             }
+            finally {
+                webRequestContext.popParentRegion();
+                webRequestContext.popContainerSize();
+            }
         } else {
             LOG.debug("Region not found on page: {}", name);
         }
-
+        
         return SKIP_BODY;
     }
 

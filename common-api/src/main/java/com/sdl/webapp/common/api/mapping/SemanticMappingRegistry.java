@@ -58,4 +58,12 @@ public interface SemanticMappingRegistry {
      * @param entityClass The entity class.
      */
     public void registerEntity(Class<? extends EntityModel> entityClass);
+
+    /**
+     * Get entity class.
+     *
+     * @param entityName
+     * @return entity class
+     */
+    public Class<? extends EntityModel> getEntityClass(String entityName);
 }

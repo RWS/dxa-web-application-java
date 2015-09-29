@@ -13,6 +13,7 @@ public interface ViewModel {
 
     Map<String, String> getXpmMetadata();
 
+    // TODO: Is this the right way forward? Is it not better to use markup decorators for this?
     String getXpmMarkup(Localization localization);
 
     String getHtmlClasses();

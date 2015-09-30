@@ -25,8 +25,6 @@ class LocalizationImpl implements Localization {
         private boolean staging;
         private String version;
 
-
-        private final ImmutableList.Builder<String> dataFormatsBuilder = ImmutableList.builder();
         private final ImmutableList.Builder<SiteLocalization> siteLocalizationsBuilder = ImmutableList.builder();
         private final ImmutableMap.Builder<String, String> configurationBuilder = ImmutableMap.builder();
         private final ImmutableMap.Builder<String, String> resourcesBuilder = ImmutableMap.builder();
@@ -63,11 +61,6 @@ class LocalizationImpl implements Localization {
 
         public Builder setVersion(String version) {
             this.version = version;
-            return this;
-        }
-
-        public Builder addDataFormats(Iterable<? extends String> dataFormats) {
-            this.dataFormatsBuilder.addAll(dataFormats);
             return this;
         }
 

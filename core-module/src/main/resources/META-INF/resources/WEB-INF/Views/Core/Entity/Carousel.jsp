@@ -2,8 +2,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %> 
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
+
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.ItemList" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
+
 <c:set var="carouselId" value="carousel-${entity.id}"/>
 <div id="${carouselId}" class="carousel slide ${entity.htmlClasses}" data-ride="carousel" data-interval="5000" ${markup.entity(entity)}>
     <ol class="carousel-indicators">

@@ -1,9 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %> 
+<%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %>
+
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Notification" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <!--[if lt IE 8]>
+
 <div id="incompability" class="container-fluid page-border ${entity.htmlClasses}" ${markup.entity(entity)}>
     <div class="row">
         <div class="col-sm-9">

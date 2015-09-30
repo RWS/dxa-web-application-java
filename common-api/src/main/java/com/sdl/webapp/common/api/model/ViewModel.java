@@ -18,4 +18,6 @@ public interface ViewModel {
 
     String getHtmlClasses();
 
+    void setHtmlClasses(String s);
+
 }

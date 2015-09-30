@@ -22,13 +22,14 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.sdl.webapp.dd4t.fieldconverters.FieldUtils.getStringValue;
-
 
 public final class EntityBuilderImpl implements EntityBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(EntityBuilderImpl.class);
@@ -46,13 +47,16 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
     private final SemanticMappingRegistry semanticMappingRegistry;
 
+    private final ModelBuilderPipeline builder;
+
     @Autowired
     EntityBuilderImpl(ViewModelRegistry viewModelRegistry, SemanticMapper semanticMapper,
-                  FieldConverterRegistry fieldConverterRegistry, SemanticMappingRegistry semanticMappingRegistry) {
+                  FieldConverterRegistry fieldConverterRegistry, SemanticMappingRegistry semanticMappingRegistry, ModelBuilderPipeline builder) {
         this.viewModelRegistry = viewModelRegistry;
         this.semanticMapper = semanticMapper;
         this.fieldConverterRegistry = fieldConverterRegistry;
         this.semanticMappingRegistry = semanticMappingRegistry;
+        this.builder = builder;
     }
 
     @Override
@@ -99,7 +103,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
         final AbstractEntityModel entity;
         try {
             entity = semanticMapper.createEntity((Class<? extends AbstractEntityModel>) entityClass, semanticSchema.getSemanticFields(),
-                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this));
+                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this.builder));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }
@@ -187,7 +191,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
         final AbstractEntityModel entity;
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
-                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this));
+                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this.builder));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }
@@ -227,7 +231,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
         final AbstractEntityModel entity;
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
-                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this));
+                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this.builder));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }

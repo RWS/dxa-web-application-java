@@ -8,4 +8,5 @@
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <div ${markup.region(region)}>
 This is a custom region
+    <dxa:entities region="Custom-Region"/>
 </div>

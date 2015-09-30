@@ -19,6 +19,7 @@ import org.dd4t.contentmodel.impl.BaseField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.ui.Model;
 
 import java.util.HashMap;
 import java.util.List;
@@ -32,7 +33,7 @@ public class DD4TSemanticPageFieldDataProvider extends AbstractSemanticFieldData
     private static final Logger LOG = LoggerFactory.getLogger(DD4TSemanticPageFieldDataProvider.class);
 
 
-    public DD4TSemanticPageFieldDataProvider(org.dd4t.contentmodel.Page page, FieldConverterRegistry fieldConverterRegistry, EntityBuilder builder) {
+    public DD4TSemanticPageFieldDataProvider(org.dd4t.contentmodel.Page page, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
         super(page, fieldConverterRegistry, builder);
     }
 

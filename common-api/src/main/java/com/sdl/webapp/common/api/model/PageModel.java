@@ -30,6 +30,4 @@ public interface PageModel extends ViewModel {
     void setMvcData(MvcData pageMvcData);
 
     void setXpmMetadata(Map<String, String> xpmMetaData);
-
-    void setHtmlClasses(String s);
 }

@@ -6,6 +6,7 @@ import com.sdl.webapp.dd4t.AbstractSemanticFieldDataProvider;
 import com.sdl.webapp.dd4t.DD4TSemanticFieldDataProvider;
 import com.sdl.webapp.dd4t.EntityBuilder;
 
+import com.sdl.webapp.dd4t.ModelBuilderPipeline;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.springframework.core.convert.TypeDescriptor;
 
@@ -15,7 +16,7 @@ public abstract class AbstractFieldConverter implements FieldConverter {
 
     @Override
     public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType,
-                                AbstractSemanticFieldDataProvider semanticFieldDataProvider, EntityBuilder builder) throws FieldConverterException {
+                                AbstractSemanticFieldDataProvider semanticFieldDataProvider, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<?> fieldValues = getFieldValues(field, targetType.isCollection() ?
                 targetType.getElementTypeDescriptor().getObjectType() : targetType.getObjectType(), builder);
 
@@ -27,5 +28,5 @@ public abstract class AbstractFieldConverter implements FieldConverter {
         return getFieldValues(field, targetClass, null);
     }
 
-    protected abstract List<?> getFieldValues(BaseField field, Class<?> targetClass, EntityBuilder builder) throws FieldConverterException;
+    protected abstract List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException;
 }

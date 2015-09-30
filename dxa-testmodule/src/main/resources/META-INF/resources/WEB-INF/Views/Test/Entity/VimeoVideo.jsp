@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %>
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
-<jsp:useBean id="entity" type="com.sdl.dxa.modules.example.model.VimeoVideo" scope="request"/>
+<jsp:useBean id="entity" type="com.sdl.dxa.modules.test.model.VimeoVideo" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <jsp:useBean id="mediaHelper" type="com.sdl.webapp.common.api.MediaHelper" scope="request"/>
 

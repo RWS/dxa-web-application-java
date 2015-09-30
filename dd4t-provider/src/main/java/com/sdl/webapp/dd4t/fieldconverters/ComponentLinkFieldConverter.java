@@ -13,6 +13,7 @@ import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.dd4t.DD4TSemanticFieldDataProvider;
 import com.sdl.webapp.dd4t.EntityBuilder;
 
+import com.sdl.webapp.dd4t.ModelBuilderPipeline;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, EntityBuilder builder) throws FieldConverterException {
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<Object> componentLinks = new ArrayList<>();
 
         for (org.dd4t.contentmodel.Component component : field.getLinkedComponentValues()) {
@@ -76,7 +77,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         }
     }
 
-    public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass, EntityBuilder builder)
+    public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass, ModelBuilderPipeline builder)
             throws SemanticMappingException {
         String componentId = component.getId();
         final String url = linkResolver.resolveLink(componentId, null);
@@ -92,7 +93,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
 
             try {
-                Object retval = builder.createEntity(component, null, localization);
+                Object retval = builder.CreateEntityModel(component, localization);
                 if (targetClass.isAssignableFrom(retval.getClass())) {
                     return retval;
                 } else {
@@ -104,7 +105,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
                 // Try to map using model field type
                 //
                 try {
-                    Object retval = builder.createEntity(component, null, localization, (Class<AbstractEntityModel>) targetClass);
+                    Object retval = builder.CreateEntityModel(component, localization, (Class<AbstractEntityModel>) targetClass);
                     return retval;
                 }
                 catch ( ContentProviderException e2 ) {

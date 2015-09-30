@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %> 
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
-<jsp:useBean id="pageModel" type="com.sdl.dxa.modules.example.model.CustomPageModelImpl" scope="request"/>
+<jsp:useBean id="pageModel" type="com.sdl.dxa.modules.test.model.CustomPageModelImpl" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
 <!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"><![endif]-->

@@ -1,11 +1,8 @@
-package com.sdl.dxa.modules.example.model;
+package com.sdl.dxa.modules.test.model;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
-import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
-import com.sdl.webapp.common.api.model.entity.Image;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.api.model.entity.MediaItemMvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -13,16 +10,14 @@ import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
-import java.util.List;
 import java.util.UUID;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
+
 @SemanticEntity(entityName = "VideoObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
     public class VimeoVideo extends MediaItem {
 

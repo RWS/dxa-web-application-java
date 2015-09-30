@@ -2,6 +2,7 @@ package com.sdl.webapp.tridion.xpm.markup;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.markup.MarkupDecorator;
@@ -47,7 +48,7 @@ public class EntityXpmMarkup implements MarkupDecorator {
                 ParsableHtmlNode entityMarkup = (ParsableHtmlNode) markup;
                 Element html = entityMarkup.getHtmlElement();
                 if (html != null) {   // If an HTML element (not a comment etc)
-                    html.prepend(buildXpmMarkup(entity).toHtml());
+                    html.prepend(buildXpmMarkup(entity, webRequestContext.getLocalization()).toHtml());
                     Elements properties = html.select("[data-entity-property-xpath]");
                     for (Element property : properties) {
                         processProperty(property);
@@ -61,7 +62,7 @@ public class EntityXpmMarkup implements MarkupDecorator {
                 // Surround the entity markup with the XPM markup
                 //
                 markup = HtmlBuilders.span()
-                        .withContent(buildXpmMarkup(entity))
+                        .withContent(buildXpmMarkup(entity, webRequestContext.getLocalization()))
                         .withContent(markup).build();
             }
         }
@@ -109,26 +110,8 @@ public class EntityXpmMarkup implements MarkupDecorator {
         return 1;
     }
 
-    private HtmlNode buildXpmMarkup(EntityModel entity) {
-        final Map<String, String> entityData = entity.getXpmMetadata();
-
-        final String componentId = entityData.get("ComponentID");
-        if (Strings.isNullOrEmpty(componentId)) {
-            return new HtmlTextNode("");
-        }
-
-        final String componentModified = entityData.get("ComponentModified");
-        final String templateId = entityData.get("ComponentTemplateID");
-        final String templateModified = entityData.get("ComponentTemplateModified");
-
-        final String isRepositoryPublished;
-        if (templateId.equals("tcm:0-0-0")) {
-            isRepositoryPublished = "true,\"IsQueryBased\":true";
-        } else {
-            isRepositoryPublished = "false";
-        }
-
-        return new HtmlCommentNode(String.format(COMPONENT_PRESENTATION_PATTERN,
-                componentId, componentModified, templateId, templateModified, isRepositoryPublished));
+    private HtmlNode buildXpmMarkup(EntityModel entity, Localization localization) {
+        return new HtmlCommentNode(entity.getXpmMarkup(localization));
     }
+
 }

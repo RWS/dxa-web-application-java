@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 
@@ -52,6 +53,15 @@ public class ModelBuilderPipeline {
         for(EntityBuilder entityBuilder : entityBuilderHandlers)
         {
             entityModel = entityBuilder.createEntity(component, entityModel, localization);
+        }
+        return entityModel;
+    }
+
+    public EntityModel CreateEntityModel(Component component, Localization localization, Class<AbstractEntityModel> entityClass) throws ContentProviderException {
+        EntityModel entityModel = null;
+        for(EntityBuilder entityBuilder : entityBuilderHandlers)
+        {
+            entityModel = entityBuilder.createEntity(component, entityModel, localization, entityClass);
         }
         return entityModel;
     }

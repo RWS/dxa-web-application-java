@@ -27,7 +27,7 @@ import java.util.Stack;
  */
 public class DD4TSemanticFieldDataProvider extends AbstractSemanticFieldDataProvider implements SemanticFieldDataProvider {
 
-    public DD4TSemanticFieldDataProvider(Component component, FieldConverterRegistry fieldConverterRegistry, EntityBuilder builder) {
+    public DD4TSemanticFieldDataProvider(Component component, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
         super(component, fieldConverterRegistry, builder);
     }
 }

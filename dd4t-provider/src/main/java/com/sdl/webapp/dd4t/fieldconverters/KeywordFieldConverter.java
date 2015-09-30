@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.entity.Tag;
 import com.sdl.webapp.dd4t.EntityBuilder;
 
+import com.sdl.webapp.dd4t.ModelBuilderPipeline;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.Keyword;
 import org.dd4t.contentmodel.impl.BaseField;
@@ -15,7 +16,7 @@ import java.util.List;
 @Component
 public class KeywordFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.KEYWORD };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.KEYWORD};
 
     @Override
     public FieldType[] supportedFieldTypes() {
@@ -23,7 +24,7 @@ public class KeywordFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, EntityBuilder builder) throws FieldConverterException {
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<Keyword> keywordValues = field.getKeywordValues();
 
         if (targetClass.isAssignableFrom(Tag.class)) {

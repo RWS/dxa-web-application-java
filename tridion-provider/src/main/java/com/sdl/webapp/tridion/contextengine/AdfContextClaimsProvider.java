@@ -38,115 +38,101 @@ import com.tridion.ambientdata.claimstore.ClaimStore;
 @Component
 public class AdfContextClaimsProvider implements ContextClaimsProvider {
 
-	private final String ContextClaimPrefix = "taf:claim:context:";
+    private final String ContextClaimPrefix = "taf:claim:context:";
 
-	private static final Logger LOG = LoggerFactory.getLogger(AdfContextClaimsProvider.class);
-	
-	
-	@Override
-	public Map<String, Object> getContextClaims(String aspectName)
-	{
-		String claimNamePrefix = ContextClaimPrefix;
-		if (!Strings.isNullOrEmpty(aspectName))
-		{
-			claimNamePrefix += aspectName + ":";
-		}
+    private static final Logger LOG = LoggerFactory.getLogger(AdfContextClaimsProvider.class);
 
-		Map<String, Object> result = new HashMap<String, Object>();
-		ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
-		if(currentClaimStore != null){
-			for(Entry<URI, Object> claim : currentClaimStore.getAll().entrySet())
-			{
-				String claimName = claim.getKey().toString();
-				if(!claimName.startsWith(claimNamePrefix))
-				{
-					continue;
-				}
-				String propertyName = claimName.substring(ContextClaimPrefix.length()).replace(':',  '.');
-				result.put(propertyName, claim.getValue());
-			}
-		}
-		return result;
 
-	}
+    @Override
+    public Map<String, Object> getContextClaims(String aspectName) {
+        String claimNamePrefix = ContextClaimPrefix;
+        if (!Strings.isNullOrEmpty(aspectName)) {
+            claimNamePrefix += aspectName + ":";
+        }
 
-	/// <summary>
-	/// Gets the device family (an aggregated device claim determined from other context claims).
-	/// </summary>
-	/// <returns>A string representing the device family.</returns>
-	public String getDeviceFamily()
-	{
-		// TODO TSI-789: this functionality overlaps with "Context Expressions".
-		ClassLoader classLoader = getClass().getClassLoader();
-		URL familiesFile = classLoader.getResource("families.xml");
-		if(familiesFile == null)
-		{
-			LOG.debug("Families.xml file not found, returning null");
-			return null;
-		}
-		File file = new File(familiesFile.getFile());
-		if(!file.exists())
-		{
-			LOG.debug("Families.xml file not found, returning null");
-			return null;
-		}
-		String result = null;
+        Map<String, Object> result = new HashMap<String, Object>();
+        ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
+        if (currentClaimStore != null) {
+            for (Entry<URI, Object> claim : currentClaimStore.getAll().entrySet()) {
+                String claimName = claim.getKey().toString();
+                if (!claimName.startsWith(claimNamePrefix)) {
+                    continue;
+                }
+                String propertyName = claimName.substring(ContextClaimPrefix.length()).replace(':', '.');
+                result.put(propertyName, claim.getValue());
+            }
+        }
+        return result;
 
-		DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder documentBuilder;
-		try {
-			documentBuilder = documentBuilderFactory.newDocumentBuilder();
-			Document families = documentBuilder.parse(file);
-			NodeList deviceFamilies = families.getElementsByTagName("devicefamily"); 
-			for(int i =0;i<deviceFamilies.getLength();i++)
-			{
-				Element n = (Element)deviceFamilies.item(i);
-				String family = n.getAttribute("name");
-				boolean inFamily = true;
-				NodeList familyConditions = n.getElementsByTagName("condition");
-				for(int j = 0; j<familyConditions.getLength();j++)
-				{
-					Element c = (Element)familyConditions.item(j);
-					try {
-						URI uri = new URI(c.getAttribute("uri"));
-						String expectedValue = c.getAttribute("value");
-						if (expectedValue.startsWith("<"))
-						{
-							int value = Integer.parseInt(expectedValue.replace("<", ""));
-							int claimValue = Integer.parseInt(AmbientDataContext.getCurrentClaimStore().get(uri, String.class));
-							if (claimValue >= value)
-								inFamily = false;
-						}
-						else if (expectedValue.startsWith(">"))
-						{
-							int value = Integer.parseInt(expectedValue.replace(">", ""));
-							int claimValue = Integer.parseInt(AmbientDataContext.getCurrentClaimStore().get(uri, String.class));
-							if (claimValue <= value)
-								inFamily = false;
-						}
-						else
-						{
-							String stringClaimValue = AmbientDataContext.getCurrentClaimStore().get(uri, String.class);
-							if (!stringClaimValue.equals(expectedValue))
-								inFamily = false; // move on to next family
-						}
-					} catch (URISyntaxException e) {
-						LOG.error("Invalid TAF URI : " + c.getAttribute("uri"), e);
-						inFamily = false;
-					}
-					if (inFamily){
-						result = family;
-						break;
-					}
-				}
-			}
-		} catch (ParserConfigurationException e) {
-			LOG.error("Error parsing Families.xml", e);
-		} catch (SAXException e) {
-			LOG.error("Error parsing Families.xml", e);
-		} catch (IOException e) {
-			LOG.error("Error loading Families.xml", e);
-		}
-		return result;
-	}
+    }
+
+    /// <summary>
+    /// Gets the device family (an aggregated device claim determined from other context claims).
+    /// </summary>
+    /// <returns>A string representing the device family.</returns>
+    public String getDeviceFamily() {
+        // TODO TSI-789: this functionality overlaps with "Context Expressions".
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL familiesFile = classLoader.getResource("families.xml");
+        if (familiesFile == null) {
+            LOG.debug("Families.xml file not found, returning null");
+            return null;
+        }
+        File file = new File(familiesFile.getFile());
+        if (!file.exists()) {
+            LOG.debug("Families.xml file not found, returning null");
+            return null;
+        }
+        String result = null;
+
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder documentBuilder;
+        try {
+            documentBuilder = documentBuilderFactory.newDocumentBuilder();
+            Document families = documentBuilder.parse(file);
+            NodeList deviceFamilies = families.getElementsByTagName("devicefamily");
+            for (int i = 0; i < deviceFamilies.getLength(); i++) {
+                Element n = (Element) deviceFamilies.item(i);
+                String family = n.getAttribute("name");
+                boolean inFamily = true;
+                NodeList familyConditions = n.getElementsByTagName("condition");
+                for (int j = 0; j < familyConditions.getLength(); j++) {
+                    Element c = (Element) familyConditions.item(j);
+                    try {
+                        URI uri = new URI(c.getAttribute("uri"));
+                        String expectedValue = c.getAttribute("value");
+                        if (expectedValue.startsWith("<")) {
+                            int value = Integer.parseInt(expectedValue.replace("<", ""));
+                            int claimValue = Integer.parseInt(AmbientDataContext.getCurrentClaimStore().get(uri, String.class));
+                            if (claimValue >= value)
+                                inFamily = false;
+                        } else if (expectedValue.startsWith(">")) {
+                            int value = Integer.parseInt(expectedValue.replace(">", ""));
+                            int claimValue = Integer.parseInt(AmbientDataContext.getCurrentClaimStore().get(uri, String.class));
+                            if (claimValue <= value)
+                                inFamily = false;
+                        } else {
+                            String stringClaimValue = AmbientDataContext.getCurrentClaimStore().get(uri, String.class);
+                            if (!stringClaimValue.equals(expectedValue))
+                                inFamily = false; // move on to next family
+                        }
+                    } catch (URISyntaxException e) {
+                        LOG.error("Invalid TAF URI : " + c.getAttribute("uri"), e);
+                        inFamily = false;
+                    }
+                    if (inFamily) {
+                        result = family;
+                        break;
+                    }
+                }
+            }
+        } catch (ParserConfigurationException e) {
+            LOG.error("Error parsing Families.xml", e);
+        } catch (SAXException e) {
+            LOG.error("Error parsing Families.xml", e);
+        } catch (IOException e) {
+            LOG.error("Error loading Families.xml", e);
+        }
+        return result;
+    }
 }

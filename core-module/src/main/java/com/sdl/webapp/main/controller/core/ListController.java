@@ -58,11 +58,6 @@ public class ListController extends AbstractController {
 
         final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
         request.setAttribute(ENTITY_MODEL, entity);
-        int containerSize = 0;
-        if(request.getAttribute("_containersize_" + regionName + entityId) != null)
-        {
-        	containerSize = (int) request.getAttribute("_containersize_" + regionName + entityId);
-        }
         if (entity instanceof ContentList) {
             final ContentList contentList = (ContentList) entity;
             if (contentList.getItemListElements().isEmpty()) {
@@ -85,7 +80,7 @@ public class ListController extends AbstractController {
 
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);
-        return resolveView(mvcData, "Entity", containerSize, request);
+        return resolveView(mvcData, "Entity", request);
         //return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
     }
 

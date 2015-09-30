@@ -6,7 +6,7 @@
 
     <groupId>com.sdl</groupId>
     <artifactId>webapp-reference-impl</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -17,6 +17,7 @@
         <module>core-module</module>
         <module>cid-module</module>
         <module>example-webapp</module>
+        <module>dxa-testmodule</module>
     </modules>
 
     <profiles>

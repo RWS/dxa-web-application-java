@@ -40,18 +40,12 @@ public class RegionController extends AbstractController {
     public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName ) {
         LOG.trace("handleGetRegion: regionName={}", regionName);
 
-        int containerSize = 0;
-        if(request.getAttribute("_containersize_" + regionName) != null)
-        {
-        	containerSize = (int) request.getAttribute("_containersize_" + regionName);
-        }
-        
         final RegionModel region = getRegionFromRequest(request, regionName);
         request.setAttribute(REGION_MODEL, region);
 
         final MvcData mvcData = region.getMvcData();
         LOG.trace("Region MvcData: {}", mvcData);
-        return resolveView(mvcData, "Region", containerSize, request);
+        return resolveView(mvcData, "Region", request);
         //return mvcData.getAreaName() + "/Region/" + mvcData.getViewName();
     }
 }

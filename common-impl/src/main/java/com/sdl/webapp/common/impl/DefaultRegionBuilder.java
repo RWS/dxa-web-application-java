@@ -14,6 +14,7 @@ import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -39,12 +40,12 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
 
     @Override
     public RegionModelSet buildRegions(PageModel page,
-			   							   ConditionalEntityEvaluator conditionalEntityEvaluator,
-                                           List<?> sourceList,
-                                           RegionBuilderCallback callback,
-                                           Localization localization) throws ContentProviderException {
+                                       ConditionalEntityEvaluator conditionalEntityEvaluator,
+                                       List<?> sourceList,
+                                       RegionBuilderCallback callback,
+                                       Localization localization) throws ContentProviderException {
 
-    	RegionModelSet regions = new RegionModelSetImpl();
+        RegionModelSet regions = new RegionModelSetImpl();
         for (Object source : sourceList) {
             final EntityModel entity = callback.buildEntity(source, localization);
 
@@ -53,18 +54,20 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
                 RegionModelImpl region = (RegionModelImpl) regions.get(regionName);
                 if (region == null) {
                     LOG.debug("Creating region: {}", regionName);
-                    region = new RegionModelImpl();
+                    try {
+                        region = new RegionModelImpl(regionName);
+                    } catch (DxaException e) {
+                        e.printStackTrace();
+                    }
 
-                    region.setName(regionName);
                     region.setMvcData(callback.getRegionMvcData(source));
 
                     regions.add(region);
                 }
-                if (conditionalEntityEvaluator == null || conditionalEntityEvaluator.IncludeEntity(entity))
-                {
-                	region.addEntity(entity);
+                if (conditionalEntityEvaluator == null || conditionalEntityEvaluator.IncludeEntity(entity)) {
+                    region.addEntity(entity);
                 }
-                
+
             }
         }
         return regions;

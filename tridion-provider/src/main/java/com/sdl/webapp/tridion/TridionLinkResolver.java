@@ -12,35 +12,37 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class TridionLinkResolver implements LinkResolver{
+public class TridionLinkResolver implements LinkResolver {
     private static final Logger LOG = LoggerFactory.getLogger(TridionLinkResolver.class);
 
     //TODO : move these back to defaultcontentprovider once class is moved to new package
     public static final String DEFAULT_PAGE_NAME = "index";
     public static final String DEFAULT_PAGE_EXTENSION = ".html";
 
-    
+
     @Override
     public String resolveLink(String url, String localizationId) {
-    	return resolveLink(url, localizationId, false);
+        return resolveLink(url, localizationId, false);
     }
+
     @Override
     public String resolveLink(String url, String localizationId, boolean resolveToBinary) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
         String resolvedUrl = resolveLink(url, publicationId, resolveToBinary);
 
-        if (!Strings.isNullOrEmpty(resolvedUrl)) {
-            if (resolvedUrl.endsWith(DEFAULT_PAGE_EXTENSION)) {
-                resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_EXTENSION.length());
-            }
-            if (resolvedUrl.endsWith("/" + DEFAULT_PAGE_NAME)) {
-                resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_NAME.length());
+        if(url.startsWith("tcm:")) {
+            if (!Strings.isNullOrEmpty(resolvedUrl)) {
+                if (resolvedUrl.endsWith(DEFAULT_PAGE_EXTENSION)) {
+                    resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_EXTENSION.length());
+                }
+                if (resolvedUrl.endsWith("/" + DEFAULT_PAGE_NAME)) {
+                    resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_NAME.length());
+                }
             }
         }
-
         return resolvedUrl;
     }
-    
+
     public String resolveLink(String uri, int publicationId, boolean isBinary) {
         if (uri == null || !uri.startsWith("tcm:")) {
             return uri;
@@ -60,14 +62,11 @@ public class TridionLinkResolver implements LinkResolver{
 
         switch (itemType) {
             case 16:
-                if(isBinary)
-            	{
-            		String resolvedLink = resolveBinaryLink(uri, publicationId); 
-            		return resolvedLink.equals("") ? resolveComponentLink(uri, publicationId, itemId) : resolvedLink;
-            	}
-                else
-                {
-                	return resolveComponentLink(uri, publicationId, itemId);
+                if (isBinary) {
+                    String resolvedLink = resolveBinaryLink(uri, publicationId);
+                    return resolvedLink.equals("") ? resolveComponentLink(uri, publicationId, itemId) : resolvedLink;
+                } else {
+                    return resolveComponentLink(uri, publicationId, itemId);
                 }
             case 64:
                 return resolvePageLink(uri, publicationId, itemId);

@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model;
 
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
+import com.sdl.webapp.common.exceptions.DxaException;
 
 /**
  * Registry that maps view names to view model object types.
@@ -11,8 +12,10 @@ public interface ViewModelRegistry {
      * Registers an entity type for a view.
      *
      * @param viewName The name of the entity view.
+     * @deprecated use registerViewModel(MvcData viewData,  Class<? extends ViewModel> entityClass) instead
      */
-    void registerViewEntityClass(String viewName, Class<? extends AbstractEntityModel> entityClass);
+    @Deprecated
+    void registerViewEntityClass(String viewName, Class<? extends ViewModel> entityClass) throws DxaException;
 
 
     /**
@@ -21,13 +24,29 @@ public interface ViewModelRegistry {
      * @param viewName The name of the entity view.
      * @return The type of the entity that this entity view needs.
      */
-    Class<? extends AbstractEntityModel> getViewEntityClass(String viewName);
+    Class<? extends ViewModel> getViewEntityClass(String viewName) throws DxaException;
+
+
 
     /**
      * Returns the entity type to use for a sepecific semantic type
      *
-     * @param viewNsemanticTypeNameame The name of the semantic type.
+     * @param semanticTypeName The name of the semantic type.
      * @return The type of the entity that this semantic type needs.
      */
-    Class<? extends AbstractEntityModel> GetMappedModelTypes(String semanticTypeName);
+    Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) throws DxaException;
+
+    Class<? extends ViewModel> getViewModelType(MvcData regionMvcData) throws DxaException;
+
+    /**
+     * Registers an entity type for a view.
+     *
+     * @param viewData The name of the entity view.
+     * @param entityClass The class to register
+     */
+    void registerViewModel(MvcData viewData,  Class<? extends ViewModel> entityClass);
+
+    void registerPageViewModel(String viewName, Class<? extends ViewModel> pageModelClass) throws DxaException;
+    void registerRegionViewModel(String viewName, Class<? extends ViewModel> regionModelClass) throws DxaException;
+
 }

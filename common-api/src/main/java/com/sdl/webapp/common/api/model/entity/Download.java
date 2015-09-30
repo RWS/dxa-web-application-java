@@ -45,66 +45,63 @@ public class Download extends MediaItem {
                 '}';
     }
 
-	@Override
-	public String toHtml(String widthFactor) {
-		return toHtml(widthFactor, 0,"",0);
-	}
+    @Override
+    public String toHtml(String widthFactor) {
+        return toHtml(widthFactor, 0, "", 0);
+    }
 
-	@Override
-	public String toHtml(String widthFactor, double aspect , String cssClass , int containerSize )
-    {
+    @Override
+    public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) {
         String descriptionHtml = Strings.isNullOrEmpty(getDescription()) ? null : String.format("<small>%s</small>", getDescription());
         String s = new StringBuilder()
-            .append("<div class=\"download-list\">")
-            .append(String.format("<i class=\"fa %s\"></i>", this.getIconClass()))
-            .append("<div>")
-            .append(String.format("<a href=\"%s\">%s</a> <small class=\"size\">(%s)</small>", this.getUrl(), this.getFileName(), this.getFriendlyFileSize()))
-            .append(String.format("%s", this.getDescription()))
-            .append("</div>")
-            .append("</div>").toString();
-		 return s;
+                .append("<div class=\"download-list\">")
+                .append(String.format("<i class=\"fa %s\"></i>", this.getIconClass()))
+                .append("<div>")
+                .append(String.format("<a href=\"%s\">%s</a> <small class=\"size\">(%s)</small>", this.getUrl(), this.getFileName(), this.getFriendlyFileSize()))
+                .append(String.format("%s", this.getDescription()))
+                .append("</div>")
+                .append("</div>").toString();
+        return s;
     }
-	
-	@Override
-	public HtmlElement toHtmlElement(String widthFactor, double aspect , String cssClass , int containerSize, String contextPath)
-    {		  
-	        if (Strings.isNullOrEmpty(this.getUrl())) {
-	            LOG.warn("Skipping download with empty URL: {}", this);
-	            return null;
-	        }
 
-	        // TODO: this does not contain any XPM markup
-	        final SimpleElementBuilder innerDivBuilder = HtmlBuilders.div()
-	                .withContent(HtmlBuilders.a(this.getUrl())
-	                        .withContent(this.getFileName())
-	                        .build())
-	                .withContent(HtmlBuilders.element("small")
-	                        .withClass("size")
-	                        .withContent("(" + this.getFriendlyFileSize() + ")")
-	                        .build());
+    @Override
+    public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
+        if (Strings.isNullOrEmpty(this.getUrl())) {
+            LOG.warn("Skipping download with empty URL: {}", this);
+            return null;
+        }
 
-	        if (!Strings.isNullOrEmpty(this.getDescription())) {
-	            innerDivBuilder.withContent(HtmlBuilders.element("small")
-	                    .withContent(this.getDescription())
-	                    .build());
-	        }
+        // TODO: this does not contain any XPM markup
+        final SimpleElementBuilder innerDivBuilder = HtmlBuilders.div()
+                .withContent(HtmlBuilders.a(this.getUrl())
+                        .withContent(this.getFileName())
+                        .build())
+                .withContent(HtmlBuilders.element("small")
+                        .withClass("size")
+                        .withContent("(" + this.getFriendlyFileSize() + ")")
+                        .build());
 
-	        return HtmlBuilders.div()
-	                .withClass("download-list")
-	                .withContent(HtmlBuilders.i().withClass("fa " + this.getIconClass()).build())
-	                .withContent(innerDivBuilder.build())
-	                .build();
+        if (!Strings.isNullOrEmpty(this.getDescription())) {
+            innerDivBuilder.withContent(HtmlBuilders.element("small")
+                    .withContent(this.getDescription())
+                    .build());
+        }
+
+        return HtmlBuilders.div()
+                .withClass("download-list")
+                .withContent(HtmlBuilders.i().withClass("fa " + this.getIconClass()).build())
+                .withContent(innerDivBuilder.build())
+                .build();
     }
-	
-	@Override
-    public  void readFromXhtmlElement(Node xhtmlElement)
-    {
+
+    @Override
+    public void readFromXhtmlElement(Node xhtmlElement) {
         super.readFromXhtmlElement(xhtmlElement);
 
         try {
-    		this.setMvcData(new MediaItemMvcData("Core:Entity:Image"));
-    	} catch (DxaException e) {
+            this.setMvcData(new MediaItemMvcData("Core:Entity:Image"));
+        } catch (DxaException e) {
 
-    	}
+        }
     }
 }

@@ -53,14 +53,14 @@ public abstract class AbstractController {
         {
         	region = regionSet.get(regionName);
         }*/
-        
+
         if (region == null) {
 
             // Check if the region is active on the request
             //
             region = (RegionModel) request.getAttribute("_region_" + regionName);
 
-            if ( region == null ) {
+            if (region == null) {
                 LOG.error("Region not found on page: {}", regionName);
                 throw new NotFoundException("Region not found on page: " + regionName);
             }
@@ -69,18 +69,16 @@ public abstract class AbstractController {
     }
 
     protected EntityModel getEntityFromRequest(HttpServletRequest request, String regionName, String entityId) {
-    	if(regionName.equals("null"))
-    	{
-    		final EntityModel entity = (EntityModel) request.getAttribute("_entity_" + entityId);
-    		if(entity != null){
-    			return entity;
-			}
-    		else{
-    			LOG.error("Entity not found in request: {}", entityId);
+        if (regionName.equals("null")) {
+            final EntityModel entity = (EntityModel) request.getAttribute("_entity_" + entityId);
+            if (entity != null) {
+                return entity;
+            } else {
+                LOG.error("Entity not found in request: {}", entityId);
                 throw new NotFoundException("Entity not found in request: " + entityId);
-    		}
-    	}
-    	final RegionModel region = getRegionFromRequest(request, regionName);
+            }
+        }
+        final RegionModel region = getRegionFromRequest(request, regionName);
         final EntityModel entity = region.getEntity(entityId); // region.getEntities().get(entityId);
         if (entity == null) {
             LOG.error("Entity not found in region: {}/{}", regionName, entityId);
@@ -95,12 +93,12 @@ public abstract class AbstractController {
         return ControllerUtils.SECTION_ERROR_VIEW;
     }
 
-    protected String resolveView(MvcData mvcData, String type, int containerSize, HttpServletRequest request) {
-        return this.viewResolver.resolveView(mvcData, type, containerSize, request);
+    protected String resolveView(MvcData mvcData, String type, HttpServletRequest request) {
+        return this.viewResolver.resolveView(mvcData, type, request);
     }
 
-    protected String resolveView(String viewBaseDir, String view, MvcData mvcData, int containerSize, HttpServletRequest request) {
-        return this.viewResolver.resolveView(viewBaseDir, view, mvcData, containerSize, request);
+    protected String resolveView(String viewBaseDir, String view, MvcData mvcData, HttpServletRequest request) {
+        return this.viewResolver.resolveView(viewBaseDir, view, mvcData, request);
     }
 
 }

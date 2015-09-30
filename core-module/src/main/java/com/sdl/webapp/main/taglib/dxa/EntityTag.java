@@ -6,14 +6,11 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
-
-import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
-
 import java.io.IOException;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
@@ -30,9 +27,7 @@ public class EntityTag extends AbstractMarkupTag {
     private EntityModel entityRef;
     
     private int containerSize;
-
-    private final WebRequestContext webRequestContext = ApplicationContextHolder.getContext().getBean(WebRequestContext.class);
-
+    
     public void setRegion(String regionName) {
         this.regionName = regionName;
     }
@@ -40,9 +35,9 @@ public class EntityTag extends AbstractMarkupTag {
     public void setEntityId(String entityId) {
         this.entityId = entityId;
     }
-        public void setContainerSize(int containerSize)
-    {
-    	this.containerSize = containerSize;
+
+    public void setContainerSize(int containerSize) {
+        this.containerSize = containerSize;
     }
     
     public void setEntity(EntityModel entity) { this.entityRef = entity; }
@@ -58,18 +53,17 @@ public class EntityTag extends AbstractMarkupTag {
 
         RegionModel region = null;
         final EntityModel entity;
-        if ( entityId != null ) {
+        WebRequestContext webRequestContext = this.getWebRequestContext();
+        
+        if (entityId != null) {
 
             parentRegion = webRequestContext.getParentRegion();
 
-             if(parentRegion != null)
-             {
-             	region = parentRegion;	
-             }
-             else
-             {
-             	region = page.getRegions().get(regionName);
-             }
+            if (parentRegion != null) {
+                region = parentRegion;
+            } else {
+                region = page.getRegions().get(regionName);
+            }
             if (region == null) {
                 LOG.debug("Region not found on page: {}", regionName);
                 return SKIP_BODY;
@@ -85,11 +79,14 @@ public class EntityTag extends AbstractMarkupTag {
             LOG.debug("Including entity: {}/{}", regionName, entity.getId());
             try {
             	pageContext.getRequest().setAttribute("_region_" + regionName, region);
-            	pageContext.getRequest().setAttribute("_containersize_" + regionName + entity.getId(), containerSize);
+                webRequestContext.pushContainerSize(containerSize);
                 //pageContext.include(ControllerUtils.getIncludePath(entity));
                 this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);
+            }
+            finally {
+                webRequestContext.popContainerSize();
             }
         } else {
             LOG.debug("Entity not found in region: {}/{}", regionName, entity.getId());

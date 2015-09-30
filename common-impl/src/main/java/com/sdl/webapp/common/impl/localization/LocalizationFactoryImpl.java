@@ -33,7 +33,7 @@ import static com.sdl.webapp.common.impl.localization.semantics.SemanticsConvert
 
 /**
  * Implementation of {@code LocalizationFactory}.
- *
+ * <p/>
  * This factory creates {@code Localization} instances and loads configuration information for each localization.
  * The configuration of a localization is stored in a number of JSON files that are retrieved via the static content
  * provider.
@@ -89,10 +89,12 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         loadResources(id, path, builder);
 
         final List<JsonSchema> semanticSchemas = parseJsonFileObject(contentProvider,
-                SEMANTIC_SCHEMAS_PATH, id, path, new TypeReference<List<JsonSchema>>() { });
+                SEMANTIC_SCHEMAS_PATH, id, path, new TypeReference<List<JsonSchema>>() {
+        });
 
         final List<JsonVocabulary> semanticVocabularies = parseJsonFileObject(contentProvider,
-                SEMANTIC_VOCABULARIES_PATH, id, path, new TypeReference<List<JsonVocabulary>>() { });
+                SEMANTIC_VOCABULARIES_PATH, id, path, new TypeReference<List<JsonVocabulary>>() {
+        });
 
         builder.addSemanticSchemas(convertSemantics(semanticSchemas, semanticVocabularies));
 
@@ -116,7 +118,8 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private List<SiteLocalizationImpl> loadSiteLocalizations(JsonNode configRootNode) {
         return objectMapper.convertValue(configRootNode.get(SITE_LOCALIZATIONS_NODE_NAME),
-                new TypeReference<List<SiteLocalizationImpl>>() { });
+                new TypeReference<List<SiteLocalizationImpl>>() {
+                });
     }
 
     private void loadVersion(String id, String path, LocalizationImpl.Builder builder)
@@ -168,7 +171,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     }
 
     public <T> T parseJsonFileObject(ContentProvider contentProvider, String filePath, String locId,
-                                            String locPath, TypeReference<T> resultType)
+                                     String locPath, TypeReference<T> resultType)
             throws LocalizationFactoryException {
         try {
             final StaticContentItem item = contentProvider.getStaticContent(filePath, locId, locPath);
@@ -182,7 +185,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     }
 
     public JsonNode parseJsonFileTree(ContentProvider contentProvider, String filePath, String locId,
-                                             String locPath)
+                                      String locPath)
             throws LocalizationFactoryException {
         try {
             final StaticContentItem item = contentProvider.getStaticContent(filePath, locId, locPath);
@@ -196,7 +199,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     }
 
     public Map<String, String> parseJsonSubFiles(ContentProvider contentProvider, JsonNode rootNode,
-                                                        String locId, String locPath)
+                                                 String locId, String locPath)
             throws LocalizationFactoryException {
         final Map<String, String> map = new HashMap<>();
 
@@ -209,7 +212,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                             subFilePath.lastIndexOf('.') + 1);
 
                     final Iterator<Map.Entry<String, JsonNode>> i = parseJsonFileTree(contentProvider,
-                            subFilePath, locId,  locPath).fields();
+                            subFilePath, locId, locPath).fields();
                     while (i.hasNext()) {
                         final Map.Entry<String, JsonNode> entry = i.next();
                         map.put(prefix + entry.getKey(), entry.getValue().asText());

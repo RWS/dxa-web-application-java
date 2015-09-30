@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.dd4t.EntityBuilder;
 
+import com.sdl.webapp.dd4t.ModelBuilderPipeline;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.slf4j.Logger;
@@ -19,10 +20,11 @@ import java.util.List;
 public class XhtmlFieldConverter extends AbstractFieldConverter {
     private static final Logger LOG = LoggerFactory.getLogger(XhtmlFieldConverter.class);
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.XHTML };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.XHTML};
 
     private final RichTextProcessor richTextProcessor;
     private final WebRequestContext webRequestContext;
+
     @Autowired
     public XhtmlFieldConverter(RichTextProcessor richTextProcessor, WebRequestContext webRequestContext) {
         this.richTextProcessor = richTextProcessor;
@@ -35,7 +37,7 @@ public class XhtmlFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, EntityBuilder builder) throws FieldConverterException {
+    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<RichText> fieldValues = new ArrayList<>();
         for (String textValue : field.getTextValues()) {
             fieldValues.add(richTextProcessor.processRichText(textValue, this.webRequestContext.getLocalization()));

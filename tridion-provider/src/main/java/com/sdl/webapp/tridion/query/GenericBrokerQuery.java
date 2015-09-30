@@ -138,7 +138,7 @@ public class GenericBrokerQuery {
         try {
             final String[] ids = query.executeQuery();
             List<String> entityIds = new ArrayList<>();
-            for ( String id : ids ) {
+            for (String id : ids) {
                 entityIds.add(id);
             }
             return entityIds;

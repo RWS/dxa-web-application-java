@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.WebRequestContext;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 /**
  * Spring configuration for {@code DefaultMediaHelperTest}.
@@ -12,15 +13,16 @@ import org.springframework.context.annotation.Configuration;
 public class DefaultMediaHelperTestConfig {
 
     @Bean
+    @Lazy
     public GenericMediaHelper mediaHelper() {
         return new GenericMediaHelper(webRequestContext());
     }
-    
+
     @Bean
     public MockContextEngine contextEngine() {
         return new MockContextEngine(new MockContextClaimsProvider());
     }
-    
+
     @Bean
     public WebRequestContext webRequestContext() {
         return new WebRequestContextImpl() {

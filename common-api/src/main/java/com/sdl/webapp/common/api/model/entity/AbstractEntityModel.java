@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -16,6 +17,8 @@ import java.util.Map;
  */
 @SemanticMappingIgnore
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
+
+    private final String XpmComponentPresentationMarkup = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %s} -->";
 
     @JsonProperty("Id")
     private String id;
@@ -32,7 +35,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     @JsonIgnore
     private String htmlClasses;
 
-    
+
     @Override
     public String getId() {
         return id;
@@ -68,26 +71,42 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     public void setMvcData(MvcData mvcData) {
         this.mvcData = mvcData;
     }
-    
+
     @Override
-    public String getHtmlClasses()
-    {
-    	return this.htmlClasses;
+    public String getHtmlClasses() {
+        return this.htmlClasses;
     }
-    public void setHtmlClasses(String htmlClasses)
-    {
-    	this.htmlClasses = htmlClasses;
-    }
-    
-    
+
     @Override
-    public String toHtml()
-    {
+    public void setHtmlClasses(String htmlClasses) {
+        this.htmlClasses = htmlClasses;
+    }
+
+
+    @Override
+    public String getXpmMarkup(Localization localization) {
+        if (getXpmMetadata() == null) {
+            return "";
+        }
+
+        // TODO: Consider data-driven approach (i.e. just render all XpmMetadata key/value pairs)
+        return String.format(
+                XpmComponentPresentationMarkup,
+                getXpmMetadata().get("ComponentID"),
+                getXpmMetadata().get("ComponentModified"),
+                getXpmMetadata().get("ComponentTemplateID"),
+                getXpmMetadata().get("ComponentTemplateModified"),
+                getXpmMetadata().get("IsRepositoryPublished")
+        );
+    }
+
+    @Override
+    public String toHtml() {
         throw new UnsupportedOperationException(
-            String.format("Direct rendering of View Model type '%s' to HTML is not supported." + 
-            " Consider using View Model property of type RichText in combination with DxaRichText() in view code to avoid direct rendering to HTML." +
-            " Alternatively, override method %s.toHtml().", 
-            getClass().getName())
-            );
+                String.format("Direct rendering of View Model type '%s' to HTML is not supported." +
+                                " Consider using View Model property of type RichText in combination with DxaRichText() in view code to avoid direct rendering to HTML." +
+                                " Alternatively, override method %s.toHtml().",
+                        getClass().getName())
+        );
     }
 }

@@ -21,43 +21,40 @@ public class RichTextTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RichTextTag.class);
 
     private RichText content;
-    
+
     public void setContent(RichText content) {
         this.content = content;
     }
+
     @Override
     public int doStartTag() throws JspException {
-    	
-    	 final JspWriter out = pageContext.getOut();
-    	 StringBuilder builder = new StringBuilder();
-         try {
-        	 for(RichTextFragment fragment: content.getFragments())
-        	 {
-        		 EntityModel entityModel = (fragment instanceof EntityModel ? (EntityModel)fragment : null);
-        		 String htmlFragment = "";
-        		 if(entityModel == null)
-        		 {
-        			 htmlFragment = fragment.toHtml();
-        		 }
-        		 else
-        		 {
-        			 try {
-        				 this.pageContext.getRequest().setAttribute("_entity_" + entityModel.getId(), entityModel);
-						htmlFragment = this.processInclude(ControllerUtils.getIncludePath(entityModel), entityModel);
-					} catch (ServletException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-        		 }
-                 
-                 builder.append(htmlFragment);
-        	 }
-        	 
-             out.write(builder.toString());
-         } catch (IOException e) {
-             throw new JspException(e);
-         }
-         return SKIP_BODY;
+
+        final JspWriter out = pageContext.getOut();
+        StringBuilder builder = new StringBuilder();
+        try {
+            for (RichTextFragment fragment : content.getFragments()) {
+                EntityModel entityModel = (fragment instanceof EntityModel ? (EntityModel) fragment : null);
+                String htmlFragment = "";
+                if (entityModel == null) {
+                    htmlFragment = fragment.toHtml();
+                } else {
+                    try {
+                        this.pageContext.getRequest().setAttribute("_entity_" + entityModel.getId(), entityModel);
+                        htmlFragment = this.processInclude(ControllerUtils.getIncludePath(entityModel), entityModel);
+                    } catch (ServletException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+                builder.append(htmlFragment);
+            }
+
+            out.write(builder.toString());
+        } catch (IOException e) {
+            throw new JspException(e);
+        }
+        return SKIP_BODY;
     }
-    
+
 }

@@ -3,11 +3,8 @@ package com.sdl.webapp.main.taglib.xpm;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModel;
-import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
-import com.sdl.webapp.tridion.xpm.ComponentType;
-import com.sdl.webapp.tridion.xpm.XpmRegion;
-import com.sdl.webapp.tridion.xpm.XpmRegionConfig;
+
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class XpmRegionMarkupTag extends XpmMarkupTag {
@@ -27,35 +24,17 @@ public class XpmRegionMarkupTag extends XpmMarkupTag {
 
     @Override
     protected HtmlNode generateXpmMarkup() {
-        // TODO determine min occurs and max occurs for the region
-        final int minOccurs = 0;
-        final int maxOccurs = 0;
 
-        final XpmRegion xpmRegion = getXpmRegionConfig().getXpmRegion(region.getName(), getLocalization());
-        if (xpmRegion == null) {
-            return null;
-        }
-
-        String separator = "";
-        boolean first = true;
-        final StringBuilder sb = new StringBuilder();
-        for (ComponentType componentType : xpmRegion.getComponentTypes()) {
-            sb.append(String.format(COMPONENT_TYPE_PATTERN, separator, componentType.getSchemaId(),
-                    componentType.getTemplateId()));
-            if (first) {
-                first = false;
-                separator = ",";
+        return new HtmlNode() {
+            @Override
+            protected String renderHtml() {
+                return region.getXpmMarkup(getLocalization());
             }
-        }
+        };
 
-        return new HtmlCommentNode(String.format(REGION_PATTERN, region.getName(), sb.toString(), minOccurs,
-                maxOccurs > 0 ? String.format(MAX_OCCURS_PATTERN, maxOccurs) : ""));
     }
 
-    private XpmRegionConfig getXpmRegionConfig() {
-        return WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
-                .getBean(XpmRegionConfig.class);
-    }
+
 
     private Localization getLocalization() {
         return WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())

@@ -9,14 +9,14 @@ import com.sdl.webapp.common.api.model.EntityModel;
 
 @Component
 public class DefaultConditionalEntityEvaluator implements
-		ConditionalEntityEvaluator {
+        ConditionalEntityEvaluator {
 
-	  private static final Logger LOG = LoggerFactory.getLogger(DefaultConditionalEntityEvaluator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultConditionalEntityEvaluator.class);
 
-	@Override
-	public boolean IncludeEntity(EntityModel entity) {
-		//TODO : currently, no implementation has been built, we just return true by default
-		LOG.debug("Entering DefaultConditionalEntityEvaluator.IncludeEntity - returning true by default until real implementation");
-		return true;		
-	}
+    @Override
+    public boolean IncludeEntity(EntityModel entity) {
+        //TODO : currently, no implementation has been built, we just return true by default
+        LOG.debug("Entering DefaultConditionalEntityEvaluator.IncludeEntity - returning true by default until real implementation");
+        return true;
+    }
 }

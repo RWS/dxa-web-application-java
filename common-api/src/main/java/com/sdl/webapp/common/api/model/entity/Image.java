@@ -26,7 +26,7 @@ public class Image extends MediaItem {
     private String alternateText;
 
     final MediaHelper mediaHelper = ApplicationContextHolder.getContext().getBean(MediaHelper.class);
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(Image.class);
 
     public String getAlternateText() {
@@ -38,25 +38,23 @@ public class Image extends MediaItem {
     }
 
     @Override
-    public String toHtml(String widthFactor)
-    {
-    	return this.toHtml(widthFactor, 0,"", 0); 
+    public String toHtml(String widthFactor) {
+        return this.toHtml(widthFactor, 0, "", 0);
     }
-    
+
     @Override
-    public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize)
-    {
+    public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) {
         String responsiveImageUrl = this.mediaHelper.getResponsiveImageUrl(getUrl(), widthFactor, aspect, containerSize);
         String dataAspect = String.valueOf((Math.round(aspect * 100) / 100));
         String widthAttr = Strings.isNullOrEmpty(widthFactor) ? null : String.format("width=\"%s\"", widthFactor);
         String classAttr = Strings.isNullOrEmpty(cssClass) ? null : String.format("class=\"%s\"", cssClass);
         return String.format("<img src=\"%s\" alt=\"%s\" data-aspect=\"%s\" %s%s/>",
-            responsiveImageUrl, getAlternateText(), dataAspect, widthAttr, classAttr);
+                responsiveImageUrl, getAlternateText(), dataAspect, widthAttr, classAttr);
     }
-    
+
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
-        
+
         if (Strings.isNullOrEmpty(this.getUrl())) {
             LOG.warn("Skipping image with empty URL: {}", this);
             return null;
@@ -77,20 +75,19 @@ public class Image extends MediaItem {
                 .withAttribute("data-aspect", String.format(Locale.US, "%.2f", aspect))
                 .build();
     }
-    
+
     @Override
-    public  void readFromXhtmlElement(Node xhtmlElement)
-    {
+    public void readFromXhtmlElement(Node xhtmlElement) {
         super.readFromXhtmlElement(xhtmlElement);
 
         this.setAlternateText(xhtmlElement.getAttributes().getNamedItem("alt").getNodeValue());
         try {
-    		this.setMvcData(new MediaItemMvcData("Core:Entity:Image"));
-    	} catch (DxaException e) {
+            this.setMvcData(new MediaItemMvcData("Core:Entity:Image"));
+        } catch (DxaException e) {
 
-    	}
+        }
     }
-    
+
     @Override
     public String toString() {
         return "Image{" +

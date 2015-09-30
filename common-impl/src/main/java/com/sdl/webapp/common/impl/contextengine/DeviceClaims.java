@@ -12,17 +12,17 @@ public class DeviceClaims extends ContextClaims{
 	}
 
 
-	public int getDisplayHeight()
+	public Integer getDisplayHeight()
 	{
 		return getClaimValue("displayHeight", Integer.class);
 	}
 
-	public int getDisplayWidth()
+	public Integer getDisplayWidth()
 	{
 		return getClaimValue("displayWidth", Integer.class); 
 	}
 
-	public boolean getIsMobile()
+	public Boolean getIsMobile()
 	{
 		return getClaimValue("mobile", Boolean.class); 
 	}
@@ -32,22 +32,22 @@ public class DeviceClaims extends ContextClaims{
 		return getClaimValue("model", String.class); 
 	}
 
-	public int getPixelDensity()
+	public Integer getPixelDensity()
 	{
 		return getClaimValue("pixelDensity", Integer.class); 
 	}
 
-	public double getPixelRatio()
+	public Double getPixelRatio()
 	{
 		return getClaimValue("pixelRatio", Double.class); 
 	}
 
-	public boolean getIsRobot()
+	public Boolean getIsRobot()
 	{
 		return getClaimValue("robot", Boolean.class); 
 	}
 
-	public boolean getIsTablet()
+	public Boolean getIsTablet()
 	{
 		return getClaimValue("tablet", Boolean.class); 
 	}

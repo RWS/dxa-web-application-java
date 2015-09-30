@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * Semantic mapping registry.
- *
+ * <p/>
  * The semantic mapping registry contains information about the entity classes, gathered from the semantic mapping
  * annotations declared on the classes and the fields of the classes.
  */
@@ -21,7 +21,7 @@ public interface SemanticMappingRegistry {
      *
      * @param field The field.
      * @return A list of {@code FieldSemantics} objects for the field. Never returns {@code null}; if there are no
-     *      field semantics for the field, an empty collection is returned.
+     * field semantics for the field, an empty collection is returned.
      */
     List<FieldSemantics> getFieldSemantics(Field field);
 
@@ -31,7 +31,7 @@ public interface SemanticMappingRegistry {
      *
      * @param entityClass The entity class.
      * @return A list of {@code SemanticEntityInfo} objects containing semantic entity information for the entity class.
-     *      Never returns {@code null}; if there is no information for the class, an empty collection is returned.
+     * Never returns {@code null}; if there is no information for the class, an empty collection is returned.
      */
     List<SemanticEntityInfo> getEntityInfo(Class<? extends EntityModel> entityClass);
 
@@ -41,7 +41,7 @@ public interface SemanticMappingRegistry {
      *
      * @param field The field.
      * @return A list of {@code SemanticPropertyInfo} objects containing semantic property information for the field.
-     *      Never returns {@code null}; if there is no information for the field, an empty collection is returned.
+     * Never returns {@code null}; if there is no information for the field, an empty collection is returned.
      */
     List<SemanticPropertyInfo> getPropertyInfo(Field field);
 
@@ -58,4 +58,12 @@ public interface SemanticMappingRegistry {
      * @param entityClass The entity class.
      */
     public void registerEntity(Class<? extends EntityModel> entityClass);
+
+    /**
+     * Get entity class.
+     *
+     * @param entityName
+     * @return entity class
+     */
+    public Class<? extends EntityModel> getEntityClass(String entityName);
 }

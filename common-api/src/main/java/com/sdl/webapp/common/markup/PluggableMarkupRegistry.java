@@ -16,7 +16,9 @@ public interface PluggableMarkupRegistry {
         CSS,
         TOP_JS,
         BOTTOM_JS
-    };
+    }
+
+    ;
 
     public void registerPluggableMarkup(MarkupType markupType, HtmlNode markup);
 

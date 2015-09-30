@@ -19,7 +19,6 @@ public abstract class XpmMarkupTag extends XpmIfEnabledTag {
                 // TODO: Invoke Markup Decorators here...
 
 
-
                 final JspWriter out = pageContext.getOut();
                 try {
                     out.write(xpmMarkup.toHtml());

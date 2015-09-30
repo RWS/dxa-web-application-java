@@ -11,7 +11,7 @@ public class BrowserClaims extends ContextClaims {
             return "browser";
         }
 
-        public boolean getCookieSupport()
+        public Boolean getCookieSupport()
         {
             // BUG: Returns false on desktop FF, IE, Safari
             return getClaimValue("cookieSupport", Boolean.class);
@@ -22,34 +22,34 @@ public class BrowserClaims extends ContextClaims {
             return getClaimValue("cssVersion", String.class); 
         }
 
-        public int getDisplayColorDepth()
+        public Integer getDisplayColorDepth()
         {
             return getClaimValue("displayColorDepth", Integer.class); 
         }
 
-        public int getDisplayHeight()
+        public Integer getDisplayHeight()
         {
             return getClaimValue("displayHeight", Integer.class); 
         }
 
-        public int getDisplayWidth() 
+        public Integer getDisplayWidth()
         { 
             return getClaimValue("displayWidth", Integer.class); 
         }
 
         public String[] getImageFormatSupport()
         {
-            return getClaimValues("imageFormatSupport", String.class); 
+            return getClaimValues("imageFormatSupport", String.class).toArray(new String[0]);
         }
 
         public String[] getInputDevices()
         {
-            return getClaimValues("inputDevices", String.class); 
+            return getClaimValues("inputDevices", String.class).toArray(new String[0]);
         }
 
         public String[] getInputModeSupport()
         {
-            return getClaimValues("inputModeSupport", String.class); 
+            return getClaimValues("inputModeSupport", String.class).toArray(new String[0]);
         }
 
         public String getJsVersion()
@@ -59,7 +59,7 @@ public class BrowserClaims extends ContextClaims {
 
         public String[] getMarkupSupport()
         {
-            return getClaimValues("markupSupport", String.class); 
+            return getClaimValues("markupSupport", String.class).toArray(new String[0]);
         }
 
         public String getModel()
@@ -74,12 +74,12 @@ public class BrowserClaims extends ContextClaims {
 
         public String[] getScriptSupport()
         {
-            return getClaimValues("scriptSupport", String.class); 
+            return getClaimValues("scriptSupport", String.class).toArray(new String[0]);
         }
 
         public String[] getStylesheetSupport()
         {
-            return getClaimValues("stylesheetSupport", String.class); 
+            return getClaimValues("stylesheetSupport", String.class).toArray(new String[0]);
         }
 
         public String getVariant()

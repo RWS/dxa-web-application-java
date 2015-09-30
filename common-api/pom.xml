@@ -67,5 +67,12 @@
             <artifactId>jsoup</artifactId>
         </dependency>
 
+        <!-- RSS -->
+        <dependency>
+            <groupId>net.java.dev.rome</groupId>
+            <artifactId>rome</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
     </dependencies>
 </project>

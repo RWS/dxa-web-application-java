@@ -9,9 +9,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.SiteLocalization;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -27,6 +25,8 @@ class LocalizationImpl implements Localization {
         private boolean staging;
         private String version;
 
+
+        private final ImmutableList.Builder<String> dataFormatsBuilder = ImmutableList.builder();
         private final ImmutableList.Builder<SiteLocalization> siteLocalizationsBuilder = ImmutableList.builder();
         private final ImmutableMap.Builder<String, String> configurationBuilder = ImmutableMap.builder();
         private final ImmutableMap.Builder<String, String> resourcesBuilder = ImmutableMap.builder();
@@ -63,6 +63,11 @@ class LocalizationImpl implements Localization {
 
         public Builder setVersion(String version) {
             this.version = version;
+            return this;
+        }
+
+        public Builder addDataFormats(Iterable<? extends String> dataFormats) {
+            this.dataFormatsBuilder.addAll(dataFormats);
             return this;
         }
 
@@ -120,6 +125,7 @@ class LocalizationImpl implements Localization {
     private final Map<Long, SemanticSchema> semanticSchemas;
     private final ListMultimap<String, String> includes;
 
+
     private LocalizationImpl(Builder builder) {
         this.id = builder.id;
         this.path = builder.path;
@@ -128,11 +134,13 @@ class LocalizationImpl implements Localization {
         this.staging = builder.staging;
         this.version = builder.version;
 
+
         this.siteLocalizations = builder.siteLocalizationsBuilder.build();
         this.configuration = builder.configurationBuilder.build();
         this.resources = builder.resourcesBuilder.build();
         this.semanticSchemas = builder.semanticSchemasBuilder.build();
         this.includes = builder.includesBuilder.build();
+
     }
 
     public static Builder newBuilder() {
@@ -177,6 +185,11 @@ class LocalizationImpl implements Localization {
         return version;
     }
 
+    @Override
+    public List<String> getDataFormats() {
+        String[]  formats = getConfiguration("core.dataFormats").split("(\\s*)?,(\\s*)?");
+        return Arrays.asList(formats);
+    }
     @Override
     public String getCulture() {
         return getConfiguration("core.culture");

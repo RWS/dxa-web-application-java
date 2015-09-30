@@ -22,7 +22,7 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.ENTITY_CONTR
 
 /**
  * Entity controller for the Core area.
- * <p/>
+ *
  * This handles include requests to /system/mvc/Core/Entity/{regionName}/{entityId}
  */
 @Controller
@@ -30,14 +30,13 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.ENTITY_CONTR
 public class EntityController extends AbstractController {
     private static final Logger LOG = LoggerFactory.getLogger(EntityController.class);
 
-
+  
     /**
      * Handles a request for an entity.
      *
-     * @param request       The request.
-     * @param regionName    The region name.
-     * @param entityId      The entity id.
-     * @param containerSize the container size.
+     * @param request The request.
+     * @param regionName The region name.
+     * @param entityId The entity id.
      * @return The name of the entity view that should be rendered for this request.
      * @throws ContentProviderException If an error occurs so that the entity cannot not be retrieved.
      */
@@ -47,10 +46,6 @@ public class EntityController extends AbstractController {
             throws ContentProviderException {
         LOG.trace("handleGetEntity: regionName={}, entityId={}", regionName, entityId);
 
-        int containerSize = 0;
-        if (request.getAttribute("_containersize_" + regionName + entityId) != null) {
-            containerSize = (int) request.getAttribute("_containersize_" + regionName + entityId);
-        }
         final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
         request.setAttribute(ENTITY_MODEL, entity);
 
@@ -58,9 +53,9 @@ public class EntityController extends AbstractController {
         LOG.trace("Entity MvcData: {}", mvcData);
         //return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
 
-        return resolveView(mvcData, "Entity", containerSize, request);
+        return resolveView(mvcData, "Entity", request);
 
     }
-
-
+    
+   
 }

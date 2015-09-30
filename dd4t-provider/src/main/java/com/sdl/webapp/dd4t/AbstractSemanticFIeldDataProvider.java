@@ -39,19 +39,19 @@ public abstract class AbstractSemanticFieldDataProvider implements SemanticField
 
     protected final FieldConverterRegistry fieldConverterRegistry;
 
-    protected final EntityBuilder builder;
+    protected final ModelBuilderPipeline builder;
 
     protected int embeddingLevel = 0;
 
     protected final Stack<Map<String, Field>> embeddedFieldsStack = new Stack<>();
 
-    public AbstractSemanticFieldDataProvider(org.dd4t.contentmodel.Component component, FieldConverterRegistry fieldConverterRegistry, EntityBuilder builder) {
+    public AbstractSemanticFieldDataProvider(org.dd4t.contentmodel.Component component, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
         this.component = component;
         this.page = null;
         this.fieldConverterRegistry = fieldConverterRegistry;
         this.builder = builder;
     }
-    public AbstractSemanticFieldDataProvider(org.dd4t.contentmodel.Page page, FieldConverterRegistry fieldConverterRegistry, EntityBuilder builder) {
+    public AbstractSemanticFieldDataProvider(org.dd4t.contentmodel.Page page, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
         this.page = page;
         this.component = null;
         this.fieldConverterRegistry = fieldConverterRegistry;

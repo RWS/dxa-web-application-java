@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
 
 import static com.sdl.webapp.dd4t.fieldconverters.FieldUtils.getStringValue;
 
+@Component
 final class PageBuilderImpl implements PageBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(PageBuilderImpl.class);
 
@@ -69,7 +70,8 @@ final class PageBuilderImpl implements PageBuilder {
 
     private static final Pattern REGION_VIEW_NAME_PATTERN = Pattern.compile(".*\\[(.*)\\]");
 
-    private final EntityBuilder entityBuilder;
+    private final ModelBuilderPipeline modelBuilderPipeline;
+    //private final EntityBuilder entityBuilder;
 
     private final LinkResolver linkResolver;
 
@@ -102,7 +104,7 @@ final class PageBuilderImpl implements PageBuilder {
                     throw new ContentProviderException("Could not fetch dynamic component presentation.", e);
                 }
             }
-            return entityBuilder.createEntity(componentPresentation, null, localization);
+            return modelBuilderPipeline.CreateEntityModel(componentPresentation, localization);
         }
 
         @Override
@@ -117,7 +119,7 @@ final class PageBuilderImpl implements PageBuilder {
     }
 
     @Autowired
-    PageBuilderImpl(EntityBuilder entityBuilder,
+    PageBuilderImpl(ModelBuilderPipeline modelBuilderPipeline,
                     RegionBuilder regionBuilder,
                     LinkResolver linkResolver,
                     SemanticMapper semanticMapper,
@@ -126,7 +128,7 @@ final class PageBuilderImpl implements PageBuilder {
                     WebRequestContext webRequestContext,
                     ViewModelRegistry viewModelRegistry,
                     FieldConverterRegistry fieldConverterRegistry) {
-        this.entityBuilder = entityBuilder;
+        this.modelBuilderPipeline = modelBuilderPipeline;
         this.regionBuilder = regionBuilder;
         this.linkResolver = linkResolver;
         this.semanticMapper = semanticMapper;
@@ -313,7 +315,7 @@ final class PageBuilderImpl implements PageBuilder {
         final ViewModel entity;
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
-                    new DD4TSemanticPageFieldDataProvider(page, fieldConverterRegistry, this.entityBuilder));
+                    new DD4TSemanticPageFieldDataProvider(page, fieldConverterRegistry, this.modelBuilderPipeline));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }

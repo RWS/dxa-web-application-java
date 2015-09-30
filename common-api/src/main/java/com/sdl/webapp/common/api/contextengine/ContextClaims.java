@@ -1,7 +1,9 @@
 package com.sdl.webapp.common.api.contextengine;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class ContextClaims {
     private Map<String, Object> claims;
@@ -26,29 +28,33 @@ public abstract class ContextClaims {
         } else {
             return null;
         }
-        //this.claims.TryGetValue(getClaimName(propertyName), out claimValue);
-        //return CastValue<T>(claimValue);
     }
 
-    public <T> T[] getClaimValues(String propertyName, Class<T> cls) {
+    public <T> ArrayList<T> getClaimValues(String propertyName, Class<T> cls) {
         Object claimValue;
         String claimName = getClaimName(propertyName);
         if (this.claims.containsKey(claimName)) {
-            claimValue = this.claims.get(propertyName);
+            claimValue = this.claims.get(claimName);
             if (claimValue == null) {
                 return null;
             } else {
-
+                if(Set.class.isInstance(claimValue))
+                {
+                    Set retval = ((Set)claimValue);
+                    ArrayList<T> array = new ArrayList<T>();
+                    for(Object o : retval)
+                    {
+                        array.add(castValue(o, cls));
+                    }
+                    return array;
+                }
+                else
+                {
+                    return (ArrayList<T>)claimValue;
+                }
             }
-
-
         }
-        {
-            return null;
-        }
-         /*
-         this.claims.TryGetValue(getClaimName(propertyName), out claimValue);
-         return (claimValue == null) ? null : (from object item in (IEnumerable) claimValue select CastValue<T>(item)).ToArray();*/
+        return null;
     }
 
     private static <T> T castValue(Object value, Class<T> cls) {

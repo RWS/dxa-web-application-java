@@ -2,8 +2,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %>
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
+
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.ContentList" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
+
 <div class="${entity.htmlClasses}" ${markup.entity(entity)}>
     <c:if test="${not empty entity.headline}">
         <h3 ${markup.property(entity, "headline")}>${entity.headline}</h3>
@@ -37,7 +39,9 @@
             <a href="${entity.link.url}" title="${entity.link.alternateText}">
                 <c:choose>
                     <c:when test="${not empty entity.link.linkText}">${entity.link.linkText}</c:when>
-                    <c:otherwise><dxa:resource key="core.readMoreLinkText"/></c:otherwise>
+                    <c:otherwise>
+                        <dxa:resource key="core.readMoreLinkText"/>
+                    </c:otherwise>
                 </c:choose>
                 <i class="fa fa-chevron-right"></i>
             </a>

@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %> 
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
+
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Place" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
@@ -27,8 +28,7 @@
         <div id="location-tile" class="row">
             <c:if test="${not empty entity.location}">
                 <div class="col-sm-6">
-                    <dxa:googlemap latitude="${entity.location.latitude}" longitude="${entity.location.longitude}"
-                                   markerName="${entity.name}" mapHeight="300"/>
+                    <dxa:googlemap latitude="${entity.location.latitude}" longitude="${entity.location.longitude}" markerName="${entity.name}" mapHeight="300"/>
                 </div>
             </c:if>
             <div class="col-sm-${width}">

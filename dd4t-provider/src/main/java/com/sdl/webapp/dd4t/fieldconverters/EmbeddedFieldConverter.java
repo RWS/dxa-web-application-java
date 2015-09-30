@@ -9,6 +9,7 @@ import com.sdl.webapp.dd4t.AbstractSemanticFieldDataProvider;
 import com.sdl.webapp.dd4t.DD4TSemanticFieldDataProvider;
 import com.sdl.webapp.dd4t.EntityBuilder;
 
+import com.sdl.webapp.dd4t.ModelBuilderPipeline;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
@@ -38,7 +39,7 @@ public class EmbeddedFieldConverter implements FieldConverter {
 
     @Override
     public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType,
-                                AbstractSemanticFieldDataProvider semanticFieldDataProvider, EntityBuilder builder) throws FieldConverterException {
+                                AbstractSemanticFieldDataProvider semanticFieldDataProvider, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<FieldSet> embeddedValues = field.getEmbeddedValues();
 
         if (semanticField.isMultiValue()) {

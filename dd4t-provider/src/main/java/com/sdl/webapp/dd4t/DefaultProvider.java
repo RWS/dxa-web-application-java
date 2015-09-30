@@ -155,8 +155,8 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         {
             throw new DxaException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", id));
         }
-        String componentUri = String.format("tcm:{0}-{1}", localization.getId(), idParts[0]);
-        String templateUri = String.format("tcm:{0}-{1}-32", localization.getId(), idParts[1]);
+        String componentUri = String.format("tcm:%s-%s", localization.getId(), idParts[0]);
+        String templateUri = String.format("tcm:%s-%s-32", localization.getId(), idParts[1]);
         try {
             final ComponentPresentation componentPresentation = this.dd4tComponentPresentationFactory.getComponentPresentation(componentUri, templateUri);
             return modelBuilderPipeline.CreateEntityModel(componentPresentation, localization);

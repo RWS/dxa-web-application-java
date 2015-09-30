@@ -105,13 +105,34 @@ public interface WebRequestContext {
     int getMaxMediaWidth();
 
     /**
+     * Get current container size in the context of current region.
+     *
+     * @return container size
+     */
+    int getContainerSize();
+
+    /**
+     * Push container size for current context (rendering of a region or entity)
+     *
+     * @param containerSize
+     */
+    void pushContainerSize(int containerSize);
+
+    /**
+     * Pop container size back to previous context
+     */
+    void popContainerSize();
+
+    /**
      * Gets the contextengine of the current request.
      *
      * @return The contextengine of the current request.
      */
     ContextEngine getContextEngine();
 
-    boolean getHasNoLocalization();
+    // TODO: Should we have setters in this interface??
+    
+	boolean getHasNoLocalization();
 
     void setHasNoLocalization(boolean value);
 
@@ -126,8 +147,7 @@ public interface WebRequestContext {
     void setIsInclude(boolean value);
 
     void setIsDeveloperMode(boolean value);
-
-
+    
     RegionModel getParentRegion();
 
     void pushParentRegion(RegionModel value);

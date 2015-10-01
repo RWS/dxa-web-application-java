@@ -143,6 +143,12 @@ final class PageBuilderImpl implements PageBuilder {
         try {
             String regionName = page.getName().replace(" ", "-");
             MvcDataImpl regionMvcData = new MvcDataImpl(regionName);
+
+            //if a include page title contains an area name, remove it from the region name, as this name should not be qualified
+            if(regionName.contains(":"))
+            {
+                regionName = regionName.substring(regionName.indexOf(":")+1);
+            }
             regionMvcData = InitializeRegionMvcData(regionMvcData);
             RegionModelImpl region = new RegionModelImpl(regionName);
             region.setName(regionName);
@@ -196,13 +202,23 @@ final class PageBuilderImpl implements PageBuilder {
 
         // = new RegionModelSetImpl();
 
-        final RegionModelSet regionMap = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization, this.viewModelRegistry);
+        final RegionModelSet regionMap = this.createPredefinedRegions(genericPage.getPageTemplate());
 
-        final RegionModelSet predefinedRegions = this.createPredefinedRegions(genericPage.getPageTemplate());
-        if (predefinedRegions != null) {
-            for (RegionModel model : predefinedRegions) {
+        final RegionModelSet cpRegions =this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization, this.viewModelRegistry);
+        if (cpRegions != null) {
+            for (RegionModel model : cpRegions) {
                 if (!regionMap.containsKey(model.getName())) {
                     regionMap.add(model);
+                }
+                else
+                {
+                    if(!regionMap.get(model.getName()).getMvcData().equals(model.getMvcData()))
+                    {
+                        LOG.warn("Region '%s' is defined with conflicting MVC data: [%s] and [%s]. Using the former.", new Object[] {model.getName(), regionMap.get(model.getName()).getMvcData(), model.getMvcData()});
+                        for(EntityModel e : model.getEntities()) {
+                            regionMap.get(model.getName()).addEntity(e);
+                        }
+                    }
                 }
             }
         }
@@ -345,8 +361,8 @@ final class PageBuilderImpl implements PageBuilder {
 
         if (pageTemplateMeta == null || !pageTemplateMeta.containsKey(REGIONS_METADATA_FIELD_NAME))// TODO: "region" instead of "regions"
         {
-            LOG.debug("No Region metadata defined for Page Template '%s'.", pageTemplate.getId());
-            return null;
+            LOG.debug("No Region metadata defined for Page Template '%'.", pageTemplate.getId());
+            return regions;
         }
 
         BaseField regionsMetaField = (BaseField) pageTemplateMeta.get(REGIONS_METADATA_FIELD_NAME);
@@ -354,7 +370,7 @@ final class PageBuilderImpl implements PageBuilder {
             for (FieldSet regionField : regionsMetaField.getEmbeddedValues()) {
                 Map<String, Field> region = regionField.getContent();
                 if (!region.containsKey(REGIONS_METADATA_FIELD_NAME_VIEW)) {
-                    LOG.warn("Region metadata without 'view' field encountered in metadata of Page Template '%s'.", pageTemplate.getId());
+                    LOG.warn("Region metadata without 'view' field encountered in metadata of Page Template '%'.", pageTemplate.getId());
                     continue;
                 }
                 String view = getStringValue(region, REGIONS_METADATA_FIELD_NAME_VIEW);
@@ -380,19 +396,19 @@ final class PageBuilderImpl implements PageBuilder {
                 try {
                     regionModel = CreateRegionModel(regionMvcData);
                 } catch (IllegalAccessException e) {
-                    LOG.error("Error creating region for view '%s'.", view, e);
+                    LOG.error("Error creating region for view '%'.", view, e);
                     continue;
                 } catch (InstantiationException e) {
-                    LOG.error("Error creating region for view '%s'.", view, e);
+                    LOG.error("Error creating region for view '%'.", view, e);
                     continue;
                 } catch (DxaException e) {
-                    LOG.error("Error creating region for view '%s'.", view, e);
+                    LOG.error("Error creating region for view '%'.", view, e);
                     continue;
                 } catch (NoSuchMethodException e) {
-                    LOG.error("Error creating region for view '%s'.", view, e);
+                    LOG.error("Error creating region for view '%'.", view, e);
                     continue;
                 } catch (InvocationTargetException e) {
-                    LOG.error("Error creating region for view '%s'.", view, e);
+                    LOG.error("Error creating region for view '%'.", view, e);
                     continue;
                 }
                 regions.add(regionModel);
@@ -526,9 +542,13 @@ final class PageBuilderImpl implements PageBuilder {
     private String getRegionName(ComponentPresentation cp) {
         final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
         if (templateMeta != null) {
-            String regionName = getStringValue(templateMeta, "regionView");
+            String regionName = getStringValue(templateMeta, "regionName");
             if (Strings.isNullOrEmpty(regionName)) {
-                regionName = DEFAULT_REGION_NAME;
+                //fallback if region name field is empty, use regionView name
+                regionName = getStringValue(templateMeta, "regionView");
+                if (Strings.isNullOrEmpty(regionName)) {
+                    regionName = DEFAULT_REGION_NAME;
+                }
             }
             return regionName;
         }

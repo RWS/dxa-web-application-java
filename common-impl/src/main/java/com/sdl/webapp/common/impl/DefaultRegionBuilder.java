@@ -55,7 +55,7 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
                         //region = new RegionModelImpl(regionName);
                         Class regionModelType = viewModelRegistry.getViewModelType(regionMvcData);
                         try {
-                            region = (RegionModel) regionModelType.getDeclaredConstructor(String.class).newInstance(regionMvcData.getViewName());
+                            region = (RegionModel) regionModelType.getDeclaredConstructor(String.class).newInstance(regionName);
                         } catch (InstantiationException | IllegalAccessException |InvocationTargetException | NoSuchMethodException e ) {
                             throw new ContentProviderException(e);
                         }

@@ -35,9 +35,14 @@
                     pageModel.getRegions().containsKey("Left");
             int mainContainerSize = hasLeftBar ? 9 : 12;
         %>
+        <dxa:region name="TestInclude"/>
         <dxa:region name="Custom-Region"/>
         <dxa:region name="Hero"/>
         <dxa:region name="Content-Tools"/>
+
+        <dxa:region name="Region1SharedView"/>
+        <dxa:region name="Region2SharedView"/>
+
         <div class="row">
             <% if (hasLeftBar) { %>
                 <div class="col-sm-12 col-md-3">

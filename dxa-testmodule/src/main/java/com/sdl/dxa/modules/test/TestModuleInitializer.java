@@ -37,6 +37,7 @@ public class TestModuleInitializer {
             this.viewModelRegistry.registerPageViewModel("Test:GeneralPageCustomRegion", CustomPageModelImpl.class);
             this.viewModelRegistry.registerViewEntityClass("Test:CustomPageMetadata", CustomPageModelImpl.class);
             this.viewModelRegistry.registerRegionViewModel("Test:CustomRegion", CustomRegionModelImpl.class);
+            this.viewModelRegistry.registerRegionViewModel("Test:TestRegionView", RegionModelImpl.class);
             this.viewModelRegistry.registerViewEntityClass("Test:ExternalContentLibraryStubSchemaflickr", ExternalContentLibraryStubSchemaflickr.class);
         } catch (DxaException e) {
             e.printStackTrace();

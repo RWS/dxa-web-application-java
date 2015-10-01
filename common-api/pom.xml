@@ -26,6 +26,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+
+        <dependency>
             <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>

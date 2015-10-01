@@ -42,8 +42,7 @@ public class RichTextTag extends AbstractMarkupTag {
                         this.pageContext.getRequest().setAttribute("_entity_" + entityModel.getId(), entityModel);
                         htmlFragment = this.processInclude(ControllerUtils.getIncludePath(entityModel), entityModel);
                     } catch (ServletException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        throw new JspException(e);
                     }
                 }
 
@@ -52,6 +51,7 @@ public class RichTextTag extends AbstractMarkupTag {
 
             out.write(builder.toString());
         } catch (IOException e) {
+            LOG.error("Error while rendering rich text", e);
             throw new JspException(e);
         }
         return SKIP_BODY;

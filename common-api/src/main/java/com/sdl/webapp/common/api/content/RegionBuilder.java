@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
 
 import java.util.List;
 import java.util.Map;
@@ -29,6 +30,7 @@ public interface RegionBuilder {
                                        ConditionalEntityEvaluator conditionalEntityEvaluator,
                                        List<?> sourceList,
                                        RegionBuilderCallback callback,
-                                       Localization localization) throws ContentProviderException;
+                                       Localization localization,
+                                       ViewModelRegistry viewModelRegistry) throws ContentProviderException;
 
 }

@@ -85,6 +85,7 @@ public class RegionModelImpl implements RegionModel {
         this.entities = entities;
     }
 
+    @Override
     public void addEntity(EntityModel entity) {
         this.entities.add(entity);
     }

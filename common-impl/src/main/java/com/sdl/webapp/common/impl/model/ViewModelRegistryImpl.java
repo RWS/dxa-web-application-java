@@ -71,9 +71,28 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             this.registerViewEntityClass("ThumbnailList", ContentList.class);
             this.registerViewEntityClass("TopNavigation", NavigationLinks.class);
             this.registerViewEntityClass("YouTubeVideo", YouTubeVideo.class);
+
             this.registerPageViewModel("GeneralPage", PageModelImpl.class);
             this.registerPageViewModel("IncludePage", PageModelImpl.class);
             this.registerPageViewModel("RedirectPage", PageModelImpl.class);
+
+            this.registerRegionViewModel("2-Column", RegionModelImpl.class);
+            this.registerRegionViewModel("3-Column", RegionModelImpl.class);
+            this.registerRegionViewModel("4-Column", RegionModelImpl.class);
+            this.registerRegionViewModel("Hero", RegionModelImpl.class);
+            this.registerRegionViewModel("Info", RegionModelImpl.class);
+            this.registerRegionViewModel("Left", RegionModelImpl.class);
+            this.registerRegionViewModel("Links", RegionModelImpl.class);
+            this.registerRegionViewModel("Logo", RegionModelImpl.class);
+            this.registerRegionViewModel("Main", RegionModelImpl.class);
+            this.registerRegionViewModel("Nav", RegionModelImpl.class);
+            this.registerRegionViewModel("Tools", RegionModelImpl.class);
+
+
+            this.registerRegionViewModel("Header", RegionModelImpl.class);
+            this.registerRegionViewModel("Footer", RegionModelImpl.class);
+            this.registerRegionViewModel("Left Navigation", RegionModelImpl.class);
+            this.registerRegionViewModel("Content Tools", RegionModelImpl.class);
 
         } catch (DxaException e) {
             e.printStackTrace();

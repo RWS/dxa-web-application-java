@@ -11,30 +11,24 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.controller.ViewResolver;
-import com.sdl.webapp.common.util.StreamUtils;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
+import com.sdl.webapp.common.api.formats.DataFormatter;
 import com.sdl.webapp.common.markup.Markup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.server.ServletServerHttpResponse;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.*;
 import static com.sdl.webapp.common.controller.ControllerUtils.*;
@@ -66,15 +60,18 @@ public class MainController {
 
     private final ViewResolver viewResolver;
 
+    private final DataFormatter dataFormatter;
+
     @Autowired
     public MainController(ContentProvider contentProvider, LinkResolver linkResolver, MediaHelper mediaHelper,
-                          WebRequestContext webRequestContext, Markup markup, ViewResolver viewResolver) {
+                          WebRequestContext webRequestContext, Markup markup, ViewResolver viewResolver, DataFormatter dataFormatter) {
         this.contentProvider = contentProvider;
         this.linkResolver = linkResolver;
         this.mediaHelper = mediaHelper;
         this.webRequestContext = webRequestContext;
         this.markup = markup;
         this.viewResolver = viewResolver;
+        this.dataFormatter = dataFormatter;
     }
 
     /**
@@ -84,7 +81,7 @@ public class MainController {
      * @param request The request.
      * @return The view name of the page.
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = "text/html")
+    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {MediaType.TEXT_HTML_VALUE})
     public String handleGetPage(HttpServletRequest request) {
         final String requestPath = webRequestContext.getRequestPath();
         LOG.trace("handleGetPage: requestPath={}", requestPath);
@@ -111,6 +108,41 @@ public class MainController {
         return this.viewResolver.resolveView(mvcData, "Page", request);
         //return mvcData.getAreaName() + "/Page/" + mvcData.getViewName();
     }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {"application/rss+xml", "application/json", "application/atom+xml"})
+    public ModelAndView handleGetPageFormatted(HttpServletRequest request, @RequestParam(required = false) String format) {
+
+        final String requestPath = webRequestContext.getRequestPath();
+        LOG.trace("handleGetPageAsJson: requestPath={}", requestPath);
+
+        final Localization localization = webRequestContext.getLocalization();
+
+        //TODO: PageModel loads includes as regions in 1.1 (.net)
+        final PageModel page = getPageModel(requestPath, localization);
+        LOG.trace("handleGetPageAsJson: page={}", page);
+
+
+        ModelAndView mav = new ModelAndView();
+        switch (format){
+            case "rss":
+                mav.setViewName("rssFeedView");
+                break;
+            case "atom":
+                mav.setViewName("atomFeedView");
+                break;
+            default:
+                //json
+                mav.setViewName("jsonFeedView");
+                break;
+        }
+        mav.addObject("formatter", dataFormatter.getFormatter(format));
+        mav.addObject("data", page);
+
+        return mav;
+
+    }
+
+
 
     @RequestMapping(method = RequestMethod.GET, value = "/resolve/{itemId}")
     public String handleResolve(@PathVariable String itemId, @RequestParam String localizationId,

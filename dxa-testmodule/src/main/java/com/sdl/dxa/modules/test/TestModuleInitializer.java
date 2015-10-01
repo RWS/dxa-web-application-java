@@ -1,6 +1,8 @@
 package com.sdl.dxa.modules.test;
 
 import com.sdl.dxa.modules.test.model.CustomPageModelImpl;
+import com.sdl.dxa.modules.test.model.CustomRegionModelImpl;
+import com.sdl.dxa.modules.test.model.ExternalContentLibraryStubSchemaflickr;
 import com.sdl.dxa.modules.test.model.VimeoVideo;
 import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
@@ -34,7 +36,8 @@ public class TestModuleInitializer {
             this.viewModelRegistry.registerViewEntityClass("Test:ShowClaims", Article.class);
             this.viewModelRegistry.registerPageViewModel("Test:GeneralPageCustomRegion", CustomPageModelImpl.class);
             this.viewModelRegistry.registerViewEntityClass("Test:CustomPageMetadata", CustomPageModelImpl.class);
-            this.viewModelRegistry.registerRegionViewModel("Test:CustomRegion", RegionModelImpl.class);
+            this.viewModelRegistry.registerRegionViewModel("Test:CustomRegion", CustomRegionModelImpl.class);
+            this.viewModelRegistry.registerViewEntityClass("Test:ExternalContentLibraryStubSchemaflickr", ExternalContentLibraryStubSchemaflickr.class);
         } catch (DxaException e) {
             e.printStackTrace();
         }

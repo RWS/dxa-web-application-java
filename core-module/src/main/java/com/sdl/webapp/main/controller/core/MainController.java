@@ -60,7 +60,7 @@ public class MainController {
 
     private final ViewResolver viewResolver;
 
-    private final DataFormatter dataFormatter;
+    private final DataFormatter dataFormatters;
 
     @Autowired
     public MainController(ContentProvider contentProvider, LinkResolver linkResolver, MediaHelper mediaHelper,
@@ -71,7 +71,7 @@ public class MainController {
         this.webRequestContext = webRequestContext;
         this.markup = markup;
         this.viewResolver = viewResolver;
-        this.dataFormatter = dataFormatter;
+        this.dataFormatters = dataFormatter;
     }
 
     /**
@@ -109,37 +109,17 @@ public class MainController {
         //return mvcData.getAreaName() + "/Page/" + mvcData.getViewName();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {"application/rss+xml", "application/json", "application/atom+xml"})
-    public ModelAndView handleGetPageFormatted(HttpServletRequest request, @RequestParam(required = false) String format) {
+    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
+    public ModelAndView handleGetPageFormatted(HttpServletRequest request) {
 
         final String requestPath = webRequestContext.getRequestPath();
-        LOG.trace("handleGetPageAsJson: requestPath={}", requestPath);
+        LOG.trace("handleGetPageFormatted: requestPath={}", requestPath);
 
         final Localization localization = webRequestContext.getLocalization();
-
-        //TODO: PageModel loads includes as regions in 1.1 (.net)
         final PageModel page = getPageModel(requestPath, localization);
-        LOG.trace("handleGetPageAsJson: page={}", page);
 
-
-        ModelAndView mav = new ModelAndView();
-        switch (format){
-            case "rss":
-                mav.setViewName("rssFeedView");
-                break;
-            case "atom":
-                mav.setViewName("atomFeedView");
-                break;
-            default:
-                //json
-                mav.setViewName("jsonFeedView");
-                break;
-        }
-        mav.addObject("formatter", dataFormatter.getFormatter(format));
-        mav.addObject("data", page);
-
-        return mav;
-
+        LOG.trace("handleGetPageFormatted: page={}", page);
+        return dataFormatters.view(page);
     }
 
 

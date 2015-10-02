@@ -4,7 +4,7 @@ import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.PageModel;
-import com.sdl.webapp.dd4t.PageBuilder;
+import com.sdl.webapp.tridion.PageBuilder;
 import org.dd4t.contentmodel.Page;
 import org.springframework.stereotype.Component;
 

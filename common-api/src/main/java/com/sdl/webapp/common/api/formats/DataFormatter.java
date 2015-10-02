@@ -1,12 +1,13 @@
 package com.sdl.webapp.common.api.formats;
 
 import com.sdl.webapp.common.api.WebRequestContext;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by Administrator on 9/30/2015.
+ * DataFormatter, to be implemented by the class wiring the different format responses
  */
 public interface DataFormatter {
-    com.sdl.webapp.common.api.formatters.DataFormatter getFormatter(String format);
+    ModelAndView view(Object model);
 }

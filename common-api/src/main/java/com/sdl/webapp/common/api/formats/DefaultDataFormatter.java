@@ -5,17 +5,18 @@ import com.sdl.webapp.common.api.formatters.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
- * Created by Administrator on 9/29/2015.
+ * Helper bean to handle the different formatters
  */
 
 @Component
 @ComponentScan(basePackages = {"com.sdl.webapp.main", "com.sdl.webapp.common.controller", "com.sdl.webapp.addon"})
-public class DefaultDataFormatter implements DataFormatter{
+public class DefaultDataFormatter implements DataFormatter {
 
     @Autowired
     private HttpServletRequest request;
@@ -35,31 +36,66 @@ public class DefaultDataFormatter implements DataFormatter{
     }
 
 
-
-    public com.sdl.webapp.common.api.formatters.DataFormatter getFormatter(String format)
+    /**
+     * Gets the formatter based on the format
+     * @param format: the format (lowercase): json, atom or rss
+     * @return The (@code DataFormatter) to handle the response
+     */
+    private com.sdl.webapp.common.api.formatters.DataFormatter getFormatter(String format)
     {
         if (formatters.containsKey(format) && context.getLocalization().getDataFormats().contains(format))
         {
-            return (com.sdl.webapp.common.api.formatters.DataFormatter)formatters.get(format);
+            return formatters.get(format);
         }
         return null;
     }
 
-    private String getFormat(HttpServletRequest request)
+    /**
+     * Returns the  @see ModelAndView to render the different formats
+     * @param model
+     * @return
+     */
+    @Override
+    public ModelAndView view(Object model) {
+        String format = getFormat();
+        com.sdl.webapp.common.api.formatters.DataFormatter formatter = getFormatter(format);
+        ModelAndView mav = new ModelAndView();
+        switch (format){
+            case "rss":
+                mav.setViewName("rssFeedView");
+                break;
+            case "atom":
+                mav.setViewName("atomFeedView");
+                break;
+            case "json":
+            default:
+                mav.setViewName("jsonFeedView");
+                break;
+        }
+        mav.addObject("formatter", getFormatter(format));
+        mav.addObject("data", model);
+
+        return mav;
+    }
+
+    /**
+     * Gets the format
+     * @return the format from the @see HttpServletRequest query string
+     */
+    private String getFormat()
     {
-        //TODO: Jaime Santos get the format query string
-        String format = "";//controllerContext.RequestContext.HttpContext.Request.QueryString["format"];
+        String format = request.getParameter("format");
         if (format != null)
         {
             return format.toLowerCase();
         }
         format = "html";
-        double topScore = getHtmlAcceptScore(request);
+        double topScore = getHtmlAcceptScore();
         if (topScore<1.0)
         {
             for (String key : formatters.keySet())
             {
-                double score = formatters.get(key).score(request);
+                double score = formatters.get(key).score();
                 if (score > topScore)
                 {
                     topScore = score;
@@ -74,11 +110,15 @@ public class DefaultDataFormatter implements DataFormatter{
         return format;
     }
 
-    private double getHtmlAcceptScore(HttpServletRequest controllerContext)
+    /**
+     * Gets the score for html media type
+     * @return the score
+     */
+    private double getHtmlAcceptScore()
     {
         double score = 0.0;
-        //TODO: Jaime Santos Get accept types
-        String[] acceptTypes = null;//controllerContext.HttpContext.Request.AcceptTypes;
+        //TODO: TW Check that acceptTypes come as comma-separated list
+        String[] acceptTypes = request.getHeader("Accept").split(",");
         if (acceptTypes!=null)
         {
             for (String type : acceptTypes)
@@ -100,13 +140,11 @@ public class DefaultDataFormatter implements DataFormatter{
         return score;
     }
 
-    public Map<String, com.sdl.webapp.common.api.formatters.DataFormatter> getFormatters() {
-        return formatters;
-    }
-
-    public void setFormatters(Map<String, com.sdl.webapp.common.api.formatters.DataFormatter> formatters) {
-        formatters = formatters;
-    }
+    /**
+     * Gets the score from accept string
+     * @param type
+     * @return
+     */
     public static double getScoreFromAcceptString(String type)
     {
         double res = 1.0;

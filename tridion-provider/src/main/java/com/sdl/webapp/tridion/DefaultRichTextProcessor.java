@@ -211,7 +211,9 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 
         String xhtml;
         try {
-            xhtml = XMLUtils.format(doc);
+            XMLUtils.format(doc);
+            xhtml = innerXml(doc.getFirstChild());
+
 
             int lastFragmentIndex = 0;
             int i = 0;
@@ -247,6 +249,22 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
         return new RichText(richTextFragments);
     }
 
+    /**
+     * Allows to retrieve the inner xml of the first node <xhtml></xhtml> as String
+     * @param node
+     * @return
+     */
+    private String innerXml(Node node) {
+        DOMImplementationLS lsImpl = (DOMImplementationLS)node.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
+        LSSerializer lsSerializer = lsImpl.createLSSerializer();
+        lsSerializer.getDomConfig().setParameter("xml-declaration", false);
+        NodeList childNodes = node.getChildNodes();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            sb.append(lsSerializer.writeToString(childNodes.item(i)));
+        }
+        return sb.toString();
+    }
     /*
     private String cleanHtml(String input) {
         // This is necessary to convert the XHTML to valid HTML that the browser

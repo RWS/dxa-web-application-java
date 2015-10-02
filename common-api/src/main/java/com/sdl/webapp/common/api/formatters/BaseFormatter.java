@@ -2,18 +2,18 @@ package com.sdl.webapp.common.api.formatters;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formats.DefaultDataFormatter;
-import com.sdl.webapp.common.api.model.PageModel;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Administrator on 9/29/2015.
+ * BaseFormatter with base logic to be used by the format specific formatters
  */
 public abstract class BaseFormatter implements DataFormatter {
     WebRequestContext context;
     HttpServletRequest request;
+
     public BaseFormatter(HttpServletRequest request, WebRequestContext context){
         this.context = context;
         this.request = request;
@@ -27,12 +27,14 @@ public abstract class BaseFormatter implements DataFormatter {
     }
 
 
-
-
-    public double score(HttpServletRequest request)
+    /**
+     * Gets the score depending on the media type
+     * @return
+     */
+    public double score()
     {
         double score = 0.0;
-        List<String> validTypes = getValidTypes(request, _mediaTypes);
+        List<String> validTypes = getValidTypes(_mediaTypes);
         if (validTypes!=null && !validTypes.isEmpty())
         {
             for(String type : validTypes)
@@ -47,11 +49,16 @@ public abstract class BaseFormatter implements DataFormatter {
         return score;
     }
 
-    public List<String> getValidTypes(HttpServletRequest request, List<String> allowedTypes)
+    /**
+     * Gets the valid mediat types depending on the allowed types by the formatter
+     * @param allowedTypes
+     * @return
+     */
+    public List<String> getValidTypes(List<String> allowedTypes)
     {
         List<String> res = new ArrayList<String>();
-        //TODO: Jaime Santos get acceptTypes
-        String[] acceptTypes = null;//controllerContext.HttpContext.Request.AcceptTypes;
+        //TODO: TW Check that acceptTypes come as comma-separated list
+        String[] acceptTypes = request.getHeader("Accept").split(",");
         if (acceptTypes!=null)
         {
             for(String type : acceptTypes)
@@ -68,11 +75,19 @@ public abstract class BaseFormatter implements DataFormatter {
         return res;
     }
 
+    /**
+     * Whether to to add includes
+     * @return
+     */
     @Override
     public boolean isAddIncludes() {
         return false;
     }
 
+    /**
+     * Whether model processing is required
+     * @return
+     */
     @Override
     public boolean isProcessModel() {
         return false;

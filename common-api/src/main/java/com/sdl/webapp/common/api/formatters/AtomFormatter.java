@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * TODO: TW Document
+ * Produces the feed in atom format
  */
 public class AtomFormatter extends FeedFormatter {
 
@@ -23,6 +23,12 @@ public class AtomFormatter extends FeedFormatter {
         this.addMediaType("application/atom+xml");
     }
 
+    /**
+     * Gets a syndication Entry from a teaser
+     * @param item (@see Teaser)
+     * @return
+     * @throws URISyntaxException
+     */
     @Override
     public Object getSyndicationItemFromTeaser(Teaser item) throws URISyntaxException {
         Entry si = new Entry();
@@ -53,6 +59,5 @@ public class AtomFormatter extends FeedFormatter {
         }
         return si;
     }
-
 
 }

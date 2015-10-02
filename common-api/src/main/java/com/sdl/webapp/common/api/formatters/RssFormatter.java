@@ -11,7 +11,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 /**
- * Created by Administrator on 9/29/2015.
+ * Produces the feed in rss format
  */
 public class RssFormatter extends FeedFormatter {
 
@@ -22,12 +22,23 @@ public class RssFormatter extends FeedFormatter {
 
     }
 
+    /**
+     * Returns the formatted data. Additional model processing can be implemented in extending classes
+     * @param model
+     * @return
+     */
     @Override
     public Object formatData(Object model) {
 
         return getData(model);
     }
 
+    /**
+     * Gets a syndication Entry from a teaser
+     * @param item (@see Teaser)
+     * @return
+     * @throws URISyntaxException
+     */
     public Object getSyndicationItemFromTeaser(Teaser item) throws URISyntaxException {
         Item si = new Item();
         if (item.getHeadline() != null)

@@ -10,13 +10,13 @@ import java.net.URISyntaxException;
 import java.util.List;
 
 /**
- * Created by Administrator on 9/29/2015.
+ * DataFormatter Interface for that defines the behavior of the formatters
  */
 public interface DataFormatter {
-    double score(HttpServletRequest request);
+    double score();
     Object formatData(Object model);
     boolean isProcessModel();
     boolean isAddIncludes();
-    List<String> getValidTypes(HttpServletRequest request, List<String> allowedTypes);
-    Object getSyndicationItemFromTeaser(Teaser item) throws URISyntaxException;
+    List<String> getValidTypes(List<String> allowedTypes);
+    Object getSyndicationItemFromTeaser(Teaser item) throws Exception;
 }

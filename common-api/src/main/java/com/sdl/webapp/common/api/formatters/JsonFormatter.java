@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
 
 /**
- * Created by Administrator on 9/29/2015.
+ * Produces the feed in json format
  */
 public class JsonFormatter extends BaseFormatter {
 
@@ -17,13 +17,24 @@ public class JsonFormatter extends BaseFormatter {
         this.addMediaType("application/json");
     }
 
+    /**
+     * Returns the formatted data. Additional model processing can be implemented in extending classes
+     * @param model
+     * @return
+     */
     @Override
     public Object formatData(Object model) {
         return model;
     }
 
+    /**
+     * Not required for Json
+     * @param item
+     * @return
+     * @throws URISyntaxException
+     */
     @Override
-    public Object getSyndicationItemFromTeaser(Teaser item) throws URISyntaxException {
-        return null;
+    public Object getSyndicationItemFromTeaser(Teaser item) throws Exception {
+        throw new Exception ("This method shall not be called!");
     }
 }

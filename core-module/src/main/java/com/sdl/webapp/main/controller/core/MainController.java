@@ -109,7 +109,7 @@ public class MainController {
         //return mvcData.getAreaName() + "/Page/" + mvcData.getViewName();
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
+    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {"application/rss+xml", MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
     public ModelAndView handleGetPageFormatted(HttpServletRequest request) {
 
         final String requestPath = webRequestContext.getRequestPath();

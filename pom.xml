@@ -12,7 +12,6 @@
     <modules>
         <module>common-api</module>
         <module>common-impl</module>
-        <module>dd4t-provider</module>
         <module>tridion-provider</module>
         <module>core-module</module>
         <module>cid-module</module>

@@ -93,6 +93,8 @@
 
     <!-- Model builder pipeline configuration -->
 
+    <!-- TODO: Consider to have the model pipeline pluggable so you do not have to modify this file!!!  -->
+
     <!--<bean id="PageBuilder" class="com.sdl.webapp.tridion.PageBuilderImpl">
     </bean>-->
 
@@ -108,14 +110,18 @@
         <property name="pageBuilderHandlers">
             <list>
                 <ref bean="pageBuilderImpl"/>
+                <!--
                 <bean class="com.sdl.dxa.modules.test.CustomPageBuilderImpl"/>
+                -->
             </list>
         </property>
 
         <property name="entityBuilderHandlers">
             <list>
                 <ref bean="EntityBuilder"/>
+                <!--
                 <bean class="com.sdl.dxa.modules.test.CustomEntityBuilder"></bean>
+                -->
             </list>
         </property>
     </bean>

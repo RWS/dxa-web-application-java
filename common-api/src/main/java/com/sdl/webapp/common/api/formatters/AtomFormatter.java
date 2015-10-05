@@ -50,7 +50,14 @@ public class AtomFormatter extends FeedFormatter {
         {
             List<Link> links = new ArrayList<Link>();
             Link l = new Link();
-            l.setHref(item.getLink().getUrl());
+            if(item.getLink().getUrl().startsWith("http")){
+                l.setHref(item.getLink().getUrl());
+            }else{
+                l.setHref(context.getBaseUrl() + item.getLink().getUrl());
+            }
+            links.add(l);
+            si.setOtherLinks(links);
+
         }
         if (item.getDate() != null)
         {

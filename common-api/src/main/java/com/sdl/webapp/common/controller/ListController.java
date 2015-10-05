@@ -1,13 +1,12 @@
-package com.sdl.webapp.main.controller.core;
+package com.sdl.webapp.common.controller;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.ContentList;
-import com.sdl.webapp.common.controller.AbstractController;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +18,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.*;
 
 /**
  * List controller for the Core area.
@@ -29,13 +26,15 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.*;
  * This handles include requests to /system/mvc/Core/List/{regionName}/{entityId}
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + LIST_CONTROLLER_NAME)
-public class ListController extends AbstractController {
+@RequestMapping(INCLUDE_PATH_PREFIX + CoreAreaConstants.CORE_AREA_NAME + "/" + CoreAreaConstants.LIST_CONTROLLER_NAME)
+public class ListController extends EntityController {
     private static final Logger LOG = LoggerFactory.getLogger(ListController.class);
 
     private final WebRequestContext webRequestContext;
 
     private final ContentProvider contentProvider;
+
+    private HttpServletRequest request = null;
 
     @Autowired
     public ListController(WebRequestContext webRequestContext, ContentProvider contentProvider) {
@@ -51,38 +50,45 @@ public class ListController extends AbstractController {
      * @param entityId The entity id.
      * @return The name of the entity view that should be rendered for this request.
      */
-    @RequestMapping(method = RequestMethod.GET, value = LIST_ACTION_NAME + "/{regionName}/{entityId}")
+    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.LIST_ACTION_NAME + "/{regionName}/{entityId}")
     public String handleGetList(HttpServletRequest request, @PathVariable String regionName,
-                                @PathVariable String entityId) {
+                                @PathVariable String entityId) throws Exception {
         LOG.trace("handleGetList: regionName={}, entityId={}", regionName, entityId);
+        this.request = request;
+        // The List action is effectively just an alias for the general Entity action (we keep it for backward compatibility).
+        return handleGetEntity(request, regionName, entityId);
+    }
 
-        final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
-        request.setAttribute(ENTITY_MODEL, entity);
-        if (entity instanceof ContentList) {
-            final ContentList contentList = (ContentList) entity;
-            if (contentList.getItemListElements().isEmpty()) {
-                // we only take the start from the query string if there is also an id parameter matching the model entity id
-                // this means that we are sure that the paging is coming from the right entity (if there is more than one paged list on the page)
-                if (contentList.getId().equals(request.getParameter("id"))) {
-                    int start = getIntParameter(request, "start", 0);
-                    contentList.setCurrentPage((start / contentList.getPageSize()) + 1);
-                    contentList.setStart(start);
-                }
+    @Override
+    protected ViewModel EnrichModel(ViewModel model) throws Exception {
+        if (model instanceof ContentList) {
 
-                try {
-                    contentProvider.populateDynamicList(contentList, webRequestContext.getLocalization());
-                } catch (ContentProviderException e) {
-                    LOG.error("An unexpected error occurred", e);
-                    throw new InternalServerErrorException("An unexpected error occurred", e);
-                }
+            final ViewModel enrichedEntity = super.EnrichModel(model);
+            final ContentList contentList = enrichedEntity instanceof EntityModel ? (ContentList) enrichedEntity : (ContentList) model;
+
+            if (contentList == null || !contentList.getItemListElements().isEmpty()) {
+                return model;
+            }
+
+            // we only take the start from the query string if there is also an id parameter matching the model entity id
+            // this means that we are sure that the paging is coming from the right entity (if there is more than one paged list on the page)
+            if (contentList.getId().equals(request.getParameter("id"))) {
+                //we need to run a query to populate the list
+                int start = getIntParameter(request, "start", 0);
+                contentList.setCurrentPage((start / contentList.getPageSize()) + 1);
+                contentList.setStart(start);
+            }
+
+            try {
+                contentProvider.populateDynamicList(contentList, webRequestContext.getLocalization());
+            } catch (ContentProviderException e) {
+                LOG.error("An unexpected error occurred", e);
+                throw new InternalServerErrorException("An unexpected error occurred", e);
             }
         }
-
-        final MvcData mvcData = entity.getMvcData();
-        LOG.trace("Entity MvcData: {}", mvcData);
-        return resolveView(mvcData, "Entity", request);
-        //return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
+        return model;
     }
+
 
     private int getIntParameter(HttpServletRequest request, String parameterName, int defaultValue) {
         final String parameter = request.getParameter(parameterName);

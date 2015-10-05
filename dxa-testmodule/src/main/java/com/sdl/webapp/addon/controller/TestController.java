@@ -4,7 +4,7 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.controller.AbstractController;
+import com.sdl.webapp.common.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @RequestMapping("/system/mvc/Example/ExampleController")
-public class TestController extends AbstractController {
+public class TestController extends BaseController {
 
     @Autowired
     private WebRequestContext webRequestContext;

@@ -1,4 +1,4 @@
-package com.sdl.webapp.main.controller.core;
+package com.sdl.webapp.common.controller;
 
 public final class CoreAreaConstants {
 

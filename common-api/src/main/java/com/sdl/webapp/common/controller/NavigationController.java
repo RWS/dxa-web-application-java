@@ -1,4 +1,4 @@
-package com.sdl.webapp.main.controller.core;
+package com.sdl.webapp.common.controller;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.NavigationProvider;
@@ -6,9 +6,9 @@ import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
-import com.sdl.webapp.common.controller.AbstractController;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,7 @@ import java.util.List;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.*;
+
 
 /**
  * Navigation controller for the Core area.
@@ -36,8 +36,8 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.*;
  * and /system/mvc/Core/Navigation/SiteMap/{regionName}/{entityId}
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + NAVIGATION_CONTROLLER_NAME)
-public class NavigationController extends AbstractController {
+@RequestMapping(INCLUDE_PATH_PREFIX + CoreAreaConstants.CORE_AREA_NAME + "/" + CoreAreaConstants.NAVIGATION_CONTROLLER_NAME)
+public class NavigationController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(NavigationController.class);
 
     private static final String NAV_TYPE_TOP = "Top";
@@ -66,19 +66,19 @@ public class NavigationController extends AbstractController {
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
-    @RequestMapping(method = RequestMethod.GET, value = NAVIGATION_ACTION_NAME + "/{regionName}/{entityId}")
+    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.NAVIGATION_ACTION_NAME + "/{regionName}/{entityId}")
     public String handleGetNavigation(HttpServletRequest request, @PathVariable String regionName,
                                       @PathVariable String entityId, @RequestParam String navType)
-            throws NavigationProviderException {
+            throws Exception {
         LOG.trace("handleGetNavigation: regionName={}, entityId={}", regionName, entityId);
 
-        final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
-        request.setAttribute(ENTITY_MODEL, entity);
+        EntityModel entity = getEntityFromRequest(request, regionName, entityId);
+
 
         final String requestPath = webRequestContext.getRequestPath();
         final Localization localization = webRequestContext.getLocalization();
         
-        final NavigationLinks navigationLinks;
+        NavigationLinks navigationLinks;
         switch (navType) {
             case NAV_TYPE_TOP:
                 navigationLinks = navigationProvider.getTopNavigationLinks(requestPath, localization);
@@ -98,6 +98,10 @@ public class NavigationController extends AbstractController {
                 break;
         }
 
+        final ViewModel enrichedEntity = EnrichModel(entity);
+        entity = enrichedEntity instanceof EntityModel ? (EntityModel)enrichedEntity:navigationLinks;
+        request.setAttribute(ENTITY_MODEL, entity);
+
         if (navigationLinks != null) {
             navigationLinks.setXpmMetadata(entity.getXpmMetadata());
             navigationLinks.setXpmPropertyMetadata(entity.getXpmPropertyMetadata());
@@ -107,7 +111,6 @@ public class NavigationController extends AbstractController {
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);
         return resolveView(mvcData, "Entity", request);
-        //return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
     }
 
     /**
@@ -119,7 +122,7 @@ public class NavigationController extends AbstractController {
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
-    @RequestMapping(method = RequestMethod.GET, value = SITEMAP_ACTION_NAME + "/{regionName}/{entityId}")
+    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.SITEMAP_ACTION_NAME + "/{regionName}/{entityId}")
     public String handleGetSiteMap(HttpServletRequest request, @PathVariable String regionName,
                                    @PathVariable String entityId) throws NavigationProviderException {
         LOG.trace("handleGetSiteMap: regionName={}, entityId={}", regionName, entityId);

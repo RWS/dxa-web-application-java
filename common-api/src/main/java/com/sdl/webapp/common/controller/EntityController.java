@@ -1,10 +1,10 @@
-package com.sdl.webapp.main.controller.core;
+package com.sdl.webapp.common.controller;
 
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.controller.AbstractController;
 
+import com.sdl.webapp.common.api.model.ViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -16,9 +16,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.CORE_AREA_NAME;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.ENTITY_ACTION_NAME;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.ENTITY_CONTROLLER_NAME;
 
 /**
  * Entity controller for the Core area.
@@ -26,8 +23,8 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.ENTITY_CONTR
  * This handles include requests to /system/mvc/Core/Entity/{regionName}/{entityId}
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + ENTITY_CONTROLLER_NAME)
-public class EntityController extends AbstractController {
+@RequestMapping(INCLUDE_PATH_PREFIX + CoreAreaConstants.CORE_AREA_NAME + "/" + CoreAreaConstants.ENTITY_CONTROLLER_NAME)
+public class EntityController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(EntityController.class);
 
   
@@ -40,13 +37,16 @@ public class EntityController extends AbstractController {
      * @return The name of the entity view that should be rendered for this request.
      * @throws ContentProviderException If an error occurs so that the entity cannot not be retrieved.
      */
-    @RequestMapping(method = RequestMethod.GET, value = ENTITY_ACTION_NAME + "/{regionName}/{entityId}")
+    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.ENTITY_ACTION_NAME + "/{regionName}/{entityId}")
     public String handleGetEntity(HttpServletRequest request, @PathVariable String regionName,
                                   @PathVariable String entityId)
-            throws ContentProviderException {
+            throws Exception {
         LOG.trace("handleGetEntity: regionName={}, entityId={}", regionName, entityId);
 
-        final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
+        final EntityModel originalModel = getEntityFromRequest(request, regionName, entityId);
+        final ViewModel enrichedEntity = EnrichModel(originalModel);
+        final EntityModel entity = enrichedEntity instanceof EntityModel ? (EntityModel)enrichedEntity:originalModel;
+
         request.setAttribute(ENTITY_MODEL, entity);
 
         final MvcData mvcData = entity.getMvcData();

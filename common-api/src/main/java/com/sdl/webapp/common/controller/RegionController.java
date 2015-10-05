@@ -1,8 +1,8 @@
-package com.sdl.webapp.main.controller.core;
+package com.sdl.webapp.common.controller;
 
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RegionModel;
-import com.sdl.webapp.common.controller.AbstractController;
+import com.sdl.webapp.common.api.model.ViewModel;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +15,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.REGION_MODEL;
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.CORE_AREA_NAME;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.REGION_ACTION_NAME;
-import static com.sdl.webapp.main.controller.core.CoreAreaConstants.REGION_CONTROLLER_NAME;
 
 /**
  * Region controller for the Core area.
@@ -25,8 +22,8 @@ import static com.sdl.webapp.main.controller.core.CoreAreaConstants.REGION_CONTR
  * This handles include requests to /system/mvc/Core/Region/{regionName}
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + REGION_CONTROLLER_NAME)
-public class RegionController extends AbstractController {
+@RequestMapping(INCLUDE_PATH_PREFIX + CoreAreaConstants.CORE_AREA_NAME + "/" + CoreAreaConstants.REGION_CONTROLLER_NAME)
+public class RegionController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(RegionController.class);
 
      /**
@@ -36,11 +33,15 @@ public class RegionController extends AbstractController {
      * @param regionName The region name.
      * @return The name of the region view that should be rendered for this request.
      */
-    @RequestMapping(method = RequestMethod.GET, value = REGION_ACTION_NAME + "/{regionName}")
-    public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName ) {
+    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.REGION_ACTION_NAME + "/{regionName}")
+    public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName ) throws Exception {
         LOG.trace("handleGetRegion: regionName={}", regionName);
 
-        final RegionModel region = getRegionFromRequest(request, regionName);
+
+        final RegionModel originalModel = getRegionFromRequest(request, regionName);
+        final ViewModel enrichedModel = EnrichModel(originalModel);
+        final RegionModel region = enrichedModel instanceof RegionModel ? (RegionModel)enrichedModel:originalModel;
+
         request.setAttribute(REGION_MODEL, region);
 
         final MvcData mvcData = region.getMvcData();
@@ -48,4 +49,6 @@ public class RegionController extends AbstractController {
         return resolveView(mvcData, "Region", request);
         //return mvcData.getAreaName() + "/Region/" + mvcData.getViewName();
     }
+
+
 }

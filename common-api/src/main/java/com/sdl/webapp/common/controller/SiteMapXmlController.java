@@ -1,4 +1,4 @@
-package com.sdl.webapp.main.controller.core;
+package com.sdl.webapp.common.controller;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.NavigationProvider;

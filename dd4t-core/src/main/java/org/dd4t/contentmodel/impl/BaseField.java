@@ -45,7 +45,7 @@ public abstract class BaseField implements Field {
     @JsonDeserialize(contentAs = ComponentImpl.class)
     private List<Component> componentLinkValues;
 
-    @JsonProperty("Keywords")
+    @JsonProperty("KeywordValues")
     @JsonDeserialize(contentAs = KeywordImpl.class)
     private List<Keyword> keywordValues;
 

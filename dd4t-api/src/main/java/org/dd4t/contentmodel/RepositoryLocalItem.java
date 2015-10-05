@@ -70,4 +70,11 @@ public interface RepositoryLocalItem extends Item {
     public void setLastPublishedDate(DateTime date);
 
     public DateTime getLastPublishedDate();
+
+    /**
+     * Get the Schema
+     *
+     * @return
+     */
+    public Schema getSchema();
 }

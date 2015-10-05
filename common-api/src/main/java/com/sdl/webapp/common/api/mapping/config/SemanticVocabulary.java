@@ -13,6 +13,19 @@ public final class SemanticVocabulary {
 
     private final String id;
 
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    private String prefix;
+
+    public void setVocab(String vocab) {
+        this.vocab = vocab;
+    }
+
+    private String vocab;
+
+
     public SemanticVocabulary(String id) {
         this.id = id;
     }
@@ -20,6 +33,10 @@ public final class SemanticVocabulary {
     public String getId() {
         return id;
     }
+    public String getPrefix() {return prefix;}
+    public String getVocab() {return vocab; }
+
+
 
     @Override
     public boolean equals(Object o) {

@@ -121,7 +121,7 @@ public class PageController extends BaseController {
 
         final Localization localization = webRequestContext.getLocalization();
         final PageModel page = getPageModel(requestPath, localization);
-
+        EnrichEmbeddedModels(page);
         LOG.trace("handleGetPageFormatted: page={}", page);
         return dataFormatters.view(page);
     }

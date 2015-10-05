@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.model.*;
 import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 
+import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +13,13 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Map;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 
@@ -28,7 +33,7 @@ public abstract class BaseController {
     protected ViewResolver viewResolver;
 
     @Autowired
-    private RequestMappingHandlerMapping handlerMapping;
+    private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     protected PageModel getPageFromRequest(HttpServletRequest request) {
         final PageModel page = (PageModel) request.getAttribute(PAGE_MODEL);
@@ -162,25 +167,29 @@ public abstract class BaseController {
         String controllerName = mvcData.getControllerName() != null ? mvcData.getControllerName() : "Entity";
         String controllerAreaName = mvcData.getControllerAreaName() != null ? mvcData.getControllerAreaName() : "Core";
 
-//            RequestContext tempRequestContext = new RequestContext(HttpContext, new RouteData());
-//            tempRequestContext.RouteData.DataTokens["Area"] = controllerAreaName;
-//            tempRequestContext.RouteData.Values["controller"] = controllerName;
-//            tempRequestContext.RouteData.Values["area"] = controllerAreaName;
 
-        try
-        {
-            // Note: Entity Controllers don't have to inherit from EntityController per se, but they must inherit from BaseController.
-//                BaseController entityController = (BaseController) ControllerBuilder.Current.GetControllerFactory().CreateController(tempRequestContext, controllerName);
-//                entityController.ControllerContext = new ControllerContext(HttpContext, tempRequestContext.RouteData, entityController);
-            Object entityController =handlerMapping.getHandlerMethods().get("");
-            //return (EntityModel) entityController.EnrichModel(entity);
-            return null;
+        Map<RequestMappingInfo, HandlerMethod> handlerMethods =
+                this.requestMappingHandlerMapping.getHandlerMethods();
+
+        for(Map.Entry<RequestMappingInfo, HandlerMethod> item : handlerMethods.entrySet()) {
+            RequestMappingInfo mapping = item.getKey();
+            HandlerMethod method = item.getValue();
+
+            for (String urlPattern : mapping.getPatternsCondition().getPatterns()) {
+                if(urlPattern.contains("/" + controllerAreaName + "/" + controllerName)) {
+                    HandlerMethod controllerMethod = handlerMethods.get(mapping);
+                    BaseController controller = (BaseController)ApplicationContextHolder.getContext().getBean(controllerMethod.getBean().toString());
+                    try {
+                        controller.EnrichModel(entity);
+                        return entity;
+                    } catch (Exception e) {
+                        LOG.error("Error in EnrichModel", e);
+                        return new ExceptionEntity(e); // TODO: What about MvcData?
+                    }
+                }
+            }
         }
-        catch (Exception ex)
-        {
-            LOG.error("Error in EnrichModel", ex);
-            return new ExceptionEntity(ex); // TODO: What about MvcData?
-        }
+        return entity;
     }
 
 

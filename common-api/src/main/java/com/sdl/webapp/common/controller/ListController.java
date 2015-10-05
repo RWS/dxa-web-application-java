@@ -32,8 +32,10 @@ public class ListController extends EntityController {
 
     private final WebRequestContext webRequestContext;
 
+    @Autowired
     private final ContentProvider contentProvider;
 
+    @Autowired
     private HttpServletRequest request = null;
 
     @Autowired

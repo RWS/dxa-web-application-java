@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
 import java.io.IOException;
@@ -40,6 +41,7 @@ import java.util.*;
 /**
  * Implementation of {@code SemanticMappingRegistry}.
  */
+@Component
 public class SemanticMappingImpl implements SemanticMapping {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMappingImpl.class);
     public final String DEFAULT_VOCABULARY = "http://www.sdl.com/web/schemas/core";

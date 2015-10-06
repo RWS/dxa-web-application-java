@@ -42,12 +42,14 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     private final Map<String, List<Class<? extends ViewModel>>> semanticTypeToModelTypesMapping = new HashMap<>();
 
     //TODO: Check whether this is really autowired
-    @Autowired
+
     private SemanticMapping semanticMapping;
     private Lock lock;
 
     //TODO : initialize these in the core module
-    public ViewModelRegistryImpl() {
+    @Autowired
+    public ViewModelRegistryImpl(SemanticMapping semanticMapping) {
+        this.semanticMapping = semanticMapping;
         this.lock = new ReentrantLock();
         try {
             this.registerViewEntityClass("Article", Article.class);
@@ -139,7 +141,8 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Override
     public void registerViewModel(MvcData viewData, Class<? extends ViewModel> entityClass) {
         try {
-            if (lock.tryLock(10, TimeUnit.SECONDS)) {
+            //TODO: TW put back the lock to 10
+            if (lock.tryLock(100, TimeUnit.SECONDS)) {
                 if (viewData != null) {
                     if (this.viewEntityClassMap.containsKey(viewData)) {
                         LOG.warn("View '%s' registered multiple times.", viewData);
@@ -250,8 +253,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             }else if(field.isAnnotationPresent(SemanticProperties.class)){
                 for(SemanticProperty prop : field.getAnnotation(SemanticProperties.class).value()){
                     updateSemanticInfo(semanticInfo, field.getName(),prop.value());
-                    //TODO: Check why this code is here, it is not necessary
-                    //semanticPropertyNames.add(attribute.PropertyName);
                 }
 
             }
@@ -268,6 +269,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             semanticPropertyNames = new ArrayList<String>();
             semanticInfo.semanticProperties.put(fieldName, semanticPropertyNames);
         }
+        semanticPropertyNames.add(propertyName);
     }
     private boolean skipSemanticProperty(SemanticProperty attribute, SemanticInfo semanticInfo){
         Object obj = attribute.value();
@@ -327,9 +329,20 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     @Override
     public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) throws DxaException {
-        MvcData mvcData = new MvcDataImpl(semanticTypeName);
-        return getViewModelType(mvcData);
-        //TODO : implement this correctly, based on semantics
+        //TODO: CB, implement this correctly, based on semantics
+        //TODO: TW, implemented as per .net code
+        if(semanticTypeToModelTypesMapping.containsKey(semanticTypeName)){
+            //TODO: TW, .net returns a list and if found more than one (i.e. list has more than one value, returns the base type
+            List<Class<? extends ViewModel>> l = semanticTypeToModelTypesMapping.get(semanticTypeName);
+            if(l.size()>=1){
+                return l.get(0);
+            }
+        }
+        //TODO: TW, shall we fallback to the old way?
+        //TODO: TW Validate we don't need the old Implementation
+        // MvcData mvcData = new MvcDataImpl(semanticTypeName);
+        // return getViewModelType(mvcData);
+        return null;
     }
 
     @Override

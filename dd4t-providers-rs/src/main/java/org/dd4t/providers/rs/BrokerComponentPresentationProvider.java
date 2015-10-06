@@ -17,8 +17,13 @@
 package org.dd4t.providers.rs;
 
 import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.util.Constants;
+import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.ComponentPresentationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +34,9 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.core.MediaType;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Component provider.
@@ -37,6 +44,8 @@ import java.util.List;
 public class BrokerComponentPresentationProvider extends BaseBrokerProvider implements ComponentPresentationProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentPresentationProvider.class);
+	private Class<? extends org.dd4t.contentmodel.ComponentPresentation> concreteComponentPresentation;
+	private Class<? extends ComponentTemplate> concreteComponentTemplateImpl;
 
 	public BrokerComponentPresentationProvider () {
 		LOG.debug("Create new instance");
@@ -83,7 +92,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 		String component = String.valueOf(componentId);
 
 		try {
-			Invocation.Builder builder = JAXRSClient.INSTANCE.getComponentByIdTarget().
+			Invocation.Builder builder = client.getComponentByIdTarget().
 					path(publication).path(template).path(component).request(MediaType.TEXT_PLAIN);
 			builder = getSessionPreviewBuilder(builder);
 
@@ -128,7 +137,61 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @throws org.dd4t.core.exceptions.SerializationException if something went wrong during deserialization
 	 */
 	@Override public ComponentPresentation getDynamicComponentPresentation (final int componentId, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
+
+
+		return constructComponentPresentation(getFullDynamicComponentPresentation(componentId, templateId, publicationId),publicationId,componentId,templateId);
+	}
+
+
+	private org.dd4t.contentmodel.ComponentPresentation constructComponentPresentation (String componentSource, int publicationId, int componentId, int componentTemplateId) {
+		try {
+
+			// TODO: with the dd4t-2 DCP TBBs this is now not necessary anymore. Return a simple String with teh content!
+//			final ComponentPresentationMetaDAO componentPresentationMetaDAO = (ComponentPresentationMetaDAO) DaoUtils.getStorageDAO(publicationId, StorageTypeMapping.COMPONENT_PRESENTATION_META);
+//			final ComponentPresentationMeta componentPresentationMeta = componentPresentationMetaDAO.findByPrimaryKey(publicationId, componentId, componentTemplateId);
+
+			final org.dd4t.contentmodel.ComponentPresentation componentPresentationResult = this.concreteComponentPresentation.newInstance();
+			final ComponentTemplate componentTemplate = this.concreteComponentTemplateImpl.newInstance();
+			componentPresentationResult.setRawComponentContent(componentSource);
+
+			componentPresentationResult.setIsDynamic(true);
+			componentTemplate.setId(new TCMURI(publicationId, componentTemplateId, 32, 0).toString());
+			componentTemplate.setTitle("Event");
+//			final DateTime dateTime = new DateTime(componentPresentationMeta.getTemplateMeta().getLastPublishDate());
+//			componentTemplate.setRevisionDate(dateTime);
+			final Map<String, Field> metadata = new HashMap<>();
+
+			// TODO: this is a hack - Update: can now be removed!
+			// Component Template Custom Meta is not published with
+			// the component template, so we cannot read the viewName.
+			// Therefore, the only supported way for now is use the lower cased
+			// template name as view model name...
+
+			// We should actually fix this in the Generate Dynamic Component TBB to also
+			// include CT data.
+
+			final List<String> values = new ArrayList<>();
+			values.add(stringToDashCase(componentTemplate.getTitle()));
+
+			TextField field = new TextField();
+			field.setName(Constants.VIEW_NAME_FIELD);
+			field.setTextValues(values);
+			metadata.put(Constants.VIEW_NAME_FIELD, field);
+
+			componentTemplate.setMetadata(metadata);
+			componentPresentationResult.setComponentTemplate(componentTemplate);
+			return componentPresentationResult;
+		} catch (InstantiationException  | IllegalAccessException e) {
+			LOG.error(e.getLocalizedMessage(), e);
+		}
 		return null;
+	}
+
+	public static String stringToDashCase (String value) {
+		if (value == null) {
+			return "";
+		}
+		return value.replaceAll("[^a-zA-Z0-9]", "_").replaceAll("([_]+)", "_").toLowerCase();
 	}
 
 	/**
@@ -144,5 +207,21 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 */
 	@Override public List<ComponentPresentation> getDynamicComponentPresentations (final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
 		return new ArrayList<>();
+	}
+
+	public Class<? extends ComponentPresentation> getConcreteComponentPresentation () {
+		return concreteComponentPresentation;
+	}
+
+	public void setConcreteComponentPresentation (final Class<? extends ComponentPresentation> concreteComponentPresentation) {
+		this.concreteComponentPresentation = concreteComponentPresentation;
+	}
+
+	public Class<? extends ComponentTemplate> getConcreteComponentTemplateImpl () {
+		return concreteComponentTemplateImpl;
+	}
+
+	public void setConcreteComponentTemplateImpl (final Class<? extends ComponentTemplate> concreteComponentTemplateImpl) {
+		this.concreteComponentTemplateImpl = concreteComponentTemplateImpl;
 	}
 }

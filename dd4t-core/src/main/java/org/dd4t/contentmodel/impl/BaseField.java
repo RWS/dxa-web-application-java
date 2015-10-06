@@ -18,8 +18,13 @@ package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.dd4t.contentmodel.*;
+import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.FieldSet;
+import org.dd4t.contentmodel.FieldType;
+import org.dd4t.contentmodel.Keyword;
 import org.dd4t.core.serializers.impl.json.FieldTypeConverter;
 
 import java.util.LinkedList;
@@ -45,7 +50,6 @@ public abstract class BaseField implements Field {
     @JsonDeserialize(contentAs = ComponentImpl.class)
     private List<Component> componentLinkValues;
 
-    @JsonProperty("Keywords")
     @JsonDeserialize(contentAs = KeywordImpl.class)
     private List<Keyword> keywordValues;
 
@@ -219,7 +223,15 @@ public abstract class BaseField implements Field {
         return keywordValues != null ? keywordValues : new LinkedList<Keyword>();
     }
 
+    @JsonSetter("Keywords")
     public void setKeywordvalues(List<Keyword> keywordValues) {
         this.keywordValues = keywordValues;
     }
+
+    // DD4T 2.0.2 template support
+    @JsonSetter ("KeywordValues")
+    private void setKeywordValues(List<Keyword> keywordValues) {
+        this.keywordValues = keywordValues;
+    }
+
 }

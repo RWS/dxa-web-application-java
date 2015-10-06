@@ -58,7 +58,7 @@ public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvid
 
 		String result = null;
 		try {
-			WebTarget target = JAXRSClient.INSTANCE.getResolveComponentTarget().path(targetComponentURI);
+			WebTarget target = client.getResolveComponentTarget().path(targetComponentURI);
 			result = target.request(MediaType.TEXT_PLAIN).get(String.class);
 			result = result == null || result.length() == 0 ? null : result;
 		} catch (NotFoundException nfe) {
@@ -87,7 +87,7 @@ public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvid
 
 		String result = null;
 		try {
-			WebTarget target = JAXRSClient.INSTANCE.getResolveComponentFromPageTarget().path(targetComponentURI).path(sourcePageURI);
+			WebTarget target = client.getResolveComponentFromPageTarget().path(targetComponentURI).path(sourcePageURI);
 			result = target.request(MediaType.TEXT_PLAIN).get(String.class);
 			result = result == null || result.length() == 0 ? null : result;
 		} catch (NotFoundException nfe) {

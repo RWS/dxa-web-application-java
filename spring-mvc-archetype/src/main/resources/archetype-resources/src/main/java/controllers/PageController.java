@@ -43,6 +43,7 @@ public class PageController extends AbstractPageController {
 	 * @param request
 	 * @param response
 	 */
+	@RequestMapping(value = {"/**/*.html", "/**/*.txt", "/**/*.xml"}, method = {RequestMethod.GET})
 	@Override public String showPage (final Model model, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
 		return super.showPage(model, request, response);
 	}

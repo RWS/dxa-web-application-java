@@ -84,7 +84,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 		String publicationId = String.valueOf(publication);
 		String encodedURL = CompressionUtils.encodeBase64(url);
 
-		Invocation.Builder builder = JAXRSClient.INSTANCE.getBinaryWrapperByURLTarget().path(publicationId).path(encodedURL).request(MediaType.APPLICATION_OCTET_STREAM);
+		Invocation.Builder builder = client.getBinaryWrapperByURLTarget().path(publicationId).path(encodedURL).request(MediaType.APPLICATION_OCTET_STREAM);
 		builder = getSessionPreviewBuilder(builder);
 
 		byte[] content = builder.get((new byte[0]).getClass());
@@ -129,7 +129,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 		String itemId = String.valueOf(id);
 
 
-		Invocation.Builder builder = JAXRSClient.INSTANCE.getBinaryWrapperByIdTarget().path(publicationId).path(itemId).request(MediaType.APPLICATION_OCTET_STREAM);
+		Invocation.Builder builder = client.getBinaryWrapperByIdTarget().path(publicationId).path(itemId).request(MediaType.APPLICATION_OCTET_STREAM);
 		builder = getSessionPreviewBuilder(builder);
 
 		byte[] content = builder.get((new byte[0]).getClass());
@@ -152,7 +152,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 		LOG.debug("Discovering Publication id for ImagesUrl: {}", imagesURL);
 
 		try {
-			int result = JAXRSClient.INSTANCE.getDiscoverPublicationByImagesURLTarget().path(CompressionUtils.encodeBase64(imagesURL)).request(MediaType.TEXT_PLAIN).get(Integer.class);
+			int result = client.getDiscoverPublicationByImagesURLTarget().path(CompressionUtils.encodeBase64(imagesURL)).request(MediaType.TEXT_PLAIN).get(Integer.class);
 
 			time = System.currentTimeMillis() - time;
 			LOG.debug("Finished discovering Publication id. Duration {}s", time / 1000.0);

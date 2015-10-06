@@ -137,6 +137,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	private org.dd4t.contentmodel.ComponentPresentation constructComponentPresentation (String componentSource, int publicationId, int componentId, int componentTemplateId, ComponentPresentation componentPresentation) {
 		try {
 
+			// TODO: with the dd4t-2 DCP TBBs this is now not necessary anymore. Return a simple String with teh content!
 			final ComponentPresentationMetaDAO componentPresentationMetaDAO = (ComponentPresentationMetaDAO) DaoUtils.getStorageDAO(publicationId, StorageTypeMapping.COMPONENT_PRESENTATION_META);
 			final ComponentPresentationMeta componentPresentationMeta = componentPresentationMetaDAO.findByPrimaryKey(publicationId, componentId, componentTemplateId);
 
@@ -150,7 +151,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 			componentTemplate.setRevisionDate(dateTime);
 			final Map<String, Field> metadata = new HashMap<>();
 
-			// TODO: this is a hack
+			// TODO: this is a hack - Update: can now be removed!
 			// Component Template Custom Meta is not published with
 			// the component template, so we cannot read the viewName.
 			// Therefore, the only supported way for now is use the lower cased

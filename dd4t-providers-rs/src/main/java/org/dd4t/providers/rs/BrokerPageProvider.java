@@ -80,7 +80,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 		LOG.debug("Encoded URL: {}", encodedURL);
 
 		try {
-			Invocation.Builder builder = JAXRSClient.INSTANCE.getPageContentByURLTarget().path(publication).path(encodedURL).request(MediaType.TEXT_PLAIN);
+			Invocation.Builder builder = client.getPageContentByURLTarget().path(publication).path(encodedURL).request(MediaType.TEXT_PLAIN);
 			builder = getSessionPreviewBuilder(builder);
 
 			String content = builder.get(String.class);
@@ -121,7 +121,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 		String id = String.valueOf(pageUri.getItemId());
 
 		try {
-			Invocation.Builder builder = JAXRSClient.INSTANCE.getPageContentByURLTarget().path(publication).path(id).request(MediaType.TEXT_PLAIN);
+			Invocation.Builder builder = client.getPageContentByURLTarget().path(publication).path(id).request(MediaType.TEXT_PLAIN);
 			builder = getSessionPreviewBuilder(builder);
 
 			String content = builder.get(String.class);
@@ -148,7 +148,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 		LOG.debug("Fetching page URL list by publication: {}", publication);
 
 		try {
-			Invocation.Builder builder = JAXRSClient.INSTANCE.getPageListByPublicationTarget().path(String.valueOf(publication)).request(MediaType.TEXT_PLAIN);
+			Invocation.Builder builder = client.getPageListByPublicationTarget().path(String.valueOf(publication)).request(MediaType.TEXT_PLAIN);
 
 			String content = builder.get(String.class);
 			if (content == null || content.length() == 0) {
@@ -188,7 +188,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 		LOG.debug("Encoded URL: {}", encodedURL);
 
 		try {
-			WebTarget target = JAXRSClient.INSTANCE.getPageCheckExists().path(publication).path(encodedURL);
+			WebTarget target = client.getPageCheckExists().path(publication).path(encodedURL);
 			exists = target.request(MediaType.TEXT_PLAIN).get(Integer.class);
 		} catch (NotFoundException nfe) {
 			throw new ItemNotFoundException(nfe);

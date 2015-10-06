@@ -149,7 +149,7 @@ public class RenderUtils {
 				return false;
 			}
 		} else {
-			LOG.debug("No Region set on CP: {} - {}", cp.getComponent().getId(), cp.getComponentTemplate().getId());
+			LOG.debug("No Region set on CP: {} - {}", cp.getComponent() != null ? cp.getComponent().getId() : "null", cp.getComponentTemplate().getId());
 			if (regionIsSet) {
 				LOG.debug("Not rendering this CP as a region is set on the Tag.");
 				return false;

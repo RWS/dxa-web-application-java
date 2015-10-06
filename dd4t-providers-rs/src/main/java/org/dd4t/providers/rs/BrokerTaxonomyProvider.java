@@ -56,7 +56,7 @@ public class BrokerTaxonomyProvider extends BaseBrokerProvider implements Taxono
 		LOG.debug("Fetching taxonomy with uri: {}", taxonomyURI);
 
 		try {
-			Invocation.Builder builder = JAXRSClient.INSTANCE.getTaxonomyByURITarget().
+			Invocation.Builder builder = client.getTaxonomyByURITarget().
 					path(taxonomyURI).path(String.valueOf(resolveContent)).request(MediaType.TEXT_PLAIN);
 			builder = getSessionPreviewBuilder(builder);
 			String content = builder.get(String.class);
@@ -94,7 +94,7 @@ public class BrokerTaxonomyProvider extends BaseBrokerProvider implements Taxono
 		LOG.debug("Fetching taxonomy with uri: {} and schema: {}", taxonomyURI, schemaURI);
 
 		try {
-			Invocation.Builder builder = JAXRSClient.INSTANCE.getTaxonomyBySchemaTarget().path(taxonomyURI).path(schemaURI).request(MediaType.TEXT_PLAIN);
+			Invocation.Builder builder = client.getTaxonomyBySchemaTarget().path(taxonomyURI).path(schemaURI).request(MediaType.TEXT_PLAIN);
 			builder = getSessionPreviewBuilder(builder);
 			String content = builder.get(String.class);
 

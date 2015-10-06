@@ -40,7 +40,7 @@
     <bean id="componentPresentationProvider" class="org.dd4t.providers.impl.BrokerComponentPresentationProvider">
         <property name="contentIsCompressed" value="true"/>
         <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
-        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpoml" />
         <property name="cacheProvider" ref="cacheProvider" />
     </bean>
 

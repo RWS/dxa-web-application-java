@@ -23,6 +23,7 @@ import org.dd4t.core.util.TridionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import javax.ws.rs.client.Invocation;
 import java.io.UnsupportedEncodingException;
 
@@ -35,11 +36,13 @@ public abstract class BaseBrokerProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BaseBrokerProvider.class);
 	private final Base64 urlCoder = new Base64(true);
+	private String baseRemoteUrl;
 
 	// Set these values in Spring configuration
 	protected boolean contentIsCompressed = true;
 	protected final boolean contentIsBase64Encoded = true;
-
+	@Resource
+	protected JAXRSClient client;
 	/**
 	 * Set the status of content compression
 	 *
@@ -112,5 +115,13 @@ public abstract class BaseBrokerProvider {
 		}
 
 		return builder;
+	}
+
+	public String getBaseRemoteUrl () {
+		return baseRemoteUrl;
+	}
+
+	public void setBaseRemoteUrl (final String baseRemoteUrl) {
+		this.baseRemoteUrl = baseRemoteUrl;
 	}
 }

@@ -64,7 +64,7 @@ public class BrokerQueryProvider extends BaseBrokerProvider implements QueryProv
 				}
 			}
 			String encodedParameter = encodeUrl(queryValue.toString()).trim();
-			WebTarget request = JAXRSClient.INSTANCE.getQueryComponentByCustomMetaRequest().path(encodeUrl(queryLocale.toLowerCase())).path(encodedParameter).path(Integer.toString(templateId));
+			WebTarget request = client.getQueryComponentByCustomMetaRequest().path(encodeUrl(queryLocale.toLowerCase())).path(encodedParameter).path(Integer.toString(templateId));
 			LOG.debug("Invoking: {}", request.getUri());
 
 			String result = request.request(MediaType.TEXT_PLAIN).get(String.class);
@@ -101,7 +101,7 @@ public class BrokerQueryProvider extends BaseBrokerProvider implements QueryProv
 
 		try {
 			String queryLocale = appendSlashIfRequired(locale);
-			WebTarget request = JAXRSClient.INSTANCE.getQueryComponentBySchema().path(encodeUrl(queryLocale.toLowerCase()).trim()).path(encodeUrl(schema).trim()).path(Integer.toString(templateId));
+			WebTarget request = client.getQueryComponentBySchema().path(encodeUrl(queryLocale.toLowerCase()).trim()).path(encodeUrl(schema).trim()).path(Integer.toString(templateId));
 			LOG.debug("Invoking: {}", request.getUri());
 
 			String result = request.request(MediaType.TEXT_PLAIN).get(String.class);
@@ -130,7 +130,7 @@ public class BrokerQueryProvider extends BaseBrokerProvider implements QueryProv
 		try {
 			String queryLocale = appendSlashIfRequired(locale);
 
-			WebTarget request = JAXRSClient.INSTANCE.getQueryComponentsBySchemaInKeyword().path(encodeUrl(queryLocale.toLowerCase()).trim()).path(encodeUrl(schema).trim()).path(Integer.toString(categoryId)).path(Integer.toString(keywordId)).path(Integer.toString(templateId));
+			WebTarget request = client.getQueryComponentsBySchemaInKeyword().path(encodeUrl(queryLocale.toLowerCase()).trim()).path(encodeUrl(schema).trim()).path(Integer.toString(categoryId)).path(Integer.toString(keywordId)).path(Integer.toString(templateId));
 
 			LOG.debug("Invoking: {}", request.getUri());
 

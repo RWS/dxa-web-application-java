@@ -19,6 +19,7 @@ package org.dd4t.providers.rs;
 import org.dd4t.core.services.PropertiesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -44,9 +45,8 @@ import javax.ws.rs.client.WebTarget;
  *
  * @author Mihai Cadariu
  */
-public enum JAXRSClient {
-
-	INSTANCE;
+@Component
+public class JAXRSClient {
 
 	private static final String SERVICE_URL = "tridionservice.url";
 	private static final String BINARY_WRAPPER_BY_ID = "providers/binary/getwrapperbyid";

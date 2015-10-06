@@ -27,7 +27,7 @@ import org.dd4t.providers.PublicationProvider;
  */
 public class BrokerPublicationProvider extends BaseBrokerProvider implements PublicationProvider {
 	@Override public int discoverPublicationId (final String url) throws SerializationException {
-		return 0;
+		return 7;
 	}
 
 	@Override public String discoverPublicationUrl (final int publicationId) {

@@ -112,17 +112,21 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 	}
 
 	private void renderComponentData (final ComponentPresentation componentPresentation, final JsonNode rawComponentData, final String viewModelName, final String rootElementName) throws IOException, SerializationException {
-		if (StringUtils.isEmpty(viewModelName) || DataBindFactory.renderGenericComponentsOnly()) {
-			LOG.debug("No view name set on Component Template or only rendering to Generic Component");
+//		if ((StringUtils.isEmpty(viewModelName) && StringUtils.isEmpty(rootElementName)) || DataBindFactory.renderGenericComponentsOnly()) {
+//			LOG.debug("No view name set on Component Template and no rootElementName found or only rendering to Generic Component");
 			try {
+				// Note: Components actually always have to be set
 				componentPresentation.setComponent(DataBindFactory.buildComponent(rawComponentData, this.concreteComponentClass));
 			} catch (SerializationException e) {
 				throw new IOException(e.getLocalizedMessage(), e);
 			}
-		} else {
+//		} else {
 
 			final Set<String> modelNames = new HashSet<>();
-			modelNames.add(viewModelName);
+
+			if (StringUtils.isNotEmpty(viewModelName)) {
+				modelNames.add(viewModelName);
+			}
 			if (!rootElementName.equals(viewModelName)) {
 				modelNames.add(rootElementName);
 			}
@@ -149,7 +153,7 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 				}
 				componentPresentation.setViewModel(models);
 			}
-		}
+//		}
 	}
 
 	private boolean isConcreteClass (final ComponentPresentation componentPresentation) {

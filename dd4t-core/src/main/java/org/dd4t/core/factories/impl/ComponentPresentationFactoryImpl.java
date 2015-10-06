@@ -18,7 +18,7 @@ package org.dd4t.core.factories.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
-import org.dd4t.contentmodel.impl.ComponentImpl;
+import org.dd4t.contentmodel.impl.ComponentPresentationImpl;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -104,7 +104,8 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 					}
 
 					// Building STMs here.
-					componentPresentation = DataBindFactory.buildDynamicComponentPresentation(componentPresentation, ComponentImpl.class);
+					// TODO: fix the bad and old provider code. Just push in the raw source
+					componentPresentation = DataBindFactory.buildDynamicComponentPresentation(componentPresentation.getRawComponentContent(), ComponentPresentationImpl.class);
 
 					LOG.debug("Running pre caching processors");
 					this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING, getRequestContext());

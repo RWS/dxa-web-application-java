@@ -32,8 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
 import javax.servlet.DispatcherType;
@@ -81,7 +79,6 @@ public abstract class AbstractPageController {
 	 * queried based on the request URI, the page meta XML contains the actual
 	 * view name to be rendered.
 	 */
-	@RequestMapping(value = {"/**/*.html", "/**/*.txt", "/**/*.xml"}, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String showPage(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		final String urlToFetch = HttpUtils.appendDefaultPageIfRequired(HttpUtils.getCurrentURL(request));
 		String url = adjustLocalErrorUrl(request, urlToFetch);

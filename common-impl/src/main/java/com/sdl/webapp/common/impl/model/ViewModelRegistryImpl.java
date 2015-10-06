@@ -224,19 +224,19 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         SemanticInfo semanticInfo = new SemanticInfo();
 
         // Built-in semantic type mapping
-        String bareTypeName = modelType.getSimpleName();
-        semanticInfo.mappedSemanticTypes.add(semanticMapping.getQualifiedTypeName(bareTypeName, null));
-
-        // Extract semantic info from SemanticEntity attributes on the Model Type.
-        if(modelType.isAnnotationPresent(SemanticEntity.class)){
-            semanticInfo = extractSemanticInfoFromAnnotation(modelType.getAnnotation(SemanticEntity.class), null);
-        }else if(modelType.getClass().isAnnotationPresent(SemanticEntities.class)){
-            SemanticEntities annotations = modelType.getClass().getAnnotation(SemanticEntities.class);
-            for (SemanticEntity attribute : annotations.value())
-            {
-                    semanticInfo = extractSemanticInfoFromAnnotation(attribute, semanticInfo);
-            }
-        }
+//        String bareTypeName = modelType.getSimpleName();
+//        semanticInfo.mappedSemanticTypes.add(semanticMapping.getQualifiedTypeName(bareTypeName, null));
+//
+//        // Extract semantic info from SemanticEntity attributes on the Model Type.
+//        if(modelType.isAnnotationPresent(SemanticEntity.class)){
+//            semanticInfo = extractSemanticInfoFromAnnotation(modelType.getAnnotation(SemanticEntity.class), null);
+//        }else if(modelType.getClass().isAnnotationPresent(SemanticEntities.class)){
+//            SemanticEntities annotations = modelType.getClass().getAnnotation(SemanticEntities.class);
+//            for (SemanticEntity attribute : annotations.value())
+//            {
+//                    semanticInfo = extractSemanticInfoFromAnnotation(attribute, semanticInfo);
+//            }
+//        }
 
 
         // Extract semantic info from SemanticEntity attributes on the Model Type's properties

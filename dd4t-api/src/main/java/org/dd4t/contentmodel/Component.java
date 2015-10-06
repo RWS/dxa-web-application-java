@@ -116,6 +116,8 @@ public interface Component extends RepositoryLocalItem {
 
 	void setRevisionDate (DateTime date);
 
+	String getEclId();
+
 	public enum ComponentType {
 		Multimedia(0), Normal(1), UNKNOWN(-1);
 		private final int value;

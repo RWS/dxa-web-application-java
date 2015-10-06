@@ -7,9 +7,9 @@ import com.sdl.webapp.common.api.formats.DataFormatter;
 import com.sdl.webapp.common.views.AtomView;
 import com.sdl.webapp.common.views.RssView;
 import com.sdl.webapp.common.views.JsonView;
-import com.sdl.webapp.main.interceptor.LocalizationResolverInterceptor;
-import com.sdl.webapp.main.interceptor.StaticContentInterceptor;
-import com.sdl.webapp.main.interceptor.ThreadLocalInterceptor;
+import com.sdl.webapp.common.impl.interceptor.LocalizationResolverInterceptor;
+import com.sdl.webapp.common.impl.interceptor.StaticContentInterceptor;
+import com.sdl.webapp.common.impl.interceptor.ThreadLocalInterceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

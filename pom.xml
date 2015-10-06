@@ -6,17 +6,17 @@
 
     <groupId>com.sdl</groupId>
     <artifactId>webapp-reference-impl</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
         <module>common-api</module>
         <module>common-impl</module>
-        <module>dd4t-provider</module>
         <module>tridion-provider</module>
         <module>core-module</module>
         <module>cid-module</module>
         <module>example-webapp</module>
+        <module>dxa-testmodule</module>
     </modules>
 
     <profiles>
@@ -728,6 +728,7 @@
                 <version>${reflections-version}</version>
                 <scope>test</scope>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 

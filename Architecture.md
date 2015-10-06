@@ -46,7 +46,7 @@ will not be passed on to a controller in that case.
 ### Controllers
 
 If the request is not for a static content item, it will be passed to one of the controllers. Most requests will be
-handled by the method `MainController.handleGetPage`. This method calls the `ContentProvider` to get the page content
+handled by the method `PageController.handleGetPage`. This method calls the `ContentProvider` to get the page content
 as a view model object. This view model object is then passed to the appropriate view to be rendered as HTML.
 
 The page view will include TRI-specific tags to include regions and entities on the page. To include those regions and

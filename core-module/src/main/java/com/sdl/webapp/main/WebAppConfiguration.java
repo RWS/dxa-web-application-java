@@ -3,6 +3,10 @@ package com.sdl.webapp.main;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
+import com.sdl.webapp.common.api.formats.DataFormatter;
+import com.sdl.webapp.common.views.AtomView;
+import com.sdl.webapp.common.views.RssView;
+import com.sdl.webapp.common.views.JsonView;
 import com.sdl.webapp.main.interceptor.LocalizationResolverInterceptor;
 import com.sdl.webapp.main.interceptor.StaticContentInterceptor;
 import com.sdl.webapp.main.interceptor.ThreadLocalInterceptor;
@@ -11,12 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.view.BeanNameViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
@@ -39,6 +45,9 @@ public class WebAppConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired
     private WebRequestContext webRequestContext;
+
+    @Autowired
+    private DataFormatter dataFormatter;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -80,4 +89,24 @@ public class WebAppConfiguration extends WebMvcConfigurerAdapter {
         viewResolver.setSuffix(VIEW_RESOLVER_SUFFIX);
         return viewResolver;
     }
+
+    @Bean
+    public BeanNameViewResolver beanNameViewResolver() {
+        BeanNameViewResolver resolver = new BeanNameViewResolver();
+        resolver.setOrder(Ordered.LOWEST_PRECEDENCE - 10);
+        return resolver;
+    }
+
+    @Bean(name = "rssFeedView")
+    public RssView rssFeedView(){
+        return new RssView(webRequestContext);
+    }
+
+    @Bean(name = "atomFeedView")
+    public AtomView atomFeedView(){
+        return new AtomView(webRequestContext);
+    }
+
+    @Bean(name = "jsonFeedView")
+    public JsonView jsonFeedView(){ return new JsonView(webRequestContext); }
 }

@@ -113,4 +113,12 @@ public interface Localization {
      * @return The URL prefixed by the path of this localization.
      */
     String localizePath(String url);
+
+    /**
+     * Gets the Data Formats from the configuration in the CMS
+     * @return The list of configured data formats
+     */
+    List<String> getDataFormats();
+
+
 }

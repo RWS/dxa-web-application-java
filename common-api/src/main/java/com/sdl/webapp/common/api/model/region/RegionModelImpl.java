@@ -30,7 +30,8 @@ public class RegionModelImpl implements RegionModel {
     private final String XpmComponentTypeMarkup = "{schema: \"%s\", template: \"%s\"}";
 
     private String name;
-    private ArrayList<EntityModel> entities = new ArrayList<EntityModel>();
+    private String htmlClasses;
+    private List<EntityModel> entities = new ArrayList<EntityModel>();
     private Map<String, String> xpmMetadata = new HashMap<>();
     private MvcData mvcData;
     private RegionModelSet regions;
@@ -55,6 +56,7 @@ public class RegionModelImpl implements RegionModel {
         return name;
     }
 
+    // TODO: Should we really expose a setter for the region name when we already set that in the constructor?
     public void setName(String name) {
         this.name = name;
     }
@@ -75,14 +77,15 @@ public class RegionModelImpl implements RegionModel {
     }
 
     @Override
-    public ArrayList<EntityModel> getEntities() {
+    public List<EntityModel> getEntities() {
         return entities;
     }
 
-    public void setEntities(ArrayList<EntityModel> entities) {
+    public void setEntities(List<EntityModel> entities) {
         this.entities = entities;
     }
 
+    @Override
     public void addEntity(EntityModel entity) {
         this.entities.add(entity);
     }
@@ -154,7 +157,12 @@ public class RegionModelImpl implements RegionModel {
 
     @Override
     public String getHtmlClasses() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return this.htmlClasses;
+    }
+
+    @Override
+    public void setHtmlClasses(String value) {
+        this.htmlClasses = value;
     }
 
     @Override

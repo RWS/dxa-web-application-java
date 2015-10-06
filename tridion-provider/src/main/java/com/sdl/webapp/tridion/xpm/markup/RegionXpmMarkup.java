@@ -1,6 +1,7 @@
 package com.sdl.webapp.tridion.xpm.markup;
 
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.xpm.ComponentType;
@@ -57,7 +58,7 @@ public class RegionXpmMarkup implements MarkupDecorator {
                     ParsableHtmlNode regionMarkup = (ParsableHtmlNode) markup;
                     Element html = regionMarkup.getHtmlElement();
                     if (html != null && !this.isFirstNodeXpmEntityXPMMarkup(html)) {
-                        html.prepend(buildXpmMarkup(region, xpmRegion, minOccurs, maxOccurs).toHtml());
+                        html.prepend(buildXpmMarkup(region, webRequestContext.getLocalization()).toHtml());
                         markupInjected = true;
                     }
                 }
@@ -67,7 +68,7 @@ public class RegionXpmMarkup implements MarkupDecorator {
                     // Surround the region with XPM markup
                     //
                     markup = HtmlBuilders.span()
-                            .withContent(buildXpmMarkup(region, xpmRegion, minOccurs, maxOccurs))
+                            .withContent(buildXpmMarkup(region, webRequestContext.getLocalization()))
                             .withContent(markup).build();
                 }
             }
@@ -95,20 +96,7 @@ public class RegionXpmMarkup implements MarkupDecorator {
         return false;
     }
 
-    private HtmlNode buildXpmMarkup(RegionModel region, XpmRegion xpmRegion, int minOccurs, int maxOccurs) {
-        String separator = "";
-        boolean first = true;
-        final StringBuilder sb = new StringBuilder();
-        for (ComponentType componentType : xpmRegion.getComponentTypes()) {
-            sb.append(String.format(COMPONENT_TYPE_PATTERN, separator, componentType.getSchemaId(),
-                    componentType.getTemplateId()));
-            if (first) {
-                first = false;
-                separator = ",";
-            }
-        }
-        HtmlNode xpmMarkup = new HtmlCommentNode(String.format(REGION_PATTERN, region.getName(), sb.toString(), minOccurs,
-                maxOccurs > 0 ? String.format(MAX_OCCURS_PATTERN, maxOccurs) : ""));
-        return xpmMarkup;
+    private HtmlNode buildXpmMarkup(RegionModel region, Localization localization) {
+        return new HtmlCommentNode(region.getXpmMarkup(localization));
     }
 }

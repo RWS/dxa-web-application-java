@@ -20,4 +20,8 @@ public class RichTextFragmentImpl implements RichTextFragment {
 
         return html;
     }
+
+    public String getHtml(){
+        return toHtml();
+    }
 }

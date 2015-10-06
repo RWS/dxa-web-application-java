@@ -2,8 +2,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dxa" uri="http://www.sdl.com/tridion-dxa" %> 
 <%@ taglib prefix="xpm" uri="http://www.sdl.com/tridion-xpm" %>
+
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.ContentList" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
+
 <div class="rich-text ${entity.htmlClasses}" ${markup.entity(entity)}>
     <c:if test="${not empty entity.headline}">
         <div class='page-header page-header-top'>
@@ -11,7 +13,7 @@
         </div>
     </c:if>
     <c:if test="${entity.itemListElements.size() > 0}">
-        <div class="pull-right">${markup.formatMessage(markup.resource("core.showingItemsText"), entity.start + 1, entity.start + entity.itemListElements.size())}</div>
+        <div class="pull-right">${markup.formatMessage(markup.resource("core.showingItemsText"),entity.start + 1, entity.start + entity.itemListElements.size())}</div>
         <c:import url="/WEB-INF/Views/Core/Entity/Partials/Pager.jsp"/>
         <div class="list-group">
             <c:forEach var="item" items="${entity.itemListElements}">

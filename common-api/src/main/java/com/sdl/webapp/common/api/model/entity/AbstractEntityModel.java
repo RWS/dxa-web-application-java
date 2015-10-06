@@ -77,14 +77,13 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
         return this.htmlClasses;
     }
 
+    @Override
     public void setHtmlClasses(String htmlClasses) {
         this.htmlClasses = htmlClasses;
     }
 
 
     @Override
-
-
     public String getXpmMarkup(Localization localization) {
         if (getXpmMetadata() == null) {
             return "";

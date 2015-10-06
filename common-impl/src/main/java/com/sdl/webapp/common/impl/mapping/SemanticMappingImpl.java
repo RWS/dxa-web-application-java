@@ -23,7 +23,6 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.impl.localization.LocalizationFactoryImpl;
 import com.sdl.webapp.common.impl.localization.semantics.JsonSchema;
 import com.sdl.webapp.common.util.PackageUtils;
-import com.sdl.webapp.main.WebAppConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -181,23 +181,19 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         }
 
         if (!semanticInfo.publicSemanticTypes.isEmpty()) {
-            LOG.debug("Model type '%s' has semantic type(s) '%s'.", modelType.getName(), semanticInfo.publicSemanticTypes); //StringUtils.join(semanticInfo.PublicSemanticTypes, " "));
+            LOG.debug("Model type '{}' has semantic type(s) '{}'.", modelType, semanticInfo.publicSemanticTypes); //StringUtils.join(semanticInfo.PublicSemanticTypes, " "));
             for (Map.Entry<String, List<String>> kvp : semanticInfo.semanticProperties.entrySet()) {
-                LOG.debug("\tRegistered property '%s' as semantic property '%s'", kvp.getKey(), kvp.getValue()); //StringUtils.join(kvp.getValue(), " "));
+                LOG.debug("\tRegistered property '{}' as semantic property '{}'", kvp.getKey(), kvp.getValue()); //StringUtils.join(kvp.getValue(), " "));
             }
         }
         return semanticInfo;
     }
 
-    private SemanticInfo extractSemanticInfoFromAnnotation(SemanticEntity attribute, SemanticInfo si) throws DxaException {
-        SemanticInfo semanticInfo = si;
-        if(si==null){
-            semanticInfo = new SemanticInfo();
-        }
+    private void extractSemanticInfoFromAnnotation(SemanticEntity attribute, SemanticInfo semanticInfo) throws DxaException {
         semanticInfo.mappedSemanticTypes.add(semanticMapping.getQualifiedTypeName(attribute.entityName(), attribute.vocabulary()));
 
         if (!attribute.public_() || attribute.prefix()==null || attribute.prefix().trim().equals(""))
-            return semanticInfo;
+            return;
 
         String prefix = attribute.prefix();
         String registeredVocab;
@@ -219,7 +215,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         }
 
         semanticInfo.publicSemanticTypes.add(String.format("%s:%s", prefix, attribute.entityName()));
-        return semanticInfo;
+
     }
 
     private SemanticInfo extractSemanticInfo(Class<? extends ViewModel> modelType) throws DxaException {
@@ -233,12 +229,12 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
         // Extract semantic info from SemanticEntity attributes on the Model Type.
         if(modelType.isAnnotationPresent(SemanticEntity.class)){
-            semanticInfo = extractSemanticInfoFromAnnotation(modelType.getAnnotation(SemanticEntity.class), null);
+            extractSemanticInfoFromAnnotation(modelType.getAnnotation(SemanticEntity.class), semanticInfo);
         }else if(modelType.getClass().isAnnotationPresent(SemanticEntities.class)){
             SemanticEntities annotations = modelType.getClass().getAnnotation(SemanticEntities.class);
             for (SemanticEntity attribute : annotations.value())
             {
-                    semanticInfo = extractSemanticInfoFromAnnotation(attribute, semanticInfo);
+                extractSemanticInfoFromAnnotation(attribute, semanticInfo);
             }
         }
 
@@ -331,6 +327,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) throws DxaException {
         //TODO: CB, implement this correctly, based on semantics
         //TODO: TW, implemented as per .net code
+        //TODO: TW, the semanticTypeName needs to be provided with vobabulary ID, otherwise it won't return any class
         if(semanticTypeToModelTypesMapping.containsKey(semanticTypeName)){
             //TODO: TW, .net returns a list and if found more than one (i.e. list has more than one value, returns the base type
             List<Class<? extends ViewModel>> l = semanticTypeToModelTypesMapping.get(semanticTypeName);

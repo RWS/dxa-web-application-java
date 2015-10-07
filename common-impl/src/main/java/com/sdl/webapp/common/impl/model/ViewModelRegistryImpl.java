@@ -48,62 +48,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     //TODO : initialize these in the core module
     public ViewModelRegistryImpl() {
         this.lock = new ReentrantLock();
-        try {
-            this.registerViewEntityClass("Article", Article.class);
-            this.registerViewEntityClass("Breadcrumb", NavigationLinks.class);
-            this.registerViewEntityClass("Carousel", ItemList.class);
-            this.registerViewEntityClass("CookieNotificationBar", Notification.class);
-            this.registerViewEntityClass("Download", Download.class);
-            this.registerViewEntityClass("FooterLinkGroup", LinkList.class);
-            this.registerViewEntityClass("FooterLinks", LinkList.class);
-            this.registerViewEntityClass("HeaderLinks", LinkList.class);
-            this.registerViewEntityClass("HeaderLogo", Teaser.class);
-            this.registerViewEntityClass("Image", Image.class);
-            this.registerViewEntityClass("LeftNavigation", NavigationLinks.class);
-            this.registerViewEntityClass("LanguageSelector", Configuration.class);
-            this.registerViewEntityClass("List", ContentList.class);
-            this.registerViewEntityClass("OldBrowserNotificationBar", Notification.class);
-            this.registerViewEntityClass("PagedList", ContentList.class);
-            this.registerViewEntityClass("Place", Place.class);
-            this.registerViewEntityClass("SiteMap", SitemapItem.class);
-            this.registerViewEntityClass("SiteMapXml", SitemapItem.class);
-            this.registerViewEntityClass("SocialLinks", TagLinkList.class);
-            this.registerViewEntityClass("SocialSharing", TagLinkList.class);
-            this.registerViewEntityClass("Tab", ItemList.class);
-            this.registerViewEntityClass("Teaser-ImageOverlay", Teaser.class);
-            this.registerViewEntityClass("Teaser", Teaser.class);
-            this.registerViewEntityClass("TeaserColored", Teaser.class);
-            this.registerViewEntityClass("TeaserHero-ImageOverlay", Teaser.class);
-            this.registerViewEntityClass("TeaserMap", Teaser.class);
-            this.registerViewEntityClass("ThumbnailList", ContentList.class);
-            this.registerViewEntityClass("TopNavigation", NavigationLinks.class);
-            this.registerViewEntityClass("YouTubeVideo", YouTubeVideo.class);
 
-            this.registerPageViewModel("GeneralPage", PageModelImpl.class);
-            this.registerPageViewModel("IncludePage", PageModelImpl.class);
-            this.registerPageViewModel("RedirectPage", PageModelImpl.class);
-
-            this.registerRegionViewModel("2-Column", RegionModelImpl.class);
-            this.registerRegionViewModel("3-Column", RegionModelImpl.class);
-            this.registerRegionViewModel("4-Column", RegionModelImpl.class);
-            this.registerRegionViewModel("Hero", RegionModelImpl.class);
-            this.registerRegionViewModel("Info", RegionModelImpl.class);
-            this.registerRegionViewModel("Left", RegionModelImpl.class);
-            this.registerRegionViewModel("Links", RegionModelImpl.class);
-            this.registerRegionViewModel("Logo", RegionModelImpl.class);
-            this.registerRegionViewModel("Main", RegionModelImpl.class);
-            this.registerRegionViewModel("Nav", RegionModelImpl.class);
-            this.registerRegionViewModel("Tools", RegionModelImpl.class);
-
-
-            this.registerRegionViewModel("Header", RegionModelImpl.class);
-            this.registerRegionViewModel("Footer", RegionModelImpl.class);
-            this.registerRegionViewModel("Left Navigation", RegionModelImpl.class);
-            this.registerRegionViewModel("Content Tools", RegionModelImpl.class);
-
-        } catch (DxaException e) {
-            e.printStackTrace();
-        }
     }
 
     private static final String DEFAULT_AREA_NAME = "Core";
@@ -141,7 +86,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             if (lock.tryLock(10, TimeUnit.SECONDS)) {
                 if (viewData != null) {
                     if (this.viewEntityClassMap.containsKey(viewData)) {
-                        LOG.warn("View '%s' registered multiple times.", viewData);
+                        LOG.warn("View % registered multiple times.", viewData);
                         return;
                     }
                     viewEntityClassMap.put(viewData, entityClass);

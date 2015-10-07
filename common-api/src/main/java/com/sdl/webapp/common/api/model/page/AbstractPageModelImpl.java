@@ -82,7 +82,7 @@ public abstract class AbstractPageModelImpl implements PageModel {
 
     @Override
     public void setXpmMetadata(Map<String, String> xpmMetadata) {
-        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);;
+        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
     }
 
     @Override

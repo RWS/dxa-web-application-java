@@ -1,5 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Configuration" scope="request"/>
+<jsp:useBean id="entity" type="com.sdl.dxa.modules.googleanalytics.model.GoogleAnalyticsConfiguration" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <script>
     (function (b, o, i, l, e, r) {
@@ -9,5 +9,5 @@
         e.src = '//www.google-analytics.com/analytics.js';
         r.parentNode.insertBefore(e, r);
     }(window, document, 'script', 'ga'));
-    ga('create', '${entity.settings["siteKey"]}'); ga('send', 'pageview');
+    ga('create', '${entity.siteKey}'); ga('send', 'pageview');
 </script>

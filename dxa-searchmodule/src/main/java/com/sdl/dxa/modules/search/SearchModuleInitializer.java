@@ -1,4 +1,4 @@
-package dxa.modules.search;
+package com.sdl.dxa.modules.search;
 
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.Link;
@@ -19,7 +19,7 @@ public class SearchModuleInitializer {
     }
 
     @PostConstruct
-    public void registerViewModelEntityClasses() {
+    public void initialize() {
         // TODO: Implement this for real, currently this is just a dummy implementation to avoid errors
         try {
             viewModelRegistry.registerViewEntityClass("Search:SearchBox", Link.class);

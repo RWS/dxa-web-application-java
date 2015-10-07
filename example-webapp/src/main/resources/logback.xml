@@ -60,7 +60,7 @@
     <logger name="com.sdl.webapp.common.impl" level="DEBUG">
         <appender-ref ref="rollingDebugLog"/>
     </logger>
-    <logger name="com.sdl.webapp.main.taglib.dxa" level="DEBUG">
+    <logger name="com.sdl.webapp.common.impl.taglib.dxa" level="DEBUG">
         <appender-ref ref="rollingDebugLog"/>
     </logger>
     <logger name="com.sdl.webapp.main.controller.core" level="DEBUG">

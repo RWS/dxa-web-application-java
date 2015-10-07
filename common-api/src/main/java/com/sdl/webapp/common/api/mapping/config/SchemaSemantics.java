@@ -28,7 +28,7 @@ public class SchemaSemantics {
 
 
     public SchemaSemantics(String entity){
-        this(SemanticMapping.DEFAULT_VOCABULARY,entity);
+//        this(SemanticMapping.DEFAULT_VOCABULARY,entity);
     }
     public SchemaSemantics(){}
     public SchemaSemantics(String prefix, String entity){

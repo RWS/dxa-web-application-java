@@ -26,7 +26,6 @@ public class ComponentImplTest {
     }
 
     @Test
-    @Ignore
     public void shouldHaveSameEclIdAfterDeSerializing() throws SerializationException {
         //given
         Component component = new ComponentImpl() {{
@@ -43,7 +42,6 @@ public class ComponentImplTest {
     }
 
     @Test
-    @Ignore
     public void shouldHaveSameExtensionDataAfterDeSerializing() throws SerializationException {
         //given
         final String key = "ECL", key2 = "KEY2";

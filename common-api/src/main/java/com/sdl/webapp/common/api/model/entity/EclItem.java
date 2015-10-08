@@ -18,47 +18,40 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
 public abstract class EclItem extends MediaItem {
 
-    private String eclUrl;
-    private String itemId;
+    private String eclUri;
+    private String displayTypeId;
+    private String templateFragment;
 
-    public String getEclUrl() {
-        return this.eclUrl;
+    public String getEclUri() {
+        return this.eclUri;
     }
 
-    public void setEclUrl(String eclUrl) {
-        this.eclUrl = eclUrl;
-        this.itemId = this.extractItemIdFromEclUrl(eclUrl);
+    public void setEclUri(String eclUri) {
+        this.eclUri = eclUri;
     }
 
-    public String getItemId() {
-        return this.itemId;
+    public String getDisplayTypeId() {
+        return displayTypeId;
     }
 
-    private static String extractItemIdFromEclUrl(String eclUrl) {
+    public void setDisplayTypeId(String displayTypeId) {
+        this.displayTypeId = displayTypeId;
+    }
 
-        // TODO: Refactor this by using a regex expression instead
+    public String getTemplateFragment() {
+        return templateFragment;
+    }
 
-        // Return item ID from the eclURI (format: ecl:[tcm id]-[ecl connector id]-[item id]-[type]-file
-        //
-        StringTokenizer tokenizer = new StringTokenizer(eclUrl, ":-");
-        tokenizer.nextToken(); // ecl
-        tokenizer.nextToken(); // tcm id
-        tokenizer.nextToken(); // ecl connector id
-        String itemId = tokenizer.nextToken();
-
-        try {
-            return URLDecoder.decode(itemId.replace("!", "%").replace(";", ""), "UTF8");
-        } catch (UnsupportedEncodingException e) {
-            return itemId;
-        }
+    public void setTemplateFragment(String templateFragment) {
+        this.templateFragment = templateFragment;
     }
 
     @Override
     public String toString() {
         return "EclItem{" +
-                "tcmUri='" + this.getId() + '\'' +
-                ", eclUrl='" + eclUrl + '\'' +
-                ", itemId='" + itemId + '\'' +
+                "eclUri='" + eclUri + '\'' +
+                ", displayTypeId='" + displayTypeId + '\'' +
+                ", templateFragment='" + templateFragment + '\'' +
                 '}';
     }
 
@@ -84,7 +77,10 @@ public abstract class EclItem extends MediaItem {
     @Override
     public String getXpmMarkup(Localization localization)
     {
-        // replace TCM URI with ECL URI
-        return super.getXpmMarkup(localization).replace(String.format("tcm:{0}-{1}", localization.getId(), this.getId()), getEclUrl());
+
+        // todo replace TCM URI with ECL URI
+        // todo is the commented implementation right?
+        // return super.getXpmMarkup(localization).replace(String.format("ecl:17-mm-379-dist-file", localization.getId(), this.getId()), getEclUri());
+        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
     }
 }

@@ -28,7 +28,7 @@ public class XpmEntityMarkupTag extends XpmMarkupTag {
         };
        /* final Map<String, String> entityData = entity.getXpmMetadata();
 
-        final String componentId = entity instanceof EclItem ? ((EclItem) entity).getEclUrl() : entityData.get("ComponentID");
+        final String componentId = entity instanceof EclItem ? ((EclItem) entity).getEclUri() : entityData.get("ComponentID");
         if (Strings.isNullOrEmpty(componentId)) {
             return null;
         }

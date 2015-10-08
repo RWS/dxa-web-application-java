@@ -122,7 +122,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
             //
             if ( entity instanceof EclItem ) {
                 final EclItem eclItem = (EclItem) entity;
-                eclItem.setEclUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+                eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
             }
         }
 
@@ -210,7 +210,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
             //
             if ( entity instanceof EclItem ) {
                 final EclItem eclItem = (EclItem) entity;
-                eclItem.setEclUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+                eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
             }
         }
 
@@ -251,7 +251,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
             //
             if (entity instanceof EclItem) {
                 final EclItem eclItem = (EclItem) entity;
-                eclItem.setEclUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+                eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
             }
         }
 
@@ -269,7 +269,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
         ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
 
         if ( entity instanceof EclItem ) {
-        	xpmMetaDataBuilder.put("ComponentID", ((EclItem) entity).getEclUri());
+        	xpmMetaDataBuilder.put("ComponentID", ((EclItem) entity).getUri());
         }
         else {
         	xpmMetaDataBuilder.put("ComponentID", component.getId());

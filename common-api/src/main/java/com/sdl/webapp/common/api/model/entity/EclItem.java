@@ -3,10 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.markup.html.HtmlElement;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.util.StringTokenizer;
+import org.springframework.util.StringUtils;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
 
@@ -18,16 +15,16 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
 public abstract class EclItem extends MediaItem {
 
-    private String eclUri;
+    private String uri;
     private String displayTypeId;
     private String templateFragment;
 
-    public String getEclUri() {
-        return this.eclUri;
+    public String getUri() {
+        return this.uri;
     }
 
-    public void setEclUri(String eclUri) {
-        this.eclUri = eclUri;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public String getDisplayTypeId() {
@@ -47,25 +44,15 @@ public abstract class EclItem extends MediaItem {
     }
 
     @Override
-    public String toString() {
-        return "EclItem{" +
-                "eclUri='" + eclUri + '\'' +
-                ", displayTypeId='" + displayTypeId + '\'' +
-                ", templateFragment='" + templateFragment + '\'' +
-                '}';
-    }
-
-    @Override
     public String toHtml(String widthFactor) {
-        // TODO implement this functionality
-        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
+        // NOTE: params will be ignored
+        return toHtml(widthFactor, 0.0, null, 0);
     }
 
     @Override
-    public String toHtml(String widthFactor, double aspect, String cssClass,
-                         int containerSize) {
-        // TODO implement this functionality
-        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
+    public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) {
+        // NOTE: we're ignoring all parameters here.
+        return templateFragment;
     }
 
     @Override
@@ -77,10 +64,18 @@ public abstract class EclItem extends MediaItem {
     @Override
     public String getXpmMarkup(Localization localization)
     {
+        if (getXpmMetadata() != null && !StringUtils.isEmpty(this.uri)) {
+            getXpmMetadata().put("ComponentID", this.uri);
+        }
+        return super.getXpmMarkup(localization);
+    }
 
-        // todo replace TCM URI with ECL URI
-        // todo is the commented implementation right?
-        // return super.getXpmMarkup(localization).replace(String.format("ecl:17-mm-379-dist-file", localization.getId(), this.getId()), getEclUri());
-        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
+    @Override
+    public String toString() {
+        return "EclItem{" +
+                "uri='" + uri + '\'' +
+                ", displayTypeId='" + displayTypeId + '\'' +
+                ", templateFragment='" + templateFragment + '\'' +
+                '}';
     }
 }

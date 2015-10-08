@@ -88,12 +88,30 @@ public abstract class MediaItem extends AbstractEntityModel {
         return String.format("%s %s", Math.ceil(len), sizes[order]);
     }
 
+    /**
+     * Renders an HTML representation of the Item.
+     *
+     * @param widthFactor The factor to apply to the width - can be % (eg "100%") or absolute (eg "120")
+     * @return The HTML representation
+     */
     public abstract String toHtml(String widthFactor);
 
+    /**
+     * Renders an HTML representation of the Item.
+     *
+     * @param widthFactor The factor to apply to the width - can be % (eg "100%") or absolute (eg "120")
+     * @param aspect The aspect ratio to apply
+     * @param cssClass Optional CSS class name(s) to apply
+     * @param containerSize The size (in grid column units) of the containing element
+     * @return The HTML representation
+     */
     public abstract String toHtml(String widthFactor, double aspect, String cssClass, int containerSize);
 
     public abstract HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath);
 
+    /**
+     * Read properties from XHTML element.
+     */
     public void readFromXhtmlElement(Node xhtmlElement) {
         // Return the Item (Reference) ID part of the TCM URI.
         this.setId(xhtmlElement.getAttributes().getNamedItem("xlink:href").getNodeValue().split("-")[1]);

@@ -4,6 +4,8 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import org.springframework.util.StringUtils;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
 
@@ -70,6 +72,32 @@ public abstract class EclItem extends MediaItem {
             getXpmMetadata().put(COMPONENT_ID_KEY, this.uri);
         }
         return super.getXpmMarkup(localization);
+    }
+
+    @Override
+    public void readFromXhtmlElement(Node xhtmlElement) {
+        super.readFromXhtmlElement(xhtmlElement);
+        NamedNodeMap attributes = xhtmlElement.getAttributes();
+
+        if (attributes == null) {
+            return;
+        }
+
+        this.uri = attributes.getNamedItem("data-eclId").getNodeValue();
+        this.displayTypeId = attributes.getNamedItem("data-eclDisplayTypeId").getNodeValue();
+        this.templateFragment = attributes.getNamedItem("data-eclTemplateFragment").getNodeValue();
+
+        // Note that FileName and MimeType are already set in MediaItem.ReadFromXhtmlElement.
+        // We overwrite those with the values provided by ECL (if any).
+        String eclFileName = attributes.getNamedItem("data-eclFileName").getNodeValue();
+        if (!StringUtils.isEmpty(eclFileName)) {
+            this.setFileName(eclFileName);
+        }
+
+        String eclMimeType = attributes.getNamedItem("data-eclMimeType").getNodeValue();
+        if (!StringUtils.isEmpty(eclMimeType)) {
+            this.setMimeType(eclMimeType);
+        }
     }
 
     @Override

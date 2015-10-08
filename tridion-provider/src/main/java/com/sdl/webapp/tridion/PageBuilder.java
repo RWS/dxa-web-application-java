@@ -7,5 +7,5 @@ import com.sdl.webapp.common.api.model.PageModel;
 
 
 public interface PageBuilder {
-    public PageModel createPage(org.dd4t.contentmodel.Page genericPage, PageModel pageModel, Localization localization, ContentProvider contentProvider) throws ContentProviderException;
+    PageModel createPage(org.dd4t.contentmodel.Page genericPage, PageModel pageModel, Localization localization, ContentProvider contentProvider) throws ContentProviderException;
 }

@@ -10,13 +10,13 @@ import org.dd4t.contentmodel.ComponentPresentation;
  * Entity Builder interface
  */
 public interface EntityBuilder {
-    public EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel, Localization localization)
+    EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel, Localization localization)
             throws ContentProviderException;
 
-    public EntityModel createEntity(org.dd4t.contentmodel.Component component, EntityModel originalEntityModel, Localization localization)
+    EntityModel createEntity(org.dd4t.contentmodel.Component component, EntityModel originalEntityModel, Localization localization)
             throws ContentProviderException;
 
-    public EntityModel createEntity(org.dd4t.contentmodel.Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
+    EntityModel createEntity(org.dd4t.contentmodel.Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
             throws ContentProviderException;
 
 }

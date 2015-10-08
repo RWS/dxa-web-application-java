@@ -28,9 +28,8 @@ public class ComponentImplTest {
     @Test
     public void shouldHaveSameEclIdAfterDeSerializing() throws SerializationException {
         //given
-        Component component = new ComponentImpl() {{
-            setEclId("ecl:17-mm-379-dist-file");
-        }};
+        Component component = new ComponentImpl();
+        ((ComponentImpl) component).setEclId("ecl:17-mm-379-dist-file");
 
         //when
         String content = serialize(component);
@@ -45,12 +44,11 @@ public class ComponentImplTest {
     public void shouldHaveSameExtensionDataAfterDeSerializing() throws SerializationException {
         //given
         final String key = "ECL", key2 = "KEY2";
-        Component component = new ComponentImpl() {{
-            setExtensionData(new HashMap<String, FieldSet>() {{
-                put(key, null);
-                put(key2, null);
-            }});
-        }};
+        Component component = new ComponentImpl();
+        ((ComponentImpl) component).setExtensionData(new HashMap<String, FieldSet>() {{
+            put(key, null);
+            put(key2, null);
+        }});
 
         //when
         String content = serialize(component);

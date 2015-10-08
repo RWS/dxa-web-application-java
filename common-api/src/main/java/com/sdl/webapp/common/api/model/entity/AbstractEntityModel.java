@@ -2,13 +2,11 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RichTextFragment;
-import com.sdl.webapp.common.markup.html.HtmlElement;
 
 import java.util.Map;
 
@@ -18,7 +16,7 @@ import java.util.Map;
 @SemanticMappingIgnore
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
 
-    private final String XpmComponentPresentationMarkup = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %s} -->";
+    private static final String XPM_COMPONENT_PRESENTATION_MARKUP = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %s} -->";
 
     @JsonProperty("Id")
     private String id;
@@ -51,7 +49,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     }
 
     public void setXpmMetadata(Map<String, String> xpmMetadata) {
-        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
+        this.xpmMetadata = xpmMetadata;
     }
 
     @Override
@@ -60,7 +58,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     }
 
     public void setXpmPropertyMetadata(Map<String, String> propertyData) {
-        this.xpmPropertyMetadata = ImmutableMap.copyOf(propertyData);
+        this.xpmPropertyMetadata = propertyData;
     }
 
     @Override
@@ -91,7 +89,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
 
         // TODO: Consider data-driven approach (i.e. just render all XpmMetadata key/value pairs)
         return String.format(
-                XpmComponentPresentationMarkup,
+                XPM_COMPONENT_PRESENTATION_MARKUP,
                 getXpmMetadata().get("ComponentID"),
                 getXpmMetadata().get("ComponentModified"),
                 getXpmMetadata().get("ComponentTemplateID"),

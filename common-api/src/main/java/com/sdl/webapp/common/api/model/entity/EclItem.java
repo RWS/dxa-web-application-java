@@ -15,6 +15,8 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
 public abstract class EclItem extends MediaItem {
 
+    static final String COMPONENT_ID_KEY = "ComponentID";
+
     private String uri;
     private String displayTypeId;
     private String templateFragment;
@@ -65,7 +67,7 @@ public abstract class EclItem extends MediaItem {
     public String getXpmMarkup(Localization localization)
     {
         if (getXpmMetadata() != null && !StringUtils.isEmpty(this.uri)) {
-            getXpmMetadata().put("ComponentID", this.uri);
+            getXpmMetadata().put(COMPONENT_ID_KEY, this.uri);
         }
         return super.getXpmMarkup(localization);
     }

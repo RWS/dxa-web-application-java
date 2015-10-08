@@ -13,7 +13,6 @@
         <module>common-api</module>
         <module>common-impl</module>
         <module>tridion-provider</module>
-        <module>core-module</module>
         <module>cid-module</module>
         <module>example-webapp</module>
         <module>dxa-testmodule</module>

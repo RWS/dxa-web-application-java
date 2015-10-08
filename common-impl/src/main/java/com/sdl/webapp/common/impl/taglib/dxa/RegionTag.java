@@ -27,6 +27,7 @@ public class RegionTag extends AbstractMarkupTag {
 
     private String name;
     private boolean placeholder;
+    private String emptyviewname;
     private RegionModel parentRegion;
     private int containerSize;
     
@@ -36,6 +37,10 @@ public class RegionTag extends AbstractMarkupTag {
 
     public void setPlaceholder(boolean placeholder) {
         this.placeholder = placeholder;
+    }
+
+    public void setEmptyviewname(String emptyviewname) {
+        this.emptyviewname = emptyviewname;
     }
 
     public void setContainerSize(int containerSize) {
@@ -93,7 +98,18 @@ public class RegionTag extends AbstractMarkupTag {
             } catch (DxaException e) {
                 e.printStackTrace();
             }
-            placeholderRegion.setMvcData(new SimpleRegionMvcData(name));
+
+            SimpleRegionMvcData mvcData = null;
+            if(Strings.isNullOrEmpty(emptyviewname))
+            {
+                mvcData = new SimpleRegionMvcData(name);
+            }
+            else
+            {
+                mvcData = new SimpleRegionMvcData(name, emptyviewname);
+            }
+
+            placeholderRegion.setMvcData(mvcData);
             region = placeholderRegion;
             pageContext.getRequest().setAttribute("_region_" + name, placeholderRegion);
         }

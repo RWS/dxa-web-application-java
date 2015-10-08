@@ -360,7 +360,7 @@ final class PageBuilderImpl implements PageBuilder {
 
         if (pageTemplateMeta == null || !pageTemplateMeta.containsKey(REGIONS_METADATA_FIELD_NAME))// TODO: "region" instead of "regions"
         {
-            LOG.debug("No Region metadata defined for Page Template '%'.", pageTemplate.getId());
+            LOG.debug("No Region metadata defined for Page Template '{}'.", pageTemplate.getId());
             return regions;
         }
 
@@ -369,7 +369,7 @@ final class PageBuilderImpl implements PageBuilder {
             for (FieldSet regionField : regionsMetaField.getEmbeddedValues()) {
                 Map<String, Field> region = regionField.getContent();
                 if (!region.containsKey(REGIONS_METADATA_FIELD_NAME_VIEW)) {
-                    LOG.warn("Region metadata without 'view' field encountered in metadata of Page Template '%'.", pageTemplate.getId());
+                    LOG.warn("Region metadata without 'view' field encountered in metadata of Page Template '{}'.", pageTemplate.getId());
                     continue;
                 }
                 String view = FieldUtils.getStringValue(region, REGIONS_METADATA_FIELD_NAME_VIEW);
@@ -395,19 +395,19 @@ final class PageBuilderImpl implements PageBuilder {
                 try {
                     regionModel = CreateRegionModel(regionMvcData);
                 } catch (IllegalAccessException e) {
-                    LOG.error("Error creating region for view '%'.", view, e);
+                    LOG.error("Error creating region for view '{}'.", view, e);
                     continue;
                 } catch (InstantiationException e) {
-                    LOG.error("Error creating region for view '%'.", view, e);
+                    LOG.error("Error creating region for view '{}'.", view, e);
                     continue;
                 } catch (DxaException e) {
-                    LOG.error("Error creating region for view '%'.", view, e);
+                    LOG.error("Error creating region for view '{}'.", view, e);
                     continue;
                 } catch (NoSuchMethodException e) {
-                    LOG.error("Error creating region for view '%'.", view, e);
+                    LOG.error("Error creating region for view '{}'.", view, e);
                     continue;
                 } catch (InvocationTargetException e) {
-                    LOG.error("Error creating region for view '%'.", view, e);
+                    LOG.error("Error creating region for view '{}'.", view, e);
                     continue;
                 }
                 regions.add(regionModel);

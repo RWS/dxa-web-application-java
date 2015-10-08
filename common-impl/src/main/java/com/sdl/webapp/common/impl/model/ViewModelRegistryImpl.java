@@ -282,9 +282,9 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         }
         //TODO: TW, shall we fallback to the old way?
         //TODO: TW Validate we don't need the old Implementation
-        // MvcData mvcData = new MvcDataImpl(semanticTypeName);
-        // return getViewModelType(mvcData);
-        return null;
+         MvcData mvcData = new MvcDataImpl(semanticTypeName);
+         return getViewModelType(mvcData);
+        //return null;
     }
 
     @Override
@@ -312,7 +312,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
         Map<MvcData, Class<? extends ViewModel>> possibleValues = Maps.filterEntries(this.viewEntityClassMap, keyNamePredicate);
         if (possibleValues.isEmpty()) {
-            throw new DxaException(String.format("Could not find a view model for the view name %s", viewName));
+            throw new DxaException(String.format("Could not find a view model for the view name {}", viewName));
         } else {
             return possibleValues.entrySet().iterator().next().getValue();
         }

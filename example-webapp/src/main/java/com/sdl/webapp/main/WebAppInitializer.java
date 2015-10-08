@@ -1,14 +1,8 @@
 package com.sdl.webapp.main;
 
-import com.sdl.webapp.common.api.model.ViewModelRegistry;
-import com.sdl.webapp.common.api.model.entity.*;
-import com.sdl.webapp.common.api.model.page.PageModelImpl;
-import com.sdl.webapp.common.api.model.region.RegionModelImpl;
-import com.sdl.webapp.common.exceptions.DxaException;
 import com.tridion.ambientdata.web.AmbientDataServletFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
@@ -16,7 +10,6 @@ import org.springframework.web.context.support.AnnotationConfigWebApplicationCon
 import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.*;
 import java.util.EnumSet;
 

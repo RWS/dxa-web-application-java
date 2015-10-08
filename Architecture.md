@@ -19,7 +19,7 @@ The `webapp-main` module contains the main components of the web application. Th
 Servlet API version 3.1. Initialization and configuration is fully done in code, there is no `web.xml` deployment
 descriptor.
 
-The classes `com.sdl.webapp.main.WebAppInitializer` and `com.sdl.webapp.main.WebAppConfiguration` contain the code to
+The classes `WebAppInitializer` and `WebAppConfiguration` contain the code to
 initialize and configure the web application. These classes register a number of components:
 
 * Two interceptors: `LocalizationResolverInterceptor` and `StaticContentInterceptor`

@@ -109,7 +109,8 @@
             <groupId>com.tridion</groupId>
             <artifactId>cd_ambient</artifactId>
         </dependency>
-    
+
+
         <!-- SDL Digital Experience Accelerator -->
         <dependency>
             <groupId>com.sdl</groupId>
@@ -120,16 +121,10 @@
             <groupId>com.sdl</groupId>
             <artifactId>common-impl</artifactId>
             <version>${project.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.sdl</groupId>
             <artifactId>tridion-provider</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>core-module</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

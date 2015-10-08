@@ -6,7 +6,7 @@
 
     <groupId>com.sdl</groupId>
     <artifactId>webapp-reference-impl</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
@@ -18,6 +18,7 @@
         <module>dxa-testmodule</module>
         <module>dxa-googleanalyticsmodule</module>
         <module>dxa-searchmodule</module>
+        <module>dxa-coremodule</module>
     </modules>
 
     <profiles>
@@ -290,9 +291,9 @@
         <!-- Dynamic Delivery for Tridion (DD4T) -->
         <!--
         <dd4t-version>1.31.3</dd4t-version>
-
-        <dd4t-version>2.0.1-beta</dd4t-version>-->
-    <dd4t-version>2.0.2-SNAPSHOT</dd4t-version>
+-->
+        <dd4t-version>2.0.1-beta</dd4t-version>
+   <!-- <dd4t-version>2.0.2-SNAPSHOT</dd4t-version>-->
 </properties>
 
 <!-- Dependency management -->

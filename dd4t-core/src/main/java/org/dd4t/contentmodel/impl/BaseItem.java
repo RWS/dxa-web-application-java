@@ -29,7 +29,7 @@ import java.util.Map;
  *
  * @author Quirijn Slings, Raimond Kempees
  */
-public abstract class BaseItem extends ModelImpl implements Item {
+public abstract class BaseItem extends AbstractModel implements Item {
 
     @JsonProperty("Id")
     private String id;

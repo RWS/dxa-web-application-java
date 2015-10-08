@@ -5,7 +5,7 @@ import org.dd4t.contentmodel.Model;
 
 import java.util.Map;
 
-public class ModelImpl implements Model {
+public abstract class AbstractModel implements Model {
     private Map<String, FieldSet> extensionData;
 
     @Override

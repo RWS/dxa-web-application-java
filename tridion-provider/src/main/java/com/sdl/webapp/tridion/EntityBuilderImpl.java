@@ -23,9 +23,11 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.sdl.webapp.tridion.fieldconverters.FieldUtils.getStringValue;
 
@@ -60,7 +62,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
     @Override
     public EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel, Localization localization)
             throws ContentProviderException {
-        final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
+        final Component component = componentPresentation.getComponent();
         final String componentId = component.getId();
         LOG.debug("Creating entity for component: {}", componentId);
 
@@ -138,13 +140,13 @@ public final class EntityBuilderImpl implements EntityBuilder {
     }
 
     @Override
-    public EntityModel createEntity(org.dd4t.contentmodel.Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
+    public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
             throws ContentProviderException {
         final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
         return createEntity(component, localization,entityClass, semanticSchema);
     }
 
-    public EntityModel createEntity(org.dd4t.contentmodel.Component component, EntityModel originalEntityModel, Localization localization)
+    public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization)
             throws ContentProviderException {
 
         final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
@@ -165,7 +167,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
     }
 
 
-    public EntityModel createEntityOLD(org.dd4t.contentmodel.Component component, EntityModel originalEntityModel, Localization localization)
+    public EntityModel createEntityOLD(Component component, EntityModel originalEntityModel, Localization localization)
             throws ContentProviderException {
        // final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
         final String componentId = component.getId();
@@ -221,7 +223,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
         return entity;
     }
 
-    private EntityModel createEntity(org.dd4t.contentmodel.Component component, Localization localization, Class<? extends AbstractEntityModel> entityClass, SemanticSchema semanticSchema)
+    private EntityModel createEntity(Component component, Localization localization, Class<? extends AbstractEntityModel> entityClass, SemanticSchema semanticSchema)
             throws ContentProviderException {
 
         final String componentId = component.getId();
@@ -247,11 +249,27 @@ public final class EntityBuilderImpl implements EntityBuilder {
             mediaItem.setFileSize(multimedia.getSize());
             mediaItem.setMimeType(multimedia.getMimeType());
 
-            // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
-            //
-            if (entity instanceof EclItem) {
-                final EclItem eclItem = (EclItem) entity;
-                eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+        }
+
+        // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
+        if (entity instanceof EclItem) {
+            final EclItem eclItem = (EclItem) entity;
+            //todo check if it's right; .NET does just eclItem.setUri(component.getEclId())
+            eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+
+            Map<String, FieldSet> extensionData = component.getExtensionData();
+            if (extensionData != null) {
+                FieldSet eclFieldSet = extensionData.get("ECL");
+                eclItem.setDisplayTypeId(getValueFromFieldSet(eclFieldSet, "DisplayTypeId"));
+                eclItem.setTemplateFragment(getValueFromFieldSet(eclFieldSet, "TemplateFragment"));
+                String fileName = getValueFromFieldSet(eclFieldSet, "FileName");
+                if (!StringUtils.isEmpty(fileName)) {
+                    eclItem.setFileName(fileName);
+                }
+                String mimeType = getValueFromFieldSet(eclFieldSet, "MimeType");
+                if (!StringUtils.isEmpty(mimeType)) {
+                    eclItem.setMimeType(mimeType);
+                }
             }
         }
 
@@ -261,9 +279,19 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
         return entity;
     }
-    
+
+    private String getValueFromFieldSet(FieldSet eclFieldSet, String fieldName) {
+        if (eclFieldSet != null) {
+            Map<String, Field> fieldSetContent = eclFieldSet.getContent();
+            if (fieldSetContent != null) {
+                return Objects.toString(fieldSetContent.get(fieldName).getValues().get(0));
+            }
+        }
+        return null;
+    }
+
     private void createEntityData(AbstractEntityModel entity, ComponentPresentation componentPresentation) {
-        final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
+        final Component component = componentPresentation.getComponent();
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
 
         ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();

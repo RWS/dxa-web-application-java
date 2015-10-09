@@ -10,6 +10,7 @@ import com.sun.syndication.feed.atom.Content;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,10 +41,13 @@ public class AtomFormatter extends FeedFormatter {
         {
             Content c = new Content();
             c.setValue(item.getText().toString());
+            c.setType("text");
             si.setSummary(c);
-            List<Content> contents = new ArrayList<Content>();
-            contents.add(c);
-            si.setContents(contents);
+            si.setId(item.getId());
+            si.setUpdated(new Date());
+//            List<Content> contents = new ArrayList<Content>();
+//            contents.add(c);
+//            si.setContents(contents);
 
         }
         if (item.getLink() != null && item.getLink().getUrl() !=null && item.getLink().getUrl().startsWith("http"))

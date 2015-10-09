@@ -41,7 +41,9 @@ public class AtomView extends AbstractAtomFeedView {
         feed.setTitle(page.getTitle());
         Content c = new Content();
         c.setValue(description);
+        c.setType("text");
         feed.setSubtitle(c);
+        feed.setId("my-id");
         StringBuffer uri = request.getRequestURL();
         String queryString = request.getQueryString();
         if(queryString!=null){

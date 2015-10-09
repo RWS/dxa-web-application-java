@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CartridgeDefinition Version="6.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="schemas/cd_ambient_cartridge_conf.xsd"
+    Uri="tcd:cartridge:context" Description="Context cartridge">
+
+    <!-- List the claim definitions that you wish to store within the session claim store -->
+    <ClaimDefinitions>
+
+        <!-- Provided claim definitions -->
+        <ClaimDefinition Uri="taf:claim:context:browser:cookieSupport" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:cssVersion" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:displayColorDepth" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:displayHeight" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:displayWidth" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:imageFormatSupport" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:inputModeSupport" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:inputDevices" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:jsVersion" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:markupSupport" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:model" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:preferredHtmlContentType" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:scriptSupport" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:stylesheetSupport" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:variant" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:vendor" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:browser:version" Scope="SESSION" Description=""/>
+
+        <ClaimDefinition Uri="taf:claim:context:device:displayHeight" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:device:displayWidth" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:device:mobile" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:device:model" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:device:pixelDensity" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:device:pixelRatio" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:device:robot" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:device:tablet" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:device:variant" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:device:vendor" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:device:version" Scope="SESSION" Description=""/>
+
+        <ClaimDefinition Uri="taf:claim:context:os:model" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:os:vendor" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:os:version" Scope="SESSION" Description=""/>
+        <ClaimDefinition Uri="taf:claim:context:os:variant" Scope="SESSION" Description=""/>
+
+        <!-- Custom claim definitions go here -->
+
+    </ClaimDefinitions>
+
+    <ClaimProcessorDefinitions>
+        <ClaimProcessorDefinition Uri="tcd:claimprocessor:cwd:context"
+            ImplementationClass="com.sdl.context.ambient.ContextEngineClaimProcessor"
+            ConfigProviderClass="com.sdl.context.ambient.ContextEngineClaimProcessorConfigProvider"/>
+    </ClaimProcessorDefinitions>
+</CartridgeDefinition>

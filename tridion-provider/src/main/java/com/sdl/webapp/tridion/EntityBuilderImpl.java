@@ -259,17 +259,9 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
             Map<String, FieldSet> extensionData = component.getExtensionData();
             if (extensionData != null) {
-                FieldSet eclFieldSet = extensionData.get("ECL");
-                eclItem.setDisplayTypeId(getValueFromFieldSet(eclFieldSet, "DisplayTypeId"));
-                eclItem.setTemplateFragment(getValueFromFieldSet(eclFieldSet, "TemplateFragment"));
-                String fileName = getValueFromFieldSet(eclFieldSet, "FileName");
-                if (!StringUtils.isEmpty(fileName)) {
-                    eclItem.setFileName(fileName);
-                }
-                String mimeType = getValueFromFieldSet(eclFieldSet, "MimeType");
-                if (!StringUtils.isEmpty(mimeType)) {
-                    eclItem.setMimeType(mimeType);
-                }
+                fillItemWithEclData(eclItem, extensionData);
+
+                fillItemWithExternalMetadata(eclItem, extensionData);
             }
         }
 
@@ -278,6 +270,29 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
 
         return entity;
+    }
+
+    private void fillItemWithExternalMetadata(EclItem eclItem, Map<String, FieldSet> extensionData) {
+        FieldSet externalEclFieldSet = extensionData.get("ECL-ExternalMetadata");
+        Map<String, Object> externalMetadata = new HashMap<>(externalEclFieldSet.getContent().size());
+        for (Map.Entry<String, Field> entry : externalEclFieldSet.getContent().entrySet()) {
+            externalMetadata.put(entry.getKey(), entry.getValue().getValues().get(0));
+        }
+        eclItem.setExternalMetadata(externalMetadata);
+    }
+
+    private void fillItemWithEclData(EclItem eclItem, Map<String, FieldSet> extensionData) {
+        FieldSet eclFieldSet = extensionData.get("ECL");
+        eclItem.setDisplayTypeId(getValueFromFieldSet(eclFieldSet, "DisplayTypeId"));
+        eclItem.setTemplateFragment(getValueFromFieldSet(eclFieldSet, "TemplateFragment"));
+        String fileName = getValueFromFieldSet(eclFieldSet, "FileName");
+        if (!StringUtils.isEmpty(fileName)) {
+            eclItem.setFileName(fileName);
+        }
+        String mimeType = getValueFromFieldSet(eclFieldSet, "MimeType");
+        if (!StringUtils.isEmpty(mimeType)) {
+            eclItem.setMimeType(mimeType);
+        }
     }
 
     private String getValueFromFieldSet(FieldSet eclFieldSet, String fieldName) {

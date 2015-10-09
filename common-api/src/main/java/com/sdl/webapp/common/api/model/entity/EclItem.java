@@ -7,6 +7,8 @@ import org.springframework.util.StringUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import java.util.Map;
+
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
 
 /**
@@ -22,6 +24,7 @@ public abstract class EclItem extends MediaItem {
     private String uri;
     private String displayTypeId;
     private String templateFragment;
+    private Map<String, Object> externalMetadata;
 
     public String getUri() {
         return this.uri;
@@ -45,6 +48,19 @@ public abstract class EclItem extends MediaItem {
 
     public void setTemplateFragment(String templateFragment) {
         this.templateFragment = templateFragment;
+    }
+
+    /**
+     * External metadata map for {@link EclItem}.
+     *
+     * Keys are the field names. Values can be simple types (String, Double, DateTime), nested Maps.
+     */
+    public Map<String, Object> getExternalMetadata() {
+        return externalMetadata;
+    }
+
+    public void setExternalMetadata(Map<String, Object> externalMetadata) {
+        this.externalMetadata = externalMetadata;
     }
 
     @Override

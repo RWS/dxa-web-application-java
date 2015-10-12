@@ -52,15 +52,15 @@ public class RssFormatter extends FeedFormatter {
             d.setValue(item.getText().toString());
             si.setDescription(d);
         }
-        if (item.getLink() != null && item.getLink().getUrl() !=null)
-        {
-            if(item.getLink().getUrl().startsWith("http")){
-                si.setLink(item.getLink().getUrl());
-            }else{
-                si.setLink(context.getBaseUrl() + item.getLink().getUrl());
-            }
-
-        }
+//        if (item.getLink() != null && item.getLink().getUrl() !=null)
+//        {
+//            if(item.getLink().getUrl().startsWith("http")){
+//                si.setLink(item.getLink().getUrl());
+//            }else{
+//                si.setLink(context.getBaseUrl() + item.getLink().getUrl());
+//            }
+//
+//        }
         if (item.getDate() != null)
         {
 

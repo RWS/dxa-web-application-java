@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 
@@ -10,9 +11,11 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA
 @SemanticEntity(entityName = "ItemList", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class ItemList extends AbstractEntityModel {
 
+    @JsonProperty("Headline")
     @SemanticProperty("s:headline")
     private String headline;
 
+    @JsonProperty("ItemListElement")
     @SemanticProperty("s:itemListElement")
     private List<Teaser> itemListElements;
 

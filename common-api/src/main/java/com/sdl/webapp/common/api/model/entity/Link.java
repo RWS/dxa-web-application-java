@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
@@ -15,12 +16,15 @@ public class Link extends AbstractEntityModel {
             @SemanticProperty("e:internalLink"),
             @SemanticProperty("e:externalLink")
     })
+    @JsonProperty("Url")
     private String url;
 
+    @JsonProperty("LinkText")
     @SemanticProperty("e:linkText")
     private String linkText;
 
     @SemanticProperty("e:alternateText")
+    @JsonProperty("AlternateText")
     private String alternateText;
 
     public String getUrl() {

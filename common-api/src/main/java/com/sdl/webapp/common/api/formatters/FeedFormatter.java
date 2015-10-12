@@ -111,7 +111,8 @@ public abstract class FeedFormatter extends BaseFormatter {
             //2. Second check if entity type is (semantically) a list, and if so, get its list items
             List<Teaser> items = null;
             try {
-                items = getTeaserListFromSemantics(entity);
+               items = getTeaserListFromSemantics(entity);
+
             } catch (IllegalAccessException e) {
                 LOG.error("Illegal Field Access");
                 LOG.error("Error while getting syndication list: {}", e.getMessage());

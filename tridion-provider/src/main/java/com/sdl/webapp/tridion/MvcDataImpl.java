@@ -1,24 +1,42 @@
 package com.sdl.webapp.tridion;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public final class MvcDataImpl implements MvcData {
 
+    @JsonProperty("ControllerAreaName")
     private String controllerAreaName;
+
+    @JsonProperty("ControllerName")
     private String controllerName;
+
+    @JsonProperty("ActionName")
     private String actionName;
 
+    @JsonProperty("AreaName")
     private String areaName;
+
+    @JsonProperty("ViewName")
     private String viewName;
 
+    @JsonProperty("RegionAreaName")
     private String regionAreaName;
+
+    @JsonProperty("RegionName")
     private String regionName;
 
+    @JsonIgnore
     private Map<String, String> routeValues = new HashMap<>();
+
+    @JsonIgnore
     private Map<String, Object> metadata = new HashMap<>();
 
     public MvcDataImpl() {

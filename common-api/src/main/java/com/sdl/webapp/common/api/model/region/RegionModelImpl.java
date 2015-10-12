@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.api.model.region;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -24,16 +27,27 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 /**
  * Implementation of {@code Region}.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegionModelImpl implements RegionModel {
 
     private final String XpmRegionMarkup = "<!-- Start Region: {title: \"%s\", allowedComponentTypes: [%s], minOccurs: %s} -->";
     private final String XpmComponentTypeMarkup = "{schema: \"%s\", template: \"%s\"}";
 
+    @JsonProperty("Name")
     private String name;
+    @JsonIgnore
     private String htmlClasses;
+
+    @JsonProperty("Entities")
     private List<EntityModel> entities = new ArrayList<EntityModel>();
+
+    @JsonProperty("XpmMetadata")
     private Map<String, String> xpmMetadata = new HashMap<>();
+
+    @JsonProperty("MvcData")
     private MvcData mvcData;
+
+    @JsonProperty("Regions")
     private RegionModelSet regions;
 
     /*

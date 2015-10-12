@@ -41,6 +41,11 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
+            <name>emptyviewname</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
+        <attribute>
         	<name>containerSize</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>

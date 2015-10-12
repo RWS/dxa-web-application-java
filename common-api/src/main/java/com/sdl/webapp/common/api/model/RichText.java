@@ -1,10 +1,14 @@
 package com.sdl.webapp.common.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.LinkedList;
 import java.util.List;
 
 public class RichText {
 
+    @JsonProperty("Fragments")
     private List<RichTextFragment> fragments;
 
     public List<RichTextFragment> getFragments() {

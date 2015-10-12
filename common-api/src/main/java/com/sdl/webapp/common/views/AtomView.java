@@ -15,9 +15,7 @@ import org.springframework.web.servlet.view.feed.AbstractAtomFeedView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * TODO: TW Document
@@ -38,12 +36,17 @@ public class AtomView extends AbstractAtomFeedView {
         PageModel page = (PageModel)model.get("data");
         String description = page.getMeta().containsKey("description") ? page.getMeta().get("description") : null;
 
-        feed.setTitle(page.getTitle());
+        Content title = new Content();
+        title.setType("text");
+        title.setValue(page.getTitle());
+        feed.setTitleEx(title);
+
         Content c = new Content();
         c.setValue(description);
         c.setType("text");
         feed.setSubtitle(c);
-        feed.setId("my-id");
+
+        feed.setId("uuid:" + UUID.randomUUID().toString());
         StringBuffer uri = request.getRequestURL();
         String queryString = request.getQueryString();
         if(queryString!=null){
@@ -52,9 +55,12 @@ public class AtomView extends AbstractAtomFeedView {
         List<Link> links = new ArrayList<>();
         Link l = new Link();
         l.setHref(uri.toString().replaceAll("[&?]format.*?(?=&|\\?|$)", ""));
-        l.setTitle(page.getTitle());
+        //l.setTitle(page.getTitle());
         links.add(l);
+
+        feed.setUpdated(new Date());
         feed.setAlternateLinks(links);
+        feed.setLanguage(context.getLocalization().getCulture());
         super.buildFeedMetadata(model, feed, request);
 
     }

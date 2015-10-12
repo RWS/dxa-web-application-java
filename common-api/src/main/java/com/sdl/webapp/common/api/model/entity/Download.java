@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -24,6 +25,7 @@ public class Download extends MediaItem {
             @SemanticProperty("s:name"),
             @SemanticProperty("s:description")
     })
+    @JsonProperty("Description")
     private String description;
 
     public String getDescription() {

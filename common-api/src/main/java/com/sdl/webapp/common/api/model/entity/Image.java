@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api.model.entity;
 
 import java.util.Locale;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA
 public class Image extends MediaItem {
 
     @SemanticProperty("s:name")
+    @JsonProperty("AlternateText")
     private String alternateText;
 
     final MediaHelper mediaHelper = ApplicationContextHolder.getContext().getBean(MediaHelper.class);

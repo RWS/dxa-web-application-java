@@ -2,6 +2,8 @@ package com.sdl.webapp.common.api.model.entity;
 
 import java.util.HashMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.w3c.dom.Node;
 
 import com.google.common.base.Strings;
@@ -15,15 +17,20 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA
 public abstract class MediaItem extends AbstractEntityModel {
 
     @SemanticProperty("s:contentUrl")
+    @JsonProperty("Url")
     private String url;
 
+    @JsonProperty("IsEmbedded")
     private Boolean isEmbedded;
 
+    @JsonProperty("FileName")
     private String fileName;
 
     @SemanticProperty("s:contentSize")
+    @JsonProperty("FileSize")
     private int fileSize;
 
+    @JsonProperty("MimeType")
     private String mimeType;
 
     public String getUrl() {
@@ -71,11 +78,13 @@ public abstract class MediaItem extends AbstractEntityModel {
         return this.toHtml("100%");
     }
 
+    @JsonIgnore
     public String getIconClass() {
         String fileType = FontAwesomeMimeTypeToIconClassMapping.containsKey(this.getMimeType()) ? FontAwesomeMimeTypeToIconClassMapping.get(this.getMimeType()) : null;
         return fileType == null ? String.format("fa-file-%s-o", fileType) : "fa-file";
     }
 
+    @JsonIgnore
     public String getFriendlyFileSize() {
         String[] sizes = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
         double len = getFileSize();

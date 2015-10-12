@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
@@ -14,9 +15,11 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
 })
 public class TagLinkList extends AbstractEntityModel {
 
+    @JsonProperty("Headline")
     private String headline;
 
     @SemanticProperty("s:link")
+    @JsonProperty("Links")
     private List<TagLink> links;
 
     public String getHeadline() {

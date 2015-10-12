@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
@@ -23,42 +24,51 @@ public class ContentList extends AbstractEntityModel {
             @SemanticProperty("i:headline"),
             @SemanticProperty("q:headline")
     })
+    @JsonProperty("Headline")
     private String headline;
 
     @SemanticProperties({
             @SemanticProperty("i:link"),
             @SemanticProperty("q:link")
     })
+    @JsonProperty("Link")
     private Link link;
 
     @SemanticProperties({
             @SemanticProperty("i:pageSize"),
             @SemanticProperty("q:pageSize")
     })
+    @JsonProperty("PageSize")
     private int pageSize;
 
     @SemanticProperties({
             @SemanticProperty("i:contentType"),
             @SemanticProperty("q:contentType")
     })
+    @JsonProperty("ContentType")
     private Tag contentType;
 
     @SemanticProperties({
             @SemanticProperty("i:sort"),
             @SemanticProperty("q:sort")
     })
+    @JsonProperty("Sort")
     private Tag sort;
 
+    @JsonProperty("Start")
     private int start;
 
+    @JsonProperty("CurrentPage")
     private int currentPage = 1;
 
+    @JsonProperty("HasMore")
     private boolean hasMore;
 
     @SemanticProperties({
             @SemanticProperty("s:itemListElement"),
             @SemanticProperty("i:itemListElement")
     })
+    @JsonProperty("ItemListElements")
     private List<Teaser> itemListElements = new ArrayList<>();
 
     public String getHeadline() {

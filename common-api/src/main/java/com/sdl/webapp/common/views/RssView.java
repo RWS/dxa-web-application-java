@@ -38,6 +38,7 @@ public class RssView extends AbstractRssFeedView {
         String description = page.getMeta().containsKey("description") ? page.getMeta().get("description") : null;
         feed.setTitle(page.getTitle());
         feed.setDescription(description);
+        feed.setLanguage(context.getLocalization().getCulture());
         StringBuffer uri = request.getRequestURL();
         String queryString = request.getQueryString();
         if(queryString!=null){

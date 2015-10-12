@@ -4,6 +4,7 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA
 
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,12 +36,16 @@ public class YouTubeVideo extends MediaItem {
 
     final MediaHelper mediaHelper = ApplicationContextHolder.getContext().getBean(MediaHelper.class);
 
+    @JsonProperty("Headline")
     private String headline;
 
+    @JsonProperty("YouTubeId")
     private String youTubeId;
 
+    @JsonProperty("Width")
     private int width = DEFAULT_WIDTH;
 
+    @JsonProperty("Height")
     private int height = DEFAULT_HEIGHT;
 
     public String getHeadline() {

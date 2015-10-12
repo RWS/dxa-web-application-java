@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Configuration Version="7.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="schemas/cd_storage_conf.xsd">
+	<Global>
+		<ObjectCache Enabled="false">
+			<Policy Type="LRU" Class="com.tridion.cache.LRUPolicy">
+				<!--
+					The maximum size of memory used by the cache. The string must consist a number 
+					followed by units: "k" or "kb" for kilobytes; "m" or "mb" for megabytes (case insensitive)
+				-->
+				<Param Name="MemSize" Value="16mb" />
+			</Policy>
+			<!-- The Features element specifies classes that add additional functionality to the cache. -->
+			<Features>
+				<Feature Type="DependencyTracker" Class="com.tridion.cache.DependencyTracker" />
+			</Features>
+			<!--
+					The optional RemoteSynchronization element specifies a remote Cache Channel Service.
+					The remote Cache Channel Service is used to send messages between caches that are running
+					on separate virtual machines. (For example, if the Broker and the Deployer run on separate
+					virtual machines.)
+					The Cache Channel Service must be running and listening on the configured host and port for
+					remote synchronization to function.
+					If this element is omitted, the cache does not use any inter-virtual machine cache communication.
+					You must use the RemoteSynchronization element in conjunction with the Cache Channel service in
+					order for objects to be updated or removed from the Broker's object cache when they are published
+					or unpublished using the Deployer.
+			-->
+			<!-- RMI CacheChannel Connector example
+			 
+			<RemoteSynchronization Queuesize="128" ServiceMonitorInterval="10000" FlushCacheDuringDisconnectInterval="20000">
+				<Connector Class="com.tridion.cache.RMICacheChannelConnector" Host="127.0.0.1" Port="1099" />
+			</RemoteSynchronization>
+			-->
+			
+			<!-- JMS CacheChannel Connector example
+
+			<RemoteSynchronization Queuesize="128" ServiceMonitorInterval="10000" FlushCacheDuringDisconnectInterval="20000">
+				<Connector Class="com.tridion.cache.JMSCacheChannelConnector" Topic="topicName" TopicConnectionFactory="jndiNameOfConnectionFactory"/>
+			</RemoteSynchronization>
+			-->
+		</ObjectCache>
+		<Storages>
+            <!--
+				Overriding default Tridion dao bundles.
+			-->
+			<StorageBindings>
+				<Bundle src="preview_dao_bundle.xml"/>
+			</StorageBindings>
+			<!-- 
+				Wrappers enhances the behaviour of DAOs for specific use cases.
+			-->
+			<Wrappers>
+			    <!--
+			    Optional:
+			    Wrapper definition for StorageLayer wrapping.
+			    This element has the following attributes:
+                    Name               The bean wrapper name.
+			    -->
+                <!--
+				<Wrapper Name="WrapperName">
+				</Wrapper>
+                -->
+                <!--
+		        <Wrapper Name="UndoWrapper">
+                -->
+					<!-- Cleanup of old undo data can be enabled or disabled; default is enabled. -->
+					<!--<CleanupEnabled>true</CleanupEnabled>-->
+					<!-- PrunePeriod means Amount of time before data becomes invalid, as in anything older than 7 days. Default value is 7 days
+					   PurgeInterval means Amount of time in between checking for old undo data. Default value is 24 hours -->
+					<!--
+					<PrunePeriod>7</PrunePeriod>
+					<PurgeInterval>24h</PurgeInterval>
+				</Wrapper>
+                -->
+				<Wrapper Name="SessionWrapper">
+					<Storage Type="persistence" Id="sessionDb" dialect="MSSQL" Class="com.tridion.storage.persistence.JPADAOFactory">
+						<Pool Type="jdbc" Size="5" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120" />
+						<DataSource Class="com.microsoft.sqlserver.jdbc.SQLServerDataSource">
+							<Property Name="serverName" Value="***SERVER_NAME***" />
+							<Property Name="portNumber" Value="1433" />
+							<Property Name="databaseName" Value="***SESSION_PREVIEW_DATABASE_NAME***" />
+							<Property Name="user" Value="***SESSION_PREVIEW_USER_NAME***" />
+							<Property Name="password" Value="***SESSION_PREVIEW_PASSWORD***" />
+						</DataSource>
+					</Storage>
+				</Wrapper>
+			</Wrappers>
+			<!--
+                For Database elements of type sql, you can specify the pooling that
+                should be used with a Pool element. This pooling is independent of the selected database driver.
+                
+                This element has the following attributes:
+                    Type               The type should be either jdbc or tridion.
+                    Size               Maximum number of connections to open.
+                    MonitorInterval    Number of seconds between checks on the pool.
+                    IdleTimeout        Number of seconds a connection can be idle before it is closed.
+                    CheckoutTimeout    Number of seconds a connection can be checked out before it is returned to pool.
+            -->
+			<!--			
+				Configuration example for MS SQL Server 2008 R2 SP1 & 2012 SP1, using the MSSQL JDBC driver.
+
+				The DataSource element specifies the class name of the DataSource to use and properties specific to the datasource.
+				For the MSSQL JDBC driver the minimum set of properties to set are:
+					serverName: name of the server that hosts the database
+					portNumber: configuration of the port used for TCP/IP connections to the database. 1433 is the default port.
+					databaseName: name of the database to access
+					userName: username used to access the database
+					password: password used to access the database
+			-->	
+			<Storage Type="persistence" Id="defaultdb" dialect="MSSQL" Class="com.tridion.storage.persistence.JPADAOFactory">
+				<Pool Type="jdbc" Size="10" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120" />
+				<DataSource Class="com.microsoft.sqlserver.jdbc.SQLServerDataSource">
+					<Property Name="serverName" Value="***SERVER_NAME***" />
+					<Property Name="portNumber" Value="1433" />
+					<Property Name="databaseName" Value="***DATABASE_NAME***" />
+					<Property Name="user" Value="***USER_NAME***" />
+					<Property Name="password" Value="***PASSWORD***" />
+				</DataSource>
+			</Storage>
+			<!--			
+				Configuration example for DB2 Version 9.7
+
+				The DataSource element specifies the class name of the DataSource to use and properties specific to the datasource.
+				For the DB2 Version 9.7 driver the minimum set of properties to set are:
+					serverName: name of the server that hosts the database
+					portNumber: configuration of the port used for TCP/IP connections to the database. 50000 is the default port.
+					databaseName: name of the database to access
+					userName: username used to access the database
+					password: password used to access the database
+					driverType: set to "4" to indicate a pure java driver so no client installations of the driver are required.
+				
+			
+			<Storage Type="persistence" Id="defaultdb1" dialect="DB2" Class="com.tridion.storage.persistence.JPADAOFactory">
+				<Pool Type="jdbc" Size="10" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120" />
+				<DataSource Class="com.ibm.db2.jcc.DB2SimpleDataSource">
+					<Property Name="serverName" Value="SERVER_NAME"/>
+					<Property Name="portNumber" Value="50000"/>
+					<Property Name="databaseName" Value="DATABASE_NAME"/>
+					<Property Name="user" Value="USER_NAME"/>
+					<Property Name="password" Value="PASSWORD"/>
+					<Property Name="driverType" Value="4"/>
+				</DataSource>
+			</Storage>
+			-->
+			
+			<!--			
+				Configuration example for Oracle 10 and Oracle 11. 
+
+				The DataSource element specifies the class name of the DataSource to use and properties specific to the datasource.
+				For the Oracle 10 driver the minimum set of properties to set are:			
+					driverType: set to value "thin". Indicates the type of driver to use, by using "thin" no oracle client installation is required.
+					networkProtocol: "tcp". Indicates TCP/IP will be used for connectivity.
+					serverName: name of the server that hosts the database
+					portNumber: configuration of the port used for TCP/IP connections to the database. 1521 is the default port.
+					databaseName: name of the database to access
+					userName: username used to access the database
+					password: password used to access the database				
+			
+			<Storage Type="persistence" Id="defaultdb2" dialect="ORACLESQL" Class="com.tridion.storage.persistence.JPADAOFactory">
+				<Pool Type="jdbc" Size="10" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120" />
+				<DataSource Class="oracle.jdbc.pool.OracleDataSource">
+					<Property Name="driverType" Value="thin"/>
+					<Property Name="networkProtocol" Value="tcp"/>
+					<Property Name="serverName" Value="SERVER_NAME"/>
+					<Property Name="portNumber" Value="1521"/>
+					<Property Name="databaseName" Value="DATABASE_NAME"/>
+					<Property Name="user" Value="USER_NAME"/>
+					<Property Name="password" Value="PASSWORD"/>
+				</DataSource>
+			</Storage>
+			-->
+		</Storages>
+	</Global>
+	<ItemTypes defaultStorageId="defaultdb" cached="false">
+	</ItemTypes>
+	<!-- Specifies the location of the license file. -->
+	<!--
+	<License Location="c:/Tridion/config/cd_licenses.xml"/> 
+	-->
+</Configuration>

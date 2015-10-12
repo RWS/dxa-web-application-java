@@ -7,13 +7,15 @@ import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RichText;
+import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.Teaser;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.*;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,7 +111,8 @@ public abstract class FeedFormatter extends BaseFormatter {
             //2. Second check if entity type is (semantically) a list, and if so, get its list items
             List<Teaser> items = null;
             try {
-                items = getTeaserListFromSemantics(entity);
+               items = getTeaserListFromSemantics(entity);
+
             } catch (IllegalAccessException e) {
                 LOG.error("Illegal Field Access");
                 LOG.error("Error while getting syndication list: {}", e.getMessage());
@@ -123,39 +126,50 @@ public abstract class FeedFormatter extends BaseFormatter {
             }
             else
             {
-                //TODO: TW Use reflection
-                //3. Last resort, try to find some suitable properties using reflection
-//                Teaser teaser = new Teaser();
-//                foreach (PropertyInfo pi in entity.GetType().GetProperties())
-//                {
-//                    switch (pi.Name)
-//                    {
-//                        case "Headline":
-//                        case "Name":
-//                            teaser.Headline = pi.GetValue(entity) as String;
-//                            break;
-//                        case "Date":
-//                            DateTime? date = pi.GetValue(entity) as DateTime?;
-//                            if (date != null)
-//                                teaser.Date = date;
-//                            break;
-//                        case "Description":
-//                            teaser.Text = pi.GetValue(entity) as String;
-//                            break;
-//                        case "Link":
-//                            teaser.Link = pi.GetValue(entity) as Link;
-//                            break;
-//                        case "Url":
-//                            string url = pi.GetValue(entity) as String;
-//                            if (url != null)
-//                                teaser.Link = new Link { Url = url };
-//                        break;
-//                    }
-//                }
-//                if (teaser.Headline != null || teaser.Text != null || teaser.Link != null)
-//                {
-//                    res.Add(teaser);
-//                }
+
+//                3. Last resort, try to find some suitable properties using reflection
+                Teaser teaser = new Teaser();
+
+                for(Method m :  entity.getClass().getDeclaredMethods()){
+                    if(!m.getName().startsWith("get")){
+                        continue;
+                    }
+                    try {
+                        switch(m.getName().toLowerCase()){
+                            case "getheadline":
+                            case "getname":
+                                teaser.setHeadline((String) m.invoke(entity));
+                                break;
+                            case "getdate":
+                                DateTime d = (DateTime) m.invoke(entity);
+                                teaser.setDate(d);
+                                break;
+                            case "getdescription":
+                                teaser.setText((RichText) m.invoke(entity));
+                                break;
+                            case "getlink":
+                                teaser.setLink((Link) m.invoke(entity));
+                                break;
+                            case "geturl":
+                                String url = (String) m.invoke(entity);
+                                if (url != null){
+                                    Link l = new Link();
+                                    l.setUrl(url);
+                                    teaser.setLink(l);
+                                }
+                            break;
+                        }
+                    } catch (InvocationTargetException e) {
+                        LOG.error("Error while instantiating a teaser using reflection for feed: {}", e.getMessage());
+                    } catch (IllegalAccessException e) {
+                        LOG.error("Error while instantiating a teaser using reflection for feed: {}", e.getMessage());
+                    }
+                }
+
+                if (teaser.getHeadline() != null || teaser.getText()!= null )
+                {
+                    res.add(teaser);
+                }
             }
         }
         return res;

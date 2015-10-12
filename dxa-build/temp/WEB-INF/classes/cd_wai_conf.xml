@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- The Tridion WAI configuration specifies all configuration values to
+ enable the Personalisation and Profiling functionality.       -->
+<Configuration Version="7.1"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="schemas/cd_wai_conf.xsd">
+	<!-- The Global section specifies configuration details that apply to all functionality. -->
+	<Global>
+		<!--
+		Specify RMI listening port
+		-->
+		<!--
+		<RMIChannel ListenerPort="1050"/>
+		-->
+	</Global>
+	<Presentations>
+		<!-- A Presentation is a sub or superset of hosts. A Presentation
+		     configuration identifies which hosts for a Presentation and how the
+		     functionality for that set of hosts should behave.
+		     A Presentation should contain an Id attribute, which is used to store
+		     Tracking and Profiling information in the database.
+		     Multiple Presentation elements are allowed. -->
+	</Presentations>
+	<!--
+	Specifies the location of the license file.
+	-->
+	<!--
+	<License Location="c:/Tridion/config/cd_licenses.xml"/>
+	-->
+</Configuration>

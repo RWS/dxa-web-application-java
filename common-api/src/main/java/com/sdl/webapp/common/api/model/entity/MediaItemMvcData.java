@@ -1,5 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
 
@@ -14,16 +16,30 @@ import java.util.Map;
  */
 public class MediaItemMvcData implements MvcData {
 
+    @JsonProperty("ControllerAreaName")
     private String controllerAreaName = "Core";
+
+    @JsonProperty("ControllerName")
     private String controllerName = "Entity";
+
+    @JsonProperty("ActionName")
     private String actionName = "Entity";
+
+    @JsonProperty("AreaName")
     private String areaName = "Core";
+
+    @JsonProperty("ViewName")
     private String viewName;
 
+    @JsonProperty("RegionAreaName")
     private String regionAreaName;
+
+    @JsonProperty("RegionName")
     private String regionName;
 
+    @JsonIgnore
     private Map<String, String> routeValues = new HashMap<>();
+    @JsonIgnore
     private Map<String, Object> metadata = new HashMap<>();
 
     public MediaItemMvcData(String qualifiedViewName) throws DxaException {

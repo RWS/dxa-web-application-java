@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Implementation-Version: 1.2-SNAPSHOT
+Implementation-Vendor-Id: com.sdl
+Build-Jdk: 1.7.0_51
+Built-By: Administrator
+Created-By: IntelliJ IDEA
+Specification-Version: 1.2-SNAPSHOT
+

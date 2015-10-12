@@ -1,15 +1,20 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.model.RichText;
 
 public class Paragraph extends AbstractEntityModel {
 
+    @JsonProperty("Subheading")
     private String subheading;
 
+    @JsonProperty("Content")
     private RichText content;
 
+    @JsonProperty("Media")
     private MediaItem media;
 
+    @JsonProperty("Caption")
     private String caption;
 
     public String getSubheading() {

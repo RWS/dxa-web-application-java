@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
@@ -10,18 +11,22 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
 public class Notification extends AbstractEntityModel {
 
     @SemanticProperty("nb:headline")
+    @JsonProperty("Headline")
     private String headline;
 
     @SemanticProperty("nb:text")
+    @JsonProperty("Text")
     private String text;
 
     @SemanticProperties({
             @SemanticProperty("nb:continue"),
             @SemanticProperty("continue")
     })
+    @JsonProperty("Continue")
     private String continue_;
 
     @SemanticProperty("nb:link")
+    @JsonProperty("Link")
     private Link link;
 
     public String getHeadline() {

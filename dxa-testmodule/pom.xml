@@ -5,7 +5,7 @@
     <parent>
         <artifactId>webapp-reference-impl</artifactId>
         <groupId>com.sdl</groupId>
-        <version>1.1-SNAPSHOT</version>
+        <version>1.2-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -20,11 +20,6 @@
         <dependency>
             <groupId>com.sdl</groupId>
             <artifactId>tridion-provider</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>dd4t-provider</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

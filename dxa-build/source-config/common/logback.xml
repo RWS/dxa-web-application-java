@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
+  <!-- Properties -->
+  <property name="log.pattern" value="%date %-5level %logger{0} - %message%n" />
+  <property name="log.history" value="7" />
+  <property name="log.folder" value="***LOG_FOLDER***" />
+  <property name="log.level" value="***LOG_LEVEL***" />
+  <property name="log.encoding" value="UTF-8" />
+  <!-- Appenders -->
+  <appender name="rollingCoreLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${log.folder}/cd_core.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>${log.history}</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <charset>${log.encoding}</charset>
+      <pattern>${log.pattern}</pattern>
+    </encoder>
+    <prudent>true</prudent>
+  </appender>
+ <appender name="rollingDxaLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <fileNamePattern>${log.folder}/dxa_app.%d{yyyy-MM-dd}.log</fileNamePattern>
+      <maxHistory>${log.history}</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <charset>${log.encoding}</charset>
+      <pattern>${log.pattern}</pattern>
+    </encoder>
+    <prudent>true</prudent>
+  </appender>
+  <!-- Loggers -->
+  <logger name="com.tridion" level="${log.level}" />
+  <logger name="Tridion.ContentDelivery" level="${log.level}">
+    <appender-ref ref="rollingCoreLog" />
+  </logger>
+  <logger name="com.sdl.webapp" level="${log.level}">
+    <appender-ref ref="rollingDxaLog" />
+  </logger>
+  <root level="OFF">
+    <appender-ref ref="rollingCoreLog" />
+  </root>
+</configuration>

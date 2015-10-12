@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formatters.FeedFormatter;
 import com.sdl.webapp.common.api.model.entity.Teaser;
 import com.sun.syndication.feed.rss.Content;
+import com.sun.syndication.feed.rss.Description;
 import com.sun.syndication.feed.rss.Item;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,14 +48,19 @@ public class RssFormatter extends FeedFormatter {
         }
         if (item.getText() != null)
         {
-            Content c = new Content();
-            c.setValue(item.getText().toString());
-            si.setContent(c);
+            Description d = new Description();
+            d.setValue(item.getText().toString());
+            si.setDescription(d);
         }
-        if (item.getLink() != null && item.getLink().getUrl() !=null && item.getLink().getUrl().startsWith("http"))
-        {
-            si.setLink(item.getLink().getUrl());
-        }
+//        if (item.getLink() != null && item.getLink().getUrl() !=null)
+//        {
+//            if(item.getLink().getUrl().startsWith("http")){
+//                si.setLink(item.getLink().getUrl());
+//            }else{
+//                si.setLink(context.getBaseUrl() + item.getLink().getUrl());
+//            }
+//
+//        }
         if (item.getDate() != null)
         {
 

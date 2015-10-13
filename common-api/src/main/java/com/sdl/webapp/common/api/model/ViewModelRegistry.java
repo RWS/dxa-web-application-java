@@ -46,7 +46,4 @@ public interface ViewModelRegistry {
      */
     void registerViewModel(MvcData viewData,  Class<? extends ViewModel> entityClass);
 
-    void registerPageViewModel(String viewName, Class<? extends ViewModel> pageModelClass) throws DxaException;
-    void registerRegionViewModel(String viewName, Class<? extends ViewModel> regionModelClass) throws DxaException;
-
 }

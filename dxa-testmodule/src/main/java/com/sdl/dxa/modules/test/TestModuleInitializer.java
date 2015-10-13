@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.Article;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.impl.AbstractInitializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,34 +17,27 @@ import javax.annotation.PostConstruct;
 
 /**
  * TestModuleInitializer
- *
  */
 @Component
-public class TestModuleInitializer {
-
-    @Autowired
-    private ViewModelRegistry viewModelRegistry;
+public class TestModuleInitializer extends AbstractInitializer {
 
     @Autowired
     private SemanticMappingRegistry semanticMappingRegistry;
 
+    @Autowired
+    public TestModuleInitializer(ViewModelRegistry viewModelRegistry) {
+        super(viewModelRegistry, "Test");
+    }
+
     @PostConstruct
     public void initialize() {
-
-        try {
-            this.viewModelRegistry.registerViewEntityClass("Test:VimeoVideo", VimeoVideo.class);
-            this.viewModelRegistry.registerViewEntityClass("Test:ShowClaims", Article.class);
-            this.viewModelRegistry.registerViewEntityClass("Test:ShowClaims", Article.class);
-            this.viewModelRegistry.registerPageViewModel("Test:GeneralPageCustomRegion", CustomPageModelImpl.class);
-            this.viewModelRegistry.registerViewEntityClass("Test:CustomPageMetadata", CustomPageModelImpl.class);
-            this.viewModelRegistry.registerRegionViewModel("Test:CustomRegion", CustomRegionModelImpl.class);
-            this.viewModelRegistry.registerRegionViewModel("Test:TestRegionView", RegionModelImpl.class);
-            this.viewModelRegistry.registerViewEntityClass("Test:ExternalContentLibraryStubSchemaflickr", ExternalContentLibraryStubSchemaflickr.class);
-        } catch (DxaException e) {
-            e.printStackTrace();
-        }
-
-        this.semanticMappingRegistry.registerEntity(VimeoVideo.class);
-
+        this.registerViewModel("VimeoVideo", VimeoVideo.class);
+        this.registerViewModel("ShowClaims", Article.class);
+        this.registerViewModel("ShowClaims", Article.class);
+        this.registerViewModel("GeneralPageCustomRegion", CustomPageModelImpl.class);
+        this.registerViewModel("CustomPageMetadata", CustomPageModelImpl.class);
+        this.registerViewModel("CustomRegion", CustomRegionModelImpl.class);
+        this.registerViewModel("TestRegionView", RegionModelImpl.class);
+        this.registerViewModel("ExternalContentLibraryStubSchemaflickr", ExternalContentLibraryStubSchemaflickr.class);
     }
 }

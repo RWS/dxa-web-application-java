@@ -89,7 +89,7 @@ public class EntityTag extends AbstractMarkupTag {
                 webRequestContext.popContainerSize();
             }
         } else {
-            LOG.debug("Entity not found in region: {}/{}", regionName, entity.getId());
+            LOG.debug("Entity not found in region: {}", regionName);
         }
 
         return SKIP_BODY;

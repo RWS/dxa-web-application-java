@@ -56,17 +56,11 @@ public abstract class BaseController {
 
     protected RegionModel getRegionFromRequest(HttpServletRequest request, String regionName) {
         final PageModel page = getPageFromRequest(request);
-        //final RegionModelSet regionSet = (RegionModelSet) request.getAttribute(REGIONSET_MODEL);
         RegionModel region = page.getRegions().get(regionName);
-        /*if(regionSet != null)
-        {
-        	region = regionSet.get(regionName);
-        }*/
 
         if (region == null) {
 
             // Check if the region is active on the request
-            //
             region = (RegionModel) request.getAttribute("_region_" + regionName);
 
             if (region == null) {

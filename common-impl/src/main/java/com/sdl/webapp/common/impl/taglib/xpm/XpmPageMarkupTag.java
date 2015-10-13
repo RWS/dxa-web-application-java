@@ -33,25 +33,7 @@ public class XpmPageMarkupTag extends XpmMarkupTag {
                 return page.getXpmMarkup(getLocalization());
             }
         };
-      /*  final Map<String, String> pageData = page.getXpmMetadata();
 
-        final String pageId = pageData.get("PageID");
-        final String pageModified = pageData.get("PageModified");
-        final String pageTemplateId = pageData.get("PageTemplateID");
-        final String pageTemplateModified = pageData.get("PageTemplateModified");
-
-        final String cmsUrl = pageData.get("CmsUrl");
-
-        return new HtmlMultiNode(
-                new HtmlCommentNode(String.format(PAGE_PATTERN, pageId, pageModified, pageTemplateId, pageTemplateModified)),
-                HtmlBuilders.element("script")
-                        .withAttribute(SCRIPT_TYPE_ATTR)
-                        .withAttribute(SCRIPT_LANG_ATTR)
-                        .withAttribute(SCRIPT_DEFER_ATTR)
-                        .withAttribute("src", cmsUrl + "/WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js")
-                        .withId(SCRIPT_ID)
-                        .build()
-        );*/
     }
 
     private Localization getLocalization() {

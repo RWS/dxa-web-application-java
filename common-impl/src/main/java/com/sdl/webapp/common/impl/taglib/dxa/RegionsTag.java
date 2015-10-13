@@ -69,7 +69,6 @@ public class RegionsTag extends AbstractMarkupTag {
             LOG.debug("Including region: {}", name);
             
             try {
-                //pageContext.include(ControllerUtils.getIncludePath(region));
             	pageContext.getRequest().setAttribute("_region_" + name, region);
                 webRequestContext.pushParentRegion(region);
                 webRequestContext.pushContainerSize(containerSize);

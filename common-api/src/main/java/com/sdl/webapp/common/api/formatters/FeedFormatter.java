@@ -209,13 +209,6 @@ public abstract class FeedFormatter extends BaseFormatter {
             isList = isList(entity.getClass().getAnnotation(SemanticEntity.class));
 
         }else if(entity.getClass().isAnnotationPresent(SemanticEntities.class)){
-//            SemanticEntities annotations = entity.getClass().getAnnotation(SemanticEntities.class);
-//            for(SemanticEntity prop : annotations.value()){
-//                isList = isList(prop);
-//                if(isList){
-//                    break;
-//                }
-//            }
         }
 
         if (isList)

@@ -224,9 +224,6 @@ public final class EntityBuilderImpl implements EntityBuilder {
             }
         }
 
-        //createEntityData(entity, componentPresentation);
-        //entity.setMvcData(createMvcData(componentPresentation));
-
 
         return entity;
     }
@@ -264,10 +261,6 @@ public final class EntityBuilderImpl implements EntityBuilder {
                 eclItem.setEclUrl(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
             }
         }
-
-        //createEntityData(entity, componentPresentation);
-        //entity.setMvcData(createMvcData(componentPresentation));
-
 
         return entity;
     }

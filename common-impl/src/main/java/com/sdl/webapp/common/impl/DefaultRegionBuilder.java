@@ -52,7 +52,6 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
                 if (region == null) {
                     LOG.debug("Creating region: {}", regionName);
                     try {
-                        //region = new RegionModelImpl(regionName);
                         Class regionModelType = viewModelRegistry.getViewModelType(regionMvcData);
                         try {
                             region = (RegionModel) regionModelType.getDeclaredConstructor(String.class).newInstance(regionName);

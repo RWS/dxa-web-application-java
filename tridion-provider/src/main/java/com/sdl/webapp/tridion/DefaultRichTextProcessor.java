@@ -139,11 +139,6 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
             // Resolve links and YouTube videos
             return ResolveRichText(document, localization);
 
-//			// Write the modified document out as XML
-//			// Remove XML header and surrounding XHTML start and end tags
-//			return cleanHtml(XMLUtils.format(document)
-//					.replaceAll("\\A(<\\?xml.*\\?>)?\\s*<xhtml>", "")
-//					.replaceAll("</xhtml>\\Z", ""));
         } catch (SAXException | IOException e) {
             LOG.warn("Exception while parsing or processing XML content", e);
             return new RichText(xhtml);

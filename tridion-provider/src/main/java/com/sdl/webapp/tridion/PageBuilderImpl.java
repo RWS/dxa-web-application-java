@@ -197,8 +197,6 @@ final class PageBuilderImpl implements PageBuilder {
             localizationPath = localizationPath + "/";
         }
 
-        // = new RegionModelSetImpl();
-
         final RegionModelSet regionMap = this.createPredefinedRegions(genericPage.getPageTemplate());
 
         final RegionModelSet cpRegions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization, this.viewModelRegistry);
@@ -254,7 +252,6 @@ final class PageBuilderImpl implements PageBuilder {
     private PageModel CreatePageModel(org.dd4t.contentmodel.Page genericPage, Localization localization) throws DxaException, ContentProviderException {
         MvcData pageMvcData = createPageMvcData(genericPage.getPageTemplate());
         Class pageModelType = viewModelRegistry.getViewModelType(pageMvcData);
-        //String pageId = getDxaIdentifierFromTcmUri(genericPage.getId());
 
         Schema pageMetadataSchema = ((PageImpl) genericPage).getSchema();
 

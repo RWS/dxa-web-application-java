@@ -33,7 +33,6 @@ public class JsonView extends MappingJackson2JsonView {
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         // If manipulation of the page is needed it can be performed here
-        //PageModel page = (PageModel)model.get("data");
         setModelKey("data");
         super.renderMergedOutputModel(model, request, response);
     }

@@ -55,7 +55,6 @@ public class AtomView extends AbstractAtomFeedView {
         List<Link> links = new ArrayList<>();
         Link l = new Link();
         l.setHref(uri.toString().replaceAll("[&?]format.*?(?=&|\\?|$)", ""));
-        //l.setTitle(page.getTitle());
         links.add(l);
 
         feed.setUpdated(new Date());

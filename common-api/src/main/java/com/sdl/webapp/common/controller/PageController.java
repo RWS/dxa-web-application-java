@@ -110,7 +110,6 @@ public class PageController extends BaseController {
         LOG.trace("Page MvcData: {}", mvcData);
 
         return this.viewResolver.resolveView(mvcData, "Page", request);
-        //return mvcData.getAreaName() + "/Page/" + mvcData.getViewName();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {"application/rss+xml", MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
@@ -187,7 +186,6 @@ public class PageController extends BaseController {
             throw new HTTPException(404);
         }
 
-        //SetupViewData(pageModel);
         final ViewModel enrichedPageModel = enrichModel(originalPageModel);
         final PageModel pageModel = enrichedPageModel instanceof PageModel ? (PageModel)enrichedPageModel:originalPageModel;
 

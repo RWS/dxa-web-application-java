@@ -51,7 +51,6 @@ public class EntityController extends BaseController {
 
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);
-        //return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
 
         return resolveView(mvcData, "Entity", request);
 

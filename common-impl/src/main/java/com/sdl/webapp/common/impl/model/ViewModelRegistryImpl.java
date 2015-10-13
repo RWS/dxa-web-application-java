@@ -116,25 +116,21 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     private void extractSemanticInfoFromAnnotation(SemanticEntity attribute, SemanticInfo semanticInfo) throws DxaException {
         semanticInfo.mappedSemanticTypes.add(semanticMapping.getQualifiedTypeName(attribute.entityName(), attribute.vocabulary()));
 
-        if (!attribute.public_() || attribute.prefix()==null || attribute.prefix().trim().equals(""))
+        if (!attribute.public_() || attribute.prefix() == null || attribute.prefix().trim().equals(""))
             return;
 
         String prefix = attribute.prefix();
         String registeredVocab;
-        if (semanticInfo.prefixMappings.containsKey(prefix))
-        {
+        if (semanticInfo.prefixMappings.containsKey(prefix)) {
             registeredVocab = semanticInfo.prefixMappings.get(prefix);
             // Prefix mapping already exists; must match.
-            if (!attribute.vocabulary().equals(registeredVocab))
-            {
+            if (!attribute.vocabulary().equals(registeredVocab)) {
                 throw new DxaException(
                         String.format("Attempt to use semantic prefix '%s' for vocabulary '%s', but is is already used for vocabulary '%s",
                                 prefix, attribute.vocabulary(), registeredVocab)
                 );
             }
-        }
-        else
-        {
+        } else {
             semanticInfo.prefixMappings.put(prefix, attribute.vocabulary());
         }
 
@@ -152,58 +148,54 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         semanticInfo.mappedSemanticTypes.add(semanticMapping.getQualifiedTypeName(bareTypeName, null));
 
         // Extract semantic info from SemanticEntity attributes on the Model Type.
-        if(modelType.isAnnotationPresent(SemanticEntity.class)){
+        if (modelType.isAnnotationPresent(SemanticEntity.class)) {
             extractSemanticInfoFromAnnotation(modelType.getAnnotation(SemanticEntity.class), semanticInfo);
-        }else if(modelType.getClass().isAnnotationPresent(SemanticEntities.class)){
+        } else if (modelType.getClass().isAnnotationPresent(SemanticEntities.class)) {
             SemanticEntities annotations = modelType.getClass().getAnnotation(SemanticEntities.class);
-            for (SemanticEntity attribute : annotations.value())
-            {
+            for (SemanticEntity attribute : annotations.value()) {
                 extractSemanticInfoFromAnnotation(attribute, semanticInfo);
             }
         }
 
         // Extract semantic info from SemanticEntity attributes on the Model Type's properties
-        for (Field field : modelType.getDeclaredFields())
-        {
-            if(field.isAnnotationPresent(SemanticProperty.class)){
+        for (Field field : modelType.getDeclaredFields()) {
+            if (field.isAnnotationPresent(SemanticProperty.class)) {
                 SemanticProperty prop = field.getAnnotation(SemanticProperty.class);
-                if(!skipSemanticProperty(prop, semanticInfo)){
-                    updateSemanticInfo(semanticInfo, field.getName(),prop.value());
+                if (!skipSemanticProperty(prop, semanticInfo)) {
+                    updateSemanticInfo(semanticInfo, field.getName(), prop.value());
                 }
-            }else if(field.isAnnotationPresent(SemanticProperties.class)){
-                for(SemanticProperty prop : field.getAnnotation(SemanticProperties.class).value()){
-                    updateSemanticInfo(semanticInfo, field.getName(),prop.value());
+            } else if (field.isAnnotationPresent(SemanticProperties.class)) {
+                for (SemanticProperty prop : field.getAnnotation(SemanticProperties.class).value()) {
+                    updateSemanticInfo(semanticInfo, field.getName(), prop.value());
                 }
 
             }
         }
         return semanticInfo;
     }
-    private void updateSemanticInfo(SemanticInfo semanticInfo, String fieldName, String propertyName){
+
+    private void updateSemanticInfo(SemanticInfo semanticInfo, String fieldName, String propertyName) {
         List<String> semanticPropertyNames = null;
-        if (semanticInfo.semanticProperties.containsKey(propertyName))
-        {
+        if (semanticInfo.semanticProperties.containsKey(propertyName)) {
             semanticPropertyNames = semanticInfo.semanticProperties.get(propertyName);
         }
-        if(semanticPropertyNames==null){
+        if (semanticPropertyNames == null) {
             semanticPropertyNames = new ArrayList<String>();
             semanticInfo.semanticProperties.put(fieldName, semanticPropertyNames);
         }
         semanticPropertyNames.add(propertyName);
     }
-    private boolean skipSemanticProperty(SemanticProperty attribute, SemanticInfo semanticInfo){
-        if (StringUtils.isEmpty(attribute.value()))
-        {
+
+    private boolean skipSemanticProperty(SemanticProperty attribute, SemanticInfo semanticInfo) {
+        if (StringUtils.isEmpty(attribute.value())) {
             return true;
         }
         String[] semanticPropertyNameParts = attribute.value().split(":");
-        if (semanticPropertyNameParts.length < 2)
-        {
+        if (semanticPropertyNameParts.length < 2) {
             return true;
         }
         String prefix = semanticPropertyNameParts[0];
-        if (!semanticInfo.prefixMappings.containsKey(prefix))
-        {
+        if (!semanticInfo.prefixMappings.containsKey(prefix)) {
             return true;
         }
         return false;
@@ -229,7 +221,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                     public boolean apply(Map.Entry<MvcData, Class<? extends ViewModel>> input) {
                         MvcData thisKey = input.getKey();
                         return thisKey.getViewName().equals(viewData.getViewName()) &&
-                                thisKey.getControllerName().equals(viewData.getControllerName());
+                                (thisKey.getControllerName().equals(viewData.getControllerName()) || viewData.getControllerName() == null);
                     }
                 };
         Map<MvcData, Class<? extends ViewModel>> possibleValues = Maps.filterEntries(this.viewEntityClassMap, keyNamePredicate);
@@ -249,17 +241,17 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         //TODO: CB, implement this correctly, based on semantics
         //TODO: TW, implemented as per .net code
         //TODO: TW, the semanticTypeName needs to be provided with vobabulary ID, otherwise it won't return any class
-        if(semanticTypeToModelTypesMapping.containsKey(semanticTypeName)){
+        if (semanticTypeToModelTypesMapping.containsKey(semanticTypeName)) {
             //TODO: TW, .net returns a list and if found more than one (i.e. list has more than one value, returns the base type
             List<Class<? extends ViewModel>> l = semanticTypeToModelTypesMapping.get(semanticTypeName);
-            if(l.size()>=1){
+            if (l.size() >= 1) {
                 return l.get(0);
             }
         }
         //TODO: TW, shall we fallback to the old way?
         //TODO: TW Validate we don't need the old Implementation
-         MvcData mvcData = new MvcDataImpl(semanticTypeName);
-         return getViewModelType(mvcData);
+        MvcData mvcData = new MvcDataImpl(semanticTypeName);
+        return getViewModelType(mvcData);
         //return null;
     }
 
@@ -268,11 +260,10 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
         final String areaName;
         final String scopedViewName;
-        if ( !viewName.contains(":") ) { // Core module
+        if (!viewName.contains(":")) { // Core module
             areaName = "Core";
             scopedViewName = viewName;
-        }
-        else {
+        } else {
             String[] parts = viewName.split(":");
             areaName = parts[0];
             scopedViewName = parts[1];
@@ -302,31 +293,24 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         registerViewModel(mvcData, entityClass);
     }
 
-        /// <summary>
-        /// Gets the semantic property names for a given Model Type and property name.
-        /// </summary>
-        /// <param name="modelType">The Model Type.</param>
-        /// <param name="propertyName">The property name.</param>
-        /// <returns>The semantic property names or <c>null</c> if no semantic property names have been registered for the given property.</returns>
 
-        public  String[] getSemanticPropertyNames(Class<? extends ViewModel> modelType, String propertyName) throws DxaException {
-            // No Tracer here to reduce trace noise.
-            SemanticInfo semanticInfo = getSemanticInfo(modelType);
+    public String[] getSemanticPropertyNames(Class<? extends ViewModel> modelType, String propertyName) throws DxaException {
+        // No Tracer here to reduce trace noise.
+        SemanticInfo semanticInfo = getSemanticInfo(modelType);
 
-            List<String> semanticPropertyNames;
+        List<String> semanticPropertyNames;
 
-            return null;
+        return null;
+    }
+
+    private SemanticInfo getSemanticInfo(Class<? extends ViewModel> modelType) throws DxaException {
+        SemanticInfo semanticInfo = null;
+        if (!modelTypeToSemanticInfoMapping.containsKey(modelType)) {
+            // Just-In-Time model type registration.
+            semanticInfo = registerModelType(modelType);
         }
-
-        private SemanticInfo getSemanticInfo(Class<? extends ViewModel> modelType) throws DxaException {
-            SemanticInfo semanticInfo = null;
-            if (!modelTypeToSemanticInfoMapping.containsKey(modelType))
-            {
-                // Just-In-Time model type registration.
-                semanticInfo = registerModelType(modelType);
-            }
-            return semanticInfo;
-        }
+        return semanticInfo;
+    }
 
 
 }

@@ -26,27 +26,6 @@ public class XpmEntityMarkupTag extends XpmMarkupTag {
                 return entity.getXpmMarkup(getLocalization());
             }
         };
-       /* final Map<String, String> entityData = entity.getXpmMetadata();
-
-        final String componentId = entity instanceof EclItem ? ((EclItem) entity).getEclUrl() : entityData.get("ComponentID");
-        if (Strings.isNullOrEmpty(componentId)) {
-            return null;
-        }
-
-        final String componentModified = entityData.get("ComponentModified");
-        final String templateId = entityData.get("ComponentTemplateID");
-        final String templateModified = entityData.get("ComponentTemplateModified");
-
-        final String isRepositoryPublished;
-        if (templateId.equals("tcm:0-0-0")) {
-            isRepositoryPublished = "true,\"IsQueryBased\":true";
-        } else {
-            isRepositoryPublished = "false";
-        }
-
-        return new HtmlCommentNode(String.format(COMPONENT_PRESENTATION_PATTERN,
-                componentId, componentModified, templateId, templateModified, isRepositoryPublished));
-                */
 
     }
 

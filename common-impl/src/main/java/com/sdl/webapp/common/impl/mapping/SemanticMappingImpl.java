@@ -157,19 +157,15 @@ public class SemanticMappingImpl implements SemanticMapping {
     @Override
     public void loadSemanticMapForLocalization(Localization loc) {
         String id = loc.getId();
-        //TODO: TW get from publication path
-        //Path.Combine(loc.Path.ToCombinePath(true), StieConfiguration.SystemFolder, @"mappings\voabularies.json").Replace("\\", "/");
+
         String path = "/";
         try {
-            //TODO: TW validate the result is as expected since the parsing might fail...
             List<SemanticSchema> schemas = parseJsonFileObject(contentProvider, SEMANTIC_SCHEMAS_PATH, id, path, new TypeReference<List<SemanticSchema>>() { });
             Map<String,SemanticSchema> map = new HashMap<>();
             for(SemanticSchema schema: schemas){
                 schema.setLocalization(loc);
                 map.put(String.valueOf(schema.getId()), schema);
             }
-            //TODO: TW Implement SiteConfiguration.ThreadSafeSettingsUpdate
-            //SiteConfiguration.ThreadSafeSettingsUpdate(_mapSettingsType, _semanticMap, key, map);
         } catch (LocalizationFactoryException e) {
             //TODO: Check wether we throw it or catch it
             LOG.error("Error getting scheams from json: {}", e.getMessage());

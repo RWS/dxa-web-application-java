@@ -5,9 +5,14 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.EntityBuilder;
+import com.sdl.webapp.tridion.MvcDataImpl;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.ComponentTemplate;
+
+import java.util.HashMap;
 
 /**
  * Created by Administrator on 10/7/2015.
@@ -21,25 +26,31 @@ public abstract class DefaultModelBuilder implements EntityBuilder {
      */
     public static MvcData getMvcData(ComponentPresentation cp)
     {
-            MvcData mvcData = null;
-//        IComponentTemplate template = cp.ComponentTemplate;
-//        string viewName = Regex.Replace(template.Title, @"\[.*\]|\s", String.Empty);
-//
-//        if (template.MetadataFields != null)
-//        {
-//            if (template.MetadataFields.ContainsKey("view"))
-//            {
-//                viewName = template.MetadataFields["view"].Value;
-//            }
-//        }
-//
-//        MvcData mvcData = CreateViewData(viewName);
-//        // defaults
-//        mvcData.ControllerName = SiteConfiguration.GetEntityController();
-//        mvcData.ControllerAreaName = SiteConfiguration.GetDefaultModuleName();
-//        mvcData.ActionName = SiteConfiguration.GetEntityAction();
-//        mvcData.RouteValues = new Dictionary<string, string>();
-//
+        ComponentTemplate template = cp.getComponentTemplate();
+        String viewName = template.getTitle().replaceAll("\[.*\]|\s", "");
+
+        if(template.getMetadata() != null)
+        {
+            if(template.getMetadata().containsKey("view"))
+            {
+                org.dd4t.contentmodel.Field view =template.getMetadata().get("view");
+                if(view.getValues().size() > 0) {
+                    viewName = view.getValues().get(0).toString();
+                }
+            }
+        }
+        MvcDataImpl mvcData = null;
+        try {
+            mvcData = new MvcDataImpl(viewName);
+            mvcData.setControllerName();
+            mvcData.setControllerAreaName();
+            mvcData.setActionName();
+            mvcData.setRouteValues(new HashMap<String, String>());
+        } catch (DxaException e) {
+            e.printStackTrace();
+        }
+
+
 //        // TODO: remove code duplication of splitting area and controller/region names
 //        if (template.MetadataFields != null)
 //        {

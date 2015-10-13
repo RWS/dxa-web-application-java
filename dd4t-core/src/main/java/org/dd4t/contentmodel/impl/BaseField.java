@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-@JsonIgnoreProperties({"Value"})
+@JsonIgnoreProperties(value = {"Value"}, ignoreUnknown = true)
 public abstract class BaseField implements Field {
 
     @JsonProperty("Name")
@@ -45,7 +45,7 @@ public abstract class BaseField implements Field {
     @JsonDeserialize(contentAs = ComponentImpl.class)
     private List<Component> componentLinkValues;
 
-    @JsonProperty("Keywords")
+    @JsonProperty("KeywordValues")
     @JsonDeserialize(contentAs = KeywordImpl.class)
     private List<Keyword> keywordValues;
 
@@ -209,7 +209,7 @@ public abstract class BaseField implements Field {
     /**
      * Set the embedded values
      *
-     * @param embeddedValues
+     * @param embeddedValues embedded values as a map
      */
     public void setEmbeddedValues(List<FieldSet> embeddedValues) {
         this.embeddedValues = embeddedValues;

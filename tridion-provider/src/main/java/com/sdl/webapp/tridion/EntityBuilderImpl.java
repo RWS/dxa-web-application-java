@@ -124,8 +124,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
             // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
             //
             if ( entity instanceof EclItem ) {
-                final EclItem eclItem = (EclItem) entity;
-                eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+                fillEclItem(component, localization, (EclItem) entity);
             }
         }
 
@@ -263,16 +262,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
         // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
         if (entity instanceof EclItem) {
-            final EclItem eclItem = (EclItem) entity;
-            //todo check if it's right; .NET does just eclItem.setUri(component.getEclId())
-            eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
-
-            Map<String, FieldSet> extensionData = component.getExtensionData();
-            if (extensionData != null) {
-                fillItemWithEclData(eclItem, extensionData);
-
-                fillItemWithExternalMetadata(eclItem, extensionData);
-            }
+            fillEclItem(component, localization, (EclItem) entity);
         }
 
         //createEntityData(entity, componentPresentation);
@@ -280,6 +270,19 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
 
         return entity;
+    }
+
+    private void fillEclItem(Component component, Localization localization, EclItem entity) {
+        final EclItem eclItem = entity;
+        //todo check if it's right; .NET does just eclItem.setUri(component.getEclId())
+        eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+
+        Map<String, FieldSet> extensionData = component.getExtensionData();
+        if (extensionData != null) {
+            fillItemWithEclData(eclItem, extensionData);
+
+            fillItemWithExternalMetadata(eclItem, extensionData);
+        }
     }
 
     private void fillItemWithExternalMetadata(EclItem eclItem, Map<String, FieldSet> extensionData) {
@@ -309,7 +312,10 @@ public final class EntityBuilderImpl implements EntityBuilder {
         if (eclFieldSet != null) {
             Map<String, Field> fieldSetContent = eclFieldSet.getContent();
             if (fieldSetContent != null) {
-                return Objects.toString(fieldSetContent.get(fieldName).getValues().get(0));
+                Field field = fieldSetContent.get(fieldName);
+                if (field != null) {
+                    return Objects.toString(field.getValues().get(0));
+                }
             }
         }
         return null;

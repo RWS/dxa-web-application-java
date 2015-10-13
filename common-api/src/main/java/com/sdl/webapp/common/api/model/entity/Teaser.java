@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
@@ -24,6 +25,7 @@ public class Teaser extends AbstractEntityModel {
             @SemanticProperty("p:_self"),
             @SemanticProperty("c:link")
     })
+    @JsonProperty("Link")
     private Link link;
 
     @SemanticProperties({
@@ -34,6 +36,7 @@ public class Teaser extends AbstractEntityModel {
             @SemanticProperty("c:headline"),
             @SemanticProperty("c:subheading")
     })
+    @JsonProperty("Headline")
     private String headline;
 
     @SemanticProperties({
@@ -41,6 +44,7 @@ public class Teaser extends AbstractEntityModel {
             @SemanticProperty("a:image"),
             @SemanticProperty("c:media")
     })
+    @JsonProperty("Media")
     private MediaItem media;
 
     @SemanticProperties({
@@ -49,19 +53,23 @@ public class Teaser extends AbstractEntityModel {
             @SemanticProperty("c:text"),
             @SemanticProperty("c:content"),
             @SemanticProperty("m:introText"),
+            @SemanticProperty("m:description"),
     })
+    @JsonProperty("Text")
     private RichText text;
 
     @SemanticProperties({
             @SemanticProperty("c:date"),
             @SemanticProperty("m:dateCreated")
     })
+    @JsonProperty("Date")
     private DateTime date;
 
     @SemanticProperties({
             @SemanticProperty("p:location"),
             @SemanticProperty("c:location")
     })
+    @JsonProperty("Location")
     private Location location;
 
     public Link getLink() {

@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.model.RichText;
@@ -10,24 +11,31 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA
 public class Place extends AbstractEntityModel {
 
     @SemanticProperty("s:name")
+    @JsonProperty("Name")
     private String name;
 
     @SemanticProperty("s:image")
+    @JsonProperty("Image")
     private Image image;
 
     @SemanticProperty("s:address")
+    @JsonProperty("Address")
     private RichText address;
 
     @SemanticProperty("s:telephone")
+    @JsonProperty("Telephone")
     private String telephone;
 
     @SemanticProperty("s:faxNumber")
+    @JsonProperty("FaxNumber")
     private String faxNumber;
 
     @SemanticProperty("s:email")
+    @JsonProperty("Email")
     private String email;
 
     @SemanticProperty("s:geo")
+    @JsonProperty("Location")
     private Location location;
 
     public String getName() {

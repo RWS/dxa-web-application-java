@@ -22,7 +22,7 @@ public class XpmButtonTag extends XpmMarkupTag {
     }
 
     private boolean isInclude() {
-        return pageContext.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null;
+        return this.region.getXpmMetadata().get(RegionModelImpl.IncludedFromPageIdXpmMetadataKey) == null;
     }
 
     @Override
@@ -33,6 +33,7 @@ public class XpmButtonTag extends XpmMarkupTag {
             String editUrl = "javascript:history.back()";
             return HtmlBuilders.div()
                     .withClass("xpm-button")
+                    .withAttribute("style", "z-index:1")
                     .withContent(HtmlBuilders.a(editUrl)
                             .withClass("fa-stack fa-lg")
                             .withTitle(title)
@@ -49,6 +50,7 @@ public class XpmButtonTag extends XpmMarkupTag {
             String editUrl = "/" + path + this.region.getXpmMetadata().get(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey);
             return HtmlBuilders.div()
                     .withClass("xpm-button")
+                    .withAttribute("style", "z-index:1")
                     .withContent(HtmlBuilders.a(editUrl)
                             .withClass("fa-stack fa-lg")
                             .withTitle(title)

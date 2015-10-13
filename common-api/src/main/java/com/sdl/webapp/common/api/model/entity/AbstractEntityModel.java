@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
@@ -14,6 +15,7 @@ import java.util.Map;
  * Abstract superclass for implementations of {@code Entity}.
  */
 @SemanticMappingIgnore
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
 
     private static final String XPM_COMPONENT_PRESENTATION_MARKUP = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %s} -->";
@@ -21,10 +23,10 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     @JsonProperty("Id")
     private String id;
 
-    @JsonIgnore
+    @JsonProperty("XpmMetadata")
     private Map<String, String> xpmMetadata;
 
-    @JsonIgnore
+    @JsonProperty("XpmPropertyMetadata")
     private Map<String, String> xpmPropertyMetadata;
 
     @JsonIgnore

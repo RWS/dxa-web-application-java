@@ -10,7 +10,9 @@ import com.sun.syndication.feed.atom.Content;
 import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Produces the feed in atom format
@@ -40,25 +42,29 @@ public class AtomFormatter extends FeedFormatter {
         {
             Content c = new Content();
             c.setValue(item.getText().toString());
+            c.setType("text");
             si.setSummary(c);
-            List<Content> contents = new ArrayList<Content>();
-            contents.add(c);
-            si.setContents(contents);
+            si.setId("uuid:" + UUID.randomUUID().toString());
+            si.setUpdated(new Date());
+//            List<Content> contents = new ArrayList<Content>();
+//            contents.add(c);
+//            si.setContents(contents);
 
         }
-        if (item.getLink() != null && item.getLink().getUrl() !=null && item.getLink().getUrl().startsWith("http"))
-        {
-            List<Link> links = new ArrayList<Link>();
-            Link l = new Link();
-            if(item.getLink().getUrl().startsWith("http")){
-                l.setHref(item.getLink().getUrl());
-            }else{
-                l.setHref(context.getBaseUrl() + item.getLink().getUrl());
-            }
-            links.add(l);
-            si.setOtherLinks(links);
-
-        }
+        //currently, we don't need to links
+//        if (item.getLink() != null && item.getLink().getUrl() !=null && item.getLink().getUrl().startsWith("http"))
+//        {
+//            List<Link> links = new ArrayList<Link>();
+//            Link l = new Link();
+//            if(item.getLink().getUrl().startsWith("http")){
+//                l.setHref(item.getLink().getUrl());
+//            }else{
+//                l.setHref(context.getBaseUrl() + item.getLink().getUrl());
+//            }
+//            links.add(l);
+//            si.setOtherLinks(links);
+//
+//        }
         if (item.getDate() != null)
         {
 

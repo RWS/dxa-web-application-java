@@ -1,11 +1,15 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class LinkList extends AbstractEntityModel {
 
+    @JsonProperty("Headline")
     private String headline;
 
+    @JsonProperty("Links")
     private List<Link> links;
 
     public String getHeadline() {

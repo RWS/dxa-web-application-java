@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <devicefamily name="featurephone">
+        <condition uri="taf:claim:context:device:mobile" value="true" />
+        <condition uri="taf:claim:context:device:tablet" value="false" />
+        <condition uri="taf:claim:context:device:displayWidth" value="&lt;320" />
+    </devicefamily>
+    <devicefamily name="smartphone">
+        <condition uri="taf:claim:context:device:mobile" value="true"/>
+        <condition uri="taf:claim:context:device:tablet" value="false" />
+        <condition uri="taf:claim:context:device:displayWidth" value="&gt;319" />
+    </devicefamily>
+    <devicefamily name="tablet">
+        <condition uri="taf:claim:context:device:tablet" value="true" />
+    </devicefamily>
+    <devicefamily name="desktop">
+        <condition uri="taf:claim:context:device:mobile" value="false"/>
+        <condition uri="taf:claim:context:device:tablet" value="false" />
+    </devicefamily>
+</configuration>

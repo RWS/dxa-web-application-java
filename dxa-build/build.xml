@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="java" default="build.custom.dxa">
+
+  <property name="src" location="source-war"/>
+  <property name="src-config" location="source-config"/>
+  <property name="src-lib" location="source-jars"/>
+  <property name="src-license" location="source-license"/>
+  <property name="build.temp" location="temp"/>
+  <property name="build.dest" location="target"/>
+
+
+  <target name="build.custom.dxa" depends="extract-base-war,add-libs,add-configs,add-license,create-war" description="Builds a war file with custom configuration and license file"></target>
+  <target name="build.custom.dxa.staging" depends="extract-base-war,add-libs,add-libs-staging,add-configs,add-configs-staging,add-license,create-war" description="Builds a war file with custom configuration and license file"></target>
+
+  <target name="extract-base-war" description="Extracts the base war file">
+    <unzip src="${src}/example-webapp.war"
+           dest="${build.temp}">
+    </unzip>
+  </target>
+  <target name="add-libs" description="Adds the tridion jars">
+    <copy todir="${build.temp}/WEB-INF/classes">
+      <fileset dir="${src-lib}/common"/>
+    </copy>
+  </target>
+  <target name="add-libs-staging" description="Adds the tridion jars needed on staging only">
+    <copy todir="${build.temp}/WEB-INF/classes">
+      <fileset dir="${src-lib}/staging"/>
+    </copy>
+  </target>
+  <target name="add-configs" description="Adds the customized configuration files">
+    <copy todir="${build.temp}/WEB-INF/classes">
+      <fileset dir="${src-config}/common"/>
+    </copy>
+  </target>
+  <target name="add-configs-staging" description="Adds the customized configuration files needed on staging only">
+    <copy todir="${build.temp}/WEB-INF/classes">
+      <fileset dir="${src-config}/staging"/>
+    </copy>
+  </target>
+  <target name="add-license" description="Adds the license file">
+    <copy todir="${build.temp}/WEB-INF/classes">
+      <fileset dir="${src-license}"/>
+    </copy>
+  </target>
+  <target name="create-war" description="Creates a final custom war file">
+    <war destfile="${build.dest}example-webapp.war" needxmlfile="false" >
+      <fileset dir="${build.temp}"/>
+    </war>
+  </target>
+</project>

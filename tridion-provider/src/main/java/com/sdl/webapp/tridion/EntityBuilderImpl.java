@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
+import com.sdl.webapp.common.api.mapping.config.EntitySemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -150,7 +151,16 @@ public final class EntityBuilderImpl implements EntityBuilder {
             throws ContentProviderException {
 
         final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-        String semanticTypeName = semanticSchema.getRootElement();
+        String semanticTypeName =  semanticSchema.getRootElement();
+        //Try to find the fully qualified name:
+        for(EntitySemantics es: semanticSchema.getEntitySemantics()){
+            if(es.getEntityName().equals(semanticTypeName)){
+                //TODO: TW, the vocabulary.getVocab() is null, using id
+                semanticTypeName = String.format("%s:%s",es.getVocabulary().getId() ,semanticTypeName);
+                break;
+            }
+        }
+
         final Class<? extends AbstractEntityModel> entityClass;
         try {
             entityClass = (Class<? extends AbstractEntityModel>)viewModelRegistry.getMappedModelTypes(semanticTypeName);

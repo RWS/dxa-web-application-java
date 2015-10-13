@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
@@ -18,15 +19,18 @@ public class Location extends AbstractEntityModel {
             @SemanticProperty("s:latitude"),
             @SemanticProperty("lm:latitude")
     })
+    @JsonProperty("Latitude")
     private double latitude;
 
     @SemanticProperties({
             @SemanticProperty("s:longitude"),
             @SemanticProperty("lm:longitude")
     })
+    @JsonProperty("Longitude")
     private double longitude;
 
     @SemanticProperty("lm:query")
+    @JsonProperty("Query")
     private String query;
 
     public double getLatitude() {

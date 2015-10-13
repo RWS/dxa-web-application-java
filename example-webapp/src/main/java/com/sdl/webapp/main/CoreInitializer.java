@@ -14,6 +14,9 @@ import javax.annotation.PostConstruct;
 public class CoreInitializer {
     private final ViewModelRegistry viewModelRegistry;
 
+    // TODO: Why is the core initializer not in the core-module? (NiC)
+    // Seems a bit fragmented to have the views in another module and the initialization part in another one...
+
     @Autowired
     public CoreInitializer(ViewModelRegistry viewModelRegistry) {
         this.viewModelRegistry = viewModelRegistry;

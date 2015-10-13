@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 public class AdminController {
     private static final Logger LOG = LoggerFactory.getLogger(AdminController.class);
 
+    // TODO: Why is this class not in the core module???
+
     private final WebRequestContext webRequestContext;
 
     private final LocalizationResolver localizationResolver;

@@ -9,17 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dxa.coremodule</artifactId>
-<dependencies>
-    <dependency>
-        <groupId>com.sdl</groupId>
-        <artifactId>common-api</artifactId>
-        <version>${project.version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.sdl</groupId>
-        <artifactId>common-impl</artifactId>
-        <version>${project.version}</version>
-    </dependency>
-</dependencies>
+    <artifactId>dxa-coremodule</artifactId>
+
+
 </project>

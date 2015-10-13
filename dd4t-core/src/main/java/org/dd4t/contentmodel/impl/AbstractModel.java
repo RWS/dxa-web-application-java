@@ -1,11 +1,16 @@
 package org.dd4t.contentmodel.impl;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Model;
 
 import java.util.Map;
 
 public abstract class AbstractModel implements Model {
+
+    @JsonProperty("ExtensionData")
+    @JsonDeserialize(contentAs = FieldSetImpl.class)
     private Map<String, FieldSet> extensionData;
 
     @Override

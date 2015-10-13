@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.markup.html.HtmlElement;
@@ -21,9 +22,13 @@ public abstract class EclItem extends MediaItem {
 
     static final String COMPONENT_ID_KEY = "ComponentID";
 
+    @JsonProperty("EclUri")
     private String uri;
+    @JsonProperty("EclDisplayTypeId")
     private String displayTypeId;
+    @JsonProperty("EclTemplateFragment")
     private String templateFragment;
+    @JsonProperty("EclExternalMetadata")
     private Map<String, Object> externalMetadata;
 
     public String getUri() {

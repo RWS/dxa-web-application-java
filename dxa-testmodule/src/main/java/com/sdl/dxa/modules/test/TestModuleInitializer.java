@@ -7,6 +7,7 @@ import com.sdl.dxa.modules.test.model.VimeoVideo;
 import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.Article;
+import com.sdl.webapp.common.api.model.entity.EclItemImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class TestModuleInitializer {
             this.viewModelRegistry.registerRegionViewModel("Test:CustomRegion", CustomRegionModelImpl.class);
             this.viewModelRegistry.registerRegionViewModel("Test:TestRegionView", RegionModelImpl.class);
             this.viewModelRegistry.registerViewEntityClass("Test:ExternalContentLibraryStubSchemaflickr", ExternalContentLibraryStubSchemaflickr.class);
+
+
+            this.viewModelRegistry.registerViewEntityClass("Test:TestEclEntity", EclItemImpl.class);
         } catch (DxaException e) {
             e.printStackTrace();
         }

@@ -21,7 +21,8 @@ public class RssView extends AbstractRssFeedView {
     private static final Logger LOG = LoggerFactory.getLogger(RssView.class);
     private DataFormatter formatter;
     WebRequestContext context;
-    public RssView(WebRequestContext context){
+
+    public RssView(WebRequestContext context) {
         this.context = context;
     }
 
@@ -29,19 +30,19 @@ public class RssView extends AbstractRssFeedView {
     @SuppressWarnings("unchecked")
     protected List<Item> buildFeedItems(Map<String, Object> model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         this.formatter = (DataFormatter) model.get("formatter");
-        return (List<Item>)formatter.formatData(model.get("data"));
+        return (List<Item>) formatter.formatData(model.get("data"));
     }
 
     @Override
     protected void buildFeedMetadata(Map<String, Object> model, Channel feed, HttpServletRequest request) {
-        PageModel page = (PageModel)model.get("data");
+        PageModel page = (PageModel) model.get("data");
         String description = page.getMeta().containsKey("description") ? page.getMeta().get("description") : null;
         feed.setTitle(page.getTitle());
         feed.setDescription(description);
         feed.setLanguage(context.getLocalization().getCulture());
         StringBuffer uri = request.getRequestURL();
         String queryString = request.getQueryString();
-        if(queryString!=null){
+        if (queryString != null) {
             uri.append("?").append(queryString);
         }
         feed.setLink(uri.toString().replaceAll("[&?]format.*?(?=&|\\?|$)", ""));

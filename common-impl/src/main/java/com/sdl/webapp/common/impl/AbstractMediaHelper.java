@@ -82,6 +82,9 @@ public abstract class AbstractMediaHelper implements MediaHelper {
                     // Small screens are max 2 columns
                     containerSize = containerSize <= gridSize / 2 ? gridSize / 2 : gridSize;
                     break;
+                default:
+                    break;
+
             }
 
             int cols = gridSize / containerSize;

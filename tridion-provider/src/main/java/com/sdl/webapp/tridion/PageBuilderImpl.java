@@ -144,9 +144,8 @@ final class PageBuilderImpl implements PageBuilder {
             MvcDataImpl regionMvcData = new MvcDataImpl(regionName);
 
             //if a include page title contains an area name, remove it from the region name, as this name should not be qualified
-            if(regionName.contains(":"))
-            {
-                regionName = regionName.substring(regionName.indexOf(":")+1);
+            if (regionName.contains(":")) {
+                regionName = regionName.substring(regionName.indexOf(":") + 1);
             }
             regionMvcData = InitializeRegionMvcData(regionMvcData);
             RegionModelImpl region = new RegionModelImpl(regionName);
@@ -193,7 +192,6 @@ final class PageBuilderImpl implements PageBuilder {
         }
 
 
-
         String localizationPath = localization.getPath();
         if (!localizationPath.endsWith("/")) {
             localizationPath = localizationPath + "/";
@@ -203,18 +201,15 @@ final class PageBuilderImpl implements PageBuilder {
 
         final RegionModelSet regionMap = this.createPredefinedRegions(genericPage.getPageTemplate());
 
-        final RegionModelSet cpRegions =this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization, this.viewModelRegistry);
+        final RegionModelSet cpRegions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization, this.viewModelRegistry);
         if (cpRegions != null) {
             for (RegionModel model : cpRegions) {
                 if (!regionMap.containsKey(model.getName())) {
                     regionMap.add(model);
-                }
-                else
-                {
-                    if(!regionMap.get(model.getName()).getMvcData().equals(model.getMvcData()))
-                    {
-                        LOG.warn("Region '%s' is defined with conflicting MVC data: [%s] and [%s]. Using the former.", new Object[] {model.getName(), regionMap.get(model.getName()).getMvcData(), model.getMvcData()});
-                        for(EntityModel e : model.getEntities()) {
+                } else {
+                    if (!regionMap.get(model.getName()).getMvcData().equals(model.getMvcData())) {
+                        LOG.warn("Region '%s' is defined with conflicting MVC data: [%s] and [%s]. Using the former.", new Object[]{model.getName(), regionMap.get(model.getName()).getMvcData(), model.getMvcData()});
+                        for (EntityModel e : model.getEntities()) {
                             regionMap.get(model.getName()).addEntity(e);
                         }
                     }
@@ -249,7 +244,6 @@ final class PageBuilderImpl implements PageBuilder {
         }
 
 
-
         //regionMap.addAll(regions.values());
         page.setRegions(regionMap);
 
@@ -260,29 +254,24 @@ final class PageBuilderImpl implements PageBuilder {
     private PageModel CreatePageModel(org.dd4t.contentmodel.Page genericPage, Localization localization) throws DxaException, ContentProviderException {
         MvcData pageMvcData = createPageMvcData(genericPage.getPageTemplate());
         Class pageModelType = viewModelRegistry.getViewModelType(pageMvcData);
-        String pageId = getDxaIdentifierFromTcmUri(genericPage.getId());
+        //String pageId = getDxaIdentifierFromTcmUri(genericPage.getId());
 
-        Schema pageMetadataSchema = ((PageImpl)genericPage).getSchema();
+        Schema pageMetadataSchema = ((PageImpl) genericPage).getSchema();
 
         PageModel pageModel;
-        if (pageModelType == PageModelImpl.class)
-        {
+        if (pageModelType == PageModelImpl.class) {
             // Standard Page Model
             pageModel = new PageModelImpl();
-        }
-        else if (pageMetadataSchema == null)
-        {
+        } else if (pageMetadataSchema == null) {
             // Custom Page Model but no Page metadata that can be mapped; simply create a Page Model instance of the right type.
             try {
-                pageModel = (PageModel)pageModelType.newInstance();
+                pageModel = (PageModel) pageModelType.newInstance();
             } catch (InstantiationException e) {
-               throw new DxaException(String.format("Error instantiating new page of type %s", pageModelType), e);
+                throw new DxaException(String.format("Error instantiating new page of type %s", pageModelType), e);
             } catch (IllegalAccessException e) {
                 throw new DxaException(String.format("Illegal access exception when instantiationg new page of type %s", pageModelType), e);
             }
-        }
-        else
-        {
+        } else {
             // Custom Page Model and Page metadata is present; do full-blown model mapping.
             String[] schemaTcmUriParts = pageMetadataSchema.getId().split("-");
 
@@ -291,7 +280,7 @@ final class PageBuilderImpl implements PageBuilder {
             String semanticTypeName = semanticSchema.getRootElement();
             final Class<? extends ViewModel> entityClass;
             try {
-                entityClass = (Class<? extends ViewModel>)viewModelRegistry.getMappedModelTypes(semanticTypeName);
+                entityClass = (Class<? extends ViewModel>) viewModelRegistry.getMappedModelTypes(semanticTypeName);
                 if (entityClass == null) {
                     throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
                             "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
@@ -300,7 +289,7 @@ final class PageBuilderImpl implements PageBuilder {
                 throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
                         "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
             }
-            pageModel = (PageModel)CreateViewModel(entityClass, semanticSchema, genericPage);
+            pageModel = (PageModel) CreateViewModel(entityClass, semanticSchema, genericPage);
         }
 
         pageModel.setId(genericPage.getId());
@@ -341,12 +330,11 @@ final class PageBuilderImpl implements PageBuilder {
 
         return getDxaIdentifierFromTcmUri(tcmUri, null);
     }
-    private String getDxaIdentifierFromTcmUri(String tcmUri, String templateTcmUri)
-    {
+
+    private String getDxaIdentifierFromTcmUri(String tcmUri, String templateTcmUri) {
         // Return the Item (Reference) ID part of the TCM URI.
         String result = tcmUri.split("-")[1];
-        if (templateTcmUri != null)
-        {
+        if (templateTcmUri != null) {
             result += "-" + templateTcmUri.split("-")[1];
         }
         return result;
@@ -386,14 +374,14 @@ final class PageBuilderImpl implements PageBuilder {
                 try {
                     regionMvcData = new MvcDataImpl(view);
                     regionMvcData.setRegionName(name);
+                    regionMvcData = InitializeRegionMvcData(regionMvcData);
                 } catch (DxaException e) {
                     LOG.error("Error creating new Region Mvc Data", e);
                 }
 
-                regionMvcData = InitializeRegionMvcData(regionMvcData);
-                RegionModel regionModel = null;
                 try {
-                    regionModel = CreateRegionModel(regionMvcData);
+                    RegionModel regionModel = CreateRegionModel(regionMvcData);
+                    regions.add(regionModel);
                 } catch (IllegalAccessException e) {
                     LOG.error("Error creating region for view '{}'.", view, e);
                     continue;
@@ -410,7 +398,7 @@ final class PageBuilderImpl implements PageBuilder {
                     LOG.error("Error creating region for view '{}'.", view, e);
                     continue;
                 }
-                regions.add(regionModel);
+
             }
         }
         return regions;
@@ -626,12 +614,14 @@ final class PageBuilderImpl implements PageBuilder {
 
         Map<String, Object> metadata = new HashMap<>();
         Map<String, Field> metadataFields = pageTemplate.getMetadata();
-        for (String fieldName : metadataFields.keySet()) {
+        for (Map.Entry<String, Field> entry : metadataFields.entrySet()) {
+
+            String fieldName = entry.getKey();
             if (fieldName.equals("view") ||
                     fieldName.equals("includes")) {
                 continue;
             }
-            Field field = metadataFields.get(fieldName);
+            Field field = entry.getValue();
             if (field.getFieldType() == FieldType.EMBEDDED) {
                 // Output embedded field as List<Map<String,String>>
                 //

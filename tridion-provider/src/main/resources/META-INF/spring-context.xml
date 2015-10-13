@@ -108,7 +108,7 @@
         <property name="pageBuilderHandlers">
             <list>
                 <ref bean="pageBuilderImpl"/>
-                <!--<bean class="com.sdl.dxa.modules.test.CustomPageBuilderImpl"/>-->
+                <bean class="com.sdl.dxa.modules.test.CustomPageBuilderImpl"/>
             </list>
         </property>
 

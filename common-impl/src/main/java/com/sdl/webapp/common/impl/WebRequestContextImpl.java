@@ -179,7 +179,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         if (this.isDeveloperMode == null) {
             this.isDeveloperMode = getIsDeveloperMode();
         }
-        return this.isDeveloperMode();        	
+        return this.isDeveloperMode;
     }
 
     private boolean getIsDeveloperMode() {

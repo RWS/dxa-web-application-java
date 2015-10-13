@@ -118,7 +118,7 @@ public abstract class BaseController {
      * @param model The model which you wish to add data to.
      * @return A fully populated view model combining CMS content with other data
      */
-    protected ViewModel EnrichModel(ViewModel model) throws Exception {
+    protected ViewModel enrichModel(ViewModel model) throws Exception {
         //Check if an exception was generated when creating the model, so now is the time to throw it
         // TODO: shouldn't we just render the ExceptionEntity using an Exception View?
         if(model.getClass().isAssignableFrom(ExceptionEntity.class))
@@ -127,7 +127,7 @@ public abstract class BaseController {
             throw exceptionEntity.getException();
         }
 
-        return (ViewModel)ProcessModel(model, model.getClass());
+        return (ViewModel)processModel(model, model.getClass());
     }
 
      /**
@@ -139,7 +139,7 @@ public abstract class BaseController {
      * @deprecated Deprecated in DXA 1.1. Override EnrichModel instead.
      */
     @Deprecated
-    protected Object ProcessModel(Object sourceModel, Class type)
+    protected Object processModel(Object sourceModel, Class type)
     {
         // NOTE: Intentionally loosely typed for backwards compatibility; this was part of the V1.0 (semi-)public API
         return sourceModel;
@@ -155,7 +155,7 @@ public abstract class BaseController {
      * it creates a Controller associated with the Entity Model for that purpose.
      * It is used by PageController.EnrichEmbeddedModels.
      */
-    protected EntityModel EnrichEntityModel(EntityModel entity)
+    protected EntityModel enrichEntityModel(EntityModel entity)
     {
         if (entity == null || entity.getMvcData() == null || ! isCustomAction(entity.getMvcData()))
         {
@@ -180,7 +180,7 @@ public abstract class BaseController {
                     HandlerMethod controllerMethod = handlerMethods.get(mapping);
                     BaseController controller = (BaseController)ApplicationContextHolder.getContext().getBean(controllerMethod.getBean().toString());
                     try {
-                        controller.EnrichModel(entity);
+                        controller.enrichModel(entity);
                         return entity;
                     } catch (Exception e) {
                         LOG.error("Error in EnrichModel", e);

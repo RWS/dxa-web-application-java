@@ -89,7 +89,7 @@ public class PageController extends BaseController {
         final Localization localization = webRequestContext.getLocalization();
 
         final PageModel originalPageModel = getPageModel(requestPath, localization);
-        final ViewModel enrichedPageModel = EnrichModel(originalPageModel);
+        final ViewModel enrichedPageModel = enrichModel(originalPageModel);
         final PageModel page = enrichedPageModel instanceof PageModel ? (PageModel)enrichedPageModel:originalPageModel;
 
         LOG.trace("handleGetPage: page={}", page);
@@ -188,7 +188,7 @@ public class PageController extends BaseController {
         }
 
         //SetupViewData(pageModel);
-        final ViewModel enrichedPageModel = EnrichModel(originalPageModel);
+        final ViewModel enrichedPageModel = enrichModel(originalPageModel);
         final PageModel pageModel = enrichedPageModel instanceof PageModel ? (PageModel)enrichedPageModel:originalPageModel;
 
         response.setStatus(404);
@@ -241,7 +241,7 @@ public class PageController extends BaseController {
                     EntityModel entity = region.getEntities().get(i);
                     if (entity != null && entity.getMvcData() != null)
                     {
-                        region.getEntities().set(i, EnrichEntityModel(entity));
+                        region.getEntities().set(i, enrichEntityModel(entity));
                     }
                 }
             }

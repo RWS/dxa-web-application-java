@@ -20,7 +20,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
 
-    private final String XpmComponentPresentationMarkup = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %s} -->";
+    private static final String XpmComponentPresentationMarkup = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %s} -->";
 
     @JsonProperty("Id")
     private String id;
@@ -108,6 +108,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
                 String.format("Direct rendering of View Model type '%s' to HTML is not supported." +
                                 " Consider using View Model property of type RichText in combination with DxaRichText() in view code to avoid direct rendering to HTML." +
                                 " Alternatively, override method %s.toHtml().",
+                        getClass().getName(),
                         getClass().getName())
         );
     }

@@ -184,30 +184,31 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
             LOG.warn("Error while evaluation XPath expression", e);
         }
 
-        for (Node imgElement : entityElements) {
-            String[] schemaTcmUriParts = imgElement.getAttributes().getNamedItem("data-schemaUri").getNodeValue().split("-");
-            final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaTcmUriParts[1]));
+        if(entityElements != null) {
+            for (Node imgElement : entityElements) {
+                String[] schemaTcmUriParts = imgElement.getAttributes().getNamedItem("data-schemaUri").getNodeValue().split("-");
+                final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaTcmUriParts[1]));
 
-            String viewName = semanticSchema.getRootElement();
-            final Class<? extends AbstractEntityModel> entityClass;
-            try {
-                entityClass = (Class<? extends AbstractEntityModel>)viewModelRegistry.getMappedModelTypes(viewName);
-                if (entityClass == null) {
+                String viewName = semanticSchema.getRootElement();
+                final Class<? extends AbstractEntityModel> entityClass;
+                try {
+                    entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(viewName);
+                    if (entityClass == null) {
+                        throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
+                                "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+                    }
+                } catch (DxaException e) {
                     throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
-                            "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+                            "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
                 }
-            } catch (DxaException e) {
-                throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
-                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
+
+                MediaItem mediaItem = (MediaItem) createInstance(entityClass);
+                mediaItem.readFromXhtmlElement(imgElement);
+                embeddedEntities.add(mediaItem);
+
+                imgElement.getParentNode().replaceChild(doc.createProcessingInstruction(EmbeddedEntityProcessingInstructionName, ""), imgElement);
             }
-
-            MediaItem mediaItem = (MediaItem)createInstance(entityClass);
-            mediaItem.readFromXhtmlElement(imgElement);
-            embeddedEntities.add(mediaItem);
-
-            imgElement.getParentNode().replaceChild(doc.createProcessingInstruction(EmbeddedEntityProcessingInstructionName, ""), imgElement);
         }
-
 
         String xhtml;
         try {
@@ -334,7 +335,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
             final String hash = !Strings.isNullOrEmpty(linkName) ? "#"
                     + linkName.replaceAll(" ", "_").toLowerCase() : "";
 
-            if (fullRequestPath.equalsIgnoreCase(fullRequestPath)) {
+            if (fullRequestPath.equalsIgnoreCase(href)) {
                 linkElement.setAttribute("href", hash);
                 linkElement.setAttribute("target", "");
             } else {

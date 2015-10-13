@@ -98,7 +98,7 @@ public class NavigationController extends BaseController {
                 break;
         }
 
-        final ViewModel enrichedEntity = EnrichModel(entity);
+        final ViewModel enrichedEntity = enrichModel(entity);
         entity = enrichedEntity instanceof EntityModel ? (EntityModel)enrichedEntity:navigationLinks;
         request.setAttribute(ENTITY_MODEL, entity);
 

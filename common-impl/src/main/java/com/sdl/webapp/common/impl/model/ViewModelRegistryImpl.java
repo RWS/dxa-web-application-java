@@ -76,7 +76,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         mvcData.setActionName(REGION_ACTION_NAME);
         registerViewModel(mvcData, regionModelClass);
     }
-    private class SemanticInfo {
+    static private class SemanticInfo {
         final Map<String, String> prefixMappings = new HashMap<>();
         final List<String> publicSemanticTypes = new ArrayList<>();
         final List<String> mappedSemanticTypes = new ArrayList<>();
@@ -213,7 +213,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         semanticPropertyNames.add(propertyName);
     }
     private boolean skipSemanticProperty(SemanticProperty attribute, SemanticInfo semanticInfo){
-        Object obj = attribute.value();
         if (StringUtils.isEmpty(attribute.value()))
         {
             return true;
@@ -312,7 +311,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
         Map<MvcData, Class<? extends ViewModel>> possibleValues = Maps.filterEntries(this.viewEntityClassMap, keyNamePredicate);
         if (possibleValues.isEmpty()) {
-            throw new DxaException(String.format("Could not find a view model for the view name {}", viewName));
+            throw new DxaException(String.format("Could not find a view model for the view name %s", viewName));
         } else {
             return possibleValues.entrySet().iterator().next().getValue();
         }

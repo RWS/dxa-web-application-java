@@ -107,7 +107,7 @@ public class SemanticMappingImpl implements SemanticMapping {
     public String getPrefix(List<SemanticVocabulary> vocabularies, String vocab) {
         SemanticVocabulary vocabulary = null;
         for(SemanticVocabulary v: vocabularies){
-            if(v.equals(vocab)){
+            if(v.getVocab().equals(vocab)){
                 return v.getPrefix();
             }
         }
@@ -126,7 +126,7 @@ public class SemanticMappingImpl implements SemanticMapping {
         try{
             return _semanticMap.get(key).get(id);
         }catch(Exception ex){
-            String message = String.format("Semantic schema %s not defined in localizatino [%d]. Check that the Publish Settings page is published and teh application is up to date.", id, loc);
+            String message = String.format("Semantic schema %s not defined in localizatino [%s]. Check that the Publish Settings page is published and teh application is up to date.", id, loc.getId());
             throw new DxaException(message);
         }
     }
@@ -147,7 +147,6 @@ public class SemanticMappingImpl implements SemanticMapping {
             List<SemanticVocabulary> vocabs = parseJsonFileObject(contentProvider, SEMANTIC_VOCABULARIES_PATH, id, path, new TypeReference<List<SemanticVocabulary>>() { });
 
             //TODO: TW Implement SiteConfiguration.ThreadSafeSettingsUpdate
-            //SiteConfiguration.ThreadSafeSettingsUpdate(_vocabSettingsType, __semanticVocabularies, key, vocabs);
         } catch (LocalizationFactoryException e) {
             //TODO: Check wether we throw it or catch it
             LOG.error("Error getting scheams from json: {}", e.getMessage());

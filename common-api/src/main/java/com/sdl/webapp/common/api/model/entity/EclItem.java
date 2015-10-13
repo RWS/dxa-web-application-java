@@ -85,6 +85,6 @@ public abstract class EclItem extends MediaItem {
     public String getXpmMarkup(Localization localization)
     {
         // replace TCM URI with ECL URI
-        return super.getXpmMarkup(localization).replace(String.format("tcm:{0}-{1}", localization.getId(), this.getId()), getEclUrl());
+        return super.getXpmMarkup(localization).replace(String.format("tcm:%s-%s", localization.getId(), this.getId()), getEclUrl());
     }
 }

@@ -145,7 +145,14 @@ public abstract class FeedFormatter extends BaseFormatter {
                                 teaser.setDate(d);
                                 break;
                             case "getdescription":
-                                teaser.setText((RichText) m.invoke(entity));
+                                Object desc = m.invoke(entity);
+                                if(RichText.class.isInstance(desc))
+                                {
+                                    teaser.setText((RichText) desc);
+                                }
+                                else {
+                                    teaser.setText(new RichText(desc.toString()));
+                                }
                                 break;
                             case "getlink":
                                 teaser.setLink((Link) m.invoke(entity));
@@ -158,6 +165,8 @@ public abstract class FeedFormatter extends BaseFormatter {
                                     teaser.setLink(l);
                                 }
                             break;
+                            default:
+                                break;
                         }
                     } catch (InvocationTargetException e) {
                         LOG.error("Error while instantiating a teaser using reflection for feed: {}", e.getMessage());
@@ -200,13 +209,13 @@ public abstract class FeedFormatter extends BaseFormatter {
             isList = isList(entity.getClass().getAnnotation(SemanticEntity.class));
 
         }else if(entity.getClass().isAnnotationPresent(SemanticEntities.class)){
-            SemanticEntities annotations = entity.getClass().getAnnotation(SemanticEntities.class);
-            for(SemanticEntity prop : annotations.value()){
-                isList = isList(prop);
-                if(isList){
-                    break;
-                }
-            }
+//            SemanticEntities annotations = entity.getClass().getAnnotation(SemanticEntities.class);
+//            for(SemanticEntity prop : annotations.value()){
+//                isList = isList(prop);
+//                if(isList){
+//                    break;
+//                }
+//            }
         }
 
         if (isList)

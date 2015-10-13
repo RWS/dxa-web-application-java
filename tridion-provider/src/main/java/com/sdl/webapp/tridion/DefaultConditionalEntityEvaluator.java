@@ -14,7 +14,7 @@ public class DefaultConditionalEntityEvaluator implements
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConditionalEntityEvaluator.class);
 
     @Override
-    public boolean IncludeEntity(EntityModel entity) {
+    public boolean includeEntity(EntityModel entity) {
         //TODO : currently, no implementation has been built, we just return true by default
         LOG.debug("Entering DefaultConditionalEntityEvaluator.IncludeEntity - returning true by default until real implementation");
         return true;

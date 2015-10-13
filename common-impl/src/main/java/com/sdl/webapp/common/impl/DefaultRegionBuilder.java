@@ -67,7 +67,7 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
 
                     regions.add(region);
                 }
-                if (conditionalEntityEvaluator == null || conditionalEntityEvaluator.IncludeEntity(entity)) {
+                if (conditionalEntityEvaluator == null || conditionalEntityEvaluator.includeEntity(entity)) {
                     region.addEntity(entity);
                 }
 

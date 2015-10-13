@@ -83,7 +83,6 @@ public class WebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public ViewResolver viewResolver() {
 
-        // TODO: Make it possible to hook in a contextual view resolver here?????
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setViewClass(JstlView.class);
         viewResolver.setPrefix(VIEW_RESOLVER_PREFIX);

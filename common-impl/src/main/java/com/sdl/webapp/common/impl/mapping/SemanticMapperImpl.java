@@ -40,8 +40,8 @@ public class SemanticMapperImpl implements SemanticMapper {
 
     @Override
     public <T extends ViewModel> T createEntity(Class<? extends T> entityClass,
-                                                          final Map<FieldSemantics, SemanticField> semanticFields,
-                                                          final SemanticFieldDataProvider fieldDataProvider)
+                                                final Map<FieldSemantics, SemanticField> semanticFields,
+                                                final SemanticFieldDataProvider fieldDataProvider)
             throws SemanticMappingException {
         final T entity = createInstance(entityClass);
 
@@ -145,7 +145,7 @@ public class SemanticMapperImpl implements SemanticMapper {
         });
 
         // Set property data (used for semantic markup)
-        if(AbstractEntityModel.class.isAssignableFrom(entity.getClass())) {
+        if (AbstractEntityModel.class.isAssignableFrom(entity.getClass())) {
             ((AbstractEntityModel) entity).setXpmPropertyMetadata(propertyDataBuilder.build());
         }
         LOG.trace("entity: {}", entity);
@@ -167,7 +167,19 @@ public class SemanticMapperImpl implements SemanticMapper {
 
     private SemanticField findMatchingSemanticField(Map<FieldSemantics, SemanticField> semanticFields,
                                                     FieldSemantics fieldSemantics) {
-        SemanticField matchingField = semanticFields.get(fieldSemantics);
+        SemanticField matchingField = null;
+
+        for (Map.Entry<FieldSemantics, SemanticField> entry : semanticFields.entrySet()) {
+            FieldSemantics f = entry.getKey();
+            if (f.getEntityName().equals(fieldSemantics.getEntityName()) && f.getPropertyName().equals(fieldSemantics.getPropertyName()) && f.getVocabulary().equals(fieldSemantics.getVocabulary())) {
+                matchingField = entry.getValue();
+            } else {
+                if (f.getEntityName().equals("StandardMetadata") && f.getPropertyName().equals(fieldSemantics.getPropertyName())) {
+                    matchingField = entry.getValue();
+                }
+            }
+        }
+
         if (matchingField == null) {
             // Search all embedded fields recursively
             for (SemanticField semanticField : semanticFields.values()) {

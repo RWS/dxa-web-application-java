@@ -1,5 +1,7 @@
 package com.sdl.webapp.common.views;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formatters.DataFormatter;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -24,6 +26,8 @@ public class JsonView extends MappingJackson2JsonView {
         this.context = context;
         setPrettyPrint(false);
         setExtractValueFromSingleKeyModel(true);
+        getObjectMapper().registerModule(new JodaModule());
+        getObjectMapper().configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
     }
 
     @Override

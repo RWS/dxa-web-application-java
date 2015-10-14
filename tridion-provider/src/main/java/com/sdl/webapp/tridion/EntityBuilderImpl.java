@@ -24,13 +24,15 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.sdl.webapp.tridion.fieldconverters.FieldUtils.getStringValue;
 
-public final class EntityBuilderImpl implements EntityBuilder {
+@Component
+final class EntityBuilderImpl implements EntityBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(EntityBuilderImpl.class);
 
     private static final String DEFAULT_AREA_NAME = "Core";

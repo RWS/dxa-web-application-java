@@ -112,7 +112,6 @@ public class DefaultDataFormatter implements DataFormatter {
      */
     private double getHtmlAcceptScore() {
         double score = 0.0;
-        //TODO: TW Check that acceptTypes come as comma-separated list
         String[] acceptTypes = request.getHeader("Accept").split(",");
         if (acceptTypes != null) {
             for (String type : acceptTypes) {

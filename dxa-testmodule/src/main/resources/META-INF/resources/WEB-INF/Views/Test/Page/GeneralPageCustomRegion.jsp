@@ -27,6 +27,8 @@
     <![endif]-->
 </head>
 <body>
+
+
 <dxa:region name="Header" />
 <main class="page-row page-row-expanded ${pageModel.htmlClasses}" role="main">
     <div class="container-fluid page-border">
@@ -35,6 +37,7 @@
                     pageModel.getRegions().containsKey("Left");
             int mainContainerSize = hasLeftBar ? 9 : 12;
         %>
+        Custom page headline : ${pageModel.headline}
         <dxa:region name="TestInclude"/>
         <dxa:region name="Custom-Region"/>
         <dxa:region name="Hero"/>

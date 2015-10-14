@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
- * TODO: TW Document
- */
+* Feed view for Atom representation of page
+*/
 public class AtomView extends AbstractAtomFeedView {
     private static final Logger LOG = LoggerFactory.getLogger(AtomView.class);
     private DataFormatter formatter;

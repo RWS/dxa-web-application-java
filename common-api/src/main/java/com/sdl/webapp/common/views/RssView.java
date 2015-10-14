@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * TODO: TW Document
+ * Feed view for RSS representation of page
  */
 public class RssView extends AbstractRssFeedView {
     private static final Logger LOG = LoggerFactory.getLogger(RssView.class);

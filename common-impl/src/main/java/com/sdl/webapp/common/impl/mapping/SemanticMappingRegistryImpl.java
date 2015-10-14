@@ -139,6 +139,18 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         return null;
     }
 
+    @Override
+    public Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName) {
+        for ( Class<? extends  EntityModel> entityClass : semanticEntityInfo.keys() ) {
+            List<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
+            for ( SemanticEntityInfo entityInfo : entityInfoList ) {
+                if ( entityName.startsWith(entityInfo.getVocabulary()) && entityName.endsWith(entityInfo.getEntityName())) {
+                    return entityClass;
+                }
+            }
+        }
+        return null;
+    }
     /**
      * Get all declared fields. If concrete class is annotated as SemanticEntity, the whole inheritance structure is followed.
      *

@@ -57,7 +57,6 @@ public abstract class BaseFormatter implements DataFormatter {
     public List<String> getValidTypes(List<String> allowedTypes)
     {
         List<String> res = new ArrayList<String>();
-        //TODO: TW Check that acceptTypes come as comma-separated list
         String[] acceptTypes = request.getHeader("Accept").split(",");
         if (acceptTypes!=null)
         {

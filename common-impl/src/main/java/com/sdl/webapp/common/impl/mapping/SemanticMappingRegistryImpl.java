@@ -90,9 +90,17 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
             return;
         }
 
+        if(semanticEntityInfo.containsKey(entityClass))
+        {
+            LOG.debug("Entity class {} is already registered, ignoring", entityClass.getName());
+            return;
+        }
+
+
         LOG.debug("Registering entity class: {}", entityClass.getName());
 
         final Map<String, SemanticEntityInfo> entityInfoMap = createSemanticEntityInfo(entityClass);
+
         semanticEntityInfo.putAll(entityClass, entityInfoMap.values());
 
         final Map<String, SemanticVocabulary> vocabularies = new HashMap<>();
@@ -141,11 +149,26 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
 
     @Override
     public Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName) {
+
+        String[] entityNameSplit = entityName.split(":");
+        List<Class<? extends EntityModel>> possibleValues = new ArrayList<>();
         for ( Class<? extends  EntityModel> entityClass : semanticEntityInfo.keys() ) {
             List<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
             for ( SemanticEntityInfo entityInfo : entityInfoList ) {
                 if ( entityName.startsWith(entityInfo.getVocabulary()) && entityName.endsWith(entityInfo.getEntityName())) {
-                    return entityClass;
+                    if(!possibleValues.contains(entityClass))
+                    {
+                        possibleValues.add(entityClass);
+                    }
+                }
+            }
+        }
+        if(possibleValues.size() > 0) {
+            for (Class<? extends EntityModel> cls : possibleValues) {
+                if (cls.getName().contains(entityNameSplit[1])) {
+                    return cls;
+                } else {
+                    return possibleValues.get(0);
                 }
             }
         }

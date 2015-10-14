@@ -9,8 +9,9 @@
   <property name="build.dest" location="target"/>
 
 
-  <target name="build.custom.dxa" depends="extract-base-war,add-libs,add-configs,add-license,create-war" description="Builds a war file with custom configuration and license file"></target>
-  <target name="build.custom.dxa.staging" depends="extract-base-war,add-libs,add-libs-staging,add-configs,add-configs-staging,add-license,create-war" description="Builds a war file with custom configuration and license file"></target>
+  <target name="build.custom.dxa" depends="extract-base-war,add-libs,add-configs,add-license,create-war,delete-temp" description="Builds a war file with custom configuration and license file"></target>
+  <target name="build.custom.dxa.staging" depends="extract-base-war,add-libs,add-libs-staging,add-configs,add-configs-staging,add-license,create-war,delete-temp" description="Builds a war file with custom configuration and license file"></target>
+
 
   <target name="extract-base-war" description="Extracts the base war file">
     <unzip src="${src}/example-webapp.war"
@@ -43,8 +44,13 @@
     </copy>
   </target>
   <target name="create-war" description="Creates a final custom war file">
-    <war destfile="${build.dest}example-webapp.war" needxmlfile="false" >
+    <war destfile="${build.dest}/example-webapp.war" needxmlfile="false" >
       <fileset dir="${build.temp}"/>
     </war>
+  </target>
+  <target name="delete-temp" description="Deletes temporary files">
+    <delete includeEmptyDirs="true">
+      <fileset dir="${build.temp}" includes="**/*" defaultexcludes="no"/>
+    </delete>
   </target>
 </project>

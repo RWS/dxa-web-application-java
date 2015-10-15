@@ -69,7 +69,6 @@ public class EntityTag extends AbstractMarkupTag {
                 return SKIP_BODY;
             }
 
-            //entity = region.getEntities().get(entityId);
             entity = region.getEntity(entityId);
         }
         else {
@@ -80,7 +79,6 @@ public class EntityTag extends AbstractMarkupTag {
             try {
             	pageContext.getRequest().setAttribute("_region_" + regionName, region);
                 webRequestContext.pushContainerSize(containerSize);
-                //pageContext.include(ControllerUtils.getIncludePath(entity));
                 this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);
@@ -89,7 +87,7 @@ public class EntityTag extends AbstractMarkupTag {
                 webRequestContext.popContainerSize();
             }
         } else {
-            LOG.debug("Entity not found in region: {}", regionName);
+            LOG.debug("Entity not found in region: {}/{}", regionName, entityId);
         }
 
         return SKIP_BODY;

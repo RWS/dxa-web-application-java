@@ -18,8 +18,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.*;
 
 /**
- * TODO: TW Document
- */
+* Feed view for Atom representation of page
+*/
 public class AtomView extends AbstractAtomFeedView {
     private static final Logger LOG = LoggerFactory.getLogger(AtomView.class);
     private DataFormatter formatter;
@@ -55,7 +55,6 @@ public class AtomView extends AbstractAtomFeedView {
         List<Link> links = new ArrayList<>();
         Link l = new Link();
         l.setHref(uri.toString().replaceAll("[&?]format.*?(?=&|\\?|$)", ""));
-        //l.setTitle(page.getTitle());
         links.add(l);
 
         feed.setUpdated(new Date());

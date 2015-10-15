@@ -35,6 +35,12 @@ import org.springframework.web.servlet.view.JstlView;
 @ComponentScan(basePackages = {"com.sdl.webapp.main", "com.sdl.webapp.common.controller", "com.sdl.webapp.addon"})
 public class WebAppConfiguration extends WebMvcConfigurerAdapter {
 
+    // TODO: This is a central class, why is this in the example webapp?? (NiC)
+    // The example webapp should only be an example on how to assembly a webapp based on the different standard DXA modules.
+    // Because now you are forced to copy stuff from this webapp to the customer specific one. From my point of view I would like to
+    // have the example webapp as thin as possible, basically just config + module dependencies
+    //
+
     private static final String VIEW_RESOLVER_PREFIX = "/WEB-INF/Views/";
     private static final String VIEW_RESOLVER_SUFFIX = ".jsp";
 
@@ -83,7 +89,6 @@ public class WebAppConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public ViewResolver viewResolver() {
 
-        // TODO: Make it possible to hook in a contextual view resolver here?????
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setViewClass(JstlView.class);
         viewResolver.setPrefix(VIEW_RESOLVER_PREFIX);

@@ -205,7 +205,7 @@ public class RegionModelImpl implements RegionModel {
                 '}';
     }
 
-    class EntityPredicate implements Predicate {
+    static class EntityPredicate implements Predicate {
         private final String entityId;
 
         public EntityPredicate(String id) {

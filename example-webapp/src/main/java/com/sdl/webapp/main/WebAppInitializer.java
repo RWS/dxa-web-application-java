@@ -23,6 +23,8 @@ import java.util.EnumSet;
  */
 public class WebAppInitializer implements WebApplicationInitializer {
 
+    // TODO: Why can not this be a generic initialization functionality in core-module/common-impl? (NiC)
+
     // TODO: Make this pluggable, so CID and other modules and attach servlet definitions?
     // Or just have CID as servlet fragment??
     // The problem is as soon you have stuff in web.xml etc those things are deployed first

@@ -30,21 +30,6 @@ public class TestController extends BaseController {
                                   @PathVariable String entityId) throws ContentProviderException {
 
 
-//        Example entity = (Example) this.getEntityFromRequest(request, regionName, entityId);
-//
-//        Localization localization = this.webRequestContext.getLocalization();
-//        String enrichEntitySetting =localization.getConfiguration("example.enrichEntity");
-//
-//        if ( enrichEntitySetting != null && enrichEntitySetting.equalsIgnoreCase("true") ) {
-//            // Enrich entity
-//            //
-//            entity.setEnrichedField(entity.getField1() + " : " + entity.getField2());
-//        }
-//
-//        request.setAttribute("entity", entity);
-//
-//        final MvcData mvcData = entity.getMvcData();
-//        return resolveView(mvcData, "Entity",0, request);
         return "Hello world";
     }
 

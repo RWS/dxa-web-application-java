@@ -66,10 +66,6 @@ public class AdfContextClaimsProvider implements ContextClaimsProvider {
 
     }
 
-    /// <summary>
-    /// Gets the device family (an aggregated device claim determined from other context claims).
-    /// </summary>
-    /// <returns>A string representing the device family.</returns>
     public String getDeviceFamily() {
         // TODO TSI-789: this functionality overlaps with "Context Expressions".
         ClassLoader classLoader = getClass().getClassLoader();

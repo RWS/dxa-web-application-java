@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
@@ -22,6 +23,7 @@ public class Article extends AbstractEntityModel {
 
     @JsonProperty("Date")
     @SemanticProperty("s:dateCreated")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private DateTime date;
 
     @JsonProperty("Description")

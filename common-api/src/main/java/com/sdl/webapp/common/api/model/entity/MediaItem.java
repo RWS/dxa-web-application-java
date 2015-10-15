@@ -81,7 +81,7 @@ public abstract class MediaItem extends AbstractEntityModel {
     @JsonIgnore
     public String getIconClass() {
         String fileType = FontAwesomeMimeTypeToIconClassMapping.containsKey(this.getMimeType()) ? FontAwesomeMimeTypeToIconClassMapping.get(this.getMimeType()) : null;
-        return fileType == null ? String.format("fa-file-%s-o", fileType) : "fa-file";
+        return fileType != null ? String.format("fa-file-%s-o", fileType) : "fa-file";
     }
 
     @JsonIgnore

@@ -39,7 +39,7 @@ public class RegionController extends BaseController {
 
 
         final RegionModel originalModel = getRegionFromRequest(request, regionName);
-        final ViewModel enrichedModel = EnrichModel(originalModel);
+        final ViewModel enrichedModel = enrichModel(originalModel);
         final RegionModel region = enrichedModel instanceof RegionModel ? (RegionModel)enrichedModel:originalModel;
 
         request.setAttribute(REGION_MODEL, region);
@@ -47,7 +47,6 @@ public class RegionController extends BaseController {
         final MvcData mvcData = region.getMvcData();
         LOG.trace("Region MvcData: {}", mvcData);
         return resolveView(mvcData, "Region", request);
-        //return mvcData.getAreaName() + "/Region/" + mvcData.getViewName();
     }
 
 

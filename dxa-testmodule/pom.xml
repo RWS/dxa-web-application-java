@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>dxa.testmodule</artifactId>
+    <artifactId>dxa-testmodule</artifactId>
     <dependencies>
         <!-- SDL Digital Experience Accelerator -->
         <dependency>

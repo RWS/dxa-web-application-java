@@ -59,8 +59,6 @@ public class RegionTag extends AbstractMarkupTag {
             return SKIP_BODY;
         }
 
-        Object parentModel = pageContext.getRequest().getAttribute("ParentModel");
-
 
         RegionModel region = null;
         if (Strings.isNullOrEmpty(name) || page.getMvcData().getViewName().equals("IncludePage")) {
@@ -73,11 +71,13 @@ public class RegionTag extends AbstractMarkupTag {
             RegionModelImpl includeregion = null;
             try {
                 includeregion = new RegionModelImpl(name);
+                includeregion.setMvcData(mvcData);
+                includeregion.setRegions(page.getRegions());
             } catch (DxaException e) {
+                LOG.error(String.format("Exception when creating new regionModel %s", name), e);
                 e.printStackTrace();
             }
-            includeregion.setMvcData(mvcData);
-            includeregion.setRegions(page.getRegions());
+
             region = includeregion;
         } else {
             region = page.getRegions().get(name);
@@ -95,21 +95,23 @@ public class RegionTag extends AbstractMarkupTag {
             RegionModelImpl placeholderRegion = null;
             try {
                 placeholderRegion = new RegionModelImpl(name);
+                SimpleRegionMvcData mvcData = null;
+                if(Strings.isNullOrEmpty(emptyviewname))
+                {
+                    mvcData = new SimpleRegionMvcData(name);
+                }
+                else
+                {
+                    mvcData = new SimpleRegionMvcData(name, emptyviewname);
+                }
+
+                placeholderRegion.setMvcData(mvcData);
             } catch (DxaException e) {
+                LOG.error(String.format("Exception when creating new placeholderRegion %s", name), e);
                 e.printStackTrace();
             }
 
-            SimpleRegionMvcData mvcData = null;
-            if(Strings.isNullOrEmpty(emptyviewname))
-            {
-                mvcData = new SimpleRegionMvcData(name);
-            }
-            else
-            {
-                mvcData = new SimpleRegionMvcData(name, emptyviewname);
-            }
 
-            placeholderRegion.setMvcData(mvcData);
             region = placeholderRegion;
             pageContext.getRequest().setAttribute("_region_" + name, placeholderRegion);
         }
@@ -118,7 +120,6 @@ public class RegionTag extends AbstractMarkupTag {
             LOG.debug("Including region: {}", name);
             
             try {
-                //pageContext.include(ControllerUtils.getIncludePath(region));
             	pageContext.getRequest().setAttribute("_region_" + name, region);
                 webRequestContext.pushParentRegion(region);
                 webRequestContext.pushContainerSize(containerSize);

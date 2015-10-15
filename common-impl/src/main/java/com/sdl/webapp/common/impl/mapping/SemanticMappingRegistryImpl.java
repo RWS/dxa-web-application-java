@@ -90,9 +90,17 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
             return;
         }
 
+        if(semanticEntityInfo.containsKey(entityClass))
+        {
+            LOG.debug("Entity class {} is already registered, ignoring", entityClass.getName());
+            return;
+        }
+
+
         LOG.debug("Registering entity class: {}", entityClass.getName());
 
         final Map<String, SemanticEntityInfo> entityInfoMap = createSemanticEntityInfo(entityClass);
+
         semanticEntityInfo.putAll(entityClass, entityInfoMap.values());
 
         final Map<String, SemanticVocabulary> vocabularies = new HashMap<>();
@@ -139,6 +147,33 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         return null;
     }
 
+    @Override
+    public Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName) {
+
+        String[] entityNameSplit = entityName.split(":");
+        List<Class<? extends EntityModel>> possibleValues = new ArrayList<>();
+        for ( Class<? extends  EntityModel> entityClass : semanticEntityInfo.keys() ) {
+            List<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
+            for ( SemanticEntityInfo entityInfo : entityInfoList ) {
+                if ( entityName.startsWith(entityInfo.getVocabulary()) && entityName.endsWith(entityInfo.getEntityName())) {
+                    if(!possibleValues.contains(entityClass))
+                    {
+                        possibleValues.add(entityClass);
+                    }
+                }
+            }
+        }
+        if(possibleValues.size() > 0) {
+            for (Class<? extends EntityModel> cls : possibleValues) {
+                if (cls.getName().contains(entityNameSplit[entityNameSplit.length-1])) {
+                    return cls;
+                }
+            }
+            return possibleValues.get(0);
+
+        }
+        return null;
+    }
     /**
      * Get all declared fields. If concrete class is annotated as SemanticEntity, the whole inheritance structure is followed.
      *

@@ -44,14 +44,13 @@ public class EntityController extends BaseController {
         LOG.trace("handleGetEntity: regionName={}, entityId={}", regionName, entityId);
 
         final EntityModel originalModel = getEntityFromRequest(request, regionName, entityId);
-        final ViewModel enrichedEntity = EnrichModel(originalModel);
+        final ViewModel enrichedEntity = enrichModel(originalModel);
         final EntityModel entity = enrichedEntity instanceof EntityModel ? (EntityModel)enrichedEntity:originalModel;
 
         request.setAttribute(ENTITY_MODEL, entity);
 
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);
-        //return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
 
         return resolveView(mvcData, "Entity", request);
 

@@ -24,11 +24,10 @@ public class DefaultDataFormatter implements DataFormatter {
     @Autowired
     private WebRequestContext context;
 
-    private static Map<String, com.sdl.webapp.common.api.formatters.DataFormatter> formatters;
+    private Map<String, com.sdl.webapp.common.api.formatters.DataFormatter> formatters;
 
     @Autowired
-    public DefaultDataFormatter(HttpServletRequest request, WebRequestContext context)
-    {
+    public DefaultDataFormatter(HttpServletRequest request, WebRequestContext context) {
         formatters = new HashMap<String, com.sdl.webapp.common.api.formatters.DataFormatter>();
         formatters.put("json", new JsonFormatter(request, context));
         formatters.put("atom", new AtomFormatter(request, context));
@@ -38,13 +37,12 @@ public class DefaultDataFormatter implements DataFormatter {
 
     /**
      * Gets the formatter based on the format
+     *
      * @param format: the format (lowercase): json, atom or rss
      * @return The (@code DataFormatter) to handle the response
      */
-    private com.sdl.webapp.common.api.formatters.DataFormatter getFormatter(String format)
-    {
-        if (formatters.containsKey(format) && context.getLocalization().getDataFormats().contains(format))
-        {
+    private com.sdl.webapp.common.api.formatters.DataFormatter getFormatter(String format) {
+        if (formatters.containsKey(format) && context.getLocalization().getDataFormats().contains(format)) {
             return formatters.get(format);
         }
         return null;
@@ -52,6 +50,7 @@ public class DefaultDataFormatter implements DataFormatter {
 
     /**
      * Returns the  @see ModelAndView to render the different formats
+     *
      * @param model
      * @return
      */
@@ -60,7 +59,7 @@ public class DefaultDataFormatter implements DataFormatter {
         String format = getFormat();
         com.sdl.webapp.common.api.formatters.DataFormatter formatter = getFormatter(format);
         ModelAndView mav = new ModelAndView();
-        switch (format){
+        switch (format) {
             case "rss":
                 mav.setViewName("rssFeedView");
                 break;
@@ -72,7 +71,7 @@ public class DefaultDataFormatter implements DataFormatter {
                 mav.setViewName("jsonFeedView");
                 break;
         }
-        mav.addObject("formatter", getFormatter(format));
+        mav.addObject("formatter", formatter);
         mav.addObject("data", model);
 
         return mav;
@@ -80,29 +79,25 @@ public class DefaultDataFormatter implements DataFormatter {
 
     /**
      * Gets the format
+     *
      * @return the format from the @see HttpServletRequest query string
      */
-    private String getFormat()
-    {
+    private String getFormat() {
         String format = request.getParameter("format");
-        if (format != null)
-        {
+        if (format != null) {
             return format.toLowerCase();
         }
         format = "html";
         double topScore = getHtmlAcceptScore();
-        if (topScore<1.0)
-        {
-            for (String key : formatters.keySet())
-            {
-                double score = formatters.get(key).score();
-                if (score > topScore)
-                {
+        if (topScore < 1.0) {
+            for (Map.Entry<String, com.sdl.webapp.common.api.formatters.DataFormatter> entry : formatters.entrySet()) {
+
+                double score = ((com.sdl.webapp.common.api.formatters.DataFormatter) entry.getValue()).score();
+                if (score > topScore) {
                     topScore = score;
-                    format = key;
+                    format = entry.getKey();
                 }
-                if (topScore == 1.0)
-                {
+                if (topScore == 1.0) {
                     break;
                 }
             }
@@ -112,26 +107,20 @@ public class DefaultDataFormatter implements DataFormatter {
 
     /**
      * Gets the score for html media type
+     *
      * @return the score
      */
-    private double getHtmlAcceptScore()
-    {
+    private double getHtmlAcceptScore() {
         double score = 0.0;
-        //TODO: TW Check that acceptTypes come as comma-separated list
         String[] acceptTypes = request.getHeader("Accept").split(",");
-        if (acceptTypes!=null)
-        {
-            for (String type : acceptTypes)
-            {
-                if (type.contains("html"))
-                {
+        if (acceptTypes != null) {
+            for (String type : acceptTypes) {
+                if (type.contains("html")) {
                     double thisScore = getScoreFromAcceptString(type);
-                    if (thisScore > score)
-                    {
+                    if (thisScore > score) {
                         score = thisScore;
                     }
-                    if (score == 1)
-                    {
+                    if (score == 1) {
                         break;
                     }
                 }
@@ -142,15 +131,14 @@ public class DefaultDataFormatter implements DataFormatter {
 
     /**
      * Gets the score from accept string
+     *
      * @param type
      * @return
      */
-    public static double getScoreFromAcceptString(String type)
-    {
+    public static double getScoreFromAcceptString(String type) {
         double res = 1.0;
         int pos = type.indexOf("q=");
-        if (pos > 0)
-        {
+        if (pos > 0) {
             return Double.parseDouble(type.substring(pos + 2));
         }
         return res;

@@ -62,13 +62,13 @@ public class ListController extends EntityController {
     }
 
     @Override
-    protected ViewModel EnrichModel(ViewModel model) throws Exception {
+    protected ViewModel enrichModel(ViewModel model) throws Exception {
         if (model instanceof ContentList) {
 
-            final ViewModel enrichedEntity = super.EnrichModel(model);
+            final ViewModel enrichedEntity = super.enrichModel(model);
             final ContentList contentList = enrichedEntity instanceof EntityModel ? (ContentList) enrichedEntity : (ContentList) model;
 
-            if (contentList == null || !contentList.getItemListElements().isEmpty()) {
+            if (!contentList.getItemListElements().isEmpty()) {
                 return model;
             }
 

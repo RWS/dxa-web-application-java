@@ -46,25 +46,20 @@ public class AtomFormatter extends FeedFormatter {
             si.setSummary(c);
             si.setId("uuid:" + UUID.randomUUID().toString());
             si.setUpdated(new Date());
-//            List<Content> contents = new ArrayList<Content>();
-//            contents.add(c);
-//            si.setContents(contents);
+        }
+        if (item.getLink() != null && item.getLink().getUrl() !=null && item.getLink().getUrl().startsWith("http"))
+        {
+            List<Link> links = new ArrayList<Link>();
+            Link l = new Link();
+            if(item.getLink().getUrl().startsWith("http")){
+                l.setHref(item.getLink().getUrl());
+            }else{
+                l.setHref(context.getBaseUrl() + item.getLink().getUrl());
+            }
+            links.add(l);
+            si.setOtherLinks(links);
 
         }
-        //currently, we don't need to links
-//        if (item.getLink() != null && item.getLink().getUrl() !=null && item.getLink().getUrl().startsWith("http"))
-//        {
-//            List<Link> links = new ArrayList<Link>();
-//            Link l = new Link();
-//            if(item.getLink().getUrl().startsWith("http")){
-//                l.setHref(item.getLink().getUrl());
-//            }else{
-//                l.setHref(context.getBaseUrl() + item.getLink().getUrl());
-//            }
-//            links.add(l);
-//            si.setOtherLinks(links);
-//
-//        }
         if (item.getDate() != null)
         {
 

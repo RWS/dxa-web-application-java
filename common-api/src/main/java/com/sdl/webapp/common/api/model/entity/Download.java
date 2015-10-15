@@ -60,7 +60,7 @@ public class Download extends MediaItem {
                 .append(String.format("<i class=\"fa %s\"></i>", this.getIconClass()))
                 .append("<div>")
                 .append(String.format("<a href=\"%s\">%s</a> <small class=\"size\">(%s)</small>", this.getUrl(), this.getFileName(), this.getFriendlyFileSize()))
-                .append(String.format("%s", this.getDescription()))
+                .append(String.format("%s", descriptionHtml))
                 .append("</div>")
                 .append("</div>").toString();
         return s;

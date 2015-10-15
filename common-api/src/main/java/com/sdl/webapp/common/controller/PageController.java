@@ -89,7 +89,7 @@ public class PageController extends BaseController {
         final Localization localization = webRequestContext.getLocalization();
 
         final PageModel originalPageModel = getPageModel(requestPath, localization);
-        final ViewModel enrichedPageModel = EnrichModel(originalPageModel);
+        final ViewModel enrichedPageModel = enrichModel(originalPageModel);
         final PageModel page = enrichedPageModel instanceof PageModel ? (PageModel)enrichedPageModel:originalPageModel;
 
         LOG.trace("handleGetPage: page={}", page);
@@ -110,7 +110,6 @@ public class PageController extends BaseController {
         LOG.trace("Page MvcData: {}", mvcData);
 
         return this.viewResolver.resolveView(mvcData, "Page", request);
-        //return mvcData.getAreaName() + "/Page/" + mvcData.getViewName();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {"application/rss+xml", MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
@@ -175,7 +174,7 @@ public class PageController extends BaseController {
      */
     @ExceptionHandler(NotFoundException.class)
     public String handleNotFoundException(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String notFoundPageUrl = webRequestContext.getLocalization().getPath() + "/error-404"; // TODO TSI-775: No need to prefix with WebRequestContext.Localization.Path here (?)
+        String notFoundPageUrl = webRequestContext.getLocalization().getPath() + "error-404"; // TODO TSI-775: No need to prefix with WebRequestContext.Localization.Path here (?)
 
         PageModel originalPageModel;
         try
@@ -187,9 +186,20 @@ public class PageController extends BaseController {
             throw new HTTPException(404);
         }
 
-        //SetupViewData(pageModel);
-        final ViewModel enrichedPageModel = EnrichModel(originalPageModel);
+        final ViewModel enrichedPageModel = enrichModel(originalPageModel);
         final PageModel pageModel = enrichedPageModel instanceof PageModel ? (PageModel)enrichedPageModel:originalPageModel;
+
+        if (!isIncludeRequest(request)) {
+            request.setAttribute(PAGE_ID, pageModel.getId());
+        }
+
+        request.setAttribute(PAGE_MODEL, pageModel);
+        request.setAttribute(LOCALIZATION, webRequestContext.getLocalization());
+        request.setAttribute(MARKUP, markup);
+        request.setAttribute(MEDIAHELPER, mediaHelper);
+        request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
+        request.setAttribute(SOCIALSHARE_URL, webRequestContext.getFullUrl());
+        request.setAttribute(CONTEXTENGINE, webRequestContext.getContextEngine());
 
         response.setStatus(404);
         return this.viewResolver.resolveView(pageModel.getMvcData(), "Page", request);
@@ -241,7 +251,7 @@ public class PageController extends BaseController {
                     EntityModel entity = region.getEntities().get(i);
                     if (entity != null && entity.getMvcData() != null)
                     {
-                        region.getEntities().set(i, EnrichEntityModel(entity));
+                        region.getEntities().set(i, enrichEntityModel(entity));
                     }
                 }
             }

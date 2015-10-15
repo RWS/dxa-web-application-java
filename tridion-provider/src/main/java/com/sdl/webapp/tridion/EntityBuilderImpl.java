@@ -24,6 +24,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -32,7 +33,8 @@ import java.util.Objects;
 
 import static com.sdl.webapp.tridion.fieldconverters.FieldUtils.getStringValue;
 
-public final class EntityBuilderImpl implements EntityBuilder {
+@Component
+final class EntityBuilderImpl implements EntityBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(EntityBuilderImpl.class);
 
     private static final String DEFAULT_AREA_NAME = "Core";
@@ -52,7 +54,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
     @Autowired
     EntityBuilderImpl(ViewModelRegistry viewModelRegistry, SemanticMapper semanticMapper,
-                  FieldConverterRegistry fieldConverterRegistry, SemanticMappingRegistry semanticMappingRegistry, ModelBuilderPipeline builder) {
+                      FieldConverterRegistry fieldConverterRegistry, SemanticMappingRegistry semanticMappingRegistry, ModelBuilderPipeline builder) {
         this.viewModelRegistry = viewModelRegistry;
         this.semanticMapper = semanticMapper;
         this.fieldConverterRegistry = fieldConverterRegistry;
@@ -91,7 +93,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
             // Get entity class through semantic mapping registry instead using implicit mapping
             //
             entityClass = this.semanticMappingRegistry.getEntityClass(component.getSchema().getRootElement());
-            if ( entityClass == null ) {
+            if (entityClass == null) {
                 throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
                         "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
             }
@@ -123,7 +125,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
             // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
             //
-            if ( entity instanceof EclItem ) {
+            if (entity instanceof EclItem) {
                 fillEclItem(component, localization, (EclItem) entity);
             }
         }
@@ -133,9 +135,9 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
         String htmlClasses = FieldUtils.getStringValue(componentPresentation.getComponentTemplate().getMetadata(), "htmlClasses");
         if (!Strings.isNullOrEmpty(htmlClasses)) {
-        	entity.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
+            entity.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
         }
-        
+
         return entity;
     }
 
@@ -143,26 +145,26 @@ public final class EntityBuilderImpl implements EntityBuilder {
     public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
             throws ContentProviderException {
         final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-        return createEntity(component, localization,entityClass, semanticSchema);
+        return createEntity(component, localization, entityClass, semanticSchema);
     }
 
     public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization)
             throws ContentProviderException {
 
         final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-        String semanticTypeName =  semanticSchema.getRootElement();
+        String semanticTypeName = semanticSchema.getRootElement();
         //Try to find the fully qualified name:
-        for(EntitySemantics es: semanticSchema.getEntitySemantics()){
-            if(es.getEntityName().equals(semanticTypeName)){
+        for (EntitySemantics es : semanticSchema.getEntitySemantics()) {
+            if (es.getEntityName().equals(semanticTypeName)) {
                 //TODO: TW, the vocabulary.getVocab() is null, using id
-                semanticTypeName = String.format("%s:%s",es.getVocabulary().getId() ,semanticTypeName);
+                semanticTypeName = String.format("%s:%s", es.getVocabulary().getId(), semanticTypeName);
                 break;
             }
         }
 
         final Class<? extends AbstractEntityModel> entityClass;
         try {
-            entityClass = (Class<? extends AbstractEntityModel>)viewModelRegistry.getMappedModelTypes(semanticTypeName);
+            entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(semanticTypeName);
             if (entityClass == null) {
                 throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
                         "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
@@ -178,15 +180,14 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
     public EntityModel createEntityOLD(Component component, EntityModel originalEntityModel, Localization localization)
             throws ContentProviderException {
-       // final org.dd4t.contentmodel.Component component = componentPresentation.getComponent();
         final String componentId = component.getId();
         LOG.debug("Creating entity for component: {}", componentId);
         final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-             
+
         String semanticTypeName = semanticSchema.getRootElement();
         final Class<? extends AbstractEntityModel> entityClass;
         try {
-            entityClass = (Class<? extends AbstractEntityModel>)viewModelRegistry.getMappedModelTypes(semanticTypeName);
+            entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(semanticTypeName);
             if (entityClass == null) {
                 throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
                         "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
@@ -219,16 +220,13 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
             // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
             //
-            if ( entity instanceof EclItem ) {
+            if (entity instanceof EclItem) {
                 final EclItem eclItem = (EclItem) entity;
                 eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
             }
         }
 
-        //createEntityData(entity, componentPresentation);
-        //entity.setMvcData(createMvcData(componentPresentation));
 
-             
         return entity;
     }
 
@@ -264,10 +262,6 @@ public final class EntityBuilderImpl implements EntityBuilder {
         if (entity instanceof EclItem) {
             fillEclItem(component, localization, (EclItem) entity);
         }
-
-        //createEntityData(entity, componentPresentation);
-        //entity.setMvcData(createMvcData(componentPresentation));
-
 
         return entity;
     }
@@ -327,11 +321,10 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
         ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
 
-        if ( entity instanceof EclItem ) {
-        	xpmMetaDataBuilder.put("ComponentID", ((EclItem) entity).getUri());
-        }
-        else {
-        	xpmMetaDataBuilder.put("ComponentID", component.getId());
+        if (entity instanceof EclItem) {
+            xpmMetaDataBuilder.put("ComponentID", ((EclItem) entity).getUri());
+        } else {
+            xpmMetaDataBuilder.put("ComponentID", component.getId());
         }
         xpmMetaDataBuilder.put("ComponentModified",
                 ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
@@ -409,25 +402,27 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
     private String[] splitName(String name) {
         final String[] parts = name.split(":");
-        return parts.length > 1 ? parts : new String[] { DEFAULT_AREA_NAME, name };
+        return parts.length > 1 ? parts : new String[]{DEFAULT_AREA_NAME, name};
     }
 
-    private Map<String,Object> getMvcMetadata(ComponentTemplate componentTemplate) {
+    private Map<String, Object> getMvcMetadata(ComponentTemplate componentTemplate) {
 
         // TODO: Move this code into a generic MvcDataHelper class
 
-        Map<String,Object> metadata = new HashMap<>();
-        Map<String,Field> metadataFields = componentTemplate.getMetadata();
-        for ( String fieldName : metadataFields.keySet() ) {
-            if ( fieldName.equals("view") ||
+        Map<String, Object> metadata = new HashMap<>();
+        Map<String, Field> metadataFields = componentTemplate.getMetadata();
+
+        for (Map.Entry<String, Field> entry : metadataFields.entrySet()) {
+            String fieldName = entry.getKey();
+            if (fieldName.equals("view") ||
                     fieldName.equals("regionView") ||
                     fieldName.equals("controller") ||
                     fieldName.equals("action") ||
-                    fieldName.equals("routeValues") ) {
+                    fieldName.equals("routeValues")) {
                 continue;
             }
-            Field field = metadataFields.get(fieldName);
-            if ( field.getValues().size() > 0 ) {
+            Field field = entry.getValue();
+            if (field.getValues().size() > 0) {
                 metadata.put(fieldName, field.getValues().get(0).toString()); // Assume single-value text fields for template metadata
             }
         }

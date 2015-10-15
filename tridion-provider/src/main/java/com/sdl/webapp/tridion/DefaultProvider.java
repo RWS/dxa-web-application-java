@@ -82,9 +82,6 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
     private final ComponentPresentationFactory dd4tComponentPresentationFactory;
 
-//    private final PageBuilder pageBuilder;
-//    private final EntityBuilder entityBuilder;
-
     @Autowired
     private ModelBuilderPipeline modelBuilderPipeline;
 
@@ -92,18 +89,13 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
     @Autowired
     public DefaultProvider(PageFactory dd4tPageFactory,
-                               ComponentPresentationFactory dd4tComponentPresentationFactory,
-                               //PageBuilder pageBuilder,
-                               //EntityBuilder entityBuilder,
-                               LinkResolver linkResolver,
-                               ObjectMapper objectMapper,
-                               WebApplicationContext webApplicationContext) {
+                           ComponentPresentationFactory dd4tComponentPresentationFactory,
+                           LinkResolver linkResolver,
+                           ObjectMapper objectMapper,
+                           WebApplicationContext webApplicationContext) {
 
         this.dd4tPageFactory = dd4tPageFactory;
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
-        //this.pageBuilder = pageBuilder;
-        //this.entityBuilder = entityBuilder;
-
         this.linkResolver = linkResolver;
         this.objectMapper = objectMapper;
         this.webApplicationContext = webApplicationContext;
@@ -137,9 +129,8 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     @Override
     public EntityModel getEntityModel(String id, final Localization localization) throws DxaException {
 
-        String [] idParts = id.split("-");
-        if(idParts.length != 2)
-        {
+        String[] idParts = id.split("-");
+        if (idParts.length != 2) {
             throw new DxaException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", id));
         }
         String componentUri = String.format("tcm:%s-%s", localization.getId(), idParts[0]);

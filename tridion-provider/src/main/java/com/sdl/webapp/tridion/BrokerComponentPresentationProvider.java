@@ -97,8 +97,6 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
             try {
                 // TODO: Use a more generic way of deserializing the DCP
                 // This can not be used as the default JSON factory does not do: addMixInAnnotations(Field.class, BaseFieldMixIn.class);
-                //
-                //return SerializerFactory.deserialize(decodeAndDecompressContent(resultString), ComponentPresentationImpl.class);
 
                 JsonNode parsedResult = JsonDataBinder.getGenericMapper().readTree(decodeAndDecompressContent(resultString));
                 final JsonParser parser = parsedResult.traverse();

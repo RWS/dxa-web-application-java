@@ -60,7 +60,6 @@ public class EntitiesTag extends AbstractMarkupTag {
                 webRequestContext.pushParentRegion(region);
                 webRequestContext.pushContainerSize(containerSize);
             	this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
-                //pageContext.include(ControllerUtils.getIncludePath(entity));
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);
             }

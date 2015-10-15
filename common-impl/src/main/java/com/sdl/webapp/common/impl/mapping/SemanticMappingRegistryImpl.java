@@ -165,12 +165,12 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         }
         if(possibleValues.size() > 0) {
             for (Class<? extends EntityModel> cls : possibleValues) {
-                if (cls.getName().contains(entityNameSplit[1])) {
+                if (cls.getName().contains(entityNameSplit[entityNameSplit.length-1])) {
                     return cls;
-                } else {
-                    return possibleValues.get(0);
                 }
             }
+            return possibleValues.get(0);
+
         }
         return null;
     }

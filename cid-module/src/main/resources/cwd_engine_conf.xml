@@ -25,7 +25,7 @@
     </whitelist>
     <sources>
       <urls>
-        <site>http://localhost:8088</site>
+        <site>http://localhost:8080</site>
       </urls>
     </sources>
   </image>

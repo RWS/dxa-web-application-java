@@ -174,7 +174,7 @@ public class PageController extends BaseController {
      */
     @ExceptionHandler(NotFoundException.class)
     public String handleNotFoundException(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String notFoundPageUrl = webRequestContext.getLocalization().getPath() + "/error-404"; // TODO TSI-775: No need to prefix with WebRequestContext.Localization.Path here (?)
+        String notFoundPageUrl = webRequestContext.getLocalization().getPath() + "error-404"; // TODO TSI-775: No need to prefix with WebRequestContext.Localization.Path here (?)
 
         PageModel originalPageModel;
         try
@@ -188,6 +188,18 @@ public class PageController extends BaseController {
 
         final ViewModel enrichedPageModel = enrichModel(originalPageModel);
         final PageModel pageModel = enrichedPageModel instanceof PageModel ? (PageModel)enrichedPageModel:originalPageModel;
+
+        if (!isIncludeRequest(request)) {
+            request.setAttribute(PAGE_ID, pageModel.getId());
+        }
+
+        request.setAttribute(PAGE_MODEL, pageModel);
+        request.setAttribute(LOCALIZATION, webRequestContext.getLocalization());
+        request.setAttribute(MARKUP, markup);
+        request.setAttribute(MEDIAHELPER, mediaHelper);
+        request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
+        request.setAttribute(SOCIALSHARE_URL, webRequestContext.getFullUrl());
+        request.setAttribute(CONTEXTENGINE, webRequestContext.getContextEngine());
 
         response.setStatus(404);
         return this.viewResolver.resolveView(pageModel.getMvcData(), "Page", request);

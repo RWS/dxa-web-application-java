@@ -93,28 +93,16 @@
 
     <!-- Model builder pipeline configuration -->
 
-    <!--<bean id="PageBuilder" class="com.sdl.webapp.tridion.PageBuilderImpl">
-    </bean>-->
-
-    <!--<bean id="CustomPageBuilder" class="com.sdl.dxa.modules.test.CustomPageBuilderImpl">
-    </bean>
-    <bean id="CustomEntityBuilder" class="com.sdl.dxa.modules.test.CustomEntityBuilder">
-    </bean>-->
-
-    <!--<bean id="CustomEntityBuilder" class="com.sdl.dxa.modules.test.CustomEntityBuilder">
-    </bean>-->
     <bean id="ModelBuilderPipelineManager" class="com.sdl.webapp.tridion.ModelBuilderPipeline" >
         <property name="pageBuilderHandlers">
             <list>
                 <ref bean="pageBuilderImpl"/>
-                <bean class="com.sdl.dxa.modules.test.CustomPageBuilderImpl"/>
             </list>
         </property>
 
         <property name="entityBuilderHandlers">
             <list>
                 <ref bean="entityBuilderImpl"/>
-                <!--<bean class="com.sdl.dxa.modules.test.CustomEntityBuilder"></bean>-->
             </list>
         </property>
     </bean>

@@ -37,7 +37,6 @@ public class AbstractMarkupTag extends TagSupport {
         ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);
         HtmlNode decoratedMarkup = this.decorateMarkup(markup, model);
         pageContext.popBody();
-        //pageContext.getOut().write(decoratedMarkup.toHtml());
         return decoratedMarkup.toHtml();
     }
 

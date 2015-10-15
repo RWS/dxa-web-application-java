@@ -1,10 +1,14 @@
 package com.sdl.webapp.common.api.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.LinkedList;
 import java.util.List;
 
 public class RichText {
 
+    @JsonProperty("Fragments")
     private List<RichTextFragment> fragments;
 
     public List<RichTextFragment> getFragments() {
@@ -33,15 +37,15 @@ public class RichText {
         return result.toString();
     }
 
-    public Boolean IsEmpty() {
+    public Boolean isEmpty() {
         if (!fragments.isEmpty() && fragments.size() > 0) {
             return fragments.get(0) == null || fragments.get(0).toHtml().isEmpty();
         }
         return true;
     }
 
-    public static Boolean IsNullOrEmpty(RichText richText) {
-        return (richText == null) || richText.IsEmpty();
+    public static Boolean isNullOrEmpty(RichText richText) {
+        return (richText == null) || richText.isEmpty();
     }
 
 }

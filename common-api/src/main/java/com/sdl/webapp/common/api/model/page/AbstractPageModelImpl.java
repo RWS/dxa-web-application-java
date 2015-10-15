@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.api.model.page;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -10,19 +13,34 @@ import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import java.util.HashMap;
 import java.util.Map;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractPageModelImpl implements PageModel {
 
-    private final String XpmPageSettingsMarkup = "<!-- Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\",\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"} -->";
-    private final String XpmPageScript = "<script type=\"text/javascript\" language=\"javascript\" defer=\"defer\" src=\"%s/WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js\" id=\"tridion.siteedit\"></script>";
+    private static final String XpmPageSettingsMarkup = "<!-- Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\",\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"} -->";
+    private static final String XpmPageScript = "<script type=\"text/javascript\" language=\"javascript\" defer=\"defer\" src=\"%s/WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js\" id=\"tridion.siteedit\"></script>";
 
-
+    @JsonProperty("Id")
     protected String id;
+
+    @JsonIgnore
     protected String name;
+
+    @JsonProperty("Title")
     protected String title;
+
+    @JsonIgnore
     protected String htmlClasses;
+
+    @JsonProperty("Meta")
     protected Map<String, String> meta = new HashMap<>();
+
+    @JsonProperty("Regions")
     protected RegionModelSet regions = new RegionModelSetImpl();
+
+    @JsonProperty("XpmMetadata")
     protected Map<String, String> xpmMetadata = new HashMap<>();
+
+    @JsonProperty("MvcData")
     protected MvcData mvcData;
 
     @Override
@@ -82,7 +100,7 @@ public abstract class AbstractPageModelImpl implements PageModel {
 
     @Override
     public void setXpmMetadata(Map<String, String> xpmMetadata) {
-        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);;
+        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
     }
 
     @Override

@@ -1,7 +1,10 @@
 package com.sdl.webapp.common.api.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class RichTextFragmentImpl implements RichTextFragment {
 
+    @JsonProperty("Html")
     private String html;
 
 
@@ -19,5 +22,9 @@ public class RichTextFragmentImpl implements RichTextFragment {
     public String toString() {
 
         return html;
+    }
+
+    public String getHtml(){
+        return toHtml();
     }
 }

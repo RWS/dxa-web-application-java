@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.joda.time.DateTime;
 
@@ -20,6 +21,7 @@ public class SitemapItem extends AbstractEntityModel {
     private List<SitemapItem> items;
 
     @JsonProperty("PublishedDate")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private DateTime publishedDate;
 
     @JsonProperty("Visible")

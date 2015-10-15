@@ -133,6 +133,8 @@ public final class MvcDataImpl implements MvcData {
 
     @Override
     public boolean equals(Object that) {
+        if(that == null)
+            return false;
         return this.toString().equals(that.toString());
     }
 

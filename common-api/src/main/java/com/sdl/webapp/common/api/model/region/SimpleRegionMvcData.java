@@ -1,5 +1,7 @@
 package com.sdl.webapp.common.api.model.region;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.model.MvcData;
 
 import java.util.Collections;
@@ -12,14 +14,28 @@ import java.util.Map;
  */
 public class SimpleRegionMvcData implements MvcData {
 
+    @JsonProperty("ControllerAreaName")
     private String controllerAreaName = "Core";
+
+    @JsonProperty("ControllerName")
     private String controllerName = "Region";
+
+    @JsonProperty("ActionName")
     private String actionName = "Region";
+
+    @JsonProperty("AreaName")
     private String areaName = "Core";
+
+    @JsonProperty("RegionName")
     private String regionName;
+
+    @JsonProperty("ViewName")
     private String viewName;
 
+    @JsonIgnore
     private Map<String, Object> metadata = Collections.emptyMap();
+
+    @JsonIgnore
     private Map<String, String> routeValues = Collections.emptyMap();
 
     public SimpleRegionMvcData(String regionName) {

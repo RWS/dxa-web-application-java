@@ -4,5 +4,5 @@ import com.sdl.webapp.common.api.model.EntityModel;
 
 public interface ConditionalEntityEvaluator {
 
-    boolean IncludeEntity(EntityModel entity);
+    boolean includeEntity(EntityModel entity);
 }

@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.api.model.region;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
@@ -24,15 +27,27 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 /**
  * Implementation of {@code Region}.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class RegionModelImpl implements RegionModel {
 
     private final String XpmRegionMarkup = "<!-- Start Region: {title: \"%s\", allowedComponentTypes: [%s], minOccurs: %s} -->";
     private final String XpmComponentTypeMarkup = "{schema: \"%s\", template: \"%s\"}";
 
+    @JsonProperty("Name")
     private String name;
-    private ArrayList<EntityModel> entities = new ArrayList<EntityModel>();
+    @JsonIgnore
+    private String htmlClasses;
+
+    @JsonProperty("Entities")
+    private List<EntityModel> entities = new ArrayList<EntityModel>();
+
+    @JsonProperty("XpmMetadata")
     private Map<String, String> xpmMetadata = new HashMap<>();
+
+    @JsonProperty("MvcData")
     private MvcData mvcData;
+
+    @JsonProperty("Regions")
     private RegionModelSet regions;
 
     /*
@@ -55,6 +70,7 @@ public class RegionModelImpl implements RegionModel {
         return name;
     }
 
+    // TODO: Should we really expose a setter for the region name when we already set that in the constructor?
     public void setName(String name) {
         this.name = name;
     }
@@ -75,14 +91,15 @@ public class RegionModelImpl implements RegionModel {
     }
 
     @Override
-    public ArrayList<EntityModel> getEntities() {
+    public List<EntityModel> getEntities() {
         return entities;
     }
 
-    public void setEntities(ArrayList<EntityModel> entities) {
+    public void setEntities(List<EntityModel> entities) {
         this.entities = entities;
     }
 
+    @Override
     public void addEntity(EntityModel entity) {
         this.entities.add(entity);
     }
@@ -154,7 +171,12 @@ public class RegionModelImpl implements RegionModel {
 
     @Override
     public String getHtmlClasses() {
-        throw new UnsupportedOperationException("Not implemented yet");
+        return this.htmlClasses;
+    }
+
+    @Override
+    public void setHtmlClasses(String value) {
+        this.htmlClasses = value;
     }
 
     @Override
@@ -183,7 +205,7 @@ public class RegionModelImpl implements RegionModel {
                 '}';
     }
 
-    class EntityPredicate implements Predicate {
+    static class EntityPredicate implements Predicate {
         private final String entityId;
 
         public EntityPredicate(String id) {

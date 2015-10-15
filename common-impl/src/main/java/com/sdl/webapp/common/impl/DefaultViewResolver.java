@@ -21,14 +21,12 @@ public class DefaultViewResolver extends DefaultImplementation<ViewResolver> imp
     }
 
     @Override
-    public String resolveView(MvcData mvcData, String viewType, int containerSize, HttpServletRequest request) {
-        request.setAttribute("CONTAINERSIZE", containerSize);
-        return mvcData.getAreaName() + "/" + viewType + "/" + mvcData.getViewName();
+    public String resolveView(MvcData mvcData, String viewType, HttpServletRequest request) {
+    	return mvcData.getAreaName() + "/" + viewType + "/" + mvcData.getViewName();
     }
 
     @Override
-    public String resolveView(String viewBaseDir, String viewName, MvcData mvcData, int containerSize, HttpServletRequest request) {
-        request.setAttribute("CONTAINERSIZE", containerSize);
+    public String resolveView(String viewBaseDir, String viewName, MvcData mvcData, HttpServletRequest request) {
         return viewBaseDir + "/" + viewName;
     }
 }

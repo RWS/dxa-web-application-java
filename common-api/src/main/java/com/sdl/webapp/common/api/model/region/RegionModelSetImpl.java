@@ -28,7 +28,7 @@ public class RegionModelSetImpl extends LinkedList<RegionModel> implements Regio
         return matches > 0;
     }
 
-    class RegionsPredicate implements Predicate {
+    static class RegionsPredicate implements Predicate {
         private final String regionName;
 
         public RegionsPredicate(String name) {

@@ -1,14 +1,13 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RichTextFragment;
-import com.sdl.webapp.common.markup.html.HtmlElement;
 
 import java.util.Map;
 
@@ -16,17 +15,18 @@ import java.util.Map;
  * Abstract superclass for implementations of {@code Entity}.
  */
 @SemanticMappingIgnore
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
 
-    private final String XpmComponentPresentationMarkup = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %s} -->";
+    private static final String XPM_COMPONENT_PRESENTATION_MARKUP = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %s} -->";
 
     @JsonProperty("Id")
     private String id;
 
-    @JsonIgnore
+    @JsonProperty("XpmMetadata")
     private Map<String, String> xpmMetadata;
 
-    @JsonIgnore
+    @JsonProperty("XpmPropertyMetadata")
     private Map<String, String> xpmPropertyMetadata;
 
     @JsonIgnore
@@ -51,7 +51,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     }
 
     public void setXpmMetadata(Map<String, String> xpmMetadata) {
-        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
+        this.xpmMetadata = xpmMetadata;
     }
 
     @Override
@@ -60,7 +60,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     }
 
     public void setXpmPropertyMetadata(Map<String, String> propertyData) {
-        this.xpmPropertyMetadata = ImmutableMap.copyOf(propertyData);
+        this.xpmPropertyMetadata = propertyData;
     }
 
     @Override
@@ -77,14 +77,13 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
         return this.htmlClasses;
     }
 
+    @Override
     public void setHtmlClasses(String htmlClasses) {
         this.htmlClasses = htmlClasses;
     }
 
 
     @Override
-
-
     public String getXpmMarkup(Localization localization) {
         if (getXpmMetadata() == null) {
             return "";
@@ -92,7 +91,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
 
         // TODO: Consider data-driven approach (i.e. just render all XpmMetadata key/value pairs)
         return String.format(
-                XpmComponentPresentationMarkup,
+                XPM_COMPONENT_PRESENTATION_MARKUP,
                 getXpmMetadata().get("ComponentID"),
                 getXpmMetadata().get("ComponentModified"),
                 getXpmMetadata().get("ComponentTemplateID"),
@@ -107,7 +106,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
                 String.format("Direct rendering of View Model type '%s' to HTML is not supported." +
                                 " Consider using View Model property of type RichText in combination with DxaRichText() in view code to avoid direct rendering to HTML." +
                                 " Alternatively, override method %s.toHtml().",
-                        getClass().getName())
+                        getClass().getName(), getClass().getName())
         );
     }
 }

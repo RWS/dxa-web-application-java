@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Default implementation of the MediaHelper which can be overriden by addon modules.
+ * Default implementation of the MediaHelper which can be overridden by addon modules.
  */
 @Component
 public class DefaultMediaHelper extends DefaultImplementation<MediaHelper> implements MediaHelper {

@@ -18,7 +18,7 @@ public interface PluggableMarkupRegistry {
         BOTTOM_JS
     }
 
-    ;
+    
 
     public void registerPluggableMarkup(MarkupType markupType, HtmlNode markup);
 

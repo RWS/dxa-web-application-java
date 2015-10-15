@@ -1,9 +1,12 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 public class NavigationLinks extends AbstractEntityModel {
 
+    @JsonProperty("Items")
     private List<Link> items;
 
     public NavigationLinks() {

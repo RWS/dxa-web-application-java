@@ -135,6 +135,8 @@ public class GenericBrokerQuery {
             query.setResultFilter(new PagingFilter(start, pageSize + 1));
         }
 
+        // TODO: Add more filters here
+
         try {
             final String[] ids = query.executeQuery();
             List<String> entityIds = new ArrayList<>();

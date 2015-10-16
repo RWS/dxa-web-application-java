@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.model;
 
 import java.util.Map;
 
-/**
- * Page model.
- */
 public interface PageModel extends ViewModel {
 
     String getId();
@@ -16,6 +13,8 @@ public interface PageModel extends ViewModel {
     Map<String, String> getMeta();
 
     RegionModelSet getRegions();
+
+    boolean containsRegion(String regionName);
 
     void setId(String Id);
 

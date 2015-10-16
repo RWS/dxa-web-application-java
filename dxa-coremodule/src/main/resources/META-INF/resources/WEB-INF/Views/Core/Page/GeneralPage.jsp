@@ -32,25 +32,18 @@
         <dxa:region name="Header" />
         <main class="page-row page-row-expanded ${pageModel.htmlClasses}" role="main">
             <div class="container-fluid page-border">
-                <%
-                boolean hasLeftBar = pageModel.getRegions().containsKey("Left-Navigation") ||
-                pageModel.getRegions().containsKey("Left");
-                int mainContainerSize = hasLeftBar ? 9 : 12;
-                %>
                 <dxa:region name="Hero"/>
                 <dxa:region name="Content-Tools"/>
                 <div class="row">
-                    <% if (hasLeftBar)
-                    {
-                    %>
+                    <c:set var="hasLeftBar" value="${pageModel.containsRegion('Left-Navigation') || pageModel.containsRegion('Left')}"/>
+                    <c:set var="mainContainerSize" value="${hasLeftBar ? 9 : 12}"/>
+                    <c:if test="${hasLeftBar}">
                         <div class="col-sm-12 col-md-3">
                             <dxa:region name="Left-Navigation" containerSize="3"/>
                             <dxa:region name="Left"  containerSize="3"/>
                         </div>
-                     <%
-                     }
-                     %>
-                    <div class="col-sm-12 col-md-<%= mainContainerSize %>">
+                    </c:if>
+                    <div class="col-sm-12 col-md-${mainContainerSize}">
                         <dxa:regions exclude="Hero,Left,Left-Navigation,Header,Footer,Content-Tools" containerSize="${mainContainerSize}"/>
                     </div>
                 </div>

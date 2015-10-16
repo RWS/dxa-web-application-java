@@ -94,6 +94,11 @@ public abstract class AbstractPageModelImpl implements PageModel {
     }
 
     @Override
+    public boolean containsRegion(String regionName) {
+        return getRegions().containsKey(regionName);
+    }
+
+    @Override
     public Map<String, String> getXpmMetadata() {
         return xpmMetadata;
     }

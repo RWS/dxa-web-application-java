@@ -7,8 +7,8 @@ public interface RichTextProcessor {
     /**
      * Resolves links in the specified content.
      *
-     * @param content The content which contains links to resolve.
-     * @return The content, with links resolved.
+     * @param xhtml The content which contains links to resolve
+     * @return The post-processed content, with links resolved
      */
     RichText processRichText(String xhtml, Localization localization);
 }

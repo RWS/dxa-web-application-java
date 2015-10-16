@@ -243,12 +243,10 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
     }
 
     private void removeXLinkAttributes(Element element) {
-        // NOTE: The org.w3c.dom API unfortunately has many design and
-        // implementation flaws, which makes it very
-        // user-unfriendly and hard to work with.
         for (Node attrNode : new NamedNodeMapAdapter(element.getAttributes())) {
             if (XLINK_NS_URI.equals(attrNode.getNamespaceURI()) ||
-                    XMLNS_ATTRIBUTE_NS_URI.equals(attrNode.getNamespaceURI()) && "xlink".equals(attrNode.getLocalName())) {
+                    attrNode.getLocalName().startsWith("data-") ||
+                    (XMLNS_ATTRIBUTE_NS_URI.equals(attrNode.getNamespaceURI()) && "xlink".equals(attrNode.getLocalName()))) {
                 element.removeAttributeNode((Attr) attrNode);
                 return;
             }

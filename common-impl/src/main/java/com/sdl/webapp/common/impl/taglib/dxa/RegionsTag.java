@@ -1,40 +1,33 @@
 package com.sdl.webapp.common.impl.taglib.dxa;
 
-import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
-import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
-
+import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
-
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Set;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
+import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 public class RegionsTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionsTag.class);
 
-    private String exclude;
-
-    private RegionModel parentRegion;
+    private Set<String> excludes;
     private int containerSize;
-        
+
     public void setExclude(String exclude) {
-        this.exclude = exclude;
+        this.excludes = commaDelimitedListToSet(exclude);
     }
-    public void setContainerSize(int containerSize)
-    {
-    	this.containerSize = containerSize;
+    public void setContainerSize(int containerSize) {
+        this.containerSize = containerSize;
     }
 
     @Override
@@ -46,37 +39,27 @@ public class RegionsTag extends AbstractMarkupTag {
         }
 
         WebRequestContext webRequestContext = this.getWebRequestContext();
-        
-        parentRegion = webRequestContext.getParentRegion();
 
-        Set<String> excludes = new HashSet<>();
-        if (!Strings.isNullOrEmpty(exclude)) {
-            excludes.addAll(Arrays.asList(exclude.split("\\s*,\\s*")));
-        }
-
-        RegionModelSet regions = page.getRegions();
-        if (parentRegion != null) {
-            regions = parentRegion.getRegions();
-        }
+        RegionModel parentRegion = webRequestContext.getParentRegion();
+        RegionModelSet regions = (parentRegion == null) ? page.getRegions() : parentRegion.getRegions();
 
         for (RegionModel region : regions) {
             String name = region.getName();
-            if (excludes.contains(name)) {
+            if (this.excludes != null && this.excludes.contains(name)) {
                 LOG.debug("Excluding region: {}", name);
                 continue;
             }
 
             LOG.debug("Including region: {}", name);
-            
+
             try {
-            	pageContext.getRequest().setAttribute("_region_" + name, region);
+                pageContext.getRequest().setAttribute("_region_" + name, region);
                 webRequestContext.pushParentRegion(region);
                 webRequestContext.pushContainerSize(containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing regions tag", e);
-            }
-            finally {
+            } finally {
                 webRequestContext.popParentRegion();
                 webRequestContext.popContainerSize();
             }

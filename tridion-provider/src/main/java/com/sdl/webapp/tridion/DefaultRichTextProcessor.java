@@ -10,9 +10,9 @@ import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.*;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.util.NamedNodeMapAdapter;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.XMLUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 
 import static com.sdl.webapp.tridion.xpath.XPathResolver.*;
 import static java.lang.Long.parseLong;
-import static javax.xml.XMLConstants.XMLNS_ATTRIBUTE_NS_URI;
 import static javax.xml.xpath.XPathConstants.NODESET;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -185,7 +184,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
             if (!isEmpty(linkUrl)) {
                 linkElement.setAttribute("href", linkUrl);
                 applyHashIfApplicable(linkElement);
-                removeXLinkAttributes(linkElement);
+                removeUnusedAttributes(linkElement);
             } else {
                 moveChildrenToParentAndRemoveNode(linkElement);
             }
@@ -242,15 +241,22 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
         }
     }
 
-    private void removeXLinkAttributes(Element element) {
-        for (Node attrNode : new NamedNodeMapAdapter(element.getAttributes())) {
-            if (XLINK_NS_URI.equals(attrNode.getNamespaceURI()) ||
-                    attrNode.getLocalName().startsWith("data-") ||
-                    (XMLNS_ATTRIBUTE_NS_URI.equals(attrNode.getNamespaceURI()) && "xlink".equals(attrNode.getLocalName()))) {
-                element.removeAttributeNode((Attr) attrNode);
-                return;
+    private void removeUnusedAttributes(Element element) {
+        NamedNodeMap attributes = element.getAttributes();
+        int length = attributes.getLength();
+        for (int i = 0; i < length; i++) {
+            Attr attribute = (Attr) attributes.item(i);
+            if (isUnusedAttribute(attribute)) {
+                element.removeAttributeNode(attribute);
+                i--;
+                length--;
             }
         }
+    }
+
+    private boolean isUnusedAttribute(Attr attribute) {
+        return attribute != null && (StringUtils.startsWithAny(attribute.getLocalName(), "data-", "xlink")
+                || StringUtils.startsWithAny(attribute.getName(), "xlink:", "xmlns:"));
     }
 
     private void moveChildrenToParentAndRemoveNode(Node node) {

@@ -14,7 +14,7 @@ import javax.xml.xpath.XPathFactory;
  * Uses {@link XPathExpression} which is not thread-safe.
  */
 public enum XPathResolver {
-    XPATH_LINKS("//a[@xlink:href[starts-with(string(.),'tcm:')]][@href='' or not(@href)]"),
+    XPATH_LINKS("//a[@xlink:href]"),
     XPATH_YOUTUBE("//img[@data-youTubeId]"),
     XPATH_IMAGES("//img[@data-schemaUri]");
 

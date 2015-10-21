@@ -1,13 +1,12 @@
 package com.sdl.webapp.common.impl;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.model.*;
-import com.sdl.webapp.common.impl.mapping.MvcDataImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.MvcDataImpl;
+import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.ViewModel;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
 
-/**
- * Created by Administrator on 13/10/2015.
- */
 public abstract class AbstractInitializer {
 
     private final ViewModelRegistry viewModelRegistry;

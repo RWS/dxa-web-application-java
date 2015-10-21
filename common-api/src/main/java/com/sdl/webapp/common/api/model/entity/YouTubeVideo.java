@@ -5,16 +5,15 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.MvcDataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.w3c.dom.Node;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
-import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
@@ -100,11 +99,12 @@ public class YouTubeVideo extends MediaItem {
         this.setYouTubeId(xhtmlElement.getAttributes().getNamedItem("data-youTubeId").getNodeValue());
         this.setHeadline(xhtmlElement.getAttributes().getNamedItem("data-headline").getNodeValue());
 
-        try {
-            this.setMvcData(new MediaItemMvcData("Core:Entity:YouTubeVideo"));
-        } catch (DxaException e) {
+        this.setMvcData(getMvcData());
+    }
 
-        }
+    @Override
+    public MvcData getMvcData() {
+        return new MvcDataImpl("Core:Entity:YouTubeVideo").defaults(MvcDataImpl.Defaults.ENTITY);
     }
 
     @Override

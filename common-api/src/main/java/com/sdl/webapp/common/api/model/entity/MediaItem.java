@@ -16,6 +16,31 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA
 @SemanticEntity(entityName = "MediaObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public abstract class MediaItem extends AbstractEntityModel {
 
+    private static final HashMap<String, String> MIME_TYPE_TO_ICON_CLASS_MAPPING;
+
+    static {
+        MIME_TYPE_TO_ICON_CLASS_MAPPING = new HashMap<>();
+
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("application/ms-excel", "excel");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("application/pdf", "pdf");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("application/x-wav", "audio");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("audio/x-mpeg", "audio");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("application/msword", "word");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("text/rtf", "word");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("application/zip", "archive");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("image/gif", "image");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("image/jpeg", "image");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("image/png", "image");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("image/x-bmp", "image");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("text/plain", "text");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("text/css", "code");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("application/x-javascript", "code");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("application/ms-powerpoint", "powerpoint");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("video/vnd.rn-realmedia", "video");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("video/quicktime", "video");
+        MIME_TYPE_TO_ICON_CLASS_MAPPING.put("video/mpeg", "video");
+    }
+
     @SemanticProperty("s:contentUrl")
     @JsonProperty("Url")
     private String url;
@@ -79,8 +104,13 @@ public abstract class MediaItem extends AbstractEntityModel {
     }
 
     @JsonIgnore
+    public boolean isImage() {
+        return false;
+    }
+
+    @JsonIgnore
     public String getIconClass() {
-        String fileType = FontAwesomeMimeTypeToIconClassMapping.containsKey(this.getMimeType()) ? FontAwesomeMimeTypeToIconClassMapping.get(this.getMimeType()) : null;
+        String fileType = MIME_TYPE_TO_ICON_CLASS_MAPPING.get(this.getMimeType());
         return fileType != null ? String.format("fa-file-%s-o", fileType) : "fa-file";
     }
 
@@ -132,30 +162,5 @@ public abstract class MediaItem extends AbstractEntityModel {
         }
         this.setMimeType(xhtmlElement.getAttributes().getNamedItem("data-multimediaMimeType").getNodeValue());
         this.setIsEmbedded(true);
-    }
-
-    private static final HashMap<String, String> FontAwesomeMimeTypeToIconClassMapping;
-
-    static {
-        FontAwesomeMimeTypeToIconClassMapping = new HashMap<String, String>();
-
-        FontAwesomeMimeTypeToIconClassMapping.put("application/ms-excel", "excel");
-        FontAwesomeMimeTypeToIconClassMapping.put("application/pdf", "pdf");
-        FontAwesomeMimeTypeToIconClassMapping.put("application/x-wav", "audio");
-        FontAwesomeMimeTypeToIconClassMapping.put("audio/x-mpeg", "audio");
-        FontAwesomeMimeTypeToIconClassMapping.put("application/msword", "word");
-        FontAwesomeMimeTypeToIconClassMapping.put("text/rtf", "word");
-        FontAwesomeMimeTypeToIconClassMapping.put("application/zip", "archive");
-        FontAwesomeMimeTypeToIconClassMapping.put("image/gif", "image");
-        FontAwesomeMimeTypeToIconClassMapping.put("image/jpeg", "image");
-        FontAwesomeMimeTypeToIconClassMapping.put("image/png", "image");
-        FontAwesomeMimeTypeToIconClassMapping.put("image/x-bmp", "image");
-        FontAwesomeMimeTypeToIconClassMapping.put("text/plain", "text");
-        FontAwesomeMimeTypeToIconClassMapping.put("text/css", "code");
-        FontAwesomeMimeTypeToIconClassMapping.put("application/x-javascript", "code");
-        FontAwesomeMimeTypeToIconClassMapping.put("application/ms-powerpoint", "powerpoint");
-        FontAwesomeMimeTypeToIconClassMapping.put("video/vnd.rn-realmedia", "video");
-        FontAwesomeMimeTypeToIconClassMapping.put("video/quicktime", "video");
-        FontAwesomeMimeTypeToIconClassMapping.put("video/mpeg", "video");
     }
 }

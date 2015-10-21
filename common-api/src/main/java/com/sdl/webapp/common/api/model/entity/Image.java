@@ -2,18 +2,18 @@ package com.sdl.webapp.common.api.model.entity;
 
 import java.util.Locale;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.MvcDataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.w3c.dom.Node;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
-import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
@@ -37,6 +37,12 @@ public class Image extends MediaItem {
 
     public void setAlternateText(String alternateText) {
         this.alternateText = alternateText;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isImage() {
+        return true;
     }
 
     @Override
@@ -83,11 +89,12 @@ public class Image extends MediaItem {
         super.readFromXhtmlElement(xhtmlElement);
 
         this.setAlternateText(xhtmlElement.getAttributes().getNamedItem("alt").getNodeValue());
-        try {
-            this.setMvcData(new MediaItemMvcData("Core:Entity:Image"));
-        } catch (DxaException e) {
+        this.setMvcData(getMvcData());
+    }
 
-        }
+    @Override
+    public MvcData getMvcData() {
+        return new MvcDataImpl("Core:Entity:Image").defaults(MvcDataImpl.Defaults.ENTITY);
     }
 
     @Override

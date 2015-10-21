@@ -11,6 +11,7 @@ import com.sdl.webapp.common.api.mapping.config.EntitySemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.EclItem;
@@ -145,6 +146,7 @@ final class EntityBuilderImpl implements EntityBuilder {
         return createEntity(component, localization, entityClass, semanticSchema);
     }
 
+    @Override
     public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization)
             throws ContentProviderException {
 
@@ -172,59 +174,6 @@ final class EntityBuilderImpl implements EntityBuilder {
         }
 
         return createEntity(component, localization, entityClass, semanticSchema);
-    }
-
-
-    public EntityModel createEntityOLD(Component component, EntityModel originalEntityModel, Localization localization)
-            throws ContentProviderException {
-        final String componentId = component.getId();
-        LOG.debug("Creating entity for component: {}", componentId);
-        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-
-        String semanticTypeName = semanticSchema.getRootElement();
-        final Class<? extends AbstractEntityModel> entityClass;
-        try {
-            entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(semanticTypeName);
-            if (entityClass == null) {
-                throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
-                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
-            }
-        } catch (DxaException e) {
-            throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
-                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
-        }
-
-
-        final AbstractEntityModel entity;
-        try {
-            entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
-                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this.builder));
-        } catch (SemanticMappingException e) {
-            throw new ContentProviderException(e);
-        }
-
-        entity.setId(componentId.split("-")[1]);
-
-        // Special handling for media items
-        if (entity instanceof MediaItem && component.getMultimedia() != null &&
-                !Strings.isNullOrEmpty(component.getMultimedia().getUrl())) {
-            final Multimedia multimedia = component.getMultimedia();
-            final MediaItem mediaItem = (MediaItem) entity;
-            mediaItem.setUrl(multimedia.getUrl());
-            mediaItem.setFileName(multimedia.getFileName());
-            mediaItem.setFileSize(multimedia.getSize());
-            mediaItem.setMimeType(multimedia.getMimeType());
-
-            // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
-            //
-            if (entity instanceof EclItem) {
-                final EclItem eclItem = (EclItem) entity;
-                eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
-            }
-        }
-
-
-        return entity;
     }
 
     private EntityModel createEntity(Component component, Localization localization, Class<? extends AbstractEntityModel> entityClass, SemanticSchema semanticSchema)
@@ -334,6 +283,7 @@ final class EntityBuilderImpl implements EntityBuilder {
     }
 
     private MvcData createMvcData(ComponentPresentation componentPresentation) {
+
         final MvcDataImpl mvcData = new MvcDataImpl();
 
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();

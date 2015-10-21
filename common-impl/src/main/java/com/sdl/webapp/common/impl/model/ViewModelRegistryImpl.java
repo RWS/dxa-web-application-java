@@ -1,38 +1,27 @@
 package com.sdl.webapp.common.impl.model;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
-import com.sdl.webapp.common.api.mapping.annotations.*;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
-import com.sdl.webapp.common.api.model.entity.*;
-import com.sdl.webapp.common.api.model.page.AbstractPageModelImpl;
-import com.sdl.webapp.common.api.model.page.PageModelImpl;
-import com.sdl.webapp.common.api.model.region.RegionModelImpl;
-import com.sdl.webapp.common.api.model.region.SimpleRegionMvcData;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.impl.mapping.MvcDataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-/**
- * Implementation of {@code ViewModelRegistry}.
- */
 @Component
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
@@ -41,7 +30,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Autowired
     private SemanticMappingRegistry semanticMappingRegistry;
     private final Map<MvcData, Class<? extends ViewModel>> viewEntityClassMap = new HashMap<>();
-    private final Map<Class<? extends ViewModel>, SemanticInfo> modelTypeToSemanticInfoMapping = new HashMap<>();
+    private final Map<Class<? extends ViewModel>, SemanticInfo> modelTypeToSem5anticInfoMapping = new HashMap<>();
     private final Map<String, List<Class<? extends ViewModel>>> semanticTypeToModelTypesMapping = new HashMap<>();
 
     //TODO: Check whether this is really autowired

@@ -7,7 +7,6 @@
 <jsp:useBean id="entity" type="com.sdl.webapp.common.api.model.entity.Article" scope="request"/>
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 <jsp:useBean id="screenWidth" type="com.sdl.webapp.common.api.ScreenWidth" scope="request"/>
-kurde
 <article class="rich-text ${entity.htmlClasses}" ${markup.entity(entity)}>
     <c:choose>
         <c:when test="${not empty entity.image and screenWidth != 'EXTRA_SMALL'}">
@@ -39,12 +38,24 @@ kurde
                     </div>
                 </c:if>
                 <c:if test="${not empty para.media}">
-                    <figure ${markup.property(para, "media")}>
-                        <dxa:media media="${para.media}" widthFactor="100%"/>
-                        <c:if test="${not empty para.caption}">
-                            <figcaption ${markup.property(para, "caption")}>${para.caption}</figcaption>
-                        </c:if>
-                    </figure>
+                    <c:choose>
+                        <c:when test="${para.media.image}">
+                            <figure ${markup.property(para, "media")}>
+                                <dxa:media media="${para.media}" widthFactor="100%"/>
+                                <c:if test="${not empty para.caption}">
+                                    <figcaption ${markup.property(para, "caption")}>${para.caption}</figcaption>
+                                </c:if>
+                            </figure>
+                        </c:when>
+                        <c:otherwise>
+                            <div ${markup.property(para, "media")}>
+                                <dxa:entity entity="${para.media}"/>
+                                <c:if test="${not empty para.caption}">
+                                    <div ${markup.property(para, "caption")}>${para.caption}</div>
+                                </c:if>
+                            </div>
+                        </c:otherwise>
+                    </c:choose>
                 </c:if>
             </div>
         </c:forEach>

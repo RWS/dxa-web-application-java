@@ -3,9 +3,9 @@ package com.sdl.dxa.modules.test.model;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
-import com.sdl.webapp.common.api.model.entity.MediaItemMvcData;
-import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
@@ -94,11 +94,12 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA
         this.setVimeoId(xhtmlElement.getAttributes().getNamedItem("data-vimeoId").getNodeValue());
         this.setHeadline(xhtmlElement.getAttributes().getNamedItem("data-headline").getNodeValue());
 
-        try {
-            this.setMvcData(new MediaItemMvcData("Test:Entity:VimeoVideo"));
-        } catch (DxaException e) {
+        this.setMvcData(getMvcData());
+    }
 
-        }
+    @Override
+    public MvcData getMvcData() {
+        return new MvcDataImpl("Test:Entity:VimeoVideo").defaults(MvcDataImpl.Defaults.ENTITY);
     }
 
     @Override

@@ -367,33 +367,16 @@ final class PageBuilderImpl implements PageBuilder {
                     }
                 }
 
-                MvcDataImpl regionMvcData = null;
-                try {
-                    regionMvcData = new MvcDataImpl(view);
-                    regionMvcData.setRegionName(name);
-                    regionMvcData = InitializeRegionMvcData(regionMvcData);
-                } catch (DxaException e) {
-                    LOG.error("Error creating new Region Mvc Data", e);
-                }
+                MvcDataImpl regionMvcData = new MvcDataImpl(view);
+                regionMvcData.setRegionName(name);
+                regionMvcData = InitializeRegionMvcData(regionMvcData);
+
 
                 try {
                     RegionModel regionModel = CreateRegionModel(regionMvcData);
                     regions.add(regionModel);
-                } catch (IllegalAccessException e) {
+                } catch (IllegalAccessException | InstantiationException | DxaException | InvocationTargetException | NoSuchMethodException e) {
                     LOG.error("Error creating region for view '{}'.", view, e);
-                    continue;
-                } catch (InstantiationException e) {
-                    LOG.error("Error creating region for view '{}'.", view, e);
-                    continue;
-                } catch (DxaException e) {
-                    LOG.error("Error creating region for view '{}'.", view, e);
-                    continue;
-                } catch (NoSuchMethodException e) {
-                    LOG.error("Error creating region for view '{}'.", view, e);
-                    continue;
-                } catch (InvocationTargetException e) {
-                    LOG.error("Error creating region for view '{}'.", view, e);
-                    continue;
                 }
 
             }

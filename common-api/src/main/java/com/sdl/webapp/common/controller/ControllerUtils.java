@@ -3,7 +3,6 @@ package com.sdl.webapp.common.controller;
 import com.google.common.base.Joiner;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 
 import java.util.ArrayList;
@@ -19,14 +18,6 @@ public final class ControllerUtils {
     public static final String SERVER_ERROR_VIEW = "Shared/ServerError";
 
     private ControllerUtils() {
-    }
-
-    public static String getIncludePath(PageModel page) {
-       /* final MvcData mvcData = page.getMvcData();
-        return getIncludePathPrefix(mvcData) +
-                page.getName() +
-                getQueryParameters(mvcData);*/
-        throw new UnsupportedOperationException("getIncludePath with parameter PageModel is no longer supported");
     }
 
     public static String getIncludePath(RegionModel region) {

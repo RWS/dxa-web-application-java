@@ -45,7 +45,7 @@ public class MvcDataImpl implements MvcData {
      *                          or 'AreaName:ViewName' or 'AreaName:ControllerName:ViewName.'
      */
     public MvcDataImpl(String qualifiedViewName) {
-        String[] parts = qualifiedViewName == null ? null : qualifiedViewName.split(":");
+        String[] parts = qualifiedViewName == null || qualifiedViewName.isEmpty() ? null : qualifiedViewName.split(":");
 
         if (parts == null || parts.length < 1 || parts.length > 3) {
             throw new IllegalArgumentException(

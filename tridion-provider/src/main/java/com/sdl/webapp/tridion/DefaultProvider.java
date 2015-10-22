@@ -210,8 +210,16 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         brokerQuery.setStart(contentList.getStart());
         brokerQuery.setPublicationId(Integer.parseInt(localization.getId()));
         brokerQuery.setPageSize(contentList.getPageSize());
-        brokerQuery.setSchemaId(mapSchema(contentList.getContentType().getKey(), localization));
-        brokerQuery.setSort(contentList.getSort().getKey());
+        if (contentList.getContentType() != null) {
+            brokerQuery.setSchemaId(mapSchema(contentList.getContentType().getKey(), localization));
+        } else {
+            LOG.error("ContentList {} - ContentType is null", contentList.getId());
+        }
+        if (contentList.getSort() != null) {
+            brokerQuery.setSort(contentList.getSort().getKey());
+        } else {
+            LOG.error("ContentList {} - Sort is null", contentList.getId());
+        }
 
         // Execute query
         try {

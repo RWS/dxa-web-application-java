@@ -79,10 +79,11 @@ public class EntityTag extends AbstractMarkupTag {
                 if (regionName != null) {
                     LOG.debug("Including entity: {}/{}", regionName, entity.getId());
             	    pageContext.getRequest().setAttribute("_region_" + regionName, region);
-                } else {
-                    LOG.debug("Including entity without region: {}", entity.getId());
-                    pageContext.getRequest().setAttribute("_entity_" + entity.getId(), entity);
                 }
+
+                LOG.debug("Including entity into request: {}", entity.getId());
+                pageContext.getRequest().setAttribute("_entity_" + entity.getId(), entity);
+
                 webRequestContext.pushContainerSize(containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
             } catch (ServletException | IOException e) {

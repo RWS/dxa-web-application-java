@@ -11,7 +11,7 @@ dd4t-2-java
 1. Download and install Maven: https://maven.apache.org/run-maven/index.html
 2. Install all Tridion dependencies (aka JAR files) in your local Maven repository as these are not available in Maven Central. The general command to do this is:
 
-		mvn -q install:install-file -DgroupId=com.tridion.contentdelivery -DartifactId=cd_broker -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_broker-7.1.0.jar
+		mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_broker -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_broker-7.1.0.jar
 		
 	Repeat for all other Tridion jar files.
 	
@@ -39,42 +39,42 @@ dd4t-2-java
 	A fairly normal setup for a DD4T 2 web application with Tridion dependencies included is: 
 	
 	     <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_ambient</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_broker</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_cache</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_core</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_datalayer</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_dynamic</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_linking</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_model</artifactId>
             <version>${tridion.version}</version>
         </dependency>
@@ -82,7 +82,7 @@ dd4t-2-java
 	Next, Tridion expects the following third party dependencies which are not in Maven Central and therefore have to be installed locally as well:
 	
 		<dependency>
-            <groupId>com.vs</groupId>
+            <groupId>com.vs.ezlicrun</groupId>
             <artifactId>easylicense</artifactId>
             <version>${easylicense-version}</version>
             <scope>runtime</scope>

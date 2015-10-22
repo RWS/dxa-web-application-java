@@ -14,14 +14,12 @@ public class RichTextFragmentImpl implements RichTextFragment {
 
     @Override
     public String toHtml() {
-
         return html;
     }
 
     @Override
     public String toString() {
-
-        return html;
+        return toHtml();
     }
 
     public String getHtml(){

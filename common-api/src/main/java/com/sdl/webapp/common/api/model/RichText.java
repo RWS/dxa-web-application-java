@@ -2,9 +2,13 @@ package com.sdl.webapp.common.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 public class RichText {
 
@@ -20,7 +24,7 @@ public class RichText {
     }
 
     public RichText(String html) {
-        this.fragments = new LinkedList<RichTextFragment>();
+        this.fragments = new LinkedList<>();
         this.fragments.add(new RichTextFragmentImpl(html));
     }
 
@@ -32,20 +36,32 @@ public class RichText {
     public String toString() {
         StringBuilder result = new StringBuilder();
         for (RichTextFragment frag : fragments) {
-            result.append(frag.toHtml());
+            result.append(frag);
         }
         return result.toString();
     }
 
+    @JsonIgnore
     public Boolean isEmpty() {
-        if (!fragments.isEmpty() && fragments.size() > 0) {
-            return fragments.get(0) == null || fragments.get(0).toHtml().isEmpty();
-        }
-        return true;
+        return CollectionUtils.isEmpty(fragments) ||
+                fragments.get(0) == null || StringUtils.isEmpty(fragments.get(0).toHtml());
     }
 
+    @JsonIgnore
     public static Boolean isNullOrEmpty(RichText richText) {
         return (richText == null) || richText.isEmpty();
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RichText richText = (RichText) o;
+        return Objects.equals(fragments, richText.fragments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fragments);
+    }
 }

@@ -73,14 +73,15 @@ try
         AddFolderToArchive $war $sourceStagingConfigDirectory "WEB-INF\classes"
     }
     
-    $war.Dispose()
     Write-Host ("Created WAR arcive for {0} site in {1}" -f $DeployType, $targetWarFileName)
 } catch
 {
     Write-Verbose ("Something went wrong: {0}" -f $_.Exception.Message)
+    throw $_
+} finally
+{
     if($war -ne $null)
     {
         $war.Dispose()
     }
-    throw $_
 }

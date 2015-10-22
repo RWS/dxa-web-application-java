@@ -147,7 +147,7 @@ public abstract class BaseController {
      *
      * This method is different from EnrichModel in that it doesn't expect the current Controller to be able to enrich the Entity Model;
      * it creates a Controller associated with the Entity Model for that purpose.
-     * It is used by PageController.EnrichEmbeddedModels.
+     * It is used by PageController.enrichEmbeddedModels.
      */
     protected EntityModel enrichEntityModel(EntityModel entity)
     {

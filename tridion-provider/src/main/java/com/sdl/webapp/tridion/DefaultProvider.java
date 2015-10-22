@@ -74,8 +74,8 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     public static final String DEFAULT_PAGE_NAME = "index";
     public static final String DEFAULT_PAGE_EXTENSION = ".html";
 
-    private static interface TryFindPage<T> {
-        public T tryFindPage(String path, int publicationId) throws ContentProviderException;
+    private interface TryFindPage<T> {
+        T tryFindPage(String path, int publicationId) throws ContentProviderException;
     }
 
     private final org.dd4t.core.factories.PageFactory dd4tPageFactory;

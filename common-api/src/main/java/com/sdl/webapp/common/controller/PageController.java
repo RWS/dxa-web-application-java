@@ -1,14 +1,21 @@
 package com.sdl.webapp.common.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
+import com.sdl.webapp.common.api.content.NavigationProvider;
+import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.*;
+import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
@@ -61,6 +68,9 @@ public class PageController extends BaseController {
     private final ViewResolver viewResolver;
 
     private final DataFormatter dataFormatters;
+
+    @Autowired
+    private NavigationProvider navigationProvider;
 
     @Autowired
     public PageController(ContentProvider contentProvider, LinkResolver linkResolver, MediaHelper mediaHelper,
@@ -120,7 +130,7 @@ public class PageController extends BaseController {
 
         final Localization localization = webRequestContext.getLocalization();
         final PageModel page = getPageModel(requestPath, localization);
-        EnrichEmbeddedModels(page);
+        enrichEmbeddedModels(page);
         LOG.trace("handleGetPageFormatted: page={}", page);
         return dataFormatters.view(page);
     }
@@ -153,6 +163,19 @@ public class PageController extends BaseController {
     @ResponseBody
     public String blankPage() {
         return "";
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
+        LOG.trace("handleGetNavigationJson");
+
+
+        SitemapItem model = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
+
+        return new ObjectMapper()
+                .registerModule(new JodaModule())
+                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+                .writeValueAsString(model);
     }
 
     /**
@@ -236,25 +259,20 @@ public class PageController extends BaseController {
      * Used by <see cref="FormatDataAttribute"/> to get all embedded Models enriched without rendering any Views.
      * @param model   The Page Model to enrich.
      */
-    void EnrichEmbeddedModels(PageModel model)
-    {
-            if (model == null)
-            {
-                return;
-            }
+    private void enrichEmbeddedModels(PageModel model) {
+        if (model == null) {
+            return;
+        }
 
-            for (RegionModel region : model.getRegions())
-            {
-                // NOTE: Currently not enriching the Region Model itself, because we don't support custom Region Controllers (yet).
-                for (int i = 0; i < region.getEntities().size(); i++)
-                {
-                    EntityModel entity = region.getEntities().get(i);
-                    if (entity != null && entity.getMvcData() != null)
-                    {
-                        region.getEntities().set(i, enrichEntityModel(entity));
-                    }
+        for (RegionModel region : model.getRegions()) {
+            // NOTE: Currently not enriching the Region Model itself, because we don't support custom Region Controllers (yet).
+            for (int i = 0; i < region.getEntities().size(); i++) {
+                EntityModel entity = region.getEntities().get(i);
+                if (entity != null && entity.getMvcData() != null) {
+                    region.getEntities().set(i, enrichEntityModel(entity));
                 }
             }
+        }
     }
 
 

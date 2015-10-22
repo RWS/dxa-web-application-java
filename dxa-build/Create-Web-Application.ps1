@@ -64,12 +64,12 @@ try
     $warFile = Get-Item($targetWarFileName)
     $war = [io.compression.zipfile]::Open($warFile.FullName, [System.IO.Compression.ZipArchiveMode]::Update)
 
-    AddFolderToArchive $war $sourceCommonJarsDirectory "WEB-INF\classes"
+    AddFolderToArchive $war $sourceCommonJarsDirectory "WEB-INF\lib"
     AddFolderToArchive $war $sourceCommonConfigDirectory "WEB-INF\classes"
     AddFolderToArchive $war $sourceLicenseDirectory "WEB-INF\classes"
     if($DeployType -eq "Staging")
     {
-        AddFolderToArchive $war $sourceStagingJarsDirectory "WEB-INF\classes"
+        AddFolderToArchive $war $sourceStagingJarsDirectory "WEB-INF\lib"
         AddFolderToArchive $war $sourceStagingConfigDirectory "WEB-INF\classes"
     }
     

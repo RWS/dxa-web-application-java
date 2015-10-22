@@ -278,6 +278,8 @@ final class EntityBuilderImpl implements EntityBuilder {
         xpmMetaDataBuilder.put("ComponentTemplateModified",
                 ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
 
+        xpmMetaDataBuilder.put("IsRepositoryPublished", String.valueOf(componentPresentation.isDynamic()));
+
         entity.setXpmMetadata(xpmMetaDataBuilder.build());
 
     }

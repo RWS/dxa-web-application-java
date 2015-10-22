@@ -23,7 +23,7 @@ public class EclItemTest {
         String uri = "uri",
                 expectedXpmMarkup = "<!-- Start Component Presentation: {\"ComponentID\" : \"uri\", \"ComponentModified\" " +
                         ": \"null\", \"ComponentTemplateID\" : \"null\", \"ComponentTemplateModified\" : \"null\", " +
-                        "\"IsRepositoryPublished\" : null} -->";
+                        "\"IsRepositoryPublished\" : false} -->";
 
         EclItem eclItem = new EclItem() { };
         eclItem.setUri(uri);

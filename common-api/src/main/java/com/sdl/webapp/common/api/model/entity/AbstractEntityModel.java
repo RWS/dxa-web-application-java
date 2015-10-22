@@ -18,7 +18,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
 
-    private static final String XPM_COMPONENT_PRESENTATION_MARKUP = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %s} -->";
+    private static final String XPM_COMPONENT_PRESENTATION_MARKUP = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %b} -->";
 
     @JsonProperty("Id")
     private String id;

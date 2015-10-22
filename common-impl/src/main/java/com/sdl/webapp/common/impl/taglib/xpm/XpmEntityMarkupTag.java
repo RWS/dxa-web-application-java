@@ -8,10 +8,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class XpmEntityMarkupTag extends XpmMarkupTag {
 
-    private static final String COMPONENT_PRESENTATION_PATTERN = "Start Component Presentation: " +
-            "{\"ComponentID\":\"%s\",\"ComponentModified\":\"%s\",\"ComponentTemplateID\":\"%s\"," +
-            "\"ComponentTemplateModified\":\"%s\",\"IsRepositoryPublished\":%s}";
-
     private EntityModel entity;
 
     public void setEntity(EntityModel entity) {

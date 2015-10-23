@@ -99,7 +99,7 @@ public class Teaser extends AbstractEntityModel {
     }
 
     public RichText getText() {
-        return text;
+        return text != null ? text : new RichText("");
     }
 
     public void setText(RichText text) {

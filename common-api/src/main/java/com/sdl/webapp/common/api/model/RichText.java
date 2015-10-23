@@ -25,7 +25,9 @@ public class RichText {
 
     public RichText(String html) {
         this.fragments = new LinkedList<>();
-        this.fragments.add(new RichTextFragmentImpl(html));
+        if (html != null) {
+            this.fragments.add(new RichTextFragmentImpl(html));
+        }
     }
 
     public RichText(List<RichTextFragment> fragments) {

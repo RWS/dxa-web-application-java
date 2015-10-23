@@ -29,12 +29,12 @@
     </copy>
   </target>
   <target name="add-configs" description="Adds the customized configuration files">
-    <copy todir="${build.temp}/WEB-INF/classes">
+    <copy todir="${build.temp}/WEB-INF/classes" overwrite="true">
       <fileset dir="${src-config}/common"/>
     </copy>
   </target>
   <target name="add-configs-staging" description="Adds the customized configuration files needed on staging only">
-    <copy todir="${build.temp}/WEB-INF/classes">
+    <copy todir="${build.temp}/WEB-INF/classes" overwrite="true">
       <fileset dir="${src-config}/staging"/>
     </copy>
   </target>

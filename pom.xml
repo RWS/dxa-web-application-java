@@ -14,13 +14,6 @@
         <module>dxa-common-impl</module>
         <module>dxa-tridion-provider</module>
         <module>dxa-core</module>
-
-        <module>dxa-module-cid</module>
-        <module>dxa-module-test</module>
-        <module>dxa-module-googleanalytics</module>
-        <module>dxa-module-search</module>
-
-        <module>example-webapp</module>
     </modules>
 
     <profiles>

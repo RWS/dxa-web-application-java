@@ -4,185 +4,119 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <artifactId>webapp-reference-impl</artifactId>
+        <groupId>com.sdl.dxa</groupId>
+        <version>1.2-SNAPSHOT</version>
+    </parent>
+
     <artifactId>example-webapp</artifactId>
     <packaging>war</packaging>
 
-    <parent>
-        <groupId>com.sdl</groupId>
-        <artifactId>webapp-reference-impl</artifactId>
-        <version>1.2-SNAPSHOT</version>
-    </parent>
+    <properties>
+        <dxa.version>1.2-SNAPSHOT</dxa.version>
+    </properties>
 
     <build>
         <finalName>${project.artifactId}</finalName>
     </build>
 
     <profiles>
-
         <profile>
             <id>cid</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <dependency>
-                    <groupId>com.sdl</groupId>
-                    <artifactId>cid-module</artifactId>
-                    <version>${project.version}</version>
+                    <artifactId>dxa-module-cid</artifactId>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <version>${dxa.version}</version>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
-
-        <!-- Is not available in the early-access branch -->
-        <!--
-        <profile>
-            <id>cd-8.0.0</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_common_config</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_common_config_api</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_common_config_legacy</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_common_util</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_odata</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_odata_types</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>odata_api</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>odata_client</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>odata_edm</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>odata_parser</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>odata_renderer</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>odata_tridion_client</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>odata_tridion_common</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>javax.cache</groupId>
-                    <artifactId>cache-api</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.ehcache</groupId>
-                    <artifactId>jcache</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        -->
     </profiles>
 
     <!-- Dependencies -->
     <dependencies>
-    
-   		 <!-- Tridion Content Delivery -->
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_ambient</artifactId>
-        </dependency>
-
-
         <!-- SDL Digital Experience Accelerator -->
         <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>common-api</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-common-impl</artifactId>
+            <version>${dxa.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>common-impl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>tridion-provider</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>cid-module</artifactId>
-            <version>${project.version}</version>
-            <scope>runtime</scope>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-core</artifactId>
+            <version>${dxa.version}</version>
         </dependency>
 
-        <!-- Spring Framework -->
+        <!-- custom modules -->
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
+            <groupId>com.sdl.dxa.modules</groupId>
+            <artifactId>dxa-module-search</artifactId>
+            <version>${dxa.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-beans</artifactId>
+            <groupId>com.sdl.dxa.modules</groupId>
+            <artifactId>dxa-module-googleanalytics</artifactId>
+            <version>${dxa.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
+            <groupId>com.sdl.dxa.modules</groupId>
+            <artifactId>dxa-module-test</artifactId>
+            <version>${dxa.version}</version>
         </dependency>
 
-        <!-- Servlet and JSP APIs -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>javax.servlet.jsp-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>jstl</artifactId>
-        </dependency>
+        <!--&lt;!&ndash; Spring Framework &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-core</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-beans</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-context</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-web</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>org.springframework</groupId>-->
+            <!--<artifactId>spring-webmvc</artifactId>-->
+        <!--</dependency>-->
 
-        <!-- Google Guava -->
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
+        <!--&lt;!&ndash; Servlet and JSP APIs &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>javax.servlet</groupId>-->
+            <!--<artifactId>javax.servlet-api</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>javax.servlet.jsp</groupId>-->
+            <!--<artifactId>javax.servlet.jsp-api</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>javax.servlet</groupId>-->
+            <!--<artifactId>jstl</artifactId>-->
+        <!--</dependency>-->
 
-        <!-- Joda Time -->
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
+        <!--&lt;!&ndash; Google Guava &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>com.google.guava</groupId>-->
+            <!--<artifactId>guava</artifactId>-->
+        <!--</dependency>-->
 
-        
+        <!--&lt;!&ndash; Joda Time &ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>joda-time</groupId>-->
+            <!--<artifactId>joda-time</artifactId>-->
+        <!--</dependency>-->
+
 
         <!-- Enable this to get XPM session working
         <dependency>
@@ -191,79 +125,52 @@
             <scope>runtime</scope>
         </dependency>
         -->
-        
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_ambient</artifactId>
-                        <version>${tridion-cd-version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_web</artifactId>
-                        <version>${tridion-cd-version}</version>
-                </dependency>
-                 <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_session</artifactId>
-                        <version>${tridion-cd-version}</version>
-                </dependency>
-                 <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_wrapper</artifactId>
-                        <version>${tridion-cd-version}</version>
-                </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_wrapper</artifactId>
-            <scope>runtime</scope>
-        </dependency>
 
+        <!-- Tridion Content Delivery -->
+        <!--<dependency>-->
+            <!--<groupId>com.tridion</groupId>-->
+            <!--<artifactId>cd_ambient</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.tridion</groupId>-->
+            <!--<artifactId>cd_preview_ambient</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.tridion</groupId>-->
+            <!--<artifactId>cd_preview_web</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.tridion</groupId>-->
+            <!--<artifactId>cd_session</artifactId>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+            <!--<groupId>com.tridion</groupId>-->
+            <!--<artifactId>cd_wrapper</artifactId>-->
+        <!--</dependency>-->
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_cache</artifactId>
-            <scope>runtime</scope>
         </dependency>
 
         <!-- Third-party libraries used by Tridion Content Delivery -->
-        <dependency>
-            <groupId>net.minidev</groupId>
-            <artifactId>json-smart</artifactId>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>net.minidev</groupId>-->
+            <!--<artifactId>json-smart</artifactId>-->
+        <!--</dependency>-->
 
-        <dependency>
-            <groupId>xalan</groupId>
-            <artifactId>xalan</artifactId>
-            <version>2.7.1</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>xml-apis</groupId>
-                    <artifactId>xml-apis</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>runtime</scope>
-        </dependency>
+        <!--<dependency>-->
+            <!--<groupId>xalan</groupId>-->
+            <!--<artifactId>xalan</artifactId>-->
+            <!--<version>2.7.1</version>-->
+            <!--<exclusions>-->
+                <!--<exclusion>-->
+                    <!--<groupId>xml-apis</groupId>-->
+                    <!--<artifactId>xml-apis</artifactId>-->
+                <!--</exclusion>-->
+            <!--</exclusions>-->
+            <!--<scope>runtime</scope>-->
+        <!--</dependency>-->
 
-        <!-- custom modules -->
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>dxa-coremodule</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>dxa-testmodule</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>dxa-googleanalyticsmodule</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>dxa-searchmodule</artifactId>
-            <version>${project.version}</version>
-        </dependency>
 
     </dependencies>
 </project>

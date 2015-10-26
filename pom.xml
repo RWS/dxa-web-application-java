@@ -4,21 +4,23 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.sdl</groupId>
+    <groupId>com.sdl.dxa</groupId>
     <artifactId>webapp-reference-impl</artifactId>
     <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>common-api</module>
-        <module>common-impl</module>
-        <module>tridion-provider</module>
-        <module>cid-module</module>
+        <module>dxa-common-api</module>
+        <module>dxa-common-impl</module>
+        <module>dxa-tridion-provider</module>
+        <module>dxa-core</module>
+
+        <module>dxa-module-cid</module>
+        <module>dxa-module-test</module>
+        <module>dxa-module-googleanalytics</module>
+        <module>dxa-module-search</module>
+
         <module>example-webapp</module>
-        <module>dxa-testmodule</module>
-        <module>dxa-googleanalyticsmodule</module>
-        <module>dxa-searchmodule</module>
-        <module>dxa-coremodule</module>
     </modules>
 
     <profiles>
@@ -355,6 +357,7 @@
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_cache</artifactId>
                 <version>${tridion-cd-version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
@@ -390,6 +393,17 @@
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_wrapper</artifactId>
                 <version>${tridion-cd-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_preview_ambient</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_preview_web</artifactId>
+                <version>${tridion-cd-version}</version>
             </dependency>
 
             <!-- Tridion Contextual Web Delivery (CWD) -->
@@ -401,6 +415,7 @@
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cwd_engine</artifactId>
+                <scope>runtime</scope>
                 <version>${tridion-cwd-version}</version>
             </dependency>
             <dependency>
@@ -534,6 +549,7 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
+                <scope>runtime</scope>
                 <version>${httpcomponents-client-version}</version>
             </dependency>
             <dependency>

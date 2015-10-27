@@ -1,7 +1,6 @@
 package com.sdl.webapp.common.impl.taglib.dxa;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
@@ -13,6 +12,7 @@ import com.sdl.webapp.common.controller.ControllerUtils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletException;
@@ -28,7 +28,6 @@ public class RegionTag extends AbstractMarkupTag {
     private String name;
     private boolean placeholder;
     private String emptyviewname;
-    private RegionModel parentRegion;
     private int containerSize;
     
     public void setName(String name) {
@@ -50,8 +49,8 @@ public class RegionTag extends AbstractMarkupTag {
     @Override
     public int doStartTag() throws JspException {
         WebRequestContext webRequestContext = this.getWebRequestContext();
-        
-        parentRegion = webRequestContext.getParentRegion();
+
+        RegionModel parentRegion = webRequestContext.getParentRegion();
 
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
         if (page == null) {
@@ -59,49 +58,43 @@ public class RegionTag extends AbstractMarkupTag {
             return SKIP_BODY;
         }
 
-
-        RegionModel region = null;
-        if (Strings.isNullOrEmpty(name) || page.getMvcData().getViewName().equals("IncludePage")) {
+        RegionModel region;
+        if (StringUtils.isEmpty(name)) {
             //special case where we wish to render an include page as region
             this.pageContext.setAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE, "1");
             // Create a new Region Model which reflects the Page Model
-            name = page.getName().replace(" ", "-");
-            MvcData mvcData = new SimpleRegionMvcData(name);
+            String regionName = page.getName().replace(" ", "-");
+            MvcData mvcData = new SimpleRegionMvcData(regionName);
 
-            RegionModelImpl includeregion = null;
+            RegionModelImpl includeRegion = null;
             try {
-                includeregion = new RegionModelImpl(name);
-                includeregion.setMvcData(mvcData);
-                includeregion.setRegions(page.getRegions());
+                includeRegion = new RegionModelImpl(regionName);
+                includeRegion.setMvcData(mvcData);
+                includeRegion.setRegions(page.getRegions());
             } catch (DxaException e) {
                 LOG.error(String.format("Exception when creating new regionModel %s", name), e);
                 e.printStackTrace();
             }
 
-            region = includeregion;
+            region = includeRegion;
         } else {
             region = page.getRegions().get(name);
         }
 
-        if(parentRegion != null)
-        {
-        	region = parentRegion.getRegions().get(name);
+        if(parentRegion != null) {
+            region = parentRegion.getRegions().get(name);
         }
         
-        if ( region == null && placeholder == true ) {
+        if (region == null && placeholder) {
             // Render the region even if it is not present on the page, so XPM region markup etc can be generated
-            //
 
             RegionModelImpl placeholderRegion = null;
             try {
                 placeholderRegion = new RegionModelImpl(name);
                 SimpleRegionMvcData mvcData = null;
-                if(Strings.isNullOrEmpty(emptyviewname))
-                {
+                if (StringUtils.isEmpty(emptyviewname)) {
                     mvcData = new SimpleRegionMvcData(name);
-                }
-                else
-                {
+                } else {
                     mvcData = new SimpleRegionMvcData(name, emptyviewname);
                 }
 
@@ -117,17 +110,18 @@ public class RegionTag extends AbstractMarkupTag {
         }
 
         if (region != null) {
-            LOG.debug("Including region: {}", name);
+            String regionName = region.getName();
+            LOG.debug("Including region: {}", regionName);
             
             try {
-            	pageContext.getRequest().setAttribute("_region_" + name, region);
+            	pageContext.getRequest().setAttribute("_region_" + regionName, region);
                 webRequestContext.pushParentRegion(region);
                 webRequestContext.pushContainerSize(containerSize);
 
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
 
             } catch (ServletException | IOException e) {
-                throw new JspException("Error while processing region tag: " + name, e);
+                throw new JspException("Error while processing region tag: " + regionName, e);
             }
             finally {
                 webRequestContext.popParentRegion();
@@ -139,5 +133,4 @@ public class RegionTag extends AbstractMarkupTag {
         
         return SKIP_BODY;
     }
-
 }

@@ -125,10 +125,12 @@ public class MarkupImpl implements Markup {
         }
         if (webRequestContext.isPreview()) {
             final Map<String, String> propertyData = entity.getXpmPropertyMetadata();
-            String xpath = propertyData.get(fieldName);
-            if (!Strings.isNullOrEmpty(xpath)) {
-                xpath += xpath.endsWith("]") ? "" : ("[" + (index + 1) + "]");
-                markup += " " + new HtmlAttribute("data-entity-property-xpath", xpath).toHtml();
+            if (propertyData != null) {
+                String xpath = propertyData.get(fieldName);
+                if (!Strings.isNullOrEmpty(xpath)) {
+                    xpath += xpath.endsWith("]") ? "" : ("[" + (index + 1) + "]");
+                    markup += " " + new HtmlAttribute("data-entity-property-xpath", xpath).toHtml();
+                }
             }
         }
 

@@ -27,7 +27,7 @@ public class AdminController {
         LOG.trace("handleRefresh: localization {}", localization);
         localizationResolver.refreshLocalization(localization);
 
-        return "redirect:" + localization.getPath() + "/";
+        return "redirect:" + localization.getPath();
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{locPath}/admin/refresh")

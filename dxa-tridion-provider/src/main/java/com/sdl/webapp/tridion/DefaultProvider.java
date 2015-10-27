@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -42,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.awt.Graphics2D;
@@ -86,7 +86,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
         private StaticContentFile(File file, String contentType) {
             this.file = file;
-            this.contentType = Strings.isNullOrEmpty(contentType) ? DEFAULT_CONTENT_TYPE : contentType;
+            this.contentType = StringUtils.isEmpty(contentType) ? DEFAULT_CONTENT_TYPE : contentType;
         }
 
         public File getFile() {
@@ -211,7 +211,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     }
 
     private static String processPath(String path) {
-        if (Strings.isNullOrEmpty(path)) {
+        if (StringUtils.isEmpty(path)) {
             return DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
         }
         if (path.endsWith("/")) {

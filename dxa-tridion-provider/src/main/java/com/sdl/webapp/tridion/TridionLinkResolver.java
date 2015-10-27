@@ -6,10 +6,10 @@ import com.tridion.linking.BinaryLink;
 import com.tridion.linking.ComponentLink;
 import com.tridion.linking.Link;
 import com.tridion.linking.PageLink;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 public class TridionLinkResolver implements LinkResolver {
@@ -31,7 +31,7 @@ public class TridionLinkResolver implements LinkResolver {
         String resolvedUrl = resolveLink(url, publicationId, resolveToBinary);
 
         if(url.startsWith("tcm:")) {
-            if (!Strings.isNullOrEmpty(resolvedUrl)) {
+            if (!StringUtils.isEmpty(resolvedUrl)) {
                 if (resolvedUrl.endsWith(DEFAULT_PAGE_EXTENSION)) {
                     resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_EXTENSION.length());
                 }

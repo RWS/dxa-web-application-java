@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -20,6 +19,7 @@ import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.api.formats.DataFormatter;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.Markup;
 
 import org.slf4j.Logger;
@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UrlPathHelper;
@@ -140,13 +141,17 @@ public class PageController extends BaseController {
     @RequestMapping(method = RequestMethod.GET, value = "/resolve/{itemId}")
     public String handleResolve(@PathVariable String itemId, @RequestParam String localizationId,
                                 @RequestParam(required = false) String defaultPath,
-                                @RequestParam(required = false) String defaultItem) {
+                                @RequestParam(required = false) String defaultItem) throws DxaException {
+        if (StringUtils.isEmpty(localizationId)) {
+            throw new DxaException(new IllegalArgumentException("Localization ID is null while it shouldn't be"));
+        }
+
         String url = linkResolver.resolveLink(itemId, localizationId);
-        if (Strings.isNullOrEmpty(url)) {
+        if (StringUtils.isEmpty(url) && !StringUtils.isEmpty(defaultItem)) {
             url = linkResolver.resolveLink(defaultItem, localizationId);
         }
-        if (Strings.isNullOrEmpty(url)) {
-            url = Strings.isNullOrEmpty(defaultPath) ? "/" : defaultPath;
+        if (StringUtils.isEmpty(url)) {
+            url = StringUtils.isEmpty(defaultPath) ? "/" : defaultPath;
         }
         return "redirect:" + url;
     }
@@ -154,7 +159,7 @@ public class PageController extends BaseController {
     @RequestMapping(method = RequestMethod.GET, value = "/{locPath}/resolve/{itemId}")
     public String handleResolveLoc(@PathVariable String locPath, @PathVariable String itemId,
                                    @RequestParam String localizationId, @RequestParam String defaultPath,
-                                   @RequestParam(required = false) String defaultItem) {
+                                   @RequestParam(required = false) String defaultItem) throws DxaException {
         return handleResolve(itemId, localizationId, defaultPath, defaultItem);
     }
 

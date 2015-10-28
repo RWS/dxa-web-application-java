@@ -72,7 +72,7 @@ public class NavigationController extends BaseController {
             throws Exception {
         LOG.trace("handleGetNavigation: regionName={}, entityId={}", regionName, entityId);
 
-        EntityModel entity = getEntityFromRequest(request, regionName, entityId);
+        EntityModel entity = getEntityFromRequest(request, entityId);
 
 
         final String requestPath = webRequestContext.getRequestPath();
@@ -127,7 +127,7 @@ public class NavigationController extends BaseController {
                                    @PathVariable String entityId) throws NavigationProviderException {
         LOG.trace("handleGetSiteMap: regionName={}, entityId={}", regionName, entityId);
 
-        final EntityModel entity = getEntityFromRequest(request, regionName, entityId);
+        final EntityModel entity = getEntityFromRequest(request, entityId);
 
         final SitemapItem navigationModel = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
         navigationModel.setXpmMetadata(entity.getXpmMetadata());

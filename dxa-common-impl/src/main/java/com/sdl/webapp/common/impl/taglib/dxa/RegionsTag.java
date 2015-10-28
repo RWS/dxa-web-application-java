@@ -34,7 +34,7 @@ public class RegionsTag extends AbstractMarkupTag {
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
         if (page == null) {
-            LOG.debug("Page not found in request attributes");
+            LOG.error("Page not found in request attributes");
             return SKIP_BODY;
         }
 
@@ -53,7 +53,7 @@ public class RegionsTag extends AbstractMarkupTag {
             LOG.debug("Including region: {}", name);
 
             try {
-                pageContext.getRequest().setAttribute("_region_" + name, region);
+                pageContext.getRequest().setAttribute("_region_", region);
                 webRequestContext.pushParentRegion(region);
                 webRequestContext.pushContainerSize(containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);

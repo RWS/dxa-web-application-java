@@ -67,20 +67,23 @@ public class MvcDataImpl implements MvcData {
     }
 
     @JsonIgnore
-    private void setMvcData(String viewName) {
+    private MvcDataImpl setMvcData(String viewName) {
         this.viewName = viewName;
+        return this;
     }
 
     @JsonIgnore
-    private void setMvcData(String areaName, String viewName) {
+    private MvcDataImpl setMvcData(String areaName, String viewName) {
         this.setMvcData(viewName);
         this.areaName = areaName;
+        return this;
     }
 
     @JsonIgnore
-    private void setMvcData(String areaName, String controllerName, String viewName) {
+    private MvcDataImpl setMvcData(String areaName, String controllerName, String viewName) {
         this.setMvcData(areaName, viewName);
         this.controllerName = controllerName;
+        return this;
     }
 
     @Override
@@ -88,8 +91,9 @@ public class MvcDataImpl implements MvcData {
         return controllerAreaName;
     }
 
-    public void setControllerAreaName(String controllerAreaName) {
+    public MvcDataImpl setControllerAreaName(String controllerAreaName) {
         this.controllerAreaName = controllerAreaName;
+        return this;
     }
 
     @Override
@@ -97,8 +101,9 @@ public class MvcDataImpl implements MvcData {
         return controllerName;
     }
 
-    public void setControllerName(String controllerName) {
+    public MvcDataImpl setControllerName(String controllerName) {
         this.controllerName = controllerName;
+        return this;
     }
 
     @Override
@@ -106,8 +111,9 @@ public class MvcDataImpl implements MvcData {
         return actionName;
     }
 
-    public void setActionName(String actionName) {
+    public MvcDataImpl setActionName(String actionName) {
         this.actionName = actionName;
+        return this;
     }
 
     @Override
@@ -115,8 +121,9 @@ public class MvcDataImpl implements MvcData {
         return areaName;
     }
 
-    public void setAreaName(String areaName) {
+    public MvcDataImpl setAreaName(String areaName) {
         this.areaName = areaName;
+        return this;
     }
 
     @Override
@@ -124,8 +131,9 @@ public class MvcDataImpl implements MvcData {
         return viewName;
     }
 
-    public void setViewName(String viewName) {
+    public MvcDataImpl setViewName(String viewName) {
         this.viewName = viewName;
+        return this;
     }
 
     @Override
@@ -133,8 +141,9 @@ public class MvcDataImpl implements MvcData {
         return regionAreaName;
     }
 
-    public void setRegionAreaName(String regionAreaName) {
+    public MvcDataImpl setRegionAreaName(String regionAreaName) {
         this.regionAreaName = regionAreaName;
+        return this;
     }
 
     @Override
@@ -142,8 +151,9 @@ public class MvcDataImpl implements MvcData {
         return regionName;
     }
 
-    public void setRegionName(String regionName) {
+    public MvcDataImpl setRegionName(String regionName) {
         this.regionName = regionName;
+        return this;
     }
 
     @Override
@@ -151,8 +161,9 @@ public class MvcDataImpl implements MvcData {
         return routeValues;
     }
 
-    public void setRouteValues(Map<String, String> routeValues) {
+    public MvcDataImpl setRouteValues(Map<String, String> routeValues) {
         this.routeValues = routeValues;
+        return this;
     }
 
     @Override
@@ -160,8 +171,9 @@ public class MvcDataImpl implements MvcData {
         return metadata;
     }
 
-    public void setMetadata(Map<String, Object> metadata) {
+    public MvcDataImpl setMetadata(Map<String, Object> metadata) {
         this.metadata = metadata;
+        return this;
     }
 
     @Override
@@ -191,7 +203,9 @@ public class MvcDataImpl implements MvcData {
 
     public enum Defaults {
 
-        ENTITY("Core", "Entity", "Entity", "Core");
+        ENTITY("Core", "Entity", "Entity", "Core"),
+
+        REGION("Core", "Region", "Region", "Core");
 
         private String controllerAreaName;
         private String controllerName;

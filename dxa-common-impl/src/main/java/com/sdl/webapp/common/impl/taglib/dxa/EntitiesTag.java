@@ -18,12 +18,7 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 public class EntitiesTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(EntitiesTag.class);
 
-    private String regionName;
     private int containerSize;
-
-    public void setRegion(String regionName) {
-        this.regionName = regionName;
-    }
 
     public void setContainerSize(int containerSize) {
         this.containerSize = containerSize;
@@ -39,24 +34,12 @@ public class EntitiesTag extends AbstractMarkupTag {
 
         WebRequestContext webRequestContext = this.getWebRequestContext();
 
-        RegionModel region;
         RegionModel parentRegion = webRequestContext.getParentRegion();
-        if (parentRegion != null) {
-            region = parentRegion;
-        } else {
-            region = page.getRegions().get(regionName);
-        }
 
-        if (region == null) {
-            LOG.debug("Region not found on page: {}", regionName);
-            return SKIP_BODY;
-        }
-
-        for (EntityModel entity : region.getEntities()) {
+        for (EntityModel entity : parentRegion.getEntities()) {
             try {
-                pageContext.getRequest().setAttribute("_region_" + regionName, region);
-                pageContext.getRequest().setAttribute("_entity_" + entity.getId(), entity);
-                webRequestContext.pushParentRegion(region);
+                pageContext.getRequest().setAttribute("_entity_", entity);
+                webRequestContext.pushParentRegion(parentRegion);
                 webRequestContext.pushContainerSize(containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
             } catch (ServletException | IOException e) {

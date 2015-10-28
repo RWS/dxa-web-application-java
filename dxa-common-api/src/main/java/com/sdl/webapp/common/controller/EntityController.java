@@ -43,7 +43,7 @@ public class EntityController extends BaseController {
             throws Exception {
         LOG.trace("handleGetEntity: regionName={}, entityId={}", regionName, entityId);
 
-        final EntityModel originalModel = getEntityFromRequest(request, regionName, entityId);
+        final EntityModel originalModel = getEntityFromRequest(request, entityId);
         final ViewModel enrichedEntity = enrichModel(originalModel);
         final EntityModel entity = enrichedEntity instanceof EntityModel ? (EntityModel)enrichedEntity:originalModel;
 

@@ -131,7 +131,7 @@ public interface WebRequestContext {
     ContextEngine getContextEngine();
 
     // TODO: Should we have setters in this interface??
-    
+
 	boolean getHasNoLocalization();
 
     void setHasNoLocalization(boolean value);

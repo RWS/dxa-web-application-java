@@ -41,7 +41,7 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-            <name>emptyviewname</name>
+            <name>emptyViewName</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
@@ -77,18 +77,8 @@
         <tag-class>com.sdl.webapp.common.impl.taglib.dxa.EntityTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
-            <name>region</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
-            <name>entityId</name>
-            <required>false</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
-        <attribute>
             <name>entity</name>
-            <required>false</required>
+            <required>true</required>
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
@@ -104,11 +94,6 @@
         <name>entities</name>
         <tag-class>com.sdl.webapp.common.impl.taglib.dxa.EntitiesTag</tag-class>
         <body-content>empty</body-content>
-        <attribute>
-            <name>region</name>
-            <required>true</required>
-            <rtexprvalue>true</rtexprvalue>
-        </attribute>
         <attribute>
         	<name>containerSize</name>
             <required>false</required>

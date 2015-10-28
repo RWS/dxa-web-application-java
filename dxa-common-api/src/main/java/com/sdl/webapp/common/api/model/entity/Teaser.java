@@ -10,6 +10,8 @@ import com.sdl.webapp.common.api.model.RichText;
 
 import org.joda.time.DateTime;
 
+import java.util.Objects;
+
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
 
 @SemanticEntities({
@@ -120,6 +122,25 @@ public class Teaser extends AbstractEntityModel {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Teaser teaser = (Teaser) o;
+        return Objects.equals(link, teaser.link) &&
+                Objects.equals(headline, teaser.headline) &&
+                Objects.equals(media, teaser.media) &&
+                Objects.equals(text, teaser.text) &&
+                Objects.equals(date, teaser.date) &&
+                Objects.equals(location, teaser.location);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), link, headline, media, text, date, location);
     }
 
     @Override

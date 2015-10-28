@@ -32,12 +32,12 @@ public class RichTextTag extends AbstractMarkupTag {
         try {
             for (RichTextFragment fragment : content.getFragments()) {
                 EntityModel entityModel = (fragment instanceof EntityModel ? (EntityModel) fragment : null);
-                String htmlFragment = "";
+                String htmlFragment;
                 if (entityModel == null) {
                     htmlFragment = fragment.toHtml();
                 } else {
                     try {
-                        this.pageContext.getRequest().setAttribute("_entity_" + entityModel.getId(), entityModel);
+                        this.pageContext.getRequest().setAttribute("_entity_", entityModel);
                         htmlFragment = this.processInclude(ControllerUtils.getIncludePath(entityModel), entityModel);
                     } catch (ServletException e) {
                         throw new JspException(e);

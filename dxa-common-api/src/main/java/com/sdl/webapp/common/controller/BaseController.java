@@ -35,57 +35,20 @@ public abstract class BaseController {
     @Autowired
     private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
-    protected PageModel getPageFromRequest(HttpServletRequest request) {
-        final PageModel page = (PageModel) request.getAttribute(PAGE_MODEL);
-        if (page == null) {
-            LOG.error("Page not found in request attributes");
-            throw new NotFoundException();
-        }
-        return page;
-    }
-
-    protected RegionModel getIncludePageFromRequest(HttpServletRequest request, String includePageName) {
-        final PageModel page = getPageFromRequest(request);
-        final RegionModel includePage = page.getRegions().get(includePageName);
-        if (includePage == null) {
-            LOG.error("Include page not found on page: {}", includePageName);
-            throw new NotFoundException("Include page not found on page: " + includePageName);
-        }
-        return includePage;
-    }
-
     protected RegionModel getRegionFromRequest(HttpServletRequest request, String regionName) {
-        final PageModel page = getPageFromRequest(request);
-        RegionModel region = page.getRegions().get(regionName);
-
+        RegionModel region = (RegionModel) request.getAttribute("_region_");
         if (region == null) {
-
-            // Check if the region is active on the request
-            region = (RegionModel) request.getAttribute("_region_" + regionName);
-
-            if (region == null) {
-                LOG.error("Region not found on page: {}", regionName);
-                throw new NotFoundException("Region not found on page: " + regionName);
-            }
+            LOG.error("Region not found on page: {}", regionName);
+            throw new NotFoundException("Region not found on page: " + regionName);
         }
         return region;
     }
 
-    protected EntityModel getEntityFromRequest(HttpServletRequest request, String regionName, String entityId) {
-        if (regionName.equals("null")) {
-            final EntityModel entity = (EntityModel) request.getAttribute("_entity_" + entityId);
-            if (entity != null) {
-                return entity;
-            } else {
-                LOG.error("Entity not found in request: {}", entityId);
-                throw new NotFoundException("Entity not found in request: " + entityId);
-            }
-        }
-        final RegionModel region = getRegionFromRequest(request, regionName);
-        final EntityModel entity = region.getEntity(entityId); // region.getEntities().get(entityId);
+    protected EntityModel getEntityFromRequest(HttpServletRequest request, String entityId) {
+        final EntityModel entity = (EntityModel) request.getAttribute("_entity_");
         if (entity == null) {
-            LOG.error("Entity not found in region: {}/{}", regionName, entityId);
-            throw new NotFoundException("Entity not found in region: " + regionName + "/" + entityId);
+            LOG.error("Entity not found in request: {}", entityId);
+            throw new NotFoundException("Entity not found in request: " + entityId);
         }
         return entity;
     }

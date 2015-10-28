@@ -6,5 +6,5 @@
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 
 <div ${markup.region(region)}>
-    <dxa:entities region="Hero"/>
+    <dxa:entities />
 </div>

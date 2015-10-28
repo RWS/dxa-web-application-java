@@ -6,5 +6,5 @@
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 
 <div class="navbar-collapse collapse" ${markup.region(region)}>
-    <dxa:entities region="Nav"/>
+    <dxa:entities />
 </div>

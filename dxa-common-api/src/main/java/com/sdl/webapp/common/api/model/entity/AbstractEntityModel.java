@@ -10,6 +10,7 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Abstract superclass for implementations of {@code Entity}.
@@ -108,5 +109,22 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
                                 " Alternatively, override method %s.toHtml().",
                         getClass().getName(), getClass().getName())
         );
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractEntityModel that = (AbstractEntityModel) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(xpmMetadata, that.xpmMetadata) &&
+                Objects.equals(xpmPropertyMetadata, that.xpmPropertyMetadata) &&
+                Objects.equals(mvcData, that.mvcData) &&
+                Objects.equals(htmlClasses, that.htmlClasses);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, xpmMetadata, xpmPropertyMetadata, mvcData, htmlClasses);
     }
 }

@@ -4,5 +4,5 @@
 <jsp:useBean id="markup" type="com.sdl.webapp.common.markup.Markup" scope="request"/>
 
 <div ${markup.region(region)}>
-    <dxa:entities region="Left"/>
+    <dxa:entities />
 </div>

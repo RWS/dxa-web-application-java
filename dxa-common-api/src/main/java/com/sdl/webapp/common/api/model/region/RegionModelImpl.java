@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl.RegionsPredicate;
@@ -23,6 +24,8 @@ import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.REGION;
 
 /**
  * Implementation of {@code Region}.
@@ -86,8 +89,10 @@ public class RegionModelImpl implements RegionModel {
 
     public RegionModelImpl(String name, String qualifiedViewName) throws DxaException {
         this(name);
-        MvcData data = new SimpleRegionMvcData(qualifiedViewName);
-        this.setMvcData(data);
+        this.setMvcData(new MvcDataImpl()
+                .setRegionName(qualifiedViewName)
+                .setViewName(qualifiedViewName)
+                .defaults(REGION));
     }
 
     @Override
@@ -106,8 +111,13 @@ public class RegionModelImpl implements RegionModel {
 
     @Override
     public EntityModel getEntity(String entityId) {
-        /*return this.entities.(entityId);*/
-        Collection<EntityModel> c = CollectionUtils.select(this.entities, new EntityPredicate(entityId));
+        Collection<EntityModel> c = new ArrayList<>();
+        for (EntityModel entity : this.entities) {
+            if (Objects.equals(entity.getId(), entityId)) {
+                c.add(entity);
+            }
+        }
+
         if (!c.isEmpty()) {
             return c.iterator().next();
         }
@@ -124,15 +134,13 @@ public class RegionModelImpl implements RegionModel {
         XpmRegionConfig xpmRegionConfig = getXpmRegionConfig();
         XpmRegion xpmRegion = xpmRegionConfig.getXpmRegion(this.name, localization);
 
-        if (xpmRegion == null)
-        {
+        if (xpmRegion == null) {
             return "";
         }
 
         List<String> types = new ArrayList<>();
 
-        for(ComponentType ct : xpmRegion.getComponentTypes())
-        {
+        for (ComponentType ct : xpmRegion.getComponentTypes()) {
             types.add(String.format(XpmComponentTypeMarkup, ct.getSchemaId(), ct.getTemplateId()));
         }
 
@@ -180,13 +188,8 @@ public class RegionModelImpl implements RegionModel {
     }
 
     @Override
-    public boolean equals(Object obj)
-    {
-        if(obj instanceof RegionModel)
-        {
-            return ((RegionModel) obj).getName().equals(this.getName());
-        }
-        return false;
+    public boolean equals(Object obj) {
+        return obj instanceof RegionModel && ((RegionModel) obj).getName().equals(this.getName());
     }
 
     @Override
@@ -203,18 +206,5 @@ public class RegionModelImpl implements RegionModel {
                 ", mvcData='" + mvcData + '\'' +
                 ", regions='" + regions + '\'' +
                 '}';
-    }
-
-    static class EntityPredicate implements Predicate {
-        private final String entityId;
-
-        public EntityPredicate(String id) {
-            entityId = id;
-        }
-
-        public boolean evaluate(Object r) {
-            EntityModel m = (EntityModel) r;
-            return m.getId().equals(entityId);
-        }
     }
 }

@@ -48,17 +48,15 @@ public class ListController extends EntityController {
      * Handles a request to fill a dynamic list with data.
      *
      * @param request The request.
-     * @param regionName The region name.
      * @param entityId The entity id.
      * @return The name of the entity view that should be rendered for this request.
      */
-    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.LIST_ACTION_NAME + "/{regionName}/{entityId}")
-    public String handleGetList(HttpServletRequest request, @PathVariable String regionName,
-                                @PathVariable String entityId) throws Exception {
-        LOG.trace("handleGetList: regionName={}, entityId={}", regionName, entityId);
+    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.LIST_ACTION_NAME + "/{entityId}")
+    public String handleGetList(HttpServletRequest request, @PathVariable String entityId) throws Exception {
+        LOG.trace("handleGetList: entityId={}", entityId);
         this.request = request;
         // The List action is effectively just an alias for the general Entity action (we keep it for backward compatibility).
-        return handleGetEntity(request, regionName, entityId);
+        return handleGetEntity(request, entityId);
     }
 
     @Override

@@ -32,16 +32,15 @@ public class EntityController extends BaseController {
      * Handles a request for an entity.
      *
      * @param request The request.
-     * @param regionName The region name.
      * @param entityId The entity id.
      * @return The name of the entity view that should be rendered for this request.
      * @throws ContentProviderException If an error occurs so that the entity cannot not be retrieved.
      */
-    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.ENTITY_ACTION_NAME + "/{regionName}/{entityId}")
-    public String handleGetEntity(HttpServletRequest request, @PathVariable String regionName,
+    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.ENTITY_ACTION_NAME + "/{entityId}")
+    public String handleGetEntity(HttpServletRequest request,
                                   @PathVariable String entityId)
             throws Exception {
-        LOG.trace("handleGetEntity: regionName={}, entityId={}", regionName, entityId);
+        LOG.trace("handleGetEntity: entityId={}", entityId);
 
         final EntityModel originalModel = getEntityFromRequest(request, entityId);
         final ViewModel enrichedEntity = enrichModel(originalModel);

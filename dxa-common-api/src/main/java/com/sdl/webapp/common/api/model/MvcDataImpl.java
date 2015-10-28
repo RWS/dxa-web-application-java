@@ -197,6 +197,19 @@ public class MvcDataImpl implements MvcData {
         return Objects.hash(controllerAreaName, controllerName, actionName, areaName, viewName, regionAreaName, regionName, routeValues, metadata);
     }
 
+    @Override
+    public String toString() {
+        return "MvcDataImpl{" +
+                "regionName='" + regionName + '\'' +
+                ", regionAreaName='" + regionAreaName + '\'' +
+                ", viewName='" + viewName + '\'' +
+                ", areaName='" + areaName + '\'' +
+                ", actionName='" + actionName + '\'' +
+                ", controllerName='" + controllerName + '\'' +
+                ", controllerAreaName='" + controllerAreaName + '\'' +
+                '}';
+    }
+
     public MvcData defaults(Defaults defaults) {
         return defaults.set(this);
     }

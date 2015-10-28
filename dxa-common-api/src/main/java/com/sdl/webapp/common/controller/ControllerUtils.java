@@ -30,7 +30,6 @@ public final class ControllerUtils {
     public static String getIncludePath(EntityModel entity) {
         final MvcData mvcData = entity.getMvcData();
         return getIncludePathPrefix(mvcData) +
-                mvcData.getRegionName() + "/" +
                 entity.getId() +
                 getQueryParameters(mvcData);
     }

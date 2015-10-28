@@ -60,17 +60,16 @@ public class NavigationController extends BaseController {
      * breadcrumb bar.
      *
      * @param request The request.
-     * @param regionName The name of the region.
      * @param entityId The name of the entity.
      * @param navType Navigation type.
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
-    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.NAVIGATION_ACTION_NAME + "/{regionName}/{entityId}")
-    public String handleGetNavigation(HttpServletRequest request, @PathVariable String regionName,
+    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.NAVIGATION_ACTION_NAME + "/{entityId}")
+    public String handleGetNavigation(HttpServletRequest request,
                                       @PathVariable String entityId, @RequestParam String navType)
             throws Exception {
-        LOG.trace("handleGetNavigation: regionName={}, entityId={}", regionName, entityId);
+        LOG.trace("handleGetNavigation:, entityId={}", entityId);
 
         EntityModel entity = getEntityFromRequest(request, entityId);
 

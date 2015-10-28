@@ -40,6 +40,7 @@ import javax.xml.ws.http.HTTPException;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.*;
 import static com.sdl.webapp.common.controller.ControllerUtils.*;
+import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
  * Main controller. This handles requests that come from the client.
@@ -202,20 +203,20 @@ public class PageController extends BaseController {
      */
     @ExceptionHandler(NotFoundException.class)
     public String handleNotFoundException(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        String notFoundPageUrl = webRequestContext.getLocalization().getPath() + "error-404"; // TODO TSI-775: No need to prefix with WebRequestContext.Localization.Path here (?)
+        // TODO TSI-775: No need to prefix with WebRequestContext.Localization.Path here (?)
+        String path = webRequestContext.getLocalization().getPath();
+        String notFoundPageUrl = (path.endsWith("/") ? path : path + "/") + "error-404";
 
         PageModel originalPageModel;
-        try
-        {
+        try {
             originalPageModel = contentProvider.getPageModel(notFoundPageUrl, webRequestContext.getLocalization());
-        }
-        catch (ContentProviderException e) {
+        } catch (ContentProviderException e) {
             LOG.error("Could not find error page", e);
-            throw new HTTPException(404);
+            throw new HTTPException(SC_NOT_FOUND);
         }
 
         final ViewModel enrichedPageModel = enrichModel(originalPageModel);
-        final PageModel pageModel = enrichedPageModel instanceof PageModel ? (PageModel)enrichedPageModel:originalPageModel;
+        final PageModel pageModel = enrichedPageModel instanceof PageModel ? (PageModel) enrichedPageModel : originalPageModel;
 
         if (!isIncludeRequest(request)) {
             request.setAttribute(PAGE_ID, pageModel.getId());
@@ -229,7 +230,7 @@ public class PageController extends BaseController {
         request.setAttribute(SOCIALSHARE_URL, webRequestContext.getFullUrl());
         request.setAttribute(CONTEXTENGINE, webRequestContext.getContextEngine());
 
-        response.setStatus(404);
+        response.setStatus(SC_NOT_FOUND);
         return this.viewResolver.resolveView(pageModel.getMvcData(), "Page", request);
     }
 

@@ -19,18 +19,16 @@ public class EntitiesTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(EntitiesTag.class);
 
     private String regionName;
-    private RegionModel parentRegion;
     private int containerSize;
-    
+
     public void setRegion(String regionName) {
         this.regionName = regionName;
     }
 
-
     public void setContainerSize(int containerSize) {
         this.containerSize = containerSize;
     }
-    
+
     @Override
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
@@ -39,10 +37,10 @@ public class EntitiesTag extends AbstractMarkupTag {
             return SKIP_BODY;
         }
 
-        RegionModel region = null;
         WebRequestContext webRequestContext = this.getWebRequestContext();
 
-        parentRegion = webRequestContext.getParentRegion();
+        RegionModel region;
+        RegionModel parentRegion = webRequestContext.getParentRegion();
         if (parentRegion != null) {
             region = parentRegion;
         } else {
@@ -56,14 +54,14 @@ public class EntitiesTag extends AbstractMarkupTag {
 
         for (EntityModel entity : region.getEntities()) {
             try {
-            	pageContext.getRequest().setAttribute("_region_" + regionName, region);
+                pageContext.getRequest().setAttribute("_region_" + regionName, region);
+                pageContext.getRequest().setAttribute("_entity_" + entity.getId(), entity);
                 webRequestContext.pushParentRegion(region);
                 webRequestContext.pushContainerSize(containerSize);
-            	this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
+                this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
             } catch (ServletException | IOException e) {
                 throw new JspException("Error while processing entity tag", e);
-            }
-            finally {
+            } finally {
                 webRequestContext.popParentRegion();
                 webRequestContext.popContainerSize();
             }

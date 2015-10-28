@@ -27,8 +27,8 @@ import java.util.*;
 public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMappingRegistryImpl.class);
 
+    // todo should we refactor this using normal maps? why do we use guava? to research
     private final ListMultimap<Field, FieldSemantics> fieldSemanticsMap = ArrayListMultimap.create();
-
     private final ListMultimap<Class<? extends EntityModel>, SemanticEntityInfo> semanticEntityInfo = ArrayListMultimap.create();
     private final ListMultimap<Field, SemanticPropertyInfo> semanticPropertyInfo = ArrayListMultimap.create();
 
@@ -136,10 +136,10 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
 
     @Override
     public Class<? extends EntityModel> getEntityClass(String entityName) {
-        for ( Class<? extends  EntityModel> entityClass : semanticEntityInfo.keys() ) {
+        for (Class<? extends EntityModel> entityClass : semanticEntityInfo.keys()) {
             List<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
-            for ( SemanticEntityInfo entityInfo : entityInfoList ) {
-                if ( entityInfo.getEntityName().equals(entityName) ) {
+            for (SemanticEntityInfo entityInfo : entityInfoList) {
+                if (entityInfo.getEntityName().equals(entityName)) {
                     return entityClass;
                 }
             }

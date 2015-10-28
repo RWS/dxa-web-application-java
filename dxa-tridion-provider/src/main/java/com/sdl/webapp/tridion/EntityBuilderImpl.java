@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -74,22 +73,21 @@ final class EntityBuilderImpl implements EntityBuilder {
         }
 
         final String viewName = FieldUtils.getStringValue(templateMeta, "view");
-        if (Strings.isNullOrEmpty(viewName)) {
+        if (StringUtils.isEmpty(viewName)) {
             LOG.warn("ComponentPresentation without a view, skipping: {}", componentId);
             return null;
         }
 
         Class<? extends EntityModel> entityClass;
         try {
+            //todo refactor raw class cast
             entityClass = (Class<? extends EntityModel>) viewModelRegistry.getViewEntityClass(viewName);
             if (entityClass == null) {
                 throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
                         "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
             }
         } catch (DxaException e) {
-
             // Get entity class through semantic mapping registry instead using implicit mapping
-            //
             entityClass = this.semanticMappingRegistry.getEntityClass(component.getSchema().getRootElement());
             if (entityClass == null) {
                 throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
@@ -103,6 +101,7 @@ final class EntityBuilderImpl implements EntityBuilder {
 
         final AbstractEntityModel entity;
         try {
+            //todo refactor raw class cast
             entity = semanticMapper.createEntity((Class<? extends AbstractEntityModel>) entityClass, semanticSchema.getSemanticFields(),
                     new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this.builder));
         } catch (SemanticMappingException e) {
@@ -113,7 +112,7 @@ final class EntityBuilderImpl implements EntityBuilder {
 
         // Special handling for media items
         if (entity instanceof MediaItem && component.getMultimedia() != null &&
-                !Strings.isNullOrEmpty(component.getMultimedia().getUrl())) {
+                !StringUtils.isEmpty(component.getMultimedia().getUrl())) {
             final Multimedia multimedia = component.getMultimedia();
             final MediaItem mediaItem = (MediaItem) entity;
             mediaItem.setUrl(multimedia.getUrl());
@@ -132,7 +131,7 @@ final class EntityBuilderImpl implements EntityBuilder {
         entity.setMvcData(createMvcData(componentPresentation));
 
         String htmlClasses = FieldUtils.getStringValue(componentPresentation.getComponentTemplate().getMetadata(), "htmlClasses");
-        if (!Strings.isNullOrEmpty(htmlClasses)) {
+        if (!StringUtils.isEmpty(htmlClasses)) {
             entity.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
         }
 
@@ -194,7 +193,7 @@ final class EntityBuilderImpl implements EntityBuilder {
         // Special handling for media items
         //
         if (entity instanceof MediaItem && component.getMultimedia() != null &&
-                !Strings.isNullOrEmpty(component.getMultimedia().getUrl())) {
+                !StringUtils.isEmpty(component.getMultimedia().getUrl())) {
             final Multimedia multimedia = component.getMultimedia();
             final MediaItem mediaItem = (MediaItem) entity;
             mediaItem.setUrl(multimedia.getUrl());
@@ -285,7 +284,7 @@ final class EntityBuilderImpl implements EntityBuilder {
     }
 
     private MvcData createMvcData(ComponentPresentation componentPresentation) {
-
+// todo remove duplication
         final MvcDataImpl mvcData = new MvcDataImpl();
 
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
@@ -305,10 +304,13 @@ final class EntityBuilderImpl implements EntityBuilder {
         mvcData.setRegionName(regionNameParts[1]);
 
         final Map<String, String> routeValues = new HashMap<>();
-        for (String value : Strings.nullToEmpty(FieldUtils.getStringValue(templateMeta, "routeValues")).split(",")) {
-            final String[] parts = value.split(":");
-            if (parts.length > 1 && !routeValues.containsKey(parts[0])) {
-                routeValues.put(parts[0], parts[1]);
+        String routeValuesStrings = FieldUtils.getStringValue(templateMeta, "routeValues");
+        if (routeValuesStrings != null) {
+            for (String value : routeValuesStrings.split(",")) {
+                final String[] parts = value.split(":");
+                if (parts.length > 1 && !routeValues.containsKey(parts[0])) {
+                    routeValues.put(parts[0], parts[1]);
+                }
             }
         }
         mvcData.setRouteValues(routeValues);
@@ -319,7 +321,7 @@ final class EntityBuilderImpl implements EntityBuilder {
 
     private String[] getControllerNameParts(Map<String, Field> templateMeta) {
         String fullName = FieldUtils.getStringValue(templateMeta, "controller");
-        if (Strings.isNullOrEmpty(fullName)) {
+        if (StringUtils.isEmpty(fullName)) {
             fullName = DEFAULT_CONTROLLER_NAME;
         }
         return splitName(fullName);
@@ -327,7 +329,7 @@ final class EntityBuilderImpl implements EntityBuilder {
 
     private String getActionName(Map<String, Field> templateMeta) {
         String actionName = FieldUtils.getStringValue(templateMeta, "action");
-        if (Strings.isNullOrEmpty(actionName)) {
+        if (StringUtils.isEmpty(actionName)) {
             actionName = DEFAULT_ACTION_NAME;
         }
         return actionName;
@@ -335,7 +337,7 @@ final class EntityBuilderImpl implements EntityBuilder {
 
     private String[] getViewNameParts(ComponentTemplate componentTemplate) {
         String fullName = FieldUtils.getStringValue(componentTemplate.getMetadata(), "view");
-        if (Strings.isNullOrEmpty(fullName)) {
+        if (StringUtils.isEmpty(fullName)) {
             fullName = componentTemplate.getTitle().replaceAll("\\[.*\\]|\\s", "");
         }
         return splitName(fullName);
@@ -343,7 +345,7 @@ final class EntityBuilderImpl implements EntityBuilder {
 
     private String[] getRegionNameParts(Map<String, Field> templateMeta) {
         String fullName = FieldUtils.getStringValue(templateMeta, "regionView");
-        if (Strings.isNullOrEmpty(fullName)) {
+        if (StringUtils.isEmpty(fullName)) {
             fullName = DEFAULT_REGION_NAME;
         }
         return splitName(fullName);

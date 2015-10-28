@@ -50,30 +50,28 @@ public interface SemanticMappingRegistry {
      *
      * @param basePackage The base package - this package and its subpackages are scanned for entity classes.
      */
-    public void registerEntities(String basePackage);
+    void registerEntities(String basePackage);
 
     /**
      * Registers the specified entity class.
      *
      * @param entityClass The entity class.
      */
-    public void registerEntity(Class<? extends EntityModel> entityClass);
+    void registerEntity(Class<? extends EntityModel> entityClass);
 
     /**
      * Get entity class.
      *
-     * @param entityName
      * @return entity class
      */
-    public Class<? extends EntityModel> getEntityClass(String entityName);
+    Class<? extends EntityModel> getEntityClass(String entityName);
 
 
     /**
      * Get entity class.
      *
-     * @param entityName
      * @return entity class
      */
-    public Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName);
+    Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName);
 
 }

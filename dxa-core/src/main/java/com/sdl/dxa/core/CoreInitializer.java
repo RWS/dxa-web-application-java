@@ -24,6 +24,7 @@ public class CoreInitializer extends AbstractInitializer {
     public void registerViewModelEntityClasses() {
 
             registerViewModel("Article", Article.class);
+            registerViewModel("Accordion", ItemList.class);
             registerViewModel("Breadcrumb", NavigationLinks.class);
             registerViewModel("Carousel", ItemList.class);
             registerViewModel("CookieNotificationBar", Notification.class);

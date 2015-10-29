@@ -8,6 +8,7 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.context.support.XmlWebApplicationContext;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
 import javax.servlet.*;
@@ -61,9 +62,8 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-
-
-
+        registerDispatcherServlet(servletContext);
+        registerCharacterEncodingFilter(servletContext);
         registerHttpUploadServlet(servletContext);
         registerContextLoaderListener(servletContext);
         registerAmbientDataServletFilter(servletContext);
@@ -72,9 +72,15 @@ public class WebAppInitializer implements WebApplicationInitializer {
         registerWebServiceServlet(servletContext);
         registerWebServiceListener(servletContext);
 
-        registerDispatcherServlet(servletContext);
 
         LOG.info("Web application initialization complete.");
+    }
+
+    private void registerCharacterEncodingFilter(ServletContext servletContext) {
+        FilterRegistration.Dynamic encodingFilter = servletContext.addFilter("encodingFilter", new CharacterEncodingFilter());
+        encodingFilter.setInitParameter("encoding", "UTF-8");
+        encodingFilter.setInitParameter("forceEncoding", "true");
+        encodingFilter.addMappingForUrlPatterns(null, false, "/*");
     }
 
 

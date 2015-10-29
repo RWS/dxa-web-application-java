@@ -1,14 +1,20 @@
 package com.sdl.webapp.tridion;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.localization.*;
+import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.localization.LocalizationFactory;
+import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
+import com.sdl.webapp.common.api.localization.LocalizationResolver;
+import com.sdl.webapp.common.api.localization.LocalizationResolverException;
 import com.tridion.dynamiccontent.DynamicContent;
 import com.tridion.dynamiccontent.publication.PublicationMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +38,12 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     public Localization getLocalization(String url) throws LocalizationResolverException {
         LOG.trace("getLocalization: {}", url);
 
-        final PublicationMapping publicationMapping = getPublicationMappingFromUrl(url);
+        final PublicationMapping publicationMapping;
+        try {
+            publicationMapping = getPublicationMappingFromUrl(UriUtils.encodePath(url, "UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Should never happen since UTF-8 is supported.");
+        }
         if (publicationMapping == null) {
             throw new PublicationMappingNotFoundException("Publication mapping not found. " +
                     "Check if your cd_dynamic_conf.xml configuration file contains a publication mapping " +

@@ -116,15 +116,14 @@ public class NavigationController extends BaseController {
      * Handles a request to get the sitemap (in HTML).
      *
      * @param request The request.
-     * @param regionName The name of the region.
      * @param entityId The name of the entity.
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
-    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.SITEMAP_ACTION_NAME + "/{regionName}/{entityId}")
-    public String handleGetSiteMap(HttpServletRequest request, @PathVariable String regionName,
+    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.SITEMAP_ACTION_NAME + "/{entityId}")
+    public String handleGetSiteMap(HttpServletRequest request,
                                    @PathVariable String entityId) throws NavigationProviderException {
-        LOG.trace("handleGetSiteMap: regionName={}, entityId={}", regionName, entityId);
+        LOG.trace("handleGetSiteMap: entityId={}", entityId);
 
         final EntityModel entity = getEntityFromRequest(request, entityId);
 

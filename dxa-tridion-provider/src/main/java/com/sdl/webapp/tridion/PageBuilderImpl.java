@@ -22,7 +22,6 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.fieldconverters.FieldConverterRegistry;
 import com.sdl.webapp.tridion.fieldconverters.FieldUtils;
 import org.dd4t.contentmodel.*;
-import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.contentmodel.impl.BaseField;
@@ -33,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -68,9 +68,9 @@ final class PageBuilderImpl implements PageBuilder {
     private static final String DEFAULT_REGION_NAME = "Main";
 
     private static final Pattern REGION_VIEW_NAME_PATTERN = Pattern.compile(".*\\[(.*)\\]");
+    public static final String IMAGE_FIELD_NAME = "image";
 
     private final ModelBuilderPipeline modelBuilderPipeline;
-    //private final EntityBuilder entityBuilder;
 
     private final LinkResolver linkResolver;
 
@@ -97,7 +97,6 @@ final class PageBuilderImpl implements PageBuilder {
                 try {
 
                     // Fetch the dynamic component presentation and replace the dummy static one
-                    //
                     componentPresentation = dd4tComponentPresentationFactory.getComponentPresentation(componentPresentation.getComponent().getId(), componentPresentation.getComponentTemplate().getId());
                 } catch (Exception e) {
                     throw new ContentProviderException("Could not fetch dynamic component presentation.", e);
@@ -186,7 +185,7 @@ final class PageBuilderImpl implements PageBuilder {
 
         final PageModel page;
         try {
-            page = CreatePageModel(genericPage, localization);
+            page = createPageModel(genericPage, localization);
         } catch (DxaException e) {
             throw new ContentProviderException(e);
         }
@@ -241,19 +240,17 @@ final class PageBuilderImpl implements PageBuilder {
             }
         }
 
-
-        //regionMap.addAll(regions.values());
         page.setRegions(regionMap);
 
         return page;
     }
 
 
-    private PageModel CreatePageModel(org.dd4t.contentmodel.Page genericPage, Localization localization) throws DxaException, ContentProviderException {
+    private PageModel createPageModel(org.dd4t.contentmodel.Page genericPage, Localization localization) throws DxaException, ContentProviderException {
         MvcData pageMvcData = createPageMvcData(genericPage.getPageTemplate());
         Class pageModelType = viewModelRegistry.getViewModelType(pageMvcData);
 
-        Schema pageMetadataSchema = ((PageImpl) genericPage).getSchema();
+        Schema pageMetadataSchema = genericPage.getSchema();
 
         PageModel pageModel;
         if (pageModelType == PageModelImpl.class) {
@@ -277,7 +274,7 @@ final class PageBuilderImpl implements PageBuilder {
             String semanticTypeName = semanticSchema.getRootElement();
             final Class<? extends ViewModel> entityClass;
             try {
-                entityClass = (Class<? extends ViewModel>) viewModelRegistry.getMappedModelTypes(semanticTypeName);
+                entityClass = viewModelRegistry.getMappedModelTypes(semanticTypeName);
                 if (entityClass == null) {
                     throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
                             "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
@@ -286,7 +283,7 @@ final class PageBuilderImpl implements PageBuilder {
                 throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
                         "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
             }
-            pageModel = (PageModel) CreateViewModel(entityClass, semanticSchema, genericPage);
+            pageModel = (PageModel) createViewModel(entityClass, semanticSchema, genericPage);
         }
 
         pageModel.setId(genericPage.getId());
@@ -311,7 +308,7 @@ final class PageBuilderImpl implements PageBuilder {
         return pageModel;
     }
 
-    private ViewModel CreateViewModel(Class<? extends ViewModel> entityClass, SemanticSchema semanticSchema, Page page) throws ContentProviderException {
+    private ViewModel createViewModel(Class<? extends ViewModel> entityClass, SemanticSchema semanticSchema, Page page) throws ContentProviderException {
 
         final ViewModel entity;
         try {
@@ -321,20 +318,6 @@ final class PageBuilderImpl implements PageBuilder {
             throw new ContentProviderException(e);
         }
         return entity;
-    }
-
-    private String getDxaIdentifierFromTcmUri(String tcmUri) {
-
-        return getDxaIdentifierFromTcmUri(tcmUri, null);
-    }
-
-    private String getDxaIdentifierFromTcmUri(String tcmUri, String templateTcmUri) {
-        // Return the Item (Reference) ID part of the TCM URI.
-        String result = tcmUri.split("-")[1];
-        if (templateTcmUri != null) {
-            result += "-" + templateTcmUri.split("-")[1];
-        }
-        return result;
     }
 
     private RegionModelSet createPredefinedRegions(PageTemplate pageTemplate) {
@@ -392,21 +375,25 @@ final class PageBuilderImpl implements PageBuilder {
         return regionModel;
     }
 
+    private String extract(Map<String, Field> metaMap, String key) {
+        return metaMap.get(key).getValues().get(0).toString();
+    }
+
     private String processPageMetadata(org.dd4t.contentmodel.Page page, Map<String, String> pageMeta, Localization localization) {
         // Process page metadata fields
         if (page.getMetadata() != null) {
             for (Field field : page.getMetadata().values()) {
-                processMetadataField(field, pageMeta);
+                pageMeta.putAll(processMetadataField(field));
             }
         }
 
         String description = pageMeta.get("description");
         String title = pageMeta.get("title");
-        String image = pageMeta.get("image");
+        String image = pageMeta.get(IMAGE_FIELD_NAME);
 
         if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(description)) {
             for (ComponentPresentation cp : page.getComponentPresentations()) {
-                if (REGION_FOR_PAGE_TITLE_COMPONENT.equals(getRegionName(cp))) {
+                if (Objects.equals(REGION_FOR_PAGE_TITLE_COMPONENT, getRegionName(cp))) {
                     final org.dd4t.contentmodel.Component component = cp.getComponent();
 
                     final Map<String, Field> metadata = component.getMetadata();
@@ -414,23 +401,22 @@ final class PageBuilderImpl implements PageBuilder {
                     if (standardMetaField != null && !standardMetaField.getEmbeddedValues().isEmpty()) {
                         final Map<String, Field> standardMeta = standardMetaField.getEmbeddedValues().get(0).getContent();
                         if (Strings.isNullOrEmpty(title) && standardMeta.containsKey(STANDARD_METADATA_TITLE_FIELD_NAME)) {
-                            title = standardMeta.get(STANDARD_METADATA_TITLE_FIELD_NAME).getValues().get(0).toString();
+                            title = extract(standardMeta, STANDARD_METADATA_TITLE_FIELD_NAME);
                         }
                         if (Strings.isNullOrEmpty(description) && standardMeta.containsKey(STANDARD_METADATA_DESCRIPTION_FIELD_NAME)) {
-                            description = standardMeta.get(STANDARD_METADATA_DESCRIPTION_FIELD_NAME).getValues().get(0).toString();
+                            description = extract(standardMeta, STANDARD_METADATA_DESCRIPTION_FIELD_NAME);
                         }
                     }
 
                     final Map<String, Field> content = component.getContent();
                     if (Strings.isNullOrEmpty(title) && content.containsKey(COMPONENT_PAGE_TITLE_FIELD_NAME)) {
-                        title = content.get(COMPONENT_PAGE_TITLE_FIELD_NAME).getValues().get(0).toString();
+                        title = extract(content, COMPONENT_PAGE_TITLE_FIELD_NAME);
                     }
 
-                    if (Strings.isNullOrEmpty(image) && content.containsKey("image")) {
-                        image = ((BaseField) content.get("image")).getLinkedComponentValues().get(0)
-                                .getMultimedia().getUrl();
+                    if (Strings.isNullOrEmpty(image) && content.containsKey(IMAGE_FIELD_NAME)) {
+                        image = ((BaseField) content.get(IMAGE_FIELD_NAME))
+                                .getLinkedComponentValues().get(0).getMultimedia().getUrl();
                     }
-
                     break;
                 }
             }
@@ -438,12 +424,14 @@ final class PageBuilderImpl implements PageBuilder {
 
         // Use page title if no title found
         if (Strings.isNullOrEmpty(title)) {
-            title = page.getTitle().replace("^\\d(3)\\s", "");
+            title = page.getTitle();
             if (title.equalsIgnoreCase("index") || title.equalsIgnoreCase("default")) {
                 // Use default page title from configuration if nothing better was found
                 title = localization.getResource("core.defaultPageTitle");
             }
         }
+
+        title = title.replaceFirst("\\d{3}\\s", "");
 
         pageMeta.put("twitter:card", "summary");
         pageMeta.put("og:title", title);
@@ -468,13 +456,15 @@ final class PageBuilderImpl implements PageBuilder {
         return title + titlePostfix;
     }
 
-    private void processMetadataField(Field field, Map<String, String> pageMeta) {
+    private Map<String, String> processMetadataField(final Field field) {
+        Map<String, String> result = new HashMap<>();
+
         // If it's an embedded field, then process the subfields
         if (field.getFieldType() == FieldType.EMBEDDED) {
             final List<FieldSet> embeddedValues = ((BaseField) field).getEmbeddedValues();
             if (embeddedValues != null && !embeddedValues.isEmpty()) {
-                for (Field subfield : embeddedValues.get(0).getContent().values()) {
-                    processMetadataField(subfield, pageMeta);
+                for (Field subField : embeddedValues.get(0).getContent().values()) {
+                    result.putAll(processMetadataField(subField));
                 }
             }
         } else {
@@ -491,19 +481,19 @@ final class PageBuilderImpl implements PageBuilder {
                         value = componentId;
                     }
                     break;
-                case "image":
-                    value = ((GenericComponent) ((BaseField) field).getLinkedComponentValues().get(0))
-                            .getMultimedia().getUrl();
+                case IMAGE_FIELD_NAME:
+                    value = ((BaseField) field).getLinkedComponentValues().get(0).getMultimedia().getUrl();
                     break;
                 default:
                     value = Joiner.on(',').join(field.getValues());
                     break;
             }
 
-            if (!Strings.isNullOrEmpty(value) && !pageMeta.containsKey(fieldName)) {
-                pageMeta.put(fieldName, value);
+            if (!(StringUtils.isEmpty(value) || result.containsKey(fieldName))) {
+                result.put(fieldName, value);
             }
         }
+        return result;
     }
 
     private String getRegionName(ComponentPresentation cp) {

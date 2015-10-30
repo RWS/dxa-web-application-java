@@ -6,6 +6,7 @@ import org.dd4t.core.serializers.Serializer;
 import org.dd4t.core.util.DateUtils;
 import org.joda.time.DateTime;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -17,6 +18,7 @@ public class SerializerFactoryTest {
 	    SerializerFactory.setSerializer(serializer);
     }
 
+    @Ignore
     @Test
     public void testDeserializePage() throws Exception {
 

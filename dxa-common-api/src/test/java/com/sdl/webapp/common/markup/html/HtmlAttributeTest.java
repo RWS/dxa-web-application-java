@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.markup.html;
 
-import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -17,6 +16,6 @@ public class HtmlAttributeTest {
         assertThat(new HtmlAttribute("hello", "a \" quote").renderHtml(), is("hello=\"a &quot; quote\""));
         assertThat(new HtmlAttribute("hello", "&&").renderHtml(), is("hello=\"&amp;&amp;\""));
         assertThat(new HtmlAttribute("hello", "<").renderHtml(), is("hello=\"&lt;\""));
-        assertThat(new HtmlAttribute("test", "&\"<>&\"").renderHtml(), is("test=\"&amp;&quot;&lt;>&amp;&quot;\""));
+        assertThat(new HtmlAttribute("test", "&\"<>&\"").renderHtml(), is("test=\"&amp;&quot;&lt;&gt;&amp;&quot;\""));
     }
 }

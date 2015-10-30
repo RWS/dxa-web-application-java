@@ -144,7 +144,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                             "] " + path, e);
                 }
 
-                return modelBuilderPipeline.CreatePageModel(genericPage, localization, DefaultProvider.this);
+                return modelBuilderPipeline.createPageModel(genericPage, localization, DefaultProvider.this);
             }
         });
     }
@@ -160,7 +160,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         String templateUri = String.format("tcm:%s-%s-32", localization.getId(), idParts[1]);
         try {
             final ComponentPresentation componentPresentation = this.dd4tComponentPresentationFactory.getComponentPresentation(componentUri, templateUri);
-            return modelBuilderPipeline.CreateEntityModel(componentPresentation, localization);
+            return modelBuilderPipeline.createEntityModel(componentPresentation, localization);
 
         } catch (FactoryException e) {
             throw new DxaItemNotFoundException(id);

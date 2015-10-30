@@ -4,39 +4,21 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 
-/**
- * Region Builder Callback
- *
- * @author nic
- */
 public interface RegionBuilderCallback {
 
     /**
-     * Build entity based on content provider specific source
-     *
-     * @param source
-     * @param localization
-     * @return entity
-     * @throws ContentProviderException
+     * Build entity based on content provider specific source.
      */
-    public EntityModel buildEntity(Object source, Localization localization) throws ContentProviderException;
+    EntityModel buildEntity(Object source, Localization localization) throws ContentProviderException;
 
     /**
-     * Get region name from content provider specific source
-     *
-     * @param source
-     * @return name
-     * @throws ContentProviderException
+     * Get region name from content provider specific source.
      */
-    public String getRegionName(Object source) throws ContentProviderException;
+    String getRegionName(Object source) throws ContentProviderException;
 
     /**
-     * Get region MVC data from content provider specific source
-     *
-     * @param source
-     * @return MVC data
-     * @throws ContentProviderException
+     * Get region MVC data from content provider specific source.
      */
-    public MvcData getRegionMvcData(Object source) throws ContentProviderException;
+    MvcData getRegionMvcData(Object source) throws ContentProviderException;
 
 }

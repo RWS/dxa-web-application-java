@@ -3,13 +3,9 @@ package com.sdl.webapp.common.api.mapping;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.ViewModel;
-import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 
 import java.util.Map;
 
-/**
- * Semantic mapper.
- */
 public interface SemanticMapper {
 
     /**

@@ -87,7 +87,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
 
             try {
-                Object retval = builder.CreateEntityModel(component, localization);
+                Object retval = builder.createEntityModel(component, localization);
                 if (targetClass.isAssignableFrom(retval.getClass())) {
                     return retval;
                 } else {
@@ -99,7 +99,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
                 // Try to map using model field type
                 //
                 try {
-                    Object retval = builder.CreateEntityModel(component, localization, (Class<AbstractEntityModel>) targetClass);
+                    Object retval = builder.createEntityModel(component, localization, (Class<AbstractEntityModel>) targetClass);
                     return retval;
                 }
                 catch ( ContentProviderException e2 ) {

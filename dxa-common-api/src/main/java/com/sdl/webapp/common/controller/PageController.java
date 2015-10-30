@@ -125,7 +125,7 @@ public class PageController extends BaseController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {"application/rss+xml", MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
-    public ModelAndView handleGetPageFormatted(HttpServletRequest request) {
+    public ModelAndView handleGetPageFormatted() {
 
         final String requestPath = webRequestContext.getRequestPath();
         LOG.trace("handleGetPageFormatted: requestPath={}", requestPath);

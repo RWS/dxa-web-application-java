@@ -39,8 +39,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.sdl.webapp.tridion.fieldconverters.FieldUtils.getStringValue;
-
 @Component
 final class PageBuilderImpl implements PageBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(PageBuilderImpl.class);
@@ -88,7 +86,7 @@ final class PageBuilderImpl implements PageBuilder {
 
     private final ComponentPresentationFactory dd4tComponentPresentationFactory;
 
-    class DD4TRegionBuilderCallback implements RegionBuilderCallback {
+    protected class DD4TRegionBuilderCallback implements RegionBuilderCallback {
         @Override
         public EntityModel buildEntity(Object source, Localization localization) throws ContentProviderException {
 
@@ -102,7 +100,7 @@ final class PageBuilderImpl implements PageBuilder {
                     throw new ContentProviderException("Could not fetch dynamic component presentation.", e);
                 }
             }
-            return modelBuilderPipeline.CreateEntityModel(componentPresentation, localization);
+            return modelBuilderPipeline.createEntityModel(componentPresentation, localization);
         }
 
         @Override
@@ -117,7 +115,7 @@ final class PageBuilderImpl implements PageBuilder {
     }
 
     @Autowired
-    PageBuilderImpl(ModelBuilderPipeline modelBuilderPipeline,
+    public PageBuilderImpl(ModelBuilderPipeline modelBuilderPipeline,
                     RegionBuilder regionBuilder,
                     LinkResolver linkResolver,
                     SemanticMapper semanticMapper,

@@ -8,7 +8,10 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.*;
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG_VOCABULARY;
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
+import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -18,26 +21,6 @@ import static org.junit.Assert.assertThat;
  * specified via annotations) is registered correctly.
  */
 public class SemanticMappingRegistryImplDefaultsTest {
-
-    public static class TestEntity1 extends AbstractEntityModel {
-        private String field1;
-        private int field2;
-    }
-
-    @SemanticEntity(entityName = "TE2", vocabulary = SDL_CORE, prefix = "x")
-    public static class TestEntity2 extends AbstractEntityModel {
-        @SemanticProperty("x:F1")
-        private String field1;
-
-        @SemanticProperty("x:F2")
-        private int field2;
-    }
-
-    @SemanticEntity(entityName = "TE3", vocabulary = SCHEMA_ORG)
-    public static class TestEntity3 extends AbstractEntityModel {
-        @SemanticProperty("F1")
-        private String field1;
-    }
 
     /**
      * Tests if default semantics are registered when an entity class has no semantic annotations at all.
@@ -94,5 +77,25 @@ public class SemanticMappingRegistryImplDefaultsTest {
         final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity3.class.getDeclaredField("field1"));
         assertThat("There should be only one FieldSemantics for field1", field1, hasSize(1));
         assertThat(field1.get(0), is(new FieldSemantics(SCHEMA_ORG_VOCABULARY, "TE3", "F1")));
+    }
+
+    public static class TestEntity1 extends AbstractEntityModel {
+        private String field1;
+        private int field2;
+    }
+
+    @SemanticEntity(entityName = "TE2", vocabulary = SDL_CORE, prefix = "x")
+    public static class TestEntity2 extends AbstractEntityModel {
+        @SemanticProperty("x:F1")
+        private String field1;
+
+        @SemanticProperty("x:F2")
+        private int field2;
+    }
+
+    @SemanticEntity(entityName = "TE3", vocabulary = SCHEMA_ORG)
+    public static class TestEntity3 extends AbstractEntityModel {
+        @SemanticProperty("F1")
+        private String field1;
     }
 }

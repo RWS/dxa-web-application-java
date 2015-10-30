@@ -7,7 +7,6 @@ import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.model.RichText;
-
 import org.joda.time.DateTime;
 
 import java.util.Objects;

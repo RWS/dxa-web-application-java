@@ -10,7 +10,9 @@ import org.w3c.dom.Node;
 import java.util.HashMap;
 import java.util.Objects;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -25,7 +27,8 @@ public class EclItemTest {
                         ": \"null\", \"ComponentTemplateID\" : \"null\", \"ComponentTemplateModified\" : \"null\", " +
                         "\"IsRepositoryPublished\" : false} -->";
 
-        EclItem eclItem = new EclItem() { };
+        EclItem eclItem = new EclItem() {
+        };
         eclItem.setUri(uri);
         eclItem.setXpmMetadata(new HashMap<String, String>());
 
@@ -40,7 +43,8 @@ public class EclItemTest {
     @Test
     public void shouldReturnEmptyStringIfXpmMetadataIsNull() {
         //given
-        EclItem eclItem = new EclItem() { };
+        EclItem eclItem = new EclItem() {
+        };
 
         //when
         String xpmMarkup = eclItem.getXpmMarkup(null);
@@ -53,7 +57,8 @@ public class EclItemTest {
     public void shouldReturnTemplateFragmentWhenToHtmlIsCalled() {
         //given
         String templateFragment = "templateFragment";
-        EclItem eclItem = new EclItem() { };
+        EclItem eclItem = new EclItem() {
+        };
         eclItem.setTemplateFragment(templateFragment);
 
         //when
@@ -72,7 +77,8 @@ public class EclItemTest {
     public void shouldReadSpecificEclDataFromXHtmlNode() {
         //given
         Node xhtmlNode = mock(Node.class);
-        EclItem eclItem = new EclItem() { };
+        EclItem eclItem = new EclItem() {
+        };
         NamedNodeMap map = mock(NamedNodeMap.class);
 
         when(xhtmlNode.getAttributes()).thenReturn(map);

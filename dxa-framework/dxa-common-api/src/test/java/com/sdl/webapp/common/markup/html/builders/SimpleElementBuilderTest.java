@@ -1,7 +1,10 @@
 package com.sdl.webapp.common.markup.html.builders;
 
-import com.sdl.webapp.common.markup.html.*;
-import com.sdl.webapp.common.markup.html.builders.SimpleElementBuilder;
+import com.sdl.webapp.common.markup.html.HtmlAttribute;
+import com.sdl.webapp.common.markup.html.HtmlCommentNode;
+import com.sdl.webapp.common.markup.html.HtmlElement;
+import com.sdl.webapp.common.markup.html.HtmlNode;
+import com.sdl.webapp.common.markup.html.HtmlTextNode;
 import org.junit.Test;
 
 import java.util.Arrays;

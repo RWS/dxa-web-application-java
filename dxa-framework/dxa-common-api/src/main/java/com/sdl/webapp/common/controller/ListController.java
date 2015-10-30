@@ -22,7 +22,7 @@ import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREF
 
 /**
  * List controller for the Core area.
- *
+ * <p/>
  * This handles include requests to /system/mvc/Core/List/{regionName}/{entityId}
  */
 @Controller
@@ -47,7 +47,7 @@ public class ListController extends EntityController {
     /**
      * Handles a request to fill a dynamic list with data.
      *
-     * @param request The request.
+     * @param request  The request.
      * @param entityId The entity id.
      * @return The name of the entity view that should be rendered for this request.
      */

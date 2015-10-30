@@ -13,9 +13,6 @@ import static org.mockito.Mockito.when;
  */
 public class SemanticEntityInfoTest {
 
-    public static class TestEntity extends AbstractEntityModel {
-    }
-
     @Test
     public void testDefaults() {
         final SemanticEntity anno = mockSemanticEntity("", "", "", "", false);
@@ -72,5 +69,8 @@ public class SemanticEntityInfoTest {
         when(anno.prefix()).thenReturn(prefix);
         when(anno.public_()).thenReturn(public_);
         return anno;
+    }
+
+    public static class TestEntity extends AbstractEntityModel {
     }
 }

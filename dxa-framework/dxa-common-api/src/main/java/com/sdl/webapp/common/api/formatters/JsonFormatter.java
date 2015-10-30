@@ -20,6 +20,7 @@ public class JsonFormatter extends BaseFormatter {
 
     /**
      * Returns the formatted data. Additional model processing can be implemented in extending classes
+     *
      * @param model
      * @return
      */
@@ -30,12 +31,13 @@ public class JsonFormatter extends BaseFormatter {
 
     /**
      * Not required for Json
+     *
      * @param item
      * @return
      * @throws URISyntaxException
      */
     @Override
     public Object getSyndicationItemFromTeaser(Teaser item) throws Exception {
-        throw new Exception ("This method shall not be called!");
+        throw new Exception("This method shall not be called!");
     }
 }

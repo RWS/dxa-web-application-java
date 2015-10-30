@@ -5,12 +5,8 @@ import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.markup.html.HtmlMultiNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.util.WebUtils;
-
-import javax.servlet.jsp.JspException;
 
 public class XpmButtonTag extends XpmMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(XpmButtonTag.class);

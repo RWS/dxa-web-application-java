@@ -18,20 +18,6 @@ public final class PackageUtils {
     private static final String WITH_SUBPACKAGES_PATTERN = "/**/*.class";
     private static final String WITHOUT_SUBPACKAGES_PATTERN = "/*.class";
 
-    /**
-     * Callback interface.
-     */
-    public static interface ClassCallback {
-
-        /**
-         * Handle the class that was found.
-         *
-         * @param metadataReader Metadata reader from which information about the class that was found can be read,
-         *                       without the need for the class being loaded by a JVM classloader.
-         */
-        void doWith(MetadataReader metadataReader);
-    }
-
     private PackageUtils() {
     }
 
@@ -73,5 +59,19 @@ public final class PackageUtils {
                 callback.doWith(metadataReaderFactory.getMetadataReader(resource));
             }
         }
+    }
+
+    /**
+     * Callback interface.
+     */
+    public interface ClassCallback {
+
+        /**
+         * Handle the class that was found.
+         *
+         * @param metadataReader Metadata reader from which information about the class that was found can be read,
+         *                       without the need for the class being loaded by a JVM classloader.
+         */
+        void doWith(MetadataReader metadataReader);
     }
 }

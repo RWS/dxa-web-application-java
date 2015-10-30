@@ -1,11 +1,10 @@
 package com.sdl.webapp.tridion;
 
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
+import com.sdl.webapp.common.api.model.EntityModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-
-import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
-import com.sdl.webapp.common.api.model.EntityModel;
 
 @Component
 public class DefaultConditionalEntityEvaluator implements

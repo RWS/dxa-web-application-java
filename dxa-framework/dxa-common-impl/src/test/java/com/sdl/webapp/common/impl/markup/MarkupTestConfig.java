@@ -24,11 +24,6 @@ import static org.mockito.Mockito.when;
 @Configuration
 public class MarkupTestConfig {
 
-    public static class TestEntity extends AbstractEntityModel {
-        private String testField;
-        private String hiddenField;
-    }
-
     @Bean
     public Markup markup() throws NoSuchFieldException {
         return new MarkupImpl(semanticMappingRegistry(), webRequestContext());
@@ -91,5 +86,10 @@ public class MarkupTestConfig {
         when(anno.propertyName()).thenReturn(propertyName);
         when(anno.value()).thenReturn(value);
         return anno;
+    }
+
+    public static class TestEntity extends AbstractEntityModel {
+        private String testField;
+        private String hiddenField;
     }
 }

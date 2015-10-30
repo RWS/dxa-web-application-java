@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.api.model;
 
-import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.exceptions.DxaException;
 
 /**
@@ -27,7 +26,6 @@ public interface ViewModelRegistry {
     Class<? extends ViewModel> getViewEntityClass(String viewName) throws DxaException;
 
 
-
     /**
      * Returns the entity type to use for a sepecific semantic type
      *
@@ -41,9 +39,9 @@ public interface ViewModelRegistry {
     /**
      * Registers an entity type for a view.
      *
-     * @param viewData The name of the entity view.
+     * @param viewData    The name of the entity view.
      * @param entityClass The class to register
      */
-    void registerViewModel(MvcData viewData,  Class<? extends ViewModel> entityClass);
+    void registerViewModel(MvcData viewData, Class<? extends ViewModel> entityClass);
 
 }

@@ -3,7 +3,6 @@ package com.sdl.webapp.tridion.fieldconverters;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.model.RichText;
-
 import com.sdl.webapp.tridion.ModelBuilderPipeline;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;

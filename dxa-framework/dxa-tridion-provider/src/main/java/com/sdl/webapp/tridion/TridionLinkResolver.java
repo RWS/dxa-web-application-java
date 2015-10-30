@@ -13,12 +13,10 @@ import org.springframework.util.StringUtils;
 
 @Component
 public class TridionLinkResolver implements LinkResolver {
-    private static final Logger LOG = LoggerFactory.getLogger(TridionLinkResolver.class);
-
     //TODO : move these back to defaultcontentprovider once class is moved to new package
     public static final String DEFAULT_PAGE_NAME = "index";
     public static final String DEFAULT_PAGE_EXTENSION = ".html";
-
+    private static final Logger LOG = LoggerFactory.getLogger(TridionLinkResolver.class);
 
     @Override
     public String resolveLink(String url, String localizationId) {
@@ -30,7 +28,7 @@ public class TridionLinkResolver implements LinkResolver {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
         String resolvedUrl = resolveLink(url, publicationId, resolveToBinary);
 
-        if(url.startsWith("tcm:")) {
+        if (url.startsWith("tcm:")) {
             if (!StringUtils.isEmpty(resolvedUrl)) {
                 if (resolvedUrl.endsWith(DEFAULT_PAGE_EXTENSION)) {
                     resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_EXTENSION.length());

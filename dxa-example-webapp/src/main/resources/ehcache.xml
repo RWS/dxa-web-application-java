@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ehcache name="DD4T" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="DD4T"
          xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false">
     <!--
         Items that depend on other items stay in cache eternally. They are expired by (un-)publishing the dependent item.

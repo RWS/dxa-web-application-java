@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -14,14 +13,6 @@ public class RichText {
 
     @JsonProperty("Fragments")
     private List<RichTextFragment> fragments;
-
-    public List<RichTextFragment> getFragments() {
-        return this.fragments;
-    }
-
-    private void setFragments(List<RichTextFragment> fragments) {
-        this.fragments = fragments;
-    }
 
     public RichText(String html) {
         this.fragments = new LinkedList<>();
@@ -32,6 +23,19 @@ public class RichText {
 
     public RichText(List<RichTextFragment> fragments) {
         this.fragments = (fragments != null) ? fragments : new LinkedList<RichTextFragment>();
+    }
+
+    @JsonIgnore
+    public static Boolean isNullOrEmpty(RichText richText) {
+        return (richText == null) || richText.isEmpty();
+    }
+
+    public List<RichTextFragment> getFragments() {
+        return this.fragments;
+    }
+
+    private void setFragments(List<RichTextFragment> fragments) {
+        this.fragments = fragments;
     }
 
     @Override
@@ -47,11 +51,6 @@ public class RichText {
     public Boolean isEmpty() {
         return CollectionUtils.isEmpty(fragments) ||
                 fragments.get(0) == null || StringUtils.isEmpty(fragments.get(0).toHtml());
-    }
-
-    @JsonIgnore
-    public static Boolean isNullOrEmpty(RichText richText) {
-        return (richText == null) || richText.isEmpty();
     }
 
     @Override

@@ -23,7 +23,6 @@ import com.tridion.broker.querying.sorting.column.CustomMetaKeyColumn;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.CustomMeta;
-
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

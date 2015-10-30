@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion.xpm;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.sdl.webapp.common.api.xpm.ComponentType;
 import com.sdl.webapp.common.api.xpm.XpmRegion;
 import org.springframework.stereotype.Component;

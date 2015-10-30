@@ -4,11 +4,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.ContentList;
-
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.springframework.cglib.core.Local;
-
-import java.io.InputStream;
 
 /**
  * Content provider.

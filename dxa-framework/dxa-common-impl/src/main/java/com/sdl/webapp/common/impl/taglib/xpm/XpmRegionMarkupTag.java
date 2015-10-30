@@ -4,7 +4,6 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.markup.html.HtmlNode;
-
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 public class XpmRegionMarkupTag extends XpmMarkupTag {
@@ -33,7 +32,6 @@ public class XpmRegionMarkupTag extends XpmMarkupTag {
         };
 
     }
-
 
 
     private Localization getLocalization() {

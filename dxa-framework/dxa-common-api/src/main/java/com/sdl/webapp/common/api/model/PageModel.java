@@ -6,25 +6,25 @@ public interface PageModel extends ViewModel {
 
     String getId();
 
-    String getName();
-
-    String getTitle();
-
-    Map<String, String> getMeta();
-
-    RegionModelSet getRegions();
-
-    boolean containsRegion(String regionName);
-
     void setId(String Id);
+
+    String getName();
 
     void setName(String name);
 
+    String getTitle();
+
     void setTitle(String name);
+
+    Map<String, String> getMeta();
+
+    void setMeta(Map<String, String> pageMeta);
+
+    RegionModelSet getRegions();
 
     void setRegions(RegionModelSet regions);
 
-    void setMeta(Map<String, String> pageMeta);
+    boolean containsRegion(String regionName);
 
     void setMvcData(MvcData pageMvcData);
 

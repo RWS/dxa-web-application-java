@@ -21,8 +21,8 @@ public interface SemanticMapper {
      * @throws SemanticMappingException When an error occurs.
      */
     <T extends ViewModel> T createEntity(Class<? extends T> entityClass,
-                                                   Map<FieldSemantics, SemanticField> semanticFields,
-                                                   SemanticFieldDataProvider fieldDataProvider)
+                                         Map<FieldSemantics, SemanticField> semanticFields,
+                                         SemanticFieldDataProvider fieldDataProvider)
             throws SemanticMappingException;
 
 }

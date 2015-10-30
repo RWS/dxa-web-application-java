@@ -117,21 +117,19 @@ public abstract class AbstractPageModelImpl implements PageModel {
     public void setMvcData(MvcData mvcData) {
         this.mvcData = mvcData;
     }
+
     @Override
-    public String getHtmlClasses()
-    {
+    public String getHtmlClasses() {
         return this.htmlClasses;
     }
 
     @Override
-    public void setHtmlClasses(String htmlClasses)
-    {
+    public void setHtmlClasses(String htmlClasses) {
         this.htmlClasses = htmlClasses;
     }
 
     @Override
-    public String getXpmMarkup(Localization localization)
-    {
+    public String getXpmMarkup(Localization localization) {
         if (getXpmMetadata() == null) {
             return "";
         }
@@ -139,13 +137,10 @@ public abstract class AbstractPageModelImpl implements PageModel {
         String cmsUrl;
         if (!getXpmMetadata().containsKey("CmsUrl")) {
             cmsUrl = localization.getConfiguration("core.cmsurl");
-        }
-        else
-        {
+        } else {
             cmsUrl = getXpmMetadata().get("CmsUrl");
         }
-        if (cmsUrl.endsWith("/"))
-        {
+        if (cmsUrl.endsWith("/")) {
             // remove trailing slash from cmsUrl if present
             cmsUrl = cmsUrl.substring(0, cmsUrl.length() - 1);
         }

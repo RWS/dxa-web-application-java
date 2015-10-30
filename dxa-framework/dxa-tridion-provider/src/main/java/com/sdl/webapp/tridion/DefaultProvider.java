@@ -31,7 +31,6 @@ import com.tridion.storage.StorageTypeMapping;
 import com.tridion.storage.dao.BinaryContentDAO;
 import com.tridion.storage.dao.BinaryVariantDAO;
 import com.tridion.storage.dao.ItemDAO;
-
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -44,8 +43,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -61,68 +60,71 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
-
 
 /**
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
  */
 @Component
 public final class DefaultProvider implements ContentProvider, NavigationProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultProvider.class);
-
     public static final String DEFAULT_PAGE_NAME = "index";
     public static final String DEFAULT_PAGE_EXTENSION = ".html";
-
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultProvider.class);
     private static final String STATIC_FILES_DIR = "BinaryData";
 
     private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
-
-    private static final class StaticContentFile {
-        private final File file;
-        private final String contentType;
-
-        private StaticContentFile(File file, String contentType) {
-            this.file = file;
-            this.contentType = StringUtils.isEmpty(contentType) ? DEFAULT_CONTENT_TYPE : contentType;
-        }
-
-        public File getFile() {
-            return file;
-        }
-
-        public String getContentType() {
-            return contentType;
-        }
-    }
-
-    private interface TryFindPage<T> {
-        T tryFindPage(String path, int publicationId) throws ContentProviderException;
-    }
-
     private static final String NAVIGATION_MODEL_URL = "/navigation.json";
-
     private static final String TYPE_STRUCTURE_GROUP = "StructureGroup";
-
     @Autowired
     private PageFactory dd4tPageFactory;
-
     @Autowired
     private ComponentPresentationFactory dd4tComponentPresentationFactory;
-
     @Autowired
     private ModelBuilderPipeline modelBuilderPipeline;
-
     @Autowired
     private ObjectMapper objectMapper;
-
     @Autowired
     private WebApplicationContext webApplicationContext;
-
     @Autowired
     private LinkResolver linkResolver;
+
+    private static <T> T findPage(String path, Localization localization, TryFindPage<T> callback)
+            throws ContentProviderException {
+        String processedPath = processPath(path);
+        final int publicationId = Integer.parseInt(localization.getId());
+
+        LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
+        T page = callback.tryFindPage(processedPath, publicationId);
+        if (page == null && !path.endsWith("/") && !hasExtension(path)) {
+            processedPath = processPath(path + "/");
+            LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
+            page = callback.tryFindPage(processedPath, publicationId);
+        }
+
+        if (page == null) {
+            throw new PageNotFoundException("Page not found: [" + publicationId + "] " + processedPath);
+        }
+
+        return page;
+    }
+
+    private static String processPath(String path) {
+        if (StringUtils.isEmpty(path)) {
+            return DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
+        }
+        if (path.endsWith("/")) {
+            path = path + DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
+        }
+        if (!hasExtension(path)) {
+            path = path + DEFAULT_PAGE_EXTENSION;
+        }
+        return path;
+    }
+
+    private static boolean hasExtension(String path) {
+        return path.lastIndexOf('.') > path.lastIndexOf('/');
+    }
 
     @Override
     public PageModel getPageModel(String path, final Localization localization) throws ContentProviderException {
@@ -190,43 +192,6 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         });
     }
 
-    private static <T> T findPage(String path, Localization localization, TryFindPage<T> callback)
-            throws ContentProviderException {
-        String processedPath = processPath(path);
-        final int publicationId = Integer.parseInt(localization.getId());
-
-        LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
-        T page = callback.tryFindPage(processedPath, publicationId);
-        if (page == null && !path.endsWith("/") && !hasExtension(path)) {
-            processedPath = processPath(path + "/");
-            LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
-            page = callback.tryFindPage(processedPath, publicationId);
-        }
-
-        if (page == null) {
-            throw new PageNotFoundException("Page not found: [" + publicationId + "] " + processedPath);
-        }
-
-        return page;
-    }
-
-    private static String processPath(String path) {
-        if (StringUtils.isEmpty(path)) {
-            return DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
-        }
-        if (path.endsWith("/")) {
-            path = path + DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
-        }
-        if (!hasExtension(path)) {
-            path = path + DEFAULT_PAGE_EXTENSION;
-        }
-        return path;
-    }
-
-    private static boolean hasExtension(String path) {
-        return path.lastIndexOf('.') > path.lastIndexOf('/');
-    }
-
     @Override
     public void populateDynamicList(ContentList contentList, Localization localization) throws ContentProviderException {
         final BrokerQuery brokerQuery = new BrokerQuery();
@@ -270,11 +235,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
             return 0;
         }
     }
-    
-    
-    
-    
-    /* staticcontentprovider code */
+
     /**
      * Implementation of {@code StaticContentProvider} that uses DD4T to provide static content.
      * <p/>
@@ -319,6 +280,11 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     private String removeVersionNumber(String path) {
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
+    
+    
+    
+    
+    /* staticcontentprovider code */
 
     private StaticContentFile getStaticContentFile(String path, String localizationId)
             throws ContentProviderException {
@@ -577,6 +543,28 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         link.setUrl(item.getUrl());
         link.setLinkText(item.getTitle());
         return link;
+    }
+
+    private interface TryFindPage<T> {
+        T tryFindPage(String path, int publicationId) throws ContentProviderException;
+    }
+
+    private static final class StaticContentFile {
+        private final File file;
+        private final String contentType;
+
+        private StaticContentFile(File file, String contentType) {
+            this.file = file;
+            this.contentType = StringUtils.isEmpty(contentType) ? DEFAULT_CONTENT_TYPE : contentType;
+        }
+
+        public File getFile() {
+            return file;
+        }
+
+        public String getContentType() {
+            return contentType;
+        }
     }
 
 

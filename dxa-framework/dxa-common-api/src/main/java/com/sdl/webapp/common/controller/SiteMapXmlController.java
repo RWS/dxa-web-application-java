@@ -19,8 +19,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.List;
 
-import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
 import static com.sdl.webapp.common.controller.ControllerUtils.SERVER_ERROR_VIEW;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
 
 /**
  * Controller which returns the sitemap in XML format.

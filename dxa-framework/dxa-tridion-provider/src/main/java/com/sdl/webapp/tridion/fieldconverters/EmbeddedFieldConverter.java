@@ -5,7 +5,6 @@ import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.tridion.AbstractSemanticFieldDataProvider;
-
 import com.sdl.webapp.tridion.ModelBuilderPipeline;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;

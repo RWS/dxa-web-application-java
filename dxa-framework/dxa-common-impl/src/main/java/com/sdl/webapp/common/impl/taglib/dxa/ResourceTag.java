@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.impl.taglib.dxa;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.localization.Localization;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.jsp.JspException;

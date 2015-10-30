@@ -1,19 +1,17 @@
 package com.sdl.webapp.common.impl.taglib.dxa;
 
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.servlet.ServletException;
+import javax.servlet.jsp.JspException;
+import javax.servlet.jsp.JspWriter;
+import java.io.IOException;
 
 public class RichTextTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RichTextTag.class);

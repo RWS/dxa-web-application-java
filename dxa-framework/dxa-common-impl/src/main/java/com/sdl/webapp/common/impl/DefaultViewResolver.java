@@ -22,7 +22,7 @@ public class DefaultViewResolver extends DefaultImplementation<ViewResolver> imp
 
     @Override
     public String resolveView(MvcData mvcData, String viewType, HttpServletRequest request) {
-    	return mvcData.getAreaName() + "/" + viewType + "/" + mvcData.getViewName();
+        return mvcData.getAreaName() + "/" + viewType + "/" + mvcData.getViewName();
     }
 
     @Override

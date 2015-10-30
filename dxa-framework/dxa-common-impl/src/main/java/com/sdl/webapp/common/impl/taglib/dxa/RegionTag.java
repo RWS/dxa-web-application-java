@@ -6,18 +6,15 @@ import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
+import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
-import com.sdl.webapp.common.controller.ControllerUtils;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StringUtils;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
-
 import java.io.IOException;
 
 import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.REGION;

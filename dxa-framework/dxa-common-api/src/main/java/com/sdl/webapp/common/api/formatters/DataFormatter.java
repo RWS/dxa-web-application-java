@@ -1,12 +1,7 @@
 package com.sdl.webapp.common.api.formatters;
 
-import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.entity.Teaser;
-import com.sun.syndication.feed.rss.Item;
-import com.sun.syndication.feed.synd.SyndFeed;
 
-import javax.servlet.http.HttpServletRequest;
-import java.net.URISyntaxException;
 import java.util.List;
 
 /**
@@ -14,9 +9,14 @@ import java.util.List;
  */
 public interface DataFormatter {
     double score();
+
     Object formatData(Object model);
+
     boolean isProcessModel();
+
     boolean isAddIncludes();
+
     List<String> getValidTypes(List<String> allowedTypes);
+
     Object getSyndicationItemFromTeaser(Teaser item) throws Exception;
 }

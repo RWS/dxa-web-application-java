@@ -13,6 +13,18 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CO
  */
 public class SemanticMappingRegistryImplErrorsTest {
 
+    @Test(expected = SemanticAnnotationException.class)
+    public void testSemanticEntityAnnosWithTheSamePrefix() {
+        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
+        registry.registerEntity(TestEntity1.class);
+    }
+
+    @Test(expected = SemanticAnnotationException.class)
+    public void testSemanticPropertyAnnoWithUnknownPrefix() {
+        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
+        registry.registerEntity(TestEntity2.class);
+    }
+
     @SemanticEntities({
             @SemanticEntity(entityName = "One", vocabulary = SDL_CORE, prefix = "x"),
             @SemanticEntity(entityName = "Two", vocabulary = SDL_CORE, prefix = "x")
@@ -25,18 +37,5 @@ public class SemanticMappingRegistryImplErrorsTest {
     public static class TestEntity2 extends AbstractEntityModel {
         @SemanticProperty("x:F1")
         private String field1;
-    }
-
-
-    @Test(expected = SemanticAnnotationException.class)
-    public void testSemanticEntityAnnosWithTheSamePrefix() {
-        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
-        registry.registerEntity(TestEntity1.class);
-    }
-
-    @Test(expected = SemanticAnnotationException.class)
-    public void testSemanticPropertyAnnoWithUnknownPrefix() {
-        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
-        registry.registerEntity(TestEntity2.class);
     }
 }

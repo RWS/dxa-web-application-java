@@ -233,16 +233,16 @@ public class MvcDataImpl implements MvcData {
         }
 
         private MvcData set(MvcDataImpl mvcData) {
-            if (mvcData.controllerAreaName == null ) {
+            if (mvcData.controllerAreaName == null) {
                 mvcData.controllerAreaName = this.controllerAreaName;
             }
-            if (mvcData.controllerName == null ) {
+            if (mvcData.controllerName == null) {
                 mvcData.controllerName = this.controllerName;
             }
-            if (mvcData.actionName == null ) {
+            if (mvcData.actionName == null) {
                 mvcData.actionName = this.actionName;
             }
-            if (mvcData.areaName == null ) {
+            if (mvcData.areaName == null) {
                 mvcData.areaName = this.areaName;
             }
             return mvcData;

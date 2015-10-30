@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.impl;
 
-import java.util.Map;
-
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
+
+import java.util.Map;
 
 public class MockContextClaimsProvider implements ContextClaimsProvider {
 

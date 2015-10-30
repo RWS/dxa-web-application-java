@@ -22,7 +22,7 @@ public class RichTextFragmentImpl implements RichTextFragment {
         return toHtml();
     }
 
-    public String getHtml(){
+    public String getHtml() {
         return toHtml();
     }
 }

@@ -1,27 +1,22 @@
 package com.sdl.webapp.common.controller;
 
-import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.model.*;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
-
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.Map;
-
-import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 
 /**
  * Abstract superclass for controllers with utility methods and exception handling.
@@ -34,6 +29,12 @@ public abstract class BaseController {
 
     @Autowired
     private RequestMappingHandlerMapping requestMappingHandlerMapping;
+
+    private static Boolean isCustomAction(MvcData mvcData) {
+        return mvcData.getActionName() != "Entity"
+                || mvcData.getControllerName() != "Entity"
+                || mvcData.getControllerAreaName() != "Core";
+    }
 
     protected RegionModel getRegionFromRequest(HttpServletRequest request, String regionName) {
         RegionModel region = (RegionModel) request.getAttribute("_region_");
@@ -67,7 +68,6 @@ public abstract class BaseController {
         return this.viewResolver.resolveView(viewBaseDir, view, mvcData, request);
     }
 
-
     /**
      * This is the method to override if you need to add custom model population logic,
      * first calling the base class and then adding your own logic
@@ -78,26 +78,24 @@ public abstract class BaseController {
     protected ViewModel enrichModel(ViewModel model) throws Exception {
         //Check if an exception was generated when creating the model, so now is the time to throw it
         // TODO: shouldn't we just render the ExceptionEntity using an Exception View?
-        if(model.getClass().isAssignableFrom(ExceptionEntity.class))
-        {
-            ExceptionEntity exceptionEntity = (ExceptionEntity)model;
+        if (model.getClass().isAssignableFrom(ExceptionEntity.class)) {
+            ExceptionEntity exceptionEntity = (ExceptionEntity) model;
             throw exceptionEntity.getException();
         }
 
-        return (ViewModel)processModel(model, model.getClass());
+        return (ViewModel) processModel(model, model.getClass());
     }
 
-     /**
+    /**
      * This is the method to override if you need to add custom model population logic, first calling the base class and then adding your own logic
      *
      * @param sourceModel The model to process
-     * @param type The type of view model required
+     * @param type        The type of view model required
      * @return A processed view model
      * @deprecated Deprecated in DXA 1.1. Override EnrichModel instead.
      */
     @Deprecated
-    protected Object processModel(Object sourceModel, Class type)
-    {
+    protected Object processModel(Object sourceModel, Class type) {
         // NOTE: Intentionally loosely typed for backwards compatibility; this was part of the V1.0 (semi-)public API
         return sourceModel;
     }
@@ -107,15 +105,13 @@ public abstract class BaseController {
      *
      * @param entity The Entity Model to enrich.
      * @return The enriched Entity Model.
-     *
+     * <p/>
      * This method is different from EnrichModel in that it doesn't expect the current Controller to be able to enrich the Entity Model;
      * it creates a Controller associated with the Entity Model for that purpose.
      * It is used by PageController.enrichEmbeddedModels.
      */
-    protected EntityModel enrichEntityModel(EntityModel entity)
-    {
-        if (entity == null || entity.getMvcData() == null || ! isCustomAction(entity.getMvcData()))
-        {
+    protected EntityModel enrichEntityModel(EntityModel entity) {
+        if (entity == null || entity.getMvcData() == null || !isCustomAction(entity.getMvcData())) {
             return entity;
         }
 
@@ -128,14 +124,14 @@ public abstract class BaseController {
         Map<RequestMappingInfo, HandlerMethod> handlerMethods =
                 this.requestMappingHandlerMapping.getHandlerMethods();
 
-        for(Map.Entry<RequestMappingInfo, HandlerMethod> item : handlerMethods.entrySet()) {
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> item : handlerMethods.entrySet()) {
             RequestMappingInfo mapping = item.getKey();
             HandlerMethod method = item.getValue();
 
             for (String urlPattern : mapping.getPatternsCondition().getPatterns()) {
-                if(urlPattern.contains("/" + controllerAreaName + "/" + controllerName)) {
+                if (urlPattern.contains("/" + controllerAreaName + "/" + controllerName)) {
                     HandlerMethod controllerMethod = handlerMethods.get(mapping);
-                    BaseController controller = (BaseController)ApplicationContextHolder.getContext().getBean(controllerMethod.getBean().toString());
+                    BaseController controller = (BaseController) ApplicationContextHolder.getContext().getBean(controllerMethod.getBean().toString());
                     try {
                         controller.enrichModel(entity);
                         return entity;
@@ -147,13 +143,5 @@ public abstract class BaseController {
             }
         }
         return entity;
-    }
-
-
-    private static Boolean isCustomAction(MvcData mvcData)
-    {
-        return mvcData.getActionName() != "Entity"
-                || mvcData.getControllerName() != "Entity"
-                || mvcData.getControllerAreaName() != "Core";
     }
 }

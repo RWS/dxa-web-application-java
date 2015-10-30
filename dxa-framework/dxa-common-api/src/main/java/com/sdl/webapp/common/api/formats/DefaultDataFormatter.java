@@ -1,14 +1,17 @@
 package com.sdl.webapp.common.api.formats;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.formatters.*;
+import com.sdl.webapp.common.api.formatters.AtomFormatter;
+import com.sdl.webapp.common.api.formatters.JsonFormatter;
+import com.sdl.webapp.common.api.formatters.RssFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Helper bean to handle the different formatters
@@ -32,6 +35,20 @@ public class DefaultDataFormatter implements DataFormatter {
         formatters.put("rss", new RssFormatter(request, context));
     }
 
+    /**
+     * Gets the score from accept string
+     *
+     * @param type
+     * @return
+     */
+    public static double getScoreFromAcceptString(String type) {
+        double res = 1.0;
+        int pos = type.indexOf("q=");
+        if (pos > 0) {
+            return Double.parseDouble(type.substring(pos + 2));
+        }
+        return res;
+    }
 
     /**
      * Gets the formatter based on the format
@@ -90,7 +107,7 @@ public class DefaultDataFormatter implements DataFormatter {
         if (topScore < 1.0) {
             for (Map.Entry<String, com.sdl.webapp.common.api.formatters.DataFormatter> entry : formatters.entrySet()) {
 
-                double score = ((com.sdl.webapp.common.api.formatters.DataFormatter) entry.getValue()).score();
+                double score = entry.getValue().score();
                 if (score > topScore) {
                     topScore = score;
                     format = entry.getKey();
@@ -125,20 +142,5 @@ public class DefaultDataFormatter implements DataFormatter {
             }
         }
         return score;
-    }
-
-    /**
-     * Gets the score from accept string
-     *
-     * @param type
-     * @return
-     */
-    public static double getScoreFromAcceptString(String type) {
-        double res = 1.0;
-        int pos = type.indexOf("q=");
-        if (pos > 0) {
-            return Double.parseDouble(type.substring(pos + 2));
-        }
-        return res;
     }
 }

@@ -19,15 +19,6 @@ public final class SemanticSchema {
     private final Set<EntitySemantics> entitySemantics;
 
     private final Map<FieldSemantics, SemanticField> semanticFields;
-
-    public Localization getLocalization() {
-        return localization;
-    }
-
-    public void setLocalization(Localization localization) {
-        this.localization = localization;
-    }
-
     private Localization localization;
 
     public SemanticSchema(long id, String rootElement, Set<EntitySemantics> entitySemantics,
@@ -36,6 +27,14 @@ public final class SemanticSchema {
         this.rootElement = rootElement;
         this.entitySemantics = ImmutableSet.copyOf(entitySemantics);
         this.semanticFields = ImmutableMap.copyOf(semanticFields);
+    }
+
+    public Localization getLocalization() {
+        return localization;
+    }
+
+    public void setLocalization(Localization localization) {
+        this.localization = localization;
     }
 
     public long getId() {

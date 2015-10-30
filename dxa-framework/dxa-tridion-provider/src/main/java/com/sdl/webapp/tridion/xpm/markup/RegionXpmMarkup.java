@@ -4,7 +4,6 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
-import com.sdl.webapp.common.api.xpm.ComponentType;
 import com.sdl.webapp.common.api.xpm.XpmRegion;
 import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import com.sdl.webapp.common.markup.MarkupDecorator;
@@ -12,9 +11,6 @@ import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.ParsableHtmlNode;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
-import com.sdl.webapp.tridion.xpm.ComponentTypeImpl;
-import com.sdl.webapp.tridion.xpm.XpmRegionConfigImpl;
-import com.sdl.webapp.tridion.xpm.XpmRegionImpl;
 import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
@@ -26,11 +22,10 @@ import org.jsoup.nodes.Node;
  */
 public class RegionXpmMarkup implements MarkupDecorator {
 
-    private XpmRegionConfig xpmRegionConfig;
-
     private static final String REGION_PATTERN = "Start Region: {title:\"%s\",allowedComponentTypes:[%s]," + "minOccurs:%d%s}";
     private static final String COMPONENT_TYPE_PATTERN = "%s{schema:\"%s\",template:\"%s\"}";
     private static final String MAX_OCCURS_PATTERN = ",maxOccurs:%d";
+    private XpmRegionConfig xpmRegionConfig;
 
     public RegionXpmMarkup(XpmRegionConfig xpmRegionConfig) {
         this.xpmRegionConfig = xpmRegionConfig;

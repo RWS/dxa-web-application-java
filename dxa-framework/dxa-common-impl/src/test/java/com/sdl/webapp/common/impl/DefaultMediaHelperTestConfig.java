@@ -1,7 +1,6 @@
 package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;

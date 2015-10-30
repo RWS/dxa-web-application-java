@@ -14,9 +14,6 @@ import java.util.HashMap;
  */
 public final class MimeUtils {
 
-    private MimeUtils() {
-    }
-
     static HashMap<String, String> MIME_TYPES = new HashMap<>();
 
     static {
@@ -182,6 +179,9 @@ public final class MimeUtils {
         MIME_TYPES.put("xyz", "chemical/x-xyz");
         MIME_TYPES.put("z", "application/compress");
         MIME_TYPES.put("zip", "application/zip");
+    }
+
+    private MimeUtils() {
     }
 
     static public String getMimeType(URL url) throws IOException {

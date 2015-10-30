@@ -12,19 +12,8 @@ public final class SemanticVocabulary {
     public static final SemanticVocabulary SCHEMA_ORG_VOCABULARY = new SemanticVocabulary(SCHEMA_ORG);
 
     private final String id;
-
-    public void setPrefix(String prefix) {
-        this.prefix = prefix;
-    }
-
     private String prefix;
-
-    public void setVocab(String vocab) {
-        this.vocab = vocab;
-    }
-
     private String vocab;
-
 
     public SemanticVocabulary(String id) {
         this.id = id;
@@ -33,10 +22,22 @@ public final class SemanticVocabulary {
     public String getId() {
         return id;
     }
-    public String getPrefix() {return prefix;}
-    public String getVocab() {return vocab; }
 
+    public String getPrefix() {
+        return prefix;
+    }
 
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
+    public String getVocab() {
+        return vocab;
+    }
+
+    public void setVocab(String vocab) {
+        this.vocab = vocab;
+    }
 
     @Override
     public boolean equals(Object o) {
@@ -45,9 +46,8 @@ public final class SemanticVocabulary {
 
         SemanticVocabulary that = (SemanticVocabulary) o;
 
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
+        return !(id != null ? !id.equals(that.id) : that.id != null);
 
-        return true;
     }
 
     @Override

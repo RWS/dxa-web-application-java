@@ -7,7 +7,12 @@ import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
-import com.sdl.webapp.common.api.model.*;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.RichText;
+import com.sdl.webapp.common.api.model.RichTextFragment;
+import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
+import com.sdl.webapp.common.api.model.ViewModel;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.NodeListAdapter;
@@ -20,7 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.w3c.dom.*;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 import org.xml.sax.SAXException;
@@ -28,11 +38,17 @@ import org.xml.sax.SAXException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.sdl.webapp.tridion.xpath.XPathResolver.*;
+import static com.sdl.webapp.tridion.xpath.XPathResolver.XLINK_NS_URI;
+import static com.sdl.webapp.tridion.xpath.XPathResolver.XPATH_IMAGES;
+import static com.sdl.webapp.tridion.xpath.XPathResolver.XPATH_LINKS;
 import static java.lang.Long.parseLong;
 import static javax.xml.xpath.XPathConstants.NODESET;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -41,9 +57,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Component
 public class DefaultRichTextProcessor implements RichTextProcessor {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultRichTextProcessor.class);
     public static final String EMBEDDED_ENTITY = "EmbeddedEntity";
-
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultRichTextProcessor.class);
     @Autowired
     private MediaHelper mediaHelper;
 

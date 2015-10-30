@@ -132,7 +132,7 @@ public interface WebRequestContext {
 
     // TODO: Should we have setters in this interface??
 
-	boolean getHasNoLocalization();
+    boolean getHasNoLocalization();
 
     void setHasNoLocalization(boolean value);
 
@@ -147,7 +147,7 @@ public interface WebRequestContext {
     void setIsInclude(boolean value);
 
     void setIsDeveloperMode(boolean value);
-    
+
     RegionModel getParentRegion();
 
     void pushParentRegion(RegionModel value);

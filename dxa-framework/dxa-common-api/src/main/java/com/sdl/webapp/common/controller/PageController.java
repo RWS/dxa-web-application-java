@@ -12,16 +12,19 @@ import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.NavigationProvider;
 import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
+import com.sdl.webapp.common.api.formats.DataFormatter;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.*;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
-import com.sdl.webapp.common.api.formats.DataFormatter;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.Markup;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +32,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
@@ -38,8 +46,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.http.HTTPException;
 
-import static com.sdl.webapp.common.controller.RequestAttributeNames.*;
-import static com.sdl.webapp.common.controller.ControllerUtils.*;
+import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
+import static com.sdl.webapp.common.controller.ControllerUtils.SECTION_ERROR_VIEW;
+import static com.sdl.webapp.common.controller.ControllerUtils.SERVER_ERROR_VIEW;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.CONTEXTENGINE;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.LOCALIZATION;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.MEDIAHELPER;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_ID;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.SCREEN_WIDTH;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.SOCIALSHARE_URL;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
@@ -53,24 +70,15 @@ public class PageController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
-
+    private final ContentProvider contentProvider;
+    private final LinkResolver linkResolver;
+    private final MediaHelper mediaHelper;
+    private final WebRequestContext webRequestContext;
+    private final Markup markup;
+    private final ViewResolver viewResolver;
+    private final DataFormatter dataFormatters;
     @Value("#{environment.getProperty('AllowJsonResponse', 'false')}")
     private boolean allowJsonResponse;
-
-    private final ContentProvider contentProvider;
-
-    private final LinkResolver linkResolver;
-
-    private final MediaHelper mediaHelper;
-
-    private final WebRequestContext webRequestContext;
-
-    private final Markup markup;
-
-    private final ViewResolver viewResolver;
-
-    private final DataFormatter dataFormatters;
-
     @Autowired
     private NavigationProvider navigationProvider;
 
@@ -102,7 +110,7 @@ public class PageController extends BaseController {
 
         final PageModel originalPageModel = getPageModel(requestPath, localization);
         final ViewModel enrichedPageModel = enrichModel(originalPageModel);
-        final PageModel page = enrichedPageModel instanceof PageModel ? (PageModel)enrichedPageModel:originalPageModel;
+        final PageModel page = enrichedPageModel instanceof PageModel ? (PageModel) enrichedPageModel : originalPageModel;
 
         LOG.trace("handleGetPage: page={}", page);
 
@@ -138,7 +146,6 @@ public class PageController extends BaseController {
     }
 
 
-
     @RequestMapping(method = RequestMethod.GET, value = "/resolve/{itemId}")
     public String handleResolve(@PathVariable String itemId, @RequestParam String localizationId,
                                 @RequestParam(required = false) String defaultPath,
@@ -172,7 +179,9 @@ public class PageController extends BaseController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody String handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
+    public
+    @ResponseBody
+    String handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
         LOG.trace("handleGetNavigationJson");
 
 
@@ -263,7 +272,8 @@ public class PageController extends BaseController {
     /**
      * Enriches all the Region/Entity Models embedded in the given Page Model.
      * Used by <see cref="FormatDataAttribute"/> to get all embedded Models enriched without rendering any Views.
-     * @param model   The Page Model to enrich.
+     *
+     * @param model The Page Model to enrich.
      */
     private void enrichEmbeddedModels(PageModel model) {
         if (model == null) {
@@ -280,7 +290,6 @@ public class PageController extends BaseController {
             }
         }
     }
-
 
 
     private boolean isIncludeRequest(HttpServletRequest request) {

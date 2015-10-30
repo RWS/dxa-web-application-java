@@ -9,7 +9,6 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +19,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
 
 
 /**
  * Navigation controller for the Core area.
- *
+ * <p/>
  * This handles include requests to /system/mvc/Core/Navigation/Navigation/{regionName}/{entityId}
  * and /system/mvc/Core/Navigation/SiteMap/{regionName}/{entityId}
  */
@@ -54,14 +52,14 @@ public class NavigationController extends BaseController {
         this.navigationProvider = navigationProvider;
     }
 
-   
+
     /**
      * Handles a request for navigation data, for example for the top navigation menu, left-side navigation or
      * breadcrumb bar.
      *
-     * @param request The request.
+     * @param request  The request.
      * @param entityId The name of the entity.
-     * @param navType Navigation type.
+     * @param navType  Navigation type.
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
@@ -76,7 +74,7 @@ public class NavigationController extends BaseController {
 
         final String requestPath = webRequestContext.getRequestPath();
         final Localization localization = webRequestContext.getLocalization();
-        
+
         NavigationLinks navigationLinks;
         switch (navType) {
             case NAV_TYPE_TOP:
@@ -98,7 +96,7 @@ public class NavigationController extends BaseController {
         }
 
         final ViewModel enrichedEntity = enrichModel(entity);
-        entity = enrichedEntity instanceof EntityModel ? (EntityModel)enrichedEntity:navigationLinks;
+        entity = enrichedEntity instanceof EntityModel ? (EntityModel) enrichedEntity : navigationLinks;
         request.setAttribute(ENTITY_MODEL, entity);
 
         if (navigationLinks != null) {
@@ -115,7 +113,7 @@ public class NavigationController extends BaseController {
     /**
      * Handles a request to get the sitemap (in HTML).
      *
-     * @param request The request.
+     * @param request  The request.
      * @param entityId The name of the entity.
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.

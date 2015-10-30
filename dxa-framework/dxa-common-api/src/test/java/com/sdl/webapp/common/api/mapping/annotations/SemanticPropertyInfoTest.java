@@ -15,12 +15,6 @@ import static org.mockito.Mockito.when;
  */
 public class SemanticPropertyInfoTest {
 
-    public static class TestEntity extends AbstractEntityModel {
-        private String testField;
-        private List<String> someList;
-        private List<String> apples;
-    }
-
     @Test
     public void testDefaults() throws NoSuchFieldException {
         final SemanticProperty anno = mockSemanticProperty("", "");
@@ -120,5 +114,11 @@ public class SemanticPropertyInfoTest {
         when(anno.propertyName()).thenReturn(propertyName);
         when(anno.value()).thenReturn(value);
         return anno;
+    }
+
+    public static class TestEntity extends AbstractEntityModel {
+        private String testField;
+        private List<String> someList;
+        private List<String> apples;
     }
 }

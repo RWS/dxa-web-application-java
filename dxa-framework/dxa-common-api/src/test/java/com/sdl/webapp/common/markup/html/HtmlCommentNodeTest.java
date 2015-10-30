@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.markup.html;
 
-import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;

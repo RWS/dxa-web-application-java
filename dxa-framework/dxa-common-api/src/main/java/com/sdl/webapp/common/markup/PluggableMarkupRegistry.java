@@ -11,23 +11,21 @@ import java.util.List;
  */
 public interface PluggableMarkupRegistry {
 
-    public enum MarkupType {
+    void registerPluggableMarkup(MarkupType markupType, HtmlNode markup);
+
+    void registerPluggableMarkup(String label, HtmlNode markup);
+
+    void registerContextualPluggableMarkup(MarkupType markupType, HtmlNode markup);
+
+    void registerContextualPluggableMarkup(String label, HtmlNode markup);
+
+    List<HtmlNode> getPluggableMarkup(String label);
+
+    enum MarkupType {
 
         CSS,
         TOP_JS,
         BOTTOM_JS
     }
-
-    
-
-    public void registerPluggableMarkup(MarkupType markupType, HtmlNode markup);
-
-    public void registerPluggableMarkup(String label, HtmlNode markup);
-
-    public void registerContextualPluggableMarkup(MarkupType markupType, HtmlNode markup);
-
-    public void registerContextualPluggableMarkup(String label, HtmlNode markup);
-
-    public List<HtmlNode> getPluggableMarkup(String label);
 
 }

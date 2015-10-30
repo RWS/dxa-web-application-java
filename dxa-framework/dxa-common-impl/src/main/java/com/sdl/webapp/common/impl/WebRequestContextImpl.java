@@ -8,7 +8,6 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.impl.contextengine.BrowserClaims;
 import com.sdl.webapp.common.impl.contextengine.DeviceClaims;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,9 @@ import java.util.Stack;
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class WebRequestContextImpl implements WebRequestContext {
     private static final Logger LOG = LoggerFactory.getLogger(WebRequestContextImpl.class);
-
+    private static final int DEFAULT_WIDTH = 1024;
+    private static final int MAX_WIDTH = 1024;
+    private final MediaHelper mediaHelper;
     private Localization localization;
     private boolean hasNoLocalization;
     private Integer maxMediaWidth;
@@ -44,28 +45,21 @@ public class WebRequestContextImpl implements WebRequestContext {
     private String pageId;
     private Boolean isDeveloperMode;
     private Boolean isInclude;
-    
-    private static final int DEFAULT_WIDTH = 1024;
-    private static final int MAX_WIDTH = 1024;
-    
-    private final MediaHelper mediaHelper;
-    
     private Stack<Integer> containerSizeStack = new Stack<>();
 
     @Autowired
     private ContextEngine contextEngine;
-    
+    private Stack<RegionModel> parentRegionstack = new Stack<>();
+
     @Autowired
-    public WebRequestContextImpl(MediaHelper mediaHelper)
-    {
-    	this.mediaHelper = mediaHelper;
+    public WebRequestContextImpl(MediaHelper mediaHelper) {
+        this.mediaHelper = mediaHelper;
     }
-    
-    public WebRequestContextImpl()
-    {
-    	this.mediaHelper = null;
+
+    public WebRequestContextImpl() {
+        this.mediaHelper = null;
     }
-    
+
     @Override
     public Localization getLocalization() {
         return localization;
@@ -75,17 +69,17 @@ public class WebRequestContextImpl implements WebRequestContext {
     public void setLocalization(Localization localization) {
         this.localization = localization;
     }
-    
+
     @Override
-    public boolean getHasNoLocalization(){
-    	return hasNoLocalization;
+    public boolean getHasNoLocalization() {
+        return hasNoLocalization;
     }
-    
+
     @Override
-    public void setHasNoLocalization(boolean value){
-    	hasNoLocalization = value;
+    public void setHasNoLocalization(boolean value) {
+        hasNoLocalization = value;
     }
-    
+
     @Override
     public int getMaxMediaWidth() {
         if (maxMediaWidth == null) {
@@ -93,7 +87,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         }
         return maxMediaWidth;
     }
-    
+
     @Override
     public double getPixelRatio() {
         if (pixelRatio == null) {
@@ -112,20 +106,17 @@ public class WebRequestContextImpl implements WebRequestContext {
         }
         return screenwidth;
     }
-    
+
     @Override
     public boolean isContextCookiePresent() {
         return contextCookiePresent;
     }
 
-    private Stack<RegionModel> parentRegionstack = new Stack<>();
-
-
     @Override
     public void setContextCookiePresent(boolean present) {
         this.contextCookiePresent = present;
     }
-    
+
     @Override
     public String getBaseUrl() {
         return baseUrl;
@@ -160,22 +151,22 @@ public class WebRequestContextImpl implements WebRequestContext {
     public String getFullUrl() {
         return baseUrl + contextPath + requestPath;
     }
-    
+
     @Override
     public ContextEngine getContextEngine() {
-       return this.contextEngine;
+        return this.contextEngine;
     }
-    
+
     @Override
     public String getPageId() {
         return pageId;
     }
-    
+
     @Override
     public void setPageId(String value) {
         this.pageId = value;
     }
-    
+
     @Override
     public boolean isDeveloperMode() {
         if (this.isDeveloperMode == null) {
@@ -187,29 +178,29 @@ public class WebRequestContextImpl implements WebRequestContext {
     private boolean getIsDeveloperMode() {
         return this.isDeveloperMode;
     }
-    
+
     @Override
     public void setIsDeveloperMode(boolean value) {
         this.isDeveloperMode = value;
     }
-    
+
     @Override
     public boolean getIsInclude() {
         return this.isInclude;
     }
-    
+
     @Override
     public void setIsInclude(boolean value) {
         this.isInclude = value;
     }
-    
+
     @Override
     public boolean isPreview() {
         // Should return true if the request is from XPM (NOTE currently always true for staging as we cannot reliably
         // distinguish XPM requests)
         return localization.isStaging();
     }
-    
+
     @Override
     public int getDisplayWidth() {
         if (displayWidth == null) {
@@ -226,18 +217,16 @@ public class WebRequestContextImpl implements WebRequestContext {
         }
         return displayWidth;
     }
-    
+
     protected ScreenWidth calculateScreenWidth() {
         int width = isContextCookiePresent() ? this.getDisplayWidth() : MAX_WIDTH;
         if (width < this.mediaHelper.getSmallScreenBreakpoint()) {
             return ScreenWidth.EXTRA_SMALL;
         }
-        if (width < this.mediaHelper.getMediumScreenBreakpoint())
-        {
+        if (width < this.mediaHelper.getMediumScreenBreakpoint()) {
             return ScreenWidth.SMALL;
         }
-        if (width < this.mediaHelper.getLargeScreenBreakpoint())
-        {
+        if (width < this.mediaHelper.getLargeScreenBreakpoint()) {
             return ScreenWidth.MEDIUM;
         }
         return ScreenWidth.LARGE;
@@ -256,12 +245,12 @@ public class WebRequestContextImpl implements WebRequestContext {
     @Override
     public void pushContainerSize(int containerSize) {
 
-        if ( containerSize == 0 ) {
+        if (containerSize == 0) {
             containerSize = this.mediaHelper.getGridSize();
         }
-        if ( this.containerSizeStack.size() > 0 ) {
+        if (this.containerSizeStack.size() > 0) {
             int parentContainerSize = this.containerSizeStack.peek();
-            containerSize = containerSize * parentContainerSize/this.mediaHelper.getGridSize();
+            containerSize = containerSize * parentContainerSize / this.mediaHelper.getGridSize();
         }
         this.containerSizeStack.push(containerSize);
     }

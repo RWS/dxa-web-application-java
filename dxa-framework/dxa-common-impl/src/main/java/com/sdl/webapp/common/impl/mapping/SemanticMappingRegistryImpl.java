@@ -4,7 +4,13 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
-import com.sdl.webapp.common.api.mapping.annotations.*;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -19,7 +25,12 @@ import org.springframework.util.ClassUtils;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of {@code SemanticMappingRegistry}.
@@ -90,8 +101,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
             return;
         }
 
-        if(semanticEntityInfo.containsKey(entityClass))
-        {
+        if (semanticEntityInfo.containsKey(entityClass)) {
             LOG.debug("Entity class {} is already registered, ignoring", entityClass.getName());
             return;
         }
@@ -152,20 +162,19 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
 
         String[] entityNameSplit = entityName.split(":");
         List<Class<? extends EntityModel>> possibleValues = new ArrayList<>();
-        for ( Class<? extends  EntityModel> entityClass : semanticEntityInfo.keys() ) {
+        for (Class<? extends EntityModel> entityClass : semanticEntityInfo.keys()) {
             List<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
-            for ( SemanticEntityInfo entityInfo : entityInfoList ) {
-                if ( entityName.startsWith(entityInfo.getVocabulary()) && entityName.endsWith(entityInfo.getEntityName())) {
-                    if(!possibleValues.contains(entityClass))
-                    {
+            for (SemanticEntityInfo entityInfo : entityInfoList) {
+                if (entityName.startsWith(entityInfo.getVocabulary()) && entityName.endsWith(entityInfo.getEntityName())) {
+                    if (!possibleValues.contains(entityClass)) {
                         possibleValues.add(entityClass);
                     }
                 }
             }
         }
-        if(possibleValues.size() > 0) {
+        if (possibleValues.size() > 0) {
             for (Class<? extends EntityModel> cls : possibleValues) {
-                if (cls.getName().contains(entityNameSplit[entityNameSplit.length-1])) {
+                if (cls.getName().contains(entityNameSplit[entityNameSplit.length - 1])) {
                     return cls;
                 }
             }
@@ -174,6 +183,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         }
         return null;
     }
+
     /**
      * Get all declared fields. If concrete class is annotated as SemanticEntity, the whole inheritance structure is followed.
      *

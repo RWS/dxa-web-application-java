@@ -2,21 +2,25 @@ package com.sdl.webapp.common.impl;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.DefaultImplementation;
-import com.sdl.webapp.common.api.content.*;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
+import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.api.content.RegionBuilder;
+import com.sdl.webapp.common.api.content.RegionBuilderCallback;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.*;
-import com.sdl.webapp.common.api.model.region.RegionModelImpl;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
-
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * DefaultRegionBuilder
@@ -55,7 +59,7 @@ public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> i
                         Class regionModelType = viewModelRegistry.getViewModelType(regionMvcData);
                         try {
                             region = (RegionModel) regionModelType.getDeclaredConstructor(String.class).newInstance(regionName);
-                        } catch (InstantiationException | IllegalAccessException |InvocationTargetException | NoSuchMethodException e ) {
+                        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                             throw new ContentProviderException(e);
                         }
                     } catch (DxaException e) {

@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion.xpm.markup;
 
-import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -8,7 +7,6 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.markup.MarkupDecorator;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
-import com.sdl.webapp.common.markup.html.HtmlTextNode;
 import com.sdl.webapp.common.markup.html.ParsableHtmlNode;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import org.jsoup.nodes.Comment;
@@ -16,9 +14,6 @@ import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
 import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
-
-import java.util.Map;
-import java.util.StringTokenizer;
 
 /**
  * Entity XPM Markup

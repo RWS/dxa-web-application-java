@@ -26,6 +26,7 @@ public class RegionsTag extends AbstractMarkupTag {
     public void setExclude(String exclude) {
         this.excludes = commaDelimitedListToSet(exclude);
     }
+
     public void setContainerSize(int containerSize) {
         this.containerSize = containerSize;
     }

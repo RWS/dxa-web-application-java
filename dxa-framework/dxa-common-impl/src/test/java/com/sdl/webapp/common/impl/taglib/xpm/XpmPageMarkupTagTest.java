@@ -1,7 +1,11 @@
 package com.sdl.webapp.common.impl.taglib.xpm;
 
 import com.sdl.webapp.common.api.model.PageModel;
-import com.sdl.webapp.common.markup.html.*;
+import com.sdl.webapp.common.markup.html.HtmlAttribute;
+import com.sdl.webapp.common.markup.html.HtmlCommentNode;
+import com.sdl.webapp.common.markup.html.HtmlElement;
+import com.sdl.webapp.common.markup.html.HtmlMultiNode;
+import com.sdl.webapp.common.markup.html.HtmlNode;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -9,8 +13,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

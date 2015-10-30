@@ -1,13 +1,12 @@
 package com.sdl.webapp.common.api.model.region;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
+import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 
-import com.sdl.webapp.common.api.model.RegionModel;
-import com.sdl.webapp.common.api.model.RegionModelSet;
+import java.util.Collection;
+import java.util.LinkedList;
 
 public class RegionModelSetImpl extends LinkedList<RegionModel> implements RegionModelSet {
 

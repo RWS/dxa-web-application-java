@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.markup.html.builders;
 
-import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;

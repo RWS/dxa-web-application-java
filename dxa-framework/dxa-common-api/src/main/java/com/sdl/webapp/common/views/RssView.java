@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.views;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.formatters.DataFormatter;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sun.syndication.feed.rss.Channel;
 import com.sun.syndication.feed.rss.Item;
 import org.slf4j.Logger;
@@ -19,8 +19,8 @@ import java.util.Map;
  */
 public class RssView extends AbstractRssFeedView {
     private static final Logger LOG = LoggerFactory.getLogger(RssView.class);
-    private DataFormatter formatter;
     WebRequestContext context;
+    private DataFormatter formatter;
 
     public RssView(WebRequestContext context) {
         this.context = context;

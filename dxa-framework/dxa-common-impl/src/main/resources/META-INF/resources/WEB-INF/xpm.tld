@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taglib xmlns="http://java.sun.com/xml/ns/javaee"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<taglib xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://java.sun.com/xml/ns/javaee"
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
         version="2.1">
 
@@ -12,15 +12,15 @@
         <name>button</name>
         <tag-class>com.sdl.webapp.common.impl.taglib.xpm.XpmButtonTag</tag-class>
         <body-content>JSP</body-content>
-         <attribute>
+        <attribute>
             <name>region</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
             <type>com.sdl.webapp.common.api.model.RegionModel</type>
         </attribute>
     </tag>
-    
-	<tag>
+
+    <tag>
         <name>if-enabled</name>
         <tag-class>com.sdl.webapp.common.impl.taglib.xpm.XpmIfEnabledTag</tag-class>
         <body-content>JSP</body-content>

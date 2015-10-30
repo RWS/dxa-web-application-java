@@ -1,9 +1,8 @@
 package com.sdl.webapp.tridion;
 
 import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
-import com.sdl.webapp.tridion.fieldconverters.*;
-
-import org.dd4t.contentmodel.*;
+import com.sdl.webapp.tridion.fieldconverters.FieldConverterRegistry;
+import org.dd4t.contentmodel.Component;
 
 /**
  * Implementation of {@code SemanticFieldDataProvider} that gets field data from the DD4T model.

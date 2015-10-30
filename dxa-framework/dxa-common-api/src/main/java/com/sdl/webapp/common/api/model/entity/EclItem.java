@@ -57,7 +57,7 @@ public abstract class EclItem extends MediaItem {
 
     /**
      * External metadata map for {@link EclItem}.
-     *
+     * <p/>
      * Keys are the field names. Values can be simple types (String, Double, DateTime), nested Maps.
      */
     public Map<String, Object> getExternalMetadata() {
@@ -87,8 +87,7 @@ public abstract class EclItem extends MediaItem {
     }
 
     @Override
-    public String getXpmMarkup(Localization localization)
-    {
+    public String getXpmMarkup(Localization localization) {
         if (getXpmMetadata() != null && !StringUtils.isEmpty(this.uri)) {
             getXpmMetadata().put(COMPONENT_ID_KEY, this.uri);
         }

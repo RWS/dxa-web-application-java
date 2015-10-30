@@ -8,7 +8,9 @@ import org.junit.Test;
 import java.util.List;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.empty;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -16,19 +18,6 @@ import static org.junit.Assert.assertThat;
  * entities and fields is handled correctly.
  */
 public class SemanticMappingRegistryImplIgnoreTest {
-
-    @SemanticMappingIgnore
-    public static class TestEntity1 extends AbstractEntityModel {
-        private String field1;
-        private int field2;
-    }
-
-    public static class TestEntity2 extends AbstractEntityModel {
-        @SemanticMappingIgnore
-        private String field1;
-        private int field2;
-        private static String field3;
-    }
 
     @Test
     public void testIgnoreOnEntity() throws NoSuchFieldException {
@@ -58,5 +47,18 @@ public class SemanticMappingRegistryImplIgnoreTest {
 
         final List<FieldSemantics> field3 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field3"));
         assertThat("field3 is static and should therefore be ignored", field3, empty());
+    }
+
+    @SemanticMappingIgnore
+    public static class TestEntity1 extends AbstractEntityModel {
+        private String field1;
+        private int field2;
+    }
+
+    public static class TestEntity2 extends AbstractEntityModel {
+        private static String field3;
+        @SemanticMappingIgnore
+        private String field1;
+        private int field2;
     }
 }

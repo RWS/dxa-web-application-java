@@ -51,13 +51,12 @@ public class RegisterSemanticClasses {
 
     @PostConstruct
     public void initialize() {
-         if ( namespace != null ) {
-             semanticMappingRegistry.registerEntities(namespace);
-         }
-         else if ( namespaces != null ) {
-             for ( String namespace : namespaces ) {
-                 semanticMappingRegistry.registerEntities(namespace);
-             }
-         }
+        if (namespace != null) {
+            semanticMappingRegistry.registerEntities(namespace);
+        } else if (namespaces != null) {
+            for (String namespace : namespaces) {
+                semanticMappingRegistry.registerEntities(namespace);
+            }
+        }
     }
 }

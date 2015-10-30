@@ -19,24 +19,17 @@ public abstract class AbstractInitializer {
         this.areaName = areaName;
     }
 
-    protected void registerViewModel(String viewName,  Class<? extends ViewModel> entityClass)
-    {
+    protected void registerViewModel(String viewName, Class<? extends ViewModel> entityClass) {
         registerViewModel(viewName, entityClass, null);
     }
-    protected void registerViewModel(String viewName,  Class<? extends ViewModel> entityClass, String controllerName)
-    {
-        if (Strings.isNullOrEmpty(controllerName))
-        {
-            if(EntityModel.class.isAssignableFrom(entityClass))
-            {
+
+    protected void registerViewModel(String viewName, Class<? extends ViewModel> entityClass, String controllerName) {
+        if (Strings.isNullOrEmpty(controllerName)) {
+            if (EntityModel.class.isAssignableFrom(entityClass)) {
                 controllerName = "Entity";
-            }
-            else if (RegionModel.class.isAssignableFrom(entityClass))
-            {
+            } else if (RegionModel.class.isAssignableFrom(entityClass)) {
                 controllerName = "Region";
-            }
-            else
-            {
+            } else {
                 controllerName = "Page";
             }
         }

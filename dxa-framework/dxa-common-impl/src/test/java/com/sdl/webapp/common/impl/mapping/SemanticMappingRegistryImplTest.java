@@ -26,22 +26,6 @@ public class SemanticMappingRegistryImplTest {
 
     private static final SemanticVocabulary SDL_TEST_VOCABULARY = new SemanticVocabulary(SDL_TEST);
 
-    @SemanticEntities({
-            @SemanticEntity(entityName = "TestOne", vocabulary = SDL_TEST, prefix = "t"),
-            @SemanticEntity(entityName = "CoreOne", vocabulary = SDL_CORE, prefix = "c")
-    })
-    public static class TestEntity1 extends AbstractEntityModel {
-
-        @SemanticProperties({
-                @SemanticProperty(propertyName = "t:F1"),
-                @SemanticProperty("c:one")
-        })
-        private String field1;
-
-        @SemanticProperty("c:two")
-        private int field2;
-    }
-
     @Test
     public void testRegistration() throws NoSuchFieldException {
         final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
@@ -65,5 +49,21 @@ public class SemanticMappingRegistryImplTest {
         assertThat("Default semantics should be last in the list", field2.get(1),
                 is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity1.class.getSimpleName(),
                         "field2")));
+    }
+
+    @SemanticEntities({
+            @SemanticEntity(entityName = "TestOne", vocabulary = SDL_TEST, prefix = "t"),
+            @SemanticEntity(entityName = "CoreOne", vocabulary = SDL_CORE, prefix = "c")
+    })
+    public static class TestEntity1 extends AbstractEntityModel {
+
+        @SemanticProperties({
+                @SemanticProperty(propertyName = "t:F1"),
+                @SemanticProperty("c:one")
+        })
+        private String field1;
+
+        @SemanticProperty("c:two")
+        private int field2;
     }
 }

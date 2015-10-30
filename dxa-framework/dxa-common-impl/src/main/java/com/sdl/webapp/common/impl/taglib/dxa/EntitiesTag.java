@@ -4,8 +4,8 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
-import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import com.sdl.webapp.common.controller.ControllerUtils;
+import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

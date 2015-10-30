@@ -29,21 +29,17 @@ import java.util.Stack;
  * Created by Administrator on 16/09/2015.
  */
 public abstract class AbstractSemanticFieldDataProvider implements SemanticFieldDataProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractSemanticFieldDataProvider.class);
-
     protected static final String METADATA_PATH = "Metadata";
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractSemanticFieldDataProvider.class);
+    protected final org.dd4t.contentmodel.Component component;
 
-    protected  final org.dd4t.contentmodel.Component component;
-
-    protected  final org.dd4t.contentmodel.Page page;
+    protected final org.dd4t.contentmodel.Page page;
 
     protected final FieldConverterRegistry fieldConverterRegistry;
 
     protected final ModelBuilderPipeline builder;
-
-    protected int embeddingLevel = 0;
-
     protected final Stack<Map<String, Field>> embeddedFieldsStack = new Stack<>();
+    protected int embeddingLevel = 0;
 
     public AbstractSemanticFieldDataProvider(org.dd4t.contentmodel.Component component, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
         this.component = component;
@@ -51,6 +47,7 @@ public abstract class AbstractSemanticFieldDataProvider implements SemanticField
         this.fieldConverterRegistry = fieldConverterRegistry;
         this.builder = builder;
     }
+
     public AbstractSemanticFieldDataProvider(org.dd4t.contentmodel.Page page, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
         this.page = page;
         this.component = null;
@@ -107,8 +104,7 @@ public abstract class AbstractSemanticFieldDataProvider implements SemanticField
         if (MediaItem.class.isAssignableFrom(targetClass) || Link.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
             return ((ComponentLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
                     FieldType.COMPONENTLINK)).createComponentLink(component, targetClass, this.builder);
-        }
-        else {
+        } else {
             throw new UnsupportedTargetTypeException(targetType);
         }
     }

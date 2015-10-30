@@ -1,47 +1,34 @@
 package com.sdl.webapp.tridion.contextengine;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
+import com.tridion.ambientdata.AmbientDataContext;
+import com.tridion.ambientdata.claimstore.ClaimStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
-import com.sdl.webapp.common.util.XMLUtils;
-import com.tridion.ambientdata.AmbientDataContext;
-import com.tridion.ambientdata.claimstore.ClaimStore;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 @Component
 public class AdfContextClaimsProvider implements ContextClaimsProvider {
 
-    private final String ContextClaimPrefix = "taf:claim:context:";
-
     private static final Logger LOG = LoggerFactory.getLogger(AdfContextClaimsProvider.class);
-
+    private final String ContextClaimPrefix = "taf:claim:context:";
 
     @Override
     public Map<String, Object> getContextClaims(String aspectName) {

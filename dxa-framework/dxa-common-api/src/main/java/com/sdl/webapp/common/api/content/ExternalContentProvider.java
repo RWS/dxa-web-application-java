@@ -15,6 +15,7 @@ public interface ExternalContentProvider {
 
     /**
      * Get model based on an ECL URL
+     *
      * @param eclUrl
      * @return model
      * @throws ContentProviderException
@@ -23,6 +24,7 @@ public interface ExternalContentProvider {
 
     /**
      * Get model through a widget and input from the HTTP request
+     *
      * @param widget
      * @param request
      * @return model

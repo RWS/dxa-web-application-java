@@ -1,7 +1,5 @@
 package com.sdl.webapp.common.markup.html;
 
-import com.sdl.webapp.common.markup.html.HtmlAttribute;
-import com.sdl.webapp.common.markup.html.HtmlStartTag;
 import org.junit.Test;
 
 import java.util.Arrays;

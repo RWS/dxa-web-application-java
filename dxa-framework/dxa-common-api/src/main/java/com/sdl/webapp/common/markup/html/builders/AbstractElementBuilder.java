@@ -2,9 +2,9 @@ package com.sdl.webapp.common.markup.html.builders;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.HtmlNode;
-import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlTextNode;
 
 public abstract class AbstractElementBuilder<B extends AbstractElementBuilder<B>> {

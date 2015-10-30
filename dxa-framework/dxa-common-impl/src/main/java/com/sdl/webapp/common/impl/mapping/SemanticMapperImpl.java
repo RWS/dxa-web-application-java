@@ -2,13 +2,16 @@ package com.sdl.webapp.common.impl.mapping;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.sdl.webapp.common.api.mapping.*;
+import com.sdl.webapp.common.api.mapping.FieldData;
+import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
+import com.sdl.webapp.common.api.mapping.SemanticMapper;
+import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

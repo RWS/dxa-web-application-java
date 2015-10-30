@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<taglib xmlns="http://java.sun.com/xml/ns/javaee"
-        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<taglib xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://java.sun.com/xml/ns/javaee"
         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
         version="2.1">
 
@@ -46,7 +46,7 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-        	<name>containerSize</name>
+            <name>containerSize</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>int</type>
@@ -64,7 +64,7 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-        	<name>containerSize</name>
+            <name>containerSize</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>int</type>
@@ -82,7 +82,7 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
         <attribute>
-        	<name>containerSize</name>
+            <name>containerSize</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>int</type>
@@ -95,11 +95,11 @@
         <tag-class>com.sdl.webapp.common.impl.taglib.dxa.EntitiesTag</tag-class>
         <body-content>empty</body-content>
         <attribute>
-        	<name>containerSize</name>
+            <name>containerSize</name>
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>int</type>
-        </attribute>    
+        </attribute>
     </tag>
 
     <!-- Insert media: an image, YouTube video or download link -->
@@ -176,12 +176,12 @@
             <rtexprvalue>true</rtexprvalue>
         </attribute>
     </tag>
-<!-- Insert a richtext field -->
+    <!-- Insert a richtext field -->
     <tag>
         <name>richtext</name>
         <tag-class>com.sdl.webapp.common.impl.taglib.dxa.RichTextTag</tag-class>
         <body-content>empty</body-content>
-         <attribute>
+        <attribute>
             <name>content</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>

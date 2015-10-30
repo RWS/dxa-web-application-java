@@ -1,15 +1,14 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import java.util.HashMap;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.w3c.dom.Node;
-
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
 import com.sdl.webapp.common.markup.html.HtmlElement;
+import org.w3c.dom.Node;
+
+import java.util.HashMap;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
@@ -62,10 +61,6 @@ public abstract class MediaItem extends AbstractEntityModel {
         return url;
     }
 
-    public void setIsEmbedded(Boolean isEmbedded) {
-        this.isEmbedded = isEmbedded;
-    }
-
     public void setUrl(String url) {
         this.url = url;
     }
@@ -80,6 +75,10 @@ public abstract class MediaItem extends AbstractEntityModel {
 
     public Boolean getIsEmbedded() {
         return this.isEmbedded;
+    }
+
+    public void setIsEmbedded(Boolean isEmbedded) {
+        this.isEmbedded = isEmbedded;
     }
 
     public int getFileSize() {
@@ -138,9 +137,9 @@ public abstract class MediaItem extends AbstractEntityModel {
     /**
      * Renders an HTML representation of the Item.
      *
-     * @param widthFactor The factor to apply to the width - can be % (eg "100%") or absolute (eg "120")
-     * @param aspect The aspect ratio to apply
-     * @param cssClass Optional CSS class name(s) to apply
+     * @param widthFactor   The factor to apply to the width - can be % (eg "100%") or absolute (eg "120")
+     * @param aspect        The aspect ratio to apply
+     * @param cssClass      Optional CSS class name(s) to apply
      * @param containerSize The size (in grid column units) of the containing element
      * @return The HTML representation
      */

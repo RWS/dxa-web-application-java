@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
                            http://www.springframework.org/schema/beans/spring-beans.xsd
                            http://www.springframework.org/schema/context
@@ -28,9 +28,9 @@
         <!-- TODO: CHANGE!!! -->
         <property name="contentIsCompressed" value="false"/>
 
-        <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
-        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
-        <property name="cacheProvider" ref="cacheProvider" />
+        <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl"/>
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl"/>
+        <property name="cacheProvider" ref="cacheProvider"/>
 
     </bean>
 
@@ -63,21 +63,22 @@
     <bean id="taxonomyProvider" class="org.dd4t.providers.impl.BrokerTaxonomyProvider"/>
 
     <bean id="taxonomyFactory" class="org.dd4t.core.factories.impl.TaxonomyFactoryImpl" factory-method="getInstance">
-        <property name="taxonomyProvider" ref="taxonomyProvider" />
-        <property name="cacheProvider" ref="cacheProvider" />
+        <property name="taxonomyProvider" ref="taxonomyProvider"/>
+        <property name="cacheProvider" ref="cacheProvider"/>
     </bean>
 
     <!-- Databind stuff.-->
-    <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
+    <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter"/>
     <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
         <!-- Set these to your need. If you only want regular Components set to true -->
-        <property name="renderDefaultComponentModelsOnly" value="true" />
-        <property name="renderDefaultComponentsIfNoModelFound" value="true" />
-        <property name="converter" ref="modelConverter" />
+        <property name="renderDefaultComponentModelsOnly" value="true"/>
+        <property name="renderDefaultComponentsIfNoModelFound" value="true"/>
+        <property name="converter" ref="modelConverter"/>
         <!-- override these if you want your own implementations -->
-        <property name="concreteComponentPresentationImpl" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
-        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
-        <property name="concreteComponentImpl" value="org.dd4t.contentmodel.impl.ComponentImpl" />
+        <property name="concreteComponentPresentationImpl"
+                  value="org.dd4t.contentmodel.impl.ComponentPresentationImpl"/>
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl"/>
+        <property name="concreteComponentImpl" value="org.dd4t.contentmodel.impl.ComponentImpl"/>
         <property name="concreteFieldImpl" value="org.dd4t.contentmodel.impl.BaseField"/>
     </bean>
     <bean id="dcpDataBinderWrapper" class="com.sdl.webapp.tridion.DCPDataBinderWrapper">
@@ -85,13 +86,13 @@
     </bean>
 
     <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="getInstance">
-        <property name="dataBinder" ref="dcpDataBinderWrapper" />
+        <property name="dataBinder" ref="dcpDataBinderWrapper"/>
     </bean>
 
 
     <!-- Model builder pipeline configuration -->
 
-    <bean id="ModelBuilderPipelineManager" class="com.sdl.webapp.tridion.ModelBuilderPipeline" >
+    <bean id="ModelBuilderPipelineManager" class="com.sdl.webapp.tridion.ModelBuilderPipeline">
         <property name="pageBuilderHandlers">
             <list>
                 <ref bean="pageBuilderImpl"/>

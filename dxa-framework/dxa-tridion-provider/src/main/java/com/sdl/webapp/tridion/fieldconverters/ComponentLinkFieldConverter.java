@@ -7,7 +7,6 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.Link;
-
 import com.sdl.webapp.tridion.ModelBuilderPipeline;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
@@ -20,7 +19,7 @@ import java.util.List;
 @Component
 public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = { FieldType.COMPONENTLINK, FieldType.MULTIMEDIALINK };
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.COMPONENTLINK, FieldType.MULTIMEDIALINK};
 
     private final LinkResolver linkResolver;
     private final WebRequestContext webRequestContext;
@@ -42,25 +41,26 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
         for (org.dd4t.contentmodel.Component component : field.getLinkedComponentValues()) {
             Object componentLink;
-			try {
-				componentLink = createComponentLink(component, targetClass, builder);
-				 if (componentLink != null) {
-	                componentLinks.add(componentLink);
-	            }
-			} catch (SemanticMappingException e) {
-				// TODO Auto-generated catch block
-				throw new FieldConverterException(e);
-			}
+            try {
+                componentLink = createComponentLink(component, targetClass, builder);
+                if (componentLink != null) {
+                    componentLinks.add(componentLink);
+                }
+            } catch (SemanticMappingException e) {
+                // TODO Auto-generated catch block
+                throw new FieldConverterException(e);
+            }
         }
 
         return componentLinks;
     }
-      public Object createPageLink(org.dd4t.contentmodel.Page page, Class<?> targetClass)
+
+    public Object createPageLink(org.dd4t.contentmodel.Page page, Class<?> targetClass)
             throws FieldConverterException {
         String pageId = page.getId();
         final String url = linkResolver.resolveLink(pageId, null);
 
-            if (targetClass.isAssignableFrom(String.class)) {
+        if (targetClass.isAssignableFrom(String.class)) {
             return url;
         } else if (targetClass.isAssignableFrom(Link.class)) {
             final Link link = new Link();
@@ -95,14 +95,13 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
                 }
 
             } catch (ContentProviderException e) {
-                
+
                 // Try to map using model field type
                 //
                 try {
                     Object retval = builder.createEntityModel(component, localization, (Class<AbstractEntityModel>) targetClass);
                     return retval;
-                }
-                catch ( ContentProviderException e2 ) {
+                } catch (ContentProviderException e2) {
                     throw new SemanticMappingException(e);
                 }
             }

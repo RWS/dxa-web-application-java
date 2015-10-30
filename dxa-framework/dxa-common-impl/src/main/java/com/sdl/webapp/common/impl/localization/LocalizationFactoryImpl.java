@@ -13,7 +13,6 @@ import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.impl.localization.semantics.JsonSchema;
 import com.sdl.webapp.common.impl.localization.semantics.JsonVocabulary;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,11 +89,11 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
         final List<JsonSchema> semanticSchemas = parseJsonFileObject(contentProvider,
                 SEMANTIC_SCHEMAS_PATH, id, path, new TypeReference<List<JsonSchema>>() {
-        });
+                });
 
         final List<JsonVocabulary> semanticVocabularies = parseJsonFileObject(contentProvider,
                 SEMANTIC_VOCABULARIES_PATH, id, path, new TypeReference<List<JsonVocabulary>>() {
-        });
+                });
 
         builder.addSemanticSchemas(convertSemantics(semanticSchemas, semanticVocabularies));
 

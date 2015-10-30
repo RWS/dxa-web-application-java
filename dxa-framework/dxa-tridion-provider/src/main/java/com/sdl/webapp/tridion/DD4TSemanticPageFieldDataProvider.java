@@ -52,7 +52,7 @@ public class DD4TSemanticPageFieldDataProvider extends AbstractSemanticFieldData
             path = path.getTail();
         }
 
-        if(fields == null) {
+        if (fields == null) {
             LOG.debug("Page has no metadata - no DD4T field found for: {}", semanticField);
             return null;
         }
@@ -77,8 +77,7 @@ public class DD4TSemanticPageFieldDataProvider extends AbstractSemanticFieldData
         if (Link.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
             return ((ComponentLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
                     FieldType.COMPONENTLINK)).createPageLink(this.page, targetClass);
-        }
-        else {
+        } else {
             throw new UnsupportedTargetTypeException(targetType);
         }
     }

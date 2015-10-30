@@ -13,18 +13,31 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
-import com.sdl.webapp.common.api.model.*;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.MvcDataImpl;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.ViewModel;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.page.PageModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
-
 import com.sdl.webapp.tridion.fieldconverters.FieldConverterRegistry;
 import com.sdl.webapp.tridion.fieldconverters.FieldUtils;
-import org.dd4t.contentmodel.*;
+import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.FieldSet;
+import org.dd4t.contentmodel.FieldType;
+import org.dd4t.contentmodel.Page;
+import org.dd4t.contentmodel.PageTemplate;
+import org.dd4t.contentmodel.Schema;
+import org.dd4t.contentmodel.impl.BaseField;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.contentmodel.impl.BaseField;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.resolvers.LinkResolver;
 import org.joda.time.format.ISODateTimeFormat;
@@ -35,39 +48,33 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
 final class PageBuilderImpl implements PageBuilder {
+    public static final String IMAGE_FIELD_NAME = "image";
     private static final Logger LOG = LoggerFactory.getLogger(PageBuilderImpl.class);
-
     private static final String REGION_FOR_PAGE_TITLE_COMPONENT = "Main";
     private static final String STANDARD_METADATA_FIELD_NAME = "standardMeta";
-
     private static final String STANDARD_METADATA_TITLE_FIELD_NAME = "name";
     private static final String STANDARD_METADATA_DESCRIPTION_FIELD_NAME = "description";
     private static final String COMPONENT_PAGE_TITLE_FIELD_NAME = "headline";
-
     private static final String REGIONS_METADATA_FIELD_NAME = "regions";
     private static final String REGIONS_METADATA_FIELD_NAME_VIEW = "view";
     private static final String REGIONS_METADATA_FIELD_NAME_NAME = "name";
-
-
     private static final String DEFAULT_AREA_NAME = "Core";
-
     private static final String PAGE_CONTROLLER_NAME = "Page";
     private static final String PAGE_ACTION_NAME = "Page";
-
     private static final String REGION_CONTROLLER_NAME = "Region";
     private static final String REGION_ACTION_NAME = "Region";
-
     private static final String DEFAULT_REGION_NAME = "Main";
-
     private static final Pattern REGION_VIEW_NAME_PATTERN = Pattern.compile(".*\\[(.*)\\]");
-    public static final String IMAGE_FIELD_NAME = "image";
-
     private final ModelBuilderPipeline modelBuilderPipeline;
 
     private final LinkResolver linkResolver;
@@ -86,44 +93,16 @@ final class PageBuilderImpl implements PageBuilder {
 
     private final ComponentPresentationFactory dd4tComponentPresentationFactory;
 
-    protected class DD4TRegionBuilderCallback implements RegionBuilderCallback {
-        @Override
-        public EntityModel buildEntity(Object source, Localization localization) throws ContentProviderException {
-
-            ComponentPresentation componentPresentation = (ComponentPresentation) source;
-            if (componentPresentation.isDynamic()) {
-                try {
-
-                    // Fetch the dynamic component presentation and replace the dummy static one
-                    componentPresentation = dd4tComponentPresentationFactory.getComponentPresentation(componentPresentation.getComponent().getId(), componentPresentation.getComponentTemplate().getId());
-                } catch (Exception e) {
-                    throw new ContentProviderException("Could not fetch dynamic component presentation.", e);
-                }
-            }
-            return modelBuilderPipeline.createEntityModel(componentPresentation, localization);
-        }
-
-        @Override
-        public String getRegionName(Object source) throws ContentProviderException {
-            return PageBuilderImpl.this.getRegionName((ComponentPresentation) source);
-        }
-
-        @Override
-        public MvcData getRegionMvcData(Object source) throws ContentProviderException {
-            return createRegionMvcData(((ComponentPresentation) source).getComponentTemplate());
-        }
-    }
-
     @Autowired
     public PageBuilderImpl(ModelBuilderPipeline modelBuilderPipeline,
-                    RegionBuilder regionBuilder,
-                    LinkResolver linkResolver,
-                    SemanticMapper semanticMapper,
-                    ConditionalEntityEvaluator conditionalEntityEvaluator,
-                    ComponentPresentationFactory dd4tComponentPresentationFactory,
-                    WebRequestContext webRequestContext,
-                    ViewModelRegistry viewModelRegistry,
-                    FieldConverterRegistry fieldConverterRegistry) {
+                           RegionBuilder regionBuilder,
+                           LinkResolver linkResolver,
+                           SemanticMapper semanticMapper,
+                           ConditionalEntityEvaluator conditionalEntityEvaluator,
+                           ComponentPresentationFactory dd4tComponentPresentationFactory,
+                           WebRequestContext webRequestContext,
+                           ViewModelRegistry viewModelRegistry,
+                           FieldConverterRegistry fieldConverterRegistry) {
         this.modelBuilderPipeline = modelBuilderPipeline;
         this.regionBuilder = regionBuilder;
         this.linkResolver = linkResolver;
@@ -175,7 +154,6 @@ final class PageBuilderImpl implements PageBuilder {
 
         return regionMvcData;
     }
-
 
     @Override
     public PageModel createPage(org.dd4t.contentmodel.Page genericPage, PageModel originalPageModel, Localization localization, ContentProvider contentProvider)
@@ -242,7 +220,6 @@ final class PageBuilderImpl implements PageBuilder {
 
         return page;
     }
-
 
     private PageModel createPageModel(org.dd4t.contentmodel.Page genericPage, Localization localization) throws DxaException, ContentProviderException {
         MvcData pageMvcData = createPageMvcData(genericPage.getPageTemplate());
@@ -615,5 +592,33 @@ final class PageBuilderImpl implements PageBuilder {
             }
         }
         return metadata;
+    }
+
+    protected class DD4TRegionBuilderCallback implements RegionBuilderCallback {
+        @Override
+        public EntityModel buildEntity(Object source, Localization localization) throws ContentProviderException {
+
+            ComponentPresentation componentPresentation = (ComponentPresentation) source;
+            if (componentPresentation.isDynamic()) {
+                try {
+
+                    // Fetch the dynamic component presentation and replace the dummy static one
+                    componentPresentation = dd4tComponentPresentationFactory.getComponentPresentation(componentPresentation.getComponent().getId(), componentPresentation.getComponentTemplate().getId());
+                } catch (Exception e) {
+                    throw new ContentProviderException("Could not fetch dynamic component presentation.", e);
+                }
+            }
+            return modelBuilderPipeline.createEntityModel(componentPresentation, localization);
+        }
+
+        @Override
+        public String getRegionName(Object source) throws ContentProviderException {
+            return PageBuilderImpl.this.getRegionName((ComponentPresentation) source);
+        }
+
+        @Override
+        public MvcData getRegionMvcData(Object source) throws ContentProviderException {
+            return createRegionMvcData(((ComponentPresentation) source).getComponentTemplate());
+        }
     }
 }

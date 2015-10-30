@@ -1,9 +1,8 @@
 package com.sdl.webapp.common.api.model;
 
 import org.junit.Test;
-import org.springframework.util.StringUtils;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class MvcDataImplTest {
 
@@ -148,18 +147,22 @@ public class MvcDataImplTest {
             this.controllerAreaName = controllerAreaName;
             return this;
         }
+
         public Parts controllerName(String controllerName) {
             this.controllerName = controllerName;
             return this;
         }
+
         public Parts actionName(String actionName) {
             this.actionName = actionName;
             return this;
         }
+
         public Parts areaName(String areaName) {
             this.areaName = areaName;
             return this;
         }
+
         public Parts viewName(String viewName) {
             this.viewName = viewName;
             return this;

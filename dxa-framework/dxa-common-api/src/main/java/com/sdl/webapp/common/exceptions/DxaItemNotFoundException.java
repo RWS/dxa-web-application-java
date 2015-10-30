@@ -5,14 +5,13 @@ package com.sdl.webapp.common.exceptions;
  */
 public class DxaItemNotFoundException extends DxaException {
 
-        public DxaItemNotFoundException(String message, Exception innerException)
-        {
-            super(message, innerException);
+    public DxaItemNotFoundException(String message, Exception innerException) {
+        super(message, innerException);
 
-        }
-        public DxaItemNotFoundException(String message)
-        {
-            super(message);
-        }
     }
+
+    public DxaItemNotFoundException(String message) {
+        super(message);
+    }
+}
 

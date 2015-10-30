@@ -8,6 +8,7 @@ import java.util.Map;
 
 public interface Localization {
     String getId();
+
     String getPath();
 
     /**
@@ -90,6 +91,7 @@ public interface Localization {
 
     /**
      * Gets the Data Formats from the configuration in the CMS
+     *
      * @return The list of configured data formats
      */
     List<String> getDataFormats();

@@ -1,11 +1,20 @@
 package com.sdl.webapp.common.impl.localization.semantics;
 
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
-import com.sdl.webapp.common.api.mapping.config.*;
+import com.sdl.webapp.common.api.mapping.config.EntitySemantics;
+import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Semantics converter.

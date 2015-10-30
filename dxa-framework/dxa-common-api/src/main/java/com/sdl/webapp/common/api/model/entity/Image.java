@@ -1,35 +1,32 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import java.util.Locale;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.w3c.dom.Node;
+
+import java.util.Locale;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 
 @SemanticEntity(entityName = "ImageObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Image extends MediaItem {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Image.class);
+    final MediaHelper mediaHelper = ApplicationContextHolder.getContext().getBean(MediaHelper.class);
     @SemanticProperty("s:name")
     @JsonProperty("AlternateText")
     private String alternateText;
-
-    final MediaHelper mediaHelper = ApplicationContextHolder.getContext().getBean(MediaHelper.class);
-
-    private static final Logger LOG = LoggerFactory.getLogger(Image.class);
 
     public String getAlternateText() {
         return alternateText;

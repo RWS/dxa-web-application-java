@@ -26,15 +26,13 @@ import java.util.concurrent.locks.ReentrantLock;
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewModelRegistryImpl.class);
-
-    @Autowired
-    private SemanticMappingRegistry semanticMappingRegistry;
     private final Map<MvcData, Class<? extends ViewModel>> viewEntityClassMap = new HashMap<>();
     private final Map<Class<? extends ViewModel>, SemanticInfo> modelTypeToSem5anticInfoMapping = new HashMap<>();
     private final Map<String, List<Class<? extends ViewModel>>> semanticTypeToModelTypesMapping = new HashMap<>();
+    @Autowired
+    private SemanticMappingRegistry semanticMappingRegistry;
 
     //TODO: Check whether this is really autowired
-
     //private SemanticMapping semanticMapping;
     private Lock lock;
 
@@ -45,13 +43,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         this.semanticMappingRegistry = semanticMappingRegistry;
         this.lock = new ReentrantLock();
 
-    }
-
-    static private class SemanticInfo {
-        final Map<String, String> prefixMappings = new HashMap<>();
-        final List<String> publicSemanticTypes = new ArrayList<>();
-        final List<String> mappedSemanticTypes = new ArrayList<>();
-        final Map<String, List<String>> semanticProperties = new HashMap<>();
     }
 
     @Override
@@ -74,7 +65,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             lock.unlock();
         }
     }
-
 
     @Override
     public Class<? extends ViewModel> getViewModelType(final MvcData viewData) throws DxaException {
@@ -155,10 +145,16 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     }
 
-
     @Override
     public void registerViewEntityClass(String viewName, Class<? extends ViewModel> entityClass) throws DxaException {
         MvcData mvcData = new MvcDataImpl(viewName);
         registerViewModel(mvcData, entityClass);
+    }
+
+    static private class SemanticInfo {
+        final Map<String, String> prefixMappings = new HashMap<>();
+        final List<String> publicSemanticTypes = new ArrayList<>();
+        final List<String> mappedSemanticTypes = new ArrayList<>();
+        final Map<String, List<String>> semanticProperties = new HashMap<>();
     }
 }

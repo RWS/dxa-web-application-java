@@ -30,10 +30,10 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     @JsonProperty("XpmPropertyMetadata")
     private Map<String, String> xpmPropertyMetadata;
 
-    @JsonIgnore
+    @JsonProperty("MvcData")
     private MvcData mvcData;
 
-    @JsonIgnore
+    @JsonProperty("HtmlClasses")
     private String htmlClasses;
 
 

@@ -5,19 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.sdl.dxa</groupId>
-    <artifactId>webapp-reference-impl</artifactId>
+    <artifactId>dxa-parent</artifactId>
     <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>dxa-common-api</module>
-        <module>dxa-common-impl</module>
-        <module>dxa-tridion-provider</module>
-        <module>dxa-core</module>
+        <module>dxa-framework</module>
     </modules>
 
     <profiles>
-
         <profile>
             <id>cd-7.1.0</id>
             <activation>
@@ -240,27 +236,27 @@
                         <artifactId>odata_tridion_common</artifactId>
                         <version>${tridion-cd-version}</version>
                     </dependency>
-                
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_ambient</artifactId>
+
+                    <dependency>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>cd_preview_ambient</artifactId>
                         <version>${tridion-cd-version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_web</artifactId>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>cd_preview_web</artifactId>
                         <version>${tridion-cd-version}</version>
-                </dependency>
-                 <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_session</artifactId>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>cd_session</artifactId>
                         <version>${tridion-cd-version}</version>
-                </dependency>
-                 <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_wrapper</artifactId>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>cd_wrapper</artifactId>
                         <version>${tridion-cd-version}</version>
-                </dependency>
+                    </dependency>
                     <dependency>
                         <groupId>javax.cache</groupId>
                         <artifactId>cache-api</artifactId>
@@ -280,35 +276,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- Java -->
         <java-version>1.7</java-version>
 
         <!-- Dynamic Delivery for Tridion (DD4T) -->
         <dd4t-version>2.0.2-SNAPSHOT</dd4t-version>
-</properties>
+    </properties>
 
-<!-- Dependency management -->
+    <!-- Dependency management -->
     <dependencyManagement>
         <dependencies>
-            <!-- Dynamic Delivery for Tridion 1.x (DD4T) -->
-            <!--
-            <dependency>
-                <groupId>org.dynamicdelivery</groupId>
-                <artifactId>dd4t-api</artifactId>
-                <version>${dd4t-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dynamicdelivery</groupId>
-                <artifactId>dd4t-core</artifactId>
-                <version>${dd4t-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dynamicdelivery</groupId>
-                <artifactId>dd4t-providers</artifactId>
-                <version>${dd4t-version}</version>
-            </dependency>
-            -->
-
             <dependency>
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-api</artifactId>
@@ -470,6 +446,14 @@
                 <scope>test</scope>
             </dependency>
 
+            <dependency>
+                <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>2.2.2</version>
+                <scope>runtime</scope>
+            </dependency>
+
             <!-- Hibernate -->
             <dependency>
                 <groupId>org.hibernate</groupId>
@@ -492,7 +476,6 @@
                 <artifactId>hibernate-ehcache</artifactId>
                 <version>${hibernate-version}</version>
             </dependency>
-
 
             <!-- Ehcache -->
             <dependency>
@@ -611,7 +594,6 @@
                 <artifactId>jsoup</artifactId>
                 <version>1.7.3</version>
             </dependency>
-
 
             <!-- User agent string parser -->
             <dependency>
@@ -822,11 +804,6 @@
                     </archive>
                 </configuration>
             </plugin>
-<plugin>
-  <groupId>org.eclipse.jetty</groupId>
-  <artifactId>jetty-maven-plugin</artifactId>
-  <version>9.0.5.v20130815</version>
-</plugin>
         </plugins>
     </build>
 </project>

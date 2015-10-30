@@ -4,21 +4,48 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <artifactId>webapp-reference-impl</artifactId>
-        <groupId>com.sdl.dxa</groupId>
-        <version>1.2-SNAPSHOT</version>
-    </parent>
-
+    <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-example-webapp</artifactId>
+    <version>1.2-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <properties>
         <dxa.version>1.2-SNAPSHOT</dxa.version>
+        <java-version>1.7</java-version>
     </properties>
 
     <build>
         <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.0.5.v20130815</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${java-version}</source>
+                    <target>${java-version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
@@ -38,6 +65,9 @@
         </profile>
         <profile>
             <id>search-module</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
@@ -60,6 +90,9 @@
         </profile>
         <profile>
             <id>googleanalytics-module</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
@@ -86,9 +119,10 @@
             <scope>runtime</scope>
         </dependency>
         <dependency>
-            <groupId>com.sdl.dxa</groupId>
-            <artifactId>dxa-core</artifactId>
+            <groupId>com.sdl.dxa.modules</groupId>
+            <artifactId>dxa-module-core</artifactId>
             <version>${dxa.version}</version>
         </dependency>
     </dependencies>
+
 </project>

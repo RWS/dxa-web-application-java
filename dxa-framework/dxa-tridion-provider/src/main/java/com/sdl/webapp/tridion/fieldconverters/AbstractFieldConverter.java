@@ -1,7 +1,7 @@
 package com.sdl.webapp.tridion.fieldconverters;
 
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
-import com.sdl.webapp.tridion.AbstractSemanticFieldDataProvider;
+import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.ModelBuilderPipeline;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.springframework.core.convert.TypeDescriptor;
@@ -12,7 +12,7 @@ public abstract class AbstractFieldConverter implements FieldConverter {
 
     @Override
     public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType,
-                                AbstractSemanticFieldDataProvider semanticFieldDataProvider, ModelBuilderPipeline builder) throws FieldConverterException {
+                                SemanticFieldDataProviderImpl semanticFieldDataProvider, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<?> fieldValues = getFieldValues(field, targetType.isCollection() ?
                 targetType.getElementTypeDescriptor().getObjectType() : targetType.getObjectType(), builder);
 

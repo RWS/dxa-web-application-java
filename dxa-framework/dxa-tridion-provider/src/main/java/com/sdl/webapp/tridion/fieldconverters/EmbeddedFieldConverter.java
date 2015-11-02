@@ -4,7 +4,7 @@ import com.sdl.webapp.common.api.mapping.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
-import com.sdl.webapp.tridion.AbstractSemanticFieldDataProvider;
+import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.ModelBuilderPipeline;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
@@ -35,7 +35,7 @@ public class EmbeddedFieldConverter implements FieldConverter {
 
     @Override
     public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType,
-                                AbstractSemanticFieldDataProvider semanticFieldDataProvider, ModelBuilderPipeline builder) throws FieldConverterException {
+                                SemanticFieldDataProviderImpl semanticFieldDataProvider, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<FieldSet> embeddedValues = field.getEmbeddedValues();
 
         if (semanticField.isMultiValue()) {
@@ -57,7 +57,7 @@ public class EmbeddedFieldConverter implements FieldConverter {
     }
 
     private Object getFieldValue(SemanticField semanticField, FieldSet fieldSet, TypeDescriptor targetType,
-                                 AbstractSemanticFieldDataProvider semanticFieldDataProvider) throws FieldConverterException {
+                                 SemanticFieldDataProviderImpl semanticFieldDataProvider) throws FieldConverterException {
         final Class<?> targetClass = targetType.getObjectType();
 
         if (AbstractEntityModel.class.isAssignableFrom(targetClass)) {

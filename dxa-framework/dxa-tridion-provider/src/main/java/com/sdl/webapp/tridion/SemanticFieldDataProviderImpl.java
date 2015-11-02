@@ -9,48 +9,44 @@ import com.sdl.webapp.common.api.mapping.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.tridion.fieldconverters.ComponentLinkFieldConverter;
+import com.sdl.webapp.tridion.fieldconverters.FieldConverterException;
 import com.sdl.webapp.tridion.fieldconverters.FieldConverterRegistry;
 import com.sdl.webapp.tridion.fieldconverters.FieldUtils;
 import com.sdl.webapp.tridion.fieldconverters.UnsupportedTargetTypeException;
+import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
+import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.convert.TypeDescriptor;
+import org.springframework.util.CollectionUtils;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-/**
- * Created by Administrator on 16/09/2015.
- */
-public abstract class AbstractSemanticFieldDataProvider implements SemanticFieldDataProvider {
+public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(SemanticFieldDataProviderImpl.class);
     protected static final String METADATA_PATH = "Metadata";
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractSemanticFieldDataProvider.class);
-    protected final org.dd4t.contentmodel.Component component;
 
-    protected final org.dd4t.contentmodel.Page page;
+    protected final SemanticEntity semanticEntity;
 
     protected final FieldConverterRegistry fieldConverterRegistry;
 
     protected final ModelBuilderPipeline builder;
+
     protected final Stack<Map<String, Field>> embeddedFieldsStack = new Stack<>();
+
     protected int embeddingLevel = 0;
 
-    public AbstractSemanticFieldDataProvider(org.dd4t.contentmodel.Component component, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
-        this.component = component;
-        this.page = null;
-        this.fieldConverterRegistry = fieldConverterRegistry;
-        this.builder = builder;
-    }
-
-    public AbstractSemanticFieldDataProvider(org.dd4t.contentmodel.Page page, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
-        this.page = page;
-        this.component = null;
+    public SemanticFieldDataProviderImpl(SemanticEntity semanticEntity, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
+        this.semanticEntity = semanticEntity;
+        this.semanticEntity.injectDataProvider(this);
         this.fieldConverterRegistry = fieldConverterRegistry;
         this.builder = builder;
     }
@@ -80,8 +76,13 @@ public abstract class AbstractSemanticFieldDataProvider implements SemanticField
             }
         } else {
             // Top-level field: look either in the metadata or the content of the component
-            fields = path.getHead().equals(METADATA_PATH) ? component.getMetadata() : component.getContent();
+            fields = semanticEntity.getFields(path);
             path = path.getTail();
+        }
+
+        if (CollectionUtils.isEmpty(fields)) {
+            LOG.debug("No metadata found for {} - no DD4T field found for: {}", semanticEntity, semanticField);
+            return null;
         }
 
         final Field field = findField(path, fields);
@@ -102,8 +103,7 @@ public abstract class AbstractSemanticFieldDataProvider implements SemanticField
         final Class<?> targetClass = targetType.getObjectType();
 
         if (MediaItem.class.isAssignableFrom(targetClass) || Link.class.isAssignableFrom(targetClass) || String.class.isAssignableFrom(targetClass)) {
-            return ((ComponentLinkFieldConverter) fieldConverterRegistry.getFieldConverterFor(
-                    FieldType.COMPONENTLINK)).createComponentLink(component, targetClass, this.builder);
+            return semanticEntity.createLink(targetClass);
         } else {
             throw new UnsupportedTargetTypeException(targetType);
         }
@@ -114,7 +114,7 @@ public abstract class AbstractSemanticFieldDataProvider implements SemanticField
         final Map<String, String> fieldData = new HashMap<>();
 
         // Add content fields as text
-        for (Map.Entry<String, Field> entry : component.getContent().entrySet()) {
+        for (Map.Entry<String, Field> entry : semanticEntity.getFields().entrySet()) {
             final String name = entry.getKey();
             if (!fieldData.containsKey(name)) {
                 final BaseField field = (BaseField) entry.getValue();
@@ -141,7 +141,7 @@ public abstract class AbstractSemanticFieldDataProvider implements SemanticField
         }
 
         // Add metadata fields as text
-        for (Map.Entry<String, Field> entry : component.getMetadata().entrySet()) {
+        for (Map.Entry<String, Field> entry : semanticEntity.getFields().entrySet()) {
             final String name = entry.getKey();
             if (!fieldData.containsKey(name)) {
                 final String value = FieldUtils.getStringValue(entry.getValue());
@@ -173,6 +173,87 @@ public abstract class AbstractSemanticFieldDataProvider implements SemanticField
             }
         } else {
             return null;
+        }
+    }
+
+    public interface SemanticEntity {
+        Map<String, Field> getFields();
+        Map<String, Field> getFields(FieldPath path);
+        Object createLink(Class<?> targetClass) throws SemanticMappingException;
+        void injectDataProvider(SemanticFieldDataProviderImpl fieldDataProvider);
+    }
+
+    public static class PageEntity implements SemanticEntity {
+        private org.dd4t.contentmodel.Page page;
+        private SemanticFieldDataProviderImpl fieldDataProvider;
+
+        public PageEntity(Page page) {
+            this.page = page;
+        }
+
+        @Override
+        public Map<String, Field> getFields() {
+            return page.getMetadata();
+        }
+
+        @Override
+        public Map<String, Field> getFields(FieldPath path) {
+            return path.getHead().equals(METADATA_PATH) ? getFields() : Collections.<String, Field>emptyMap();
+        }
+
+        @Override
+        public Object createLink(Class<?> targetClass) throws FieldConverterException {
+            return ((ComponentLinkFieldConverter) fieldDataProvider.fieldConverterRegistry.getFieldConverterFor(
+                    FieldType.COMPONENTLINK)).createPageLink(this.page, targetClass);
+        }
+
+        @Override
+        public void injectDataProvider(SemanticFieldDataProviderImpl fieldDataProvider) {
+            this.fieldDataProvider = fieldDataProvider;
+        }
+
+        @Override
+        public String toString() {
+            return "PageEntity{" +
+                    "page=" + page +
+                    '}';
+        }
+    }
+
+    public static class ComponentEntity implements SemanticEntity {
+        private Component component;
+        private SemanticFieldDataProviderImpl fieldDataProvider;
+
+        public ComponentEntity(Component component) {
+            this.component = component;
+        }
+
+        @Override
+        public Map<String, Field> getFields() {
+            return component.getContent();
+        }
+
+        @Override
+        public Map<String, Field> getFields(FieldPath path) {
+            return path.getHead().equals(METADATA_PATH) ? component.getMetadata() : getFields();
+        }
+
+        @Override
+        public Object createLink(Class<?> targetClass) throws SemanticMappingException {
+            return ((ComponentLinkFieldConverter) fieldDataProvider.fieldConverterRegistry.getFieldConverterFor(
+                    FieldType.COMPONENTLINK)).createComponentLink(component, targetClass, fieldDataProvider.builder);
+        }
+
+        @Override
+        public void injectDataProvider(SemanticFieldDataProviderImpl fieldDataProvider) {
+            this.fieldDataProvider = fieldDataProvider;
+        }
+
+        @Override
+        public String toString() {
+            return "ComponentEntity{" +
+                    "component=" + component +
+                    '}';
         }
     }
 }

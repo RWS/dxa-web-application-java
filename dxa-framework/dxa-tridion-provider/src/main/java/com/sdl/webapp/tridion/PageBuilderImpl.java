@@ -288,7 +288,8 @@ final class PageBuilderImpl implements PageBuilder {
         final ViewModel entity;
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
-                    new DD4TSemanticPageFieldDataProvider(page, fieldConverterRegistry, this.modelBuilderPipeline));
+                    new SemanticFieldDataProviderImpl(
+                            new SemanticFieldDataProviderImpl.PageEntity(page), fieldConverterRegistry, this.modelBuilderPipeline));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }

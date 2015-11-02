@@ -107,7 +107,8 @@ final class EntityBuilderImpl implements EntityBuilder {
         try {
             //todo refactor raw class cast
             entity = semanticMapper.createEntity((Class<? extends AbstractEntityModel>) entityClass, semanticSchema.getSemanticFields(),
-                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this.builder));
+                    new SemanticFieldDataProviderImpl(
+                            new SemanticFieldDataProviderImpl.ComponentEntity(component), fieldConverterRegistry, this.builder));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }
@@ -187,7 +188,8 @@ final class EntityBuilderImpl implements EntityBuilder {
         final AbstractEntityModel entity;
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
-                    new DD4TSemanticFieldDataProvider(component, fieldConverterRegistry, this.builder));
+                    new SemanticFieldDataProviderImpl(
+                            new SemanticFieldDataProviderImpl.ComponentEntity(component), fieldConverterRegistry, this.builder));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }

@@ -10,7 +10,6 @@ import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA
 @SemanticEntity(entityName = "Place", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Place extends AbstractEntityModel {
 
-    @SemanticProperty("s:name")
     @JsonProperty("Name")
     private String name;
 

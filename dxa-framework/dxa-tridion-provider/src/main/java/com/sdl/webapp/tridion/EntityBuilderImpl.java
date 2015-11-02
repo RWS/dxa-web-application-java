@@ -16,6 +16,7 @@ import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl.ComponentEntity;
 import com.sdl.webapp.tridion.fieldconverters.FieldConverterRegistry;
 import com.sdl.webapp.tridion.fieldconverters.FieldUtils;
 import org.dd4t.contentmodel.Component;
@@ -107,8 +108,7 @@ final class EntityBuilderImpl implements EntityBuilder {
         try {
             //todo refactor raw class cast
             entity = semanticMapper.createEntity((Class<? extends AbstractEntityModel>) entityClass, semanticSchema.getSemanticFields(),
-                    new SemanticFieldDataProviderImpl(
-                            new SemanticFieldDataProviderImpl.ComponentEntity(component), fieldConverterRegistry, this.builder));
+                    new SemanticFieldDataProviderImpl(new ComponentEntity(component), fieldConverterRegistry, this.builder));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }
@@ -189,7 +189,7 @@ final class EntityBuilderImpl implements EntityBuilder {
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
                     new SemanticFieldDataProviderImpl(
-                            new SemanticFieldDataProviderImpl.ComponentEntity(component), fieldConverterRegistry, this.builder));
+                            new ComponentEntity(component), fieldConverterRegistry, this.builder));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }

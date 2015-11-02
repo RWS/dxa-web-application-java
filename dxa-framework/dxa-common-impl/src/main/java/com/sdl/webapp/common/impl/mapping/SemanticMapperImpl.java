@@ -174,10 +174,13 @@ public class SemanticMapperImpl implements SemanticMapper {
 
         for (Map.Entry<FieldSemantics, SemanticField> entry : semanticFields.entrySet()) {
             FieldSemantics f = entry.getKey();
-            if (f.getEntityName().equals(fieldSemantics.getEntityName()) && f.getPropertyName().equals(fieldSemantics.getPropertyName()) && f.getVocabulary().equals(fieldSemantics.getVocabulary())) {
+            if (f.getEntityName().equals(fieldSemantics.getEntityName())
+                    && f.getPropertyName().equals(fieldSemantics.getPropertyName())
+                    && f.getVocabulary().equals(fieldSemantics.getVocabulary())) {
                 matchingField = entry.getValue();
             } else {
-                if (f.getEntityName().equals("StandardMetadata") && f.getPropertyName().equals(fieldSemantics.getPropertyName())) {
+                if (f.getEntityName().equals("StandardMetadata")
+                        && f.getPropertyName().equals(fieldSemantics.getPropertyName())) {
                     matchingField = entry.getValue();
                 }
             }

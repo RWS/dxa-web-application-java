@@ -24,12 +24,9 @@ public interface ContentProvider {
     /**
      * Get entity model by TCM URI
      *
-     * @param id
-     * @param localization
      * @return the {@code Entity}
      * @throws ContentProviderException
      */
-    // TODO: What terminology should we use here? Is template id correct wording???
     EntityModel getEntityModel(String id, Localization localization) throws ContentProviderException, DxaException;
 
     /**

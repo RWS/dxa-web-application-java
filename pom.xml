@@ -270,6 +270,16 @@
                 </dependencies>
             </dependencyManagement>
         </profile>
+
+        <!--<profile>-->
+            <!--<id>release</id>-->
+            <!--<distributionManagement>-->
+                <!--<snapshotRepository>-->
+                    <!--<id>sdl-snapshot</id>-->
+                    <!--<url>http://nexus:8080/nexus/content/repositories/snapshots/</url>-->
+                <!--</snapshotRepository>-->
+            <!--</distributionManagement>-->
+        <!--</profile>-->
     </profiles>
 
     <properties>

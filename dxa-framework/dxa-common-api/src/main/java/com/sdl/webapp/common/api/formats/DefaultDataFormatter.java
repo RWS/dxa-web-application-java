@@ -9,6 +9,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,30 +17,28 @@ import java.util.Map;
 /**
  * Helper bean to handle the different formatters
  */
-
 @Component
 @ComponentScan(basePackages = {"com.sdl.webapp.main", "com.sdl.webapp.common.controller", "com.sdl.webapp.addon"})
 public class DefaultDataFormatter implements DataFormatter {
 
+    @Autowired
     private HttpServletRequest request;
 
+    @Autowired
     private WebRequestContext context;
 
     private Map<String, com.sdl.webapp.common.api.formatters.DataFormatter> formatters;
 
-    @Autowired
-    public DefaultDataFormatter(HttpServletRequest request, WebRequestContext context) {
-        formatters = new HashMap<String, com.sdl.webapp.common.api.formatters.DataFormatter>();
+    @PostConstruct
+    public void setFormatters() {
+        formatters = new HashMap<>();
         formatters.put("json", new JsonFormatter(request, context));
         formatters.put("atom", new AtomFormatter(request, context));
         formatters.put("rss", new RssFormatter(request, context));
     }
 
     /**
-     * Gets the score from accept string
-     *
-     * @param type
-     * @return
+     * Gets the score from accept string.
      */
     public static double getScoreFromAcceptString(String type) {
         double res = 1.0;
@@ -64,10 +63,7 @@ public class DefaultDataFormatter implements DataFormatter {
     }
 
     /**
-     * Returns the  @see ModelAndView to render the different formats
-     *
-     * @param model
-     * @return
+     * Returns the  @see ModelAndView to render the different formats.
      */
     @Override
     public ModelAndView view(Object model) {
@@ -128,16 +124,14 @@ public class DefaultDataFormatter implements DataFormatter {
     private double getHtmlAcceptScore() {
         double score = 0.0;
         String[] acceptTypes = request.getHeader("Accept").split(",");
-        if (acceptTypes != null) {
-            for (String type : acceptTypes) {
-                if (type.contains("html")) {
-                    double thisScore = getScoreFromAcceptString(type);
-                    if (thisScore > score) {
-                        score = thisScore;
-                    }
-                    if (score == 1) {
-                        break;
-                    }
+        for (String type : acceptTypes) {
+            if (type.contains("html")) {
+                double thisScore = getScoreFromAcceptString(type);
+                if (thisScore > score) {
+                    score = thisScore;
+                }
+                if (score == 1) {
+                    break;
                 }
             }
         }

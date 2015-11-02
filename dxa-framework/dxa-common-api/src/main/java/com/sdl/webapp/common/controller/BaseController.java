@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandl
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Abstract superclass for controllers with utility methods and exception handling.
@@ -31,9 +32,9 @@ public abstract class BaseController {
     private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     private static Boolean isCustomAction(MvcData mvcData) {
-        return mvcData.getActionName() != "Entity"
-                || mvcData.getControllerName() != "Entity"
-                || mvcData.getControllerAreaName() != "Core";
+        return !Objects.equals(mvcData.getActionName(), "Entity")
+                || !Objects.equals(mvcData.getControllerName(), "Entity")
+                || !Objects.equals(mvcData.getControllerAreaName(), "Core");
     }
 
     protected RegionModel getRegionFromRequest(HttpServletRequest request, String regionName) {

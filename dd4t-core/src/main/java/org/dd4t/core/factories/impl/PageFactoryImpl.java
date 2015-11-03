@@ -41,8 +41,6 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 	private static final Logger LOG = LoggerFactory.getLogger(PageFactoryImpl.class);
 	private static final PageFactoryImpl INSTANCE = new PageFactoryImpl();
 
-	private static final Object CACHE_LOCK  = new Object();
-
 	protected PageFactoryImpl () {
 		LOG.debug("Create new instance");
 	}
@@ -129,9 +127,9 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 		CacheElement<Page> cacheElement = cacheProvider.loadPayloadFromLocalCache(cacheKey);
 		Page page;
 
-		if (cacheElement.isExpired() || cacheElement.getPayload() == null) {
-			synchronized (CACHE_LOCK) {
-				if (cacheElement.isExpired() || cacheElement.getPayload() == null) {
+		if (cacheElement.isExpired()) {
+			synchronized (cacheElement) {
+				if (cacheElement.isExpired()) {
 					cacheElement.setExpired(false);
 					String pageSource;
 

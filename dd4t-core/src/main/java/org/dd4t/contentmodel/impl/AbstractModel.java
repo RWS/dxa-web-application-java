@@ -9,7 +9,7 @@ import java.util.Map;
 
 public abstract class AbstractModel implements Model {
 
-    @JsonProperty("ExtensionData")
+    @JsonProperty(value = "ExtensionData", required = false)
     @JsonDeserialize(contentAs = FieldSetImpl.class)
     private Map<String, FieldSet> extensionData;
 

@@ -6,11 +6,6 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * ThreadLocalManagerImpl
- *
- * @author nic
- */
 @Component
 public class ThreadLocalManagerImpl implements ThreadLocalManager {
 

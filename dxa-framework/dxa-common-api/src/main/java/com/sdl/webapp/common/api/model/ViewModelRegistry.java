@@ -6,17 +6,6 @@ import com.sdl.webapp.common.exceptions.DxaException;
  * Registry that maps view names to view model object types.
  */
 public interface ViewModelRegistry {
-
-    /**
-     * Registers an entity type for a view.
-     *
-     * @param viewName The name of the entity view.
-     * @deprecated use registerViewModel(MvcData viewData,  Class<? extends ViewModel> entityClass) instead
-     */
-    @Deprecated
-    void registerViewEntityClass(String viewName, Class<? extends ViewModel> entityClass) throws DxaException;
-
-
     /**
      * Returns the entity type to use for a specified entity view.
      *

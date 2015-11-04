@@ -1,7 +1,6 @@
 package com.sdl.webapp.common.impl;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.DefaultImplementation;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.RegionBuilder;
@@ -22,20 +21,10 @@ import org.springframework.stereotype.Component;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-/**
- * DefaultRegionBuilder
- *
- * @author nic
- */
 @Component
-public class DefaultRegionBuilder extends DefaultImplementation<RegionBuilder> implements RegionBuilder {
+public class DefaultRegionBuilder implements RegionBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRegionBuilder.class);
-
-    @Override
-    public Class<?> getObjectType() {
-        return RegionBuilder.class;
-    }
 
     @Override
     public RegionModelSet buildRegions(PageModel page,

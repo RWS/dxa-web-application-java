@@ -5,7 +5,7 @@ import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.stereotype.Component;
 
 /**
- * Object mapper factory. This factory bean creates and configures the Jackson {@code ObjectMapper}.
+ * Object mapper factory. This factory bean creates and configures the Jackson {@link ObjectMapper}.
  */
 @Component
 public class ObjectMapperFactory extends AbstractFactoryBean<ObjectMapper> {

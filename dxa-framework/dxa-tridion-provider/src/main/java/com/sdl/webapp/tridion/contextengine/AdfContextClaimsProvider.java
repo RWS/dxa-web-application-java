@@ -28,11 +28,11 @@ import java.util.Map.Entry;
 public class AdfContextClaimsProvider implements ContextClaimsProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(AdfContextClaimsProvider.class);
-    private final String ContextClaimPrefix = "taf:claim:context:";
 
     @Override
     public Map<String, Object> getContextClaims(String aspectName) {
-        String claimNamePrefix = ContextClaimPrefix;
+        String contextClaimPrefix = "taf:claim:context:";
+        String claimNamePrefix = contextClaimPrefix;
         if (!Strings.isNullOrEmpty(aspectName)) {
             claimNamePrefix += aspectName + ":";
         }
@@ -45,7 +45,7 @@ public class AdfContextClaimsProvider implements ContextClaimsProvider {
                 if (!claimName.startsWith(claimNamePrefix)) {
                     continue;
                 }
-                String propertyName = claimName.substring(ContextClaimPrefix.length()).replace(':', '.');
+                String propertyName = claimName.substring(contextClaimPrefix.length()).replace(':', '.');
                 result.put(propertyName, claim.getValue());
             }
         }
@@ -109,12 +109,8 @@ public class AdfContextClaimsProvider implements ContextClaimsProvider {
                     }
                 }
             }
-        } catch (ParserConfigurationException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e){
             LOG.error("Error parsing Families.xml", e);
-        } catch (SAXException e) {
-            LOG.error("Error parsing Families.xml", e);
-        } catch (IOException e) {
-            LOG.error("Error loading Families.xml", e);
         }
         return result;
     }

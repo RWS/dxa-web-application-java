@@ -6,18 +6,12 @@ import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class AbstractInitializer {
 
-    private final ViewModelRegistry viewModelRegistry;
-
-    private final String areaName;
-
-
-    public AbstractInitializer(ViewModelRegistry viewModelRegistry, String areaName) {
-        this.viewModelRegistry = viewModelRegistry;
-        this.areaName = areaName;
-    }
+    @Autowired
+    private ViewModelRegistry viewModelRegistry;
 
     protected void registerViewModel(String viewName, Class<? extends ViewModel> entityClass) {
         registerViewModel(viewName, entityClass, null);
@@ -35,10 +29,12 @@ public abstract class AbstractInitializer {
         }
 
         MvcDataImpl mvcData = new MvcDataImpl();
-        mvcData.setAreaName(this.areaName);
+        mvcData.setAreaName(getAreaName());
         mvcData.setViewName(viewName);
         mvcData.setControllerName(controllerName);
 
         viewModelRegistry.registerViewModel(mvcData, entityClass);
     }
+
+    protected abstract String getAreaName();
 }

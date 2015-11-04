@@ -75,44 +75,33 @@ final class PageBuilderImpl implements PageBuilder {
     private static final String REGION_ACTION_NAME = "Region";
     private static final String DEFAULT_REGION_NAME = "Main";
     private static final Pattern REGION_VIEW_NAME_PATTERN = Pattern.compile(".*\\[(.*)\\]");
-    private final ModelBuilderPipeline modelBuilderPipeline;
-
-    private final LinkResolver linkResolver;
-
-    private final ConditionalEntityEvaluator conditionalEntityEvaluator;
-
-    private final WebRequestContext webRequestContext;
-
-    private final ViewModelRegistry viewModelRegistry;
-
-    private final FieldConverterRegistry fieldConverterRegistry;
-
-    private final RegionBuilder regionBuilder;
-
-    private final SemanticMapper semanticMapper;
-
-    private final ComponentPresentationFactory dd4tComponentPresentationFactory;
 
     @Autowired
-    public PageBuilderImpl(ModelBuilderPipeline modelBuilderPipeline,
-                           RegionBuilder regionBuilder,
-                           LinkResolver linkResolver,
-                           SemanticMapper semanticMapper,
-                           ConditionalEntityEvaluator conditionalEntityEvaluator,
-                           ComponentPresentationFactory dd4tComponentPresentationFactory,
-                           WebRequestContext webRequestContext,
-                           ViewModelRegistry viewModelRegistry,
-                           FieldConverterRegistry fieldConverterRegistry) {
-        this.modelBuilderPipeline = modelBuilderPipeline;
-        this.regionBuilder = regionBuilder;
-        this.linkResolver = linkResolver;
-        this.semanticMapper = semanticMapper;
-        this.conditionalEntityEvaluator = conditionalEntityEvaluator;
-        this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
-        this.webRequestContext = webRequestContext;
-        this.viewModelRegistry = viewModelRegistry;
-        this.fieldConverterRegistry = fieldConverterRegistry;
-    }
+    private ModelBuilderPipeline modelBuilderPipeline;
+
+    @Autowired
+    private LinkResolver linkResolver;
+
+    @Autowired
+    private ConditionalEntityEvaluator conditionalEntityEvaluator;
+
+    @Autowired
+    private WebRequestContext webRequestContext;
+
+    @Autowired
+    private ViewModelRegistry viewModelRegistry;
+
+    @Autowired
+    private FieldConverterRegistry fieldConverterRegistry;
+
+    @Autowired
+    private RegionBuilder regionBuilder;
+
+    @Autowired
+    private SemanticMapper semanticMapper;
+
+    @Autowired
+    private ComponentPresentationFactory dd4tComponentPresentationFactory;
 
     private RegionModel getRegionFromIncludePage(PageModel page, String includeFileName) {
         try {

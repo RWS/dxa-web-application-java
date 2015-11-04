@@ -44,25 +44,20 @@ final class EntityBuilderImpl implements EntityBuilder {
     private static final String DEFAULT_ACTION_NAME = "Entity";
     private static final String DEFAULT_REGION_NAME = "Main";
 
-    private final ViewModelRegistry viewModelRegistry;
-
-    private final SemanticMapper semanticMapper;
-
-    private final FieldConverterRegistry fieldConverterRegistry;
-
-    private final SemanticMappingRegistry semanticMappingRegistry;
-
-    private final ModelBuilderPipeline builder;
+    @Autowired
+    private ViewModelRegistry viewModelRegistry;
 
     @Autowired
-    EntityBuilderImpl(ViewModelRegistry viewModelRegistry, SemanticMapper semanticMapper,
-                      FieldConverterRegistry fieldConverterRegistry, SemanticMappingRegistry semanticMappingRegistry, ModelBuilderPipeline builder) {
-        this.viewModelRegistry = viewModelRegistry;
-        this.semanticMapper = semanticMapper;
-        this.fieldConverterRegistry = fieldConverterRegistry;
-        this.semanticMappingRegistry = semanticMappingRegistry;
-        this.builder = builder;
-    }
+    private SemanticMapper semanticMapper;
+
+    @Autowired
+    private FieldConverterRegistry fieldConverterRegistry;
+
+    @Autowired
+    private SemanticMappingRegistry semanticMappingRegistry;
+
+    @Autowired
+    private ModelBuilderPipeline builder;
 
     @Override
     public EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel, Localization localization)

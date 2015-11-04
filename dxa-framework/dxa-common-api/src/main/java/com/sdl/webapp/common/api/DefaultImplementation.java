@@ -9,9 +9,8 @@ import java.lang.reflect.Proxy;
 /**
  * Default Implementation
  * Is a way of doing a default implementation (singletons) in the core that can be overridden by modules.
- *
- * @author nic
  */
+@Deprecated
 public abstract class DefaultImplementation<T> extends AbstractFactoryBean<T> implements InvocationHandler {
 
     private T implementation = (T) this;

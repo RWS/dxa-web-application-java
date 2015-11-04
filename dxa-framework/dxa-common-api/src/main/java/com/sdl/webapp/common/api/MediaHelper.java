@@ -1,8 +1,5 @@
 package com.sdl.webapp.common.api;
 
-/**
- * Media helper.
- */
 public interface MediaHelper {
 
     int getResponsiveWidth(String widthFactor, int containerSize);

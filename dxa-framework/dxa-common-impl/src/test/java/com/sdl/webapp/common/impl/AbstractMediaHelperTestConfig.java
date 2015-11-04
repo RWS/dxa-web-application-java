@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.impl;
 
+import com.sdl.webapp.common.api.MediaHelper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 
 /**
  * Spring configuration for {@link DefaultMediaHelperTest}.
@@ -11,11 +11,12 @@ import org.springframework.context.annotation.Lazy;
 public class AbstractMediaHelperTestConfig {
 
     @Bean
-    public DefaultMediaHelper mediaHelper() {
+    public MediaHelper mediaHelper() {
         return new DefaultMediaHelper();
     }
 
     @Bean
+    //todo refactor to use normal mocks
     public MockWebRequestContext webRequestContext() {
         return new MockWebRequestContext();
     }

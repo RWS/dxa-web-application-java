@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl;
 
+import com.sdl.webapp.common.api.MediaHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,14 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Unit tests for {@link DefaultMediaHelper}.
+ * Unit tests for {@link GenericMediaHelper}.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AbstractMediaHelperTestConfig.class)
 public class DefaultMediaHelperTest {
 
     @Autowired
-    private DefaultMediaHelper mediaHelper;
+    private MediaHelper mediaHelper;
 
     @Autowired
     private MockWebRequestContext webRequestContext;
@@ -54,6 +55,13 @@ public class DefaultMediaHelperTest {
 
     @Test
     public void testGetResponsiveImageUrl() throws Exception {
+        //given
+        webRequestContext.setDisplayWidth(1920);
+        webRequestContext.setPixelRatio(1.0);
+        webRequestContext.setMaxMediaWidth(2048);
+
+        //when
+        //then
         assertThat(mediaHelper.getResponsiveImageUrl("/example.jpg", "100%", 3.3, 12), is("/example_w2048_h621_n.jpg"));
         assertThat(mediaHelper.getResponsiveImageUrl("/example.jpg", "100%", 3.3, 6), is("/example_w1024_h311_n.jpg"));
         assertThat(mediaHelper.getResponsiveImageUrl("/example.jpg", "100%", 2.0, 12), is("/example_w2048_h1024_n.jpg"));

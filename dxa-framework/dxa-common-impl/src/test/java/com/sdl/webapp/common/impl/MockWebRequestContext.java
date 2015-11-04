@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 /**
  * Mock implementation of {@code WebRequestContext} for testing.
  */
-@Component
+//@Component
 public class MockWebRequestContext extends WebRequestContextImpl {
 
     private int displayWidth;

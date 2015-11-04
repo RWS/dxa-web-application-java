@@ -14,9 +14,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -33,7 +33,7 @@ public class MarkupTestConfig {
     public SemanticMappingRegistry semanticMappingRegistry() throws NoSuchFieldException {
         final SemanticMappingRegistry semanticMappingRegistry = mock(SemanticMappingRegistry.class);
 
-        final List<SemanticEntityInfo> entityInfoList = new ArrayList<>();
+        final Set<SemanticEntityInfo> entityInfoList = new LinkedHashSet<>();
         entityInfoList.add(new SemanticEntityInfo(mockSemanticEntity("TestEnt", "", "", "", true), TestEntity.class));
         entityInfoList.add(new SemanticEntityInfo(mockSemanticEntity("SchemaEnt", "", SemanticVocabulary.SCHEMA_ORG, "s", true), TestEntity.class));
         when(semanticMappingRegistry.getEntityInfo(TestEntity.class)).thenReturn(entityInfoList);
@@ -41,7 +41,7 @@ public class MarkupTestConfig {
         final Field testField = TestEntity.class.getDeclaredField("testField");
         final Field hiddenField = TestEntity.class.getDeclaredField("hiddenField");
 
-        final List<SemanticPropertyInfo> propertyInfoList = new ArrayList<>();
+        final Set<SemanticPropertyInfo> propertyInfoList = new LinkedHashSet<>();
         propertyInfoList.add(new SemanticPropertyInfo(mockSemanticProperty("s:TheField", ""), testField));
         propertyInfoList.add(new SemanticPropertyInfo(mockSemanticProperty("SomeField", ""), hiddenField));
 

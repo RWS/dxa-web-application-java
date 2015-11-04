@@ -5,7 +5,7 @@ import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;
 
-import java.util.List;
+import java.util.Set;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.hamcrest.Matchers.empty;
@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 /**
- * Unit tests for {@code SemanticMappingRegistry} that test if the {@code @SemanticMappingIgnore} annotation on
+ * Unit tests for {@link SemanticMappingRegistryImpl} that test if the {@link SemanticMappingIgnore} annotation on
  * entities and fields is handled correctly.
  */
 public class SemanticMappingRegistryImplIgnoreTest {
@@ -24,10 +24,10 @@ public class SemanticMappingRegistryImplIgnoreTest {
         final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity1.class);
 
-        final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field1"));
+        final Set<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field1"));
         assertThat(field1, empty());
 
-        final List<FieldSemantics> field2 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field2"));
+        final Set<FieldSemantics> field2 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field2"));
         assertThat(field2, empty());
     }
 
@@ -36,16 +36,16 @@ public class SemanticMappingRegistryImplIgnoreTest {
         final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity2.class);
 
-        final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field1"));
+        final Set<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field1"));
         assertThat("field1 has a @SemanticMappingIgnore annotation, so there should not be semantics for field1",
                 field1, empty());
 
-        final List<FieldSemantics> field2 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field2"));
+        final Set<FieldSemantics> field2 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field2"));
         assertThat("There should be semantics for field2", field2, hasSize(1));
-        assertThat(field2.get(0), is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity2.class.getSimpleName(),
+        assertThat(field2.iterator().next(), is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity2.class.getSimpleName(),
                 "field2")));
 
-        final List<FieldSemantics> field3 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field3"));
+        final Set<FieldSemantics> field3 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field3"));
         assertThat("field3 is static and should therefore be ignored", field3, empty());
     }
 

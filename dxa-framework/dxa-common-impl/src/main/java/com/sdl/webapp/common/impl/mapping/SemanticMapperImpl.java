@@ -20,12 +20,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-/**
- * Implementation of {@code SemanticMapper}.
- */
 @Component
 public class SemanticMapperImpl implements SemanticMapper {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMapperImpl.class);
@@ -55,7 +52,7 @@ public class SemanticMapperImpl implements SemanticMapper {
             @Override
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 // Find the semantics for this field
-                final List<FieldSemantics> registrySemantics = registry.getFieldSemantics(field);
+                final Set<FieldSemantics> registrySemantics = registry.getFieldSemantics(field);
                 if (LOG.isTraceEnabled() && !registrySemantics.isEmpty()) {
                     LOG.trace("field: {}", field);
                 }

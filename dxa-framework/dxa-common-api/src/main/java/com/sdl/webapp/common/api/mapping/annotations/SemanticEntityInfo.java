@@ -4,6 +4,8 @@ import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.EntityModel;
 
+import java.util.Objects;
+
 public final class SemanticEntityInfo {
 
     public static final String DEFAULT_VOCABULARY = SemanticVocabulary.SDL_CORE;
@@ -64,6 +66,22 @@ public final class SemanticEntityInfo {
 
     public boolean isPublic() {
         return public_;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SemanticEntityInfo that = (SemanticEntityInfo) o;
+        return Objects.equals(public_, that.public_) &&
+                Objects.equals(vocabulary, that.vocabulary) &&
+                Objects.equals(entityName, that.entityName) &&
+                Objects.equals(prefix, that.prefix);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(vocabulary, entityName, prefix, public_);
     }
 
     @Override

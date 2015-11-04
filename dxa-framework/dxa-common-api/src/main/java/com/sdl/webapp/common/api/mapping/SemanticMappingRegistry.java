@@ -6,7 +6,7 @@ import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.model.EntityModel;
 
 import java.lang.reflect.Field;
-import java.util.List;
+import java.util.Set;
 
 /**
  * Semantic mapping registry.
@@ -23,7 +23,7 @@ public interface SemanticMappingRegistry {
      * @return A list of {@code FieldSemantics} objects for the field. Never returns {@code null}; if there are no
      * field semantics for the field, an empty collection is returned.
      */
-    List<FieldSemantics> getFieldSemantics(Field field);
+    Set<FieldSemantics> getFieldSemantics(Field field);
 
     /**
      * Gets semantic information for the specified entity class. This information is gathered from the semantic entity
@@ -33,7 +33,7 @@ public interface SemanticMappingRegistry {
      * @return A list of {@code SemanticEntityInfo} objects containing semantic entity information for the entity class.
      * Never returns {@code null}; if there is no information for the class, an empty collection is returned.
      */
-    List<SemanticEntityInfo> getEntityInfo(Class<? extends EntityModel> entityClass);
+    Set<SemanticEntityInfo> getEntityInfo(Class<? extends EntityModel> entityClass);
 
     /**
      * Gets semantic information for the specified field. This information is gathered from the semantic property
@@ -43,7 +43,7 @@ public interface SemanticMappingRegistry {
      * @return A list of {@code SemanticPropertyInfo} objects containing semantic property information for the field.
      * Never returns {@code null}; if there is no information for the field, an empty collection is returned.
      */
-    List<SemanticPropertyInfo> getPropertyInfo(Field field);
+    Set<SemanticPropertyInfo> getPropertyInfo(Field field);
 
     /**
      * Registers the entity classes in the specified package and subpackages.

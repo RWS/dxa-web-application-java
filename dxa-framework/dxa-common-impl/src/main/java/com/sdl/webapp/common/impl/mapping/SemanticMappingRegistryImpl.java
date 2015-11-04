@@ -1,8 +1,9 @@
 package com.sdl.webapp.common.impl.mapping;
 
-import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.SetMultimap;
 import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
@@ -28,30 +29,28 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-/**
- * Implementation of {@code SemanticMappingRegistry}.
- */
 public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMappingRegistryImpl.class);
 
-    // todo should we refactor this using normal maps? why do we use guava? to research
-    private final ListMultimap<Field, FieldSemantics> fieldSemanticsMap = ArrayListMultimap.create();
-    private final ListMultimap<Class<? extends EntityModel>, SemanticEntityInfo> semanticEntityInfo = ArrayListMultimap.create();
-    private final ListMultimap<Field, SemanticPropertyInfo> semanticPropertyInfo = ArrayListMultimap.create();
+    private final SetMultimap<Field, FieldSemantics> fieldSemanticsMap = LinkedHashMultimap.create();
+    private final SetMultimap<Class<? extends EntityModel>, SemanticEntityInfo> semanticEntityInfo = LinkedHashMultimap.create();
+    private final SetMultimap<Field, SemanticPropertyInfo> semanticPropertyInfo = LinkedHashMultimap.create();
 
     @Override
-    public List<FieldSemantics> getFieldSemantics(Field field) {
-        final List<FieldSemantics> fieldSemanticsList = fieldSemanticsMap.get(field);
-        return fieldSemanticsList != null ? fieldSemanticsList : Collections.<FieldSemantics>emptyList();
+    public Set<FieldSemantics> getFieldSemantics(Field field) {
+        final Set<FieldSemantics> fieldSemanticsList = fieldSemanticsMap.get(field);
+        return fieldSemanticsList != null ? fieldSemanticsList : Collections.<FieldSemantics>emptySet();
     }
 
     @Override
-    public List<SemanticEntityInfo> getEntityInfo(Class<? extends EntityModel> entityClass) {
-        final List<SemanticEntityInfo> result = new ArrayList<>();
+    public Set<SemanticEntityInfo> getEntityInfo(Class<? extends EntityModel> entityClass) {
+        final Set<SemanticEntityInfo> result = new HashSet<>();
 
         // Get semantic entity info of this class and all superclasses (that implement interface Entity)
         Class<? extends EntityModel> cls = entityClass;
@@ -65,7 +64,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     }
 
     @Override
-    public List<SemanticPropertyInfo> getPropertyInfo(Field field) {
+    public Set<SemanticPropertyInfo> getPropertyInfo(Field field) {
         return semanticPropertyInfo.get(field);
     }
 
@@ -147,7 +146,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     @Override
     public Class<? extends EntityModel> getEntityClass(String entityName) {
         for (Class<? extends EntityModel> entityClass : semanticEntityInfo.keys()) {
-            List<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
+            Set<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
             for (SemanticEntityInfo entityInfo : entityInfoList) {
                 if (entityInfo.getEntityName().equals(entityName)) {
                     return entityClass;
@@ -163,7 +162,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         String[] entityNameSplit = entityName.split(":");
         List<Class<? extends EntityModel>> possibleValues = new ArrayList<>();
         for (Class<? extends EntityModel> entityClass : semanticEntityInfo.keys()) {
-            List<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
+            Set<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
             for (SemanticEntityInfo entityInfo : entityInfoList) {
                 if (entityName.startsWith(entityInfo.getVocabulary()) && entityName.endsWith(entityInfo.getEntityName())) {
                     if (!possibleValues.contains(entityClass)) {
@@ -187,7 +186,6 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     /**
      * Get all declared fields. If concrete class is annotated as SemanticEntity, the whole inheritance structure is followed.
      *
-     * @param entityClass
      * @return list of class fields
      */
     private List<Field> getDeclaredFields(Class entityClass) {
@@ -199,9 +197,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         List<Field> declaredFields = new ArrayList<>();
         Class clazz = entityClass;
         while (!clazz.equals(AbstractEntityModel.class) && !clazz.equals(Object.class)) {
-            for (Field field : clazz.getDeclaredFields()) {
-                declaredFields.add(field);
-            }
+            Collections.addAll(declaredFields, clazz.getDeclaredFields());
             if (!followInheritanceStructure) break;
             clazz = clazz.getSuperclass();
         }

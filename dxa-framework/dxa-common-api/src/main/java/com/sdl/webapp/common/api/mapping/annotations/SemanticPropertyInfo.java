@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Objects;
 
 public final class SemanticPropertyInfo {
 
@@ -54,6 +55,20 @@ public final class SemanticPropertyInfo {
 
     public String getPropertyName() {
         return propertyName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SemanticPropertyInfo that = (SemanticPropertyInfo) o;
+        return Objects.equals(prefix, that.prefix) &&
+                Objects.equals(propertyName, that.propertyName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(prefix, propertyName);
     }
 
     @Override

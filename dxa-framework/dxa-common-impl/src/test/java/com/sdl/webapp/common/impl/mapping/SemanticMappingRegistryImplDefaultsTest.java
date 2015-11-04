@@ -6,7 +6,9 @@ import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
 import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG_VOCABULARY;
@@ -32,14 +34,14 @@ public class SemanticMappingRegistryImplDefaultsTest {
         final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity1.class);
 
-        final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field1"));
+        final Set<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field1"));
         assertThat("Default FieldSemantics should be present for field1", field1, hasSize(1));
-        assertThat(field1.get(0), is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity1.class.getSimpleName(),
+        assertThat(field1.iterator().next(), is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity1.class.getSimpleName(),
                 "field1")));
 
-        final List<FieldSemantics> field2 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field2"));
+        final Set<FieldSemantics> field2 = registry.getFieldSemantics(TestEntity1.class.getDeclaredField("field2"));
         assertThat("Default FieldSemantics should be present for field2", field2, hasSize(1));
-        assertThat(field2.get(0), is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity1.class.getSimpleName(),
+        assertThat(field2.iterator().next(), is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity1.class.getSimpleName(),
                 "field2")));
     }
 
@@ -55,11 +57,12 @@ public class SemanticMappingRegistryImplDefaultsTest {
         final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity2.class);
 
-        final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field1"));
+        final Set<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity2.class.getDeclaredField("field1"));
         assertThat("Besides the specified semantics, there should be default semantics for field1", field1, hasSize(2));
-        assertThat("The specified semantics must be first in the list", field1.get(0),
+        Iterator<FieldSemantics> iterator1 = field1.iterator();
+        assertThat("The specified semantics must be first in the list", iterator1.next(),
                 is(new FieldSemantics(SDL_CORE_VOCABULARY, "TE2", "F1")));
-        assertThat("The default semantics must be second in the list", field1.get(1),
+        assertThat("The default semantics must be second in the list", iterator1.next(),
                 is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity2.class.getSimpleName(), "field1")));
 
     }
@@ -74,9 +77,9 @@ public class SemanticMappingRegistryImplDefaultsTest {
         final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity3.class);
 
-        final List<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity3.class.getDeclaredField("field1"));
+        final Set<FieldSemantics> field1 = registry.getFieldSemantics(TestEntity3.class.getDeclaredField("field1"));
         assertThat("There should be only one FieldSemantics for field1", field1, hasSize(1));
-        assertThat(field1.get(0), is(new FieldSemantics(SCHEMA_ORG_VOCABULARY, "TE3", "F1")));
+        assertThat(field1.iterator().next(), is(new FieldSemantics(SCHEMA_ORG_VOCABULARY, "TE3", "F1")));
     }
 
     public static class TestEntity1 extends AbstractEntityModel {

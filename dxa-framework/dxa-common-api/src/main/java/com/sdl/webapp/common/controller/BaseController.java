@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -54,6 +55,13 @@ public abstract class BaseController {
         }
         return entity;
     }
+
+    @RequestMapping(value = ControllerUtils.INCLUDE_PATH_PREFIX + ControllerUtils.SECTION_ERROR_VIEW)
+    public String handleJspIncludesErrors() {
+        LOG.error("Unhandled exception from JSP include action");
+        return ControllerUtils.SECTION_ERROR_VIEW;
+    }
+
 
     @ExceptionHandler(Exception.class)
     public String handleException(HttpServletRequest request, Exception exception) {

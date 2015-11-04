@@ -29,30 +29,39 @@ public class AbstractMarkupTag extends TagSupport {
 
         // TODO: Consider to replace with an annotation instead
 
-        StringWriter sw = new StringWriter();
-        pageContext.pushBody(sw);
-        pageContext.getRequest().setAttribute("ParentModel", model);
-        pageContext.include(include);
-        String renderedHtml = sw.toString();
-        ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);
-        HtmlNode decoratedMarkup = this.decorateMarkup(markup, model);
-        pageContext.popBody();
-        return decoratedMarkup.toHtml();
+        try {
+            StringWriter sw = new StringWriter();
+            pageContext.pushBody(sw);
+            pageContext.getRequest().setAttribute("ParentModel", model);
+            pageContext.include(include);
+            String renderedHtml = sw.toString();
+            ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);
+            HtmlNode decoratedMarkup = this.decorateMarkup(markup, model);
+            return decoratedMarkup.toHtml();
+        } finally {
+            pageContext.popBody();
+        }
     }
 
     protected void decorateInclude(String include, ViewModel model) throws IOException, ServletException {
 
         // TODO: Consider to replace with an annotation instead
 
-        StringWriter sw = new StringWriter();
-        pageContext.pushBody(sw);
-        pageContext.getRequest().setAttribute("ParentModel", model);
-        pageContext.include(include);
-        String renderedHtml = sw.toString();
-        ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);
-        HtmlNode decoratedMarkup = this.decorateMarkup(markup, model);
-        pageContext.popBody();
-        pageContext.getOut().write(decoratedMarkup.toHtml());
+        HtmlNode decoratedMarkup = null;
+        try {
+            StringWriter sw = new StringWriter();
+            pageContext.pushBody(sw);
+            pageContext.getRequest().setAttribute("ParentModel", model);
+            pageContext.include(include);
+            String renderedHtml = sw.toString();
+            ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);
+            decoratedMarkup = this.decorateMarkup(markup, model);
+        } finally {
+            pageContext.popBody();
+            if (decoratedMarkup != null) {
+                pageContext.getOut().write(decoratedMarkup.toHtml());
+            }
+        }
     }
 
     protected HtmlNode decorateMarkup(HtmlNode markup, ViewModel model) {

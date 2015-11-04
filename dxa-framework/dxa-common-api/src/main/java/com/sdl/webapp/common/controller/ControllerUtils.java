@@ -34,6 +34,10 @@ public final class ControllerUtils {
                 getQueryParameters(mvcData);
     }
 
+    public static String getIncludeErrorPath() {
+        return ControllerUtils.INCLUDE_PATH_PREFIX + ControllerUtils.SECTION_ERROR_VIEW;
+    }
+
     private static String getIncludePathPrefix(MvcData mvcData) {
         return INCLUDE_PATH_PREFIX +
                 mvcData.getControllerAreaName() + "/" +

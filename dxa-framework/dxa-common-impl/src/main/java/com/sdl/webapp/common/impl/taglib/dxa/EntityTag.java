@@ -37,7 +37,12 @@ public class EntityTag extends AbstractMarkupTag {
             webRequestContext.pushContainerSize(containerSize);
             this.decorateInclude(ControllerUtils.getIncludePath(entity), entity);
         } catch (ServletException | IOException e) {
-            throw new JspException("Error while processing entity tag", e);
+            try {
+                LOG.error("Error while processing entity tag", e);
+                this.decorateInclude(ControllerUtils.getIncludeErrorPath(), entity);
+            } catch (IOException | ServletException e1) {
+                throw new JspException("Error while processing entity tag, error view wasn't found", e1);
+            }
         } finally {
             webRequestContext.popContainerSize();
         }

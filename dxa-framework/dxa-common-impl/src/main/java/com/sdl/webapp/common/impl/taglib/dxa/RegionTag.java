@@ -112,9 +112,13 @@ public class RegionTag extends AbstractMarkupTag {
                 webRequestContext.pushParentRegion(region);
                 webRequestContext.pushContainerSize(containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
-
             } catch (ServletException | IOException e) {
-                throw new JspException("Error while processing region tag: " + regionName, e);
+                try {
+                    LOG.error("Error while processing region tag", e);
+                    this.decorateInclude(ControllerUtils.getIncludeErrorPath(), region);
+                } catch (IOException | ServletException e1) {
+                    throw new JspException("Error while processing region tag, error view wasn't found", e1);
+                }
             } finally {
                 webRequestContext.popParentRegion();
                 webRequestContext.popContainerSize();

@@ -16,7 +16,28 @@ public class TridionLinkResolver implements LinkResolver {
     //TODO : move these back to defaultcontentprovider once class is moved to new package
     public static final String DEFAULT_PAGE_NAME = "index";
     public static final String DEFAULT_PAGE_EXTENSION = ".html";
+
     private static final Logger LOG = LoggerFactory.getLogger(TridionLinkResolver.class);
+
+    private static final LinkStrategy BINARY_LINK_STRATEGY = new LinkStrategy() {
+        @Override
+        public Link getLink(int publicationId, int itemId, String uri) {
+            return new BinaryLink(publicationId)
+                    .getLink(uri.startsWith("tcm:") ? uri : ("tcm:" + uri), null, null, null, false);
+        }
+    };
+    private static final LinkStrategy COMPONENT_LINK_STRATEGY = new LinkStrategy() {
+        @Override
+        public Link getLink(int publicationId, int itemId, String uri) {
+            return new ComponentLink(publicationId).getLink(itemId);
+        }
+    };
+    private static final LinkStrategy PAGE_LINK_STRATEGY = new LinkStrategy() {
+        @Override
+        public Link getLink(int publicationId, int itemId, String uri) {
+            return new PageLink(publicationId).getLink(itemId);
+        }
+    };
 
     @Override
     public String resolveLink(String url, String localizationId) {
@@ -61,13 +82,16 @@ public class TridionLinkResolver implements LinkResolver {
         switch (itemType) {
             case 16:
                 if (isBinary) {
-                    String resolvedLink = resolveBinaryLink(uri, publicationId);
-                    return resolvedLink.equals("") ? resolveComponentLink(uri, publicationId, itemId) : resolvedLink;
-                } else {
-                    return resolveComponentLink(uri, publicationId, itemId);
+                    String resolvedLink = resolveLink(BINARY_LINK_STRATEGY, publicationId, uri);
+
+                    if (!StringUtils.isEmpty(resolvedLink)) {
+                        return resolvedLink;
+                    }
                 }
+
+                return resolveLink(COMPONENT_LINK_STRATEGY, publicationId, itemId);
             case 64:
-                return resolvePageLink(uri, publicationId, itemId);
+                return resolveLink(PAGE_LINK_STRATEGY, publicationId, itemId);
 
             default:
                 LOG.warn("Could not resolve link: {}", uri);
@@ -75,19 +99,17 @@ public class TridionLinkResolver implements LinkResolver {
         }
     }
 
-    private String resolveComponentLink(String uri, int publicationId, int itemId) {
-        final Link link = new ComponentLink(publicationId).getLink(itemId);
-        return link.isResolved() ? link.getURL() : "";
+    private interface LinkStrategy {
+        Link getLink(int publicationId, int itemId, String uri);
     }
-
-    private String resolveBinaryLink(String uri, int publicationId) {
-        final Link link = new BinaryLink(publicationId).getLink(uri.startsWith("tcm:") ? uri : ("tcm:" + uri),
-                null, null, null, false);
-        return link.isResolved() ? link.getURL() : "";
+    private String resolveLink(LinkStrategy linkStrategy, int publicationId, int itemId) {
+        return resolveLink(linkStrategy, publicationId, itemId, null);
     }
-
-    private String resolvePageLink(String uri, int publicationId, int itemId) {
-        final Link link = new PageLink(publicationId).getLink(itemId);
+    private String resolveLink(LinkStrategy linkStrategy, int publicationId, String uri) {
+        return resolveLink(linkStrategy, publicationId, 0, uri);
+    }
+    private synchronized String resolveLink(LinkStrategy linkStrategy, int publicationId, int itemId, String uri) {
+        final Link link = linkStrategy.getLink(publicationId, itemId, uri);
         return link.isResolved() ? link.getURL() : "";
     }
 }

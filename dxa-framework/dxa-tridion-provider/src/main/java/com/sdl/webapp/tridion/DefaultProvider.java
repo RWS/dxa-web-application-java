@@ -339,18 +339,18 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         }
     }
 
-    private BinaryVariant findBinaryVariant(int publicationId, String path) throws StorageException {
+    private synchronized BinaryVariant findBinaryVariant(int publicationId, String path) throws StorageException {
         final BinaryVariantDAO dao = (BinaryVariantDAO) StorageManagerFactory.getDAO(publicationId,
                 StorageTypeMapping.BINARY_VARIANT);
         return dao.findByURL(publicationId, path);
     }
 
-    private ItemMeta findItemMeta(int publicationId, int itemId) throws StorageException {
+    private synchronized ItemMeta findItemMeta(int publicationId, int itemId) throws StorageException {
         final ItemDAO dao = (ItemDAO) StorageManagerFactory.getDAO(publicationId, StorageTypeMapping.ITEM_META);
         return dao.findByPrimaryKey(publicationId, itemId);
     }
 
-    private BinaryContent findBinaryContent(int publicationId, int itemId, String variantId) throws StorageException {
+    private synchronized BinaryContent findBinaryContent(int publicationId, int itemId, String variantId) throws StorageException {
         final BinaryContentDAO dao = (BinaryContentDAO) StorageManagerFactory.getDAO(publicationId,
                 StorageTypeMapping.BINARY_CONTENT);
         return dao.findByPrimaryKey(publicationId, itemId, variantId);

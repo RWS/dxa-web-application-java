@@ -165,7 +165,7 @@ public class PageController extends BaseController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = "/{locPath}/resolve/{itemId}")
-    public String handleResolveLoc(@PathVariable String locPath, @PathVariable String itemId,
+    public String handleResolveLoc(@PathVariable String itemId,
                                    @RequestParam String localizationId, @RequestParam String defaultPath,
                                    @RequestParam(required = false) String defaultItem) throws DxaException {
         return handleResolve(itemId, localizationId, defaultPath, defaultItem);

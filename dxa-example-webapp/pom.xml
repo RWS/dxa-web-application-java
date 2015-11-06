@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.sdl.dxa</groupId>
+    <artifactId>dxa-example-webapp</artifactId>
+    <version>1.2-SNAPSHOT</version>
+    <packaging>war</packaging>
+
+    <properties>
+        <dxa.version>1.2-SNAPSHOT</dxa.version>
+        <java-version>1.7</java-version>
+    </properties>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-maven-plugin</artifactId>
+                <version>9.0.5.v20130815</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>${java-version}</source>
+                    <target>${java-version}</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.4</version>
+                <configuration>
+                    <failOnMissingWebXml>false</failOnMissingWebXml>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <profile>
+            <id>cid-module</id>
+            <dependencies>
+                <dependency>
+                    <artifactId>dxa-module-cid</artifactId>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <version>${dxa.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>search-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-search</artifactId>
+                    <version>${dxa.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>test-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-test</artifactId>
+                    <version>${dxa.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>googleanalytics-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-googleanalytics</artifactId>
+                    <version>${dxa.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <!-- Dependencies -->
+    <dependencies>
+        <!-- SDL Digital Experience Accelerator -->
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-common-api</artifactId>
+            <version>${dxa.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-common-impl</artifactId>
+            <version>${dxa.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa.modules</groupId>
+            <artifactId>dxa-module-core</artifactId>
+            <version>${dxa.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+            <version>3.2.8.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>3.2.8.RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+            <version>3.2.8.RELEASE</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+    </dependencies>
+
+</project>

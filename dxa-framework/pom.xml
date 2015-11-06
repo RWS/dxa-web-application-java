@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>dxa-parent</artifactId>
+        <groupId>com.sdl.dxa</groupId>
+        <version>1.2-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>dxa-framework</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Parent for Digital Experince Accelerator API framework</name>
+    <description>Parent for Digital Experince Accelerator API framework</description>
+    <url>https://github.com/sdl/dxa-web-application-java</url>
+
+    <scm>
+        <url>https://github.com/sdl/dxa-web-application-java</url>
+        <connection>scm:git:https://github.com/sdl/dxa-web-application-java.git</connection>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>rpannekoek</id>
+            <name>Rick Pannekoek</name>
+            <email>rpannekoek@sdl.com</email>
+            <timezone>UTC+1</timezone>
+        </developer>
+        <developer>
+            <id>azarakovskiy</id>
+            <name>Alexey Zarakovskiy</name>
+            <email>azarakovskiy@sdl.com</email>
+            <timezone>UTC+1</timezone>
+        </developer>
+    </developers>
+
+    <modules>
+        <module>dxa-common-api</module>
+        <module>dxa-common-impl</module>
+        <module>dxa-tridion-provider</module>
+    </modules>
+
+</project>

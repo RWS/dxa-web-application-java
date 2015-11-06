@@ -1,0 +1,72 @@
+﻿<configuration scan="true" scanPeriod="1 minute">
+    <!-- Properties and variables -->
+    <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
+    <property name="log.history" value="7"/>
+    <property name="log.level" value="WARN"/>
+    <property name="log.encoding" value="UTF-8"/>
+    <property name="log.folder" value="../logs/DXA"/>
+
+    <!-- Appenders -->
+    <appender name="rollingCoreLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_core.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+
+    <appender name="rollingDebugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_debug.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!-- Loggers -->
+    <logger name="org.hibernate" level="WARN">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="org.springframework" level="INFO">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="org.springframework.web" level="INFO">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="org.dd4t" level="INFO">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="com.tridion" level="WARN">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="com.sdl.webapp" level="DEBUG">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="com.sdl.webapp.common.impl" level="DEBUG">
+        <appender-ref ref="rollingDebugLog"/>
+    </logger>
+    <logger name="com.sdl.webapp.common.impl.taglib.dxa" level="DEBUG">
+        <appender-ref ref="rollingDebugLog"/>
+    </logger>
+    <logger name="com.sdl.webapp.main.controller.core" level="DEBUG">
+        <appender-ref ref="rollingDebugLog"/>
+    </logger>
+</configuration>

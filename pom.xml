@@ -1,28 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.sdl</groupId>
-    <artifactId>webapp-reference-impl</artifactId>
+    <groupId>com.sdl.dxa</groupId>
+    <artifactId>dxa-parent</artifactId>
     <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>Parent for all Digital Experince Accelerator projects</name>
+    <description>Dependencies management for DXA projects</description>
+    <url>https://github.com/sdl/dxa-web-application-java</url>
+
+    <scm>
+        <url>https://github.com/sdl/dxa-web-application-java</url>
+        <connection>scm:git:https://github.com/sdl/dxa-web-application-java.git</connection>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>rpannekoek</id>
+            <name>Rick Pannekoek</name>
+            <email>rpannekoek@sdl.com</email>
+            <timezone>UTC+1</timezone>
+        </developer>
+        <developer>
+            <id>azarakovskiy</id>
+            <name>Alexey Zarakovskiy</name>
+            <email>azarakovskiy@sdl.com</email>
+            <timezone>UTC+1</timezone>
+        </developer>
+    </developers>
+
     <modules>
-        <module>common-api</module>
-        <module>common-impl</module>
-        <module>tridion-provider</module>
-        <module>cid-module</module>
-        <module>example-webapp</module>
-        <module>dxa-testmodule</module>
-        <module>dxa-googleanalyticsmodule</module>
-        <module>dxa-searchmodule</module>
-        <module>dxa-coremodule</module>
+        <module>dxa-framework</module>
     </modules>
 
     <profiles>
-
         <profile>
             <id>cd-7.1.0</id>
             <activation>
@@ -245,27 +268,27 @@
                         <artifactId>odata_tridion_common</artifactId>
                         <version>${tridion-cd-version}</version>
                     </dependency>
-                
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_ambient</artifactId>
+
+                    <dependency>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>cd_preview_ambient</artifactId>
                         <version>${tridion-cd-version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_web</artifactId>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>cd_preview_web</artifactId>
                         <version>${tridion-cd-version}</version>
-                </dependency>
-                 <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_session</artifactId>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>cd_session</artifactId>
                         <version>${tridion-cd-version}</version>
-                </dependency>
-                 <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_wrapper</artifactId>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>cd_wrapper</artifactId>
                         <version>${tridion-cd-version}</version>
-                </dependency>
+                    </dependency>
                     <dependency>
                         <groupId>javax.cache</groupId>
                         <artifactId>cache-api</artifactId>
@@ -279,41 +302,100 @@
                 </dependencies>
             </dependencyManagement>
         </profile>
+
+        <profile>
+            <id>release</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>sdl</id>
+                    <url>http://nexus.global.sdl.corp:8080/nexus/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>sdl</id>
+                    <url>http://nexus.global.sdl.corp:8080/nexus/repositories/releases</url>
+                </repository>
+            </distributionManagement>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-release-plugin</artifactId>
+                        <version>2.5.2</version>
+                        <configuration>
+                            <releaseProfiles>release</releaseProfiles>
+                            <goals>deploy nexus-staging:release</goals>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.5</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>sdl</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <!-- Java -->
         <java-version>1.7</java-version>
 
         <!-- Dynamic Delivery for Tridion (DD4T) -->
-        <dd4t-version>2.0.2-SNAPSHOT</dd4t-version>
-</properties>
+        <dd4t-version>2.0.2-DXA</dd4t-version>
+    </properties>
 
-<!-- Dependency management -->
+    <!-- Dependency management -->
     <dependencyManagement>
         <dependencies>
-            <!-- Dynamic Delivery for Tridion 1.x (DD4T) -->
-            <!--
-            <dependency>
-                <groupId>org.dynamicdelivery</groupId>
-                <artifactId>dd4t-api</artifactId>
-                <version>${dd4t-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dynamicdelivery</groupId>
-                <artifactId>dd4t-core</artifactId>
-                <version>${dd4t-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.dynamicdelivery</groupId>
-                <artifactId>dd4t-providers</artifactId>
-                <version>${dd4t-version}</version>
-            </dependency>
-            -->
-
             <dependency>
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-api</artifactId>
@@ -355,6 +437,7 @@
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_cache</artifactId>
                 <version>${tridion-cd-version}</version>
+                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
@@ -390,6 +473,17 @@
                 <groupId>com.tridion</groupId>
                 <artifactId>cd_wrapper</artifactId>
                 <version>${tridion-cd-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_preview_ambient</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_preview_web</artifactId>
+                <version>${tridion-cd-version}</version>
             </dependency>
 
             <!-- Tridion Contextual Web Delivery (CWD) -->
@@ -401,6 +495,7 @@
             <dependency>
                 <groupId>com.tridion</groupId>
                 <artifactId>cwd_engine</artifactId>
+                <scope>runtime</scope>
                 <version>${tridion-cwd-version}</version>
             </dependency>
             <dependency>
@@ -443,7 +538,7 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
-                <version>3.1.1.RELEASE</version>
+                <version>${spring-version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -460,6 +555,14 @@
                 <artifactId>spring-test</artifactId>
                 <version>${spring-version}</version>
                 <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>2.2.2</version>
+                <scope>runtime</scope>
             </dependency>
 
             <!-- Hibernate -->
@@ -484,7 +587,6 @@
                 <artifactId>hibernate-ehcache</artifactId>
                 <version>${hibernate-version}</version>
             </dependency>
-
 
             <!-- Ehcache -->
             <dependency>
@@ -529,11 +631,23 @@
                 <artifactId>commons-pool</artifactId>
                 <version>${commons-pool-version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.1</version>
+                <scope>compile</scope>
+            </dependency>
 
             <!-- Apache HttpComponents -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
+                <scope>runtime</scope>
                 <version>${httpcomponents-client-version}</version>
             </dependency>
             <dependency>
@@ -603,7 +717,6 @@
                 <version>1.7.3</version>
             </dependency>
 
-
             <!-- User agent string parser -->
             <dependency>
                 <groupId>ua_parser</groupId>
@@ -665,6 +778,12 @@
             <!-- Miscellaneous libraries used by Tridion CD -->
             <dependency>
                 <groupId>com.vs.ezlicrun</groupId>
+                <artifactId>easylicense</artifactId>
+                <version>${easylicense-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.vs</groupId>
                 <artifactId>easylicense</artifactId>
                 <version>${easylicense-version}</version>
                 <scope>runtime</scope>
@@ -746,10 +865,17 @@
             <artifactId>logback-classic</artifactId>
         </dependency>
 
-        <!-- Hibernate - Necessary to make IntelliJ stop warning about missing classes -->
+        <!-- Hibernate Entitymanager - Necessary to stop warning about missing classes -->
+        <!-- todo remove dependency unused in fact -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
+        </dependency>
+
+        <dependency>
+            <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
+            <groupId>cglib</groupId>
+            <artifactId>cglib</artifactId>
         </dependency>
 
         <!-- JUnit and Spring Test -->
@@ -813,11 +939,6 @@
                     </archive>
                 </configuration>
             </plugin>
-<plugin>
-  <groupId>org.eclipse.jetty</groupId>
-  <artifactId>jetty-maven-plugin</artifactId>
-  <version>9.0.5.v20130815</version>
-</plugin>
         </plugins>
     </build>
 </project>

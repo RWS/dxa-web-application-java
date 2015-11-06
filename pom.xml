@@ -9,6 +9,38 @@
     <version>1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>Parent for all Digital Experince Accelerator projects</name>
+    <description>Dependencies management for DXA projects</description>
+    <url>https://github.com/sdl/dxa-web-application-java</url>
+
+    <scm>
+        <url>https://github.com/sdl/dxa-web-application-java</url>
+        <connection>scm:git:https://github.com/sdl/dxa-web-application-java.git</connection>
+    </scm>
+
+    <licenses>
+        <license>
+            <name>The Apache Software License, Version 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <id>rpannekoek</id>
+            <name>Rick Pannekoek</name>
+            <email>rpannekoek@sdl.com</email>
+            <timezone>UTC+1</timezone>
+        </developer>
+        <developer>
+            <id>azarakovskiy</id>
+            <name>Alexey Zarakovskiy</name>
+            <email>azarakovskiy@sdl.com</email>
+            <timezone>UTC+1</timezone>
+        </developer>
+    </developers>
+
     <modules>
         <module>dxa-framework</module>
     </modules>
@@ -271,15 +303,75 @@
             </dependencyManagement>
         </profile>
 
-        <!--<profile>-->
-            <!--<id>release</id>-->
-            <!--<distributionManagement>-->
-                <!--<snapshotRepository>-->
-                    <!--<id>sdl-snapshot</id>-->
-                    <!--<url>http://nexus:8080/nexus/content/repositories/snapshots/</url>-->
-                <!--</snapshotRepository>-->
-            <!--</distributionManagement>-->
-        <!--</profile>-->
+        <profile>
+            <id>release-central</id>
+            <distributionManagement>
+                <snapshotRepository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+                </snapshotRepository>
+                <repository>
+                    <id>ossrh</id>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+            </distributionManagement>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonatype.plugins</groupId>
+                        <artifactId>nexus-staging-maven-plugin</artifactId>
+                        <version>1.6.5</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <serverId>ossrh</serverId>
+                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
+                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>2.2.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>2.9.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.5</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
     <properties>
@@ -837,30 +929,6 @@
                         </manifest>
                     </archive>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

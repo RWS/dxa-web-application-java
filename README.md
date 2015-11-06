@@ -7,7 +7,7 @@ About
 -----
 The SDL Digital Experience Accelerator (formerly known as the SDL Tridion Reference Implementation) is a reference implementation of SDL Tridion intended to help you create, design and publish an SDL Tridion-based Web site quickly.
 
-You can find more details and a download of the entire release on [TODO]
+You can find more details and a download of the entire release on https://community.sdl.com/developers/tridion_developer/m/mediagallery/1241
 
 
 Support

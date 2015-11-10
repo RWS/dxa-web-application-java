@@ -93,6 +93,17 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>mediamanager-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-mediamanager</artifactId>
+                    <version>${dxa.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
     <!-- Dependencies -->

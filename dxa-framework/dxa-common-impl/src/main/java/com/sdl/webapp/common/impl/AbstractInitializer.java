@@ -6,9 +6,22 @@ import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
+
 public abstract class AbstractInitializer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractInitializer.class);
+
+    @PostConstruct
+    public final void initialize() {
+        if (!registerModule()) {
+            LOG.error("Module {} was not initialized", getAreaName());
+        }
+    }
 
     @Autowired
     private ViewModelRegistry viewModelRegistry;
@@ -36,5 +49,6 @@ public abstract class AbstractInitializer {
         viewModelRegistry.registerViewModel(mvcData, entityClass);
     }
 
+    protected abstract boolean registerModule();
     protected abstract String getAreaName();
 }

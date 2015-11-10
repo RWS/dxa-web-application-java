@@ -5,10 +5,15 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
+import org.apache.commons.collections.MapUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
@@ -67,6 +72,11 @@ public abstract class EclItem extends MediaItem {
 
     public void setExternalMetadata(Map<String, Object> externalMetadata) {
         this.externalMetadata = externalMetadata;
+    }
+
+    public Object getFromExternalMetadataOrAlternative(String key, Object alternative) {
+        final Object obj = new NestedStringMap(getExternalMetadata()).get(key);
+        return obj == null ? alternative : obj;
     }
 
     @Override
@@ -145,5 +155,40 @@ public abstract class EclItem extends MediaItem {
                 ", displayTypeId='" + displayTypeId + '\'' +
                 ", templateFragment='" + templateFragment + '\'' +
                 '}';
+    }
+
+    public static class NestedStringMap {
+        private Map<String, Object> map;
+
+        public NestedStringMap(Map<String, Object> map) {
+            this.map = map;
+        }
+
+        public Map<String, Object> getMap() {
+            return map;
+        }
+
+        public Object get(String key) {
+            if (key == null || CollectionUtils.isEmpty(map)) {
+                return null;
+            }
+
+            final List<String> keys = Arrays.asList(key.split("/"));
+            final Iterator<String> iterator = keys.iterator();
+            Map currentMap = map;
+            while (iterator.hasNext()) {
+                String current = iterator.next();
+                if (!iterator.hasNext()) { //last element
+                    return currentMap.get(current);
+                }
+
+                currentMap = MapUtils.getMap(currentMap, current);
+                if (currentMap == null) {
+                    return null;
+                }
+            }
+
+            return null;
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.controller.ControllerUtils;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +47,7 @@ public class RichTextTag extends AbstractMarkupTag {
             }
 
             out.write(builder.toString());
-        } catch (IOException e) {
+        } catch (IOException | DxaException e) {
             LOG.error("Error while rendering rich text", e);
             throw new JspException(e);
         }

@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.NamedNodeMap;
@@ -69,15 +70,32 @@ public abstract class EclItem extends MediaItem {
     }
 
     @Override
-    public String toHtml(String widthFactor) {
-        // NOTE: params will be ignored
+    public String toHtml(String widthFactor) throws DxaException {
         return toHtml(widthFactor, 0.0, null, 0);
     }
 
+    /**
+     * Returns an HTML representation.
+     *
+     * @param widthFactor   The factor to apply to the width - can be % (eg "100%") or absolute (eg "120") | <strong>ignored</strong>
+     * @param aspect        The aspect ratio to apply | <strong>ignored</strong>
+     * @param cssClass      Optional CSS class name(s) to apply
+     * @param containerSize The size (in grid column units) of the containing element | <strong>ignored</strong>
+     * @return string html representation
+     */
     @Override
-    public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) {
-        // NOTE: we're ignoring all parameters here.
-        return templateFragment;
+    public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException {
+        if (StringUtils.isEmpty(templateFragment)) {
+            throw new DxaException(
+                    String.format("Attempt to render an ECL Item for which no Template Fragment is available: " +
+                            "'%s' (DisplayTypeId: '%s')", getUri(), getDisplayTypeId()));
+        }
+
+        if (StringUtils.isEmpty(cssClass)) {
+            return templateFragment;
+        }
+
+        return String.format("<div class=\"%s\">%s</div>", cssClass, templateFragment);
     }
 
     @Override

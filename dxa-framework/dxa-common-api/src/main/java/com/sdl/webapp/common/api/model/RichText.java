@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -26,7 +27,7 @@ public class RichText {
     }
 
     @JsonIgnore
-    public static Boolean isNullOrEmpty(RichText richText) {
+    public static Boolean isNullOrEmpty(RichText richText) throws DxaException {
         return (richText == null) || richText.isEmpty();
     }
 
@@ -48,7 +49,7 @@ public class RichText {
     }
 
     @JsonIgnore
-    public Boolean isEmpty() {
+    public Boolean isEmpty() throws DxaException {
         return CollectionUtils.isEmpty(fragments) ||
                 fragments.get(0) == null || StringUtils.isEmpty(fragments.get(0).toHtml());
     }

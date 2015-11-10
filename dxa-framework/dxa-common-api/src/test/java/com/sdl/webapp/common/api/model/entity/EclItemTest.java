@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -54,7 +55,7 @@ public class EclItemTest {
     }
 
     @Test
-    public void shouldReturnTemplateFragmentWhenToHtmlIsCalled() {
+    public void shouldReturnTemplateFragmentWhenToHtmlIsCalled() throws DxaException {
         //given
         String templateFragment = "templateFragment";
         EclItem eclItem = new EclItem() {

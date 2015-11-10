@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import org.w3c.dom.Node;
 
@@ -98,7 +99,7 @@ public abstract class MediaItem extends AbstractEntityModel {
     }
 
     @Override
-    public String toHtml() {
+    public String toHtml() throws DxaException {
         return this.toHtml("100%");
     }
 
@@ -132,7 +133,7 @@ public abstract class MediaItem extends AbstractEntityModel {
      * @param widthFactor The factor to apply to the width - can be % (eg "100%") or absolute (eg "120")
      * @return The HTML representation
      */
-    public abstract String toHtml(String widthFactor);
+    public abstract String toHtml(String widthFactor) throws DxaException;
 
     /**
      * Renders an HTML representation of the Item.
@@ -143,7 +144,7 @@ public abstract class MediaItem extends AbstractEntityModel {
      * @param containerSize The size (in grid column units) of the containing element
      * @return The HTML representation
      */
-    public abstract String toHtml(String widthFactor, double aspect, String cssClass, int containerSize);
+    public abstract String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException;
 
     public abstract HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath);
 

@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.impl;
+package com.sdl.webapp.common.api.mapping.views;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -16,21 +16,37 @@ public abstract class AbstractInitializer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractInitializer.class);
 
-    @PostConstruct
-    public final void initialize() {
-        if (!registerModule()) {
-            LOG.error("Module {} was not initialized", getAreaName());
-        }
-    }
-
     @Autowired
     private ViewModelRegistry viewModelRegistry;
 
-    protected void registerViewModel(String viewName, Class<? extends ViewModel> entityClass) {
+    @PostConstruct
+    public final void initialize() {
+        if (getClass().isAnnotationPresent(RegisteredView.class)) {
+            LOG.debug("AutoRegistering (@RegisteredView present) view for module {}", getAreaName());
+            registerViewEntry(getClass().getAnnotation(RegisteredView.class));
+        }
+
+        if (getClass().isAnnotationPresent(RegisteredViews.class)) {
+            LOG.debug("AutoRegistering (@RegisteredViews present) views for module {}", getAreaName());
+            final RegisteredViews views = getClass().getAnnotation(RegisteredViews.class);
+            for (RegisteredView viewEntry : views.value()) {
+                registerViewEntry(viewEntry);
+            }
+        }
+    }
+
+    protected abstract String getAreaName();
+
+    private void registerViewEntry(RegisteredView viewEntry) {
+        LOG.debug("View {} for class {}", viewEntry.viewName(), viewEntry.clazz());
+        registerViewModel(viewEntry.viewName(), viewEntry.clazz());
+    }
+
+    private void registerViewModel(String viewName, Class<? extends ViewModel> entityClass) {
         registerViewModel(viewName, entityClass, null);
     }
 
-    protected void registerViewModel(String viewName, Class<? extends ViewModel> entityClass, String controllerName) {
+    private void registerViewModel(String viewName, Class<? extends ViewModel> entityClass, String controllerName) {
         if (Strings.isNullOrEmpty(controllerName)) {
             if (EntityModel.class.isAssignableFrom(entityClass)) {
                 controllerName = "Entity";
@@ -48,7 +64,4 @@ public abstract class AbstractInitializer {
 
         viewModelRegistry.registerViewModel(mvcData, entityClass);
     }
-
-    protected abstract boolean registerModule();
-    protected abstract String getAreaName();
 }

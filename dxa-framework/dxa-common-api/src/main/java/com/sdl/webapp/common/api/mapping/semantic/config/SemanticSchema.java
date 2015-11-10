@@ -1,15 +1,13 @@
-package com.sdl.webapp.common.api.mapping.config;
+package com.sdl.webapp.common.api.mapping.semantic.config;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.sdl.webapp.common.api.localization.Localization;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
-/**
- * Semantic schema.
- */
 public final class SemanticSchema {
 
     private final long id;
@@ -51,6 +49,23 @@ public final class SemanticSchema {
 
     public Map<FieldSemantics, SemanticField> getSemanticFields() {
         return semanticFields;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SemanticSchema that = (SemanticSchema) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(rootElement, that.rootElement) &&
+                Objects.equals(entitySemantics, that.entitySemantics) &&
+                Objects.equals(semanticFields, that.semanticFields) &&
+                Objects.equals(localization, that.localization);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, rootElement, entitySemantics, semanticFields, localization);
     }
 
     @Override

@@ -1,11 +1,11 @@
 package com.sdl.webapp.tridion;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.mapping.FieldData;
-import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
-import com.sdl.webapp.common.api.mapping.SemanticMappingException;
-import com.sdl.webapp.common.api.mapping.config.FieldPath;
-import com.sdl.webapp.common.api.mapping.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.FieldData;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldPath;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.tridion.fieldconverters.ComponentLinkFieldConverter;

@@ -1,7 +1,7 @@
-package com.sdl.webapp.common.api.mapping.annotations;
+package com.sdl.webapp.common.api.mapping.semantic.annotations;
 
 import com.google.common.base.Strings;
-import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.EntityModel;
 
 import java.util.Objects;

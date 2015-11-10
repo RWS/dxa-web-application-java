@@ -1,12 +1,10 @@
-package com.sdl.webapp.common.api.mapping.config;
+package com.sdl.webapp.common.api.mapping.semantic.config;
 
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Map;
+import java.util.Objects;
 
-/**
- * Semantic field.
- */
 public final class SemanticField {
 
     private final String name;
@@ -45,25 +43,16 @@ public final class SemanticField {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         SemanticField that = (SemanticField) o;
-
-        if (multiValue != that.multiValue) return false;
-        if (embeddedFields != null ? !embeddedFields.equals(that.embeddedFields) : that.embeddedFields != null)
-            return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
-        if (path != null ? !path.equals(that.path) : that.path != null) return false;
-
-        return true;
+        return Objects.equals(multiValue, that.multiValue) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(path, that.path) &&
+                Objects.equals(embeddedFields, that.embeddedFields);
     }
 
     @Override
     public int hashCode() {
-        int result = name != null ? name.hashCode() : 0;
-        result = 31 * result + (path != null ? path.hashCode() : 0);
-        result = 31 * result + (multiValue ? 1 : 0);
-        result = 31 * result + (embeddedFields != null ? embeddedFields.hashCode() : 0);
-        return result;
+        return Objects.hash(name, path, multiValue, embeddedFields);
     }
 
     @Override

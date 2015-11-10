@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api.mapping.annotations;
+package com.sdl.webapp.common.api.mapping.semantic.annotations;
 
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;

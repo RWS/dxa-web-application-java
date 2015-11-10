@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api.mapping.annotations;
+package com.sdl.webapp.common.api.mapping.semantic.annotations;
 
 import com.google.common.base.Strings;
 

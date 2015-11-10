@@ -1,8 +1,7 @@
-package com.sdl.webapp.common.api.mapping.config;
+package com.sdl.webapp.common.api.mapping.semantic.config;
 
-/**
- * Semantic vocabulary.
- */
+import java.util.Objects;
+
 public final class SemanticVocabulary {
 
     public static final String SDL_CORE = "http://www.sdl.com/web/schemas/core";
@@ -43,16 +42,15 @@ public final class SemanticVocabulary {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         SemanticVocabulary that = (SemanticVocabulary) o;
-
-        return !(id != null ? !id.equals(that.id) : that.id != null);
-
+        return Objects.equals(id, that.id) &&
+                Objects.equals(prefix, that.prefix) &&
+                Objects.equals(vocab, that.vocab);
     }
 
     @Override
     public int hashCode() {
-        return id != null ? id.hashCode() : 0;
+        return Objects.hash(id, prefix, vocab);
     }
 
     @Override

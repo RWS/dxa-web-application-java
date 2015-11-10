@@ -1,10 +1,10 @@
 package com.sdl.webapp.common.impl.mapping;
 
-import com.sdl.webapp.common.api.mapping.FieldData;
-import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
-import com.sdl.webapp.common.api.mapping.SemanticMappingException;
-import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
-import com.sdl.webapp.common.api.mapping.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.FieldData;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Article;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -19,8 +19,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG_VOCABULARY;
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
+import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG_VOCABULARY;
+import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;

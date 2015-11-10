@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.impl.mapping;
 
-import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -2,7 +2,7 @@ package com.sdl.webapp.common.impl.model;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
-import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.MvcDataImpl;
@@ -12,13 +12,9 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;

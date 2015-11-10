@@ -1,8 +1,8 @@
-package com.sdl.webapp.common.api.mapping;
+package com.sdl.webapp.common.api.mapping.semantic;
 
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
-import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntityInfo;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticPropertyInfo;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.model.EntityModel;
 
 import java.lang.reflect.Field;

@@ -3,7 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.MediaHelper;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
@@ -16,7 +16,7 @@ import org.w3c.dom.Node;
 
 import java.util.UUID;
 
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SCHEMA_ORG;
+import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG;
 
 @SemanticEntity(entityName = "VideoObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class YouTubeVideo extends MediaItem {

@@ -1,16 +1,19 @@
-package com.sdl.webapp.common.api.mapping.config;
+package com.sdl.webapp.common.api.mapping.semantic.config;
 
 import java.util.Objects;
 
-public final class EntitySemantics {
+public final class FieldSemantics {
 
     private final SemanticVocabulary vocabulary;
 
     private final String entityName;
 
-    public EntitySemantics(SemanticVocabulary vocabulary, String entityName) {
+    private final String propertyName;
+
+    public FieldSemantics(SemanticVocabulary vocabulary, String entityName, String propertyName) {
         this.vocabulary = vocabulary;
         this.entityName = entityName;
+        this.propertyName = propertyName;
     }
 
     public SemanticVocabulary getVocabulary() {
@@ -21,25 +24,31 @@ public final class EntitySemantics {
         return entityName;
     }
 
+    public String getPropertyName() {
+        return propertyName;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        EntitySemantics that = (EntitySemantics) o;
+        FieldSemantics that = (FieldSemantics) o;
         return Objects.equals(vocabulary, that.vocabulary) &&
-                Objects.equals(entityName, that.entityName);
+                Objects.equals(entityName, that.entityName) &&
+                Objects.equals(propertyName, that.propertyName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(vocabulary, entityName);
+        return Objects.hash(vocabulary, entityName, propertyName);
     }
 
     @Override
     public String toString() {
-        return "EntitySemantics{" +
+        return "FieldSemantics{" +
                 "vocabulary=" + vocabulary +
                 ", entityName='" + entityName + '\'' +
+                ", propertyName='" + propertyName + '\'' +
                 '}';
     }
 }

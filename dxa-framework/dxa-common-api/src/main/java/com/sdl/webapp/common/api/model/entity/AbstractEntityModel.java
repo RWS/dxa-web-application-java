@@ -3,7 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RichTextFragment;

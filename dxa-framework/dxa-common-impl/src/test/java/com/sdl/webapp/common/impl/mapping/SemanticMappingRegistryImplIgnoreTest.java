@@ -1,13 +1,13 @@
 package com.sdl.webapp.common.impl.mapping;
 
-import com.sdl.webapp.common.api.mapping.annotations.SemanticMappingIgnore;
-import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticMappingIgnore;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;
 
 import java.util.Set;
 
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
+import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;

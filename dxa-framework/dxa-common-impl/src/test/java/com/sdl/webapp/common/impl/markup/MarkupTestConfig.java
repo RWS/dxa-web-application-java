@@ -2,12 +2,12 @@ package com.sdl.webapp.common.impl.markup;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
-import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntityInfo;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticPropertyInfo;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.markup.Markup;
 import org.springframework.context.annotation.Bean;

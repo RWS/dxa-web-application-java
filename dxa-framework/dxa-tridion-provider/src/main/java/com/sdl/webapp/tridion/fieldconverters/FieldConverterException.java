@@ -1,6 +1,6 @@
 package com.sdl.webapp.tridion.fieldconverters;
 
-import com.sdl.webapp.common.api.mapping.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 
 public class FieldConverterException extends SemanticMappingException {
 

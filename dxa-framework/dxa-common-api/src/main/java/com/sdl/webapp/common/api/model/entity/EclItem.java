@@ -2,7 +2,7 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import org.springframework.util.StringUtils;
 import org.w3c.dom.NamedNodeMap;
@@ -10,7 +10,7 @@ import org.w3c.dom.Node;
 
 import java.util.Map;
 
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
+import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 
 /**
  * ECL Item

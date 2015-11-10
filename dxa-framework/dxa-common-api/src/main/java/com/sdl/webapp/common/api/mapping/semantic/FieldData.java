@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api.mapping;
+package com.sdl.webapp.common.api.mapping.semantic;
 
 /**
  * Field data, which consists of a field value and property data for a field. This is returned by

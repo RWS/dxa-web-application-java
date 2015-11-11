@@ -21,6 +21,14 @@ public final class HtmlBuilders {
         return element("span");
     }
 
+    public static SimpleElementBuilder small() {
+        return element("small");
+    }
+
+    public static SimpleElementBuilder empty() {
+        return element("");
+    }
+
     public static SimpleElementBuilder i() {
         return element("i");
     }
@@ -51,5 +59,9 @@ public final class HtmlBuilders {
 
     public static ImgElementBuilder img(String src) {
         return img().withSrc(src);
+    }
+
+    public static SrcElementBuilder script() {
+        return new SrcElementBuilder("script", true);
     }
 }

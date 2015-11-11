@@ -33,7 +33,7 @@ public class RichTextTag extends AbstractMarkupTag {
                 EntityModel entityModel = (fragment instanceof EntityModel ? (EntityModel) fragment : null);
                 String htmlFragment;
                 if (entityModel == null) {
-                    htmlFragment = fragment.toHtml();
+                    htmlFragment = fragment.toHtmlElement().toHtml();
                 } else {
                     try {
                         this.pageContext.getRequest().setAttribute("_entity_", entityModel);

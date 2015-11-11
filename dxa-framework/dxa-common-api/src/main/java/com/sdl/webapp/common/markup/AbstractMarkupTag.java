@@ -2,21 +2,18 @@ package com.sdl.webapp.common.markup;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.ViewModel;
+import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.ParsableHtmlNode;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.ServletException;
+import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
-/**
- * AbstractMarkupTag
- *
- * @author nic
- */
 public class AbstractMarkupTag extends TagSupport {
 
     private MarkupDecoratorRegistry markupDecoratorRegistry = null;
@@ -40,6 +37,14 @@ public class AbstractMarkupTag extends TagSupport {
             return decoratedMarkup.toHtml();
         } finally {
             pageContext.popBody();
+        }
+    }
+
+    protected void decorateException(ViewModel model) throws JspException {
+        try {
+            this.decorateInclude(ControllerUtils.getIncludeErrorPath(), model);
+        } catch (IOException | ServletException e1) {
+            throw new JspException("Error while processing entity tag, error view wasn't found", e1);
         }
     }
 

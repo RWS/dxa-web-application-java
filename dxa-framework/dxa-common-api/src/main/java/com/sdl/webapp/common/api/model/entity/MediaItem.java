@@ -98,11 +98,6 @@ public abstract class MediaItem extends AbstractEntityModel {
         this.mimeType = mimeType;
     }
 
-    @Override
-    public String toHtml() throws DxaException {
-        return this.toHtml("100%");
-    }
-
     @JsonIgnore
     public boolean isImage() {
         return false;
@@ -127,13 +122,18 @@ public abstract class MediaItem extends AbstractEntityModel {
         return String.format("%s %s", Math.ceil(len), sizes[order]);
     }
 
+    @Override
+    public HtmlElement toHtmlElement() throws DxaException {
+        return this.toHtmlElement("100%");
+    }
+
     /**
      * Renders an HTML representation of the Item.
      *
      * @param widthFactor The factor to apply to the width - can be % (eg "100%") or absolute (eg "120")
-     * @return The HTML representation
+     * @return The HTML element representation
      */
-    public abstract String toHtml(String widthFactor) throws DxaException;
+    public abstract HtmlElement toHtmlElement(String widthFactor) throws DxaException;
 
     /**
      * Renders an HTML representation of the Item.
@@ -142,11 +142,21 @@ public abstract class MediaItem extends AbstractEntityModel {
      * @param aspect        The aspect ratio to apply
      * @param cssClass      Optional CSS class name(s) to apply
      * @param containerSize The size (in grid column units) of the containing element
-     * @return The HTML representation
+     * @return The HTML element representation
      */
-    public abstract String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException;
+    public abstract HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException;
 
-    public abstract HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath);
+    /**
+     * Renders an HTML representation of the Item.
+     *
+     * @param widthFactor   The factor to apply to the width - can be % (eg "100%") or absolute (eg "120")
+     * @param aspect        The aspect ratio to apply
+     * @param cssClass      Optional CSS class name(s) to apply
+     * @param containerSize The size (in grid column units) of the containing element
+     * @param contextPath   Context path to prepend the urls
+     * @return The HTML element representation
+     */
+    public abstract HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException;
 
     /**
      * Read properties from XHTML element.

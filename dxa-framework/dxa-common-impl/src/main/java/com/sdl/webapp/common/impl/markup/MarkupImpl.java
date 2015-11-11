@@ -186,7 +186,7 @@ public class MarkupImpl implements Markup {
     private HtmlElement siteMapListHelper(SitemapItem item) {
         if (!item.getUrl().endsWith("/index")) {
             final SimpleElementBuilder itemElementBuilder = HtmlBuilders.element("li")
-                    .withContent(HtmlBuilders.a(item.getUrl()).withTitle(item.getTitle()).withContent(item.getTitle())
+                    .withNode(HtmlBuilders.a(item.getUrl()).withTitle(item.getTitle()).withTextualContent(item.getTitle())
                             .build());
 
             if (!item.getItems().isEmpty()) {
@@ -194,10 +194,10 @@ public class MarkupImpl implements Markup {
                 for (SitemapItem child : item.getItems()) {
                     final HtmlElement childElement = siteMapListHelper(child);
                     if (childElement != null) {
-                        childListBuilder.withContent(childElement);
+                        childListBuilder.withNode(childElement);
                     }
                 }
-                itemElementBuilder.withContent(childListBuilder.build());
+                itemElementBuilder.withNode(childListBuilder.build());
             }
 
             return itemElementBuilder.build();

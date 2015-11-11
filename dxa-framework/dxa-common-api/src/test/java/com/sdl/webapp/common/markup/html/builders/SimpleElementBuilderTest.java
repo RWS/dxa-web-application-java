@@ -73,7 +73,7 @@ public class SimpleElementBuilderTest {
     @Test
     public void testWithContentNode() {
         final SimpleElementBuilder builder = new SimpleElementBuilder("div", true)
-                .withContent(new HtmlCommentNode("Comment"));
+                .withNode(new HtmlCommentNode("Comment"));
         assertThat(builder.build(), is(new HtmlElement("div", true,
                 Collections.<HtmlAttribute>emptyList(),
                 Arrays.<HtmlNode>asList(new HtmlCommentNode("Comment")))));
@@ -82,16 +82,16 @@ public class SimpleElementBuilderTest {
     @Test
     public void testWithContentText() {
         final SimpleElementBuilder builder = new SimpleElementBuilder("div", true)
-                .withContent("Tom & Jerry");
+                .withTextualContent("Tom & Jerry");
         assertThat(builder.build(), is(new HtmlElement("div", true,
                 Collections.<HtmlAttribute>emptyList(),
                 Arrays.<HtmlNode>asList(new HtmlTextNode("Tom & Jerry", true)))));
     }
 
     @Test
-    public void testWithLiteralContent() {
+    public void testWithPureHtmlContent() {
         final SimpleElementBuilder builder = new SimpleElementBuilder("div", true)
-                .withLiteralContent("Tom & Jerry");
+                .withPureHtmlContent("Tom & Jerry");
         assertThat(builder.build(), is(new HtmlElement("div", true,
                 Collections.<HtmlAttribute>emptyList(),
                 Arrays.<HtmlNode>asList(new HtmlTextNode("Tom & Jerry", false)))));

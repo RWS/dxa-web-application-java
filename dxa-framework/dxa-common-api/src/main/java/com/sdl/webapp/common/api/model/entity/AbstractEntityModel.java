@@ -8,6 +8,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.markup.html.HtmlElement;
 
 import java.util.Map;
 import java.util.Objects;
@@ -102,11 +103,11 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     }
 
     @Override
-    public String toHtml() throws DxaException {
+    public HtmlElement toHtmlElement() throws DxaException {
         throw new UnsupportedOperationException(
                 String.format("Direct rendering of View Model type '%s' to HTML is not supported." +
                                 " Consider using View Model property of type RichText in combination with DxaRichText() in view code to avoid direct rendering to HTML." +
-                                " Alternatively, override method %s.toHtml().",
+                                " Alternatively, override method %s.toHtmlElement().",
                         getClass().getName(), getClass().getName())
         );
     }

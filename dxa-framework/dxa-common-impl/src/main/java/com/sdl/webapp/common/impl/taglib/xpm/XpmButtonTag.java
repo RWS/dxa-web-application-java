@@ -30,10 +30,10 @@ public class XpmButtonTag extends XpmMarkupTag {
             return HtmlBuilders.div()
                     .withClass("xpm-button")
                     .withAttribute("style", "z-index:1")
-                    .withContent(HtmlBuilders.a(editUrl)
+                    .withNode(HtmlBuilders.a(editUrl)
                             .withClass("fa-stack fa-lg")
                             .withTitle(title)
-                            .withContent(
+                            .withNode(
                                     new HtmlMultiNode(
                                             HtmlBuilders.i().withClass("fa fa-square fa-stack-2x").build(),
                                             HtmlBuilders.i().withClass("fa fa-arrow-left fa-inverse fa-stack-1x").build())
@@ -47,10 +47,10 @@ public class XpmButtonTag extends XpmMarkupTag {
             return HtmlBuilders.div()
                     .withClass("xpm-button")
                     .withAttribute("style", "z-index:1")
-                    .withContent(HtmlBuilders.a(editUrl)
+                    .withNode(HtmlBuilders.a(editUrl)
                             .withClass("fa-stack fa-lg")
                             .withTitle(title)
-                            .withContent(
+                            .withNode(
                                     new HtmlMultiNode(
                                             HtmlBuilders.i().withClass("fa fa-square fa-stack-2x").build(),
                                             HtmlBuilders.i().withClass("fa fa-pencil fa-inverse fa-stack-1x").build())

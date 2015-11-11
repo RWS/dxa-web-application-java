@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion;
 
-import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
@@ -32,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -229,7 +229,11 @@ final class EntityBuilderImpl implements EntityBuilder {
         FieldSet externalEclFieldSet = extensionData.get("ECL-ExternalMetadata");
         Map<String, Object> externalMetadata = new HashMap<>(externalEclFieldSet.getContent().size());
         for (Map.Entry<String, Field> entry : externalEclFieldSet.getContent().entrySet()) {
-            externalMetadata.put(entry.getKey(), entry.getValue().getValues().get(0));
+            final List<Object> values = entry.getValue().getValues();
+
+            if (values.size() > 0) {
+                externalMetadata.put(entry.getKey(), values.get(0));
+            }
         }
         eclItem.setExternalMetadata(externalMetadata);
     }
@@ -265,22 +269,22 @@ final class EntityBuilderImpl implements EntityBuilder {
         final Component component = componentPresentation.getComponent();
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
 
-        ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
+        Map<String, String> xpmMetaData = new HashMap<>();
 
         if (entity instanceof EclItem) {
-            xpmMetaDataBuilder.put("ComponentID", ((EclItem) entity).getUri());
+            xpmMetaData.put("ComponentID", ((EclItem) entity).getUri());
         } else {
-            xpmMetaDataBuilder.put("ComponentID", component.getId());
+            xpmMetaData.put("ComponentID", component.getId());
         }
-        xpmMetaDataBuilder.put("ComponentModified",
+        xpmMetaData.put("ComponentModified",
                 ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
-        xpmMetaDataBuilder.put("ComponentTemplateID", componentTemplate.getId());
-        xpmMetaDataBuilder.put("ComponentTemplateModified",
+        xpmMetaData.put("ComponentTemplateID", componentTemplate.getId());
+        xpmMetaData.put("ComponentTemplateModified",
                 ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
 
-        xpmMetaDataBuilder.put("IsRepositoryPublished", String.valueOf(componentPresentation.isDynamic()));
+        xpmMetaData.put("IsRepositoryPublished", String.valueOf(componentPresentation.isDynamic()));
 
-        entity.setXpmMetadata(xpmMetaDataBuilder.build());
+        entity.setXpmMetadata(xpmMetaData);
 
     }
 

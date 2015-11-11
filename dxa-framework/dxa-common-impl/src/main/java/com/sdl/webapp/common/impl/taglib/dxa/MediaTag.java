@@ -2,6 +2,7 @@ package com.sdl.webapp.common.impl.taglib.dxa;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class MediaTag extends HtmlElementTag {
     }
 
     @Override
-    protected HtmlElement generateElement() {
+    protected HtmlElement generateElement() throws DxaException {
         if (media == null) {
             return null;
         }

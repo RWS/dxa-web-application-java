@@ -1,20 +1,25 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.MvcDataImpl;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
-import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
-import com.sdl.webapp.common.markup.html.builders.SimpleElementBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG;
+import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.a;
+import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.div;
+import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.empty;
+import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.i;
+import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.small;
+import static java.lang.String.format;
+import static org.springframework.util.StringUtils.isEmpty;
 
 @SemanticEntity(entityName = "DataDownload", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Download extends MediaItem {
@@ -37,63 +42,35 @@ public class Download extends MediaItem {
     }
 
     @Override
-    public String toString() {
-        return "Download{" +
-                "url='" + getUrl() + '\'' +
-                ", fileName='" + getFileName() + '\'' +
-                ", fileSize=" + getFileSize() +
-                ", mimeType='" + getMimeType() + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+    public HtmlElement toHtmlElement(String widthFactor) throws DxaException {
+        return toHtmlElement(widthFactor, 0, "", 0);
     }
 
     @Override
-    public String toHtml(String widthFactor) {
-        return toHtml(widthFactor, 0, "", 0);
+    public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException {
+        return toHtmlElement(widthFactor, aspect, cssClass, containerSize, "");
     }
 
     @Override
-    public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) {
-        String descriptionHtml = Strings.isNullOrEmpty(getDescription()) ? null : String.format("<small>%s</small>", getDescription());
-        String s = new StringBuilder()
-                .append("<div class=\"download-list\">")
-                .append(String.format("<i class=\"fa %s\"></i>", this.getIconClass()))
-                .append("<div>")
-                .append(String.format("<a href=\"%s\">%s</a> <small class=\"size\">(%s)</small>", this.getUrl(), this.getFileName(), this.getFriendlyFileSize()))
-                .append(String.format("%s", descriptionHtml))
-                .append("</div>")
-                .append("</div>").toString();
-        return s;
-    }
-
-    @Override
-    public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
-        if (Strings.isNullOrEmpty(this.getUrl())) {
+    public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException {
+        if (isEmpty(getUrl())) {
             LOG.warn("Skipping download with empty URL: {}", this);
-            return null;
+            throw new DxaException("URL is null for download component: " + this);
         }
 
         // TODO: this does not contain any XPM markup
-        final SimpleElementBuilder innerDivBuilder = HtmlBuilders.div()
-                .withContent(HtmlBuilders.a(this.getUrl())
-                        .withContent(this.getFileName())
-                        .build())
-                .withContent(HtmlBuilders.element("small")
-                        .withClass("size")
-                        .withContent("(" + this.getFriendlyFileSize() + ")")
-                        .build());
-
-        if (!Strings.isNullOrEmpty(this.getDescription())) {
-            innerDivBuilder.withContent(HtmlBuilders.element("small")
-                    .withContent(this.getDescription())
-                    .build());
-        }
-
-        return HtmlBuilders.div()
-                .withClass("download-list")
-                .withContent(HtmlBuilders.i().withClass("fa " + this.getIconClass()).build())
-                .withContent(innerDivBuilder.build())
-                .build();
+        return div().withClass("download-list")
+                .withNode(
+                        i().withClass("fa").withClass(getIconClass()).build()
+                ).withNode(
+                        div().withNode(
+                                a(getUrl()).withTextualContent(getFileName()).build()
+                        ).withNode(
+                                small().withClass("size").withTextualContent(format("(%s)", getFriendlyFileSize())).build()
+                        ).withNode(
+                                (isEmpty(getDescription()) ? empty() : small().withTextualContent(getDescription())).build()
+                        ).build()
+                ).build();
     }
 
     @Override
@@ -106,4 +83,17 @@ public class Download extends MediaItem {
     public MvcData getMvcData() {
         return new MvcDataImpl("Core:Entity:Download").defaults(MvcDataImpl.Defaults.ENTITY);
     }
+
+
+    @Override
+    public String toString() {
+        return "Download{" +
+                "url='" + getUrl() + '\'' +
+                ", fileName='" + getFileName() + '\'' +
+                ", fileSize=" + getFileSize() +
+                ", mimeType='" + getMimeType() + '\'' +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
 }

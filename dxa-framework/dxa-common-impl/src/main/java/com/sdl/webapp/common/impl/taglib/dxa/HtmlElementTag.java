@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl.taglib.dxa;
 
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.HtmlEndTag;
 import com.sdl.webapp.common.markup.html.HtmlNode;
@@ -13,11 +14,15 @@ public abstract class HtmlElementTag extends TagSupport {
 
     private HtmlElement element;
 
-    protected abstract HtmlElement generateElement();
+    protected abstract HtmlElement generateElement() throws DxaException;
 
     @Override
     public int doStartTag() throws JspException {
-        this.element = generateElement();
+        try {
+            this.element = generateElement();
+        } catch (DxaException e) {
+            throw new JspException(e);
+        }
 
         if (element != null) {
             write(element.getStartTag().toHtml());

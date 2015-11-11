@@ -63,9 +63,9 @@ public class EclItemTest {
         eclItem.setTemplateFragment(templateFragment);
 
         //when
-        String toHtml = eclItem.toHtml();
-        String toHtml1 = eclItem.toHtml("100%");
-        String toHtml2 = eclItem.toHtml("100%", 0.0, "", 0);
+        String toHtml = eclItem.toHtmlElement().toHtml();
+        String toHtml1 = eclItem.toHtmlElement("100%").toHtml();
+        String toHtml2 = eclItem.toHtmlElement("100%", 0.0, "", 0).toHtml();
 
         //then
         assertNotNull(toHtml);

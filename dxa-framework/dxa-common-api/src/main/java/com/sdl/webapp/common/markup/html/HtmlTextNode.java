@@ -2,6 +2,8 @@ package com.sdl.webapp.common.markup.html;
 
 import org.springframework.web.util.HtmlUtils;
 
+import java.util.Objects;
+
 public final class HtmlTextNode extends HtmlNode {
 
     private final String text;
@@ -26,19 +28,13 @@ public final class HtmlTextNode extends HtmlNode {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         HtmlTextNode that = (HtmlTextNode) o;
-
-        if (escape != that.escape) return false;
-        if (text != null ? !text.equals(that.text) : that.text != null) return false;
-
-        return true;
+        return Objects.equals(escape, that.escape) &&
+                Objects.equals(text, that.text);
     }
 
     @Override
     public int hashCode() {
-        int result = text != null ? text.hashCode() : 0;
-        result = 31 * result + (escape ? 1 : 0);
-        return result;
+        return Objects.hash(text, escape);
     }
 }

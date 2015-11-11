@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.markup.html;
 
-import java.util.Arrays;
+import java.util.Objects;
 
 public class HtmlMultiNode extends HtmlNode {
 
@@ -27,16 +27,12 @@ public class HtmlMultiNode extends HtmlNode {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         HtmlMultiNode that = (HtmlMultiNode) o;
-
-        if (!Arrays.equals(nodes, that.nodes)) return false;
-
-        return true;
+        return Objects.equals(nodes, that.nodes);
     }
 
     @Override
     public int hashCode() {
-        return nodes != null ? Arrays.hashCode(nodes) : 0;
+        return Objects.hash(nodes);
     }
 }

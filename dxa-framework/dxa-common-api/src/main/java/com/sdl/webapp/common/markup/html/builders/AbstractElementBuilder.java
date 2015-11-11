@@ -24,6 +24,7 @@ public abstract class AbstractElementBuilder<B extends AbstractElementBuilder<B>
 
     public B withAttribute(HtmlAttribute attribute) {
         this.attributes.add(attribute);
+        //noinspection unchecked
         return (B) this;
     }
 
@@ -32,6 +33,7 @@ public abstract class AbstractElementBuilder<B extends AbstractElementBuilder<B>
     }
 
     public B withAttributeIfNotEmpty(String name, String value) {
+        //noinspection unchecked
         return !Strings.isNullOrEmpty(value) ? withAttribute(name, value) : (B) this;
     }
 
@@ -43,17 +45,18 @@ public abstract class AbstractElementBuilder<B extends AbstractElementBuilder<B>
         return withAttributeIfNotEmpty("class", cssClass);
     }
 
-    public B withContent(HtmlNode node) {
+    public B withNode(HtmlNode node) {
         this.content.add(node);
+        //noinspection unchecked
         return (B) this;
     }
 
-    public B withContent(String text) {
-        return withContent(new HtmlTextNode(text));
+    public B withTextualContent(String text) {
+        return withNode(new HtmlTextNode(text));
     }
 
-    public B withLiteralContent(String text) {
-        return withContent(new HtmlTextNode(text, false));
+    public B withPureHtmlContent(String text) {
+        return withNode(new HtmlTextNode(text, false));
     }
 
     public HtmlElement build() {

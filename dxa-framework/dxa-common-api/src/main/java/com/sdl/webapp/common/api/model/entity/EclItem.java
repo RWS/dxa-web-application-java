@@ -7,7 +7,6 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import org.apache.commons.collections.MapUtils;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -17,6 +16,10 @@ import java.util.List;
 import java.util.Map;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
+import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.div;
+import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.empty;
+import static java.lang.String.format;
+import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * ECL Item
@@ -80,8 +83,8 @@ public abstract class EclItem extends MediaItem {
     }
 
     @Override
-    public String toHtml(String widthFactor) throws DxaException {
-        return toHtml(widthFactor, 0.0, null, 0);
+    public HtmlElement toHtmlElement(String widthFactor) throws DxaException {
+        return toHtmlElement(widthFactor, 0.0, null, 0);
     }
 
     /**
@@ -94,29 +97,37 @@ public abstract class EclItem extends MediaItem {
      * @return string html representation
      */
     @Override
-    public String toHtml(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException {
-        if (StringUtils.isEmpty(templateFragment)) {
-            throw new DxaException(
-                    String.format("Attempt to render an ECL Item for which no Template Fragment is available: " +
+    public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException {
+        return toHtmlElement(widthFactor, aspect, cssClass, containerSize, "");
+    }
+
+    /**
+     * Returns an HTML representation.
+     *
+     * @param widthFactor   The factor to apply to the width - can be % (eg "100%") or absolute (eg "120") | <strong>ignored</strong>
+     * @param aspect        The aspect ratio to apply | <strong>ignored</strong>
+     * @param cssClass      Optional CSS class name(s) to apply
+     * @param containerSize The size (in grid column units) of the containing element | <strong>ignored</strong>
+     * @param contextPath Context path | <strong>ignored</strong>
+     * @return string html representation
+     */
+    @Override
+    public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException {
+        if (isEmpty(templateFragment)) {
+            throw new DxaException(format("Attempt to render an ECL Item for which no Template Fragment is available: " +
                             "'%s' (DisplayTypeId: '%s')", getUri(), getDisplayTypeId()));
         }
 
-        if (StringUtils.isEmpty(cssClass)) {
-            return templateFragment;
+        if (isEmpty(cssClass)) {
+            return empty().withPureHtmlContent(templateFragment).build();
         }
 
-        return String.format("<div class=\"%s\">%s</div>", cssClass, templateFragment);
-    }
-
-    @Override
-    public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
-        // TODO implement this functionality
-        throw new UnsupportedOperationException("This should be implemented in a subclass of EclItem");
+        return div().withClass(cssClass).withPureHtmlContent(templateFragment).build();
     }
 
     @Override
     public String getXpmMarkup(Localization localization) {
-        if (getXpmMetadata() != null && !StringUtils.isEmpty(this.uri)) {
+        if (getXpmMetadata() != null && !isEmpty(this.uri)) {
             getXpmMetadata().put(COMPONENT_ID_KEY, this.uri);
         }
         return super.getXpmMarkup(localization);
@@ -138,12 +149,12 @@ public abstract class EclItem extends MediaItem {
         // Note that FileName and MimeType are already set in MediaItem.ReadFromXhtmlElement.
         // We overwrite those with the values provided by ECL (if any).
         String eclFileName = attributes.getNamedItem("data-eclFileName").getNodeValue();
-        if (!StringUtils.isEmpty(eclFileName)) {
+        if (!isEmpty(eclFileName)) {
             this.setFileName(eclFileName);
         }
 
         String eclMimeType = attributes.getNamedItem("data-eclMimeType").getNodeValue();
-        if (!StringUtils.isEmpty(eclMimeType)) {
+        if (!isEmpty(eclMimeType)) {
             this.setMimeType(eclMimeType);
         }
     }

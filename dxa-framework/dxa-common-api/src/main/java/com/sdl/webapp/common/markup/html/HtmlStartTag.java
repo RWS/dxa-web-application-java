@@ -1,8 +1,10 @@
 package com.sdl.webapp.common.markup.html;
 
 import com.google.common.collect.ImmutableList;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.Objects;
 
 public final class HtmlStartTag extends HtmlRenderable {
 
@@ -25,6 +27,10 @@ public final class HtmlStartTag extends HtmlRenderable {
 
     @Override
     protected String renderHtml() {
+        if (StringUtils.isEmpty(tagName)) {
+            return "";
+        }
+
         final StringBuilder sb = new StringBuilder().append('<').append(tagName);
         for (HtmlAttribute attribute : attributes) {
             sb.append(' ').append(attribute.toHtml());
@@ -36,19 +42,13 @@ public final class HtmlStartTag extends HtmlRenderable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         HtmlStartTag that = (HtmlStartTag) o;
-
-        if (attributes != null ? !attributes.equals(that.attributes) : that.attributes != null) return false;
-        if (tagName != null ? !tagName.equals(that.tagName) : that.tagName != null) return false;
-
-        return true;
+        return Objects.equals(tagName, that.tagName) &&
+                Objects.equals(attributes, that.attributes);
     }
 
     @Override
     public int hashCode() {
-        int result = tagName != null ? tagName.hashCode() : 0;
-        result = 31 * result + (attributes != null ? attributes.hashCode() : 0);
-        return result;
+        return Objects.hash(tagName, attributes);
     }
 }

@@ -57,8 +57,8 @@ public class EntityXpmMarkup implements MarkupDecorator {
                 // Surround the entity markup with the XPM markup
                 //
                 markup = HtmlBuilders.span()
-                        .withContent(buildXpmMarkup(entity, webRequestContext.getLocalization()))
-                        .withContent(markup).build();
+                        .withNode(buildXpmMarkup(entity, webRequestContext.getLocalization()))
+                        .withNode(markup).build();
             }
         }
 

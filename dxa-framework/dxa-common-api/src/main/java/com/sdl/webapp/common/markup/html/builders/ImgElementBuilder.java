@@ -1,13 +1,9 @@
 package com.sdl.webapp.common.markup.html.builders;
 
-public final class ImgElementBuilder extends AbstractElementBuilder<ImgElementBuilder> {
+public final class ImgElementBuilder extends SrcElementBuilder<ImgElementBuilder> {
 
     public ImgElementBuilder() {
         super("img", false);
-    }
-
-    public ImgElementBuilder withSrc(String src) {
-        return withAttribute("src", src);
     }
 
     public ImgElementBuilder withAlt(String alt) {

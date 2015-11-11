@@ -63,8 +63,8 @@ public class RegionXpmMarkup implements MarkupDecorator {
                     // Surround the region with XPM markup
                     //
                     markup = HtmlBuilders.span()
-                            .withContent(buildXpmMarkup(region, webRequestContext.getLocalization()))
-                            .withContent(markup).build();
+                            .withNode(buildXpmMarkup(region, webRequestContext.getLocalization()))
+                            .withNode(markup).build();
                 }
             }
         }

@@ -32,7 +32,7 @@ public class LinkTag extends HtmlElementTag {
         return HtmlBuilders.a(link.getUrl())
                 .withTitle(link.getAlternateText())
                 .withClass(cssClass)
-                .withContent(linkText)
+                .withTextualContent(linkText)
                 .build();
     }
 

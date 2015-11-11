@@ -1,5 +1,9 @@
 package com.sdl.webapp.common.markup.html;
 
+import org.springframework.util.StringUtils;
+
+import java.util.Objects;
+
 public final class HtmlEndTag extends HtmlRenderable {
 
     private final String tagName;
@@ -14,23 +18,19 @@ public final class HtmlEndTag extends HtmlRenderable {
 
     @Override
     protected String renderHtml() {
-        return "</" + tagName + ">";
+        return StringUtils.isEmpty(tagName) ? "" : "</" + tagName + ">";
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         HtmlEndTag that = (HtmlEndTag) o;
-
-        if (tagName != null ? !tagName.equals(that.tagName) : that.tagName != null) return false;
-
-        return true;
+        return Objects.equals(tagName, that.tagName);
     }
 
     @Override
     public int hashCode() {
-        return tagName != null ? tagName.hashCode() : 0;
+        return Objects.hash(tagName);
     }
 }

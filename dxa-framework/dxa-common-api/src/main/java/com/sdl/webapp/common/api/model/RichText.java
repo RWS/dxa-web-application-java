@@ -51,7 +51,7 @@ public class RichText {
     @JsonIgnore
     public Boolean isEmpty() throws DxaException {
         return CollectionUtils.isEmpty(fragments) ||
-                fragments.get(0) == null || StringUtils.isEmpty(fragments.get(0).toHtml());
+                fragments.get(0) == null || StringUtils.isEmpty(fragments.get(0).toHtmlElement());
     }
 
     @Override

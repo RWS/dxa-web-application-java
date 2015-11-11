@@ -38,7 +38,7 @@ public class GoogleStaticMapTag extends AbstractGoogleMapTag {
                 .withId("map" + UUID.randomUUID().toString().replaceAll("-", ""))
                 .withAttribute(CLASS_STATIC_MAP_ATTR)
                 .withAttribute("style", "height: " + Integer.toString(getMapHeight()))
-                .withContent(HtmlBuilders.img("//maps.googleapis.com/maps/api/staticmap" + sb.toString())
+                .withNode(HtmlBuilders.img("//maps.googleapis.com/maps/api/staticmap" + sb.toString())
                         .withAlt(getMarkerName())
                         .build())
                 .build();

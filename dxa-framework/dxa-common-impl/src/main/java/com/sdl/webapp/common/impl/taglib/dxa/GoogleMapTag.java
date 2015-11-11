@@ -38,7 +38,7 @@ public class GoogleMapTag extends AbstractGoogleMapTag {
                 .build();
 
         final HtmlElement script2 = HtmlBuilders.element("script")
-                .withLiteralContent("function initialize() {\n" +
+                .withPureHtmlContent("function initialize() {\n" +
                         "    var myLatlng = new google.maps.LatLng(" + getLatString() + ", " + getLonString() + ");\n" +
                         "    var mapOptions = { center: myLatlng, zoom: 15 };\n" +
                         "    var map = new google.maps.Map(document.getElementById(\"" + divId + "\"), mapOptions);\n" +

@@ -43,6 +43,7 @@
 
     <modules>
         <module>dxa-framework</module>
+        <module>dxa-webapp-archetype</module>
     </modules>
 
     <profiles>

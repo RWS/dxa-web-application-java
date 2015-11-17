@@ -1,4 +1,4 @@
-package com.sdl.webapp.tridion.fieldconverters;
+package com.sdl.webapp.tridion.fields.exceptions;
 
 import org.dd4t.contentmodel.FieldType;
 

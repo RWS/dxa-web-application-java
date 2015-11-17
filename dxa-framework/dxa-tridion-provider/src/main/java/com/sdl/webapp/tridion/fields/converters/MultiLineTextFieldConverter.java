@@ -1,6 +1,7 @@
-package com.sdl.webapp.tridion.fieldconverters;
+package com.sdl.webapp.tridion.fields.converters;
 
 import com.sdl.webapp.tridion.ModelBuilderPipeline;
+import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.springframework.stereotype.Component;
@@ -8,9 +9,9 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-public class TextFieldConverter extends AbstractFieldConverter {
+public class MultiLineTextFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.TEXT};
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.MULTILINETEXT};
 
     @Override
     public FieldType[] supportedFieldTypes() {

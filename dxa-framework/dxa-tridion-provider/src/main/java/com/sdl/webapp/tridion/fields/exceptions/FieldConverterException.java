@@ -1,4 +1,4 @@
-package com.sdl.webapp.tridion.fieldconverters;
+package com.sdl.webapp.tridion.fields.exceptions;
 
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 

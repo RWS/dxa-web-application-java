@@ -1,4 +1,4 @@
-package com.sdl.webapp.tridion.fieldconverters;
+package com.sdl.webapp.tridion.fields;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
@@ -11,7 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.util.CollectionUtils.*;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 public final class FieldUtils {
 

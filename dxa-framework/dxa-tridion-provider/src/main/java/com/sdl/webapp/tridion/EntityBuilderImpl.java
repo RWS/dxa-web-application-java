@@ -16,8 +16,8 @@ import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl.ComponentEntity;
-import com.sdl.webapp.tridion.fieldconverters.FieldConverterRegistry;
-import com.sdl.webapp.tridion.fieldconverters.FieldUtils;
+import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
+import com.sdl.webapp.tridion.fields.FieldUtils;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
@@ -60,8 +60,8 @@ final class EntityBuilderImpl implements EntityBuilder {
     private ModelBuilderPipeline builder;
 
     @Override
-    public EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel, Localization localization)
-            throws ContentProviderException {
+    public EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel,
+                                    Localization localization) throws ContentProviderException {
         final Component component = componentPresentation.getComponent();
         final String componentId = component.getId();
         LOG.debug("Creating entity for component: {}", componentId);

@@ -1,6 +1,8 @@
-package com.sdl.webapp.tridion.fieldconverters;
+package com.sdl.webapp.tridion.fields.converters;
 
 import com.sdl.webapp.tridion.ModelBuilderPipeline;
+import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
+import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.springframework.stereotype.Component;

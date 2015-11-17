@@ -1,5 +1,7 @@
-package com.sdl.webapp.tridion.fieldconverters;
+package com.sdl.webapp.tridion.fields;
 
+import com.sdl.webapp.tridion.fields.converters.FieldConverter;
+import com.sdl.webapp.tridion.fields.exceptions.UnsupportedFieldTypeException;
 import org.dd4t.contentmodel.FieldType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

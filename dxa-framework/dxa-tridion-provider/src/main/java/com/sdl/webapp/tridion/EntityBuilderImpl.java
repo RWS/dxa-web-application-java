@@ -28,12 +28,13 @@ import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+
+import static org.springframework.util.StringUtils.isEmpty;
 
 @org.springframework.stereotype.Component
 final class EntityBuilderImpl implements EntityBuilder {
@@ -59,6 +60,23 @@ final class EntityBuilderImpl implements EntityBuilder {
     @Autowired
     private ModelBuilderPipeline builder;
 
+    private static class GetEntityData {
+        String viewName, schemaRoot;
+
+        public GetEntityData(String viewName, String schemaRoot) {
+            this.viewName = viewName;
+            this.schemaRoot = schemaRoot;
+        }
+    }
+
+    private static abstract class GetEntityClass<T> {
+        protected abstract Class<? extends AbstractEntityModel> get(T data) throws DxaException, ContentProviderException;
+
+        protected Class<? extends AbstractEntityModel> onException(T data) throws ContentProviderException {
+            return null;
+        }
+    }
+
     @Override
     public EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel,
                                     Localization localization) throws ContentProviderException {
@@ -73,83 +91,53 @@ final class EntityBuilderImpl implements EntityBuilder {
         }
 
         final String viewName = FieldUtils.getStringValue(templateMeta, "view");
-        if (StringUtils.isEmpty(viewName)) {
+        if (isEmpty(viewName)) {
             LOG.warn("ComponentPresentation without a view, skipping: {}", componentId);
             return null;
         }
 
-        Class<? extends EntityModel> entityClass;
-        try {
-            //todo refactor raw class cast
-            entityClass = (Class<? extends EntityModel>) viewModelRegistry.getViewEntityClass(viewName);
-            if (entityClass == null) {
-                throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
-                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+        Class<? extends AbstractEntityModel> entityClass = getEntityClass(new GetEntityClass<GetEntityData>() {
+            @Override
+            protected Class<? extends AbstractEntityModel> get(GetEntityData data) throws DxaException, ContentProviderException {
+                final Class<? extends AbstractEntityModel> entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getViewEntityClass(data.viewName);
+                if (entityClass == null) {
+                    throw new ContentProviderException("Cannot determine entity type for view name: '" + data.viewName +
+                            "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+                }
+                return entityClass;
             }
-        } catch (DxaException e) {
-            // Get entity class through semantic mapping registry instead using implicit mapping
-            entityClass = this.semanticMappingRegistry.getEntityClass(component.getSchema().getRootElement());
-            if (entityClass == null) {
-                throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
-                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
+
+            @Override
+            protected Class<? extends AbstractEntityModel> onException(GetEntityData data) throws ContentProviderException {
+                final Class<? extends AbstractEntityModel> entityClass =
+                        (Class<? extends AbstractEntityModel>) semanticMappingRegistry.getEntityClass(data.schemaRoot);
+                if (entityClass == null) {
+                    throw new ContentProviderException("Cannot determine entity type for view name: '" + data.viewName +
+                            "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+                }
+                return entityClass;
             }
-        }
+        }, new GetEntityData(viewName, component.getSchema().getRootElement()));
 
-
-        final SemanticSchema semanticSchema = localization.getSemanticSchemas()
-                .get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-
-        final AbstractEntityModel entity;
-        try {
-            //todo refactor raw class cast
-            entity = semanticMapper.createEntity((Class<? extends AbstractEntityModel>) entityClass, semanticSchema.getSemanticFields(),
-                    new SemanticFieldDataProviderImpl(new ComponentEntity(component), fieldConverterRegistry, this.builder));
-        } catch (SemanticMappingException e) {
-            throw new ContentProviderException(e);
-        }
-
-        entity.setId(componentId.split("-")[1]);
-
-        // Special handling for media items
-        if (entity instanceof MediaItem && component.getMultimedia() != null &&
-                !StringUtils.isEmpty(component.getMultimedia().getUrl())) {
-            final Multimedia multimedia = component.getMultimedia();
-            final MediaItem mediaItem = (MediaItem) entity;
-            mediaItem.setUrl(multimedia.getUrl());
-            mediaItem.setFileName(multimedia.getFileName());
-            mediaItem.setFileSize(multimedia.getSize());
-            mediaItem.setMimeType(multimedia.getMimeType());
-
-            // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
-            //
-            if (entity instanceof EclItem) {
-                fillEclItem(component, localization, (EclItem) entity);
-            }
-        }
+        final SemanticSchema semanticSchema = getSemanticSchema(component, localization);
+        final AbstractEntityModel entity = (AbstractEntityModel) createEntity(component, localization, entityClass, semanticSchema);
 
         createEntityData(entity, componentPresentation);
         entity.setMvcData(createMvcData(componentPresentation));
 
         String htmlClasses = FieldUtils.getStringValue(componentPresentation.getComponentTemplate().getMetadata(), "htmlClasses");
-        if (!StringUtils.isEmpty(htmlClasses)) {
-            entity.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
+        if (!isEmpty(htmlClasses)) {
+            entity.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\- ]", ""));
         }
 
         return entity;
     }
 
     @Override
-    public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
-            throws ContentProviderException {
-        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-        return createEntity(component, localization, entityClass, semanticSchema);
-    }
-
-    @Override
-    public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization)
+    public EntityModel createEntity(final Component component, EntityModel originalEntityModel, final Localization localization)
             throws ContentProviderException {
 
-        final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
+        final SemanticSchema semanticSchema = getSemanticSchema(component, localization);
         String semanticTypeName = semanticSchema.getRootElement();
         //Try to find the fully qualified name:
         for (EntitySemantics es : semanticSchema.getEntitySemantics()) {
@@ -164,8 +152,7 @@ final class EntityBuilderImpl implements EntityBuilder {
         try {
             entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(semanticTypeName);
             if (entityClass == null) {
-                throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
-                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+                throw new DxaException("Cannot find the entity class in mapped model types");
             }
         } catch (DxaException e) {
             throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
@@ -175,26 +162,48 @@ final class EntityBuilderImpl implements EntityBuilder {
         return createEntity(component, localization, entityClass, semanticSchema);
     }
 
-    private EntityModel createEntity(Component component, Localization localization, Class<? extends AbstractEntityModel> entityClass, SemanticSchema semanticSchema)
-            throws ContentProviderException {
 
-        final String componentId = component.getId();
-        LOG.debug("Creating entity for component: {}", componentId);
+    @Override
+    public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
+            throws ContentProviderException {
+        return createEntity(component, localization, entityClass, getSemanticSchema(component, localization));
+    }
+
+    private EntityModel createEntity(Component component, Localization localization,
+                                     Class<? extends AbstractEntityModel> entityClass,
+                                     SemanticSchema semanticSchema) throws ContentProviderException {
         final AbstractEntityModel entity;
+
+        LOG.debug("Creating entity for component: {}", component.getId());
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
-                    new SemanticFieldDataProviderImpl(
-                            new ComponentEntity(component), fieldConverterRegistry, this.builder));
+                    new SemanticFieldDataProviderImpl(new ComponentEntity(component), fieldConverterRegistry, this.builder));
         } catch (SemanticMappingException e) {
             throw new ContentProviderException(e);
         }
 
-        entity.setId(componentId.split("-")[1]);
+        entity.setId(component.getId().split("-")[1]);
 
-        // Special handling for media items
-        //
-        if (entity instanceof MediaItem && component.getMultimedia() != null &&
-                !StringUtils.isEmpty(component.getMultimedia().getUrl())) {
+        processMediaItems(component, localization, entity);
+
+        return entity;
+    }
+
+
+    private <T> Class<? extends AbstractEntityModel> getEntityClass(GetEntityClass<T> getEntityClass, T data) throws ContentProviderException {
+        try {
+            return getEntityClass.get(data);
+        } catch (DxaException e) {
+            return getEntityClass.onException(data);
+        }
+    }
+
+    private SemanticSchema getSemanticSchema(Component component, Localization localization) {
+        return localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
+    }
+
+    private void processMediaItems(Component component, Localization localization, AbstractEntityModel entity) {
+        if (entity instanceof MediaItem && component.getMultimedia() != null && !isEmpty(component.getMultimedia().getUrl())) {
             final Multimedia multimedia = component.getMultimedia();
             final MediaItem mediaItem = (MediaItem) entity;
             mediaItem.setUrl(multimedia.getUrl());
@@ -202,26 +211,23 @@ final class EntityBuilderImpl implements EntityBuilder {
             mediaItem.setFileSize(multimedia.getSize());
             mediaItem.setMimeType(multimedia.getMimeType());
 
+            // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
+            processEclItems(component, localization, entity);
         }
-
-        // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
-        if (entity instanceof EclItem) {
-            fillEclItem(component, localization, (EclItem) entity);
-        }
-
-        return entity;
     }
 
-    private void fillEclItem(Component component, Localization localization, EclItem entity) {
-        final EclItem eclItem = entity;
-        //todo check if it's right; .NET does just eclItem.setUri(component.getEclId())
-        eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+    private void processEclItems(Component component, Localization localization, AbstractEntityModel entity) {
+        if (entity instanceof EclItem) {
+            final EclItem eclItem = (EclItem) entity;
+            //todo check if it's right; .NET does just eclItem.setUri(component.getEclId())
+            eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
 
-        Map<String, FieldSet> extensionData = component.getExtensionData();
-        if (extensionData != null) {
-            fillItemWithEclData(eclItem, extensionData);
+            Map<String, FieldSet> extensionData = component.getExtensionData();
+            if (extensionData != null) {
+                fillItemWithEclData(eclItem, extensionData);
 
-            fillItemWithExternalMetadata(eclItem, extensionData);
+                fillItemWithExternalMetadata(eclItem, extensionData);
+            }
         }
     }
 
@@ -243,11 +249,11 @@ final class EntityBuilderImpl implements EntityBuilder {
         eclItem.setDisplayTypeId(getValueFromFieldSet(eclFieldSet, "DisplayTypeId"));
         eclItem.setTemplateFragment(getValueFromFieldSet(eclFieldSet, "TemplateFragment"));
         String fileName = getValueFromFieldSet(eclFieldSet, "FileName");
-        if (!StringUtils.isEmpty(fileName)) {
+        if (!isEmpty(fileName)) {
             eclItem.setFileName(fileName);
         }
         String mimeType = getValueFromFieldSet(eclFieldSet, "MimeType");
-        if (!StringUtils.isEmpty(mimeType)) {
+        if (!isEmpty(mimeType)) {
             eclItem.setMimeType(mimeType);
         }
     }
@@ -289,7 +295,7 @@ final class EntityBuilderImpl implements EntityBuilder {
     }
 
     private MvcData createMvcData(ComponentPresentation componentPresentation) {
-// todo remove duplication
+        // todo remove duplication from MvcDataImpl
         final MvcDataImpl mvcData = new MvcDataImpl();
 
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
@@ -326,7 +332,7 @@ final class EntityBuilderImpl implements EntityBuilder {
 
     private String[] getControllerNameParts(Map<String, Field> templateMeta) {
         String fullName = FieldUtils.getStringValue(templateMeta, "controller");
-        if (StringUtils.isEmpty(fullName)) {
+        if (isEmpty(fullName)) {
             fullName = DEFAULT_CONTROLLER_NAME;
         }
         return splitName(fullName);
@@ -334,7 +340,7 @@ final class EntityBuilderImpl implements EntityBuilder {
 
     private String getActionName(Map<String, Field> templateMeta) {
         String actionName = FieldUtils.getStringValue(templateMeta, "action");
-        if (StringUtils.isEmpty(actionName)) {
+        if (isEmpty(actionName)) {
             actionName = DEFAULT_ACTION_NAME;
         }
         return actionName;
@@ -342,7 +348,7 @@ final class EntityBuilderImpl implements EntityBuilder {
 
     private String[] getViewNameParts(ComponentTemplate componentTemplate) {
         String fullName = FieldUtils.getStringValue(componentTemplate.getMetadata(), "view");
-        if (StringUtils.isEmpty(fullName)) {
+        if (isEmpty(fullName)) {
             fullName = componentTemplate.getTitle().replaceAll("\\[.*\\]|\\s", "");
         }
         return splitName(fullName);
@@ -350,7 +356,7 @@ final class EntityBuilderImpl implements EntityBuilder {
 
     private String[] getRegionNameParts(Map<String, Field> templateMeta) {
         String fullName = FieldUtils.getStringValue(templateMeta, "regionView");
-        if (StringUtils.isEmpty(fullName)) {
+        if (isEmpty(fullName)) {
             fullName = DEFAULT_REGION_NAME;
         }
         return splitName(fullName);

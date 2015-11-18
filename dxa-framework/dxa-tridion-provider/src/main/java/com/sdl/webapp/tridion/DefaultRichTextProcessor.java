@@ -159,8 +159,9 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
                     throw new DxaException("Entity class is not registered in View Model Registry, null value");
                 }
             } catch (DxaException e) {
-                throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName + "'. " +
+                LOG.error("Cannot determine entity type for view name: '" + viewName + "'. " +
                         "Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
+                continue;
             }
 
             MediaItem mediaItem = (MediaItem) createInstance(entityClass);
@@ -168,6 +169,8 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
             embeddedEntities.add(mediaItem);
 
             imgElement.getParentNode().replaceChild(doc.createProcessingInstruction(EMBEDDED_ENTITY, EMPTY), imgElement);
+
+            removeUnusedAttributes((Element) imgElement);
         }
         return embeddedEntities;
     }

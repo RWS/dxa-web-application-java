@@ -5,7 +5,6 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
-import com.sdl.webapp.common.api.mapping.semantic.config.EntitySemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -138,26 +137,9 @@ final class EntityBuilderImpl implements EntityBuilder {
             throws ContentProviderException {
 
         final SemanticSchema semanticSchema = getSemanticSchema(component, localization);
-        String semanticTypeName = semanticSchema.getRootElement();
-        //Try to find the fully qualified name:
-        for (EntitySemantics es : semanticSchema.getEntitySemantics()) {
-            if (es.getEntityName().equals(semanticTypeName)) {
-                //TODO: TW, the vocabulary.getVocab() is null, using id
-                semanticTypeName = String.format("%s:%s", es.getVocabulary().getId(), semanticTypeName);
-                break;
-            }
-        }
 
-        final Class<? extends AbstractEntityModel> entityClass;
-        try {
-            entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(semanticTypeName);
-            if (entityClass == null) {
-                throw new DxaException("Cannot find the entity class in mapped model types");
-            }
-        } catch (DxaException e) {
-            throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
-                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
-        }
+        final Class<? extends AbstractEntityModel> entityClass =
+                (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
 
         return createEntity(component, localization, entityClass, semanticSchema);
     }

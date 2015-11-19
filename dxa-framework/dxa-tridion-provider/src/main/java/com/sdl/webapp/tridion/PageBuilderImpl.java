@@ -235,18 +235,7 @@ final class PageBuilderImpl implements PageBuilder {
 
             final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaTcmUriParts[1]));
 
-            String semanticTypeName = semanticSchema.getRootElement();
-            final Class<? extends ViewModel> entityClass;
-            try {
-                entityClass = viewModelRegistry.getMappedModelTypes(semanticTypeName);
-                if (entityClass == null) {
-                    throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
-                            "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
-                }
-            } catch (DxaException e) {
-                throw new ContentProviderException("Cannot determine entity type for view name: '" + semanticTypeName +
-                        "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
-            }
+            final Class<? extends ViewModel> entityClass = viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
             pageModel = (PageModel) createViewModel(entityClass, semanticSchema, genericPage);
         }
 

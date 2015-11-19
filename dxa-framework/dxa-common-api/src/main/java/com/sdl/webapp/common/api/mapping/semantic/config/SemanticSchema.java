@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.sdl.webapp.common.api.localization.Localization;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -49,6 +50,14 @@ public final class SemanticSchema {
 
     public Map<FieldSemantics, SemanticField> getSemanticFields() {
         return semanticFields;
+    }
+
+    public Set<String> getFullyQualifiedNames() {
+        final HashSet<String> result = new HashSet<>();
+        for (EntitySemantics semantics : getEntitySemantics()) {
+            result.add(String.format("%s:%s", semantics.getVocabulary().getId(), semantics.getEntityName()));
+        }
+        return result;
     }
 
     @Override

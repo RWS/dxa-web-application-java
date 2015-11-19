@@ -14,7 +14,6 @@ import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
-import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.XMLUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -151,18 +150,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
             String[] schemaTcmUriParts = imgElement.getAttributes().getNamedItem("data-schemaUri").getNodeValue().split("-");
             final SemanticSchema semanticSchema = localization.getSemanticSchemas().get(parseLong(schemaTcmUriParts[1]));
 
-            String viewName = semanticSchema.getRootElement();
-            final Class<? extends ViewModel> entityClass;
-            try {
-                entityClass = viewModelRegistry.getMappedModelTypes(viewName);
-                if (entityClass == null) {
-                    throw new DxaException("Entity class is not registered in View Model Registry, null value");
-                }
-            } catch (DxaException e) {
-                LOG.error("Cannot determine entity type for view name: '" + viewName + "'. " +
-                        "Please make sure that an entry is registered for this view name in the ViewModelRegistry.", e);
-                continue;
-            }
+            final Class<? extends ViewModel> entityClass = viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
 
             MediaItem mediaItem = (MediaItem) createInstance(entityClass);
             mediaItem.readFromXhtmlElement(imgElement);

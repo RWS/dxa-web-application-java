@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -54,7 +55,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     }
 
     @Override
-    public Class<? extends ViewModel> getViewModelType(final MvcData viewData) throws DxaException {
+    public Class<? extends ViewModel> getViewModelType(final MvcData viewData) {
 
         Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>> keyNamePredicate =
                 new Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>>() {
@@ -81,14 +82,30 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             possibleValues = Maps.filterEntries(viewEntityClassMap, keyNamePredicateNoArea);
         }
         if (possibleValues.isEmpty()) {
-            throw new DxaException(String.format("Could not find a view model for the view data %s", viewData));
+            return null;
         } else {
             return possibleValues.entrySet().iterator().next().getValue();
         }
     }
 
     @Override
-    public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) throws DxaException {
+    public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames) {
+        Class<? extends ViewModel> entityClass = null;
+        for (String fullyQualifiedName : semanticTypeNames) {
+            entityClass = getMappedModelTypes(fullyQualifiedName);
+            if (entityClass != null) {
+                break;
+            }
+        }
+        if (entityClass == null) {
+            LOG.error("Cannot determine entity type for semantic schema names: '" + semanticTypeNames + "'. " +
+                    "Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+        }
+        return entityClass;
+    }
+
+    @Override
+    public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) {
 
         Class<? extends ViewModel> retval = this.semanticMappingRegistry.getEntityClassByFullyQualifiedName(semanticTypeName);
         if (retval != null) {

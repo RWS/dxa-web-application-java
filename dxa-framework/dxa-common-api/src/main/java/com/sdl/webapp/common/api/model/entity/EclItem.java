@@ -21,11 +21,6 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.empty;
 import static java.lang.String.format;
 import static org.springframework.util.StringUtils.isEmpty;
 
-/**
- * ECL Item
- *
- * @author nic
- */
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
 public abstract class EclItem extends MediaItem {
 
@@ -142,21 +137,26 @@ public abstract class EclItem extends MediaItem {
             return;
         }
 
-        this.uri = attributes.getNamedItem("data-eclId").getNodeValue();
-        this.displayTypeId = attributes.getNamedItem("data-eclDisplayTypeId").getNodeValue();
-        this.templateFragment = attributes.getNamedItem("data-eclTemplateFragment").getNodeValue();
+        this.uri = getNodeValue(attributes, "data-eclId");
+        this.displayTypeId = getNodeValue(attributes, "data-eclDisplayTypeId");
+        this.templateFragment = getNodeValue(attributes, "data-eclTemplateFragment");
 
         // Note that FileName and MimeType are already set in MediaItem.ReadFromXhtmlElement.
         // We overwrite those with the values provided by ECL (if any).
-        String eclFileName = attributes.getNamedItem("data-eclFileName").getNodeValue();
+        String eclFileName = getNodeValue(attributes, "data-eclFileName");
         if (!isEmpty(eclFileName)) {
             this.setFileName(eclFileName);
         }
 
-        String eclMimeType = attributes.getNamedItem("data-eclMimeType").getNodeValue();
+        String eclMimeType = getNodeValue(attributes, "data-eclMimeType");
         if (!isEmpty(eclMimeType)) {
             this.setMimeType(eclMimeType);
         }
+    }
+
+    private String getNodeValue(NamedNodeMap attributes, String name) {
+        final Node namedItem = attributes.getNamedItem(name);
+        return namedItem != null ? namedItem.getNodeValue() : null;
     }
 
     @Override

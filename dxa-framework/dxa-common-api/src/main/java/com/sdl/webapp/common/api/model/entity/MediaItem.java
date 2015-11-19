@@ -46,7 +46,7 @@ public abstract class MediaItem extends AbstractEntityModel {
     private String url;
 
     @JsonProperty("IsEmbedded")
-    private Boolean isEmbedded;
+    private boolean isEmbedded;
 
     @JsonProperty("FileName")
     private String fileName;
@@ -74,11 +74,11 @@ public abstract class MediaItem extends AbstractEntityModel {
         this.fileName = fileName;
     }
 
-    public Boolean getIsEmbedded() {
+    public boolean getIsEmbedded() {
         return this.isEmbedded;
     }
 
-    public void setIsEmbedded(Boolean isEmbedded) {
+    public void setIsEmbedded(boolean isEmbedded) {
         this.isEmbedded = isEmbedded;
     }
 

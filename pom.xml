@@ -10,7 +10,7 @@
 	
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-parent</artifactId>
-    <version>1.2</version>
+    <version>1.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Parent for all Digital Experince Accelerator projects</name>
@@ -21,7 +21,7 @@
         <url>git@github.com:sdl/dxa-web-application-java.git</url>
         <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
 		<developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
-	  <tag>DXA_1.2_Release</tag>
+	  <tag>HEAD</tag>
   </scm>
 
     <licenses>

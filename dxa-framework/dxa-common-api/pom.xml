@@ -45,6 +45,11 @@
     </licenses>
 
     <dependencies>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-core</artifactId>
+        </dependency>
+
         <!-- Spring Framework -->
         <dependency>
             <groupId>org.springframework</groupId>

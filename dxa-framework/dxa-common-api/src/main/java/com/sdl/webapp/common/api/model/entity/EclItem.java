@@ -1,11 +1,16 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Function;
+import com.google.common.collect.Maps;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
-import org.apache.commons.collections.MapUtils;
+import com.sdl.webapp.common.util.FieldUtils;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.FieldSet;
+import org.dd4t.contentmodel.impl.EmbeddedField;
 import org.springframework.util.CollectionUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -14,6 +19,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.div;
@@ -73,8 +79,36 @@ public abstract class EclItem extends MediaItem {
     }
 
     public Object getFromExternalMetadataOrAlternative(String key, Object alternative) {
-        final Object obj = new NestedStringMap(getExternalMetadata()).get(key);
-        return obj == null ? alternative : obj;
+        final Object obj = new NestedCustomMap(getExternalMetadata(),
+                new Function<Entry<String, Map<String, Object>>, Map<String, Object>>() {
+            @Override
+            public Map<String, Object> apply(Entry<String, Map<String, Object>> pair) {
+                String key = pair.getKey();
+                Map<String, Object> map = pair.getValue();
+
+                Object o = map.get(key);
+                Map content;
+                if (o instanceof FieldSet) {
+                    content = ((FieldSet) o).getContent();
+                } else if (o instanceof EmbeddedField) {
+                    content = ((EmbeddedField) o).getEmbeddedValues().get(0).getContent();
+                } else {
+                    throw new UnsupportedOperationException("Unsupported format of ECL metadata structure");
+                }
+                //noinspection unchecked
+                return content;
+            }
+        }).get(key);
+
+        if (obj == null) {
+            return alternative;
+        }
+
+        if (obj instanceof Field) {
+            return FieldUtils.getStringValue((Field) obj);
+        }
+
+        return alternative;
     }
 
     @Override
@@ -103,14 +137,14 @@ public abstract class EclItem extends MediaItem {
      * @param aspect        The aspect ratio to apply | <strong>ignored</strong>
      * @param cssClass      Optional CSS class name(s) to apply
      * @param containerSize The size (in grid column units) of the containing element | <strong>ignored</strong>
-     * @param contextPath Context path | <strong>ignored</strong>
+     * @param contextPath   Context path | <strong>ignored</strong>
      * @return string html representation
      */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException {
         if (isEmpty(templateFragment)) {
             throw new DxaException(format("Attempt to render an ECL Item for which no Template Fragment is available: " +
-                            "'%s' (DisplayTypeId: '%s')", getUri(), getDisplayTypeId()));
+                    "'%s' (DisplayTypeId: '%s')", getUri(), getDisplayTypeId()));
         }
 
         if (isEmpty(cssClass)) {
@@ -168,11 +202,14 @@ public abstract class EclItem extends MediaItem {
                 '}';
     }
 
-    public static class NestedStringMap {
+    public static class NestedCustomMap {
         private Map<String, Object> map;
+        private Function<Entry<String, Map<String, Object>>, Map<String, Object>> loadNestedFunction;
 
-        public NestedStringMap(Map<String, Object> map) {
+        public NestedCustomMap(Map<String, Object> map,
+                               Function<Entry<String, Map<String, Object>>, Map<String, Object>> function) {
             this.map = map;
+            this.loadNestedFunction = function;
         }
 
         public Map<String, Object> getMap() {
@@ -186,14 +223,14 @@ public abstract class EclItem extends MediaItem {
 
             final List<String> keys = Arrays.asList(key.split("/"));
             final Iterator<String> iterator = keys.iterator();
-            Map currentMap = map;
+            Map<String, Object> currentMap = map;
             while (iterator.hasNext()) {
                 String current = iterator.next();
                 if (!iterator.hasNext()) { //last element
                     return currentMap.get(current);
                 }
 
-                currentMap = MapUtils.getMap(currentMap, current);
+                currentMap = loadNestedFunction.apply(Maps.immutableEntry(current, currentMap));
                 if (currentMap == null) {
                     return null;
                 }

@@ -1,4 +1,4 @@
-package com.sdl.webapp.tridion.fields;
+package com.sdl.webapp.common.util;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;

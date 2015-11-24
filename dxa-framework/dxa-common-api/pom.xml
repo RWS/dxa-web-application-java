@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.sdl.dxa</groupId>
         <artifactId>dxa-framework</artifactId>
-        <version>1.2-SNAPSHOT</version>
+        <version>1.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-common-api</artifactId>
@@ -19,7 +19,8 @@
     <scm>
         <url>https://github.com/sdl/dxa-web-application-java</url>
         <connection>scm:git:https://github.com/sdl/dxa-web-application-java.git</connection>
-    </scm>
+      <tag>HEAD</tag>
+  </scm>
 
     <developers>
         <developer>

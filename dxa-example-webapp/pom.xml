@@ -72,17 +72,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>test-module</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-test</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>googleanalytics-module</id>
             <dependencies>
                 <dependency>

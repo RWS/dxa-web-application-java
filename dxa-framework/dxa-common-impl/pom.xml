@@ -19,8 +19,8 @@
     <scm>
         <url>https://github.com/sdl/dxa-web-application-java</url>
         <connection>scm:git:https://github.com/sdl/dxa-web-application-java.git</connection>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <licenses>
         <license>

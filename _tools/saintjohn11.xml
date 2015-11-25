@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <templateAssemblyUploadConfig>
-  <targetURL>http://saintjohn01.ams.dev</targetURL>
-  <userName>administrator</userName>
+  <targetURL>http://saintjohn11.ams.dev</targetURL>
+  <userName>Administrator</userName>
   <password>8+0l37x6QDQbWru4Es64xg==</password>
   <uploadPDB>true</uploadPDB>
 </templateAssemblyUploadConfig>

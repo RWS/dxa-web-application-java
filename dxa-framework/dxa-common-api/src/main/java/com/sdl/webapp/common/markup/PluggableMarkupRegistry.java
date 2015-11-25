@@ -4,11 +4,6 @@ import com.sdl.webapp.common.markup.html.HtmlNode;
 
 import java.util.List;
 
-/**
- * PluggableMarkupRegistry
- *
- * @author nic
- */
 public interface PluggableMarkupRegistry {
 
     void registerPluggableMarkup(MarkupType markupType, HtmlNode markup);
@@ -22,10 +17,8 @@ public interface PluggableMarkupRegistry {
     List<HtmlNode> getPluggableMarkup(String label);
 
     enum MarkupType {
-
         CSS,
         TOP_JS,
         BOTTOM_JS
     }
-
 }

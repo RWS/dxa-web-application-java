@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.controller;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RegionModel;
@@ -30,7 +31,14 @@ public abstract class BaseController {
     protected ViewResolver viewResolver;
 
     @Autowired
+    private WebRequestContext context;
+
+    @Autowired
     private RequestMappingHandlerMapping requestMappingHandlerMapping;
+
+    protected WebRequestContext getContext() {
+        return context;
+    }
 
     private static Boolean isCustomAction(MvcData mvcData) {
         return !Objects.equals(mvcData.getActionName(), "Entity")
@@ -82,9 +90,10 @@ public abstract class BaseController {
      * first calling the base class and then adding your own logic
      *
      * @param model The model which you wish to add data to.
+     * @param httpServletRequest http servlet request for current request, can be null
      * @return A fully populated view model combining CMS content with other data
      */
-    protected ViewModel enrichModel(ViewModel model) throws Exception {
+    protected ViewModel enrichModel(ViewModel model, HttpServletRequest httpServletRequest) throws Exception {
         //Check if an exception was generated when creating the model, so now is the time to throw it
         // TODO: shouldn't we just render the ExceptionEntity using an Exception View?
         if (model.getClass().isAssignableFrom(ExceptionEntity.class)) {
@@ -142,7 +151,7 @@ public abstract class BaseController {
                     HandlerMethod controllerMethod = handlerMethods.get(mapping);
                     BaseController controller = (BaseController) ApplicationContextHolder.getContext().getBean(controllerMethod.getBean().toString());
                     try {
-                        controller.enrichModel(entity);
+                        controller.enrichModel(entity, null);
                         return entity;
                     } catch (Exception e) {
                         LOG.error("Error in EnrichModel", e);

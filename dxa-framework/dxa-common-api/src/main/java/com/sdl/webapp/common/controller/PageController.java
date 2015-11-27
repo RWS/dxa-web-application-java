@@ -109,7 +109,7 @@ public class PageController extends BaseController {
         final Localization localization = webRequestContext.getLocalization();
 
         final PageModel originalPageModel = getPageModel(requestPath, localization);
-        final ViewModel enrichedPageModel = enrichModel(originalPageModel);
+        final ViewModel enrichedPageModel = enrichModel(originalPageModel, request);
         final PageModel page = enrichedPageModel instanceof PageModel ? (PageModel) enrichedPageModel : originalPageModel;
 
         LOG.trace("handleGetPage: page={}", page);
@@ -224,7 +224,7 @@ public class PageController extends BaseController {
             throw new HTTPException(SC_NOT_FOUND);
         }
 
-        final ViewModel enrichedPageModel = enrichModel(originalPageModel);
+        final ViewModel enrichedPageModel = enrichModel(originalPageModel, request);
         final PageModel pageModel = enrichedPageModel instanceof PageModel ? (PageModel) enrichedPageModel : originalPageModel;
 
         if (!isIncludeRequest(request)) {

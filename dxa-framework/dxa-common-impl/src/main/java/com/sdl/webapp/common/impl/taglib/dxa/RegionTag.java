@@ -17,7 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
 import java.io.IOException;
 
-import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.REGION;
+import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.CORE_REGION;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 import static org.springframework.util.StringUtils.isEmpty;
 
@@ -66,7 +66,7 @@ public class RegionTag extends AbstractMarkupTag {
             MvcData mvcData = new MvcDataImpl()
                     .setRegionName(regionName)
                     .setViewName(regionName)
-                    .defaults(REGION);
+                    .defaults(CORE_REGION);
 
             RegionModelImpl includeRegion = null;
             try {
@@ -94,7 +94,7 @@ public class RegionTag extends AbstractMarkupTag {
                 MvcData mvcData = new MvcDataImpl()
                         .setRegionName(name)
                         .setViewName(isEmpty(emptyViewName) ? name : emptyViewName)
-                        .defaults(REGION);
+                        .defaults(CORE_REGION);
                 placeholderRegion.setMvcData(mvcData);
             } catch (DxaException e) {
                 LOG.error("Exception when creating new placeholderRegion {}", name, e);

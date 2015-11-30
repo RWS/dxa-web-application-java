@@ -216,9 +216,9 @@ public class MvcDataImpl implements MvcData {
 
     public enum Defaults {
 
-        ENTITY("Core", "Entity", "Entity", "Core"),
+        CORE_ENTITY("Core", "Entity", "Entity", "Core"),
 
-        REGION("Core", "Region", "Region", "Core");
+        CORE_REGION("Core", "Region", "Region", "Core");
 
         private String controllerAreaName;
         private String controllerName;

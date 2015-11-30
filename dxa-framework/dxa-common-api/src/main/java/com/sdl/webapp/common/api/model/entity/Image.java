@@ -76,7 +76,7 @@ public class Image extends MediaItem {
 
     @Override
     public MvcData getMvcData() {
-        return new MvcDataImpl("Core:Entity:Image").defaults(MvcDataImpl.Defaults.ENTITY);
+        return new MvcDataImpl("Core:Entity:Image").defaults(MvcDataImpl.Defaults.CORE_ENTITY);
     }
 
     @Override

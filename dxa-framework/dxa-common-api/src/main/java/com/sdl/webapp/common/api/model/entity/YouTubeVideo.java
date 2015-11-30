@@ -103,7 +103,7 @@ public class YouTubeVideo extends MediaItem {
 
     @Override
     public MvcData getMvcData() {
-        return new MvcDataImpl("Core:Entity:YouTubeVideo").defaults(MvcDataImpl.Defaults.ENTITY);
+        return new MvcDataImpl("Core:Entity:YouTubeVideo").defaults(MvcDataImpl.Defaults.CORE_ENTITY);
     }
 
     @Override

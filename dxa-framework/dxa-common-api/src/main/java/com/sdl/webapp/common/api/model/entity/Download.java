@@ -81,7 +81,7 @@ public class Download extends MediaItem {
 
     @Override
     public MvcData getMvcData() {
-        return new MvcDataImpl("Core:Entity:Download").defaults(MvcDataImpl.Defaults.ENTITY);
+        return new MvcDataImpl("Core:Entity:Download").defaults(MvcDataImpl.Defaults.CORE_ENTITY);
     }
 
 

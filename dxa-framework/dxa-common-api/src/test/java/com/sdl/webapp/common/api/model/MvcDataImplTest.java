@@ -34,9 +34,9 @@ public class MvcDataImplTest {
                 .viewName(viewName));
 
         //when
-        mvcDataFull.defaults(MvcDataImpl.Defaults.ENTITY);
-        mvcDataHalf.defaults(MvcDataImpl.Defaults.ENTITY);
-        mvcDataShort.defaults(MvcDataImpl.Defaults.ENTITY);
+        mvcDataFull.defaults(MvcDataImpl.Defaults.CORE_ENTITY);
+        mvcDataHalf.defaults(MvcDataImpl.Defaults.CORE_ENTITY);
+        mvcDataShort.defaults(MvcDataImpl.Defaults.CORE_ENTITY);
 
         //then
         Parts fullParts = new Parts()
@@ -104,7 +104,7 @@ public class MvcDataImplTest {
         MvcDataImpl mvcData = new MvcDataImpl(viewName);
 
         //when
-        mvcData.defaults(MvcDataImpl.Defaults.ENTITY);
+        mvcData.defaults(MvcDataImpl.Defaults.CORE_ENTITY);
 
         //then
         assertPartsAreSet(mvcData, new Parts()

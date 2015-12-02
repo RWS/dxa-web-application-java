@@ -19,7 +19,7 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.empty;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.i;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.small;
 import static java.lang.String.format;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @SemanticEntity(entityName = "DataDownload", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Download extends MediaItem {

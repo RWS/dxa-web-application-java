@@ -25,7 +25,7 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.div;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.empty;
 import static java.lang.String.format;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
 public abstract class EclItem extends MediaItem {

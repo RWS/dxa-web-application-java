@@ -19,7 +19,7 @@ import java.io.IOException;
 
 import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.CORE_REGION;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 public class RegionTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionTag.class);

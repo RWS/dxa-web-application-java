@@ -16,7 +16,7 @@ import org.w3c.dom.Node;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.img;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @SemanticEntity(entityName = "ImageObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Image extends MediaItem {

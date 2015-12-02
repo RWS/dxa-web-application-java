@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.markup.html;
 
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 

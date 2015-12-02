@@ -3,8 +3,8 @@ package com.sdl.webapp.common.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.exceptions.DxaException;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class RichText {
     @JsonIgnore
     public Boolean isEmpty() throws DxaException {
         return CollectionUtils.isEmpty(fragments) ||
-                fragments.get(0) == null || StringUtils.isEmpty(fragments.get(0).toHtmlElement());
+                fragments.get(0) == null || StringUtils.isEmpty(fragments.get(0).toHtmlElement().toHtml());
     }
 
     @Override

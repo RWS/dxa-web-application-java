@@ -70,7 +70,7 @@
 
                 <!-- Spring Framework -->
                 <!-- NOTE: Tridion CD 7.1.0 is compiled against Spring 3.1.0, but we need Spring 3.2 features -->
-                <spring-version>3.2.8.RELEASE</spring-version>
+                <spring-version>3.1.4.RELEASE</spring-version>
 
                 <!-- Hibernate -->
                 <hibernate-version>4.0.1.Final</hibernate-version>
@@ -218,10 +218,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <java-version>1.7</java-version>
-
-        <!-- Spring Framework -->
-        <!-- NOTE: Tridion CD 7.1.0 is compiled against Spring 3.1.0, but we need Spring 3.2 features -->
-        <spring-version>3.2.8.RELEASE</spring-version>
 
         <!-- Dynamic Delivery for Tridion (DD4T) -->
         <dd4t-version>2.0.2-DXA</dd4t-version>

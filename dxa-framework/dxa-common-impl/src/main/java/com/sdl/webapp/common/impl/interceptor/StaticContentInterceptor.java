@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.util.MimeUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +14,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -65,12 +65,12 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
                 final StaticContentItem staticContentItem = contentProvider.getStaticContent(requestPath,
                         localization.getId(), localization.getPath());
 
-                if (staticContentItem.getLastModified() > req.getHeaders().getIfModifiedSince() + 1000L) {
+                if (staticContentItem.getLastModified() > req.getHeaders().getIfNotModifiedSince() + 1000L) {
                     res.setStatusCode(HttpStatus.OK);
                     res.getHeaders().setLastModified(staticContentItem.getLastModified());
                     res.getHeaders().setContentType(MediaType.parseMediaType(staticContentItem.getContentType()));
                     try (final InputStream in = staticContentItem.getContent(); final OutputStream out = res.getBody()) {
-                        StreamUtils.copy(in, out);
+                        IOUtils.copy(in, out);
                     }
                 } else {
                     res.setStatusCode(HttpStatus.NOT_MODIFIED);
@@ -92,7 +92,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
                     res.getHeaders().setContentType(MediaType.parseMediaType(mimeType));
 
                     try (final InputStream in = contentResource.openStream(); final OutputStream out = res.getBody()) {
-                        StreamUtils.copy(in, out);
+                        IOUtils.copy(in, out);
                     }
                 } else {
                     throw e;

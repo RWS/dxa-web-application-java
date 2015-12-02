@@ -31,6 +31,7 @@ import com.tridion.storage.StorageTypeMapping;
 import com.tridion.storage.dao.BinaryContentDAO;
 import com.tridion.storage.dao.BinaryVariantDAO;
 import com.tridion.storage.dao.ItemDAO;
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -40,7 +41,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.imageio.ImageIO;

@@ -146,7 +146,7 @@
                 <tridion-cd-version>8.0.0</tridion-cd-version>
 
                 <!-- Spring Framework -->
-                <spring-version>3.2.8.RELEASE</spring-version>
+                <spring-version>3.1.4.RELEASE</spring-version>
 
                 <!-- Hibernate -->
                 <hibernate-version>4.2.12.Final</hibernate-version>

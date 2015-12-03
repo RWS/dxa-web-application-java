@@ -20,6 +20,7 @@ public class SerializerFactoryTest {
 
     @Ignore
     @Test
+    @Ignore("TODO in code brakes the test")
     public void testDeserializePage() throws Exception {
 
         // TODO: add test data

@@ -23,7 +23,7 @@ import java.util.Map;
  *
  * @author Quirijn Slings
  */
-public interface Item {
+public interface Item extends Model {
 
     /**
      * Get the tridion id.

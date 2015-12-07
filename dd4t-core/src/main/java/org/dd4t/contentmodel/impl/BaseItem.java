@@ -17,6 +17,8 @@
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Item;
 
 import java.util.HashMap;
@@ -25,11 +27,11 @@ import java.util.Map;
 /**
  * Base class for all tridion items
  *
- * The latest DD4T version has uppercase start characters in elements.
+ * Note: The latest DD4T version has uppercase start characters in elements.
  *
  * @author Quirijn Slings, Raimond Kempees
  */
-public abstract class BaseItem extends AbstractModel implements Item {
+public abstract class BaseItem implements Item {
 
     @JsonProperty("Id")
     private String id;
@@ -39,6 +41,10 @@ public abstract class BaseItem extends AbstractModel implements Item {
 
     @JsonProperty("CustomProperties")
     private Map<String, Object> customProperties = new HashMap<>();
+
+    @JsonProperty(value = "ExtensionData", required = false)
+    @JsonDeserialize (contentAs = FieldSetImpl.class)
+    private Map<String, FieldSet> extensionData;
 
     public String getId() {
         return id;
@@ -70,5 +76,15 @@ public abstract class BaseItem extends AbstractModel implements Item {
 
     public Object getCustomProperty(String key) {
         return customProperties.get(key);
+    }
+
+    @Override
+    public Map<String, FieldSet> getExtensionData() {
+        return this.extensionData;
+    }
+
+    @Override
+    public void setExtensionData(Map<String, FieldSet> extensionData) {
+        this.extensionData = extensionData;
     }
 }

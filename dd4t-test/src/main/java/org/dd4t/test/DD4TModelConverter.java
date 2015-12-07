@@ -45,7 +45,7 @@ public class DD4TModelConverter {
 //		System.out.println(testXml + xml2 + xml3);
 		String completeXml = FileUtils.readFileToString(new File("dd4t-test/target/classes/xml-without-java-xslt.xml"));
 //
-		String homepage = FileUtils.readFileToString(new File("dd4t-test/target/classes/homepage.json"));
+		String homepage = FileUtils.readFileToString(new File("dd4t-test/target/classes/test.json"));
 		//System.out.println(completeXml);
 		//deserializeXmlJackson(completeXml);
 		deserializeJson(homepage);

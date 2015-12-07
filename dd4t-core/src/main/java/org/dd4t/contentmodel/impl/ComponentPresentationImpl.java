@@ -22,19 +22,18 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.core.databind.BaseViewModel;
 
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Class representing a component presentation which holds a component template and a component.
+ * Class representing a Tridion Component Presentation object.
  *
- *  TODO: API changes!
- *
- * @author bjornl
+ * @author bjornl, rai, sdl
  */
-public class ComponentPresentationImpl extends AbstractModel implements ComponentPresentation {
+public class ComponentPresentationImpl implements ComponentPresentation {
 
     @JsonProperty("Component")
     @JsonDeserialize(as = ComponentImpl.class)
@@ -43,6 +42,10 @@ public class ComponentPresentationImpl extends AbstractModel implements Componen
     @JsonProperty("ComponentTemplate")
     @JsonDeserialize(as = ComponentTemplateImpl.class)
     private ComponentTemplate componentTemplate;
+
+    @JsonProperty(value = "ExtensionData", required = false)
+    @JsonDeserialize (contentAs = FieldSetImpl.class)
+    private Map<String, FieldSet> extensionData;
 
     @JsonProperty("IsDynamic")
     private boolean isDynamic;
@@ -152,4 +155,16 @@ public class ComponentPresentationImpl extends AbstractModel implements Componen
 	@Override public String getRawComponentContent () {
 		return this.rawComponentContent;
 	}
+
+    @Override
+    public Map<String, FieldSet> getExtensionData () {
+        return extensionData;
+    }
+
+    @Override
+    public void setExtensionData (final Map<String, FieldSet> extensionData) {
+        this.extensionData = extensionData;
+    }
+
+
 }

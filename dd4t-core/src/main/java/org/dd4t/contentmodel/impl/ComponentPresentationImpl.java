@@ -34,7 +34,7 @@ import java.util.Map;
  *
  * @author bjornl
  */
-public class ComponentPresentationImpl implements ComponentPresentation {
+public class ComponentPresentationImpl extends AbstractModel implements ComponentPresentation {
 
     @JsonProperty("Component")
     @JsonDeserialize(as = ComponentImpl.class)

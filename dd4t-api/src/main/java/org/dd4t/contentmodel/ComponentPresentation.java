@@ -20,7 +20,7 @@ import org.dd4t.core.databind.BaseViewModel;
 
 import java.util.Map;
 
-public interface ComponentPresentation {
+public interface ComponentPresentation extends Model {
 
     /**
      * Get the component

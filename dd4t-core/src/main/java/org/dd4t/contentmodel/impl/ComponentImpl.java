@@ -34,6 +34,9 @@ public class ComponentImpl extends BaseComponent implements GenericComponent, Ha
 	@JsonProperty("Multimedia") @JsonDeserialize(as = MultimediaImpl.class)
     private Multimedia multimedia;
 
+    @JsonProperty("EclId") @JsonDeserialize(as = String.class)
+    private String eclId;
+
     /**
      * Get the content
      *
@@ -87,5 +90,14 @@ public class ComponentImpl extends BaseComponent implements GenericComponent, Ha
     @Override
     public void setMultimedia(Multimedia multimedia) {
         this.multimedia = multimedia;
+    }
+
+    @Override
+    public String getEclId() {
+        return this.eclId;
+    }
+
+    public void setEclId(String eclId) {
+        this.eclId = eclId;
     }
 }

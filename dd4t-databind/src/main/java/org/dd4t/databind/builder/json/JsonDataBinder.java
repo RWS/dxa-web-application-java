@@ -75,6 +75,16 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		}
 	}
 
+	@Override
+	public <T extends ComponentPresentation> T buildComponentPresentation (final String source, final Class<T> componentPresentationClass) throws SerializationException {
+		try {
+			return GENERIC_MAPPER.readValue(source, componentPresentationClass);
+		} catch (IOException e) {
+			LOG.error(DataBindConstants.MESSAGE_ERROR_DESERIALIZING, e);
+			throw new SerializationException(e);
+		}
+	}
+
 	public ComponentPresentation buildDynamicComponentPresentation (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException {
 		final Set<String> modelNames = new HashSet<>();
 		try {

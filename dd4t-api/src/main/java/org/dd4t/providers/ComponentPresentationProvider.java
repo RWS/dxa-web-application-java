@@ -16,14 +16,15 @@
 
 package org.dd4t.providers;
 
-import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 
 import java.util.List;
 
 /**
- * Component Provider.
+ * Dynamic Component Presentation Provider.
+ *
+ * Note that this class is NOT used when fetching pages with static Component Presentations!
  */
 public interface ComponentPresentationProvider {
 
@@ -40,7 +41,7 @@ public interface ComponentPresentationProvider {
      * @throws ItemNotFoundException  if the requested DCP does not exist
      * @throws SerializationException if something went wrong during deserialization
      */
-    public org.dd4t.contentmodel.ComponentPresentation getDynamicComponentPresentation(int componentId, int publicationId) throws ItemNotFoundException, SerializationException;
+    String getDynamicComponentPresentation(int componentId, int publicationId) throws ItemNotFoundException, SerializationException;
 
     /**
      * Retrieves content of a Dynamic Component Presentation by looking up its componentId, templateId and publicationId.
@@ -52,7 +53,7 @@ public interface ComponentPresentationProvider {
      * @throws ItemNotFoundException  if the requested DCP does not exist
      * @throws SerializationException if something went wrong during deserialization
      */
-    public org.dd4t.contentmodel.ComponentPresentation getDynamicComponentPresentation(int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException;
+    String getDynamicComponentPresentation(int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException;
 
 	/**
 	 * Convenience method to obtain a list of component presentations for the same template id.
@@ -64,5 +65,5 @@ public interface ComponentPresentationProvider {
 	 * @throws ItemNotFoundException
 	 * @throws SerializationException
 	 */
-	public List<ComponentPresentation> getDynamicComponentPresentations(String[] itemUris, int templateId, int publicationId) throws ItemNotFoundException, SerializationException;
+	List<String> getDynamicComponentPresentations(String[] itemUris, int templateId, int publicationId) throws ItemNotFoundException, SerializationException;
 }

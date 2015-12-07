@@ -102,14 +102,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 			LOG.debug("Return page with uri: {} from cache", uri);
 			page = cacheElement.getPayload();
 		}
-		if (page != null) {
-			LOG.debug("Running Post caching Processors");
-			try {
-				this.executeProcessors(page, RunPhase.AFTER_CACHING, getRequestContext());
-			} catch (ProcessorException e) {
-				LOG.error(e.getLocalizedMessage(), e);
-			}
-		}
+		executePostCacheProcessors(page);
 		return page;
 	}
 
@@ -162,6 +155,11 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 			LOG.debug("Return page with url: {} and publicationId: {} from cache", url, publicationId);
 			page = cacheElement.getPayload();
 		}
+		executePostCacheProcessors(page);
+		return page;
+	}
+
+	private void executePostCacheProcessors (final Page page) {
 		if (page != null) {
 			LOG.debug("Running Post caching Processors");
 			try {
@@ -170,7 +168,6 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 				LOG.error(e.getLocalizedMessage(), e);
 			}
 		}
-		return page;
 	}
 
 

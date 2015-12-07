@@ -31,27 +31,21 @@ public class TCMURI implements Serializable {
     protected int pubId;
     protected int version;
 
-    @Deprecated
-    public TCMURI() {
-    }
-
-    @Deprecated
     public TCMURI(String uri) throws ParseException {
         this(new Builder(uri));
     }
 
-    //added because of custom code, next release can be deleted?
-    @Deprecated
     public TCMURI(String uri, int version) throws ParseException {
         this(new Builder(uri)
                 .version(version));
     }
 
-    //make it private instead of delete on next release
-    @Deprecated
+    public TCMURI(int publicationId, int itemId, int itemType) {
+        this(new Builder(publicationId,itemId, itemType));
+    }
+
     public TCMURI(int publicationId, int itemId, int itemType, int version) {
-        this(new Builder(publicationId, itemId)
-                .itemType(itemType)
+        this(new Builder(publicationId, itemId, itemType)
                 .version(version));
     }
 
@@ -66,7 +60,6 @@ public class TCMURI implements Serializable {
         return tcmUri != null && tcmUri.startsWith(URI_NAMESPACE);
     }
 
-    @Deprecated
     protected void load(String uriString) throws ParseException {
         Builder builder = new Builder(uriString);
         this.itemType = builder.itemType;
@@ -114,9 +107,20 @@ public class TCMURI implements Serializable {
         private int itemType = 16;
         private int version = -1;
 
+	    /**
+         * Defaults to ItemType component
+         * @param pubId the publication Id
+         * @param itemId the item Id
+         */
         public Builder(int pubId, int itemId) {
             this.pubId = pubId;
             this.itemId = itemId;
+        }
+
+        public Builder(int pubId, int itemId, int itemType) {
+            this.pubId = pubId;
+            this.itemId = itemId;
+            this.itemType = itemType;
         }
 
         public Builder(String uri) throws ParseException {

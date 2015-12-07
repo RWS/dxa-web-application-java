@@ -52,37 +52,37 @@
             <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_broker</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_cache</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_core</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_datalayer</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_linking</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_model</artifactId>
             <version>${tridion.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.tridion.contentdelivery</groupId>
+            <groupId>com.tridion</groupId>
             <artifactId>cd_dynamic</artifactId>
             <version>${tridion.version}</version>
         </dependency>

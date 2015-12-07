@@ -123,7 +123,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 	public Page findPageByUrl (String url, int publicationId) throws FactoryException {
 		LOG.debug("Enter findPageByUrl with url: {} and publicationId: {}", url, publicationId);
 
-		String cacheKey = publicationId + "-" + url;
+		String cacheKey = publicationId + "-" + url.toLowerCase();
 		CacheElement<Page> cacheElement = cacheProvider.loadPayloadFromLocalCache(cacheKey);
 		Page page;
 
@@ -189,7 +189,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 	public String findSourcePageByUrl (String url, int publicationId) throws FactoryException {
 		LOG.debug("Enter findXMLPageByUrl with url: {} and publicationId: {}", url, publicationId);
 
-		String cacheKey = "PSE" +"-"+publicationId + "-" + url;
+		String cacheKey = "PSE" +"-"+publicationId + "-" + url.toLowerCase();
 		CacheElement<String> cacheElement = cacheProvider.loadPayloadFromLocalCache(cacheKey);
 
 		String page;

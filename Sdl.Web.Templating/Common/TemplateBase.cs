@@ -203,20 +203,7 @@ namespace Sdl.Web.Tridion.Common
         /// <returns>True if publishing to a target which is XPM enabled.</returns>
         protected bool IsPublishingToStaging()
         {
-            bool isXpmEnabled = false;
-
-            // TODO: change for 8.0 to use Utility.IsPublishTargetXpmEnabled(Engine.PublishingContext)
-            if (Engine.PublishingContext != null)
-            {
-                PublicationTarget pubTarget = Engine.PublishingContext.PublicationTarget;
-                if (pubTarget != null)
-                {
-                    isXpmEnabled = Utility.IsPublicationTargetXpmEnabled(pubTarget);
-                    Logger.Debug(String.Format("Publication Target {0} ({1}) enabled for inline editing: {2}", pubTarget.Title, pubTarget.Id, isXpmEnabled));
-                }
-            }
-
-            return isXpmEnabled;
+            return Utility.IsXpmEnabled(Engine.PublishingContext);
         }
 
         protected bool IsPreviewMode()

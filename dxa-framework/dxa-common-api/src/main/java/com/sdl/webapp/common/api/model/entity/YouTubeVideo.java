@@ -21,7 +21,7 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.i;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.iframe;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.img;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.span;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @SemanticEntity(entityName = "VideoObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class YouTubeVideo extends MediaItem {
@@ -103,7 +103,7 @@ public class YouTubeVideo extends MediaItem {
 
     @Override
     public MvcData getMvcData() {
-        return new MvcDataImpl("Core:Entity:YouTubeVideo").defaults(MvcDataImpl.Defaults.ENTITY);
+        return new MvcDataImpl("Core:Entity:YouTubeVideo").defaults(MvcDataImpl.Defaults.CORE_ENTITY);
     }
 
     @Override

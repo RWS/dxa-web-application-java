@@ -13,4 +13,6 @@ public @interface RegisteredView {
     String viewName();
 
     Class<? extends ViewModel> clazz();
+
+    String controllerName() default "";
 }

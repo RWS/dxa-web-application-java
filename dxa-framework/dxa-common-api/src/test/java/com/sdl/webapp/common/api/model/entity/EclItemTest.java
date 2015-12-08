@@ -1,10 +1,10 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.exceptions.DxaException;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.springframework.util.StringUtils;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 

@@ -39,11 +39,7 @@ public abstract class AbstractInitializer {
 
     private void registerViewEntry(RegisteredView viewEntry) {
         LOG.debug("View {} for class {}", viewEntry.viewName(), viewEntry.clazz());
-        registerViewModel(viewEntry.viewName(), viewEntry.clazz());
-    }
-
-    private void registerViewModel(String viewName, Class<? extends ViewModel> entityClass) {
-        registerViewModel(viewName, entityClass, null);
+        registerViewModel(viewEntry.viewName(), viewEntry.clazz(), viewEntry.controllerName());
     }
 
     private void registerViewModel(String viewName, Class<? extends ViewModel> entityClass, String controllerName) {

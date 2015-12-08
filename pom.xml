@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-	<parent>
+    <parent>
         <groupId>com.sdl.oss</groupId>
         <artifactId>oss-parent</artifactId>
         <version>0.1.0</version>
@@ -22,9 +22,9 @@
     <scm>
         <url>git@github.com:sdl/dxa-web-application-java.git</url>
         <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
-		<developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
-	  <tag>HEAD</tag>
-  </scm>
+        <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <licenses>
         <license>
@@ -70,7 +70,7 @@
 
                 <!-- Spring Framework -->
                 <!-- NOTE: Tridion CD 7.1.0 is compiled against Spring 3.1.0, but we need Spring 3.2 features -->
-                <spring-version>3.2.8.RELEASE</spring-version>
+                <spring-version>3.1.4.RELEASE</spring-version>
 
                 <!-- Hibernate -->
                 <hibernate-version>4.0.1.Final</hibernate-version>
@@ -89,8 +89,8 @@
                 <commons-pool-version>1.5.3</commons-pool-version>
 
                 <!-- Apache HttpComponents -->
-                <httpcomponents-client-version>4.1.3</httpcomponents-client-version>
-                <httpcomponents-core-version>4.1.4</httpcomponents-core-version>
+                <httpcomponents-client-version>4.3.3</httpcomponents-client-version>
+                <httpcomponents-core-version>4.3.3</httpcomponents-core-version>
 
                 <!-- Google Guava -->
                 <guava-version>14.0.1</guava-version>
@@ -146,7 +146,7 @@
                 <tridion-cd-version>8.0.0</tridion-cd-version>
 
                 <!-- Spring Framework -->
-                <spring-version>3.2.8.RELEASE</spring-version>
+                <spring-version>3.1.4.RELEASE</spring-version>
 
                 <!-- Hibernate -->
                 <hibernate-version>4.2.12.Final</hibernate-version>
@@ -165,8 +165,8 @@
                 <commons-pool-version>1.6</commons-pool-version>
 
                 <!-- Apache HttpComponents -->
-                <httpcomponents-client-version>4.1.3</httpcomponents-client-version>
-                <httpcomponents-core-version>4.1.4</httpcomponents-core-version>
+                <httpcomponents-client-version>4.3.3</httpcomponents-client-version>
+                <httpcomponents-core-version>4.3.3</httpcomponents-core-version>
 
                 <!-- Google Guava -->
                 <guava-version>18.0</guava-version>
@@ -210,108 +210,8 @@
                 <mockito-version>1.10.8</mockito-version>
                 <reflections-version>0.9.9-RC2</reflections-version>
             </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_common_config</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_common_config_api</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_common_config_legacy</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_common_util</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_odata</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_odata_types</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>odata_api</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>odata_client</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>odata_edm</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>odata_parser</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>odata_renderer</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>odata_tridion_client</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>odata_tridion_common</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_preview_ambient</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_preview_web</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_session</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_wrapper</artifactId>
-                        <version>${tridion-cd-version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>javax.cache</groupId>
-                        <artifactId>cache-api</artifactId>
-                        <version>1.0.0</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.ehcache</groupId>
-                        <artifactId>jcache</artifactId>
-                        <version>1.0.1</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
         </profile>
-	</profiles>
+    </profiles>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -321,6 +221,7 @@
 
         <!-- Dynamic Delivery for Tridion (DD4T) -->
         <dd4t-version>2.0.2-DXA</dd4t-version>
+        <solr-solrj.version>5.3.1</solr-solrj.version>
     </properties>
 
     <!-- Dependency management -->
@@ -635,6 +536,12 @@
                 <scope>runtime</scope>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.solr</groupId>
+                <artifactId>solr-solrj</artifactId>
+                <version>${solr-solrj.version}</version>
+            </dependency>
+
             <!-- SnakeYAML -->
             <dependency>
                 <groupId>org.yaml</groupId>
@@ -667,6 +574,11 @@
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j-version}</version>
             </dependency>
             <dependency>
@@ -777,7 +689,82 @@
                 <version>${reflections-version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_common_config</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_common_config_api</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_common_config_legacy</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_common_util</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_odata</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_odata_types</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>odata_api</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>odata_client</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>odata_edm</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>odata_parser</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>odata_renderer</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>odata_tridion_client</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>odata_tridion_common</artifactId>
+                <version>${tridion-cd-version}</version>
+            </dependency>
 
+            <dependency>
+                <groupId>javax.cache</groupId>
+                <artifactId>cache-api</artifactId>
+                <version>1.0.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ehcache</groupId>
+                <artifactId>jcache</artifactId>
+                <version>1.0.1</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

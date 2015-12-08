@@ -25,13 +25,13 @@ import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.Markup;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -109,7 +109,7 @@ public class PageController extends BaseController {
         final Localization localization = webRequestContext.getLocalization();
 
         final PageModel originalPageModel = getPageModel(requestPath, localization);
-        final ViewModel enrichedPageModel = enrichModel(originalPageModel);
+        final ViewModel enrichedPageModel = enrichModel(originalPageModel, request);
         final PageModel page = enrichedPageModel instanceof PageModel ? (PageModel) enrichedPageModel : originalPageModel;
 
         LOG.trace("handleGetPage: page={}", page);
@@ -132,7 +132,8 @@ public class PageController extends BaseController {
         return this.viewResolver.resolveView(mvcData, "Page", request);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {"application/rss+xml", MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
+    @RequestMapping(method = RequestMethod.GET, value = "/**", params = { "format" },
+            produces = {"application/rss+xml", MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
     public ModelAndView handleGetPageFormatted() {
 
         final String requestPath = webRequestContext.getRequestPath();
@@ -224,7 +225,7 @@ public class PageController extends BaseController {
             throw new HTTPException(SC_NOT_FOUND);
         }
 
-        final ViewModel enrichedPageModel = enrichModel(originalPageModel);
+        final ViewModel enrichedPageModel = enrichModel(originalPageModel, request);
         final PageModel pageModel = enrichedPageModel instanceof PageModel ? (PageModel) enrichedPageModel : originalPageModel;
 
         if (!isIncludeRequest(request)) {

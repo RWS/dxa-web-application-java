@@ -7,29 +7,28 @@ import org.joda.time.DateTime;
 
 public interface Markup {
 
+    String url(String path);
 
-    public String url(String path);
+    String versionedContent(String path);
 
-    public String versionedContent(String path);
+    String region(RegionModel region);
 
-    public String region(RegionModel region);
+    String entity(EntityModel entity);
 
-    public String entity(EntityModel entity);
+    String property(EntityModel entity, String fieldName);
 
-    public String property(EntityModel entity, String fieldName);
+    String property(EntityModel entity, String fieldName, int index);
 
-    public String property(EntityModel entity, String fieldName, int index);
+    String resource(String key);
 
-    public String resource(String key);
+    String formatDate(DateTime dateTime);
 
-    public String formatDate(DateTime dateTime);
+    String formatDateDiff(DateTime dateTime);
 
-    public String formatDateDiff(DateTime dateTime);
+    String formatMessage(String pattern, Object... args);
 
-    public String formatMessage(String pattern, Object... args);
+    String replaceLineEndsWithHtmlBreaks(String text);
 
-    public String replaceLineEndsWithHtmlBreaks(String text);
-
-    public String siteMapList(SitemapItem item);
+    String siteMapList(SitemapItem item);
 
 }

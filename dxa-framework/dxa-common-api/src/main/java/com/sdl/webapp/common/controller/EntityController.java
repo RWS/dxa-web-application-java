@@ -39,10 +39,14 @@ public class EntityController extends BaseController {
     public String handleGetEntity(HttpServletRequest request,
                                   @PathVariable String entityId)
             throws Exception {
+        return handleEntityRequest(request, entityId);
+    }
+
+    protected String handleEntityRequest(HttpServletRequest request, String entityId) throws Exception {
         LOG.trace("handleGetEntity: entityId={}", entityId);
 
         final EntityModel originalModel = getEntityFromRequest(request, entityId);
-        final ViewModel enrichedEntity = enrichModel(originalModel);
+        final ViewModel enrichedEntity = enrichModel(originalModel, request);
         final EntityModel entity = enrichedEntity instanceof EntityModel ? (EntityModel) enrichedEntity : originalModel;
 
         request.setAttribute(ENTITY_MODEL, entity);
@@ -51,8 +55,5 @@ public class EntityController extends BaseController {
         LOG.trace("Entity MvcData: {}", mvcData);
 
         return resolveView(mvcData, "Entity", request);
-
     }
-
-
 }

@@ -36,9 +36,6 @@ public class ListController extends EntityController {
     private final ContentProvider contentProvider;
 
     @Autowired
-    private HttpServletRequest request = null;
-
-    @Autowired
     public ListController(WebRequestContext webRequestContext, ContentProvider contentProvider) {
         this.webRequestContext = webRequestContext;
         this.contentProvider = contentProvider;
@@ -54,16 +51,15 @@ public class ListController extends EntityController {
     @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.LIST_ACTION_NAME + "/{entityId}")
     public String handleGetList(HttpServletRequest request, @PathVariable String entityId) throws Exception {
         LOG.trace("handleGetList: entityId={}", entityId);
-        this.request = request;
         // The List action is effectively just an alias for the general Entity action (we keep it for backward compatibility).
-        return handleGetEntity(request, entityId);
+        return handleEntityRequest(request, entityId);
     }
 
     @Override
-    protected ViewModel enrichModel(ViewModel model) throws Exception {
+    protected ViewModel enrichModel(ViewModel model, HttpServletRequest request) throws Exception {
         if (model instanceof ContentList) {
 
-            final ViewModel enrichedEntity = super.enrichModel(model);
+            final ViewModel enrichedEntity = super.enrichModel(model, request);
             final ContentList contentList = enrichedEntity instanceof EntityModel ? (ContentList) enrichedEntity : (ContentList) model;
 
             if (!contentList.getItemListElements().isEmpty()) {

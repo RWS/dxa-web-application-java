@@ -6,10 +6,10 @@ import com.tridion.linking.BinaryLink;
 import com.tridion.linking.ComponentLink;
 import com.tridion.linking.Link;
 import com.tridion.linking.PageLink;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 @Component
 public class TridionLinkResolver implements LinkResolver {

@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.markup.html;
 
 import com.google.common.collect.ImmutableList;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.Objects;

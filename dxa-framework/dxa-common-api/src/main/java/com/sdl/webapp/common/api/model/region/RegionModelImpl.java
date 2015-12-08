@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.REGION;
+import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.CORE_REGION;
 
 /**
  * Implementation of {@code Region}.
@@ -72,7 +72,7 @@ public class RegionModelImpl implements RegionModel {
         this.setMvcData(new MvcDataImpl()
                 .setRegionName(qualifiedViewName)
                 .setViewName(qualifiedViewName)
-                .defaults(REGION));
+                .defaults(CORE_REGION));
     }
 
     @Override

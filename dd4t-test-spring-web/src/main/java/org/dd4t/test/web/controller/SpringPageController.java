@@ -19,6 +19,8 @@ package org.dd4t.test.web.controller;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.mvc.controllers.AbstractPageController;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -40,6 +42,7 @@ public class SpringPageController extends AbstractPageController {
 	 * @param request
 	 * @param response
 	 */
+	@RequestMapping (value = {"/**/*.html", "/**/*.txt", "/**/*.xml"}, method = {RequestMethod.GET, RequestMethod.HEAD})
 	@Override public String showPage (final Model model, final HttpServletRequest request, final HttpServletResponse response) throws IOException {
 		return super.showPage(model, request, response);
 	}

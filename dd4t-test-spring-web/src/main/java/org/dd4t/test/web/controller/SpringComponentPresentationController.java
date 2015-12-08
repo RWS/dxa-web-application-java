@@ -19,11 +19,15 @@ package org.dd4t.test.web.controller;
 
 import org.dd4t.mvc.controllers.AbstractComponentPresentationController;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * dd4t-2
+ * SpringComponentPresentationController.
+ *
+ * Example controller to load DCPs. Extend as needed.
  *
  * @author R. Kempees
  */
@@ -38,7 +42,9 @@ public class SpringComponentPresentationController extends AbstractComponentPres
 	 * @param request           the request on which the component must be present
 	 * @return the view name to render
 	 */
-	@Override public String showComponentPresentation (@PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
+	@Override
+	@RequestMapping (value = {"/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String showComponentPresentation (@PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
 		return super.showComponentPresentation(componentViewName, componentId, request);
 	}
 
@@ -52,21 +58,24 @@ public class SpringComponentPresentationController extends AbstractComponentPres
 	 * @param request             the request on which the component must be present
 	 * @return the view name to render
 	 */
-	@Override public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
+	@Override
+	public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
 		return super.showComponentPresentation(componentViewPrefix, componentViewName, componentId, request);
 	}
 
 	/**
 	 * @return, the component view path
 	 */
-	@Override public String getComponentViewPath () {
+	@Override
+	public String getComponentViewPath () {
 		return super.getComponentViewPath();
 	}
 
 	/**
 	 * @param componentViewPath , sets the component view path relative to the view resolver path
 	 */
-	@Override public void setComponentViewPath (final String componentViewPath) {
+	@Override
+	public void setComponentViewPath (final String componentViewPath) {
 		super.setComponentViewPath(componentViewPath);
 	}
 }

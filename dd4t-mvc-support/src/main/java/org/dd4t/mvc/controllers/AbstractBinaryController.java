@@ -29,8 +29,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -38,7 +36,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -61,9 +64,11 @@ import java.util.TimeZone;
  *         <p/>
  *         The request mapping supports an array of strings, but we need a way
  *         to configure this without modifying source code.
+ *
+ * Important Note: concrete implementing classes will need to add the
+ * {@literal @RequestMapping} annotations!
  */
 @Controller
-@RequestMapping(value = {"**/*.gif", "**/*.jpg", "**/*.jpeg", "**/*.png", "**/*.pdf", "**/*.vcf", "**/*.swf", "**/*.zip", "**/*.xls", "**/*.xlsx"})
 public class AbstractBinaryController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractBinaryController.class);
@@ -98,7 +103,6 @@ public class AbstractBinaryController {
 	 */
 	private boolean removeContextPath = false;
 
-	@RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
 	public void getBinary(final HttpServletRequest request, final HttpServletResponse response) throws ItemNotFoundException {
 		String binaryPath = getBinaryPath(request);
 		LOG.debug(">> {} binary {}", request.getMethod(), binaryPath);

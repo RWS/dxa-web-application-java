@@ -32,8 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
 import javax.servlet.DispatcherType;
@@ -50,7 +48,7 @@ import java.util.TimeZone;
  *
  * Extend this class in your own web project for default functionality.
  *
- * Do NOT add stuff here, as this will in the near future be loaded through maven only!
+ * Do NOT add stuff here, as this will in the near future be loaded as library through maven only.
  *
  * @author R. Kempees
  */
@@ -80,8 +78,11 @@ public abstract class AbstractPageController {
 	 * All page requests are handled by this method. The page meta XML is
 	 * queried based on the request URI, the page meta XML contains the actual
 	 * view name to be rendered.
+	 *
+	 * Important Note: concrete implementing classes will need to add the
+	 * {@literal @RequestMapping} annotations!
 	 */
-	@RequestMapping(value = {"/**/*.html", "/**/*.txt", "/**/*.xml"}, method = {RequestMethod.GET, RequestMethod.HEAD})
+
 	public String showPage(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		final String urlToFetch = HttpUtils.appendDefaultPageIfRequired(HttpUtils.getCurrentURL(request));
 		String url = adjustLocalErrorUrl(request, urlToFetch);

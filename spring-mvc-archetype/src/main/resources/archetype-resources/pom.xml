@@ -52,7 +52,7 @@
         <tridion.version>7.1.0</tridion.version>
         <hibernate.version>4.0.1.Final</hibernate.version>
         <hibernate-jpa.version>1.0.1.Final</hibernate-jpa.version>
-        <jackson.version>2.4.3</jackson.version>
+        <jackson.version>2.6.4</jackson.version>
         <woodstox.version>4.4.1</woodstox.version>
         <javax.jms.version>1.1-rev-1</javax.jms.version>
         <activation.version>1.1.1</activation.version>

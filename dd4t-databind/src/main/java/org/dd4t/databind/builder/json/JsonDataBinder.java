@@ -23,8 +23,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import org.apache.commons.lang3.StringUtils;
-import org.dd4t.contentmodel.*;
+import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.Page;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.databind.TridionViewModel;
@@ -42,7 +47,11 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author R. Kempees
@@ -206,7 +215,8 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		final SimpleModule module = new SimpleModule("ComponentPresentationDeserializerModule", new Version(1, 0, 0, "RELEASE", "org.dd4t", "dd4t-databind"));
 		module.addDeserializer(ComponentPresentation.class, componentPresentationDeserializer);
 		GENERIC_MAPPER.registerModule(module);
-		GENERIC_MAPPER.addMixInAnnotations(Field.class, BaseFieldMixIn.class);
+		GENERIC_MAPPER.registerModule(new AfterburnerModule());
+		GENERIC_MAPPER.addMixIn(Field.class, BaseFieldMixIn.class);
 
 		LOG.debug("Mapper configured for: {} and {}", this.concreteComponentPresentationImpl.toString(), this.concreteComponentTemplateImpl.toString());
 	}

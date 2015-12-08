@@ -65,7 +65,7 @@
         <spring.version>3.2.0.RELEASE</spring.version>
         <tridion.version>7.1.0</tridion.version>
         <hibernate.version>4.0.1.Final</hibernate.version>
-        <jackson.version>2.4.3</jackson.version>
+        <jackson.version>2.6.4</jackson.version>
         <woodstox.version>4.4.1</woodstox.version>
         <javax.jms.version>1.1-rev-1</javax.jms.version>
 
@@ -217,6 +217,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-afterburner</artifactId>
             <version>${jackson.version}</version>
         </dependency>
 

@@ -70,7 +70,8 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @return String representing the content of the DCP
 	 * @throws ItemNotFoundException if the requested DCP cannot be found
 	 */
-	@Override public String getDynamicComponentPresentation (int componentId, int publicationId) throws ItemNotFoundException, SerializationException {
+	@Override
+	public String getDynamicComponentPresentation (int componentId, int publicationId) throws ItemNotFoundException, SerializationException {
 		return getDynamicComponentPresentation(componentId, 0, publicationId);
 	}
 
@@ -83,7 +84,8 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @return String representing the content of the DCP
 	 * @throws ItemNotFoundException if the requested DCP cannot be found
 	 */
-	@Override public String getDynamicComponentPresentation (int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
+	@Override
+	public String getDynamicComponentPresentation (int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
 		ComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);
 
 		if (factory == null) {
@@ -128,13 +130,14 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @throws org.dd4t.core.exceptions.ItemNotFoundException
 	 * @throws org.dd4t.core.exceptions.SerializationException
 	 */
-	@Override public List<String> getDynamicComponentPresentations (final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
+	@Override
+	public List<String> getDynamicComponentPresentations (final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
 		List<String> componentPresentations = new ArrayList<>();
 
 		for (String itemUri : itemUris) {
 			try {
 				org.dd4t.core.util.TCMURI uri = new org.dd4t.core.util.TCMURI(itemUri);
-				componentPresentations.add(getDynamicComponentPresentation(uri.getItemId(),templateId,publicationId));
+				componentPresentations.add(getDynamicComponentPresentation(uri.getItemId(), templateId, publicationId));
 			} catch (ParseException e) {
 				throw new SerializationException(e);
 			}
@@ -187,6 +190,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	}
 
 	// TODO: move away from this.
+
 	/**
 	 * Utility method to fix a constant value (probably a CMS-able value from
 	 * Tridion), so it can be used inside a URL: lower case and all spaces and
@@ -203,6 +207,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	public void setConcreteComponentPresentation (final Class<? extends org.dd4t.contentmodel.ComponentPresentation> concreteComponentPresentation) {
 		this.concreteComponentPresentation = concreteComponentPresentation;
 	}
+
 	// TODO Remove after testing
 	public void setConcreteComponentTemplateImpl (final Class<? extends ComponentTemplate> concreteComponentTemplateImpl) {
 		this.concreteComponentTemplateImpl = concreteComponentTemplateImpl;

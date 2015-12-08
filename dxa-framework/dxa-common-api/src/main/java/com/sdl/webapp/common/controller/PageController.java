@@ -134,14 +134,14 @@ public class PageController extends BaseController {
 
     @RequestMapping(method = RequestMethod.GET, value = "/**", params = { "format" },
             produces = {"application/rss+xml", MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
-    public ModelAndView handleGetPageFormatted() {
+    public ModelAndView handleGetPageFormatted(final HttpServletRequest request) {
 
         final String requestPath = webRequestContext.getRequestPath();
         LOG.trace("handleGetPageFormatted: requestPath={}", requestPath);
 
         final Localization localization = webRequestContext.getLocalization();
         final PageModel page = getPageModel(requestPath, localization);
-        enrichEmbeddedModels(page);
+        enrichEmbeddedModels(page, request);
         LOG.trace("handleGetPageFormatted: page={}", page);
         return dataFormatters.view(page);
     }
@@ -275,8 +275,9 @@ public class PageController extends BaseController {
      * Used by <see cref="FormatDataAttribute"/> to get all embedded Models enriched without rendering any Views.
      *
      * @param model The Page Model to enrich.
+     * @param request
      */
-    private void enrichEmbeddedModels(PageModel model) {
+    private void enrichEmbeddedModels(PageModel model, HttpServletRequest request) {
         if (model == null) {
             return;
         }
@@ -286,7 +287,7 @@ public class PageController extends BaseController {
             for (int i = 0; i < region.getEntities().size(); i++) {
                 EntityModel entity = region.getEntities().get(i);
                 if (entity != null && entity.getMvcData() != null) {
-                    region.getEntities().set(i, enrichEntityModel(entity));
+                    region.getEntities().set(i, enrichEntityModel(entity, request));
                 }
             }
         }

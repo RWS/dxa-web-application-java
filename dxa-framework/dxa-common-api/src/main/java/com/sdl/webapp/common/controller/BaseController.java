@@ -122,13 +122,14 @@ public abstract class BaseController {
      * Enriches a given Entity Model using an appropriate (custom) Controller.
      *
      * @param entity The Entity Model to enrich.
+     * @param request
      * @return The enriched Entity Model.
      * <p/>
      * This method is different from EnrichModel in that it doesn't expect the current Controller to be able to enrich the Entity Model;
      * it creates a Controller associated with the Entity Model for that purpose.
      * It is used by PageController.enrichEmbeddedModels.
      */
-    protected EntityModel enrichEntityModel(EntityModel entity) {
+    protected EntityModel enrichEntityModel(EntityModel entity, HttpServletRequest request) {
         if (entity == null || entity.getMvcData() == null || !isCustomAction(entity.getMvcData())) {
             return entity;
         }
@@ -151,7 +152,7 @@ public abstract class BaseController {
                     HandlerMethod controllerMethod = handlerMethods.get(mapping);
                     BaseController controller = (BaseController) ApplicationContextHolder.getContext().getBean(controllerMethod.getBean().toString());
                     try {
-                        controller.enrichModel(entity, null);
+                        controller.enrichModel(entity, request);
                         return entity;
                     } catch (Exception e) {
                         LOG.error("Error in EnrichModel", e);

@@ -34,6 +34,7 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.OData.Client">
       <HintPath>..\_references\cm-8.1\Microsoft.OData.Client.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -75,6 +76,7 @@
     </Reference>
     <Reference Include="Tridion.TopologyManager.Client">
       <HintPath>..\_references\cm-8.1\Tridion.TopologyManager.Client.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>

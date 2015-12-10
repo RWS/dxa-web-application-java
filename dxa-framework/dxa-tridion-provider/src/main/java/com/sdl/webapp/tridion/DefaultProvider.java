@@ -19,18 +19,14 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.Teaser;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
+import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.tridion.query.BrokerQuery;
 import com.sdl.webapp.tridion.query.BrokerQueryException;
-import com.tridion.broker.StorageException;
-import com.tridion.storage.BinaryContent;
-import com.tridion.storage.BinaryMeta;
-import com.tridion.storage.BinaryVariant;
-import com.tridion.storage.ItemMeta;
-import com.tridion.storage.StorageManagerFactory;
-import com.tridion.storage.StorageTypeMapping;
-import com.tridion.storage.dao.BinaryContentDAO;
-import com.tridion.storage.dao.BinaryVariantDAO;
-import com.tridion.storage.dao.ItemDAO;
+import com.tridion.content.BinaryFactory;
+import com.tridion.data.BinaryData;
+import com.tridion.dynamiccontent.DynamicMetaRetriever;
+import com.tridion.meta.BinaryMeta;
+import com.tridion.meta.PageMeta;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
@@ -43,12 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -88,6 +79,12 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     private WebApplicationContext webApplicationContext;
     @Autowired
     private LinkResolver linkResolver;
+
+    @Autowired
+    private DynamicMetaRetriever dynamicMetaRetriever;
+
+    @Autowired
+    private BinaryFactory binaryFactory;
 
     private static <T> T findPage(String path, Localization localization, TryFindPage<T> callback)
             throws ContentProviderException {
@@ -292,22 +289,24 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                 webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localizationId), path);
         LOG.trace("getStaticContentFile: {}", file);
 
-        final StaticContentPathInfo pathInfo = new StaticContentPathInfo(path);
+        final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
 
         final int publicationId = Integer.parseInt(localizationId);
         try {
-            final BinaryVariant binaryVariant = findBinaryVariant(publicationId, pathInfo.getFileName());
-            if (binaryVariant == null) {
-                throw new StaticContentNotFoundException("No binary variant found for: [" + publicationId + "] " +
+            //todo full path?
+            //todo sync?
+            final BinaryMeta binaryMeta = dynamicMetaRetriever.getBinaryMetaByURL(pathInfo.getFileName());
+            if (binaryMeta == null) {
+                throw new StaticContentNotFoundException("No binary meta found for: [" + publicationId + "] " +
                         pathInfo.getFileName());
             }
-
-            final BinaryMeta binaryMeta = binaryVariant.getBinaryMeta();
-            final ItemMeta itemMeta = findItemMeta(binaryMeta.getPublicationId(), binaryMeta.getItemId());
+            //todo full path?
+            //todo sync?
+            final PageMeta pageMeta = dynamicMetaRetriever.getPageMetaByURL(pathInfo.getFileName());
 
             boolean refresh;
             if (file.exists()) {
-                refresh = file.lastModified() < itemMeta.getLastPublishDate().getTime();
+                refresh = file.lastModified() < pageMeta.getLastPublicationDate().getTime();
             } else {
                 refresh = true;
                 if (!file.getParentFile().exists()) {
@@ -318,12 +317,11 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
             }
 
             if (refresh) {
-                final BinaryContent binaryContent = findBinaryContent(itemMeta.getPublicationId(), itemMeta.getItemId(),
-                        binaryVariant.getVariantId());
+                BinaryData binaryData = binaryFactory.getBinary(pageMeta.getPublicationId(), pageMeta.getId(), binaryMeta.getVariantId());
 
-                byte[] content = binaryContent.getContent();
+                byte[] content = binaryData.getBytes();
                 if (pathInfo.isImage() && pathInfo.isResized()) {
-                    content = resizeImage(content, pathInfo);
+                    content = ImageUtils.resizeImage(content, pathInfo);
                 }
 
                 LOG.debug("Writing binary content to file: {}", file);
@@ -332,107 +330,31 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                 LOG.debug("File does not need to be refreshed: {}", file);
             }
 
-            return new StaticContentFile(file, binaryVariant.getBinaryType());
-        } catch (StorageException | IOException e) {
+            return new StaticContentFile(file, binaryMeta.getType());
+        } catch (IOException e) {
             throw new ContentProviderException("Exception while getting static content for: [" + publicationId + "] "
                     + path, e);
         }
     }
 
-    private synchronized BinaryVariant findBinaryVariant(int publicationId, String path) throws StorageException {
-        final BinaryVariantDAO dao = (BinaryVariantDAO) StorageManagerFactory.getDAO(publicationId,
-                StorageTypeMapping.BINARY_VARIANT);
-        return dao.findByURL(publicationId, path);
-    }
+//    private synchronized BinaryVariant findBinaryVariant(int publicationId, String path) throws StorageException {
+//        final BinaryVariantDAO dao = (BinaryVariantDAO) StorageManagerFactory.getDAO(publicationId,
+//                StorageTypeMapping.BINARY_VARIANT);
+//        return dao.findByURL(publicationId, path);
+//    }
+//
+//    private synchronized ItemMeta findItemMeta(int publicationId, int itemId) throws StorageException {
+//        final ItemDAO dao = (ItemDAO) StorageManagerFactory.getDAO(publicationId, StorageTypeMapping.ITEM_META);
+//        return dao.findByPrimaryKey(publicationId, itemId);
+//    }
+//
+//    private synchronized BinaryContent findBinaryContent(int publicationId, int itemId, String variantId) throws StorageException {
+//        final BinaryContentDAO dao = (BinaryContentDAO) StorageManagerFactory.getDAO(publicationId,
+//                StorageTypeMapping.BINARY_CONTENT);
+//        return dao.findByPrimaryKey(publicationId, itemId, variantId);
+//    }
 
-    private synchronized ItemMeta findItemMeta(int publicationId, int itemId) throws StorageException {
-        final ItemDAO dao = (ItemDAO) StorageManagerFactory.getDAO(publicationId, StorageTypeMapping.ITEM_META);
-        return dao.findByPrimaryKey(publicationId, itemId);
-    }
 
-    private synchronized BinaryContent findBinaryContent(int publicationId, int itemId, String variantId) throws StorageException {
-        final BinaryContentDAO dao = (BinaryContentDAO) StorageManagerFactory.getDAO(publicationId,
-                StorageTypeMapping.BINARY_CONTENT);
-        return dao.findByPrimaryKey(publicationId, itemId, variantId);
-    }
-
-    private byte[] resizeImage(byte[] original, StaticContentPathInfo pathInfo) throws ContentProviderException {
-        try {
-            final BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(original));
-
-            int cropX = 0, cropY = 0;
-            int sourceW = originalImage.getWidth(), sourceH = originalImage.getHeight();
-            int targetW, targetH;
-
-            // Most complex case is if a height AND width is specified
-            if (pathInfo.getWidth() > 0 && pathInfo.getHeight() > 0) {
-                if (pathInfo.isNoStretch()) {
-                    // If we don't want to stretch, then we crop
-                    float originalAspect = (float) sourceW / (float) sourceH;
-                    float targetAspect = (float) pathInfo.getWidth() / (float) pathInfo.getHeight();
-                    if (targetAspect < originalAspect) {
-                        // Crop the width - ensuring that we do not stretch if the requested height is bigger than the original
-                        targetH = Math.min(pathInfo.getHeight(), sourceH); // pathInfo.getHeight() > sourceH ? sourceH : pathInfo.getHeight();
-                        targetW = (int) Math.ceil(targetH * targetAspect);
-                        cropX = (int) Math.ceil((sourceW - (sourceH * targetAspect)) / 2);
-                        sourceW = sourceW - 2 * cropX;
-                    } else {
-                        // Crop the height - ensuring that we do not stretch if the requested width is bigger than the original
-                        targetW = Math.min(pathInfo.getWidth(), sourceW); // pathInfo.getWidth() > sourceW ? sourceW : pathInfo.getWidth();
-                        targetH = (int) Math.ceil(targetW / targetAspect);
-                        cropY = (int) Math.ceil((sourceH - (sourceW / targetAspect)) / 2);
-                        sourceH = sourceH - 2 * cropY;
-                    }
-                } else {
-                    // We stretch to fit the dimensions
-                    targetH = pathInfo.getHeight();
-                    targetW = pathInfo.getWidth();
-                }
-            } else if (pathInfo.getWidth() > 0) {
-                // If we simply have a certain width or height, its simple: We just use that and derive the other
-                // dimension from the original image aspect ratio. We also check if the target size is bigger than
-                // the original, and if we allow stretching.
-                targetW = (pathInfo.isNoStretch() && pathInfo.getWidth() > sourceW) ?
-                        sourceW : pathInfo.getWidth();
-                targetH = (int) (sourceH * ((float) targetW / (float) sourceW));
-            } else {
-                targetH = (pathInfo.isNoStretch() && pathInfo.getHeight() > sourceH) ?
-                        sourceH : pathInfo.getHeight();
-                targetW = (int) (sourceW * ((float) targetH / (float) sourceH));
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Image: {}, cropX = {}, cropY = {}, sourceW = {}, sourceH = {}, targetW = {}, targetH = {}",
-                        new Object[]{pathInfo.getFileName(), cropX, cropY, sourceW, sourceH, targetW, targetH});
-            }
-
-            if (targetW == sourceW && targetH == sourceH) {
-                // No resize required
-                return original;
-            }
-
-            final BufferedImage target = new BufferedImage(targetW, targetH, BufferedImage.TYPE_INT_RGB);
-
-            final Graphics2D graphics = target.createGraphics();
-            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-            graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-            graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-
-            final AffineTransform transform = new AffineTransform();
-            transform.scale((double) targetW / (double) sourceW, (double) targetH / (double) sourceH);
-            transform.translate(-cropX, -cropY);
-
-            graphics.drawRenderedImage(originalImage, transform);
-
-            graphics.dispose();
-
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            ImageIO.write(target, pathInfo.getImageFormatName(), out);
-            return out.toByteArray();
-        } catch (IOException e) {
-            throw new ContentProviderException("Exception while processing image data", e);
-        }
-    }
 
     @Override
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {

@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,14 +26,10 @@ import java.util.Map;
 public class TridionLocalizationResolver implements LocalizationResolver {
     private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationResolver.class);
 
-    private final Map<String, Localization> localizations = new HashMap<>();
-
-    private final LocalizationFactory localizationFactory;
+    private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<String, Localization>());
 
     @Autowired
-    public TridionLocalizationResolver(LocalizationFactory localizationFactory) {
-        this.localizationFactory = localizationFactory;
-    }
+    private LocalizationFactory localizationFactory;
 
     @Override
     public Localization getLocalization(String url) throws LocalizationResolverException {
@@ -52,10 +49,8 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
         final String key = Integer.toString(publicationMapping.getPublicationId());
 
-        synchronized (localizations) {
-            if (!localizations.containsKey(key)) {
-                localizations.put(key, createLocalization(publicationMapping));
-            }
+        if (!localizations.containsKey(key)) {
+            localizations.put(key, createLocalization(publicationMapping));
         }
 
         return localizations.get(key);
@@ -66,17 +61,16 @@ public class TridionLocalizationResolver implements LocalizationResolver {
         if (localization == null) {
             return false;
         }
-        synchronized (localizations) {
-            String localizationId = localization.getId();
-            if (localizations.remove(localizationId) != null) {
-                LOG.debug("Removed cached localization with id: {}", localizationId);
-                return true;
-            }
+        String localizationId = localization.getId();
+        if (localizations.remove(localizationId) != null) {
+            LOG.debug("Removed cached localization with id: {}", localizationId);
+            return true;
         }
         return false;
     }
 
     private PublicationMapping getPublicationMappingFromUrl(String url) {
+        // dynamicMappingsRetriever.getPublicationMapping(UriUtils.encodePath(url, "UTF-8"));
         return DynamicContent.getInstance().getMappingsResolver().getPublicationMappingFromUrl(url);
     }
 

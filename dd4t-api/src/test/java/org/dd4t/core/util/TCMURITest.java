@@ -55,7 +55,7 @@ public class TCMURITest {
     @Test public void
     throws_exception_when_uri_is_null() {
         try {
-            new TCMURI().load(null);
+            new TCMURI(null);
             fail("Exception expected");
         } catch (ParseException e) {
             assertThat(e.getMessage(), is("Invalid TCMURI String, string cannot be null"));
@@ -68,7 +68,7 @@ public class TCMURITest {
         final String uri = String.format("wrong:%s-%s-%s", PUBLICATION_ID, ITEM_ID, ITEM_TYPE);
 
         try {
-            new TCMURI().load(uri);
+            new TCMURI(uri);
             fail("Exception expected");
         } catch (ParseException e) {
             assertThat(e.getMessage(), is(String.format("URI string %s does not start with %s", uri, TCMURI.URI_NAMESPACE)));
@@ -80,7 +80,7 @@ public class TCMURITest {
         final String uri = String.format("tcm:%s#bad", PUBLICATION_ID);
 
         try {
-            new TCMURI().load(uri);
+            new TCMURI(uri);
             fail("Exception expected");
         } catch (ParseException e) {
             assertThat(e.getMessage(), is(String.format("URI %s does not match the pattern", uri)));
@@ -91,8 +91,7 @@ public class TCMURITest {
     build_when_url_only_mandatory_parameters_and_put_default() throws ParseException {
         final String uri = String.format("tcm:%s-%s", PUBLICATION_ID, ITEM_ID);
 
-        TCMURI tcmUri = new TCMURI();
-        tcmUri.load(uri);
+        TCMURI tcmUri = new TCMURI(uri);
 
         assertThat(tcmUri.getPublicationId(), is(PUBLICATION_ID));
         assertThat(tcmUri.getItemId(), is(ITEM_ID));
@@ -105,7 +104,7 @@ public class TCMURITest {
         final String uri = String.format("tcm:%s-%s-%s", "aString", ITEM_ID, ITEM_TYPE);
 
         try {
-            new TCMURI().load(uri);
+            new TCMURI(uri);
             fail("Exception expected");
         } catch (ParseException e) {
             assertThat(e.getMessage(), is(String.format("URI %s does not match the pattern", uri)));

@@ -49,7 +49,7 @@ public class TCMURI implements Serializable {
                 .version(version));
     }
 
-    public TCMURI(Builder builder) {
+    private TCMURI(Builder builder) {
         this.itemType = builder.itemType;
         this.itemId = builder.itemId;
         this.pubId = builder.pubId;

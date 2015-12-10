@@ -57,6 +57,9 @@
     <profiles>
         <profile>
             <id>cd-7.1.0</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <tridion-cd-version>7.1.0</tridion-cd-version>
                 <tridion-cwd-version>7.1.2</tridion-cwd-version>
@@ -281,9 +284,6 @@
         </profile>
         <profile>
             <id>cd-8.1.0</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <tridion-cd-version>8.1.0</tridion-cd-version>
                 <tridion-cwd-version>8.1.0</tridion-cwd-version>

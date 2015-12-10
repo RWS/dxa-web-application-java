@@ -52,6 +52,9 @@
     <profiles>
         <profile>
             <id>cd-7.1.0</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <!-- Tridion Content Delivery -->
                 <dependency>
@@ -182,9 +185,6 @@
         </profile>
         <profile>
             <id>cd-8.1.0</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <dependencies>
                 <!-- Tridion Content Delivery -->
                 <dependency>

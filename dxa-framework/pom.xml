@@ -48,6 +48,9 @@
     <modules>
         <module>dxa-common-api</module>
         <module>dxa-common-impl</module>
+        <module>dxa-tridion-provider/tridion-versions-resolver</module>
+        <module>dxa-tridion-provider/tridion-versions-resolver-web7</module>
+        <module>dxa-tridion-provider/tridion-versions-resolver-web8</module>
         <module>dxa-tridion-provider</module>
     </modules>
 

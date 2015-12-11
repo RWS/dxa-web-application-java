@@ -6,6 +6,7 @@ dd4t-2-java
  - Current stable archetype version: [1.4](http://search.maven.org/#artifactdetails%7Corg.dd4t%7Cdd4t-spring-mvc-archetype%7C1.4%7Cmaven-archetype)
 
 
+
 ##Prerequisites
 
 1. Download and install Maven: https://maven.apache.org/run-maven/index.html

@@ -55,6 +55,9 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
+            <properties>
+                <tridion.version.resolverClass>com.sdl.webapp.tridion.versions.Web7Resolver</tridion.version.resolverClass>
+            </properties>
             <dependencies>
                 <!-- Tridion Content Delivery -->
                 <dependency>
@@ -185,6 +188,9 @@
         </profile>
         <profile>
             <id>cd-8.1.0</id>
+            <properties>
+                <tridion.version.resolverClass>com.sdl.webapp.tridion.versions.Web8Resolver</tridion.version.resolverClass>
+            </properties>
             <dependencies>
                 <!-- Tridion Content Delivery -->
                 <dependency>
@@ -396,4 +402,16 @@
             </exclusions>
         </dependency>
     </dependencies>
+
+    <build>
+        <filters>
+            <filter>src/main/resources/META-INF/config.properties</filter>
+        </filters>
+        <resources>
+            <resource>
+                <filtering>true</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+    </build>
 </project>

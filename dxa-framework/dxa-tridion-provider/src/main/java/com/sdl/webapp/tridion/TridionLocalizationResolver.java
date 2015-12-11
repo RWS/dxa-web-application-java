@@ -6,7 +6,7 @@ import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.api.localization.LocalizationResolverException;
-import com.tridion.dynamiccontent.DynamicContent;
+import com.sdl.webapp.tridion.versions.TridionVersionsConflictResolver;
 import com.tridion.dynamiccontent.publication.PublicationMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +30,9 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
     @Autowired
     private LocalizationFactory localizationFactory;
+
+    @Autowired
+    private TridionVersionsConflictResolver versionsConflictResolver;
 
     @Override
     public Localization getLocalization(String url) throws LocalizationResolverException {
@@ -70,8 +73,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     }
 
     private PublicationMapping getPublicationMappingFromUrl(String url) {
-        // dynamicMappingsRetriever.getPublicationMapping(UriUtils.encodePath(url, "UTF-8"));
-        return DynamicContent.getInstance().getMappingsResolver().getPublicationMappingFromUrl(url);
+        return versionsConflictResolver.getPublicationMappingFromUrl(url);
     }
 
     private Localization createLocalization(PublicationMapping publicationMapping) throws LocalizationResolverException {

@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion.versions;
 
+import com.tridion.dynamiccontent.publication.PublicationMapping;
 import org.springframework.stereotype.Service;
 
 /**
@@ -8,4 +9,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class Web7Resolver implements TridionVersionsConflictResolver {
 
+    @Override
+    public PublicationMapping getPublicationMappingFromUrl(String url) {
+//        DynamicContent.getInstance().getMappingsResolver().getPublicationMappingFromUrl(url);
+        return null;
+    }
 }

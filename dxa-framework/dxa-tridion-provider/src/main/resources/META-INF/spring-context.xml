@@ -16,12 +16,6 @@
         <property name="contentIsCompressed" value="false"/>
     </bean>
 
-    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="locations" value="classpath:/META-INF/config.properties"/>
-    </bean>
-
-    <bean id="tridionConflictResolver" class="${tridion.version.resolverClass}"/>
-
     <!-- DD4T Cache Provider -->
     <bean id="cacheProvider" class="org.dd4t.core.providers.EHCacheProvider">
         <property name="checkForPreview" value="true"/>

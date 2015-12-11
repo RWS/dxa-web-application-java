@@ -128,6 +128,12 @@
             </properties>
             <dependencyManagement>
                 <dependencies>
+                    <dependency>
+                        <groupId>com.sdl.dxa</groupId>
+                        <artifactId>tridion-versions-resolver-web7</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+
                     <!-- Tridion Content Delivery (CD) -->
                     <dependency>
                         <groupId>com.tridion</groupId>
@@ -350,6 +356,12 @@
 
             <dependencyManagement>
                 <dependencies>
+                    <dependency>
+                        <groupId>com.sdl.dxa</groupId>
+                        <artifactId>tridion-versions-resolver-web8</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+
                     <!-- Tridion Content Delivery (CD) -->
                     <dependency>
                         <groupId>com.tridion</groupId>

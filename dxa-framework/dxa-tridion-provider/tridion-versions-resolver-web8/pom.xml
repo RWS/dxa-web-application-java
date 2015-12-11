@@ -6,13 +6,16 @@
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
         <version>1.3-SNAPSHOT</version>
+        <relativePath>../../../dxa-framework</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>tridion-versions-resolver-web8</artifactId>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Contains part of providers functionality in order to resolve differences in Web7/Web8 CD versions for Web8</description>
+    <description>Contains part of providers functionality in order to resolve differences in Web7/Web8 CD versions for
+        Web8
+    </description>
     <url>https://github.com/sdl/dxa-web-application-java</url>
 
     <scm>

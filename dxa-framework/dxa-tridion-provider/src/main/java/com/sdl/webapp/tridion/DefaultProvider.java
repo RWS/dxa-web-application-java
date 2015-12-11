@@ -1,6 +1,7 @@
 package com.sdl.webapp.tridion;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -26,7 +27,8 @@ import com.tridion.content.BinaryFactory;
 import com.tridion.data.BinaryData;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.BinaryMeta;
-import com.tridion.meta.PageMeta;
+import com.tridion.meta.ComponentMeta;
+import com.tridion.meta.ComponentMetaFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
@@ -67,6 +69,9 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
     private static final String NAVIGATION_MODEL_URL = "/navigation.json";
     private static final String TYPE_STRUCTURE_GROUP = "StructureGroup";
+
+    private static final Object LOCK = new Object();
+
     @Autowired
     private PageFactory dd4tPageFactory;
     @Autowired
@@ -85,6 +90,9 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
     @Autowired
     private BinaryFactory binaryFactory;
+
+    @Autowired
+    private WebRequestContext webRequestContext;
 
     private static <T> T findPage(String path, Localization localization, TryFindPage<T> callback)
             throws ContentProviderException {
@@ -277,11 +285,15 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     private String removeVersionNumber(String path) {
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
-    
-    
-    
-    
-    /* staticcontentprovider code */
+
+
+    private String prependFullUrlIfNeeded(String path) {
+        String baseUrl = webRequestContext.getBaseUrl();
+        if (path.contains(baseUrl)) {
+            return path;
+        }
+        return baseUrl + path;
+    }
 
     private StaticContentFile getStaticContentFile(String path, String localizationId)
             throws ContentProviderException {
@@ -293,20 +305,27 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
         final int publicationId = Integer.parseInt(localizationId);
         try {
-            //todo full path?
-            //todo sync?
-            final BinaryMeta binaryMeta = dynamicMetaRetriever.getBinaryMetaByURL(pathInfo.getFileName());
-            if (binaryMeta == null) {
-                throw new StaticContentNotFoundException("No binary meta found for: [" + publicationId + "] " +
-                        pathInfo.getFileName());
+            BinaryMeta binaryMeta;
+            ComponentMetaFactory factory = new ComponentMetaFactory(publicationId);
+            ComponentMeta componentMeta;
+            int itemId;
+            synchronized (LOCK) {
+                binaryMeta = dynamicMetaRetriever.getBinaryMetaByURL(prependFullUrlIfNeeded(pathInfo.getFileName()));
+                if (binaryMeta == null) {
+                    throw new StaticContentNotFoundException("No binary meta found for: [" + publicationId + "] " +
+                            pathInfo.getFileName());
+                }
+                itemId = (int) binaryMeta.getURI().getItemId();
+                componentMeta = factory.getMeta(itemId);
+                if (componentMeta == null) {
+                    throw new StaticContentNotFoundException("No meta meta found for: [" + publicationId + "] " +
+                            pathInfo.getFileName());
+                }
             }
-            //todo full path?
-            //todo sync?
-            final PageMeta pageMeta = dynamicMetaRetriever.getPageMetaByURL(pathInfo.getFileName());
 
             boolean refresh;
             if (file.exists()) {
-                refresh = file.lastModified() < pageMeta.getLastPublicationDate().getTime();
+                refresh = file.lastModified() < componentMeta.getLastPublicationDate().getTime();
             } else {
                 refresh = true;
                 if (!file.getParentFile().exists()) {
@@ -317,7 +336,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
             }
 
             if (refresh) {
-                BinaryData binaryData = binaryFactory.getBinary(pageMeta.getPublicationId(), pageMeta.getId(), binaryMeta.getVariantId());
+                BinaryData binaryData = binaryFactory.getBinary(publicationId, itemId, binaryMeta.getVariantId());
 
                 byte[] content = binaryData.getBytes();
                 if (pathInfo.isImage() && pathInfo.isResized()) {
@@ -353,7 +372,6 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 //                StorageTypeMapping.BINARY_CONTENT);
 //        return dao.findByPrimaryKey(publicationId, itemId, variantId);
 //    }
-
 
 
     @Override

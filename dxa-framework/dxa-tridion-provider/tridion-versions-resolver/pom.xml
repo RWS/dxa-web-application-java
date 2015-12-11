@@ -6,6 +6,7 @@
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
         <version>1.3-SNAPSHOT</version>
+        <relativePath>../../../dxa-framework</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 

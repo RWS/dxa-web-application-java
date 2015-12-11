@@ -11,6 +11,9 @@
     <context:component-scan base-package="com.sdl.webapp.tridion"/>
     <import resource="classpath:com/sdl/context/engine/repository/beans-sdl-context-engine.xml"/>
 
+    <bean id="binaryFactory" class="com.tridion.content.BinaryFactory"/>
+    <bean id="dynamicMetaRetriever" class="com.tridion.dynamiccontent.DynamicMetaRetriever"/>
+
     <!--<context:component-scan base-package="com.sdl"/>-->
     <bean id="linkProvider" class="org.dd4t.providers.impl.BrokerLinkProvider">
         <property name="contentIsCompressed" value="false"/>

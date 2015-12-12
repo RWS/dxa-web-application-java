@@ -16,7 +16,6 @@
 
 package org.dd4t.providers.rs;
 
-import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.providers.ComponentPresentationProvider;
@@ -113,7 +112,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @throws org.dd4t.core.exceptions.ItemNotFoundException  if the requested DCP does not exist
 	 * @throws org.dd4t.core.exceptions.SerializationException if something went wrong during deserialization
 	 */
-	@Override public ComponentPresentation getDynamicComponentPresentation (final int componentId, final int publicationId) throws ItemNotFoundException, SerializationException {
+	@Override public String getDynamicComponentPresentation (final int componentId, final int publicationId) throws ItemNotFoundException, SerializationException {
 		return null;
 	}
 
@@ -127,7 +126,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @throws org.dd4t.core.exceptions.ItemNotFoundException  if the requested DCP does not exist
 	 * @throws org.dd4t.core.exceptions.SerializationException if something went wrong during deserialization
 	 */
-	@Override public ComponentPresentation getDynamicComponentPresentation (final int componentId, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
+	@Override public String getDynamicComponentPresentation (final int componentId, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
 		return null;
 	}
 
@@ -142,7 +141,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @throws org.dd4t.core.exceptions.ItemNotFoundException
 	 * @throws org.dd4t.core.exceptions.SerializationException
 	 */
-	@Override public List<ComponentPresentation> getDynamicComponentPresentations (final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
+	@Override public List<String> getDynamicComponentPresentations (final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
 		return new ArrayList<>();
 	}
 }

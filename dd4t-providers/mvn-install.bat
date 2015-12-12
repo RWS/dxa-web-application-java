@@ -35,7 +35,7 @@ call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cwd_resource
 
 echo Installing third-party libraries into the local Maven repository...
 call mvn -q install:install-file -DgroupId=com.vs.ezlicrun -DartifactId=easylicense -Dversion=2.5 -Dpackaging=jar -Dfile=easylicense-2.5.jar
-call mvn -q install:install-file -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0.0 -Dpackaging=jar -Dfile=sqljdbc4-4.0.jar
+call mvn -q install:install-file -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0.0 -Dpackaging=jar -Dfile=sqljdbc4-4.0.0.jar
 
 echo Finished
 pause

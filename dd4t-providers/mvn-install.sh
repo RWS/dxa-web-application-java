@@ -44,4 +44,7 @@ echo "Installing third-party libraries into the local Maven repository..."
 mvn install:install-file -DgroupId=com.vs.ezlicrun -DartifactId=easylicense -Dversion=2.5 -Dpackaging=jar -Dfile=easylicense-2.5.jar
 mvn install:install-file -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0.0 -Dpackaging=jar -Dfile=sqljdbc4-4.0.0.jar
 
+# Required for the dd4t-1.31 example site
+# TODO: the proper groupid should com.bitmechanic
+mvn install:install-file -DgroupId=jdbcpool -DartifactId=jdbcpool -Dversion=1.0 -Dpackaging=jar -Dfile=jdbcpool-1.0.jar
 echo "Done"

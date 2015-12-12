@@ -1,6 +1,4 @@
 REM see DD4T dependency naming on https://github.com/dd4t/dd4t-2-java/blob/develop/README.md
-REM TODO remove dependencies not ued by DD4T 2.0
-REM DD4T README has different easylicense artifactId then dd4t-sample site
 
 @echo off
 rem Install Tridion Content Delivery libraries and necessary third-party libraries in the local Maven repository
@@ -36,6 +34,10 @@ call mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cwd_resource
 echo Installing third-party libraries into the local Maven repository...
 call mvn -q install:install-file -DgroupId=com.vs.ezlicrun -DartifactId=easylicense -Dversion=2.5 -Dpackaging=jar -Dfile=easylicense-2.5.jar
 call mvn -q install:install-file -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0.0 -Dpackaging=jar -Dfile=sqljdbc4-4.0.0.jar
+
+REM Required for the dd4t-1.31 example site
+REM TODO: the proper groupid should com.bitmechanic
+call mvn -q install:install-file -DgroupId=jdbcpool -DartifactId=jdbcpool -Dversion=1.0 -Dpackaging=jar -Dfile=jdbcpool-1.0.jar
 
 echo Finished
 pause

@@ -30,6 +30,7 @@ mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_preview_web   
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_preview_webservice  -Dversion=$TRIDION_VERSION -Dpackaging=jar -Dfile=cd_preview_webservice-$TRIDION_VERSION.jar
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_preview_ambient     -Dversion=$TRIDION_VERSION -Dpackaging=jar -Dfile=cd_preview_ambient-$TRIDION_VERSION.jar
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_tcdl                -Dversion=$TRIDION_VERSION -Dpackaging=jar -Dfile=cd_tcdl-$TRIDION_VERSION.jar
+mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_wai                -Dversion=$TRIDION_VERSION -Dpackaging=jar -Dfile=cd_wai-$TRIDION_VERSION.jar
 
 echo "Installing Tridion Contextual Web Delivery libraries into the local Maven repository..."
 mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cwd_cartridge      -Dversion=$TRIDION_CWD_VERSION -Dpackaging=jar -Dfile=cwd_cartridge-$TRIDION_CWD_VERSION.jar

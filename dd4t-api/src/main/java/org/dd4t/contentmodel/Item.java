@@ -23,35 +23,35 @@ import java.util.Map;
  *
  * @author Quirijn Slings
  */
-public interface Item extends Model {
+public interface Item {
 
     /**
      * Get the tridion id.
      *
      * @return the tridion id i.e. tcm:1-1-32
      */
-    public String getId();
+    String getId();
 
     /**
      * Set the id
      *
      * @param id
      */
-    public void setId(String id);
+    void setId(String id);
 
     /**
      * Get the title
      *
      * @return
      */
-    public String getTitle();
+    String getTitle();
 
     /**
      * Set the title
      *
      * @param title
      */
-    public void setTitle(String title);
+    void setTitle(String title);
 
     /**
      * Add a custom property
@@ -59,7 +59,7 @@ public interface Item extends Model {
      * @param key
      * @param value
      */
-    public void addCustomProperty(String key, Object value);
+    void addCustomProperty(String key, Object value);
 
     /**
      * Get a custom property
@@ -67,19 +67,23 @@ public interface Item extends Model {
      * @param key
      * @return the property object
      */
-    public Object getCustomProperty(String key);
+    Object getCustomProperty(String key);
 
     /**
      * Get the Map of custom properties
      *
      * @return the map of custom properties
      */
-    public Map<String, Object> getCustomProperties();
+    Map<String, Object> getCustomProperties();
 
     /**
      * Set the map of custom properties
      *
      * @param customProperties
      */
-    public void setCustomProperties(Map<String, Object> customProperties);
+    void setCustomProperties(Map<String, Object> customProperties);
+
+    Map<String, FieldSet> getExtensionData();
+
+    void setExtensionData(Map<String, FieldSet> extensionData);
 }

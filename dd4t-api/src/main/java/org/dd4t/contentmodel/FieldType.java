@@ -46,6 +46,7 @@ public enum FieldType {
         try {
             return FieldType.valueOf(name.toUpperCase());
         } catch (IllegalArgumentException iae) {
+            LOG.error(iae.getLocalizedMessage(),iae);
             try {
                 int value = Integer.parseInt(name);
                 return findByValue(value);

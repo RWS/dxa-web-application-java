@@ -39,7 +39,11 @@ import java.util.zip.GZIPOutputStream;
  */
 public class CompressionUtils {
 
-    private final static Logger LOG = LoggerFactory.getLogger(CompressionUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CompressionUtils.class);
+
+    private CompressionUtils() {
+
+    }
 
     /**
      * Compresses a given object to a GZipped byte array.
@@ -148,7 +152,7 @@ public class CompressionUtils {
             bais = new ByteArrayInputStream(bytes);
             gis = new GZIPInputStream(bais);
 
-            result = (String) IOUtils.toString(gis);
+            result = IOUtils.toString(gis);
         } catch (IOException ioe) {
             LOG.error("Decompression failed.", ioe);
             throw new SerializationException("Failed to decompress byte array", ioe);
@@ -199,7 +203,7 @@ public class CompressionUtils {
         try {
             result = message.getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
-            LOG.warn("Unsupported Encoding Exception: " + uee.getMessage());
+            LOG.error(uee.getLocalizedMessage(),uee);
             result = message.getBytes();
         }
         return result;

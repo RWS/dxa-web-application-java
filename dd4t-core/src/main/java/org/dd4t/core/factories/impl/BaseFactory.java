@@ -38,7 +38,7 @@ import java.util.List;
 public abstract class BaseFactory {
 	private static final Logger LOG = LoggerFactory.getLogger(BaseFactory.class);
     protected PayloadCacheProvider cacheProvider;
-    private List<Processor> processors;
+    protected List<Processor> processors;
 	private Class requestContextClass;
 
     public List<Processor> getProcessors () {

@@ -109,7 +109,7 @@ public abstract class AbstractPageController {
 			return getPageViewName(pageModel);
 
 		} catch (ItemNotFoundException e) {
-
+			LOG.trace(e.getLocalizedMessage(),e);
 			LOG.warn("Page with url '{}' could not be found.", url);
 			response.sendError(HttpServletResponse.SC_NOT_FOUND);
 		} catch (FactoryException e) {
@@ -125,16 +125,13 @@ public abstract class AbstractPageController {
 		return null;
 	}
 
-	private String getDefaultPublicationUrl() {
-		return propertiesService.getProperty(Constants.DEFAULT_PUBLICATION_URL_CONFIGURATION_KEY);
-	}
+	private String adjustLocalErrorUrl(final HttpServletRequest request, final String url) {
 
-
-	private String adjustLocalErrorUrl(HttpServletRequest request, String url) {
+		String adjustedUrl = url;
 		if (request.getDispatcherType() == DispatcherType.ERROR) {
-			url = publicationResolver.getLocalPageUrl(url);
+			adjustedUrl = publicationResolver.getLocalPageUrl(url);
 		}
-		return url;
+		return adjustedUrl;
 	}
 
 
@@ -192,7 +189,7 @@ public abstract class AbstractPageController {
 	 * Create Date format for last-modified headers. Note that a constant
 	 * SimpleDateFormat is not allowed, it's access should be sync-ed.
 	 */
-	private DateFormat createDateFormat() {
+	private static DateFormat createDateFormat() {
 		final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
 		dateFormat.setTimeZone(GMT);
 		return dateFormat;

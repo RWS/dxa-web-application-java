@@ -70,24 +70,24 @@ public enum JAXRSClient {
 
 	// TODO: wire up in remote scenario
 	@Resource
-	private PropertiesService propertiesService;
+	private transient PropertiesService propertiesService;
 
-	private WebTarget binaryWrapperByIdTarget;
-	private WebTarget binaryWrapperByURLTarget;
-	private WebTarget componentByIdTarget;
-	private WebTarget discoverPublicationByPublicationURLTarget;
-	private WebTarget discoverPublicationByImagesURLTarget;
-	private WebTarget pageCheckExists;
-	private WebTarget pageContentByIdTarget;
-	private WebTarget pageContentByURLTarget;
-	private WebTarget pageListByPublicationTarget;
-	private WebTarget resolveComponentFromPageTarget;
-	private WebTarget resolveComponentTarget;
-	private WebTarget taxonomyBySchemaTarget;
-	private WebTarget taxonomyByURITarget;
-	private WebTarget queryComponentByCustomMeta;
-	private WebTarget queryComponentBySchema;
-	private WebTarget queryComponentsBySchemaInKeyword;
+	private transient WebTarget binaryWrapperByIdTarget;
+	private transient WebTarget binaryWrapperByURLTarget;
+	private transient WebTarget componentByIdTarget;
+	private transient WebTarget discoverPublicationByPublicationURLTarget;
+	private transient WebTarget discoverPublicationByImagesURLTarget;
+	private transient WebTarget pageCheckExists;
+	private transient WebTarget pageContentByIdTarget;
+	private transient WebTarget pageContentByURLTarget;
+	private transient WebTarget pageListByPublicationTarget;
+	private transient WebTarget resolveComponentFromPageTarget;
+	private transient WebTarget resolveComponentTarget;
+	private transient WebTarget taxonomyBySchemaTarget;
+	private transient WebTarget taxonomyByURITarget;
+	private transient WebTarget queryComponentByCustomMeta;
+	private transient WebTarget queryComponentBySchema;
+	private transient WebTarget queryComponentsBySchemaInKeyword;
 
 
 	/**

@@ -60,9 +60,10 @@ public class SmartIncludeTag extends TagSupport {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SmartIncludeTag.class);
 	private String page;
-	private PublicationResolverFactory publicationResolverFactory = PublicationResolverFactoryImpl.getInstance();
-	private PublicationResolver publicationResolver = publicationResolverFactory.getPublicationResolver();
+	private transient PublicationResolverFactory publicationResolverFactory = PublicationResolverFactoryImpl.getInstance();
+	private transient PublicationResolver publicationResolver = publicationResolverFactory.getPublicationResolver();
 
+	@Override
 	public int doStartTag () throws JspException {
 		final HttpServletRequest currentRequest = (HttpServletRequest) pageContext.getRequest();
 

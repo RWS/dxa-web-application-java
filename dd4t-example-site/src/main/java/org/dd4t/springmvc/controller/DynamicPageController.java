@@ -145,8 +145,8 @@ public class DynamicPageController extends BaseDD4TController {
         
         long navmodeldone = System.currentTimeMillis();
         
-        if(logger.isDebugEnabled()){
-            logger.debug("Built navigationmodel: " + navigationModel+" in "+(navmodeldone-contentmodeldone)+" milliseconds.");
+        if(LOGGER.isDebugEnabled()){
+            LOGGER.debug("Built navigationmodel: " + navigationModel+" in "+(navmodeldone-contentmodeldone)+" milliseconds.");
         }  
         request.setAttribute(Constants.NAVIGATION_MODEL_KEY, navigationModel);  
           */

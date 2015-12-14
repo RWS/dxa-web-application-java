@@ -16,6 +16,9 @@
 
 package org.dd4t.core.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.regex.Matcher;
@@ -76,6 +79,7 @@ public class TCMURI implements Serializable {
         return (int) l;
     }
 
+    @Override
     public String toString() {
         return URI_NAMESPACE + this.pubId
                 + SEPARATOR + this.itemId
@@ -101,6 +105,7 @@ public class TCMURI implements Serializable {
     public static class Builder {
         private static final Pattern PATTERN = Pattern.compile(
                 "^tcm:(?<pubId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?(-v(?<version>\\d+))?$");
+        private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
 
         private int pubId;
         private int itemId;
@@ -128,6 +133,7 @@ public class TCMURI implements Serializable {
                 validatePatternOf(uri);
                 extractItemsFrom(uri);
             } catch (IllegalArgumentException iae) {
+                LOG.trace(iae.getLocalizedMessage(),iae);
                 throw new ParseException(iae.getMessage(), 0);
             }
         }
@@ -142,7 +148,7 @@ public class TCMURI implements Serializable {
             return this;
         }
 
-        private void validatePatternOf(String uri) {
+        private static void validatePatternOf(String uri) {
             if (uri == null) {
                 throw new IllegalArgumentException("Invalid TCMURI String, string cannot be null");
             }

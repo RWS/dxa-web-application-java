@@ -50,7 +50,7 @@ import java.util.List;
  *
  */
 public class ImageFilter implements Filter {
-	public static Logger logger = LoggerFactory.getLogger(ImageFilter.class);
+	public static final Logger LOGGER = LoggerFactory.getLogger(ImageFilter.class);
 	
 	private ServletContext context;
 
@@ -69,15 +69,15 @@ public class ImageFilter implements Filter {
 			url = url.replace(hreq.getContextPath(), "");
 			// detect if request is binary
 			if(!url.endsWith(".html")){
-	        	if(logger.isDebugEnabled())
-		        	logger.debug("Examening image url: "+url);
+	        	if(LOGGER.isDebugEnabled())
+		        	LOGGER.debug("Examening image url: "+url);
 	        	
 				// check if we can find the said binary
 	        	BinaryVariantDAO metaDao = (BinaryVariantDAO) StorageManagerFactory.getDAO(200, StorageTypeMapping.BINARY_VARIANT);
 	        	List<BinaryVariant> potentials = metaDao.findByURL(url);
 	        	
-	        	if(logger.isDebugEnabled()){
-		        	logger.debug("Got potentials: "+potentials);
+	        	if(LOGGER.isDebugEnabled()){
+		        	LOGGER.debug("Got potentials: "+potentials);
 	        	}
 	        	
 	        	// no binary, no action
@@ -95,23 +95,23 @@ public class ImageFilter implements Filter {
 	        	// first, replace url spaces with normal ones
 				url = url.replace("%20", " ");
 				
-				if(logger.isDebugEnabled()){
-					logger.debug("Trying to check file on url "+url+" with context "+context);
+				if(LOGGER.isDebugEnabled()){
+					LOGGER.debug("Trying to check file on url "+url+" with context "+context);
 				}
 				
 				// check if item is on filesystem
 		        File file = new File(context.getRealPath(url));
 	
-		        if(logger.isDebugEnabled())
-		        	logger.debug("Got file which exists "+file.exists()+" at path "+file.getAbsolutePath());
+		        if(LOGGER.isDebugEnabled())
+		        	LOGGER.debug("Got file which exists "+file.exists()+" at path "+file.getAbsolutePath());
 
 		        // refresh the file it's not there
 		        boolean refresh = !file.exists();
 		        
 		        // alternatively, if if is, check if the modified is ok
 		        if(file.exists()){
-		        	if(logger.isDebugEnabled()){
-		        		logger.debug("Existing file has timestamp of "+file.lastModified()+" versus broker timestamp "+item.getLastPublishDate().getTime());
+		        	if(LOGGER.isDebugEnabled()){
+		        		LOGGER.debug("Existing file has timestamp of "+file.lastModified()+" versus broker timestamp "+item.getLastPublishDate().getTime());
 		        	}
 		        	
 		        	if(file.lastModified() < item.getLastPublishDate().getTime()){
@@ -131,8 +131,8 @@ public class ImageFilter implements Filter {
 		        	file.createNewFile();
 		        }
 		        		
-		        if(logger.isDebugEnabled())
-		        	logger.debug("Will refresh image: "+refresh);
+		        if(LOGGER.isDebugEnabled())
+		        	LOGGER.debug("Will refresh image: "+refresh);
 		        
 		        // if refresh, stream item from broker onto filesystem so the appserver can server it
 		        if(refresh){	        	
@@ -149,7 +149,7 @@ public class ImageFilter implements Filter {
 			}
 		}
 		catch(Exception ex){
-			logger.error("Unable to process filter", ex);
+			LOGGER.error("Unable to process filter", ex);
 		}
 		
 		chain.doFilter(req, res);

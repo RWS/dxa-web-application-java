@@ -34,8 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GenericComponentFactory extends BaseFactory implements ComponentFactory {
 
-	private static Logger logger = LoggerFactory
-			.getLogger(GenericComponentFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GenericComponentFactory.class);
 
 	@Override
 	public void setCacheProvider(PayloadCacheProvider cacheAgent) {
@@ -49,9 +48,7 @@ public class GenericComponentFactory extends BaseFactory implements ComponentFac
 		try {
 			cp = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(uri, null);
 		} catch (FactoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
+			LOG.error(e.getLocalizedMessage(),e);
 			return null;
 		}
 		
@@ -73,9 +70,7 @@ public class GenericComponentFactory extends BaseFactory implements ComponentFac
 		try {
 			cp = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(componentUri, componentTemplateUri);
 		} catch (FactoryException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			
+			LOG.error(e.getLocalizedMessage(),e);
 			return null;
 		}
 		

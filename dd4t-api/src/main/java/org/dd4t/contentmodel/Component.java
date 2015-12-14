@@ -17,6 +17,8 @@
 package org.dd4t.contentmodel;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -33,84 +35,87 @@ public interface Component extends RepositoryLocalItem {
 	 *
 	 * @return the schema
 	 */
-	public Schema getSchema ();
+	@Override
+	Schema getSchema ();
 
 	/**
 	 * Set the schema of the component
 	 *
 	 * @param schema
 	 */
-	public void setSchema (Schema schema);
+	void setSchema (Schema schema);
 
 	/**
 	 * Get the last published date
 	 *
 	 * @return the last published date
 	 */
-	public DateTime getLastPublishedDate ();
+	@Override
+	DateTime getLastPublishedDate ();
 
 	/**
 	 * Set the last published date
 	 *
 	 * @param date published date
 	 */
-	public void setLastPublishedDate (DateTime date);
+	@Override
+	void setLastPublishedDate (DateTime date);
 
 	/**
 	 * Get the metadata
 	 *
 	 * @return a map of field objects representing the metadata
 	 */
-	public Map<String, Field> getMetadata ();
+	Map<String, Field> getMetadata ();
 
 	/**
 	 * Set the metadata
 	 */
-	public void setMetadata (Map<String, Field> metadata);
+	void setMetadata (Map<String, Field> metadata);
 
 	/**
 	 * Get the content
 	 *
 	 * @return a map of field objects representing the content
 	 */
-	public Map<String, Field> getContent ();
+	Map<String, Field> getContent ();
 
 	/**
 	 * Set the content
 	 */
-	public void setContent (Map<String, Field> content);
+	void setContent (Map<String, Field> content);
 
 	/**
 	 * Get the component type
 	 *
 	 * @return the component type
 	 */
-	public ComponentType getComponentType ();
+	ComponentType getComponentType ();
 
 	/**
 	 * Set the component type
 	 *
 	 * @param componentType
 	 */
-	public void setComponentType (ComponentType componentType);
+	void setComponentType (ComponentType componentType);
 
 	/**
 	 * Get the multimedia object
 	 *
 	 * @return the multimedia object
 	 */
-	public Multimedia getMultimedia ();
+	Multimedia getMultimedia ();
 
 	/**
 	 * Set the multimedia object
 	 */
-	public void setMultimedia (Multimedia multimedia);
+	void setMultimedia (Multimedia multimedia);
 
-	public List<Category> getCategories ();
+	List<Category> getCategories ();
 
-	public void setCategories (List<Category> categories);
+	void setCategories (List<Category> categories);
 
-	public int getVersion ();
+	int getVersion ();
 
 	DateTime getRevisionDate ();
 
@@ -118,9 +123,10 @@ public interface Component extends RepositoryLocalItem {
 
 	String getEclId();
 
-	public enum ComponentType {
+	enum ComponentType {
 		Multimedia(0), Normal(1), UNKNOWN(-1);
 		private final int value;
+		private static final Logger LOG = LoggerFactory.getLogger(ComponentType.class);
 
 		ComponentType (int value) {
 			this.value = value;
@@ -144,6 +150,7 @@ public interface Component extends RepositoryLocalItem {
 					int value = Integer.parseInt(name);
 					return findByValue(value);
 				} catch (NumberFormatException nfe) {
+					LOG.error(nfe.getLocalizedMessage(),nfe);
 					return UNKNOWN;
 				}
 			}

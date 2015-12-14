@@ -16,12 +16,17 @@
 
 package org.dd4t.contentmodel;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public enum FieldType {
 
     TEXT(0), MULTILINETEXT(1), XHTML(2), KEYWORD(3), EMBEDDED(4), MULTIMEDIALINK(5),
     COMPONENTLINK(6), EXTERNALLINK(7), NUMBER(8), DATE(9), UNKNOWN(-1);
 
+    private static final Logger LOG = LoggerFactory.getLogger(FieldType.class);
     private final int value;
+
 
     FieldType(int value) {
         this.value = value;
@@ -45,6 +50,7 @@ public enum FieldType {
                 int value = Integer.parseInt(name);
                 return findByValue(value);
             } catch (NumberFormatException nfe) {
+                LOG.error(nfe.getLocalizedMessage(),nfe);
                 return UNKNOWN;
             }
         }

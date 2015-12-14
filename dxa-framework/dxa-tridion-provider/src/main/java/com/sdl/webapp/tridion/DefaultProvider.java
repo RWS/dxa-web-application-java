@@ -251,7 +251,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     public StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
             throws ContentProviderException {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("getStaticContent: {} [{}] {}", new Object[]{path, localizationId, localizationPath});
+            LOG.trace("getStaticContent: {} [{}] {}", path, localizationId, localizationPath);
         }
 
         final String contentPath;
@@ -355,24 +355,6 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                     + path, e);
         }
     }
-
-//    private synchronized BinaryVariant findBinaryVariant(int publicationId, String path) throws StorageException {
-//        final BinaryVariantDAO dao = (BinaryVariantDAO) StorageManagerFactory.getDAO(publicationId,
-//                StorageTypeMapping.BINARY_VARIANT);
-//        return dao.findByURL(publicationId, path);
-//    }
-//
-//    private synchronized ItemMeta findItemMeta(int publicationId, int itemId) throws StorageException {
-//        final ItemDAO dao = (ItemDAO) StorageManagerFactory.getDAO(publicationId, StorageTypeMapping.ITEM_META);
-//        return dao.findByPrimaryKey(publicationId, itemId);
-//    }
-//
-//    private synchronized BinaryContent findBinaryContent(int publicationId, int itemId, String variantId) throws StorageException {
-//        final BinaryContentDAO dao = (BinaryContentDAO) StorageManagerFactory.getDAO(publicationId,
-//                StorageTypeMapping.BINARY_CONTENT);
-//        return dao.findByPrimaryKey(publicationId, itemId, variantId);
-//    }
-
 
     @Override
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {

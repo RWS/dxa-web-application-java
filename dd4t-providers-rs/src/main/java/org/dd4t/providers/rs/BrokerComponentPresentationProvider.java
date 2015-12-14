@@ -82,7 +82,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 		String component = String.valueOf(componentId);
 
 		try {
-			Invocation.Builder builder = JAXRSClient.INSTANCE.getComponentByIdTarget().
+			Invocation.Builder builder = client.getComponentByIdTarget().
 					path(publication).path(template).path(component).request(MediaType.TEXT_PLAIN);
 			builder = getSessionPreviewBuilder(builder);
 

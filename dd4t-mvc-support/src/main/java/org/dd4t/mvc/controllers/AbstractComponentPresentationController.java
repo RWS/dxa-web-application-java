@@ -35,20 +35,24 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
+
 /**
  * dd4t-2
- *
+ * <p/>
  * Extend this class in your own web project for default functionality.
- *
- * Do NOT add stuff here, as this will in the near future be loaded through maven only!
- *
+ * <p/>
+ * Do not add stuff here, as this will be loaded as library only.
+ * <p/>
+ * Important Note: concrete implementing classes will need to add the
+ * {@literal @RequestMapping} annotations!
  */
 @Controller
 public class AbstractComponentPresentationController {
 
 	private static final Logger LOG = LoggerFactory.getLogger(AbstractComponentPresentationController.class);
 
-	@Autowired private ComponentPresentationFactoryImpl componentPresentationFactory;
+	@Autowired
+	private ComponentPresentationFactoryImpl componentPresentationFactory;
 
 	private String componentViewPath = "";
 
@@ -61,7 +65,7 @@ public class AbstractComponentPresentationController {
 	 * @param request           the request on which the component must be present
 	 * @return the view name to render
 	 */
-	@RequestMapping(value = {"/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD}) public String showComponentPresentation (@PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
+	public String showComponentPresentation (@PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
 		return showComponentPresentation(null, componentViewName, componentId, request);
 	}
 
@@ -75,7 +79,7 @@ public class AbstractComponentPresentationController {
 	 * @param request             the request on which the component must be present
 	 * @return the view name to render
 	 */
-	@RequestMapping(value = {"/{componentViewPrefix}/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD})
+	@RequestMapping (value = {"/{componentViewPrefix}/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
 		LOG.debug(">> {} component with viewPrefix: {}, viewName: {} and componentId: {}", new Object[]{request.getMethod(), componentViewPrefix, componentViewName, componentId});
 
@@ -104,8 +108,8 @@ public class AbstractComponentPresentationController {
 			throw new ResourceNotFoundException();
 		}
 
-		RenderUtils.setDynamicComponentOnRequest(request,componentPresentation.getComponent());
-		RenderUtils.setViewModelsOnRequest(request,componentPresentation);
+		RenderUtils.setDynamicComponentOnRequest(request, componentPresentation.getComponent());
+		RenderUtils.setViewModelsOnRequest(request, componentPresentation);
 
 		LOG.debug("Rendering component presentation with template '{}' and component id '{}'", componentViewName, componentId);
 
@@ -134,6 +138,7 @@ public class AbstractComponentPresentationController {
 		this.componentViewPath = componentViewPath;
 	}
 
-	@ResponseStatus(value = HttpStatus.NOT_FOUND) public static class ResourceNotFoundException extends RuntimeException {
+	@ResponseStatus (value = HttpStatus.NOT_FOUND)
+	public static class ResourceNotFoundException extends RuntimeException {
 	}
 }

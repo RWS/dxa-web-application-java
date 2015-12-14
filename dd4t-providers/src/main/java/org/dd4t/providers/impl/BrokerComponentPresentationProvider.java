@@ -37,6 +37,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,7 +47,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * Provides access to Dynamic Component Presentations stored in the Content Delivery database. It uses CD API to retrieve
  * raw DCP content from the database. Access to these objects is not cached, and as such must be cached externally.
- * TODO: we shouldn't throw exceptions if a DCP is not found?
  */
 public class BrokerComponentPresentationProvider extends BaseBrokerProvider implements ComponentPresentationProvider {
 
@@ -70,7 +70,8 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @return String representing the content of the DCP
 	 * @throws ItemNotFoundException if the requested DCP cannot be found
 	 */
-	@Override public org.dd4t.contentmodel.ComponentPresentation getDynamicComponentPresentation (int componentId, int publicationId) throws ItemNotFoundException, SerializationException {
+	@Override
+	public String getDynamicComponentPresentation (int componentId, int publicationId) throws ItemNotFoundException, SerializationException {
 		return getDynamicComponentPresentation(componentId, 0, publicationId);
 	}
 
@@ -83,9 +84,10 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @return String representing the content of the DCP
 	 * @throws ItemNotFoundException if the requested DCP cannot be found
 	 */
-	@Override public org.dd4t.contentmodel.ComponentPresentation getDynamicComponentPresentation (int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
+	@Override
+	public String getDynamicComponentPresentation (int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
 		ComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);
-		int actualTemplateId = templateId;
+
 		if (factory == null) {
 			factory = new ComponentPresentationFactory(publicationId);
 			FACTORY_CACHE.put(publicationId, factory);
@@ -108,20 +110,18 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 				LOG.info(String.format(ERROR_MESSAGE, componentId, templateId, publicationId));
 				throw new ItemNotFoundException(String.format(ERROR_MESSAGE, componentId, templateId, publicationId));
 			}
-			actualTemplateId = result.getComponentTemplateId();
+
 			resultString = result.getContent();
 		}
 
 		if (!StringUtils.isEmpty(resultString)) {
-			return constructComponentPresentation(decodeAndDecompressContent(resultString), publicationId, componentId, actualTemplateId, result);
+			return decodeAndDecompressContent(resultString);
 		}
 		return null;
 	}
 
 	/**
 	 * Convenience method to obtain a list of component presentations for the same template id.
-	 * <p/>
-	 * TODO
 	 *
 	 * @param itemUris      array of found Component TCM IDs
 	 * @param templateId    the CT Id to fetch DCPs on
@@ -130,10 +130,23 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	 * @throws org.dd4t.core.exceptions.ItemNotFoundException
 	 * @throws org.dd4t.core.exceptions.SerializationException
 	 */
-	@Override public List<org.dd4t.contentmodel.ComponentPresentation> getDynamicComponentPresentations (final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
-		return new ArrayList<>();
+	@Override
+	public List<String> getDynamicComponentPresentations (final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
+		List<String> componentPresentations = new ArrayList<>();
+
+		for (String itemUri : itemUris) {
+			try {
+				org.dd4t.core.util.TCMURI uri = new org.dd4t.core.util.TCMURI(itemUri);
+				componentPresentations.add(getDynamicComponentPresentation(uri.getItemId(), templateId, publicationId));
+			} catch (ParseException e) {
+				throw new SerializationException(e);
+			}
+		}
+		return componentPresentations;
 	}
 
+	// TODO Remove after testing
+	@Deprecated
 	private org.dd4t.contentmodel.ComponentPresentation constructComponentPresentation (String componentSource, int publicationId, int componentId, int componentTemplateId, ComponentPresentation componentPresentation) {
 		try {
 
@@ -178,6 +191,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 	}
 
 	// TODO: move away from this.
+
 	/**
 	 * Utility method to fix a constant value (probably a CMS-able value from
 	 * Tridion), so it can be used inside a URL: lower case and all spaces and
@@ -189,12 +203,13 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 		}
 		return value.replaceAll("[^a-zA-Z0-9]", "_").replaceAll("([_]+)", "_").toLowerCase();
 	}
-
+// TODO Remove after testing
 
 	public void setConcreteComponentPresentation (final Class<? extends org.dd4t.contentmodel.ComponentPresentation> concreteComponentPresentation) {
 		this.concreteComponentPresentation = concreteComponentPresentation;
 	}
 
+	// TODO Remove after testing
 	public void setConcreteComponentTemplateImpl (final Class<? extends ComponentTemplate> concreteComponentTemplateImpl) {
 		this.concreteComponentTemplateImpl = concreteComponentTemplateImpl;
 	}

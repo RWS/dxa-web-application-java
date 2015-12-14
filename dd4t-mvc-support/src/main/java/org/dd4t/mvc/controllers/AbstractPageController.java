@@ -48,7 +48,7 @@ import java.util.TimeZone;
  *
  * Extend this class in your own web project for default functionality.
  *
- * Do NOT add stuff here, as this will in the near future be loaded through maven only!
+ * Do NOT add stuff here, as this will in the near future be loaded as library through maven only.
  *
  * @author R. Kempees
  */
@@ -78,7 +78,11 @@ public abstract class AbstractPageController {
 	 * All page requests are handled by this method. The page meta XML is
 	 * queried based on the request URI, the page meta XML contains the actual
 	 * view name to be rendered.
+	 *
+	 * Important Note: concrete implementing classes will need to add the
+	 * {@literal @RequestMapping} annotations!
 	 */
+
 	public String showPage(Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
 		final String urlToFetch = HttpUtils.appendDefaultPageIfRequired(HttpUtils.getCurrentURL(request));
 		String url = adjustLocalErrorUrl(request, urlToFetch);

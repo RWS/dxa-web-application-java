@@ -93,10 +93,12 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 		if (cacheElement.isExpired()) {
 			synchronized (cacheElement) {
 				if (cacheElement.isExpired()) {
-					cacheElement.setExpired(false);
-					componentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
 
-					if (componentPresentation == null) {
+					cacheElement.setExpired(false);
+					String rawComponentPresentation;
+					rawComponentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
+
+					if (rawComponentPresentation == null) {
 
 						cacheElement.setPayload(null);
 						cacheProvider.storeInItemCache(key, cacheElement);
@@ -104,10 +106,10 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 					}
 
 					// Building STMs here.
-					// TODO: fix the bad and old provider code. Just push in the raw source
-					componentPresentation = DataBindFactory.buildDynamicComponentPresentation(componentPresentation.getRawComponentContent(), ComponentPresentationImpl.class);
+					componentPresentation = DataBindFactory.buildDynamicComponentPresentation(rawComponentPresentation, ComponentPresentationImpl.class);
 
 					LOG.debug("Running pre caching processors");
+					// TODO: support full CPs?
 					this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING, getRequestContext());
 					cacheElement.setPayload(componentPresentation);
 					cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);

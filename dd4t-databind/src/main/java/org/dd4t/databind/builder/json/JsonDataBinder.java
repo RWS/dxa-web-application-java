@@ -23,8 +23,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import org.apache.commons.lang3.StringUtils;
-import org.dd4t.contentmodel.*;
+import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.Page;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.databind.TridionViewModel;
@@ -42,7 +47,11 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author R. Kempees
@@ -76,42 +85,34 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 	}
 
 	@Override
-	public <T extends ComponentPresentation> T buildDynamicComponentPresentation(final String source, final Class<T> aClass) throws SerializationException {
+	public <T extends ComponentPresentation> T buildComponentPresentation (final String source, final Class<T> componentPresentationClass) throws SerializationException {
 		try {
-			return GENERIC_MAPPER.readValue(source, aClass);
+			return GENERIC_MAPPER.readValue(source, componentPresentationClass);
 		} catch (IOException e) {
 			LOG.error(DataBindConstants.MESSAGE_ERROR_DESERIALIZING, e);
 			throw new SerializationException(e);
 		}
 	}
 
-	@Deprecated
-	public ComponentPresentation buildDynamicComponentPresentationOld (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException {
+	public ComponentPresentation buildDynamicComponentPresentation (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException {
 		final Set<String> modelNames = new HashSet<>();
 		try {
 			String viewModelName = DataBindFactory.findComponentTemplateViewName(componentPresentation.getComponentTemplate());
+			final Component component = DataBindFactory.buildComponent(componentPresentation.getRawComponentContent(), aClass);
+			componentPresentation.setComponent(component);
+			String rootElementName = component.getSchema().getRootElement();
 
-			// in DD4T 2.0.2 the source is a ComponentPresentation..
-			// TODO: fix this and fix the provider as well.
-			final ComponentPresentation componentPresentationRaw = GENERIC_MAPPER.readValue(componentPresentation.getRawComponentContent(), this.concreteComponentPresentationImpl);
-
-			//final Component component = DataBindFactory.buildComponent(componentPresentation.getRawComponentContent(), aClass);
-			//componentPresentation.setComponent(component);
-			String rootElementName = componentPresentationRaw.getComponent().getSchema().getRootElement();
-
-			if (StringUtils.isEmpty(viewModelName) && StringUtils.isEmpty(rootElementName)){
+			if (StringUtils.isEmpty(viewModelName)){
 				LOG.error("Viewmodel name not found on CT: {}. Not proceeding to build models", componentPresentation.getComponentTemplate().getId());
 				return componentPresentation;
 			}
 
-			if (StringUtils.isNotEmpty(viewModelName)) {
-				modelNames.add(viewModelName);
-			}
+			modelNames.add(viewModelName);
 			if (!rootElementName.equals(viewModelName)) {
 				modelNames.add(rootElementName);
 			}
 			final JsonNode rawComponentData = GENERIC_MAPPER.readTree(componentPresentation.getRawComponentContent());
-			final Map<String, BaseViewModel> models = DataBindFactory.buildModels(rawComponentData, modelNames, componentPresentationRaw.getComponentTemplate().getId());
+			final Map<String, BaseViewModel> models = DataBindFactory.buildModels(rawComponentData, modelNames, componentPresentation.getComponentTemplate().getId());
 
 			componentPresentation.setViewModel(models);
 		}catch (SerializationException | IOException e) {
@@ -213,9 +214,9 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		final ComponentPresentationDeserializer componentPresentationDeserializer = new ComponentPresentationDeserializer(this.concreteComponentPresentationImpl, this.concreteComponentTemplateImpl, this.concreteComponentImpl);
 		final SimpleModule module = new SimpleModule("ComponentPresentationDeserializerModule", new Version(1, 0, 0, "RELEASE", "org.dd4t", "dd4t-databind"));
 		module.addDeserializer(ComponentPresentation.class, componentPresentationDeserializer);
-		module.addDeserializer(this.concreteComponentPresentationImpl,componentPresentationDeserializer);
 		GENERIC_MAPPER.registerModule(module);
-		GENERIC_MAPPER.addMixInAnnotations(Field.class, BaseFieldMixIn.class);
+		GENERIC_MAPPER.registerModule(new AfterburnerModule());
+		GENERIC_MAPPER.addMixIn(Field.class, BaseFieldMixIn.class);
 
 		LOG.debug("Mapper configured for: {} and {}", this.concreteComponentPresentationImpl.toString(), this.concreteComponentTemplateImpl.toString());
 	}

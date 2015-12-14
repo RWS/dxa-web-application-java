@@ -34,12 +34,15 @@ import java.util.Set;
  */
 public interface DataBinder {
 
+	<T extends Page> T buildPage(final String source, final Class<T> aClass) throws SerializationException;
+	<T extends ComponentPresentation> T buildComponentPresentation (final String source, final Class<T> componentPresentationClass) throws SerializationException;
+
 	Map<String,BaseViewModel> buildModels(final Object source, final Set<String> modelNames, final String templateUri) throws SerializationException;
 	<T extends BaseViewModel> T buildModel(final Object rawData, final String modelName, final String templateUri) throws SerializationException;
 	<T extends BaseViewModel> T buildModel (final Object source, final Class modelClass, final String templateUri) throws SerializationException;
-	<T extends Page> T buildPage(final String source,final Class<T> aClass) throws SerializationException;
-	<T extends ComponentPresentation> T buildDynamicComponentPresentation(final String source,final Class<T> aClass) throws SerializationException;
-	ComponentPresentation buildDynamicComponentPresentationOld (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException;
+
+	@Deprecated
+	ComponentPresentation buildDynamicComponentPresentation (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException;
 	<T extends Component> T buildComponent(final Object source, final Class<T> aClass) throws SerializationException;
 
 	String findComponentTemplateViewName(ComponentTemplate template) throws IOException;

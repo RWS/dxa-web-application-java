@@ -56,12 +56,13 @@ public class DataBindFactory {
 		return INSTANCE.dataBinder.buildPage(source,aClass);
 	}
 
-	public static <T extends ComponentPresentation> T buildDynamicComponentPresentation(final String source,final Class<T> aClass) throws SerializationException {
-		return INSTANCE.dataBinder.buildDynamicComponentPresentation(source,aClass);
+	public static <T extends ComponentPresentation> T buildDynamicComponentPresentation(final String source, final Class<T> aClass)  throws SerializationException {
+		return INSTANCE.dataBinder.buildComponentPresentation(source, aClass);
 	}
 
-	public static ComponentPresentation buildDynamicComponentPresentationOld(final ComponentPresentation componentPresentation, final Class<? extends Component> aClass)  throws SerializationException {
-		return INSTANCE.dataBinder.buildDynamicComponentPresentationOld(componentPresentation, aClass);
+	@Deprecated
+	public static ComponentPresentation buildDynamicComponentPresentation(final ComponentPresentation componentPresentation, final Class<? extends Component> aClass)  throws SerializationException {
+		return INSTANCE.dataBinder.buildDynamicComponentPresentation(componentPresentation,aClass);
 	}
 
 	public static  <T extends Component> T buildComponent(final Object source, final Class<T> aClass)  throws SerializationException {

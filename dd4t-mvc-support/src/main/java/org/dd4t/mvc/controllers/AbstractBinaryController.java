@@ -64,6 +64,9 @@ import java.util.TimeZone;
  *         <p/>
  *         The request mapping supports an array of strings, but we need a way
  *         to configure this without modifying source code.
+ *
+ * Important Note: concrete implementing classes will need to add the
+ * {@literal @RequestMapping} annotations!
  */
 @Controller
 public class AbstractBinaryController {

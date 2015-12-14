@@ -17,10 +17,10 @@
 package org.dd4t.databind.serializers.json;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.databind.util.ClassUtil;
 import org.dd4t.contentmodel.FieldType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,13 +99,18 @@ public class TridionFieldTypeIdResolver implements TypeIdResolver {
 
 		try {
 			LOG.trace("Loading a '{}'", clazzName);
-			clazz = ClassUtil.findClass(clazzName);
+			clazz = TypeFactory.defaultInstance().findClass(clazzName); //ClassUtil.findClass(clazzName);
 		} catch (ClassNotFoundException e) {
 			LOG.error("Could not find the class!", e);
 			throw new IllegalStateException("Cannot find class '" + clazzName + "'");
 		}
 
 		return TypeFactory.defaultInstance().constructSpecializedType(mBaseType, clazz);
+	}
+
+	@Override
+	public JavaType typeFromId (final DatabindContext databindContext, final String s) {
+		return typeFromId(s);
 	}
 
 	@Override

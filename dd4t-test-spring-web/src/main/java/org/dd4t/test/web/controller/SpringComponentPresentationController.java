@@ -59,6 +59,7 @@ public class SpringComponentPresentationController extends AbstractComponentPres
 	 * @return the view name to render
 	 */
 	@Override
+	@RequestMapping (value = {"/{componentViewPrefix}/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD})
 	public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
 		return super.showComponentPresentation(componentViewPrefix, componentViewName, componentId, request);
 	}

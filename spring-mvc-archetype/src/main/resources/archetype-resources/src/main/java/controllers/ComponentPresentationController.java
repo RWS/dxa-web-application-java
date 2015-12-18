@@ -41,7 +41,9 @@ public class ComponentPresentationController extends AbstractComponentPresentati
 	 * @param request           the request on which the component must be present
 	 * @return the view name to render
 	 */
-	@Override public String showComponentPresentation (@PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
+	@Override
+	@RequestMapping (value = {"/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String showComponentPresentation (@PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
 		return super.showComponentPresentation(componentViewName, componentId, request);
 	}
 
@@ -55,7 +57,9 @@ public class ComponentPresentationController extends AbstractComponentPresentati
 	 * @param request             the request on which the component must be present
 	 * @return the view name to render
 	 */
-	@Override public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
+	@Override
+	@RequestMapping (value = {"/{componentViewPrefix}/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD})
+	public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
 		return super.showComponentPresentation(componentViewPrefix, componentViewName, componentId, request);
 	}
 

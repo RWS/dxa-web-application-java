@@ -86,6 +86,11 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 		return setGenericComponentOnComponentPresentation;
 	}
 
+	@Override
+	public boolean isMultiValued (final String fieldName) {
+		return getFieldMap().get(fieldName).isMultiValued();
+	}
+
 	public String getXPath(final String fieldName) {
 		XPMInfo xpmInfo = fieldMap.get(fieldName);
 		if (xpmInfo != null) {

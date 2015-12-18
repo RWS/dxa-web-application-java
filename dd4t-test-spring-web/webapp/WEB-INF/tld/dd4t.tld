@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.1">
+    <description>
+        This tag library contains several tag extensions
+        useful for rendering Component Presentations and
+        for formatting content for HTML.
+    </description>
+
+    <tlib-version>2.1</tlib-version>
+    <short-name>dd4t</short-name>
+    <uri>http://www.dd4t.org/tags/2.0</uri>
+
+    <tag>
+        <name>componentpresentations</name>
+        <tag-class>org.dd4t.mvc.tags.ComponentPresentationsTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>region</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>schema</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>rootElement</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>view</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>gridLayout</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Boolean</type>
+        </attribute>
+        <attribute>
+            <name>gridColumnSize</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Integer</type>
+        </attribute>
+        <attribute>
+            <name>addAnchor</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Boolean</type>
+        </attribute>
+        <attribute>
+            <name>start</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Integer</type>
+        </attribute>
+        <attribute>
+            <name>end</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Integer</type>
+        </attribute>
+    </tag>
+    <tag>
+        <name>smartInclude</name>
+        <tag-class>org.dd4t.mvc.tags.SmartIncludeTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>page</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+    </tag>
+
+    <function>
+        <name>publicationUrl</name>
+        <function-class>org.dd4t.mvc.tags.PublicationUrl</function-class>
+        <function-signature>java.lang.String getPublicationUrl()</function-signature>
+    </function>
+
+    <function>
+        <name>escapeEcmaScript</name>
+        <function-class>org.apache.commons.lang3.StringEscapeUtils</function-class>
+        <function-signature>java.lang.String escapeEcmaScript(java.lang.String)</function-signature>
+    </function>
+
+</taglib>

@@ -30,8 +30,11 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author R. Kempees
  */
+@RequestMapping (value = {"**/*.gif", "**/*.jpg", "**/*.jpeg", "**/*.png", "**/*.pdf", "**/*.vcf", "**/*.swf", "**/*.zip", "**/*.xls", "**/*.xlsx"})
 public class BinaryController extends AbstractBinaryController {
-	@Override public void getBinary (final HttpServletRequest request, final HttpServletResponse response) throws ItemNotFoundException {
+	@Override
+	@RequestMapping(method = {RequestMethod.GET, RequestMethod.HEAD})
+	public void getBinary (final HttpServletRequest request, final HttpServletResponse response) throws ItemNotFoundException {
 		super.getBinary(request, response);
 	}
 

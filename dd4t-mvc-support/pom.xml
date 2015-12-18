@@ -60,7 +60,7 @@
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
-                <targetPath>META-INF</targetPath>
+                <targetPath>WEB-INF/tld</targetPath>
                 <filtering>true</filtering>
                 <includes>
                     <include>**/**</include>

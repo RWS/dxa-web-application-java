@@ -115,5 +115,11 @@
     <!-- DD4T factories entry point  -->
     <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="getInstance">
         <property name="dataBinder" ref="dataBinder" />
-    </bean>	
+    </bean>
+
+	<!-- Experience Manager -->
+	<bean id="xpmRender" class="org.dd4t.mvc.utils.XPMRenderer" factory-method="getInstance">
+		<property name="enabled" value="false"/>
+		<property name="cmsUrl" value="http://cms-url"/>
+	</bean>
 </beans>

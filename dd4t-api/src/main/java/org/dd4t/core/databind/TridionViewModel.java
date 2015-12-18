@@ -20,7 +20,6 @@ import org.dd4t.core.util.TCMURI;
 import org.joda.time.DateTime;
 
 /**
- * TODO: API Change!
  *
  * @author R. Kempees
  * @since 12/11/14.
@@ -43,4 +42,6 @@ public interface TridionViewModel extends BaseViewModel {
 	void addXpmEntry(final String fieldName, final String xpath, final boolean multiValued);
 
 	boolean setGenericComponentOnComponentPresentation();
+
+	boolean isMultiValued(final String fieldName);
 }

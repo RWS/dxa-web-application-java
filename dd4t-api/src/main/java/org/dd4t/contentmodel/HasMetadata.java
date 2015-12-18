@@ -30,12 +30,12 @@ public interface HasMetadata {
      *
      * @return the content as a map of fields.
      */
-    public Map<String, Field> getMetadata();
+    Map<String, Field> getMetadata();
 
     /**
      * Set the metadata
      *
      * @param metadata
      */
-    public void setMetadata(Map<String, Field> metadata);
+    void setMetadata(Map<String, Field> metadata);
 }

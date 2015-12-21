@@ -17,12 +17,11 @@
 package org.dd4t.mvc.tags;
 
 import org.dd4t.core.factories.PageFactory;
-import org.dd4t.core.factories.PublicationResolverFactory;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
-import org.dd4t.mvc.utils.PublicationResolverFactoryImpl;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.HttpUtils;
+import org.dd4t.mvc.utils.PublicationResolverFactory;
 import org.dd4t.mvc.utils.RenderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,8 +59,7 @@ public class SmartIncludeTag extends TagSupport {
 
 	private static final Logger LOG = LoggerFactory.getLogger(SmartIncludeTag.class);
 	private String page;
-	private transient PublicationResolverFactory publicationResolverFactory = PublicationResolverFactoryImpl.getInstance();
-	private transient PublicationResolver publicationResolver = publicationResolverFactory.getPublicationResolver();
+	private transient PublicationResolver publicationResolver = PublicationResolverFactory.getPublicationResolver();
 
 	@Override
 	public int doStartTag () throws JspException {

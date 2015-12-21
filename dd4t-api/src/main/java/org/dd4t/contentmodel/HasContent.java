@@ -30,7 +30,7 @@ public interface HasContent {
      *
      * @return the content as a map of fields.
      */
-    public Map<String, Field> getContent();
+    Map<String, Field> getContent();
 
     /**
      * Set the content

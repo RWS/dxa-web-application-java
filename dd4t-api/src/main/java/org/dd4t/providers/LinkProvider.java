@@ -32,7 +32,7 @@ public interface LinkProvider {
      * @throws ItemNotFoundException
      * @throws SerializationException
      */
-    public String resolveComponent(String targetComponentUri) throws ItemNotFoundException, SerializationException;
+    String resolveComponent(String targetComponentUri) throws ItemNotFoundException, SerializationException;
 
     /**
      * Retrieves a link URL to a Component from a Page.
@@ -42,7 +42,7 @@ public interface LinkProvider {
      * @throws ItemNotFoundException
      * @throws SerializationException
      */
-    public String resolveComponentFromPage(String targetComponentUri, String sourcePageUri) throws ItemNotFoundException, SerializationException;
+    String resolveComponentFromPage(String targetComponentUri, String sourcePageUri) throws ItemNotFoundException, SerializationException;
 
 	/**
 	 * Retrieves a link URL to a Component with the option to exclude links
@@ -54,5 +54,5 @@ public interface LinkProvider {
 	 * @throws ItemNotFoundException
 	 * @throws SerializationException
 	 */
-	public String resolveComponent(String targetComponentUri,String componentTemplateUri) throws ItemNotFoundException, SerializationException;
+	String resolveComponent(String targetComponentUri,String componentTemplateUri) throws ItemNotFoundException, SerializationException;
 }

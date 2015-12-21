@@ -25,15 +25,15 @@ package org.dd4t.core.caching;
  * @author Mihai Cadariu
  */
 public interface CacheElement<T> {
-	public T getPayload();
+	T getPayload();
 
-	public void setPayload(T payload);
+	void setPayload(T payload);
 
-	public boolean isExpired();
+	boolean isExpired();
 
-	public void setExpired(boolean update);
+	void setExpired(boolean update);
 
-	public String getDependentKey();
+	String getDependentKey();
 
 	void setDependentKey(String dependentKey);
 }

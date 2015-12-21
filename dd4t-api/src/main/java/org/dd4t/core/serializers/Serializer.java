@@ -32,12 +32,12 @@ public interface Serializer {
 	 * @return DD4T Tridion Model Object
 	 * @throws SerializationException
 	 */
-	public <T> T deserialize(String content, Class<T> aClass) throws SerializationException;
+	<T> T deserialize(String content, Class<T> aClass) throws SerializationException;
 
 	/**
 	 * @param item the Object to Serialize
 	 * @return serialized string
 	 * @throws SerializationException
 	 */
-	public String serialize(Object item) throws SerializationException;
+	String serialize(Object item) throws SerializationException;
 }

@@ -36,7 +36,7 @@ public interface BinaryFactory extends Factory {
      * @throws ItemNotFoundException  if the items cannot be found in the underlying storage
      * @throws SerializationException if the binary cannot be deserialized into an object
      */
-    public Binary getBinaryByURI(String tcmUri) throws FactoryException;
+    Binary getBinaryByURI(String tcmUri) throws FactoryException;
 
     /**
      * Get a binary by the url and publicationId.
@@ -47,6 +47,6 @@ public interface BinaryFactory extends Factory {
      * @throws ItemNotFoundException  if the items cannot be found in the underlying storage
      * @throws SerializationException if the binary cannot be deserialized into an object
      */
-    public Binary getBinaryByURL(String url, int publicationId) throws FactoryException;
+    Binary getBinaryByURL(String url, int publicationId) throws FactoryException;
 
   }

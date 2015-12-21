@@ -25,16 +25,16 @@ public interface PageTemplate extends Item, HasMetadata {
 	 *
 	 * @return the file extension
 	 */
-	public String getFileExtension ();
+	String getFileExtension ();
 
 	/**
 	 * Set the file extension
 	 *
 	 * @param fileExtension
 	 */
-	public void setFileExtension (String fileExtension);
+	void setFileExtension (String fileExtension);
 
-	public DateTime getRevisionDate ();
+	DateTime getRevisionDate ();
 
-	public void setRevisionDate (DateTime date);
+	void setRevisionDate (DateTime date);
 }

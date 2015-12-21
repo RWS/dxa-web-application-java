@@ -44,7 +44,7 @@ public interface QueryProvider {
      * @throws ItemNotFoundException  if the requested CP does not exist
      * @throws SerializationException if something went wrong during deserialization
      */
-    public String[] getDynamicComponentPresentationsByCustomMetaQuery(String locale, Map<String, Collection<String>> keyValueMap, int templateId) throws ItemNotFoundException, SerializationException;
+    String[] getDynamicComponentPresentationsByCustomMetaQuery(String locale, Map<String, Collection<String>> keyValueMap, int templateId) throws ItemNotFoundException, SerializationException;
 
 	/**
 	 * Retrieves content of a Dynamic Component Presentation by doing a Broker Query
@@ -63,7 +63,7 @@ public interface QueryProvider {
 	 * @throws ItemNotFoundException
 	 * @throws SerializationException
 	 */
-	public String[] getDynamicComponentPresentationsBySchema(String locale, String schema, int templateId) throws ItemNotFoundException, SerializationException;
+	String[] getDynamicComponentPresentationsBySchema(String locale, String schema, int templateId) throws ItemNotFoundException, SerializationException;
 
 
 	/**
@@ -86,5 +86,5 @@ public interface QueryProvider {
 	 * @throws SerializationException
 	 */
 
-	public String[] getDynamicComponentPresentationsBySchemaInKeyword(String locale, String schema, int categoryId, int keywordId, int templateId) throws ItemNotFoundException, SerializationException;
+	String[] getDynamicComponentPresentationsBySchemaInKeyword(String locale, String schema, int categoryId, int keywordId, int templateId) throws ItemNotFoundException, SerializationException;
 }

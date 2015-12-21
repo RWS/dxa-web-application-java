@@ -28,9 +28,9 @@ import java.io.Serializable;
  *
  */
 public interface Cachable extends Serializable{
-	public void notifyCached(String key, String realm);
+	void notifyCached(String key, String realm);
 	
-	public String getCacheRealm();
+	String getCacheRealm();
 	
-	public String getCacheKey();
+	String getCacheKey();
 }

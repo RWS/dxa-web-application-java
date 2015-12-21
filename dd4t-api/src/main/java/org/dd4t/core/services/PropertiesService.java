@@ -23,9 +23,9 @@ package org.dd4t.core.services;
  */
 public interface PropertiesService {
 
-    public void load(String propertiesFile);
+    void load(String propertiesFile);
 
-    public String getProperty(String name);
+    String getProperty(String name);
 
-    public String getProperty(String name, String defaultValue);
+    String getProperty(String name, String defaultValue);
 }

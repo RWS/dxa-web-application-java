@@ -19,6 +19,7 @@ package org.dd4t.providers;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.util.TCMURI;
+import org.joda.time.DateTime;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -27,6 +28,12 @@ import java.text.ParseException;
  * Page Provider.Reads Pages by their URL or id.
  */
 public interface PageProvider extends BaseProvider {
+
+
+	ProviderResultItem<String> getPageById (int id, int publication) throws IOException, ItemNotFoundException, SerializationException;
+
+	ProviderResultItem<String> getPageByURL(String url, int publication) throws ItemNotFoundException, SerializationException;
+
 
 	String getPageContentById (int id, int publication) throws IOException, ItemNotFoundException, SerializationException;
 
@@ -72,7 +79,9 @@ public interface PageProvider extends BaseProvider {
      * @throws ItemNotFoundException  if said page cannot be found
      * @throws SerializationException if there was an error communicating with the service
      */
-    Boolean checkPageExists(final String url, final int publicationId) throws ItemNotFoundException, SerializationException;
+    boolean checkPageExists(final String url, final int publicationId) throws ItemNotFoundException, SerializationException;
 
     TCMURI getPageIdForUrl(final String url, final int publicationId) throws ItemNotFoundException, SerializationException;
+
+	DateTime getLastPublishDate (final String url, final int publication) throws ItemNotFoundException;
 }

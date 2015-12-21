@@ -21,6 +21,8 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.util.CompressionUtils;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.PageProvider;
+import org.dd4t.providers.ProviderResultItem;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,6 +32,7 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Invocation;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 import java.text.ParseException;
 
 /**
@@ -48,6 +51,17 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 
 	public BrokerPageProvider () {
 		LOG.debug("Create new instance");
+	}
+
+
+	@Override
+	public ProviderResultItem<String> getPageById (final int id, final int publication) throws IOException, ItemNotFoundException, SerializationException {
+		return null;
+	}
+
+	@Override
+	public ProviderResultItem<String> getPageByURL (final String url, final int publication) throws ItemNotFoundException, SerializationException {
+		return null;
 	}
 
 	@Override public String getPageContentById (final int id, final int publication) throws ItemNotFoundException {
@@ -178,7 +192,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @throws SerializationException if there was an error communicating with the service
 	 */
 	@Override
-	public Boolean checkPageExists (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
+	public boolean checkPageExists (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
 		long time = System.currentTimeMillis();
 		LOG.debug("Checking Page existance by url: {} and publicationId: {}", url, publicationId);
 
@@ -206,6 +220,12 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	@Override
 	public TCMURI getPageIdForUrl (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
 		LOG.error("Not implemented yet!");
+		return null;
+	}
+
+	// TODO
+	@Override
+	public DateTime getLastPublishDate (final String url, final int publication) throws ItemNotFoundException {
 		return null;
 	}
 }

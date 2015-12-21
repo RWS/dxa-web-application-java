@@ -37,13 +37,18 @@ import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.providers.BaseBrokerProvider;
+import org.dd4t.core.providers.StringResultItemImpl;
+import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.PageProvider;
+import org.dd4t.providers.ProviderResultItem;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -53,6 +58,40 @@ import java.util.List;
 public class BrokerPageProvider extends BaseBrokerProvider implements PageProvider {
 
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerPageProvider.class);
+
+	@Override
+	public ProviderResultItem<String> getPageById (final int id, final int publication) throws IOException, ItemNotFoundException, SerializationException {
+
+		final PageMeta pageMeta = getPageMetaById(id, publication);
+
+		ProviderResultItem<String> pageResult = new StringResultItemImpl();
+
+		if (pageMeta == null) {
+			throw new ItemNotFoundException("Unable to find page meta by id '" + id + "' and publication '" + publication + "'.");
+		}
+
+		pageResult.setLastPublishDate(pageMeta.getLastPublishDate());
+		pageResult.setRevisionDate(pageMeta.getModificationDate());
+		pageResult.setContentSource(getPageContentById(id, publication));
+
+		return pageResult;
+	}
+
+	@Override
+	public ProviderResultItem<String> getPageByURL (final String url, final int publication) throws ItemNotFoundException, SerializationException {
+		PageMeta pageMeta = getPageMetaByURL(url, publication);
+		ProviderResultItem<String> pageResult = new StringResultItemImpl();
+
+		if (pageMeta == null) {
+			throw new ItemNotFoundException("Unable to find page meta by url '" + url + "' and publication '" + publication + "'.");
+		}
+
+		pageResult.setLastPublishDate(pageMeta.getLastPublishDate());
+		pageResult.setRevisionDate(pageMeta.getModificationDate());
+		pageResult.setContentSource(getPageContentById(pageMeta.getItemId(), pageMeta.getPublicationId()));
+		return pageResult;
+	}
+
 	/**
 	 * Retrieves content of a Page by looking the page up by its item id and Publication id.
 	 *
@@ -69,7 +108,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 			PageDAO pageDAO = (PageDAO) StorageManagerFactory.getDAO(publication, StorageTypeMapping.PAGE);
 			data = pageDAO.findByPrimaryKey(publication, id);
 		} catch (StorageException e) {
-			LOG.error(e.getMessage(),e);
+			LOG.error(e.getMessage(), e);
 		}
 
 		if (data == null) {
@@ -92,14 +131,15 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @throws ItemNotFoundException if the requested page does not exist
 	 */
 	@Override
-	public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, SerializationException {
+	public String getPageContentByURL (String url, int publication) throws ItemNotFoundException, SerializationException {
 		PageMeta meta = getPageMetaByURL(url, publication);
 		return getPageContentById(meta.getItemId(), meta.getPublicationId());
 	}
 
-	@Override public String getPageContentById (final String tcmUri) throws ItemNotFoundException, ParseException, SerializationException {
+	@Override
+	public String getPageContentById (final String tcmUri) throws ItemNotFoundException, ParseException, SerializationException {
 		TCMURI uri = new TCMURI(tcmUri);
-		return getPageContentById(uri.getItemId(),uri.getPublicationId());
+		return getPageContentById(uri.getItemId(), uri.getPublicationId());
 	}
 
 	/**
@@ -110,14 +150,14 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @return PageMeta representing the metadata of the Page
 	 * @throws ItemNotFoundException if the requested page does not exist
 	 */
-	public PageMeta getPageMetaById(int id, int publication) throws ItemNotFoundException {
+	public PageMeta getPageMetaById (int id, int publication) throws ItemNotFoundException {
 
 		PageMeta meta = null;
 		try {
 			ItemDAO itemDAO = (ItemDAO) StorageManagerFactory.getDAO(publication, StorageTypeMapping.PAGE_META);
 			meta = (PageMeta) itemDAO.findByPrimaryKey(publication, id);
 		} catch (StorageException e) {
-			LOG.error(e.getMessage(),e);
+			LOG.error(e.getMessage(), e);
 		}
 
 		if (meta == null) {
@@ -135,14 +175,14 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @return PageMeta representing the metadata of the Page
 	 * @throws ItemNotFoundException if the requested page does not exist
 	 */
-	public PageMeta getPageMetaByURL(String url, int publication) throws ItemNotFoundException {
+	public PageMeta getPageMetaByURL (String url, int publication) throws ItemNotFoundException {
 
 		PageMeta meta = null;
 		try {
 			ItemDAO itemDAO = (ItemDAO) StorageManagerFactory.getDAO(publication, StorageTypeMapping.PAGE_META);
 			meta = itemDAO.findByPageURL(publication, url);
 		} catch (StorageException e) {
-			LOG.error(e.getMessage(),e);
+			LOG.error(e.getMessage(), e);
 		}
 
 		if (meta == null) {
@@ -160,14 +200,14 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 	 * @throws ItemNotFoundException if the requested page does not exist
 	 */
 	@Override
-	public String getPageListByPublicationId(int publication) throws ItemNotFoundException {
+	public String getPageListByPublicationId (int publication) throws ItemNotFoundException {
 
 		List<ItemMeta> itemMetas = null;
 		try {
 			ItemDAO itemDAO = (ItemDAO) StorageManagerFactory.getDAO(publication, StorageTypeMapping.PAGE_META);
 			itemMetas = itemDAO.findAll(publication, ItemTypeSelector.PAGE);
 		} catch (StorageException e) {
-			LOG.error(e.getMessage(),e);
+			LOG.error(e.getMessage(), e);
 		}
 
 		if (itemMetas == null || itemMetas.isEmpty()) {
@@ -184,7 +224,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 
 	// TODO: introduce ProviderException
 	@Override
-	public Boolean checkPageExists (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
+	public boolean checkPageExists (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
 
 		LOG.debug("Checking whether Page with url: {} exists", url);
 
@@ -206,19 +246,17 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 					try {
 						String[] results = tridionQuery.executeQuery();
 						if (results != null && results.length > 0) {
-							LOG.debug("Found 1 result");
 							result = 1;
 							TCMURI tcmuri = new TCMURI(results[0]);
 							cacheElement.setPayload(result);
 							cacheProvider.storeInItemCache(key, cacheElement, tcmuri.getPublicationId(), tcmuri.getItemId());
 						} else {
-							LOG.debug("No results");
 							result = 0;
 							cacheElement.setPayload(result);
 							cacheProvider.storeInItemCache(key, cacheElement);
 						}
 					} catch (StorageException | ParseException e) {
-						LOG.error(e.getLocalizedMessage(),e);
+						LOG.error(e.getLocalizedMessage(), e);
 					}
 					LOG.debug("Stored Page exist check with key: {} in cache", key);
 				} else {
@@ -236,10 +274,17 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 
 	@Override
 	public TCMURI getPageIdForUrl (final String url, final int publicationId) throws ItemNotFoundException, SerializationException {
-		PageMeta pageMeta = getPageMetaByURL(url,publicationId);
+		PageMeta pageMeta = getPageMetaByURL(url, publicationId);
 		if (pageMeta != null) {
-			return new TCMURI(publicationId,pageMeta.getItemId(),pageMeta.getItemType(),pageMeta.getMajorVersion());
+			return new TCMURI(publicationId, pageMeta.getItemId(), pageMeta.getItemType(), pageMeta.getMajorVersion());
 		}
 		throw new ItemNotFoundException("Page Id for URL not found.");
+	}
+
+	@Override
+	public DateTime getLastPublishDate (final String url, final int publication) throws ItemNotFoundException {
+		PageMeta pageMeta = getPageMetaByURL(url, publication);
+		Date lpd = pageMeta.getLastPublishDate();
+		return lpd != null ? new DateTime(pageMeta.getLastPublishDate()) : Constants.THE_YEAR_ZERO;
 	}
 }

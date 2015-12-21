@@ -16,6 +16,8 @@
 
 package org.dd4t.core.util;
 
+import org.joda.time.DateTime;
+
 /**
  * dd4t-2
  *
@@ -35,6 +37,8 @@ public class Constants {
 	public static final String SMART_INCLUDE_URL = "smartIncludeUrl";
 	public static final String VIEW_NAME_FIELD = "viewName";
 	public static final String COMPONENT_NAME = "component";
+
+	public static final DateTime THE_YEAR_ZERO = new DateTime(0,0,0,0,0);
 
 	private Constants () {
 

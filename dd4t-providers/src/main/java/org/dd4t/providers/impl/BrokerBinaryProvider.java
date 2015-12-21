@@ -29,6 +29,7 @@ import org.dd4t.contentmodel.impl.BinaryImpl;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.providers.BaseBrokerProvider;
+import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.BinaryProvider;
 import org.joda.time.DateTime;
@@ -75,11 +76,15 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 
 				if (lastPublishDate != null) {
 					binary.setLastPublishedDate(new DateTime(lastPublishDate));
+				} else {
+					binary.setLastPublishedDate(Constants.THE_YEAR_ZERO);
 				}
 
 				final Date revisionDate = binaryVariant.getBinaryMeta().getMultimediaMeta().getModificationDate();
 				if (revisionDate != null) {
 					binary.setRevisionDate(new DateTime(revisionDate));
+				} else {
+					binary.setLastPublishedDate(Constants.THE_YEAR_ZERO);
 				}
 
 

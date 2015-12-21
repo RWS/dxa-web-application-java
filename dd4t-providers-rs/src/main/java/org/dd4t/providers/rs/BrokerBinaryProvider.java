@@ -24,6 +24,7 @@ import org.dd4t.core.util.CompressionUtils;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.BinaryProvider;
 import org.dd4t.providers.transport.BinaryWrapper;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,10 +164,16 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 		}
 	}
 
+	// TODO
+	@Override
+	public DateTime getLastPublishDate (final String tcmUri) throws ParseException, ItemNotFoundException {
+		return null;
+	}
+
 	/*
-	Deserializes the byte array into a Binary object. It is expected that byte array represents a GZipped BinaryWrapper
-	object. Once deserialized, a Binary object is built from BinaryWrapper.
-	 */
+		Deserializes the byte array into a Binary object. It is expected that byte array represents a GZipped BinaryWrapper
+		object. Once deserialized, a Binary object is built from BinaryWrapper.
+		 */
 	private Binary deserialize (byte[] content) throws SerializationException {
 		BinaryWrapper wrapper = CompressionUtils.decompressGZipGeneric(content);
 		BinaryBuilder builder = new BinaryBuilder();

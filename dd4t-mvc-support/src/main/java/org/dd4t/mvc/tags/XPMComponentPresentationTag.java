@@ -17,7 +17,7 @@ import java.io.IOException;
  */
 public class XPMComponentPresentationTag extends SimpleTagSupport {
 
-	private TridionViewModel model;
+	protected TridionViewModel model;
 
 	@Override
 	public void doTag() throws JspException, IOException {

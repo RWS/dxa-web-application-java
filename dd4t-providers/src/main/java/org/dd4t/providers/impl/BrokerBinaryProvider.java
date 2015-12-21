@@ -16,10 +16,7 @@
 
 package org.dd4t.providers.impl;
 
-import com.tridion.ItemTypes;
 import com.tridion.broker.StorageException;
-import com.tridion.meta.BinaryMeta;
-import com.tridion.meta.BinaryMetaFactory;
 import com.tridion.storage.BinaryContent;
 import com.tridion.storage.BinaryVariant;
 import com.tridion.storage.StorageManagerFactory;
@@ -34,10 +31,12 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.BinaryProvider;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
+import java.util.Date;
 
 /**
  * Provides access to Binaries stored in the Content Delivery database. It uses JPA DAOs to retrieve raw binary content
@@ -45,37 +44,51 @@ import java.text.ParseException;
  */
 public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryProvider {
 
-	private static final BinaryMetaFactory BINARY_META_FACTORY = new BinaryMetaFactory();
-
 	private static final Logger LOG = LoggerFactory.getLogger(BrokerBinaryProvider.class);
 
 	@Override public Binary getBinaryByURI (final String tcmUri) throws ItemNotFoundException, ParseException, SerializationException {
 		final TCMURI binaryUri = new TCMURI(tcmUri);
-		final BinaryMeta binaryMeta = BINARY_META_FACTORY.getMeta(tcmUri);
-		return getBinary(binaryUri,binaryMeta);
+		final BinaryVariant binaryVariant = getBinaryVariantById(binaryUri.getItemId(),binaryUri.getPublicationId());
+		return getBinary(binaryUri,binaryVariant);
 	}
 
 
 	@Override public Binary getBinaryByURL (final String url, final int publication) throws ItemNotFoundException, SerializationException {
-		final BinaryMeta binaryMeta = BINARY_META_FACTORY.getMetaByURL(publication,url);
-		final TCMURI binaryUri = new TCMURI(binaryMeta.getPublicationId(),TCMURI.safeLongToInt(binaryMeta.getId()), ItemTypes.COMPONENT,-1);
-		return getBinary(binaryUri,binaryMeta);
+		final BinaryVariant binaryVariant = getBinaryVariantByURL(url,publication);
+
+		if (binaryVariant == null) {
+			throw new ItemNotFoundException("Unable to find binary content by URL '" + url + "' and publication '" + publication + "'.");
+		}
+		TCMURI binaryUri = new TCMURI(binaryVariant.getBinaryMeta().getPublicationId(),binaryVariant.getBinaryMeta().getItemId(),16);
+		return getBinary(binaryUri, binaryVariant);
 	}
 
-	private static Binary getBinary (final TCMURI binaryUri, final BinaryMeta binaryMeta) throws ItemNotFoundException {
-		if (binaryMeta != null) {
+	private static Binary getBinary (final TCMURI binaryUri, final BinaryVariant binaryVariant) throws ItemNotFoundException {
+		if (binaryVariant != null) {
 			final BinaryImpl binary = new BinaryImpl();
 			binary.setId(binaryUri.toString());
-			binary.setUrlPath(binaryMeta.getURLPath());
-			// TODO: check if this actually is the Mime Type
-			binary.setMimeType(binaryMeta.getType());
+			binary.setUrlPath(binaryVariant.getUrl());
+			binary.setMimeType(binaryVariant.getBinaryType());
 
-			// TODO: binaryMeta.getCustomMeta();
-			//binaryMeta.getDescription();
-			//binaryMeta.getPath();
-			//binaryMeta.getVariantId();
+			if (binaryVariant.getBinaryMeta() != null) {
+				final Date lastPublishDate = binaryVariant.getBinaryMeta().getMultimediaMeta().getLastPublishDate();
+
+				if (lastPublishDate != null) {
+					binary.setLastPublishedDate(new DateTime(lastPublishDate));
+				}
+
+				final Date revisionDate = binaryVariant.getBinaryMeta().getMultimediaMeta().getModificationDate();
+				if (revisionDate != null) {
+					binary.setRevisionDate(new DateTime(revisionDate));
+				}
 
 
+				// TODO: binaryMeta.getCustomMeta();
+				//binaryMeta.getDescription();
+				//binaryMeta.getPath();
+				//binaryMeta.getVariantId();
+
+			}
 			final BinaryContentDAO contentDAO;
 			BinaryContent content = null;
 			try {
@@ -141,7 +154,6 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 	}
 
 	/**
-	 * Not in the interface just to keep the tridion dependency out.
 	 * @param id          int representing the item id
 	 * @param publication int representing the publication id
 	 * @return BinaryVariant the binary identified by id and publication
@@ -166,7 +178,6 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 	}
 
 	/**
-	 * Not in the interface just to keep the tridion dependency out.
 	 * @param url         string representing the path portion of the URL of the binary
 	 * @param publication int representing the publication id
 	 * @return BinaryVariant the binary identified by url and publication
@@ -188,5 +199,19 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 		}
 
 		return variant;
+	}
+
+	@Override
+	public DateTime getLastPublishDate(String tcmUri) throws ParseException, ItemNotFoundException {
+		TCMURI binaryTcmUri = new TCMURI(tcmUri);
+		BinaryVariant variant = getBinaryVariantById(binaryTcmUri.getItemId(),binaryTcmUri.getPublicationId());
+
+		if (variant != null  && variant.getBinaryMeta() != null) {
+			Date lpd = variant.getBinaryMeta().getMultimediaMeta().getLastPublishDate();
+			if (lpd != null) {
+				return new DateTime(lpd);
+			}
+		}
+		return new DateTime(0,0,0,0,0);
 	}
 }

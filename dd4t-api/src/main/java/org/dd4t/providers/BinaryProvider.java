@@ -19,6 +19,7 @@ package org.dd4t.providers;
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
+import org.joda.time.DateTime;
 
 import java.text.ParseException;
 
@@ -37,7 +38,7 @@ public interface BinaryProvider extends BaseProvider {
      * @throws ParseException         if given parameter does not represent a TCMURI
      * @throws SerializationException if response from service does not represent a serialized Binary
      */
-    public Binary getBinaryByURI(String tcmUri) throws ItemNotFoundException, ParseException, SerializationException;
+    Binary getBinaryByURI(String tcmUri) throws ItemNotFoundException, ParseException, SerializationException;
 
     /**
      * Retrieves a Binary by its Publication and URL and deserializes it into a Binary object.
@@ -47,9 +48,11 @@ public interface BinaryProvider extends BaseProvider {
      * @throws ItemNotFoundException  if said binary cannot be found
      * @throws SerializationException if response from service does not represent a serialized Binary
      */
-    public Binary getBinaryByURL(String url, int publication) throws ItemNotFoundException, SerializationException;
+    Binary getBinaryByURL(String url, int publication) throws ItemNotFoundException, SerializationException;
 
 	byte[] getBinaryContentById (int id, int publication) throws ItemNotFoundException;
 
 	byte[] getBinaryContentByURL (String url, int publication) throws ItemNotFoundException;
+
+    DateTime getLastPublishDate(String tcmUri) throws ParseException, ItemNotFoundException;
 }

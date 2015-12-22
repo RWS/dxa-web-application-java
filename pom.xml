@@ -66,10 +66,7 @@
         <jackson.version>2.6.4</jackson.version>
         <woodstox.version>4.4.1</woodstox.version>
         <javax.jms.version>1.1-rev-1</javax.jms.version>
-
         <httpcomponents.version>4.3.3</httpcomponents.version>
-        <junit.version>4.11</junit.version>
-
         <resteasy.version>3.0.8.Final</resteasy.version>
         <easymock.version>3.2</easymock.version>
         <aspectj.version>1.8.1</aspectj.version>

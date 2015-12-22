@@ -266,6 +266,9 @@ public class DefaultLinkResolver implements LinkResolver {
 	}
 
 	@Override public String getContextPath () {
+		if (contextPath == null) {
+			contextPath = "";
+		}
 		return contextPath;
 	}
 

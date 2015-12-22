@@ -16,14 +16,6 @@
 
 package org.dd4t.core.processors.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
-
-import javax.xml.transform.TransformerException;
-
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Field;
@@ -32,22 +24,28 @@ import org.dd4t.contentmodel.Item;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.EmbeddedField;
 import org.dd4t.contentmodel.impl.XhtmlField;
+import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.ProcessorException;
+import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.processors.Processor;
 import org.dd4t.core.request.RequestContext;
-import org.dd4t.core.util.XSLTransformer;
+import org.dd4t.core.util.RichTextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.xml.transform.TransformerException;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Filter to resolve component links.
  *
- * @author bjornl, rogier oudshoorn
+ * @author bjornl, rogier oudshoorn, Raimond Kempees
  */
 public class RichTextResolver extends BaseProcessor implements Processor {
 
 	private static final Logger LOG = LoggerFactory.getLogger(RichTextResolver.class);
-	private final XSLTransformer xslTransformer = XSLTransformer.getInstance();
 
 	public RichTextResolver () {
 	}
@@ -124,14 +122,10 @@ public class RichTextResolver extends BaseProcessor implements Processor {
 	}
 
 	protected void resolveXhtmlField (XhtmlField xhtmlField) throws TransformerException {
-		List<Object> xhtmlValues = xhtmlField.getValues();
-		List<String> newValues = new ArrayList<String>();
-
-		Pattern p = Pattern.compile("</?ddtmproot>");
-		for (Object xhtmlValue : xhtmlValues) {
-			String result = xslTransformer.transformSourceFromFilesource("<ddtmproot>" + xhtmlValue + "</ddtmproot>", "/resolveXhtml.xslt");
-			newValues.add(p.matcher(result).replaceAll(""));
+		try {
+			RichTextUtils.resolveXhtmlField(xhtmlField,false,null,null);
+		} catch (ItemNotFoundException | SerializationException e) {
+			throw new TransformerException(e);
 		}
-		xhtmlField.setTextValues(newValues);
 	}
 }

@@ -25,7 +25,7 @@
         <property name="location" value="dd4t.properties"/>
     </bean>
 
-    <bean id="publicationResolverFactory" factory-method="getInstance" class="org.dd4t.mvc.utils.PublicationResolverFactoryImpl">
+    <bean id="publicationResolverFactory" factory-method="getInstance" class="org.dd4t.mvc.utils.PublicationResolverFactory">
         <property name="publicationResolver" ref="publicationResolver" />
     </bean>
 
@@ -59,10 +59,6 @@
     </bean>
 
     <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver"/>
-
-    <bean id="componentFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl"
-          factory-method="getInstance">
-    </bean>
 
     <!-- DD4T Factories -->
     <bean id="pageFactory" class="org.dd4t.core.factories.impl.PageFactoryImpl"
@@ -140,14 +136,16 @@
 
     <!--
         JMS Caching. Only turn this on if your deployer is configured to use JMS.
-        This implementation also requires a dependency on org.apache.activemq.
-    -->
+        This implementation also requires a dependency on org.apache.activemq:activemq-client:5.10.0+
+
+        Make sure to set the brokerURL, userName and password properties,
+        as well as the JMS topic in the listener config
+
 
     <bean id="cacheMessageListener" class="org.dd4t.core.caching.jms.impl.JMSCacheMessageListener"/>
     <bean id="jmsExceptionListener" class="org.dd4t.core.caching.jms.impl.JMSExceptionListener"/>
     <bean id="jmsCacheMonitor" class="org.dd4t.core.caching.jms.impl.JMSCacheMonitor" />
 
-    <!-- Make sure to set the proper JMS variables -->
     <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="tcp://localhost:61616?wireFormat.maxInactivityDuration=60000"/>
         <property name="exceptionListener" ref="jmsExceptionListener"/>
@@ -155,8 +153,8 @@
         <property name="password" value="[JMS-PASSWORD]"/>
     </bean>
 
-    <!-- Make sure to set jms.topic -->
     <jms:listener-container container-type="default" destination-type="topic" connection-factory="connectionFactory" acknowledge="auto">
         <jms:listener destination="[JMS-TOPIC]" ref="cacheMessageListener" method="onMessage"/>
     </jms:listener-container>
+    -->
 </beans>

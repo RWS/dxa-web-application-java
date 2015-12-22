@@ -17,17 +17,14 @@
 package org.dd4t.core.processors.impl;
 
 import org.dd4t.contentmodel.impl.XhtmlField;
+import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.processors.Processor;
 import org.dd4t.core.resolvers.LinkResolver;
-import org.dd4t.core.util.XSLTransformer;
+import org.dd4t.core.util.RichTextUtils;
 
 import javax.annotation.Resource;
 import javax.xml.transform.TransformerException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Filter to resolve component links.
@@ -36,27 +33,16 @@ import java.util.regex.Pattern;
  */
 public class RichTextWithLinksResolver extends RichTextResolver implements Processor {
 
-	private final XSLTransformer xslTransformer = XSLTransformer.getInstance();
-
 	@Resource
 	private LinkResolver linkResolver;
 
 	@Override
 	protected void resolveXhtmlField (XhtmlField xhtmlField) throws TransformerException {
-		List<Object> xhtmlValues = xhtmlField.getValues();
-		List<String> newValues = new ArrayList<>();
-
-		// get context path from linkResolver
-		Map<String, Object> params = new HashMap<>();
-		params.put("contextpath", linkResolver.getContextPath());
-
-		// find all component links and try to resolve them
-		Pattern p = Pattern.compile("</?ddtmproot>");
-		for (Object xhtmlValue : xhtmlValues) {
-			String result = xslTransformer.transformSourceFromFilesource("<ddtmproot>" + xhtmlValue + "</ddtmproot>", "/resolveXhtmlWithLinks.xslt", params);
-			newValues.add(p.matcher(result).replaceAll(""));
+		try {
+			RichTextUtils.resolveXhtmlField(xhtmlField,true,this.linkResolver,this.linkResolver.getContextPath());
+		} catch (ItemNotFoundException | SerializationException e) {
+			throw new TransformerException(e);
 		}
-		xhtmlField.setTextValues(newValues);
 	}
 
 	public LinkResolver getLinkResolver () {

@@ -38,7 +38,7 @@ public class Constants {
 	public static final String VIEW_NAME_FIELD = "viewName";
 	public static final String COMPONENT_NAME = "component";
 
-	public static final DateTime THE_YEAR_ZERO = new DateTime(0,0,0,0,0);
+	public static final DateTime THE_YEAR_ZERO = new DateTime(0,1,1,0,0);
 
 	private Constants () {
 

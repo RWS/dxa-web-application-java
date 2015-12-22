@@ -17,12 +17,13 @@
 package org.dd4t.providers.impl;
 
 import com.tridion.broker.StorageException;
+import com.tridion.dynamiccontent.DynamicContent;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
+import com.tridion.dynamiccontent.publication.PublicationMapping;
 import com.tridion.meta.PublicationMeta;
 import com.tridion.meta.PublicationMetaFactory;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.CacheType;
-import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.PublicationDescriptor;
 import org.dd4t.providers.PublicationProvider;
@@ -41,8 +42,8 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 
 	private Class publicationDescriptor;
 
-
-	public int discoverPublicationId (final String url) throws SerializationException {
+	//TODO: Document
+	public int discoverPublicationIdByPageUrlPath (final String url) {
 		LOG.debug("Discovering Publication id for url: {}", url);
 		final String key = getKey(CacheType.DISCOVER_PUBLICATION_URL, url);
 		final CacheElement<Integer> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
@@ -75,6 +76,21 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 		}
 
 		return result == null ? -1 : result;
+	}
+
+	//TODO: Document
+
+	@Override
+	public int discoverPublicationByBaseUrl(final String fullUrl) {
+
+		PublicationMapping publicationMapping = DynamicContent.getInstance().getMappingsResolver().getPublicationMappingFromUrl(fullUrl);
+
+		if (publicationMapping != null) {
+			return publicationMapping.getPublicationId();
+		}
+
+		LOG.info("Could not find publication Id for url: {}",fullUrl);
+		return -1;
 	}
 
 	@Override public String discoverPublicationUrl (int publicationId) {

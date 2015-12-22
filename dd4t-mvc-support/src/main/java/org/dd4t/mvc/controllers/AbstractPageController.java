@@ -92,12 +92,12 @@ public abstract class AbstractPageController {
 		try {
 			if (StringUtils.isEmpty(url)) {
 				// url is not valid, throw an ItemNotFoundException
-				throw new ItemNotFoundException("Local Page Url could not be resolved: " + urlToFetch + " (probably publication url could not be resolved)");
+				throw new ItemNotFoundException("Page Url was empty or could not be resolved.");
 			}
 
 			Page pageModel = pageFactory.findPageByUrl(url, publicationResolver.getPublicationId());
 
-			DateTime lastPublishDate = pageModel.getLastPublishedDate();
+			DateTime lastPublishDate = pageModel != null ? pageModel.getLastPublishedDate() : Constants.THE_YEAR_ZERO;
 
 			response.setHeader(LAST_MODIFIED, createDateFormat().format(lastPublishDate.toDate()));
 

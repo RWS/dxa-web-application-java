@@ -17,7 +17,6 @@
 package org.dd4t.core.resolvers.impl;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.dd4t.core.util.HttpUtils;
 import org.dd4t.core.util.PublicationDescriptor;
@@ -46,13 +45,12 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 * @return int representing the SDL Tridion Publication item id
 	 */
 	@Override public int getPublicationId () {
-		try {
-			final HttpServletRequest request = HttpUtils.getCurrentRequest();
-			return publicationProvider.discoverPublicationId(HttpUtils.getOriginalFullUrl(request));
-		} catch (SerializationException e) {
-			LOG.error(e.getLocalizedMessage(),e);
-		}
-		return -1;
+		final HttpServletRequest request = HttpUtils.getCurrentRequest();
+
+
+		//return publicationProvider.discoverPublicationIdByPageUrlPath(HttpUtils.getOriginalFullUrl(request));
+
+		return publicationProvider.discoverPublicationByBaseUrl(HttpUtils.getOriginalFullUrl(request));
 	}
 
 	/**

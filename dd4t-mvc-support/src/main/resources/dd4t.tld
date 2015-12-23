@@ -84,6 +84,30 @@
         </attribute>
     </tag>
 
+    <tag>
+        <name>renderComponentPresentation</name>
+        <tag-class>org.dd4t.mvc.tags.RenderDynamicComponentPresentationTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>componentURI</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>templateURI</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>viewName</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+    </tag>
+
     <function>
         <name>publicationUrl</name>
         <function-class>org.dd4t.mvc.tags.PublicationUrl</function-class>

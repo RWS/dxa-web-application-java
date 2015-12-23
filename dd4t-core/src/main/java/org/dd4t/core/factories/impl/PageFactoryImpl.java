@@ -138,6 +138,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
 					if (StringUtils.isEmpty(pageSource)) {
 						cacheElement.setPayload(null);
+						cacheElement.setExpired(true);
 						cacheProvider.storeInItemCache(cacheKey, cacheElement);
 						throw new ItemNotFoundException("Page with url: " + url + " not found.");
 					}
@@ -210,6 +211,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
 					if (page == null || page.length() == 0) {
 						cacheElement.setPayload(null);
+						cacheElement.setExpired(true);
 						cacheProvider.storeInItemCache(cacheKey, cacheElement);
 						throw new ItemNotFoundException("XML Page with url: " + url + " not found.");
 					}
@@ -265,6 +267,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
 					if (StringUtils.isEmpty(pageSource)) {
 						cacheElement.setPayload(null);
+						cacheElement.setExpired(true);
 						cacheProvider.storeInItemCache(cacheKey, cacheElement);
 						throw new ItemNotFoundException("Unable to find page by id " + tcmId);
 					}

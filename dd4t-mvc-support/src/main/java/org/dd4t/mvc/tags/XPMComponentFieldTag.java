@@ -22,6 +22,7 @@ public class XPMComponentFieldTag extends BodyTagSupport {
 	private String field;
 	private int index;
 	private String enclosed = "span";
+	private Boolean useEnclosingTags = true;
 
 	@Override
 	public int doAfterBody () throws JspException {
@@ -39,14 +40,14 @@ public class XPMComponentFieldTag extends BodyTagSupport {
 			xpath = model.getXPath(field);
 			boolean isMultiValued = model.isMultiValued(field);
 
-			if (StringUtils.isNotEmpty(enclosed)) {
+			if (StringUtils.isNotEmpty(enclosed) && useEnclosingTags) {
 				out.append(String.format("<%s>", enclosed));
 			}
 
 			out.append(factory.componentField(xpath, isMultiValued, index));
 			out.append(content.getString());
 
-			if (StringUtils.isNotEmpty(enclosed)) {
+			if (StringUtils.isNotEmpty(enclosed) && useEnclosingTags) {
 				out.append(String.format("</%s>", enclosed));
 			}
 		} else {
@@ -93,5 +94,13 @@ public class XPMComponentFieldTag extends BodyTagSupport {
 
 	public void setEnclosed (String enclosed) {
 		this.enclosed = enclosed;
+	}
+
+	public Boolean isUseEnclosingTags () {
+		return useEnclosingTags;
+	}
+
+	public void setUseEnclosingTags (final Boolean useEnclosingTags) {
+		this.useEnclosingTags = useEnclosingTags;
 	}
 }

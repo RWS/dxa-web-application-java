@@ -76,6 +76,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
                         LOG.debug("Added binary with uri: {} to cache", tcmUri);
                     } catch (ParseException e) {
                         cacheElement.setPayload(null);
+                        cacheElement.setExpired(true);
                         cacheProvider.storeInItemCache(tcmUri, cacheElement);
                         throw new ItemNotFoundException(e);
                     }

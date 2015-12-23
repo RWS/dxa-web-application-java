@@ -101,6 +101,7 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 					if (rawComponentPresentation == null) {
 
 						cacheElement.setPayload(null);
+						cacheElement.setExpired(true);
 						cacheProvider.storeInItemCache(key, cacheElement);
 						throw new ItemNotFoundException(String.format("Could not find DCP with componentURI: %s and templateURI: %s", componentURI, templateURI));
 					}

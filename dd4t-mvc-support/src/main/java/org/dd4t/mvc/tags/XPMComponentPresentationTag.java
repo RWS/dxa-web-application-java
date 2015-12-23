@@ -25,9 +25,9 @@ public class XPMComponentPresentationTag extends SimpleTagSupport {
 		final String templateId = (String) pageContext.getAttribute(Constants.COMPONENT_TEMPLATE_ID, PageContext.REQUEST_SCOPE);
 		final boolean isDynamic = (boolean) pageContext.getAttribute(Constants.DYNAMIC_COMPONENT_PRESENTATION, PageContext.REQUEST_SCOPE);
 
-		XPMRenderer factory = XPMRenderer.getInstance();
+		XPMRenderer renderer = XPMRenderer.getInstance();
 
-		final String out = factory.componentPresentation(model.getTcmUri().toString(), model.getLastModified(), templateId, isDynamic);
+		final String out = renderer.componentPresentation(model.getTcmUri().toString(), model.getLastModified(), templateId, isDynamic);
 		pageContext.getOut().write(out);
 	}
 

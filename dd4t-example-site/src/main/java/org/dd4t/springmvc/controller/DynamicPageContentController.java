@@ -53,8 +53,9 @@ public class DynamicPageContentController extends BaseDD4TController implements
     /**
      * Function builds a ComponentViews model based on given pagemodel
      */
+    @Override
     public ComponentViews buildComponentViews(Page model,
-            HttpServletRequest req, HttpServletResponse res) throws Exception {
+                                              HttpServletRequest req, HttpServletResponse res) throws Exception {
 
         ComponentViews viewmodel = new ComponentViews();
 

@@ -59,6 +59,7 @@ public class ServletOutputStreamWrapper extends ServletOutputStream {
 	 * toString() method returns whatever is written to this stream as a string.
 	 * 
 	 */
+	@Override
 	public String toString(){
 		return new String(fBuffer.toByteArray());
 	}

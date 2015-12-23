@@ -102,6 +102,7 @@ public class PublicationDescriptorImpl implements PublicationDescriptor {
 		this.publicationPath = publicationPath;
 	}
 
+	@Override
 	public String toString() {
 		return "[Id: " + this.id + ", Key: " + this.key + ", Title: " + this.title + "MM Path: " + this.multimediaPath + "MM URL: " + this.multimediaUrl + "Publication URL: " + this.publicationUrl + "Publication Path" + this.publicationPath + "]";
 	}

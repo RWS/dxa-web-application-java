@@ -70,6 +70,7 @@ public abstract class BaseField implements Field {
      * @return a list of objects, where the type is depending of the field type.
      * Never returns null.
      */
+    @Override
     public abstract List<Object> getValues();
 
     /**
@@ -131,6 +132,7 @@ public abstract class BaseField implements Field {
      *
      * @return the name of the field
      */
+    @Override
     public String getName() {
         return name == null ? "" : name;
     }
@@ -140,6 +142,7 @@ public abstract class BaseField implements Field {
      *
      * @param name
      */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -169,6 +172,7 @@ public abstract class BaseField implements Field {
      *
      * @return the field type
      */
+    @Override
     public FieldType getFieldType() {
         return fieldType;
     }
@@ -178,6 +182,7 @@ public abstract class BaseField implements Field {
      *
      * @param fieldType
      */
+    @Override
     public void setFieldType(FieldType fieldType) {
         this.fieldType = fieldType;
     }

@@ -47,10 +47,12 @@ public class FieldSetImpl implements FieldSet {
     @JsonProperty("Schema")
     private Schema schema;
 
+    @Override
     public Schema getSchema() {
         return schema;
     }
 
+    @Override
     public void setSchema(Schema schema) {
         this.schema = schema;
     }
@@ -80,6 +82,7 @@ public class FieldSetImpl implements FieldSet {
      *
      * @return a map of field objects representing the content
      */
+    @Override
     public Map<String, Field> getContent() {
         return content;
     }
@@ -87,6 +90,7 @@ public class FieldSetImpl implements FieldSet {
     /**
      * Set the content
      */
+    @Override
     public void setContent(Map<String, Field> content) {
         this.content = content;
     }

@@ -45,7 +45,7 @@ public class ComponentImplTest {
         //given
         final String key = "ECL", key2 = "KEY2";
         Component component = new ComponentImpl();
-        ((ComponentImpl) component).setExtensionData(new HashMap<String, FieldSet>() {{
+        component.setExtensionData(new HashMap<String, FieldSet>() {{
             put(key, null);
             put(key2, null);
         }});

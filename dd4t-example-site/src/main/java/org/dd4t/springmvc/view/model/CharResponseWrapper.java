@@ -38,6 +38,7 @@ public class CharResponseWrapper extends HttpServletResponseWrapper {
     private ServletOutputStreamWrapper stream;
     private boolean writerUsed;
 
+    @Override
     public String toString() {
     	StringBuffer buf = new StringBuffer();
     	

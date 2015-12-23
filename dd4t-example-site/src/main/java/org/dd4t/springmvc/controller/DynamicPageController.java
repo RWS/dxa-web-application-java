@@ -118,8 +118,7 @@ public class DynamicPageController extends BaseDD4TController {
         if(logger.isDebugEnabled())
             logger.debug("Request shortened to " + URL);
 
-        Page pageModel =
-                (Page) genericPageFactory.findPageByUrl(URL, publication);
+        Page pageModel = genericPageFactory.findPageByUrl(URL, publication);
       //          new BasicRequestContext(request));
       
         request.setAttribute(Constants.PAGE_MODEL_KEY, pageModel);      

@@ -55,6 +55,7 @@ public enum CacheType {
 		this.id = id;
 	}
 
+	@Override
 	public String toString() {
 		return id;
 	}

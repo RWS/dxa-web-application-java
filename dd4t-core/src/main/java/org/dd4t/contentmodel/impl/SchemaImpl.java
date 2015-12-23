@@ -24,6 +24,7 @@ public class SchemaImpl extends BaseRepositoryLocalItem implements Schema {
     @JsonProperty("RootElementName")
     private String rootElement;
 
+    @Override
     public String getRootElement() {
         return rootElement;
     }

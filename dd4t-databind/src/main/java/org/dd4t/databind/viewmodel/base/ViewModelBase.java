@@ -111,6 +111,7 @@ public abstract class ViewModelBase implements BaseViewModel {
 
 
 
+	@Override
 	public Map<String,Object> getModelProperties() {
 		return this.modelProperties;
 	}

@@ -60,10 +60,12 @@ public class CacheElementImpl<T> implements CacheElement<T> {
 		this.payload = payload;
 	}
 
+	@Override
 	public String getDependentKey() {
 		return dependentKey;
 	}
 
+	@Override
 	public void setDependentKey(String dependentKey) {
 		this.dependentKey = dependentKey;
 	}

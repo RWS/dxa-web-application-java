@@ -36,7 +36,7 @@ public interface TaxonomyFactory {
      * @return Keyword the root node of the Taxonomy
      * @throws IOException if said taxonomy cannot be found or an error occurred while fetching it
      */
-    public Keyword getTaxonomy(String taxonomyURI) throws IOException;
+    Keyword getTaxonomy (String taxonomyURI) throws IOException;
 
     /**
      * Returns the root Keyword of Taxonomy by reading the specified taxonomy from the local cache or from the
@@ -49,5 +49,5 @@ public interface TaxonomyFactory {
      * @return Keyword the root node of the Taxonomy
      * @throws IOException if said taxonomy cannot be found or an error occurred while fetching it
      */
-    public Keyword getTaxonomyFilterBySchema(String taxonomyURI, String schemaURI) throws IOException;
+    Keyword getTaxonomyFilterBySchema (String taxonomyURI, String schemaURI) throws IOException;
 }

@@ -28,6 +28,7 @@ public class BinaryDataImpl implements BinaryData {
 
     private byte[] bytes;
 
+    @Override
     public byte[] getBytes() {
         return this.bytes.clone();
     }

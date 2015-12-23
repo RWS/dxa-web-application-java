@@ -125,8 +125,7 @@ public class NewsList extends AbstractController {
                      * Load the components from the factory. Note that we're using getEmbeddedComponent
                      * as we know that in the example these components are found embedded on the page.
                      */
-                    ComponentPresentation comp = 
-                    		(ComponentPresentation) componentPresentationFactory.getComponentPresentation(result, null);
+                    ComponentPresentation comp = componentPresentationFactory.getComponentPresentation(result, null);
                     
                     if(comp != null){
                     	comps.add(comp);

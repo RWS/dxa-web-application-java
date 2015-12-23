@@ -310,6 +310,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 	 */
 
 
+	@Override
 	public <T extends Page> T deserialize (final String source, final Class<? extends T> clazz) throws FactoryException {
 		return DataBindFactory.buildPage(source, clazz);
 	}
@@ -321,6 +322,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 	 * @param publicationId the publication Id
 	 * @return boolean indicating the page is present
 	 */
+	@Override
 	public Boolean isPagePublished (String url, int publicationId) {
 		LOG.debug("Enter isPagePublished with url: {} and publicationId: {}", url, publicationId);
 		try {

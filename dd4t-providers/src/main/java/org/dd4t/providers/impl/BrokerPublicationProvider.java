@@ -43,6 +43,7 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 	private Class publicationDescriptor;
 
 	//TODO: Document
+	@Override
 	public int discoverPublicationIdByPageUrlPath (final String url) {
 		LOG.debug("Discovering Publication id for url: {}", url);
 		final String key = getKey(CacheType.DISCOVER_PUBLICATION_URL, url);

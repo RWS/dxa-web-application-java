@@ -31,10 +31,9 @@ import java.util.Collection;
  * @param <T>
  */
 public interface IViewHandler<T> {
-    public Collection<String> provideViews();
+    Collection<String> provideViews ();
 
-    public String handleView(Page pagemodel, T itemmodel, String ViewID, HttpServletRequest req,
-            HttpServletResponse res) throws Exception;
+    String handleView (Page pagemodel, T itemmodel, String ViewID, HttpServletRequest req, HttpServletResponse res) throws Exception;
     
-    public boolean canHandleView(String view, HttpServletRequest req, HttpServletResponse res);               
+    boolean canHandleView (String view, HttpServletRequest req, HttpServletResponse res);
 }

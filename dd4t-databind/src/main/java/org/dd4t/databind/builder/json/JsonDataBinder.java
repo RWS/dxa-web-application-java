@@ -75,6 +75,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		return INSTANCE;
 	}
 
+	@Override
 	public <T extends Page> T buildPage (final String source, final Class<T> aClass) throws SerializationException {
 		try {
 			return GENERIC_MAPPER.readValue(source, aClass);
@@ -94,6 +95,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		}
 	}
 
+	@Override
 	public ComponentPresentation buildDynamicComponentPresentation (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException {
 		final Set<String> modelNames = new HashSet<>();
 		try {
@@ -121,6 +123,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		return componentPresentation;
 	}
 
+	@Override
 	public <T extends Component> T buildComponent (final Object source, final Class<T> aClass) throws SerializationException {
 		try {
 			if (source instanceof JsonNode) {
@@ -139,6 +142,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		}
 	}
 
+	@Override
 	public Map<String, BaseViewModel> buildModels (final Object source, final Set<String> modelNames, final String templateUri) throws SerializationException {
 
 		final Map<String, BaseViewModel> models = new HashMap<>();
@@ -169,6 +173,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 	 * @return A concrete instance of the view model.
 	 * @throws SerializationException
 	 */
+	@Override
 	public <T extends BaseViewModel> T buildModel (final Object source, final String modelName, final String templateUri) throws SerializationException {
 		if (VIEW_MODELS.containsKey(modelName)) {
 			Class modelClass = VIEW_MODELS.get(modelName);
@@ -179,6 +184,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		return null;
 	}
 
+	@Override
 	public <T extends BaseViewModel> T buildModel (final Object source, final Class modelClass, final String templateUri) throws SerializationException {
 
 		try {
@@ -221,6 +227,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		LOG.debug("Mapper configured for: {} and {}", this.concreteComponentPresentationImpl.toString(), this.concreteComponentTemplateImpl.toString());
 	}
 
+	@Override
 	public String findComponentTemplateViewName (ComponentTemplate template) throws IOException {
 		if (template == null) {
 			throw new IOException("The component template to find the viewModel of is null.");
@@ -240,6 +247,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 		return null;
 	}
 
+	@Override
 	public String getRootElementName (Object componentNode) {
 
 		if (!JsonUtils.isValidJsonNode(componentNode)) {

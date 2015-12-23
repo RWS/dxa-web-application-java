@@ -34,7 +34,7 @@ public interface TaxonomyService {
      * @param tcmuri String representing the TCMURI of the item that was classified with the Keyword we are looking for
      * @return Keyword object with its parent/children and metadata resolved
      */
-    public Keyword findKeywordByClassifiedId(TCMURI tcmuri) throws IOException;
+    Keyword findKeywordByClassifiedId (TCMURI tcmuri) throws IOException;
 
     /**
      * Retrieves a resolved Keyword object corresponding to the given description.
@@ -42,7 +42,7 @@ public interface TaxonomyService {
      * @param description String representing the description of the Keyword to look for
      * @return Keyword object with its parent/children and metadata resolved
      */
-    public Keyword findKeywordByDescription(String description) throws IOException;
+    Keyword findKeywordByDescription (String description) throws IOException;
 
     /**
      * Retrieves a resolved Keyword object corresponding to the given TCMURI.
@@ -50,7 +50,7 @@ public interface TaxonomyService {
      * @param tcmuri String representing the TCMURI of the Keyword to look for
      * @return Keyword object with its parent/children and metadata resolved
      */
-    public Keyword findKeywordById(String tcmuri) throws IOException;
+    Keyword findKeywordById (String tcmuri) throws IOException;
 
     /**
      * Retrieves a resolved Keyword object corresponding to the given TCMURI item id.
@@ -58,7 +58,7 @@ public interface TaxonomyService {
      * @param itemId String representing the TCMURI item id of the Keyword to look for
      * @return Keyword object with its parent/children and metadata resolved
      */
-    public Keyword findKeywordByItemId(int itemId) throws IOException;
+    Keyword findKeywordByItemId (int itemId) throws IOException;
 
     /**
      * Retrieves a resolved Keyword object corresponding to the given key.
@@ -66,7 +66,7 @@ public interface TaxonomyService {
      * @param key String representing the key of the Keyword to look for
      * @return Keyword object with its parent/children and metadata resolved
      */
-    public Keyword findKeywordByKey(String key) throws IOException;
+    Keyword findKeywordByKey (String key) throws IOException;
 
     /**
      * Retrieves a resolved Keyword object corresponding to the given name.
@@ -74,7 +74,7 @@ public interface TaxonomyService {
      * @param name String representing the name of the Keyword to look for
      * @return Keyword object with its parent/children and metadata resolved
      */
-    public Keyword findKeywordByName(String name) throws IOException;
+    Keyword findKeywordByName (String name) throws IOException;
 
     /**
      * Retrieves a resolved Keyword object corresponding to the given path.
@@ -82,12 +82,12 @@ public interface TaxonomyService {
      * @param path String representing the path of the Keyword to look for
      * @return Keyword object with its parent/children and metadata resolved
      */
-    public Keyword findKeywordByPath(String path) throws IOException;
+    Keyword findKeywordByPath (String path) throws IOException;
 
     /**
      * Returns the root Keyword of Taxonomy.
      *
      * @return Keyword the root node of the Taxonomy
      */
-    public Keyword getTaxonomy();
+    Keyword getTaxonomy ();
 }

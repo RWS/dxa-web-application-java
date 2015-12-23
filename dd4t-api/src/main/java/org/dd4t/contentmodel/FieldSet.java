@@ -30,17 +30,17 @@ public interface FieldSet {
      *
      * @return the schema
      */
-    public Schema getSchema();
+    Schema getSchema ();
 
     /**
      * Set the schema of the component
      *
      * @param schema
      */
-    public void setSchema(Schema schema);
+    void setSchema (Schema schema);
 
-    public Map<String, Field> getContent();
+    Map<String, Field> getContent ();
 
-    public void setContent(Map<String, Field> content);
+    void setContent (Map<String, Field> content);
 
 }

@@ -23,6 +23,5 @@ import javax.servlet.http.HttpServletResponse;
 
 
 public interface ContentController {
-    public ComponentViews buildComponentViews(Page model,
-            HttpServletRequest req, HttpServletResponse res) throws Exception;
+    ComponentViews buildComponentViews (Page model, HttpServletRequest req, HttpServletResponse res) throws Exception;
 }

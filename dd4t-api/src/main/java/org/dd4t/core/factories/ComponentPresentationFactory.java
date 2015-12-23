@@ -31,5 +31,5 @@ public interface ComponentPresentationFactory extends Factory {
      * @return a Generic Component object
      * @throws org.dd4t.core.exceptions.FactoryException
      */
-    public ComponentPresentation getComponentPresentation (String componentURI, String viewOrTemplateURI) throws FactoryException;
+    ComponentPresentation getComponentPresentation (String componentURI, String viewOrTemplateURI) throws FactoryException;
 }

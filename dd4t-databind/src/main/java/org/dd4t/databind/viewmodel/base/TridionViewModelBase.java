@@ -91,6 +91,7 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 		return getFieldMap().get(fieldName).isMultiValued();
 	}
 
+	@Override
 	public String getXPath(final String fieldName) {
 		XPMInfo xpmInfo = fieldMap.get(fieldName);
 		if (xpmInfo != null) {
@@ -100,6 +101,7 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
 		}
 	}
 
+	@Override
 	public void addXpmEntry(final String fieldName, final String xpath, final boolean multiValued) {
 		fieldMap.put(fieldName, new XPMInfo(xpath, multiValued));
 	}

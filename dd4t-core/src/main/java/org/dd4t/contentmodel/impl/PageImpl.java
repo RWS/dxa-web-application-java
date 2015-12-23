@@ -42,14 +42,17 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
 	@JsonProperty("StructureGroup") @JsonDeserialize(as = StructureGroupImpl.class)
     protected StructureGroup structureGroup;
 
+    @Override
     public PageTemplate getPageTemplate() {
         return pageTemplate;
     }
 
+    @Override
     public void setPageTemplate(PageTemplate pageTemplate) {
         this.pageTemplate = pageTemplate;
     }
 
+    @Override
     public List<ComponentPresentation> getComponentPresentations() {
         if (componentPresentations == null) {
             componentPresentations = new ArrayList<>();
@@ -57,6 +60,7 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
         return componentPresentations;
     }
 
+    @Override
     public void setComponentPresentations(List<ComponentPresentation> componentPresentations) {
         this.componentPresentations = componentPresentations;
     }
@@ -64,6 +68,7 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
     /**
      * Get the file name
      */
+    @Override
     public String getFileName() {
         return fileName;
     }
@@ -71,6 +76,7 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
     /**
      * Set the file name
      */
+    @Override
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
@@ -79,6 +85,7 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
      * Get the file extension of the page (this is actually determined by the
      * page template but also set here for clarity).
      */
+    @Override
     public String getFileExtension() {
         if (this.getPageTemplate() != null) {
             return this.getPageTemplate().getFileExtension();
@@ -91,16 +98,19 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
      * Set the file extension. It sets the file extension on the page template
      * because that is were the extension is determined.
      */
+    @Override
     public void setFileExtension(String fileExtension) {
         if (this.getPageTemplate() != null) {
             this.getPageTemplate().setFileExtension(fileExtension);
         }
     }
 
+    @Override
     public StructureGroup getStructureGroup() {
         return structureGroup;
     }
 
+    @Override
     public void setStructureGroup(StructureGroup structureGroup) {
         this.structureGroup = structureGroup;
     }

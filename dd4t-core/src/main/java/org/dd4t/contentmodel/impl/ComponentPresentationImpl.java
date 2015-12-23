@@ -67,6 +67,7 @@ public class ComponentPresentationImpl implements ComponentPresentation {
      *
      * @return the component
      */
+    @Override
     public Component getComponent() {
         return component;
     }
@@ -76,6 +77,7 @@ public class ComponentPresentationImpl implements ComponentPresentation {
      *
      * @param component
      */
+    @Override
     public void setComponent(Component component) {
         this.component = component;
     }
@@ -85,6 +87,7 @@ public class ComponentPresentationImpl implements ComponentPresentation {
      *
      * @return the component template
      */
+    @Override
     public ComponentTemplate getComponentTemplate() {
         return componentTemplate;
     }
@@ -94,14 +97,17 @@ public class ComponentPresentationImpl implements ComponentPresentation {
      *
      * @param componentTemplate
      */
+    @Override
     public void setComponentTemplate(ComponentTemplate componentTemplate) {
         this.componentTemplate = componentTemplate;
     }
 
+    @Override
     public String getRenderedContent() {
         return renderedContent;
     }
 
+    @Override
     public void setRenderedContent(String renderedContent) {
         this.renderedContent = renderedContent;
     }
@@ -111,6 +117,7 @@ public class ComponentPresentationImpl implements ComponentPresentation {
         return isDynamic;
     }
 
+    @Override
     public void setIsDynamic(final boolean isDynamic) {
         this.isDynamic = isDynamic;
     }
@@ -119,6 +126,7 @@ public class ComponentPresentationImpl implements ComponentPresentation {
         return orderOnPage;
     }
 
+    @Override
     public void setOrderOnPage(final int orderOnPage) {
         this.orderOnPage = orderOnPage;
     }

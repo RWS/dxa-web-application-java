@@ -76,6 +76,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
     /**
      * Set the organizational item
      */
+    @Override
     public void setOrganizationalItem(OrganizationalItem organizationalItem) {
         this.organizationalItem = organizationalItem;
     }
@@ -93,6 +94,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
      *
      * @param publication
      */
+    @Override
     public void setOwningPublication(Publication publication) {
         this.owningPublication = publication;
     }
@@ -127,6 +129,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
         this.revisionDateAsString = date.toString();
     }
 
+    @Override
     public DateTime getLastPublishedDate() {
         if (lastPublishedDateAsString == null || lastPublishedDateAsString.isEmpty()) {
             return new DateTime();
@@ -134,6 +137,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
         return DateUtils.convertStringToDate(lastPublishedDateAsString);
     }
 
+    @Override
     public void setLastPublishedDate(DateTime date) {
         this.lastPublishedDateAsString = DateUtils.convertDateToString(date);
     }
@@ -167,7 +171,8 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
         this.categories = categories;
     }
 
-	public Schema getSchema() {
+	@Override
+    public Schema getSchema() {
 	    return schema;
 	}
 

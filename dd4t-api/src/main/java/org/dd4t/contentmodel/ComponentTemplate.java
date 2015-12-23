@@ -26,7 +26,7 @@ import org.joda.time.DateTime;
  * @author bjornl
  */
 public interface ComponentTemplate extends Item, HasMetadata {
-    public DateTime getRevisionDate();
+    DateTime getRevisionDate ();
 
-    public void setRevisionDate(DateTime date);
+    void setRevisionDate (DateTime date);
 }

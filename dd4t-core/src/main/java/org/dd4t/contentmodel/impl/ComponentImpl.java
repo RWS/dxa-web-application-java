@@ -42,6 +42,7 @@ public class ComponentImpl extends BaseComponent implements GenericComponent, Ha
      *
      * @return a map of field objects representing the content
      */
+    @Override
     public Map<String, Field> getContent() {
         if (content == null) {
             content = new HashMap<String, Field>();
@@ -52,6 +53,7 @@ public class ComponentImpl extends BaseComponent implements GenericComponent, Ha
     /**
      * Set the content
      */
+    @Override
     public void setContent(Map<String, Field> content) {
         this.content = content;
     }
@@ -61,6 +63,7 @@ public class ComponentImpl extends BaseComponent implements GenericComponent, Ha
      *
      * @return the component type
      */
+    @Override
     public ComponentType getComponentType() {
         return componentType;
     }
@@ -70,6 +73,7 @@ public class ComponentImpl extends BaseComponent implements GenericComponent, Ha
      *
      * @param componentType
      */
+    @Override
     public void setComponentType(ComponentType componentType) {
         this.componentType = componentType;
     }

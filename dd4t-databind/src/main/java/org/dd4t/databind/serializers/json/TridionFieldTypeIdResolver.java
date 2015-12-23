@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.FieldType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +65,7 @@ public class TridionFieldTypeIdResolver implements TypeIdResolver {
 
 	public TridionFieldTypeIdResolver () {
 	}
+
 
 	@Override
 	public void init (final JavaType javaType) {
@@ -119,8 +121,16 @@ public class TridionFieldTypeIdResolver implements TypeIdResolver {
 	}
 
 	public static String getClassForKey (String type) {
+
 		LOG.trace("Fetching field type for {}", type);
-		FieldType fieldType = FieldType.findByName(type);
+		FieldType fieldType;
+		if (StringUtils.isNumeric(type)) {
+			fieldType = FieldType.findByValue(Integer.parseInt(type));
+		} else {
+			fieldType = FieldType.findByName(type);
+		}
+
+
 		String result = FIELD_TYPES.get(fieldType);
 		LOG.trace("Returning field type {}", result);
 

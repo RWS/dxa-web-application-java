@@ -21,7 +21,8 @@ import org.dd4t.core.serializers.Serializer;
 import org.dd4t.core.serializers.impl.json.JSONSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.Resource;
 
 /**
  * Factory class to allow easy access for deserialization / serialization
@@ -40,7 +41,7 @@ public class SerializerFactory {
 	private static final Logger LOG = LoggerFactory.getLogger(SerializerFactory.class);
 	private static final SerializerFactory INSTANCE = new SerializerFactory();
 
-	@Autowired
+	@Resource
 	private Serializer serializer = null;
 
 	private SerializerFactory () {

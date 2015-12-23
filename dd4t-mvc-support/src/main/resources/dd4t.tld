@@ -85,7 +85,7 @@
     </tag>
 
     <tag>
-        <name>renderComponentPresentation</name>
+        <name>renderDynamicComponentPresentation</name>
         <tag-class>org.dd4t.mvc.tags.RenderDynamicComponentPresentationTag</tag-class>
         <body-content>empty</body-content>
         <attribute>

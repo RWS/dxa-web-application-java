@@ -24,6 +24,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.core.util.CompressionUtils;
 import org.dd4t.databind.DataBindFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
@@ -78,7 +79,7 @@ public class DD4TModelConverter {
 	// TODO: OrderOnPage always is 0 in the JSon
 
 	private static void deserializeJson (String content) throws IOException, SerializationException {
-		String content1 = decodeAndDecompressContent(content);//test4;//
+		String content1 = CompressionUtils.decompressGZip(CompressionUtils.decodeBase64(content));//test4;//
 
 		PageImpl page = DataBindFactory.buildPage(content1, PageImpl.class);
 		System.out.println(content1);

@@ -38,9 +38,6 @@ import java.io.IOException;
 public class JSONSerializer implements Serializer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JSONSerializer.class);
-    /**
-     * Jackson's ObjectMapper
-     */
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     static {

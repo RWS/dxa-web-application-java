@@ -27,6 +27,10 @@ public class RichTextUtils {
 	private static final String IMG_TAG = "img";
 	private static final String SRC_ATTR = "src";
 
+	private RichTextUtils() {
+
+	}
+
 	/**
 	 * This method takes care of:
 	 * 1. Formatting RTF from Tridion. This basically means

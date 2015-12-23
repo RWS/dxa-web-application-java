@@ -16,15 +16,17 @@
 
 package org.dd4t.providers.impl;
 
-import java.util.Collection;
-
 import org.dd4t.core.caching.Cachable;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.impl.CacheElementImpl;
 import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.PayloadCacheProvider;
 
+import java.util.Collection;
+
 /**
+ * TODO: move this to dd4t-caching
+ *
  * CacheProvider which doesn't cache anything.
  * 
  * @author rooudsho

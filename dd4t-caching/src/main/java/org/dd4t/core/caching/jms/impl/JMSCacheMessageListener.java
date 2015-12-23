@@ -20,8 +20,8 @@ import com.tridion.cache.CacheEvent;
 import org.dd4t.core.caching.CacheInvalidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
@@ -34,9 +34,9 @@ import java.io.Serializable;
 public class JMSCacheMessageListener implements MessageListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(JMSCacheMessageListener.class);
-    @Autowired
+    @Resource
     protected CacheInvalidator cacheInvalidator;
-    @Autowired
+    @Resource
     private JMSCacheMonitor monitor;
 
     public void setMonitor(JMSCacheMonitor monitor) {

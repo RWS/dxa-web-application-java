@@ -120,7 +120,7 @@ public class TridionFieldTypeIdResolver implements TypeIdResolver {
 
 	public static String getClassForKey (String type) {
 		LOG.trace("Fetching field type for {}", type);
-		FieldType fieldType = FieldType.findByName(type);
+		FieldType fieldType = FieldType.findByValue(Integer.valueOf(type));
 		String result = FIELD_TYPES.get(fieldType);
 		LOG.trace("Returning field type {}", result);
 

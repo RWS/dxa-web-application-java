@@ -8,9 +8,6 @@
     <artifactId>dd4t-parent</artifactId>
     <packaging>pom</packaging>
     <version>2.0.2-SNAPSHOT</version>
-    <!--<modules>
-        <module>spring-mvc-archetype</module>
-    </modules>-->
 
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Parent for all DD4T projects.</description>
@@ -67,7 +64,7 @@
         <logback.version>1.0.13</logback.version>
         <jetty-util.version>6.1.26</jetty-util.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
-        <jersey.version>2.8</jersey.version>
+
         <joda-time.version>2.2</joda-time.version>
         <jsp-api.version>2.2</jsp-api.version>
         <jstl.version>1.2</jstl.version>
@@ -111,6 +108,11 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+            <version>${httpcomponents.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
             <version>${httpcomponents.version}</version>
         </dependency>
         <dependency>
@@ -243,13 +245,6 @@
             <version>${javax.jms.version}</version>
         </dependency>
 
-        <!-- only used for dd4t-providers-rs -->
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-
         <!-- Only used for JMS cache invalidation -->
         <dependency>
             <groupId>org.apache.activemq</groupId>
@@ -268,7 +263,6 @@
          - dd4t-databind
          - dd4t-providers
          - dd4t-mvc-support
-         TODO: add dd4t-providers-rs when done.
 
         Please do read: http://central.sonatype.org/pages/apache-maven.html
 
@@ -291,7 +285,7 @@
                 <module>dd4t-compatibility</module>
                 <module>dd4t-databind</module>
                 <module>dd4t-providers</module>
-                <module>dd4t-providers-rs</module>
+                <module>dd4t-caching</module>
                 <module>dd4t-test</module>
                 <module>dd4t-mvc-support</module>
                 <module>dd4t-test-spring-web</module>
@@ -318,6 +312,7 @@
                 <module>dd4t-compatibility</module>
                 <module>dd4t-databind</module>
                 <module>dd4t-providers</module>
+                <module>dd4t-caching</module>
                 <module>dd4t-mvc-support</module>
             </modules>
             <build>

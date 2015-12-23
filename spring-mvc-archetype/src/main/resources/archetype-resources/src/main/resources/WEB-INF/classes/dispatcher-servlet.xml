@@ -145,10 +145,12 @@
     <bean id="cacheMessageListener" class="org.dd4t.core.caching.jms.impl.JMSCacheMessageListener"/>
     <bean id="jmsExceptionListener" class="org.dd4t.core.caching.jms.impl.JMSExceptionListener"/>
     <bean id="jmsCacheMonitor" class="org.dd4t.core.caching.jms.impl.JMSCacheMonitor" />
+    <bean id="jmsTransportListener" class="org.dd4t.core.caching.jms.impl.JMSTransportListener"/>
 
     <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="tcp://localhost:61616?wireFormat.maxInactivityDuration=60000"/>
         <property name="exceptionListener" ref="jmsExceptionListener"/>
+        <property name="transportListener" ref="jmsTransportListener"/>
         <property name="userName" value="[JMS-USERNAME]"/>
         <property name="password" value="[JMS-PASSWORD]"/>
     </bean>

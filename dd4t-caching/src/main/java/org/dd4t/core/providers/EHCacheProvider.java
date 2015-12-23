@@ -142,7 +142,7 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator,
 		} else {
 			LOG.debug("Disable cache for Preview Session Token: {}",
 					TridionUtils.getSessionPreviewToken());
-			return new CacheElementImpl<T>((T) null, true);
+			return new CacheElementImpl<>((T) null, true);
 		}
 	}
 

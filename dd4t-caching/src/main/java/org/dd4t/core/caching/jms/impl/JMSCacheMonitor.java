@@ -16,12 +16,12 @@
 
 package org.dd4t.core.caching.jms.impl;
 
-import javax.annotation.PostConstruct;
-
 import org.dd4t.core.caching.CacheInvalidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 
 /**
  * @author Mihai Cadariu
@@ -31,7 +31,7 @@ public class JMSCacheMonitor {
     private static final Logger LOG = LoggerFactory.getLogger(JMSCacheMonitor.class);
     private int monitorServiceInterval = 30000; // milliseconds
 
-	@Autowired
+	@Resource
     private CacheInvalidator cacheInvalidator;
     private MQServerStatus serverStatus = MQServerStatus.UP; // assume it's down
 

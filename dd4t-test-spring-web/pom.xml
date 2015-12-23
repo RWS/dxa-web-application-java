@@ -127,6 +127,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-caching</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
         </dependency>

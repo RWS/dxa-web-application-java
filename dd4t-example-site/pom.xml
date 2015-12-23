@@ -41,6 +41,11 @@
 			<artifactId>dd4t-providers</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.dd4t</groupId>
+			<artifactId>dd4t-caching</artifactId>
+			<version>${project.version}</version>
+		</dependency>
 		
 		<!-- Tridion jarfiles (poms from maven4 tridion) -->
 		<dependency>

@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import java.io.File;
 
@@ -21,7 +21,7 @@ public class SerializerFactoryTest {
     @Before
     public void setUp() throws Exception {
         // Load Spring
-        ApplicationContext context = new FileSystemXmlApplicationContext("dd4t-core/src/test/resources/application-context.xml");
+        ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
 
         Serializer serializer = new org.dd4t.core.serializers.impl.json.JSONSerializer();
 	    SerializerFactory.setSerializer(serializer);
@@ -30,7 +30,7 @@ public class SerializerFactoryTest {
     @Test
     public void testDeserializePage() throws Exception {
 
-        String notFoundPage = FileUtils.readFileToString(new File("dd4t-core/src/test/resources/test.json"));
+        String notFoundPage = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("test.json").toURI()));
 
         String pageSource = CompressionUtils.decompressGZip(CompressionUtils.decodeBase64(notFoundPage));
 

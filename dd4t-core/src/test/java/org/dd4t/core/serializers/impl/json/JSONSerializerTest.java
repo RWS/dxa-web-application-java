@@ -1,7 +1,6 @@
 package org.dd4t.core.serializers.impl.json;
 
 import org.dd4t.contentmodel.Field;
-import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.Item;
 import org.dd4t.contentmodel.impl.MultimediaImpl;
 import org.dd4t.core.exceptions.SerializationException;
@@ -80,7 +79,6 @@ public class JSONSerializerTest {
             Field fieldInstance = field.newInstance();
             fieldInstance.setName(field.toString());
             fieldInstance.setXPath("tcm:Content/test:label/test:label[1]/test:lKey");
-            fieldInstance.setFieldType(FieldType.TEXT);
 
             String serialized = serializer.serialize(fieldInstance);
 

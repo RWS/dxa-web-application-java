@@ -32,8 +32,8 @@ import org.springframework.beans.factory.annotation.Autowired;
  * <p/>
  * TODO: rework for databind
  *
- * @Author R. Kempees
- * @Since 06/06/14.
+ * @author R. Kempees
+ * @since 06/06/14.
  */
 public class SerializerFactory {
 

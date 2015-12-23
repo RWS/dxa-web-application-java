@@ -20,8 +20,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import org.dd4t.contentmodel.Field;
 import org.dd4t.core.serializers.Serializer;
 import org.dd4t.core.exceptions.SerializationException;
+import org.dd4t.databind.serializers.json.BaseFieldMixIn;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +46,8 @@ public class JSONSerializer implements Serializer {
     static {
         MAPPER.registerModule(new JodaModule());
         MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        MAPPER.addMixIn(Field.class, BaseFieldMixIn.class);
+        MAPPER.registerModule(new AfterburnerModule());
     }
 
     @Override

@@ -20,21 +20,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
-import org.dd4t.mvc.utils.PublicationResolverFactoryImpl;
+import org.dd4t.core.util.TCMURI;
 import org.dd4t.mvc.utils.ComponentUtils;
 import org.dd4t.mvc.utils.RenderUtils;
-import org.dd4t.core.util.TCMURI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 
 /**
  * dd4t-2
@@ -73,17 +71,24 @@ public class AbstractComponentPresentationController {
 	 * Renders the component template response, the exact mapping needs to be
 	 * determined.
 	 *
+	 * TODO: split this logic. It is now used for two different things:
+	 * 1. For attempting to fetch a DCP which is on a Page
+	 * 2. Attempt to load a DCP based on the incoming URL. Which is something totally different, as we need the publication path
+	 *    to actually do this.
+	 *
+	 * For now, if you use this controller to load DCPs, make sure that the componentViewPrefix variable is actually the publication path,
+	 * or simply extend this controller and be creative with the ComponentPresentationFactory and resolving Publication Ids
+	 *
 	 * @param componentViewPrefix the prefix to use for the view
 	 * @param componentViewName   the viewName to be used to render this component
 	 * @param componentId         the id as an int, not a tcm uri!
 	 * @param request             the request on which the component must be present
 	 * @return the view name to render
 	 */
-	@RequestMapping (value = {"/{componentViewPrefix}/{componentViewName}/{componentId}.dcp"}, method = {RequestMethod.GET, RequestMethod.HEAD})
+
 	public String showComponentPresentation (@PathVariable final String componentViewPrefix, @PathVariable final String componentViewName, @PathVariable final int componentId, final HttpServletRequest request) {
 		LOG.debug(">> {} component with viewPrefix: {}, viewName: {} and componentId: {}", new Object[]{request.getMethod(), componentViewPrefix, componentViewName, componentId});
 
-		int publicationId = PublicationResolverFactoryImpl.getInstance().getPublicationResolver().getPublicationId();
 		ComponentPresentation componentPresentation = ComponentUtils.getComponentPresentation(request);
 
 		if (componentPresentation == null || componentPresentation.isDynamic()) {
@@ -93,14 +98,28 @@ public class AbstractComponentPresentationController {
 
 			if (componentPresentation != null) {
 				try {
-					componentPresentation = componentPresentationFactory.getComponentPresentation(new TCMURI(publicationId, componentId, 16, 0).toString(), componentPresentation.getComponentTemplate().getId());
 
-				} catch (FactoryException e) {
+					final TCMURI ctUri = new TCMURI(componentPresentation.getComponentTemplate().getId());
+					componentPresentation = componentPresentationFactory.getComponentPresentation(new TCMURI(ctUri.getPublicationId(), componentId, 16, 0).toString(), componentPresentation.getComponentTemplate().getId());
+
+				} catch (FactoryException | ParseException e) {
 					LOG.error(e.getLocalizedMessage(), e);
 				}
-			} else {
-				LOG.debug("No component found in request.");
 			}
+
+//			else {
+//
+//
+//
+//				int publicationId = PublicationResolverFactory.getPublicationResolver().getPublicationId();
+//
+//				// Depending on whether the incoming path actually is a publication path
+//				if (publicationId <= 0) {
+//					LOG.warn("Cannot get publication Id!");
+//				} else {
+//					componentPresentation = componentPresentationFactory.getComponentPresentation()
+//				}
+//			}
 		}
 
 		if (componentPresentation == null) {

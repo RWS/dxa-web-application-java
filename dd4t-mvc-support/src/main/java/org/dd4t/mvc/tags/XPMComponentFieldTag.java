@@ -18,7 +18,7 @@ import java.io.IOException;
  */
 public class XPMComponentFieldTag extends BodyTagSupport {
 
-	private TridionViewModel model;
+	private transient TridionViewModel model;
 	private String field;
 	private int index;
 	private String enclosed = "span";

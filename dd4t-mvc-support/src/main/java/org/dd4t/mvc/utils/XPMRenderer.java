@@ -50,7 +50,7 @@ public class XPMRenderer {
 	/**
 	 * Removes the type identifier from the id if present
 	 */
-	private String stripTypeIdentifier(String componentId) {
+	private static String stripTypeIdentifier(String componentId) {
 		if (componentId.endsWith("-16")) {
 			return componentId.substring(0, componentId.length() - 3);
 		} else {
@@ -183,7 +183,7 @@ public class XPMRenderer {
 			xmlDate.setTimezone(DatatypeConstants.FIELD_UNDEFINED);
 			return xmlDate.toXMLFormat();
 		} catch (DatatypeConfigurationException e) {
-			LOG.error("Failed to convert date '" + date + "' to XML date!");
+			LOG.error(e.getLocalizedMessage(),e);
 		}
 		return "";
 	}

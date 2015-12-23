@@ -27,26 +27,27 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.util.CompressionUtils;
 import org.dd4t.databind.DataBindFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.zip.GZIPInputStream;
 
 public class DD4TModelConverter {
 
-	public static void main (String[] args) throws IOException, XMLStreamException, SerializationException {
+	public static void main (String[] args) throws IOException, XMLStreamException, SerializationException, URISyntaxException {
 
 		// Load Spring
-		ApplicationContext context = new FileSystemXmlApplicationContext ("dd4t-test/target/classes/application-context.xml");
+		ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
 
 
 //		System.out.println(testXml + xml2 + xml3);
 		String completeXml = FileUtils.readFileToString(new File("dd4t-test/target/classes/xml-without-java-xslt.xml"));
 //
-		String homepage = FileUtils.readFileToString(new File("dd4t-test/target/classes/test.json"));
+		String homepage = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("test.json").toURI()));
 		//System.out.println(completeXml);
 		//deserializeXmlJackson(completeXml);
 		deserializeJson(homepage);

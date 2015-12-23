@@ -39,8 +39,7 @@ import java.util.Map;
  * 
  */
 public abstract class BaseJSPViewHandler<T> implements IViewHandler<T> {
-	private static Logger logger = LoggerFactory
-			.getLogger(BaseJSPViewHandler.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BaseJSPViewHandler.class);
 
 	/**
 	 * Local set of cachedviews, enabling speedy lookup of views.
@@ -96,6 +95,7 @@ public abstract class BaseJSPViewHandler<T> implements IViewHandler<T> {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public Collection<String> provideViews() {
 		return cachedViews.keySet();
 	}
@@ -124,6 +124,7 @@ public abstract class BaseJSPViewHandler<T> implements IViewHandler<T> {
 	 * 
 	 * {@inheritDoc}
 	 */
+	@Override
 	public boolean canHandleView(String view, HttpServletRequest req,
 			HttpServletResponse res) {
 		if (filePattern == null && !cachedViews.containsKey(view))
@@ -135,22 +136,22 @@ public abstract class BaseJSPViewHandler<T> implements IViewHandler<T> {
 			try {
 				dispatch(null, null, URL, req, res);
 
-				if (logger.isDebugEnabled())
-					logger.debug("Dispatch successfull, adding view for viewid "
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug("Dispatch successfull, adding view for viewid "
 							+ view);
 
 				cachedViews.put(view, URL);
 
 				return true;
 			} catch (FileNotFoundException ex) {
-				if (logger.isDebugEnabled())
-					logger.debug("Dispatch unsuccessfull, ignoring view: "
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug("Dispatch unsuccessfull, ignoring view: "
 							+ ex.getMessage());
 
 				return false;
 			} catch (Exception ex) {
-				if (logger.isDebugEnabled())
-					logger.debug("Dispatch unsuccessfull due to try-catch unaware view, using view: "
+				if (LOGGER.isDebugEnabled())
+					LOGGER.debug("Dispatch unsuccessfull due to try-catch unaware view, using view: "
 							+ ex.getMessage());
 
 				cachedViews.put(view, URL);
@@ -181,8 +182,8 @@ public abstract class BaseJSPViewHandler<T> implements IViewHandler<T> {
 	 */
 	private String dispatch(Page page, T model, String URL,
 			HttpServletRequest req, HttpServletResponse res) throws Exception {
-		if (logger.isDebugEnabled())
-			logger.debug("Attempting to dispatch view to " + URL);
+		if (LOGGER.isDebugEnabled())
+			LOGGER.debug("Attempting to dispatch view to " + URL);
 
 		// retrieve dispatcher to component JSP view
 		RequestDispatcher dispatcher = req.getSession().getServletContext()

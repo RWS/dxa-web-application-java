@@ -228,6 +228,7 @@ public abstract class BaseField implements Field {
         return keywordValues != null ? keywordValues : new LinkedList<Keyword>();
     }
 
+    // FIXME
     @JsonSetter("Keywords")
     public void setKeywordvalues(List<Keyword> keywordValues) {
         this.keywordValues = keywordValues;

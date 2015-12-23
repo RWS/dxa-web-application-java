@@ -154,7 +154,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
 
     public Map<String, Field> getMetadata() {
         if (metadata == null) {
-            metadata = new HashMap<String, Field>();
+            metadata = new HashMap<>();
         }
         return metadata;
     }

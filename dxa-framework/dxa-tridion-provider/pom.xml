@@ -221,11 +221,6 @@
             <groupId>com.vs.ezlicrun</groupId>
             <artifactId>easylicense</artifactId>
         </dependency>
-        <!-- TODO: Why do we have dependency to Microsoft SQL server here?? -->
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>sqljdbc4</artifactId>
-        </dependency>
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>

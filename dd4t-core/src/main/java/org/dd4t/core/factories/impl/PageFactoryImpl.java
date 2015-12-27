@@ -127,9 +127,9 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 		CacheElement<Page> cacheElement = cacheProvider.loadPayloadFromLocalCache(cacheKey);
 		Page page;
 
-		if (cacheElement.isExpired()) {
+		if (cacheElement.isExpired() || cacheElement.getPayload() == null) {
 			synchronized (cacheElement) {
-				if (cacheElement.isExpired()) {
+				if (cacheElement.isExpired() || cacheElement.getPayload() == null) {
 					cacheElement.setExpired(false);
 					String pageSource;
 					ProviderResultItem<String> resultItem;

@@ -116,6 +116,7 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 //			LOG.debug("No view name set on Component Template and no rootElementName found or only rendering to Generic Component");
 			try {
 				// Note: Components actually always have to be set
+				// TODO: figure out a way to not have to do it.
 				componentPresentation.setComponent(DataBindFactory.buildComponent(rawComponentData, this.concreteComponentClass));
 			} catch (SerializationException e) {
 				throw new IOException(e.getLocalizedMessage(), e);

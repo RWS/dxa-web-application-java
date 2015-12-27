@@ -2,7 +2,7 @@
 <jsp:useBean id="pageModel" type="org.dd4t.contentmodel.Page" scope="request"/>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dd4t" uri="http://www.dd4t.org/tags/2.0" %>
-<jsp:useBean id="generic" type="org.dd4t.test.web.models.GenericTextField" scope="request"/>
+<jsp:useBean id="generic" type="org.dd4t.test.web.models.Generic" scope="request"/>
 
 <c:if test="${!empty generic.heading}">
   <h1>${generic.heading}</h1>

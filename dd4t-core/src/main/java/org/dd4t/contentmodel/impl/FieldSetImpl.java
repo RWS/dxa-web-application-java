@@ -67,7 +67,6 @@ public class FieldSetImpl implements FieldSet {
 
         try {
             // The basefield annotations will map the fields to concrete types
-	        // TODO: see if this breaks with XML
             BaseField b = JsonDataBinder.getGenericMapper().readValue(embeddedField.toString(), BaseField.class);
             content.put(fieldKey, b);
         } catch (IOException e) {

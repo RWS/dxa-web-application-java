@@ -112,7 +112,7 @@
     <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
         <!-- Set this value to your own models package root -->
         <property name="viewModelPackageRoot" value="${package}.models" />
-        <property name="viewModelMetaKeyName" value="viewName" />
+        <property name="viewModelMetaKeyName" value="view" />
         <!-- Set these to your need. If you only want regular Components set to true -->
         <property name="renderDefaultComponentModelsOnly" value="false" />
         <property name="renderDefaultComponentsIfNoModelFound" value="true" />

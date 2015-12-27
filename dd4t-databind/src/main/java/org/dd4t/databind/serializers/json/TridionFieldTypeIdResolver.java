@@ -26,7 +26,7 @@ import org.dd4t.contentmodel.FieldType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
 
 /**
@@ -41,7 +41,7 @@ import java.util.Map;
 public class TridionFieldTypeIdResolver implements TypeIdResolver {
 
 	private static final Logger LOG = LoggerFactory.getLogger(TridionFieldTypeIdResolver.class);
-	private static final Map<FieldType, String> FIELD_TYPES = new HashMap<>();
+	private static final EnumMap<FieldType, String> FIELD_TYPES = new EnumMap<>(FieldType.class);
 	private static final String NAMESPACE_PREFIX = "org.dd4t.contentmodel.impl.";
 	private static final String TEXT_FIELD = "TextField";
 	private static final String COMPONENT_LINK_FIELD = "ComponentLinkField";
@@ -101,7 +101,7 @@ public class TridionFieldTypeIdResolver implements TypeIdResolver {
 
 		try {
 			LOG.trace("Loading a '{}'", clazzName);
-			clazz = TypeFactory.defaultInstance().findClass(clazzName); //ClassUtil.findClass(clazzName);
+			clazz = TypeFactory.defaultInstance().findClass(clazzName);
 		} catch (ClassNotFoundException e) {
 			LOG.error("Could not find the class!", e);
 			throw new IllegalStateException("Cannot find class '" + clazzName + "'");

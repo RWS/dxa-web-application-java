@@ -18,8 +18,12 @@ package org.dd4t.databind.builder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.Embedded;
+import org.dd4t.contentmodel.FieldSet;
+import org.dd4t.contentmodel.FieldType;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.TridionViewModel;
+import org.dd4t.databind.util.TypeUtils;
 import org.dd4t.databind.viewmodel.base.ModelFieldMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,17 +65,47 @@ public abstract class AbstractModelConverter {
 		}
 	}
 
-	protected <T extends BaseViewModel> void setFieldValue (final T model, final Field f, final Object fieldValue) throws IllegalAccessException {
+	protected <T extends BaseViewModel> void setFieldValue (final T model, final Field f, final Object fieldValue, final FieldType fieldType) throws IllegalAccessException {
 
 		boolean isMultiValued = false;
+		Class<?> fieldTypeOfFieldToSet;
 		if (f.getType().equals(List.class)) {
 			isMultiValued = true;
+			fieldTypeOfFieldToSet = (Class<?>)TypeUtils.getRuntimeTypeOfTypeParameter(f.getGenericType());
+		} else {
+			fieldTypeOfFieldToSet = f.getType();
 		}
 
-		if (fieldValue instanceof org.dd4t.contentmodel.Field ) {
+		if (fieldType == FieldType.EMBEDDED && (FieldSet.class.isAssignableFrom(fieldTypeOfFieldToSet) || Embedded.class.isAssignableFrom(fieldTypeOfFieldToSet)))  {
+			setEmbeddedFieldSetOnModelField(model, f, (org.dd4t.contentmodel.Field)fieldValue, isMultiValued);
+		}
+		else if (fieldValue instanceof org.dd4t.contentmodel.Field ) {
 			setFieldValueOnField(model, f, (org.dd4t.contentmodel.Field) fieldValue, isMultiValued);
 		} else if (fieldValue instanceof Component) {
 			setComponentOnField(model, f, fieldValue, isMultiValued);
+		}
+	}
+
+
+	private <T extends BaseViewModel> void setEmbeddedFieldSetOnModelField (final T model, final Field f, final org.dd4t.contentmodel.Field fieldValue, final boolean isMultiValued) throws IllegalAccessException {
+		LOG.debug("Setting Embedded Field on Model field");
+
+		Object valueToSet;
+		if (FieldSet.class.isAssignableFrom(f.getType())) {
+			if (fieldValue.getValues() != null && !fieldValue.getValues().isEmpty()) {
+				valueToSet = fieldValue.getValues().get(0);
+			} else {
+				valueToSet = null;
+			}
+
+		} else {
+			valueToSet = fieldValue;
+		}
+
+		if (isMultiValued) {
+			addToListTypeField(model,f,valueToSet);
+		} else {
+			f.set(model,valueToSet);
 		}
 	}
 
@@ -86,6 +120,8 @@ public abstract class AbstractModelConverter {
 
 	private <T extends BaseViewModel> void setFieldValueOnField (final T model, final Field f, final org.dd4t.contentmodel.Field fieldValue, final boolean isMultiValued) throws IllegalAccessException {
 		List<Object> values = fieldValue.getValues();
+
+		// TODO: embedded values from fieldSet
 		if (values != null && !values.isEmpty()) {
 			if (isMultiValued) {
 				LOG.debug("Setting multivalued field: {}", f.getName());

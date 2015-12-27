@@ -79,8 +79,13 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
 		return result == null ? -1 : result;
 	}
 
-	//TODO: Document
+	//TODO: Document and add caching
 
+	/**
+	 * Uses cd_dynamic to resolve publication Ids
+	 * @param fullUrl the full url, including the host name
+	 * @return a publiction Id
+	 */
 	@Override
 	public int discoverPublicationByBaseUrl(final String fullUrl) {
 

@@ -19,6 +19,8 @@
 
     <bean id="publicationResolver" class="org.dd4t.core.resolvers.impl.UrlPublicationResolver">
         <property name="publicationProvider" ref="publicationProvider" />
+        <!-- Set to true to use cd_dynamic_conf.xml to figure out publication Ids -->
+        <property name="useCdDynamic" value="false" />
     </bean>
 
     <bean id="propertiesService" class="org.dd4t.mvc.utils.PropertiesServiceImpl">

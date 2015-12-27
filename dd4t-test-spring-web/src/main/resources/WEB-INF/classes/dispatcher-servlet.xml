@@ -19,6 +19,9 @@
 
     <bean id="publicationResolver" class="org.dd4t.core.resolvers.impl.UrlPublicationResolver">
         <property name="publicationProvider" ref="publicationProvider" />
+
+        <!-- Set to true to use cd_dynamic_conf.xml to figure out publication Ids -->
+        <property name="useCdDynamic" value="false" />
     </bean>
 
     <bean id="propertiesService" class="org.dd4t.mvc.utils.PropertiesServiceImpl">
@@ -27,6 +30,7 @@
 
     <bean id="publicationResolverFactory" factory-method="getInstance" class="org.dd4t.mvc.utils.PublicationResolverFactory">
         <property name="publicationResolver" ref="publicationResolver" />
+
     </bean>
 
     <!-- DD4T Provider beans -->
@@ -53,9 +57,12 @@
         <property name="contentIsCompressed" value="true"/>
     </bean>
 
+
     <bean id="publicationProvider" class="org.dd4t.providers.impl.BrokerPublicationProvider">
         <property name="publicationDescriptor" value="org.dd4t.contentmodel.impl.PublicationDescriptorImpl" />
         <property name="cacheProvider" ref="cacheProvider" />
+
+        <!-- Set to true if you want or need to use cd_dynamic to resolve publication Ids -->
     </bean>
 
     <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver"/>

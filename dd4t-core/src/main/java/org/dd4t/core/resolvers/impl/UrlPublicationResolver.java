@@ -37,20 +37,24 @@ public class UrlPublicationResolver implements PublicationResolver {
 
 	@Resource
 	private PublicationProvider publicationProvider;
-
+	private boolean useCdDynamic;
 
 	/**
 	 * Gets the Publication TCMURI item id for the current request
 	 *
 	 * @return int representing the SDL Tridion Publication item id
 	 */
-	@Override public int getPublicationId () {
+	@Override
+	public int getPublicationId () {
 		final HttpServletRequest request = HttpUtils.getCurrentRequest();
 
-
-		//return publicationProvider.discoverPublicationIdByPageUrlPath(HttpUtils.getOriginalFullUrl(request));
-
-		return publicationProvider.discoverPublicationByBaseUrl(HttpUtils.getOriginalFullUrl(request));
+		if (this.useCdDynamic) {
+			LOG.debug("Using cd_dynamic_conf.xml to determine publication Id");
+			return publicationProvider.discoverPublicationByBaseUrl(HttpUtils.getOriginalFullUrl(request));
+		} else {
+			LOG.debug("Determining Pub Id on page URL.");
+			return publicationProvider.discoverPublicationIdByPageUrlPath(HttpUtils.getOriginalFullUrl(request));
+		}
 	}
 
 	/**
@@ -58,7 +62,8 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @return String representing the SDL Tridion Publication Url metadata property
 	 */
-	@Override public String getPublicationUrl () {
+	@Override
+	public String getPublicationUrl () {
 		return publicationProvider.discoverPublicationUrl(getPublicationId());
 	}
 
@@ -67,7 +72,8 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @return String representing the SDL Tridion Publication Path metadata property
 	 */
-	@Override public String getPublicationPath () {
+	@Override
+	public String getPublicationPath () {
 		return publicationProvider.discoverPublicationPath(getPublicationId());
 	}
 
@@ -76,7 +82,8 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @return String representing the SDL Tridion Images URL metadata property
 	 */
-	@Override public String getImagesUrl () {
+	@Override
+	public String getImagesUrl () {
 		return publicationProvider.discoverImagesUrl(getPublicationId());
 	}
 
@@ -85,7 +92,8 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 *
 	 * @return String representing the SDL Tridion Images Path metadata property
 	 */
-	@Override public String getImagesPath () {
+	@Override
+	public String getImagesPath () {
 		return publicationProvider.discoverImagesPath(getPublicationId());
 	}
 
@@ -95,7 +103,8 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 * @param url String representing the generic URL (i.e. URL path without PublicationUrl prefix)
 	 * @return String representing the current Publication URL followed by the given URL
 	 */
-	@Override public String getLocalPageUrl (final String url) {
+	@Override
+	public String getLocalPageUrl (final String url) {
 		if (StringUtils.isEmpty(url)) {
 			return "";
 		}
@@ -113,20 +122,31 @@ public class UrlPublicationResolver implements PublicationResolver {
 	 * @param url String representing the generic URL (i.e. URL path without PublicationUrl prefix)
 	 * @return String representing the current Publication URL followed by the given URL
 	 */
-	@Override public String getLocalBinaryUrl (final String url) {
+	@Override
+	public String getLocalBinaryUrl (final String url) {
 		String binaryUrl = publicationProvider.discoverImagesUrl(getPublicationId());
 		return url.replaceFirst(binaryUrl, "");
 	}
 
 	/**
 	 * For use in the RS scenario.
+	 *
 	 * @return a publication descriptor
 	 */
-	@Override public PublicationDescriptor getPublicationDescriptor () {
+	@Override
+	public PublicationDescriptor getPublicationDescriptor () {
 		return publicationProvider.getPublicationDescriptor(getPublicationId());
 	}
 
 	public void setPublicationProvider (final PublicationProvider publicationProvider) {
 		this.publicationProvider = publicationProvider;
+	}
+
+	public Boolean useCdDynamic () {
+		return useCdDynamic;
+	}
+
+	public void setUseCdDynamic (final String useCdDynamicValue) {
+		this.useCdDynamic = Boolean.parseBoolean(useCdDynamicValue);
 	}
 }

@@ -25,6 +25,14 @@ public class ModelBuilderPipeline {
         this.entityBuilderHandlers = handlers;
     }
 
+    public void addEntityBuilderHandler(EntityBuilder entityBuilder) {
+        this.entityBuilderHandlers.add(entityBuilder);
+    }
+
+    public void addPageBuilderHandler(PageBuilder pageBuilder) {
+        this.pageBuilderHandlers.add(pageBuilder);
+    }
+
     public PageModel createPageModel(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider) throws ContentProviderException {
         PageModel pageModel = null;
         for (PageBuilder pageBuilder : pageBuilderHandlers) {

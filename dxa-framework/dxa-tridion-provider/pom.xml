@@ -205,6 +205,7 @@
             <groupId>com.tridion</groupId>
             <artifactId>cwd_resource</artifactId>
         </dependency>
+        <!-- TODO: Why dependency to cwd-image here??? -->
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cwd_image</artifactId>
@@ -218,10 +219,6 @@
         <dependency>
             <groupId>com.vs.ezlicrun</groupId>
             <artifactId>easylicense</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>sqljdbc4</artifactId>
         </dependency>
         <dependency>
             <groupId>xalan</groupId>

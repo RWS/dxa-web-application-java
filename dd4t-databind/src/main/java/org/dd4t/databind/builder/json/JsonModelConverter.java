@@ -18,6 +18,8 @@ package org.dd4t.databind.builder.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.Embedded;
+import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.ModelConverter;
@@ -120,11 +122,11 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 				boolean isEmbedabble = false;
 				if (!rawJsonData.has(DataBindConstants.FIELD_TYPE_KEY) && !isRootComponent) {
 					isEmbedabble = true;
-				} else if (rawJsonData.has(DataBindConstants.FIELD_TYPE_KEY) && (FieldType.findByValue(rawJsonData.get(DataBindConstants.FIELD_TYPE_KEY).intValue()) == FieldType.EMBEDDED) ) {
+				} else if (rawJsonData.has(DataBindConstants.FIELD_TYPE_KEY) && (FieldType.findByValue(rawJsonData.get(DataBindConstants.FIELD_TYPE_KEY).intValue()) == FieldType.EMBEDDED)) {
 					isEmbedabble = true;
 				}
 
-				final JsonNode currentNode = getJsonNodeToParse(fieldKey, rawJsonData, isRootComponent,isEmbedabble,contentFields, metadataFields, m);
+				final JsonNode currentNode = getJsonNodeToParse(fieldKey, rawJsonData, isRootComponent, isEmbedabble, contentFields, metadataFields, m);
 				// Since we are now now going from modelproperty > fetch data, the data might actually be null
 				if (currentNode != null) {
 					this.buildField(model, fieldName, currentNode, m);
@@ -149,7 +151,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 	 * @param m               The current model field that is parsing at the moment
 	 * @return the Json node found under the entityFieldName key or null
 	 */
-	private static JsonNode getJsonNodeToParse (final String entityFieldName, final JsonNode rawJsonData, final boolean isRootComponent,final boolean isEmbeddable, final JsonNode contentFields, final JsonNode metadataFields, final ModelFieldMapping m) {
+	private static JsonNode getJsonNodeToParse (final String entityFieldName, final JsonNode rawJsonData, final boolean isRootComponent, final boolean isEmbeddable, final JsonNode contentFields, final JsonNode metadataFields, final ModelFieldMapping m) {
 
 		final JsonNode currentNode;
 		if (isRootComponent) {
@@ -182,28 +184,16 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		}
 		LOG.debug("Tridion field type: {}", tridionDataFieldType);
 
+		Class<?> fieldTypeOfFieldToSet = TypeUtils.determineTypeOfField(modelField);
+
+		boolean modelFieldIsRegularEmbeddedType = FieldSet.class.isAssignableFrom(fieldTypeOfFieldToSet) || Embedded.class.isAssignableFrom(fieldTypeOfFieldToSet);
+
 		final List<JsonNode> nodeList = new ArrayList<>();
 		if (tridionDataFieldType.equals(FieldType.COMPONENTLINK) || tridionDataFieldType.equals(FieldType.MULTIMEDIALINK)) {
 			fillLinkedComponentValues(currentField, nodeList);
-		} else if (tridionDataFieldType == FieldType.EMBEDDED) {
+		} else if (tridionDataFieldType == FieldType.EMBEDDED && !modelFieldIsRegularEmbeddedType) {
 
-			final JsonNode embeddedNode = currentField.get(DataBindConstants.EMBEDDED_VALUES_NODE);
-			// This is a fix for when we are already in an embedded node. The Json unfortunately
-			// keeps sibling nodes in this child, which has FieldType embedded, while we're actually already in
-			// that node's Values
-
-			if (embeddedNode != null) {
-				final Iterator<JsonNode> embeddedIter = embeddedNode.elements();
-				while (embeddedIter.hasNext()) {
-					JsonNode embeddedValue = embeddedIter.next();
-					nodeList.add(embeddedValue);
-				}
-			} else {
-				final Iterator<JsonNode> currentFieldElements = currentField.elements();
-				while (currentFieldElements.hasNext()) {
-					nodeList.add(currentFieldElements.next());
-				}
-			}
+			handleEmbeddedContent(currentField, nodeList);
 		} else if (tridionDataFieldType == FieldType.UNKNOWN) {
 			// we're in the embedded scenario where there is no field type
 			// This is where the serializer passes when it's trying to deserialize the actual field in an embedded
@@ -216,8 +206,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			if (currentField.has(fieldName)) {
 				nodeList.add(currentField.get(fieldName));
 			}
-		}
-		else {
+		} else {
 			nodeList.add(currentField);
 		}
 
@@ -226,6 +215,10 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 			return;
 		}
 
+		deserializeAndBuildModels(model, fieldName, modelField, tridionDataFieldType, nodeList);
+	}
+
+	private <T extends BaseViewModel> void deserializeAndBuildModels (final T model, final String fieldName, final Field modelField, final FieldType tridionDataFieldType, final List<JsonNode> nodeList) throws SerializationException, IllegalAccessException, IOException {
 		if (modelField.getType().equals(List.class)) {
 			final Type parametrizedType = TypeUtils.getRuntimeTypeOfTypeParameter(modelField.getGenericType());
 			LOG.debug("Interface check: " + TypeUtils.classIsViewModel((Class<?>) parametrizedType));
@@ -244,10 +237,28 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 		} else if (TypeUtils.classIsViewModel(modelField.getType())) {
 			final Class<T> modelClassToUse = (Class<T>) modelField.getType();
 			checkTypeAndBuildModel(model, fieldName, nodeList.get(0), modelField, modelClassToUse);
-
-
 		} else {
 			deserializeGeneric(model, nodeList.get(0), modelField, tridionDataFieldType);
+		}
+	}
+
+	private static void handleEmbeddedContent (final JsonNode currentField, final List<JsonNode> nodeList) {
+		final JsonNode embeddedNode = currentField.get(DataBindConstants.EMBEDDED_VALUES_NODE);
+		// This is a fix for when we are already in an embedded node. The Json unfortunately
+		// keeps sibling nodes in this child, which has FieldType embedded, while we're actually already in
+		// that node's Values
+
+		if (embeddedNode != null) {
+			final Iterator<JsonNode> embeddedIter = embeddedNode.elements();
+			while (embeddedIter.hasNext()) {
+				JsonNode embeddedValue = embeddedIter.next();
+				nodeList.add(embeddedValue);
+			}
+		} else {
+			final Iterator<JsonNode> currentFieldElements = currentField.elements();
+			while (currentFieldElements.hasNext()) {
+				nodeList.add(currentFieldElements.next());
+			}
 		}
 	}
 

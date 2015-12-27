@@ -20,8 +20,10 @@ import org.dd4t.core.databind.BaseViewModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.List;
 
 /**
  * dd4t-2
@@ -31,7 +33,7 @@ import java.lang.reflect.Type;
 public class TypeUtils {
 	private static final Logger LOG = LoggerFactory.getLogger(TypeUtils.class);
 
-	private TypeUtils() {
+	private TypeUtils () {
 
 	}
 
@@ -46,11 +48,18 @@ public class TypeUtils {
 		return Object.class;
 	}
 
-	public static boolean classIsViewModel(Class<?> clazz) {
+	public static boolean classIsViewModel (Class<?> clazz) {
 		if (BaseViewModel.class.isAssignableFrom(clazz)) {
 			LOG.debug("Current class is a View Model.");
 			return true;
 		}
 		return false;
+	}
+
+	public static Class<?> determineTypeOfField (Field field) {
+		if (field.getType().equals(List.class)) {
+			return (Class<?>) TypeUtils.getRuntimeTypeOfTypeParameter(field.getGenericType());
+		}
+		return field.getType();
 	}
 }

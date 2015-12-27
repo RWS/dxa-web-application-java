@@ -25,7 +25,7 @@ public class Generic extends TridionViewModelBase {
 	List<String> body;
 
 	@ViewModelProperty
-	EmbeddedOne embedded;
+	List<EmbeddedOne> embedded;
 
 	public String getHeading () {
 		return heading;
@@ -43,11 +43,11 @@ public class Generic extends TridionViewModelBase {
 		this.body = body;
 	}
 
-	public EmbeddedOne getEmbedded () {
+	public List<EmbeddedOne> getEmbedded () {
 		return embedded;
 	}
 
-	public void setEmbedded (final EmbeddedOne embedded) {
+	public void setEmbedded (final List<EmbeddedOne> embedded) {
 		this.embedded = embedded;
 	}
 }

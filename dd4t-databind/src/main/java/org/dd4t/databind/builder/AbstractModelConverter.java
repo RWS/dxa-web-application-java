@@ -68,12 +68,9 @@ public abstract class AbstractModelConverter {
 	protected <T extends BaseViewModel> void setFieldValue (final T model, final Field f, final Object fieldValue, final FieldType fieldType) throws IllegalAccessException {
 
 		boolean isMultiValued = false;
-		Class<?> fieldTypeOfFieldToSet;
+		Class<?> fieldTypeOfFieldToSet = TypeUtils.determineTypeOfField(f);
 		if (f.getType().equals(List.class)) {
 			isMultiValued = true;
-			fieldTypeOfFieldToSet = (Class<?>)TypeUtils.getRuntimeTypeOfTypeParameter(f.getGenericType());
-		} else {
-			fieldTypeOfFieldToSet = f.getType();
 		}
 
 		if (fieldType == FieldType.EMBEDDED && (FieldSet.class.isAssignableFrom(fieldTypeOfFieldToSet) || Embedded.class.isAssignableFrom(fieldTypeOfFieldToSet)))  {

@@ -33,23 +33,23 @@ import javax.xml.transform.TransformerException;
  */
 public class RichTextWithLinksResolver extends RichTextResolver implements Processor {
 
-	@Resource
-	private LinkResolver linkResolver;
+    @Resource
+    private LinkResolver linkResolver;
 
-	@Override
-	protected void resolveXhtmlField (XhtmlField xhtmlField) throws TransformerException {
-		try {
-			RichTextUtils.resolveXhtmlField(xhtmlField,true,this.linkResolver,this.linkResolver.getContextPath());
-		} catch (ItemNotFoundException | SerializationException e) {
-			throw new TransformerException(e);
-		}
-	}
+    @Override
+    protected void resolveXhtmlField (XhtmlField xhtmlField) throws TransformerException {
+        try {
+            RichTextUtils.resolveXhtmlField(xhtmlField, true, this.linkResolver, this.linkResolver.getContextPath());
+        } catch (ItemNotFoundException | SerializationException e) {
+            throw new TransformerException(e);
+        }
+    }
 
-	public LinkResolver getLinkResolver () {
-		return linkResolver;
-	}
+    public LinkResolver getLinkResolver () {
+        return linkResolver;
+    }
 
-	public void setLinkResolver (LinkResolver linkResolver) {
-		this.linkResolver = linkResolver;
-	}
+    public void setLinkResolver (LinkResolver linkResolver) {
+        this.linkResolver = linkResolver;
+    }
 }

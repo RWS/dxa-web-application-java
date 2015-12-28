@@ -21,16 +21,15 @@ import java.io.Serializable;
  * Interface any object Cachable by the CacheAgent class must implement.
  * Its functions are used as such:
  * - After caching, notifyCached(key, realm) is called by the Cache Agent
- * - When placing a dependency to this object, the CacheAgent calls 
- * 	 getCacheRealm and getCacheKey, expecting the same values back.
- * 
- * @author Rogier Oudshoorn, Capgemini
+ * - When placing a dependency to this object, the CacheAgent calls
+ * getCacheRealm and getCacheKey, expecting the same values back.
  *
+ * @author Rogier Oudshoorn, Capgemini
  */
-public interface Cachable extends Serializable{
-	void notifyCached(String key, String realm);
-	
-	String getCacheRealm();
-	
-	String getCacheKey();
+public interface Cachable extends Serializable {
+    void notifyCached (String key, String realm);
+
+    String getCacheRealm ();
+
+    String getCacheKey ();
 }

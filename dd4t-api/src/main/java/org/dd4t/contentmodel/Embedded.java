@@ -6,6 +6,7 @@ package org.dd4t.contentmodel;
  * @author R. Kempees
  */
 public interface Embedded {
-	Schema getEmbeddedSchema();
-	void setEmbeddedSchema(final Schema embeddedSchema);
+    Schema getEmbeddedSchema ();
+
+    void setEmbeddedSchema (final Schema embeddedSchema);
 }

@@ -30,12 +30,12 @@ public interface HasContent {
      *
      * @return the content as a map of fields.
      */
-    Map<String, Field> getContent();
+    Map<String, Field> getContent ();
 
     /**
      * Set the content
      *
      * @param content
      */
-    void setContent(Map<String, Field> content);
+    void setContent (Map<String, Field> content);
 }

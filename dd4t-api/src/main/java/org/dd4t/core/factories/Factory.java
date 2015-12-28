@@ -26,15 +26,15 @@ import java.util.List;
  */
 public interface Factory {
 
-	/**
-	 * @return list of Processors
-	 */
-	List<Processor> getProcessors ();
+    /**
+     * @return list of Processors
+     */
+    List<Processor> getProcessors ();
 
-	/**
-	 * @param processors list of Processors
-	 */
-	void setProcessors (List<Processor> processors);
+    /**
+     * @param processors list of Processors
+     */
+    void setProcessors (List<Processor> processors);
 
-	void setCacheProvider (PayloadCacheProvider cacheAgent);
+    void setCacheProvider (PayloadCacheProvider cacheAgent);
 }

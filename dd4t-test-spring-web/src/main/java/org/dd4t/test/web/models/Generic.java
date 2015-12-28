@@ -1,8 +1,12 @@
 package org.dd4t.test.web.models;
 
+import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.Keyword;
+import org.dd4t.contentmodel.Multimedia;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.annotations.ViewModelProperty;
 import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
+import org.joda.time.DateTime;
 
 import java.util.List;
 
@@ -13,41 +17,112 @@ import java.util.List;
  */
 
 @ViewModel (
-		viewModelNames = {"generic-content"},
-		rootElementNames = {"Generic"},
-		setComponentObject = true)
+        viewModelNames = {"generic-content"},
+        rootElementNames = {"Generic"},
+        setComponentObject = true)
 public class Generic extends TridionViewModelBase {
 
-	@ViewModelProperty
-	private String heading;
+    @ViewModelProperty
+    private String heading;
 
-	@ViewModelProperty
-	List<String> body;
+    @ViewModelProperty
+    List<String> body;
 
-	@ViewModelProperty
-	List<EmbeddedOne> embedded;
+    @ViewModelProperty
+    private double numeric;
 
-	public String getHeading () {
-		return heading;
-	}
+    @ViewModelProperty
+    private DateTime date;
 
-	public void setHeading (final String heading) {
-		this.heading = heading;
-	}
+    @ViewModelProperty (entityFieldName = "externallink")
+    private String externalLink;
 
-	public List<String> getBody () {
-		return body;
-	}
+    /**
+     * Note: For multimedia you can also use the Component class
+     * to set Multimedia components.
+     */
+    @ViewModelProperty (entityFieldName = "multimedialink")
+    private Multimedia multimedia;
 
-	public void setBody (final List<String> body) {
-		this.body = body;
-	}
+    @ViewModelProperty (entityFieldName = "componentlink")
+    private Component componentLink;
 
-	public List<EmbeddedOne> getEmbedded () {
-		return embedded;
-	}
+    @ViewModelProperty
+    List<EmbeddedOne> embedded;
 
-	public void setEmbedded (final List<EmbeddedOne> embedded) {
-		this.embedded = embedded;
-	}
+    @ViewModelProperty
+    private Keyword keyword;
+
+    public String getHeading () {
+        return heading;
+    }
+
+    public void setHeading (final String heading) {
+        this.heading = heading;
+    }
+
+    public List<String> getBody () {
+        return body;
+    }
+
+    public void setBody (final List<String> body) {
+        this.body = body;
+    }
+
+    public double getNumeric () {
+        return numeric;
+    }
+
+    public void setNumeric (final double numeric) {
+        this.numeric = numeric;
+    }
+
+    public DateTime getDate () {
+        return date;
+    }
+
+    public void setDate (final DateTime date) {
+        this.date = date;
+    }
+
+    public String getExternalLink () {
+        return externalLink;
+    }
+
+    public void setExternalLink (final String externalLink) {
+        this.externalLink = externalLink;
+    }
+
+    public Multimedia getMultimedia () {
+        return multimedia;
+    }
+
+    public void setMultimedia (final Multimedia multimedia) {
+        this.multimedia = multimedia;
+    }
+
+    public Component getComponentLink () {
+        return componentLink;
+    }
+
+    public void setComponentLink (final Component componentLink) {
+        this.componentLink = componentLink;
+    }
+
+
+    public List<EmbeddedOne> getEmbedded () {
+        return embedded;
+    }
+
+    public void setEmbedded (final List<EmbeddedOne> embedded) {
+        this.embedded = embedded;
+    }
+
+    public Keyword getKeyword () {
+        return keyword;
+    }
+
+    public void setKeyword (final Keyword keyword) {
+        this.keyword = keyword;
+    }
 }

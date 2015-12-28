@@ -11,19 +11,22 @@ import java.util.Date;
  * when fetching actual content for Pages and Binaries. This meta contains information
  * like the Last Publish Date, which by default is not stored inside the Item's Json
  * content.
- *
+ * <p/>
  * This interface can be extended in the future if so required.
  *
  * @author R. Kempees
  */
 public interface ProviderResultItem<T> {
 
-	T getSourceContent();
-	void setContentSource(T source);
+    T getSourceContent ();
 
-	DateTime getLastPublishDate();
-	void setLastPublishDate(Date lastPublishDate);
+    void setContentSource (T source);
 
-	DateTime getRevisionDate();
-	void setRevisionDate(Date revisionDate);
+    DateTime getLastPublishDate ();
+
+    void setLastPublishDate (Date lastPublishDate);
+
+    DateTime getRevisionDate ();
+
+    void setRevisionDate (Date revisionDate);
 }

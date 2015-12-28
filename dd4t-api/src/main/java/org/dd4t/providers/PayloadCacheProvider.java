@@ -28,7 +28,7 @@ public interface PayloadCacheProvider {
      * @param key String representing the name under which the object is stored in the cache
      * @return CacheElement the wrapper around the actual payload object in cache
      */
-    <T> CacheElement<T> loadPayloadFromLocalCache(String key);
+    <T> CacheElement<T> loadPayloadFromLocalCache (String key);
 
     /**
      * Store given item in the cache with a simple time-to-live property (for items not depending on Tridion items)
@@ -36,7 +36,7 @@ public interface PayloadCacheProvider {
      * @param key          String representing the name under which the object is stored in the cache
      * @param cacheElement CacheElement representing wrapper around the actual payload to store in cache
      */
-    <T> void storeInItemCache(String key, CacheElement<T> cacheElement);
+    <T> void storeInItemCache (String key, CacheElement<T> cacheElement);
 
     /**
      * Store given item in the cache with a reference to supplied Tridion Item.
@@ -46,5 +46,5 @@ public interface PayloadCacheProvider {
      * @param dependingPublicationId int representing the Publication id of the Tridion item the cacheItem depends on
      * @param dependingItemId        int representing the Item id of the Tridion item the cacheItem depends on
      */
-    <T> void storeInItemCache(String key, CacheElement<T> cacheElement, int dependingPublicationId, int dependingItemId);
+    <T> void storeInItemCache (String key, CacheElement<T> cacheElement, int dependingPublicationId, int dependingItemId);
 }

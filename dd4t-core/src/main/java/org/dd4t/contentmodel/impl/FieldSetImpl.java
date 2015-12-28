@@ -41,29 +41,29 @@ public class FieldSetImpl implements FieldSet {
     private static final Logger LOG = LoggerFactory.getLogger(FieldSetImpl.class);
 
     private final Map<String, Object> rawContent = new HashMap<>();
-	@JsonIgnore
+    @JsonIgnore
     private Map<String, Field> content = new HashMap<>();
 
-    @JsonProperty("Schema")
+    @JsonProperty ("Schema")
     private Schema schema;
 
     @Override
-    public Schema getSchema() {
+    public Schema getSchema () {
         return schema;
     }
 
     @Override
-    public void setSchema(Schema schema) {
+    public void setSchema (Schema schema) {
         this.schema = schema;
     }
 
     @JsonAnyGetter
-    public Map<String, Object> getRawContent() {
+    public Map<String, Object> getRawContent () {
         return rawContent;
     }
 
     @JsonAnySetter
-    public void set(String fieldKey, JsonNode embeddedField) {
+    public void set (String fieldKey, JsonNode embeddedField) {
 
         try {
             // The basefield annotations will map the fields to concrete types
@@ -82,7 +82,7 @@ public class FieldSetImpl implements FieldSet {
      * @return a map of field objects representing the content
      */
     @Override
-    public Map<String, Field> getContent() {
+    public Map<String, Field> getContent () {
         return content;
     }
 
@@ -90,7 +90,7 @@ public class FieldSetImpl implements FieldSet {
      * Set the content
      */
     @Override
-    public void setContent(Map<String, Field> content) {
+    public void setContent (Map<String, Field> content) {
         this.content = content;
     }
 }

@@ -30,135 +30,135 @@ import java.util.Map;
  */
 public interface Component extends RepositoryLocalItem {
 
-	/**
-	 * Get the schema of the component
-	 *
-	 * @return the schema
-	 */
-	@Override
-	Schema getSchema ();
+    /**
+     * Get the schema of the component
+     *
+     * @return the schema
+     */
+    @Override
+    Schema getSchema ();
 
-	/**
-	 * Set the schema of the component
-	 *
-	 * @param schema
-	 */
-	void setSchema (Schema schema);
+    /**
+     * Set the schema of the component
+     *
+     * @param schema
+     */
+    void setSchema (Schema schema);
 
-	/**
-	 * Get the last published date
-	 *
-	 * @return the last published date
-	 */
-	@Override
-	DateTime getLastPublishedDate ();
+    /**
+     * Get the last published date
+     *
+     * @return the last published date
+     */
+    @Override
+    DateTime getLastPublishedDate ();
 
-	/**
-	 * Set the last published date
-	 *
-	 * @param date published date
-	 */
-	@Override
-	void setLastPublishedDate (DateTime date);
+    /**
+     * Set the last published date
+     *
+     * @param date published date
+     */
+    @Override
+    void setLastPublishedDate (DateTime date);
 
-	/**
-	 * Get the metadata
-	 *
-	 * @return a map of field objects representing the metadata
-	 */
-	Map<String, Field> getMetadata ();
+    /**
+     * Get the metadata
+     *
+     * @return a map of field objects representing the metadata
+     */
+    Map<String, Field> getMetadata ();
 
-	/**
-	 * Set the metadata
-	 */
-	void setMetadata (Map<String, Field> metadata);
+    /**
+     * Set the metadata
+     */
+    void setMetadata (Map<String, Field> metadata);
 
-	/**
-	 * Get the content
-	 *
-	 * @return a map of field objects representing the content
-	 */
-	Map<String, Field> getContent ();
+    /**
+     * Get the content
+     *
+     * @return a map of field objects representing the content
+     */
+    Map<String, Field> getContent ();
 
-	/**
-	 * Set the content
-	 */
-	void setContent (Map<String, Field> content);
+    /**
+     * Set the content
+     */
+    void setContent (Map<String, Field> content);
 
-	/**
-	 * Get the component type
-	 *
-	 * @return the component type
-	 */
-	ComponentType getComponentType ();
+    /**
+     * Get the component type
+     *
+     * @return the component type
+     */
+    ComponentType getComponentType ();
 
-	/**
-	 * Set the component type
-	 *
-	 * @param componentType
-	 */
-	void setComponentType (ComponentType componentType);
+    /**
+     * Set the component type
+     *
+     * @param componentType
+     */
+    void setComponentType (ComponentType componentType);
 
-	/**
-	 * Get the multimedia object
-	 *
-	 * @return the multimedia object
-	 */
-	Multimedia getMultimedia ();
+    /**
+     * Get the multimedia object
+     *
+     * @return the multimedia object
+     */
+    Multimedia getMultimedia ();
 
-	/**
-	 * Set the multimedia object
-	 */
-	void setMultimedia (Multimedia multimedia);
+    /**
+     * Set the multimedia object
+     */
+    void setMultimedia (Multimedia multimedia);
 
-	List<Category> getCategories ();
+    List<Category> getCategories ();
 
-	void setCategories (List<Category> categories);
+    void setCategories (List<Category> categories);
 
-	int getVersion ();
+    int getVersion ();
 
-	DateTime getRevisionDate ();
+    DateTime getRevisionDate ();
 
-	void setRevisionDate (DateTime date);
+    void setRevisionDate (DateTime date);
 
-	String getEclId();
+    String getEclId ();
 
-	enum ComponentType {
-		Multimedia(0), Normal(1), UNKNOWN(-1);
-		private final int value;
-		private static final Logger LOG = LoggerFactory.getLogger(ComponentType.class);
+    enum ComponentType {
+        MULTIMEDIA(0), NORMAL(1), UNKNOWN(-1);
+        private final int value;
+        private static final Logger LOG = LoggerFactory.getLogger(ComponentType.class);
 
-		ComponentType (int value) {
-			this.value = value;
-		}
+        ComponentType (int value) {
+            this.value = value;
+        }
 
-		public static ComponentType findByValue (int value) {
-			for (ComponentType componentType : values()) {
-				if (componentType.getValue() == value) {
-					return componentType;
-				}
-			}
+        public static ComponentType findByValue (int value) {
+            for (ComponentType componentType : values()) {
+                if (componentType.getValue() == value) {
+                    return componentType;
+                }
+            }
 
-			return UNKNOWN;
-		}
+            return UNKNOWN;
+        }
 
-		public static ComponentType findByName (String name) {
-			try {
-				return ComponentType.valueOf(name.toUpperCase());
-			} catch (IllegalArgumentException iae) {
-				LOG.error(iae.getLocalizedMessage(),iae);
-				try {
-					int value = Integer.parseInt(name);
-					return findByValue(value);
-				} catch (NumberFormatException nfe) {
-					LOG.error(nfe.getLocalizedMessage(),nfe);
-					return UNKNOWN;
-				}
-			}
-		}
+        public static ComponentType findByName (String name) {
+            try {
+                return ComponentType.valueOf(name.toUpperCase());
+            } catch (IllegalArgumentException iae) {
+                LOG.error(iae.getLocalizedMessage(), iae);
+                try {
+                    int value = Integer.parseInt(name);
+                    return findByValue(value);
+                } catch (NumberFormatException nfe) {
+                    LOG.error(nfe.getLocalizedMessage(), nfe);
+                    return UNKNOWN;
+                }
+            }
+        }
 
-		public int getValue () {
-			return value;
-		}
-	}
+        public int getValue () {
+            return value;
+        }
+    }
 }

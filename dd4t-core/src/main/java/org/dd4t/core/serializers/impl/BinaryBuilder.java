@@ -40,7 +40,7 @@ public class BinaryBuilder {
      * @return Binary a full Binary object containing metadata and raw content byte []
      * @throws SerializationException if anything goes wrong during decompressing, deserialization
      */
-    public Binary build(BinaryWrapper wrapper) throws SerializationException {
+    public Binary build (BinaryWrapper wrapper) throws SerializationException {
         byte[] binaryBytes = CompressionUtils.decodeBase64(wrapper.getBinary());
         String binaryJSON = CompressionUtils.decompressGZip(binaryBytes);
         Binary result = SerializerFactory.deserialize(binaryJSON, BinaryImpl.class);

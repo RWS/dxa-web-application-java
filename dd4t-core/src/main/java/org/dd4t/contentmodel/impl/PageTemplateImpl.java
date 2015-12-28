@@ -22,14 +22,14 @@ import org.dd4t.contentmodel.PageTemplate;
 
 public class PageTemplateImpl extends BaseRepositoryLocalItem implements PageTemplate, HasMetadata {
 
-    @JsonProperty("FileExtension")
+    @JsonProperty ("FileExtension")
     private String fileExtension;
 
     /**
      * Get the file extension
      */
     @Override
-    public String getFileExtension() {
+    public String getFileExtension () {
         return fileExtension;
     }
 
@@ -37,7 +37,7 @@ public class PageTemplateImpl extends BaseRepositoryLocalItem implements PageTem
      * Set the file extension
      */
     @Override
-    public void setFileExtension(String fileExtension) {
+    public void setFileExtension (String fileExtension) {
         this.fileExtension = fileExtension;
     }
 }

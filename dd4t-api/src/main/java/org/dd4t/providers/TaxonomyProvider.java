@@ -31,7 +31,7 @@ public interface TaxonomyProvider {
      * @throws ItemNotFoundException  if said taxonomy cannot be found
      * @throws SerializationException if response from service does not represent a serialized Keyword object
      */
-    String getTaxonomyByURI(String taxonomyURI, boolean resolveContent) throws ItemNotFoundException, SerializationException;
+    String getTaxonomyByURI (String taxonomyURI, boolean resolveContent) throws ItemNotFoundException, SerializationException;
 
     /**
      * Retrieves a Taxonomy TCMURI. It returns a Keyword object representing the root taxonomy node with all the parent/
@@ -43,5 +43,5 @@ public interface TaxonomyProvider {
      * @throws ItemNotFoundException  if said taxonomy cannot be found
      * @throws SerializationException if response from service does not represent a serialized Keyword object
      */
-    String getTaxonomyFilterBySchema(String taxonomyURI, String schemaURI) throws ItemNotFoundException, SerializationException;
+    String getTaxonomyFilterBySchema (String taxonomyURI, String schemaURI) throws ItemNotFoundException, SerializationException;
 }

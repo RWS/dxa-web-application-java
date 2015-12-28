@@ -24,12 +24,12 @@ import java.util.List;
 
 public class NumericField extends BaseField implements Field {
 
-    public NumericField() {
+    public NumericField () {
         setFieldType(FieldType.NUMBER);
     }
 
     @Override
-    public List<Object> getValues() {
+    public List<Object> getValues () {
         List<Double> dblValues = getNumericValues();
 
         List<Object> l = new LinkedList<Object>();

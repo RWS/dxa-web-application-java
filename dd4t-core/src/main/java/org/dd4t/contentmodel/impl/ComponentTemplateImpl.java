@@ -21,7 +21,7 @@ import org.dd4t.contentmodel.ComponentTemplate;
 
 public class ComponentTemplateImpl extends BaseRepositoryLocalItem implements ComponentTemplate {
 
-    @JsonProperty("OutputFormat")
+    @JsonProperty ("OutputFormat")
     private String outputFormat;
 
     /**
@@ -29,7 +29,7 @@ public class ComponentTemplateImpl extends BaseRepositoryLocalItem implements Co
      *
      * @return
      */
-    public String getOutputFormat() {
+    public String getOutputFormat () {
         return outputFormat;
     }
 
@@ -38,7 +38,7 @@ public class ComponentTemplateImpl extends BaseRepositoryLocalItem implements Co
      *
      * @param outputFormat
      */
-    public void setOutputFormat(String outputFormat) {
+    public void setOutputFormat (String outputFormat) {
         this.outputFormat = outputFormat;
     }
 }

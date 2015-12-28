@@ -11,17 +11,17 @@ import org.junit.Test;
 public class DataBindFactoryTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp () throws Exception {
         DataBindFactory.getInstance().setDataBinder(JsonDataBinder.getInstance());
     }
 
     @Test
-    public void testDataBindFactory() throws SerializationException {
+    public void testDataBindFactory () throws SerializationException {
         // TODO: add JSON source code for the page
         // TODO: can't have even a cyclomatic dependency on dd4t-core, so move this to the
         // dd4t-core project
-       // Page page = DataBindFactory.buildPage("", PageImpl.class);
-       // Assert.notNull(page, "page cannot be bound");
-       // Assert.hasLength(page.getTitle(), "page has no valid title");
+        // Page page = DataBindFactory.buildPage("", PageImpl.class);
+        // Assert.notNull(page, "page cannot be bound");
+        // Assert.hasLength(page.getTitle(), "page has no valid title");
     }
 }

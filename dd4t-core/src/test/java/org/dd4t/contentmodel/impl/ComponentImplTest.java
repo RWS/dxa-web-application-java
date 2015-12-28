@@ -20,13 +20,13 @@ public class ComponentImplTest {
     private Serializer serializer;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp () throws Exception {
         serializer = new org.dd4t.core.serializers.impl.json.JSONSerializer();
         SerializerFactory.setSerializer(serializer);
     }
 
     @Test
-    public void shouldHaveSameEclIdAfterDeSerializing() throws SerializationException {
+    public void shouldHaveSameEclIdAfterDeSerializing () throws SerializationException {
         //given
         Component component = new ComponentImpl();
         ((ComponentImpl) component).setEclId("ecl:17-mm-379-dist-file");
@@ -41,7 +41,7 @@ public class ComponentImplTest {
     }
 
     @Test
-    public void shouldHaveSameExtensionDataAfterDeSerializing() throws SerializationException {
+    public void shouldHaveSameExtensionDataAfterDeSerializing () throws SerializationException {
         //given
         final String key = "ECL", key2 = "KEY2";
         Component component = new ComponentImpl();
@@ -60,7 +60,7 @@ public class ComponentImplTest {
         assertTrue(component.getExtensionData().containsKey(key2) && deserialized.getExtensionData().containsKey(key2));
     }
 
-    private String serialize(Object obj) throws SerializationException {
+    private String serialize (Object obj) throws SerializationException {
         return serializer.serialize(obj);
     }
 

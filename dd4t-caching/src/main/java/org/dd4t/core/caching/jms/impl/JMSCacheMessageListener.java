@@ -39,12 +39,12 @@ public class JMSCacheMessageListener implements MessageListener {
     @Resource
     private JMSCacheMonitor monitor;
 
-    public void setMonitor(JMSCacheMonitor monitor) {
-		this.monitor = monitor;
-	}
+    public void setMonitor (JMSCacheMonitor monitor) {
+        this.monitor = monitor;
+    }
 
-	@Override
-    public void onMessage(Message message) {
+    @Override
+    public void onMessage (Message message) {
         CacheEvent event = getCacheEvent(message);
         if (event != null) {
             switch (event.getType()) {
@@ -90,7 +90,7 @@ public class JMSCacheMessageListener implements MessageListener {
     /**
      * Set the cache agent.
      */
-    public void setCacheInvalidator(CacheInvalidator cacheAgent) {
+    public void setCacheInvalidator (CacheInvalidator cacheAgent) {
         cacheInvalidator = cacheAgent;
     }
 }

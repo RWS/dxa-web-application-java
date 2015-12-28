@@ -25,10 +25,10 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
  * @author R. Kempees
  */
 @JsonTypeInfo (
-		use = JsonTypeInfo.Id.CUSTOM,
-		include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
-		property = "FieldType",
-		visible = true)
+        use = JsonTypeInfo.Id.CUSTOM,
+        include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
+        property = "FieldType",
+        visible = true)
 @JsonTypeIdResolver (TridionFieldTypeIdResolver.class)
 public class BaseFieldMixIn {
 }

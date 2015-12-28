@@ -7,6 +7,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  *
  * @author R. Kempees
  */
-@JsonDeserialize()
+@JsonDeserialize ()
 public class ComponentPresentationMixIn {
 }

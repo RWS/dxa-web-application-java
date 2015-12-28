@@ -41,7 +41,7 @@ public class CompressionUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(CompressionUtils.class);
 
-    private CompressionUtils() {
+    private CompressionUtils () {
 
     }
 
@@ -52,7 +52,7 @@ public class CompressionUtils {
      * @return byte[] representing the compressed object bytes
      * @throws SerializationException if something goes wrong with the streams
      */
-    public static <T> byte[] compressGZipGeneric(T object) throws SerializationException {
+    public static <T> byte[] compressGZipGeneric (T object) throws SerializationException {
         ByteArrayOutputStream baos = null;
         GZIPOutputStream gos = null;
         ObjectOutputStream oos = null;
@@ -83,7 +83,7 @@ public class CompressionUtils {
      * @return byte[] representing the compressed content bytes
      * @throws SerializationException if something goes wrong with the streams
      */
-    public static byte[] compressGZip(String content) throws SerializationException {
+    public static byte[] compressGZip (String content) throws SerializationException {
         ByteArrayOutputStream baos = null;
         GZIPOutputStream gos = null;
 
@@ -112,7 +112,7 @@ public class CompressionUtils {
      * @return the deserialized object of the given class type
      * @throws SerializationException if something goes wrong with the streams
      */
-    public static <T> T decompressGZipGeneric(byte[] bytes) throws SerializationException {
+    public static <T> T decompressGZipGeneric (byte[] bytes) throws SerializationException {
         T result = null;
         ByteArrayInputStream bais = null;
         GZIPInputStream gis = null;
@@ -143,7 +143,7 @@ public class CompressionUtils {
      * @return the deserialized object of the given class type
      * @throws SerializationException if something goes wrong with the streams
      */
-    public static String decompressGZip(byte[] bytes) throws SerializationException {
+    public static String decompressGZip (byte[] bytes) throws SerializationException {
         String result = null;
         ByteArrayInputStream bais = null;
         GZIPInputStream gis = null;
@@ -170,7 +170,7 @@ public class CompressionUtils {
      * @param byteArray the byte array to encode
      * @return String representing the encoded array
      */
-    public static String encodeBase64(byte[] byteArray) {
+    public static String encodeBase64 (byte[] byteArray) {
         return Base64.encodeBase64String(byteArray);
     }
 
@@ -180,7 +180,7 @@ public class CompressionUtils {
      * @param message the byte array to encode
      * @return String representing the encoded array
      */
-    public static String encodeBase64(String message) {
+    public static String encodeBase64 (String message) {
         if (message == null) {
             return null;
         } else {
@@ -194,7 +194,7 @@ public class CompressionUtils {
      * @param message String representing the message to decode
      * @return byte[] representing the decoded array
      */
-    public static byte[] decodeBase64(String message) {
+    public static byte[] decodeBase64 (String message) {
         if (Base64.isBase64(message)) {
             return Base64.decodeBase64(message);
         }
@@ -203,7 +203,7 @@ public class CompressionUtils {
         try {
             result = message.getBytes("UTF-8");
         } catch (UnsupportedEncodingException uee) {
-            LOG.error(uee.getLocalizedMessage(),uee);
+            LOG.error(uee.getLocalizedMessage(), uee);
             result = message.getBytes();
         }
         return result;

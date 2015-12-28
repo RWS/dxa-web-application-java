@@ -31,13 +31,13 @@ public class JMSCacheMonitor {
     private static final Logger LOG = LoggerFactory.getLogger(JMSCacheMonitor.class);
     private int monitorServiceInterval = 30000; // milliseconds
 
-	@Resource
+    @Resource
     private CacheInvalidator cacheInvalidator;
     private MQServerStatus serverStatus = MQServerStatus.UP; // assume it's down
 
     private final Runnable monitor = new Runnable() {
         @Override
-        public void run() {
+        public void run () {
             LOG.debug("Monitor thread running");
 
             MQServerStatus previousServerStatus = MQServerStatus.UP;
@@ -66,43 +66,43 @@ public class JMSCacheMonitor {
     private Thread thread;
 
     @PostConstruct
-    public void init(){
+    public void init () {
         LOG.debug("Create new instance");
 
         LOG.debug("Using Monitor interval (or cache refresh time when JMS is down) = {} seconds", monitorServiceInterval, monitorServiceInterval / 1000);
         thread = new Thread(monitor);
         thread.setName("Dd4tWebAppJMSMonitorThread");
-        
+
         LOG.debug("Start cache monitor thread");
 
         thread.start();
     }
-    
-    public int getMonitorServiceInterval() {
-		return monitorServiceInterval;
-	}
 
-	public void setMonitorServiceInterval(int monitorServiceInterval) {
-		this.monitorServiceInterval = monitorServiceInterval;
-	}
-	
-    public boolean isMQServerUp() {
+    public int getMonitorServiceInterval () {
+        return monitorServiceInterval;
+    }
+
+    public void setMonitorServiceInterval (int monitorServiceInterval) {
+        this.monitorServiceInterval = monitorServiceInterval;
+    }
+
+    public boolean isMQServerUp () {
         return serverStatus == MQServerStatus.UP;
     }
 
-    public boolean isMQServerDown() {
+    public boolean isMQServerDown () {
         return serverStatus == MQServerStatus.DOWN;
     }
 
-    public MQServerStatus getMQServerStatus() {
+    public MQServerStatus getMQServerStatus () {
         return serverStatus;
     }
 
-    public void setMQServerStatus(MQServerStatus status) {
+    public void setMQServerStatus (MQServerStatus status) {
         this.serverStatus = status;
     }
 
-    public void shutdown() throws InterruptedException {
+    public void shutdown () throws InterruptedException {
         LOG.debug("Stopping thread monitor");
 
         thread.interrupt();
@@ -111,21 +111,21 @@ public class JMSCacheMonitor {
         LOG.debug("Thread monitor stopped successfully");
     }
 
-    public void setMQServerStatusDown() {
+    public void setMQServerStatusDown () {
         if (isMQServerUp()) {
             LOG.debug("Detected MQ server connection dropped. Setting status DOWN");
             setMQServerStatus(MQServerStatus.DOWN);
         }
     }
 
-    public void setMQServerStatusUp() {
+    public void setMQServerStatusUp () {
         if (isMQServerDown()) {
             LOG.debug("Detected MQ server activity. Setting status UP");
             setMQServerStatus(MQServerStatus.UP);
         }
     }
 
-    public void setCacheInvalidator(CacheInvalidator cacheInvalidator) {
+    public void setCacheInvalidator (CacheInvalidator cacheInvalidator) {
         this.cacheInvalidator = cacheInvalidator;
     }
 

@@ -31,25 +31,25 @@ import org.slf4j.LoggerFactory;
  */
 public class PublicationResolverFactory {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PublicationResolverFactory.class);
-	private static final PublicationResolverFactory INSTANCE = new PublicationResolverFactory();
+    private static final Logger LOG = LoggerFactory.getLogger(PublicationResolverFactory.class);
+    private static final PublicationResolverFactory INSTANCE = new PublicationResolverFactory();
 
-	private PublicationResolver publicationResolver;
+    private PublicationResolver publicationResolver;
 
-	private PublicationResolverFactory () {
+    private PublicationResolverFactory () {
 
-	}
+    }
 
-	public static PublicationResolverFactory getInstance () {
-		return INSTANCE;
-	}
+    public static PublicationResolverFactory getInstance () {
+        return INSTANCE;
+    }
 
-	public static PublicationResolver getPublicationResolver () {
-		return INSTANCE.publicationResolver;
-	}
+    public static PublicationResolver getPublicationResolver () {
+        return INSTANCE.publicationResolver;
+    }
 
-	public void setPublicationResolver (PublicationResolver publicationResolver) {
-		LOG.debug("Set PublicationResolver " + publicationResolver);
-		this.publicationResolver = publicationResolver;
-	}
+    public void setPublicationResolver (PublicationResolver publicationResolver) {
+        LOG.debug("Set PublicationResolver " + publicationResolver);
+        this.publicationResolver = publicationResolver;
+    }
 }

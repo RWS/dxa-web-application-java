@@ -20,7 +20,7 @@ import org.joda.time.DateTime;
 
 /**
  * Interface for the component template
- *
+ * <p/>
  * TODO: revision date should be LPD?
  *
  * @author bjornl

@@ -35,119 +35,119 @@ import java.text.ParseException;
 
 public class ComponentPresentationFactoryImpl extends BaseFactory implements ComponentPresentationFactory {
 
-	private static final Logger LOG = LoggerFactory.getLogger(ComponentPresentationFactoryImpl.class);
-	private static final ComponentPresentationFactoryImpl INSTANCE = new ComponentPresentationFactoryImpl();
-	protected ComponentPresentationProvider componentPresentationProvider;
+    private static final Logger LOG = LoggerFactory.getLogger(ComponentPresentationFactoryImpl.class);
+    private static final ComponentPresentationFactoryImpl INSTANCE = new ComponentPresentationFactoryImpl();
+    protected ComponentPresentationProvider componentPresentationProvider;
 
-	protected ComponentPresentationFactoryImpl () {
-		LOG.debug("Create new instance");
-	}
+    protected ComponentPresentationFactoryImpl () {
+        LOG.debug("Create new instance");
+    }
 
-	public static ComponentPresentationFactoryImpl getInstance () {
-		return INSTANCE;
-	}
+    public static ComponentPresentationFactoryImpl getInstance () {
+        return INSTANCE;
+    }
 
-	/**
-	 * Get the component by the component uri and template uri.
-	 * but NO CT rendering (so from the Dynamic Template Tab) should take place,
-	 * as this is done in a View
-	 * <p/>
-	 * Null values should be handled in the controller
-	 * <p/>
-	 * The Content Service should use ComponentPresentationFactory.getComponentPresentation(int publicationId, int componentId, int templateId)
-	 * OR
-	 * ComponentPresentationAssembler.getContent(int componentId, int componentTemplateId)
-	 * if we want to use REL linking. :)
-	 * Metadata should be added into the DD4T stack @ publishtime
-	 * Rendered output is cached in output cache
-	 *
-	 * @return the component
-	 * @throws org.dd4t.core.exceptions.FactoryException if no item found NotAuthorizedException if the user is not authorized to get the component
-	 */
-	@Override
-	public ComponentPresentation getComponentPresentation (String componentURI, String templateURI) throws FactoryException {
-		LOG.debug("Enter getComponentPresentation with componentURI: {} and templateURI: {}", componentURI, templateURI);
+    /**
+     * Get the component by the component uri and template uri.
+     * but NO CT rendering (so from the Dynamic Template Tab) should take place,
+     * as this is done in a View
+     * <p/>
+     * Null values should be handled in the controller
+     * <p/>
+     * The Content Service should use ComponentPresentationFactory.getComponentPresentation(int publicationId, int componentId, int templateId)
+     * OR
+     * ComponentPresentationAssembler.getContent(int componentId, int componentTemplateId)
+     * if we want to use REL linking. :)
+     * Metadata should be added into the DD4T stack @ publishtime
+     * Rendered output is cached in output cache
+     *
+     * @return the component
+     * @throws org.dd4t.core.exceptions.FactoryException if no item found NotAuthorizedException if the user is not authorized to get the component
+     */
+    @Override
+    public ComponentPresentation getComponentPresentation (String componentURI, String templateURI) throws FactoryException {
+        LOG.debug("Enter getComponentPresentation with componentURI: {} and templateURI: {}", componentURI, templateURI);
 
-		if (StringUtils.isEmpty(templateURI)) {
-			throw new ItemNotFoundException("Provide a CT view or TCMURI");
-		}
+        if (StringUtils.isEmpty(templateURI)) {
+            throw new ItemNotFoundException("Provide a CT view or TCMURI");
+        }
 
-		final TCMURI componentTcmUri;
-		final TCMURI templateTcmUri;
-		try {
-			componentTcmUri = new TCMURI(componentURI);
-			templateTcmUri = new TCMURI(templateURI);
-		} catch (ParseException e) {
-			throw new ItemNotFoundException(e);
-		}
-		componentURI = componentTcmUri.toString();
-		int publicationId = componentTcmUri.getPublicationId();
-		int componentId = componentTcmUri.getItemId();
-		int templateId = templateTcmUri.getItemId();
+        final TCMURI componentTcmUri;
+        final TCMURI templateTcmUri;
+        try {
+            componentTcmUri = new TCMURI(componentURI);
+            templateTcmUri = new TCMURI(templateURI);
+        } catch (ParseException e) {
+            throw new ItemNotFoundException(e);
+        }
+        componentURI = componentTcmUri.toString();
+        int publicationId = componentTcmUri.getPublicationId();
+        int componentId = componentTcmUri.getItemId();
+        int templateId = templateTcmUri.getItemId();
 
-		String key = getKey(publicationId, componentId, templateId);
-		CacheElement<ComponentPresentation> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
+        String key = getKey(publicationId, componentId, templateId);
+        CacheElement<ComponentPresentation> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
 
-		ComponentPresentation componentPresentation;
+        ComponentPresentation componentPresentation;
 
-		if (cacheElement.isExpired()) {
-			synchronized (cacheElement) {
-				if (cacheElement.isExpired()) {
+        if (cacheElement.isExpired()) {
+            synchronized (cacheElement) {
+                if (cacheElement.isExpired()) {
 
-					cacheElement.setExpired(false);
-					String rawComponentPresentation;
-					rawComponentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
+                    cacheElement.setExpired(false);
+                    String rawComponentPresentation;
+                    rawComponentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
 
-					if (rawComponentPresentation == null) {
+                    if (rawComponentPresentation == null) {
 
-						cacheElement.setPayload(null);
-						cacheElement.setExpired(true);
-						cacheProvider.storeInItemCache(key, cacheElement);
-						throw new ItemNotFoundException(String.format("Could not find DCP with componentURI: %s and templateURI: %s", componentURI, templateURI));
-					}
+                        cacheElement.setPayload(null);
+                        cacheElement.setExpired(true);
+                        cacheProvider.storeInItemCache(key, cacheElement);
+                        throw new ItemNotFoundException(String.format("Could not find DCP with componentURI: %s and templateURI: %s", componentURI, templateURI));
+                    }
 
-					// Building STMs here.
-					componentPresentation = DataBindFactory.buildDynamicComponentPresentation(rawComponentPresentation, ComponentPresentationImpl.class);
+                    // Building STMs here.
+                    componentPresentation = DataBindFactory.buildDynamicComponentPresentation(rawComponentPresentation, ComponentPresentationImpl.class);
 
-					LOG.debug("Running pre caching processors");
-					// TODO: support full CPs?
-					this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING, getRequestContext());
-					cacheElement.setPayload(componentPresentation);
-					cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);
-					LOG.debug("Added component with uri: {} and template: {} to cache", componentURI, templateURI);
+                    LOG.debug("Running pre caching processors");
+                    // TODO: support full CPs?
+                    this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING, getRequestContext());
+                    cacheElement.setPayload(componentPresentation);
+                    cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);
+                    LOG.debug("Added component with uri: {} and template: {} to cache", componentURI, templateURI);
 
-				} else {
-					LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, templateURI);
-					componentPresentation = cacheElement.getPayload();
-				}
-			}
-		} else {
-			LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, templateURI);
-			componentPresentation = cacheElement.getPayload();
-		}
+                } else {
+                    LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, templateURI);
+                    componentPresentation = cacheElement.getPayload();
+                }
+            }
+        } else {
+            LOG.debug("Return component for componentURI: {} and templateURI: {} from cache", componentURI, templateURI);
+            componentPresentation = cacheElement.getPayload();
+        }
 
-		if (componentPresentation != null) {
-			LOG.debug("Running Post caching Processors");
-			try {
-				this.executeProcessors(componentPresentation.getComponent(), RunPhase.AFTER_CACHING,getRequestContext());
-			} catch (ProcessorException e) {
-				LOG.error(e.getLocalizedMessage(), e);
-			}
-		}
+        if (componentPresentation != null) {
+            LOG.debug("Running Post caching Processors");
+            try {
+                this.executeProcessors(componentPresentation.getComponent(), RunPhase.AFTER_CACHING, getRequestContext());
+            } catch (ProcessorException e) {
+                LOG.error(e.getLocalizedMessage(), e);
+            }
+        }
 
-		LOG.debug("Exit getComponentPresentation");
-		return componentPresentation;
-	}
+        LOG.debug("Exit getComponentPresentation");
+        return componentPresentation;
+    }
 
-	private String getKey (int publicationId, int componentId, int templateId) {
-		return String.format("Component-%d-%d-%d", publicationId, componentId, templateId);
-	}
+    private String getKey (int publicationId, int componentId, int templateId) {
+        return String.format("Component-%d-%d-%d", publicationId, componentId, templateId);
+    }
 
-	public ComponentPresentationProvider getComponentPresentationProvider () {
-		return componentPresentationProvider;
-	}
+    public ComponentPresentationProvider getComponentPresentationProvider () {
+        return componentPresentationProvider;
+    }
 
-	public void setComponentPresentationProvider (ComponentPresentationProvider componentPresentationProvider) {
-		this.componentPresentationProvider = componentPresentationProvider;
-	}
+    public void setComponentPresentationProvider (ComponentPresentationProvider componentPresentationProvider) {
+        this.componentPresentationProvider = componentPresentationProvider;
+    }
 }

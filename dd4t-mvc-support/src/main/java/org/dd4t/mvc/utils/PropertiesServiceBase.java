@@ -28,12 +28,12 @@ public abstract class PropertiesServiceBase implements PropertiesService {
     protected Properties properties;
 
     @Override
-    public String getProperty(String name) {
+    public String getProperty (String name) {
         return properties.getProperty(name);
     }
 
     @Override
-    public String getProperty(String name, String defaultValue) {
+    public String getProperty (String name, String defaultValue) {
         return properties.getProperty(name, defaultValue);
     }
 }

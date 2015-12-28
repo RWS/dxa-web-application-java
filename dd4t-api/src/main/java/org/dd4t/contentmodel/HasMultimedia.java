@@ -27,12 +27,12 @@ public interface HasMultimedia {
      *
      * @return the multimedia.
      */
-    Multimedia getMultimedia();
+    Multimedia getMultimedia ();
 
     /**
      * Set the multimedia
      *
      * @param multimedia
      */
-    void setMultimedia(Multimedia multimedia);
+    void setMultimedia (Multimedia multimedia);
 }

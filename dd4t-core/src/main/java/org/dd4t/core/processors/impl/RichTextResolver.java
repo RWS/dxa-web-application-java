@@ -45,87 +45,87 @@ import java.util.Map;
  */
 public class RichTextResolver extends BaseProcessor implements Processor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(RichTextResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RichTextResolver.class);
 
-	public RichTextResolver () {
-	}
+    public RichTextResolver () {
+    }
 
-	/**
-	 * Recursively resolves all components links.
-	 *
-	 * @param item    the to resolve the links
-	 */
-	@Override
-	public void execute (Item item, RequestContext context) throws ProcessorException {
-		if (item instanceof Page) {
-			try {
-				resolvePage((Page)item);
-			} catch (TransformerException e) {
-				LOG.error(e.getMessage(), e);
-				throw new ProcessorException(e);
-			}
-		} else if (item instanceof ComponentPresentation) {
-			try {
-				resolveComponent(((ComponentPresentation) item).getComponent());
-			} catch (TransformerException e) {
-				LOG.error(e.getMessage(), e);
-				throw new ProcessorException(e);
-			}
-		} else if (item instanceof Component) {
-			try {
-				resolveComponent((Component) item);
-			} catch (TransformerException e) {
-				LOG.error(e.getMessage(), e);
-				throw new ProcessorException(e);
-			}
-		} else {
-			LOG.debug("RichTextResolverFilter. Item is not a GenericPage or GenericComponent so no component to resolve");
-		}
-		LOG.debug("RichTextResolverFilter finished");
+    /**
+     * Recursively resolves all components links.
+     *
+     * @param item the to resolve the links
+     */
+    @Override
+    public void execute (Item item, RequestContext context) throws ProcessorException {
+        if (item instanceof Page) {
+            try {
+                resolvePage((Page) item);
+            } catch (TransformerException e) {
+                LOG.error(e.getMessage(), e);
+                throw new ProcessorException(e);
+            }
+        } else if (item instanceof ComponentPresentation) {
+            try {
+                resolveComponent(((ComponentPresentation) item).getComponent());
+            } catch (TransformerException e) {
+                LOG.error(e.getMessage(), e);
+                throw new ProcessorException(e);
+            }
+        } else if (item instanceof Component) {
+            try {
+                resolveComponent((Component) item);
+            } catch (TransformerException e) {
+                LOG.error(e.getMessage(), e);
+                throw new ProcessorException(e);
+            }
+        } else {
+            LOG.debug("RichTextResolverFilter. Item is not a GenericPage or GenericComponent so no component to resolve");
+        }
+        LOG.debug("RichTextResolverFilter finished");
 
-	}
+    }
 
-	protected void resolvePage (Page page) throws TransformerException {
-		List<ComponentPresentation> cpList = page.getComponentPresentations();
-		if (cpList != null) {
-			for (ComponentPresentation cp : cpList) {
-				resolveComponent(cp.getComponent());
-			}
-		}
-		resolveMap(page.getMetadata());
-	}
+    protected void resolvePage (Page page) throws TransformerException {
+        List<ComponentPresentation> cpList = page.getComponentPresentations();
+        if (cpList != null) {
+            for (ComponentPresentation cp : cpList) {
+                resolveComponent(cp.getComponent());
+            }
+        }
+        resolveMap(page.getMetadata());
+    }
 
-	protected void resolveComponent (Component component) throws TransformerException {
-		if (component != null) {
-			resolveMap(component.getContent());
-			resolveMap(component.getMetadata());
-		}
-	}
+    protected void resolveComponent (Component component) throws TransformerException {
+        if (component != null) {
+            resolveMap(component.getContent());
+            resolveMap(component.getMetadata());
+        }
+    }
 
-	protected void resolveMap (Map<String, Field> fieldMap) throws TransformerException {
-		if (fieldMap == null || fieldMap.isEmpty()) {
-			return;
-		}
-		Collection<Field> values = fieldMap.values();
-		for (Field field : values) {
-			if (field instanceof XhtmlField) {
-				resolveXhtmlField((XhtmlField) field);
-			}
-			if (field instanceof EmbeddedField) {
-				EmbeddedField ef = (EmbeddedField) field;
+    protected void resolveMap (Map<String, Field> fieldMap) throws TransformerException {
+        if (fieldMap == null || fieldMap.isEmpty()) {
+            return;
+        }
+        Collection<Field> values = fieldMap.values();
+        for (Field field : values) {
+            if (field instanceof XhtmlField) {
+                resolveXhtmlField((XhtmlField) field);
+            }
+            if (field instanceof EmbeddedField) {
+                EmbeddedField ef = (EmbeddedField) field;
 
-				for (FieldSet fs : ef.getEmbeddedValues()) {
-					resolveMap(fs.getContent());
-				}
-			}
-		}
-	}
+                for (FieldSet fs : ef.getEmbeddedValues()) {
+                    resolveMap(fs.getContent());
+                }
+            }
+        }
+    }
 
-	protected void resolveXhtmlField (XhtmlField xhtmlField) throws TransformerException {
-		try {
-			RichTextUtils.resolveXhtmlField(xhtmlField,false,null,null);
-		} catch (ItemNotFoundException | SerializationException e) {
-			throw new TransformerException(e);
-		}
-	}
+    protected void resolveXhtmlField (XhtmlField xhtmlField) throws TransformerException {
+        try {
+            RichTextUtils.resolveXhtmlField(xhtmlField, false, null, null);
+        } catch (ItemNotFoundException | SerializationException e) {
+            throw new TransformerException(e);
+        }
+    }
 }

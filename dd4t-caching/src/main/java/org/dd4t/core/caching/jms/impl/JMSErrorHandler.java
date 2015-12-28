@@ -23,9 +23,8 @@ import org.springframework.util.ErrorHandler;
 
 /**
  * Spring JMS error handler, alternative to the JMSExceptionListener which isn't always easy to hook up.
- * 
- * @author rogier.oudshoorn
  *
+ * @author rogier.oudshoorn
  */
 public class JMSErrorHandler implements ErrorHandler {
 
@@ -35,12 +34,12 @@ public class JMSErrorHandler implements ErrorHandler {
     private JMSCacheMonitor monitor;
 
     @Override
-	public void handleError(Throwable error) {
+    public void handleError (Throwable error) {
         LOG.error("JMS exception occurred", error);
         monitor.setMQServerStatusDown();
     }
 
-    public void setMonitor(JMSCacheMonitor monitor) {
+    public void setMonitor (JMSCacheMonitor monitor) {
         this.monitor = monitor;
     }
 }

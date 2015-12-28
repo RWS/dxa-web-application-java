@@ -51,125 +51,125 @@ import java.util.regex.Pattern;
  */
 public class LinkingProcessor extends BaseProcessor implements LinkResolverProcessor {
 
-	private static final Logger LOG = LoggerFactory.getLogger(LinkingProcessor.class);
-	private final Pattern regExpPattern = Pattern.compile("href=\"" + TridionUtils.TCM_REGEX + "\"");
+    private static final Logger LOG = LoggerFactory.getLogger(LinkingProcessor.class);
+    private final Pattern regExpPattern = Pattern.compile("href=\"" + TridionUtils.TCM_REGEX + "\"");
 
-	@Resource
-	private LinkResolver linkResolver;
-	private String contextPath;
-	private Map<String, Object> params = new HashMap<>();
+    @Resource
+    private LinkResolver linkResolver;
+    private String contextPath;
+    private Map<String, Object> params = new HashMap<>();
 
-	/**
-	 * Recursively resolves all components links.
-	 *
-	 * @param item the to resolve the links
-	 */
-	@Override
-	public void execute (Item item, RequestContext context) throws ProcessorException {
-		linkResolver.setContextPath(contextPath);
+    /**
+     * Recursively resolves all components links.
+     *
+     * @param item the to resolve the links
+     */
+    @Override
+    public void execute (Item item, RequestContext context) throws ProcessorException {
+        linkResolver.setContextPath(contextPath);
 
-		if (item instanceof Page) {
-			try {
-				resolvePage((Page) item);
-			} catch (TransformerException e) {
-				LOG.error(e.getMessage(), e);
-				throw new ProcessorException(e);
-			}
-		} else if (item instanceof Component) {
-			try {
-				resolveComponent((Component) item);
-			} catch (TransformerException e) {
-				LOG.error(e.getMessage(), e);
-				throw new ProcessorException(e);
-			}
-		} else {
-			LOG.debug("DefaultLinkResolverFilter. Item is not a GenericPage or GenericComponent so no component to resolve");
-		}
-	}
+        if (item instanceof Page) {
+            try {
+                resolvePage((Page) item);
+            } catch (TransformerException e) {
+                LOG.error(e.getMessage(), e);
+                throw new ProcessorException(e);
+            }
+        } else if (item instanceof Component) {
+            try {
+                resolveComponent((Component) item);
+            } catch (TransformerException e) {
+                LOG.error(e.getMessage(), e);
+                throw new ProcessorException(e);
+            }
+        } else {
+            LOG.debug("DefaultLinkResolverFilter. Item is not a GenericPage or GenericComponent so no component to resolve");
+        }
+    }
 
-	protected void resolvePage (Page page) throws TransformerException {
-		List<ComponentPresentation> cpList = page.getComponentPresentations();
-		if (cpList != null) {
-			for (ComponentPresentation cp : cpList) {
-				resolveComponentOnPage(cp.getComponent());
-			}
-		}
-		resolveMap(page.getMetadata());
-	}
+    protected void resolvePage (Page page) throws TransformerException {
+        List<ComponentPresentation> cpList = page.getComponentPresentations();
+        if (cpList != null) {
+            for (ComponentPresentation cp : cpList) {
+                resolveComponentOnPage(cp.getComponent());
+            }
+        }
+        resolveMap(page.getMetadata());
+    }
 
-	protected void resolveComponentOnPage (Component component) throws TransformerException {
-		if (component != null) {
-			// resolve regular content
-			resolveMap(component.getContent());
-			// resolve metadata
-			resolveMap(component.getMetadata());
-		}
-	}
+    protected void resolveComponentOnPage (Component component) throws TransformerException {
+        if (component != null) {
+            // resolve regular content
+            resolveMap(component.getContent());
+            // resolve metadata
+            resolveMap(component.getMetadata());
+        }
+    }
 
-	protected void resolveComponent (Component component) throws TransformerException {
-		try {
-			if (component != null) {
-				resolveMap(component.getContent());
-				resolveMap(component.getMetadata());
-				linkResolver.resolve(component);
-			}
-		} catch (ItemNotFoundException | SerializationException e) {
-			throw new TransformerException(e);
-		}
-	}
+    protected void resolveComponent (Component component) throws TransformerException {
+        try {
+            if (component != null) {
+                resolveMap(component.getContent());
+                resolveMap(component.getMetadata());
+                linkResolver.resolve(component);
+            }
+        } catch (ItemNotFoundException | SerializationException e) {
+            throw new TransformerException(e);
+        }
+    }
 
-	protected void resolveMap (Map<String, Field> fieldMap) throws TransformerException {
-		if (fieldMap != null && !fieldMap.isEmpty()) {
-			Collection<Field> values = fieldMap.values();
-			for (Field field : values) {
-				if (field instanceof ComponentLinkField) {
-					resolveComponentLinkField((ComponentLinkField) field);
-				} else if (field instanceof EmbeddedField) {
-					resolveList(((EmbeddedField) field).getEmbeddedValues());
-				} else if (field instanceof XhtmlField) {
-					resolveXhtmlField((XhtmlField) field);
-				}
-			}
-		}
-	}
+    protected void resolveMap (Map<String, Field> fieldMap) throws TransformerException {
+        if (fieldMap != null && !fieldMap.isEmpty()) {
+            Collection<Field> values = fieldMap.values();
+            for (Field field : values) {
+                if (field instanceof ComponentLinkField) {
+                    resolveComponentLinkField((ComponentLinkField) field);
+                } else if (field instanceof EmbeddedField) {
+                    resolveList(((EmbeddedField) field).getEmbeddedValues());
+                } else if (field instanceof XhtmlField) {
+                    resolveXhtmlField((XhtmlField) field);
+                }
+            }
+        }
+    }
 
-	protected void resolveList (List<FieldSet> fslist) throws TransformerException {
-		if (fslist != null && !fslist.isEmpty()) {
-			for (FieldSet fs : fslist) {
-				resolveMap(fs.getContent());
-			}
-		}
-	}
+    protected void resolveList (List<FieldSet> fslist) throws TransformerException {
+        if (fslist != null && !fslist.isEmpty()) {
+            for (FieldSet fs : fslist) {
+                resolveMap(fs.getContent());
+            }
+        }
+    }
 
-	protected void resolveComponentLinkField (ComponentLinkField componentLinkField) throws TransformerException {
-		List<Object> compList = componentLinkField.getValues();
+    protected void resolveComponentLinkField (ComponentLinkField componentLinkField) throws TransformerException {
+        List<Object> compList = componentLinkField.getValues();
 
-		for (Object component : compList) {
-			resolveComponent((Component) component);
-		}
-	}
+        for (Object component : compList) {
+            resolveComponent((Component) component);
+        }
+    }
 
-	protected void resolveXhtmlField (XhtmlField xhtmlField) throws TransformerException {
-		try {
-			RichTextUtils.resolveXhtmlField(xhtmlField,true,this.linkResolver,this.getContextPath());
-		} catch (ItemNotFoundException | SerializationException e) {
-			throw new TransformerException(e);
-		}
-	}
+    protected void resolveXhtmlField (XhtmlField xhtmlField) throws TransformerException {
+        try {
+            RichTextUtils.resolveXhtmlField(xhtmlField, true, this.linkResolver, this.getContextPath());
+        } catch (ItemNotFoundException | SerializationException e) {
+            throw new TransformerException(e);
+        }
+    }
 
-	public LinkResolver getLinkResolver () {
-		return linkResolver;
-	}
+    public LinkResolver getLinkResolver () {
+        return linkResolver;
+    }
 
-	@Override
-	public String getContextPath () {
-		return this.contextPath;
-	}
+    @Override
+    public String getContextPath () {
+        return this.contextPath;
+    }
 
-	@Override
-	public void setContextPath (String contextPath) {
-		this.contextPath = contextPath;
-		this.params = new HashMap<>();
-		this.params.put("contextpath", contextPath);
-	}
+    @Override
+    public void setContextPath (String contextPath) {
+        this.contextPath = contextPath;
+        this.params = new HashMap<>();
+        this.params.put("contextpath", contextPath);
+    }
 }

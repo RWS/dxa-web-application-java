@@ -31,37 +31,37 @@ import java.util.LinkedList;
 import java.util.List;
 
 
-@JsonIgnoreProperties(value = {"Value"}, ignoreUnknown = true)
+@JsonIgnoreProperties (value = {"Value"}, ignoreUnknown = true)
 public abstract class BaseField implements Field {
 
-    @JsonProperty("Name")
+    @JsonProperty ("Name")
     private String name;
 
-    @JsonProperty("Values")
+    @JsonProperty ("Values")
     private List<String> textValues;
 
-    @JsonProperty("NumericValues")
+    @JsonProperty ("NumericValues")
     private List<Double> numericValues;
 
-    @JsonProperty("DateTimeValues")
+    @JsonProperty ("DateTimeValues")
     private List<String> dateValues;
 
-    @JsonProperty("LinkedComponentValues")
-    @JsonDeserialize(contentAs = ComponentImpl.class)
+    @JsonProperty ("LinkedComponentValues")
+    @JsonDeserialize (contentAs = ComponentImpl.class)
     private List<Component> componentLinkValues;
 
-    @JsonDeserialize(contentAs = KeywordImpl.class)
+    @JsonDeserialize (contentAs = KeywordImpl.class)
     private List<Keyword> keywordValues;
 
-    @JsonProperty("EmbeddedValues")
-    @JsonDeserialize(contentAs = FieldSetImpl.class)
+    @JsonProperty ("EmbeddedValues")
+    @JsonDeserialize (contentAs = FieldSetImpl.class)
     private List<FieldSet> embeddedValues;
 
-    @JsonProperty("FieldType")
-    @JsonDeserialize(converter = FieldTypeConverter.class)
+    @JsonProperty ("FieldType")
+    @JsonDeserialize (converter = FieldTypeConverter.class)
     private FieldType fieldType;
 
-    @JsonProperty("XPath")
+    @JsonProperty ("XPath")
     private String xPath;
 
     /**
@@ -71,14 +71,14 @@ public abstract class BaseField implements Field {
      * Never returns null.
      */
     @Override
-    public abstract List<Object> getValues();
+    public abstract List<Object> getValues ();
 
     /**
      * Get the numeric field values
      *
      * @return numericValues
      */
-    public List<Double> getNumericValues() {
+    public List<Double> getNumericValues () {
         return numericValues == null ? new LinkedList<Double>() : numericValues;
     }
 
@@ -87,7 +87,7 @@ public abstract class BaseField implements Field {
      *
      * @param numericValues
      */
-    public void setNumericValues(List<Double> numericValues) {
+    public void setNumericValues (List<Double> numericValues) {
         this.numericValues = numericValues;
     }
 
@@ -96,7 +96,7 @@ public abstract class BaseField implements Field {
      *
      * @return
      */
-    public List<String> getDateTimeValues() {
+    public List<String> getDateTimeValues () {
         return dateValues == null ? new LinkedList<String>() : dateValues;
     }
 
@@ -105,7 +105,7 @@ public abstract class BaseField implements Field {
      *
      * @param dateTimeValues
      */
-    public void setDateTimeValues(List<String> dateTimeValues) {
+    public void setDateTimeValues (List<String> dateTimeValues) {
         this.dateValues = dateTimeValues;
     }
 
@@ -114,7 +114,7 @@ public abstract class BaseField implements Field {
      *
      * @return
      */
-    public List<Component> getLinkedComponentValues() {
+    public List<Component> getLinkedComponentValues () {
         return componentLinkValues != null ? componentLinkValues : new LinkedList<Component>();
     }
 
@@ -123,7 +123,7 @@ public abstract class BaseField implements Field {
      *
      * @param linkedComponentValues
      */
-    public void setLinkedComponentValues(List<Component> linkedComponentValues) {
+    public void setLinkedComponentValues (List<Component> linkedComponentValues) {
         this.componentLinkValues = linkedComponentValues;
     }
 
@@ -133,7 +133,7 @@ public abstract class BaseField implements Field {
      * @return the name of the field
      */
     @Override
-    public String getName() {
+    public String getName () {
         return name == null ? "" : name;
     }
 
@@ -143,7 +143,7 @@ public abstract class BaseField implements Field {
      * @param name
      */
     @Override
-    public void setName(String name) {
+    public void setName (String name) {
         this.name = name;
     }
 
@@ -153,7 +153,7 @@ public abstract class BaseField implements Field {
      * @return
      */
     @Override
-    public String getXPath() {
+    public String getXPath () {
         return xPath;
     }
 
@@ -163,7 +163,7 @@ public abstract class BaseField implements Field {
      * @param xPath
      */
     @Override
-    public void setXPath(String xPath) {
+    public void setXPath (String xPath) {
         this.xPath = xPath;
     }
 
@@ -173,7 +173,7 @@ public abstract class BaseField implements Field {
      * @return the field type
      */
     @Override
-    public FieldType getFieldType() {
+    public FieldType getFieldType () {
         return fieldType;
     }
 
@@ -183,7 +183,7 @@ public abstract class BaseField implements Field {
      * @param fieldType
      */
     @Override
-    public void setFieldType(FieldType fieldType) {
+    public void setFieldType (FieldType fieldType) {
         this.fieldType = fieldType;
     }
 
@@ -192,7 +192,7 @@ public abstract class BaseField implements Field {
      *
      * @return a list of text values
      */
-    public List<String> getTextValues() {
+    public List<String> getTextValues () {
         return textValues == null ? new LinkedList<String>() : textValues;
     }
 
@@ -202,7 +202,7 @@ public abstract class BaseField implements Field {
      * @param textValues
      */
 
-    public void setTextValues(List<String> textValues) {
+    public void setTextValues (List<String> textValues) {
         this.textValues = textValues;
     }
 
@@ -211,7 +211,7 @@ public abstract class BaseField implements Field {
      *
      * @return the embedded values as a map
      */
-    public List<FieldSet> getEmbeddedValues() {
+    public List<FieldSet> getEmbeddedValues () {
         return embeddedValues != null ? embeddedValues : new LinkedList<FieldSet>();
     }
 
@@ -220,23 +220,22 @@ public abstract class BaseField implements Field {
      *
      * @param embeddedValues embedded values as a map
      */
-    public void setEmbeddedValues(List<FieldSet> embeddedValues) {
+    public void setEmbeddedValues (List<FieldSet> embeddedValues) {
         this.embeddedValues = embeddedValues;
     }
 
-    public List<Keyword> getKeywordValues() {
+    public List<Keyword> getKeywordValues () {
         return keywordValues != null ? keywordValues : new LinkedList<Keyword>();
     }
 
-    // FIXME
-    @JsonSetter("Keywords")
-    public void setKeywordvalues(List<Keyword> keywordValues) {
+    @JsonSetter ("Keywords")
+    public void setKeywords (List<Keyword> keywordValues) {
         this.keywordValues = keywordValues;
     }
 
     // DD4T 2.0.2 template support
     @JsonSetter ("KeywordValues")
-    private void setKeywordValues(List<Keyword> keywordValues) {
+    private void setKeywordValues (List<Keyword> keywordValues) {
         this.keywordValues = keywordValues;
     }
 

@@ -47,249 +47,254 @@ import java.util.regex.Pattern;
  */
 public class DefaultLinkResolver implements LinkResolver {
 
-	private static final Logger LOG = LoggerFactory.getLogger(DefaultLinkResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultLinkResolver.class);
 
-	@Resource
-	private LinkProvider linkProvider;
-	@Resource
-	private PayloadCacheProvider cacheProvider;
-	private Map<String, String> schemaToUrlMappings;
-	private String schemaKey;
-	private boolean encodeUrl = true;
-	private String contextPath;
+    @Resource
+    private LinkProvider linkProvider;
+    @Resource
+    private PayloadCacheProvider cacheProvider;
+    private Map<String, String> schemaToUrlMappings;
+    private String schemaKey;
+    private boolean encodeUrl = true;
+    private String contextPath;
 
-	private DefaultLinkResolver () {
-		LOG.debug("Create new instance");
-	}
+    private DefaultLinkResolver () {
+        LOG.debug("Create new instance");
+    }
 
-	@Override
-	public String resolve(ComponentPresentation cp)
-			throws ItemNotFoundException, SerializationException {
-		return resolve(cp.getComponent(), null);
-	}
-	
-	@Override public String resolve (Component component) throws ItemNotFoundException, SerializationException {
-		return resolve(component, null);
-	}
+    @Override
+    public String resolve (ComponentPresentation cp) throws ItemNotFoundException, SerializationException {
+        return resolve(cp.getComponent(), null);
+    }
 
-	@Override public String resolve (Component component, Page page) throws ItemNotFoundException, SerializationException {
-		LOG.debug("Resolving link to component: {} from page: {}", component, page);
-		String resolvedUrl = null;
-		if (component == null) {
-			return null;
-		}
-		// option 1 - handle multimedia
+    @Override
+    public String resolve (Component component) throws ItemNotFoundException, SerializationException {
+        return resolve(component, null);
+    }
 
-		if (component.getMultimedia() != null) {
-			resolvedUrl = component.getMultimedia().getUrl();
-		}
+    @Override
+    public String resolve (Component component, Page page) throws ItemNotFoundException, SerializationException {
+        LOG.debug("Resolving link to component: {} from page: {}", component, page);
+        String resolvedUrl = null;
+        if (component == null) {
+            return null;
+        }
+        // option 1 - handle multimedia
 
-		Schema schema = component.getSchema();
+        if (component.getMultimedia() != null) {
+            resolvedUrl = component.getMultimedia().getUrl();
+        }
 
-		// option 2 - handle by schema
-		if (resolvedUrl == null) {
-			resolvedUrl = findUrlMapping(schema);
-		}
+        Schema schema = component.getSchema();
 
-		// option 3 - use componentLinker
-		if (StringUtils.isEmpty(resolvedUrl)) {
-			verifyPublicationIsSet(component);
+        // option 2 - handle by schema
+        if (resolvedUrl == null) {
+            resolvedUrl = findUrlMapping(schema);
+        }
 
-			if (page == null) {
-				resolvedUrl = resolve(component.getId());
-			} else {
-				resolvedUrl = resolve(component.getId(), page.getId());
-			}
+        // option 3 - use componentLinker
+        if (StringUtils.isEmpty(resolvedUrl)) {
+            verifyPublicationIsSet(component);
 
-			if (StringUtils.isEmpty(resolvedUrl)) {
-				LOG.warn("Not possible to resolve url for component: " + component.getId());
-			}
-		} else {
-			resolvedUrl = replacePlaceholders(resolvedUrl, "%COMPONENTURI%", component.getId());
-			resolvedUrl = replacePlaceholders(resolvedUrl, "%COMPONENTTITLE%", component.getTitle());
-			resolvedUrl = replacePlaceholders(resolvedUrl, "%SCHEMAURI%", schema.getId());
-			resolvedUrl = replacePlaceholders(resolvedUrl, "%SCHEMATITLE%", schema.getTitle());
-		}
-		if (contextPath != null && contextPath.length() > 0) {
-			resolvedUrl = contextPath + resolvedUrl;
-		}
-		return resolvedUrl;
-	}
+            if (page == null) {
+                resolvedUrl = resolve(component.getId());
+            } else {
+                resolvedUrl = resolve(component.getId(), page.getId());
+            }
 
-	private static void verifyPublicationIsSet (final Component component) {
-		if (component.getPublication() == null) {
-			try {
-				TCMURI tcmUri = new TCMURI(component.getId());
-				component.setPublication(new PublicationImpl(TridionUtils.constructFullTcmPublicationUri(tcmUri.getPublicationId())));
-			} catch (ParseException e) {
-				LOG.error("Problem parsing the uri for component: " + component.getId(), e);
-			}
-		}
-	}
+            if (StringUtils.isEmpty(resolvedUrl)) {
+                LOG.warn("Not possible to resolve url for component: " + component.getId());
+            }
+        } else {
+            resolvedUrl = replacePlaceholders(resolvedUrl, "%COMPONENTURI%", component.getId());
+            resolvedUrl = replacePlaceholders(resolvedUrl, "%COMPONENTTITLE%", component.getTitle());
+            resolvedUrl = replacePlaceholders(resolvedUrl, "%SCHEMAURI%", schema.getId());
+            resolvedUrl = replacePlaceholders(resolvedUrl, "%SCHEMATITLE%", schema.getTitle());
+        }
+        if (contextPath != null && contextPath.length() > 0) {
+            resolvedUrl = contextPath + resolvedUrl;
+        }
+        return resolvedUrl;
+    }
 
-	@Override public String resolve (String componentURI) throws ItemNotFoundException, SerializationException {
-		return resolve(componentURI, null);
-	}
+    private static void verifyPublicationIsSet (final Component component) {
+        if (component.getPublication() == null) {
+            try {
+                TCMURI tcmUri = new TCMURI(component.getId());
+                component.setPublication(new PublicationImpl(TridionUtils.constructFullTcmPublicationUri(tcmUri.getPublicationId())));
+            } catch (ParseException e) {
+                LOG.error("Problem parsing the uri for component: " + component.getId(), e);
+            }
+        }
+    }
 
-	private boolean validInCache (CacheElement<String> cacheElement) {
-		if (cacheElement.isExpired()) {
-			synchronized (cacheElement) {
-				if (cacheElement.isExpired()) {
-					cacheElement.setExpired(false);
-					return false;
-				}
-			}
-		}
-		return true;
-	}
+    @Override
+    public String resolve (String componentURI) throws ItemNotFoundException, SerializationException {
+        return resolve(componentURI, null);
+    }
 
-	@Override public String resolve (String componentURI, String pageURI) throws ItemNotFoundException, SerializationException {
-		String key;
-		if (!StringUtils.isEmpty(pageURI)) {
-			key = getCacheKey(componentURI, pageURI);
-		} else {
-			key = getCacheKey(componentURI);
-		}
-		CacheElement<String> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
-		String result;
+    private boolean validInCache (CacheElement<String> cacheElement) {
+        if (cacheElement.isExpired()) {
+            synchronized (cacheElement) {
+                if (cacheElement.isExpired()) {
+                    cacheElement.setExpired(false);
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
-		if (!validInCache(cacheElement)) {
-			if (!StringUtils.isEmpty(pageURI)) {
-				result = linkProvider.resolveComponentFromPage(componentURI, pageURI);
-			} else {
-				result = linkProvider.resolveComponent(componentURI);
-			}
+    @Override
+    public String resolve (String componentURI, String pageURI) throws ItemNotFoundException, SerializationException {
+        String key;
+        if (!StringUtils.isEmpty(pageURI)) {
+            key = getCacheKey(componentURI, pageURI);
+        } else {
+            key = getCacheKey(componentURI);
+        }
+        CacheElement<String> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
+        String result;
 
-			try {
-				result = addToCache(componentURI, key, cacheElement, result);
-			} catch (ParseException e) {
-				String message = String.format("Invalid ComponentURI %s", componentURI);
-				LOG.error(message);
-				throw new SerializationException(message, e);
-			}
-		} else {
-			result = cacheElement.getPayload();
-			LOG.debug("Return link url: {} for uri: {} from cache", result, componentURI);
-		}
+        if (!validInCache(cacheElement)) {
+            if (!StringUtils.isEmpty(pageURI)) {
+                result = linkProvider.resolveComponentFromPage(componentURI, pageURI);
+            } else {
+                result = linkProvider.resolveComponent(componentURI);
+            }
 
-		return result;
-	}
+            try {
+                result = addToCache(componentURI, key, cacheElement, result);
+            } catch (ParseException e) {
+                String message = String.format("Invalid ComponentURI %s", componentURI);
+                LOG.error(message);
+                throw new SerializationException(message, e);
+            }
+        } else {
+            result = cacheElement.getPayload();
+            LOG.debug("Return link url: {} for uri: {} from cache", result, componentURI);
+        }
+
+        return result;
+    }
 
 
-	private String addToCache (String componentURI, String key, CacheElement<String> cacheElement, String result) throws ParseException {
-		result = result == null ? "" : result;
-		cacheElement.setPayload(result);
+    private String addToCache (String componentURI, String key, CacheElement<String> cacheElement, String result) throws ParseException {
+        result = result == null ? "" : result;
+        cacheElement.setPayload(result);
 
-		TCMURI tcmUri = new TCMURI(componentURI);
-		cacheProvider.storeInItemCache(key, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
-		LOG.debug("Added link url: {} for uri: {} to cache", result, componentURI);
-		return result;
-	}
+        TCMURI tcmUri = new TCMURI(componentURI);
+        cacheProvider.storeInItemCache(key, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
+        LOG.debug("Added link url: {} for uri: {} to cache", result, componentURI);
+        return result;
+    }
 
-	private String getCacheKey (String componentURI) {
-		return String.format("CL-%s", componentURI);
-	}
+    private String getCacheKey (String componentURI) {
+        return String.format("CL-%s", componentURI);
+    }
 
-	private String getCacheKey (String componentURI, String pageURI) {
-		return String.format("CL-%s-%s", componentURI, pageURI);
-	}
+    private String getCacheKey (String componentURI, String pageURI) {
+        return String.format("CL-%s-%s", componentURI, pageURI);
+    }
 
-	private String replacePlaceholders (String resolvedUrl, String placeholder, String replacementText) {
-		StringBuffer sb = new StringBuffer();
-		if (!StringUtils.isEmpty(replacementText)) {
-			if (getEncodeUrl()) {
-				try {
-					replacementText = URLEncoder.encode(replacementText, "UTF-8");
-				} catch (UnsupportedEncodingException e) {
-					LOG.warn("Not possible to encode string: " + replacementText, e);
-					return "";
-				}
-			}
+    private String replacePlaceholders (String resolvedUrl, String placeholder, String replacementText) {
+        StringBuffer sb = new StringBuffer();
+        if (!StringUtils.isEmpty(replacementText)) {
+            if (getEncodeUrl()) {
+                try {
+                    replacementText = URLEncoder.encode(replacementText, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    LOG.warn("Not possible to encode string: " + replacementText, e);
+                    return "";
+                }
+            }
 
-			Pattern p = Pattern.compile(placeholder);
-			Matcher m = p.matcher(resolvedUrl);
+            Pattern p = Pattern.compile(placeholder);
+            Matcher m = p.matcher(resolvedUrl);
 
-			while (m.find()) {
-				m.appendReplacement(sb, replacementText);
-			}
-			m.appendTail(sb);
-		}
-		return sb.toString();
-	}
+            while (m.find()) {
+                m.appendReplacement(sb, replacementText);
+            }
+            m.appendTail(sb);
+        }
+        return sb.toString();
+    }
 
-	private String findUrlMapping (Schema schema) {
-		String key = "";
-		if ("id".equals(schemaKey)) {
-			try {
-				TCMURI tcmUri = new TCMURI(schema.getId());
-				key = String.valueOf(tcmUri.getItemId());
-			} catch (ParseException e) {
-				LOG.error(e.getMessage(), e);
-				return null;
-			}
-		} else if ("title".equals(schemaKey)) {
-			key = schema.getTitle();
-		} else {
-			// use uri as default key
-			key = schema.getId();
-		}
+    private String findUrlMapping (Schema schema) {
+        String key = "";
+        if ("id".equals(schemaKey)) {
+            try {
+                TCMURI tcmUri = new TCMURI(schema.getId());
+                key = String.valueOf(tcmUri.getItemId());
+            } catch (ParseException e) {
+                LOG.error(e.getMessage(), e);
+                return null;
+            }
+        } else if ("title".equals(schemaKey)) {
+            key = schema.getTitle();
+        } else {
+            // use uri as default key
+            key = schema.getId();
+        }
 
-		return getSchemaToUrlMappings().get(key);
-	}
+        return getSchemaToUrlMappings().get(key);
+    }
 
-	public Map<String, String> getSchemaToUrlMappings () {
-		if (schemaToUrlMappings == null) {
-			this.schemaToUrlMappings = new HashMap<String, String>();
-		}
-		return schemaToUrlMappings;
-	}
+    public Map<String, String> getSchemaToUrlMappings () {
+        if (schemaToUrlMappings == null) {
+            this.schemaToUrlMappings = new HashMap<String, String>();
+        }
+        return schemaToUrlMappings;
+    }
 
-	// TODO: where is this set?
-	public void setSchemaToUrlMappings (Map<String, String> schemaToUrlMappings) {
-		this.schemaToUrlMappings = schemaToUrlMappings;
-	}
+    // TODO: where is this set?
+    public void setSchemaToUrlMappings (Map<String, String> schemaToUrlMappings) {
+        this.schemaToUrlMappings = schemaToUrlMappings;
+    }
 
-	public String getSchemaKey () {
-		return schemaKey;
-	}
+    public String getSchemaKey () {
+        return schemaKey;
+    }
 
-	public void setSchemaKey (String schemaKey) {
-		this.schemaKey = schemaKey;
-	}
+    public void setSchemaKey (String schemaKey) {
+        this.schemaKey = schemaKey;
+    }
 
-	public boolean getEncodeUrl () {
-		return encodeUrl;
-	}
+    public boolean getEncodeUrl () {
+        return encodeUrl;
+    }
 
-	public void setEncodeUrl (boolean encodeUrl) {
-		this.encodeUrl = encodeUrl;
-	}
+    public void setEncodeUrl (boolean encodeUrl) {
+        this.encodeUrl = encodeUrl;
+    }
 
-	@Override public String getContextPath () {
-		if (contextPath == null) {
-			contextPath = "";
-		}
-		return contextPath;
-	}
+    @Override
+    public String getContextPath () {
+        if (contextPath == null) {
+            contextPath = "";
+        }
+        return contextPath;
+    }
 
-	@Override public void setContextPath (String contextPath) {
-		this.contextPath = contextPath;
-	}
+    @Override
+    public void setContextPath (String contextPath) {
+        this.contextPath = contextPath;
+    }
 
-	public LinkProvider getLinkProvider () {
-		return linkProvider;
-	}
+    public LinkProvider getLinkProvider () {
+        return linkProvider;
+    }
 
-	public void setLinkProvider (LinkProvider linkProvider) {
-		this.linkProvider = linkProvider;
-	}
+    public void setLinkProvider (LinkProvider linkProvider) {
+        this.linkProvider = linkProvider;
+    }
 
-	public PayloadCacheProvider getCacheProvider () {
-		return cacheProvider;
-	}
+    public PayloadCacheProvider getCacheProvider () {
+        return cacheProvider;
+    }
 
-	public void setCacheProvider (PayloadCacheProvider cacheProvider) {
-		this.cacheProvider = cacheProvider;
-	}
+    public void setCacheProvider (PayloadCacheProvider cacheProvider) {
+        this.cacheProvider = cacheProvider;
+    }
 
 }

@@ -26,7 +26,7 @@ public class DateUtils {
     private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_PATTERN);
 
-    private DateUtils(){
+    private DateUtils () {
     }
 
     /**
@@ -35,7 +35,7 @@ public class DateUtils {
      * @param date the Joda DateTime object
      * @return the date as String, formatted according to the date pattern.
      */
-    public static String convertDateToString(DateTime date) {
+    public static String convertDateToString (DateTime date) {
         return DATE_TIME_FORMATTER.print(date);
     }
 
@@ -55,7 +55,7 @@ public class DateUtils {
      * @param date the date string.
      * @return the Joda DateTime
      */
-    public static DateTime convertStringToDate(String date) {
+    public static DateTime convertStringToDate (String date) {
         if (date.length() > 19) {
             return DATE_TIME_FORMATTER.parseDateTime(date);
         } else {

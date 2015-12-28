@@ -36,51 +36,53 @@ import java.text.ParseException;
  * @author R. Kempees
  */
 public class JsonUtils {
-	private static final Logger LOG = LoggerFactory.getLogger(JsonUtils.class);
-	private JsonUtils() {
+    private static final Logger LOG = LoggerFactory.getLogger(JsonUtils.class);
 
-	}
-	public static <T extends Field> T renderComponentField(JsonNode node, Class<T> concreteClass) throws IOException {
-		final JsonParser parser = node.traverse();
-		return JsonDataBinder.getGenericMapper().readValue(parser,concreteClass);
-	}
+    private JsonUtils () {
 
-	public static TCMURI getTcmUriFromField (String fieldName, JsonNode node) {
-		if (!node.has(fieldName)) {
-			return null;
-		}
-		String tcmUri = node.get(fieldName).textValue();
-		TCMURI uri = null;
-		try {
-			uri = new TCMURI(tcmUri);
-		} catch (ParseException e) {
-			LOG.error(e.getLocalizedMessage(),e);
-		}
-		return uri;
-	}
+    }
 
-	public static boolean isValidJsonNode(Object data) {
+    public static <T extends Field> T renderComponentField (JsonNode node, Class<T> concreteClass) throws IOException {
+        final JsonParser parser = node.traverse();
+        return JsonDataBinder.getGenericMapper().readValue(parser, concreteClass);
+    }
 
-		return isNotNull(data) && isJsonNode(data);
-	}
+    public static TCMURI getTcmUriFromField (String fieldName, JsonNode node) {
+        if (!node.has(fieldName)) {
+            return null;
+        }
+        String tcmUri = node.get(fieldName).textValue();
+        TCMURI uri = null;
+        try {
+            uri = new TCMURI(tcmUri);
+        } catch (ParseException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+        return uri;
+    }
 
-	public static boolean isJsonNode(Object data) {
-		return data instanceof JsonNode;
-	}
+    public static boolean isValidJsonNode (Object data) {
 
-	public static boolean isNotNull(Object data) {
-		return data != null;
-	}
+        return isNotNull(data) && isJsonNode(data);
+    }
 
-	public static DateTime getDateFromField (String fieldName, JsonNode node) {
-		if (!node.has(fieldName)) {
-			return null;
-		}
-		String dateNode = node.get(fieldName).textValue();
-		if (StringUtils.isEmpty(dateNode)){
-			return null;
-		}
+    public static boolean isJsonNode (Object data) {
+        return data instanceof JsonNode;
+    }
 
-		return DateUtils.convertStringToDate(dateNode);
-	}
+    public static boolean isNotNull (Object data) {
+        return data != null;
+    }
+
+    public static DateTime getDateFromField (String fieldName, JsonNode node) {
+        if (!node.has(fieldName)) {
+            return null;
+        }
+        String dateNode = node.get(fieldName).textValue();
+        if (StringUtils.isEmpty(dateNode)) {
+            return null;
+        }
+
+        return DateUtils.convertStringToDate(dateNode);
+    }
 }

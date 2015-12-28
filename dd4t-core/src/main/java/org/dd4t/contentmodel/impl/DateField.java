@@ -25,12 +25,12 @@ import java.util.List;
 
 public class DateField extends BaseField implements Field {
 
-    public DateField() {
+    public DateField () {
         setFieldType(FieldType.DATE);
     }
 
     @Override
-    public List<Object> getValues() {
+    public List<Object> getValues () {
         List<String> dateValues = getDateTimeValues();
         List<Object> l = new LinkedList<Object>();
 

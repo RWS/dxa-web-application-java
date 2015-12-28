@@ -26,12 +26,12 @@ import java.util.List;
 
 public class CategoryImpl extends BaseItem implements Category {
 
-    @JsonProperty("Keywords")
-    @JsonDeserialize(contentAs = KeywordImpl.class)
+    @JsonProperty ("Keywords")
+    @JsonDeserialize (contentAs = KeywordImpl.class)
     private List<Keyword> keywords;
 
     @Override
-    public List<Keyword> getKeywords() {
+    public List<Keyword> getKeywords () {
         List<Keyword> l = new LinkedList<>();
 
         if (keywords != null) {
@@ -44,7 +44,7 @@ public class CategoryImpl extends BaseItem implements Category {
     }
 
     @Override
-    public void setKeywords(List<Keyword> keywords) {
+    public void setKeywords (List<Keyword> keywords) {
         List<Keyword> l = new LinkedList<>();
 
         for (Keyword k : keywords) {

@@ -14,20 +14,20 @@ import java.io.IOException;
  */
 public class XPMPageInitTag extends SimpleTagSupport {
 
-	private Page page;
+    private Page page;
 
-	@Override
-	public void doTag() throws JspException, IOException {
-		XPMRenderer renderer = XPMRenderer.getInstance();
-		String out = renderer.initPage(page.getId(), page.getRevisionDate(), page.getPageTemplate().getId());
-		getJspContext().getOut().write(out);
-	}
+    @Override
+    public void doTag () throws JspException, IOException {
+        XPMRenderer renderer = XPMRenderer.getInstance();
+        String out = renderer.initPage(page.getId(), page.getRevisionDate(), page.getPageTemplate().getId());
+        getJspContext().getOut().write(out);
+    }
 
-	public org.dd4t.contentmodel.Page getPage() {
-		return page;
-	}
+    public org.dd4t.contentmodel.Page getPage () {
+        return page;
+    }
 
-	public void setPage(Page page) {
-		this.page = page;
-	}
+    public void setPage (Page page) {
+        this.page = page;
+    }
 }

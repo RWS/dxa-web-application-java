@@ -26,18 +26,19 @@ import java.lang.reflect.Field;
  * @author R. Kempees
  */
 public class ModelFieldMapping {
-	private ViewModelProperty viewModelProperty;
-	private Field field;
-	public ModelFieldMapping(ViewModelProperty modelProperty, Field f) {
-		this.field = f;
-		this.viewModelProperty = modelProperty;
-	}
+    private ViewModelProperty viewModelProperty;
+    private Field field;
 
-	public ViewModelProperty getViewModelProperty () {
-		return viewModelProperty;
-	}
+    public ModelFieldMapping (ViewModelProperty modelProperty, Field f) {
+        this.field = f;
+        this.viewModelProperty = modelProperty;
+    }
 
-	public Field getField () {
-		return field;
-	}
+    public ViewModelProperty getViewModelProperty () {
+        return viewModelProperty;
+    }
+
+    public Field getField () {
+        return field;
+    }
 }

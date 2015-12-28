@@ -28,125 +28,125 @@ public interface Multimedia {
      *
      * @return the tridion native binary data
      */
-    BinaryData getBinaryData();
+    BinaryData getBinaryData ();
 
     /**
      * Set the binary data
      *
      * @param binaryData
      */
-    void setBinaryData(BinaryData binaryData);
+    void setBinaryData (BinaryData binaryData);
 
     /**
      * Get the height of the binary
      *
      * @return the height
      */
-    int getHeight();
+    int getHeight ();
 
     /**
      * Set the height of the binary
      *
      * @param height
      */
-    void setHeight(int height);
+    void setHeight (int height);
 
     /**
      * Get the width of the binary
      *
      * @return
      */
-    int getWidth();
+    int getWidth ();
 
     /**
      * Set the width of the binary
      *
      * @param width
      */
-    void setWidth(int width);
+    void setWidth (int width);
 
     /**
      * Get the size of the binary
      *
      * @return Size in bytes
      */
-    int getSize();
+    int getSize ();
 
     /**
      * Set the size of the binary
      *
      * @param size in bytes
      */
-    void setSize(int size);
+    void setSize (int size);
 
     /**
      * Get the alt text of the binary
      *
      * @return the alt text
      */
-    String getAlt();
+    String getAlt ();
 
     /**
      * Set the al text
      *
      * @param alt
      */
-    void setAlt(String alt);
+    void setAlt (String alt);
 
     /**
      * Get the URL of the binary
      *
      * @return the URL
      */
-    String getUrl();
+    String getUrl ();
 
     /**
      * Set the URL
      *
      * @param url
      */
-    void setUrl(String url);
+    void setUrl (String url);
 
     /**
      * Get the mime type of the binary
      *
      * @return the mime type
      */
-    String getMimeType();
+    String getMimeType ();
 
     /**
      * Set the mime type
      *
      * @param mimeType type
      */
-    void setMimeType(String mimeType);
+    void setMimeType (String mimeType);
 
     /**
      * Get the file extension
      *
      * @return the file extension
      */
-    String getFileExtension();
+    String getFileExtension ();
 
     /**
      * Set the file extension
      *
      * @param fileExtension
      */
-    void setFileExtension(String fileExtension);
+    void setFileExtension (String fileExtension);
 
     /**
      * Get the file name
      *
      * @return the file name
      */
-    String getFileName();
+    String getFileName ();
 
     /**
      * Set the file name
      *
      * @param fileName
      */
-    void setFileName(String fileName);
+    void setFileName (String fileName);
 
 }

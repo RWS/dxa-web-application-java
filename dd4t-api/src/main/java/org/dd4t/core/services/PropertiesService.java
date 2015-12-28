@@ -17,15 +17,13 @@
 package org.dd4t.core.services;
 
 /**
- * TODO: determine whether this should be in the API
- *
  * @author Mihai Cadariu
  */
 public interface PropertiesService {
 
-    void load(String propertiesFile);
+    void load (String propertiesFile);
 
-    String getProperty(String name);
+    String getProperty (String name);
 
-    String getProperty(String name, String defaultValue);
+    String getProperty (String name, String defaultValue);
 }

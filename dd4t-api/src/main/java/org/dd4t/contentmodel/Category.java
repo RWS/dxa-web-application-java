@@ -24,7 +24,7 @@ import java.util.List;
  * @author Quirijn Slings
  */
 public interface Category extends Item {
-    List<Keyword> getKeywords();
+    List<Keyword> getKeywords ();
 
-    void setKeywords(List<Keyword> keywords);
+    void setKeywords (List<Keyword> keywords);
 }

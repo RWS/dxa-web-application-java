@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
-@RunWith(Theories.class)
+@RunWith (Theories.class)
 public class DateUtilsTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DateUtilsTest.class);
@@ -28,7 +28,7 @@ public class DateUtilsTest {
     private DateTime endTime;
 
     @Before
-    public void setUp() {
+    public void setUp () {
 
         beginTime = DateTime.now().minusWeeks(1);
         endTime = DateTime.now().plusWeeks(1);
@@ -36,7 +36,7 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void testConvertDateToString() {
+    public void testConvertDateToString () {
 
         // Test the date
         Calendar calendar = Calendar.getInstance();
@@ -60,7 +60,7 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void testConvertTimstampToString() {
+    public void testConvertTimstampToString () {
         // Test the date
         Calendar calendar = Calendar.getInstance();
 
@@ -83,7 +83,7 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void testConvertStringToDate() {
+    public void testConvertStringToDate () {
         DateTime date = DateUtils.convertStringToDate(EXPECTED_DATE_STAMP);
 
         Calendar cal = date.toGregorianCalendar();
@@ -100,7 +100,7 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void testRandomConversions() {
+    public void testRandomConversions () {
         for (int i = 0; i < 10; i++) {
             DateTime random = DateTime.now().withMillis(getRandomTimeBetweenTwoDates(beginTime, endTime));
             String randomDateString = DateUtils.convertDateToString(random);
@@ -119,7 +119,6 @@ public class DateUtilsTest {
             Assert.assertEquals(random.getMillisOfSecond(), cal.get(Calendar.MILLISECOND));
         }
     }
-
 
 
     /**

@@ -40,115 +40,115 @@ import java.util.Map;
  */
 public class TridionFieldTypeIdResolver implements TypeIdResolver {
 
-	private static final Logger LOG = LoggerFactory.getLogger(TridionFieldTypeIdResolver.class);
-	private static final EnumMap<FieldType, String> FIELD_TYPES = new EnumMap<>(FieldType.class);
-	private static final String NAMESPACE_PREFIX = "org.dd4t.contentmodel.impl.";
-	private static final String TEXT_FIELD = "TextField";
-	private static final String COMPONENT_LINK_FIELD = "ComponentLinkField";
+    private static final Logger LOG = LoggerFactory.getLogger(TridionFieldTypeIdResolver.class);
+    private static final EnumMap<FieldType, String> FIELD_TYPES = new EnumMap<>(FieldType.class);
+    private static final String NAMESPACE_PREFIX = "org.dd4t.contentmodel.impl.";
+    private static final String TEXT_FIELD = "TextField";
+    private static final String COMPONENT_LINK_FIELD = "ComponentLinkField";
 
-	static {
-		FIELD_TYPES.put(FieldType.TEXT, NAMESPACE_PREFIX + TEXT_FIELD);
-		FIELD_TYPES.put(FieldType.MULTILINETEXT, NAMESPACE_PREFIX + TEXT_FIELD);
-		FIELD_TYPES.put(FieldType.XHTML, NAMESPACE_PREFIX + "XhtmlField");
-		FIELD_TYPES.put(FieldType.KEYWORD, NAMESPACE_PREFIX + "KeywordField");
-		FIELD_TYPES.put(FieldType.EMBEDDED, NAMESPACE_PREFIX + "EmbeddedField");
-		// This (5) is actually a MM Link field, but the links are needed for multi values and meta
-		FIELD_TYPES.put(FieldType.MULTIMEDIALINK, NAMESPACE_PREFIX + COMPONENT_LINK_FIELD);
-		FIELD_TYPES.put(FieldType.COMPONENTLINK, NAMESPACE_PREFIX + COMPONENT_LINK_FIELD);
-		FIELD_TYPES.put(FieldType.EXTERNALLINK, NAMESPACE_PREFIX + TEXT_FIELD);
-		FIELD_TYPES.put(FieldType.NUMBER, NAMESPACE_PREFIX + "NumericField");
-		FIELD_TYPES.put(FieldType.DATE, NAMESPACE_PREFIX + "DateField");
-		FIELD_TYPES.put(FieldType.UNKNOWN, NAMESPACE_PREFIX + "BaseField");
-	}
+    static {
+        FIELD_TYPES.put(FieldType.TEXT, NAMESPACE_PREFIX + TEXT_FIELD);
+        FIELD_TYPES.put(FieldType.MULTILINETEXT, NAMESPACE_PREFIX + TEXT_FIELD);
+        FIELD_TYPES.put(FieldType.XHTML, NAMESPACE_PREFIX + "XhtmlField");
+        FIELD_TYPES.put(FieldType.KEYWORD, NAMESPACE_PREFIX + "KeywordField");
+        FIELD_TYPES.put(FieldType.EMBEDDED, NAMESPACE_PREFIX + "EmbeddedField");
+        // This (5) is actually a MM Link field, but the links are needed for multi values and meta
+        FIELD_TYPES.put(FieldType.MULTIMEDIALINK, NAMESPACE_PREFIX + COMPONENT_LINK_FIELD);
+        FIELD_TYPES.put(FieldType.COMPONENTLINK, NAMESPACE_PREFIX + COMPONENT_LINK_FIELD);
+        FIELD_TYPES.put(FieldType.EXTERNALLINK, NAMESPACE_PREFIX + TEXT_FIELD);
+        FIELD_TYPES.put(FieldType.NUMBER, NAMESPACE_PREFIX + "NumericField");
+        FIELD_TYPES.put(FieldType.DATE, NAMESPACE_PREFIX + "DateField");
+        FIELD_TYPES.put(FieldType.UNKNOWN, NAMESPACE_PREFIX + "BaseField");
+    }
 
-	private JavaType mBaseType;
+    private JavaType mBaseType;
 
-	public TridionFieldTypeIdResolver () {
-	}
-
-
-	@Override
-	public void init (final JavaType javaType) {
-		LOG.info("Instantiating TridionJsonFieldTypeResolver for " + javaType);
-		mBaseType = javaType;
-	}
-
-	@Override
-	public String idFromValue (final Object o) {
-		return idFromValueAndType(o, o.getClass());
-	}
-
-	@Override
-	public String idFromValueAndType (final Object o, final Class<?> aClass) {
-		String name = aClass.getName();
-
-		if (null == o) {
-			return "-1";
-		}
-
-		return getIdFromClass(name);
-	}
-
-	@Override
-	public String idFromBaseType () {
-		return "-1";
-	}
-
-	@Override
-	public JavaType typeFromId (final String s) {
-		String clazzName = getClassForKey(s);
-		Class<?> clazz;
-
-		try {
-			LOG.trace("Loading a '{}'", clazzName);
-			clazz = TypeFactory.defaultInstance().findClass(clazzName);
-		} catch (ClassNotFoundException e) {
-			LOG.error("Could not find the class!", e);
-			throw new IllegalStateException("Cannot find class '" + clazzName + "'");
-		}
-
-		return TypeFactory.defaultInstance().constructSpecializedType(mBaseType, clazz);
-	}
-
-	@Override
-	public JavaType typeFromId (final DatabindContext databindContext, final String s) {
-		return typeFromId(s);
-	}
-
-	@Override
-	public JsonTypeInfo.Id getMechanism () {
-		return JsonTypeInfo.Id.CUSTOM;
-	}
-
-	public static String getClassForKey (String type) {
-
-		LOG.trace("Fetching field type for {}", type);
-		FieldType fieldType;
-		if (StringUtils.isNumeric(type)) {
-			fieldType = FieldType.findByValue(Integer.parseInt(type));
-		} else {
-			fieldType = FieldType.findByName(type);
-		}
+    public TridionFieldTypeIdResolver () {
+    }
 
 
-		String result = FIELD_TYPES.get(fieldType);
-		LOG.trace("Returning field type {}", result);
+    @Override
+    public void init (final JavaType javaType) {
+        LOG.info("Instantiating TridionJsonFieldTypeResolver for " + javaType);
+        mBaseType = javaType;
+    }
 
-		return result;
-	}
+    @Override
+    public String idFromValue (final Object o) {
+        return idFromValueAndType(o, o.getClass());
+    }
 
-	private String getIdFromClass (String aClassName) {
-		if (!aClassName.startsWith(NAMESPACE_PREFIX)) {
-			aClassName = NAMESPACE_PREFIX + aClassName;
-		}
+    @Override
+    public String idFromValueAndType (final Object o, final Class<?> aClass) {
+        String name = aClass.getName();
 
-		for (Map.Entry<FieldType, String> entry : FIELD_TYPES.entrySet()) {
-			if (entry.getValue().equalsIgnoreCase(aClassName)) {
-				LOG.trace("Found {}::{}", entry.getKey(), entry.getValue());
-				return entry.getKey().toString();
-			}
-		}
+        if (null == o) {
+            return "-1";
+        }
 
-		return "-1";
-	}
+        return getIdFromClass(name);
+    }
+
+    @Override
+    public String idFromBaseType () {
+        return "-1";
+    }
+
+    @Override
+    public JavaType typeFromId (final String s) {
+        String clazzName = getClassForKey(s);
+        Class<?> clazz;
+
+        try {
+            LOG.trace("Loading a '{}'", clazzName);
+            clazz = TypeFactory.defaultInstance().findClass(clazzName);
+        } catch (ClassNotFoundException e) {
+            LOG.error("Could not find the class!", e);
+            throw new IllegalStateException("Cannot find class '" + clazzName + "'");
+        }
+
+        return TypeFactory.defaultInstance().constructSpecializedType(mBaseType, clazz);
+    }
+
+    @Override
+    public JavaType typeFromId (final DatabindContext databindContext, final String s) {
+        return typeFromId(s);
+    }
+
+    @Override
+    public JsonTypeInfo.Id getMechanism () {
+        return JsonTypeInfo.Id.CUSTOM;
+    }
+
+    public static String getClassForKey (String type) {
+
+        LOG.trace("Fetching field type for {}", type);
+        FieldType fieldType;
+        if (StringUtils.isNumeric(type)) {
+            fieldType = FieldType.findByValue(Integer.parseInt(type));
+        } else {
+            fieldType = FieldType.findByName(type);
+        }
+
+
+        String result = FIELD_TYPES.get(fieldType);
+        LOG.trace("Returning field type {}", result);
+
+        return result;
+    }
+
+    private String getIdFromClass (String aClassName) {
+        if (!aClassName.startsWith(NAMESPACE_PREFIX)) {
+            aClassName = NAMESPACE_PREFIX + aClassName;
+        }
+
+        for (Map.Entry<FieldType, String> entry : FIELD_TYPES.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(aClassName)) {
+                LOG.trace("Found {}::{}", entry.getKey(), entry.getValue());
+                return entry.getKey().toString();
+            }
+        }
+
+        return "-1";
+    }
 }

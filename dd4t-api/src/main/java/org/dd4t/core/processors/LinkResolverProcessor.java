@@ -17,7 +17,7 @@
 package org.dd4t.core.processors;
 
 public interface LinkResolverProcessor extends Processor {
-    String getContextPath();
+    String getContextPath ();
 
-    void setContextPath(String contextPath);
+    void setContextPath (String contextPath);
 }

@@ -16,7 +16,7 @@
 
 package org.dd4t.core.resolvers;
 
-import org.dd4t.core.util.PublicationDescriptor;
+import org.dd4t.contentmodel.PublicationDescriptor;
 
 public interface PublicationResolver {
 
@@ -25,37 +25,37 @@ public interface PublicationResolver {
      *
      * @return int representing the SDL Tridion Publication item id
      */
-    int getPublicationId();
+    int getPublicationId ();
 
     /**
      * Gets the Publication Url property as defined in Tridion Publication metadata corresponding to the current request
      *
      * @return String representing the SDL Tridion Publication Url metadata property
      */
-    String getPublicationUrl();
+    String getPublicationUrl ();
 
 
-	/**
-	 * Gets the Publication Path property as defined in Tridion Publication metadata corresponding to the current request
-	 *
-	 * @return String representing the SDL Tridion Publication Path metadata property
-	 */
-	String getPublicationPath();
+    /**
+     * Gets the Publication Path property as defined in Tridion Publication metadata corresponding to the current request
+     *
+     * @return String representing the SDL Tridion Publication Path metadata property
+     */
+    String getPublicationPath ();
 
     /**
      * Gets the Images URL property as defined in Tridion Publication metadata corresponding to the current request
      *
      * @return String representing the SDL Tridion Images URL metadata property
      */
-    String getImagesUrl();
+    String getImagesUrl ();
 
 
-	/**
-	 * Gets the Images Path property as defined in Tridion Publication metadata corresponding to the current request
-	 *
-	 * @return String representing the SDL Tridion Images Path metadata property
-	 */
-	String getImagesPath();
+    /**
+     * Gets the Images Path property as defined in Tridion Publication metadata corresponding to the current request
+     *
+     * @return String representing the SDL Tridion Images Path metadata property
+     */
+    String getImagesPath ();
 
     /**
      * Gets the Page URL in the current Publication corresponding to the given generic URL
@@ -63,7 +63,7 @@ public interface PublicationResolver {
      * @param url String representing the generic URL (i.e. URL path without PublicationUrl prefix)
      * @return String representing the current Publication URL followed by the given URL
      */
-    String getLocalPageUrl(String url);
+    String getLocalPageUrl (String url);
 
     /**
      * Gets the Binary URL in the current Publication corresponding to the given generic URL
@@ -71,7 +71,7 @@ public interface PublicationResolver {
      * @param url String representing the generic URL (i.e. URL path without PublicationUrl prefix)
      * @return String representing the current Publication URL followed by the given URL
      */
-    String getLocalBinaryUrl(String url);
+    String getLocalBinaryUrl (String url);
 
-	PublicationDescriptor getPublicationDescriptor();
+    PublicationDescriptor getPublicationDescriptor ();
 }

@@ -26,47 +26,47 @@ public interface Field {
      * @return a list of objects, where the type is depending of the field type.
      * Never returns null.
      */
-    List<Object> getValues();
+    List<Object> getValues ();
 
     /**
      * Get the name of the field.
      *
      * @return the name of the field
      */
-    String getName();
+    String getName ();
 
     /**
      * Set the name of the field
      *
      * @param name
      */
-    void setName(String name);
+    void setName (String name);
 
     /**
      * Get the xPath of the field (used for SiteEdit)
      *
      * @return the xPath of the field
      */
-    String getXPath();
+    String getXPath ();
 
     /**
      * Set the xPath of the field (used for SiteEdit)
      *
      * @param xPath
      */
-    void setXPath(String xPath);
+    void setXPath (String xPath);
 
     /**
      * Get the field type
      *
      * @return the field type
      */
-    FieldType getFieldType();
+    FieldType getFieldType ();
 
     /**
      * Set the field type
      *
      * @param fieldType
      */
-    void setFieldType(FieldType fieldType);
+    void setFieldType (FieldType fieldType);
 }

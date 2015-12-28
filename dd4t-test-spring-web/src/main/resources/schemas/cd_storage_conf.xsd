@@ -427,13 +427,15 @@
                                                                         <ul>
                                                                             <li>To use RMI, set to
                                                                                 <code>
-                                                                                    com.tridion.cache.RMICacheChannelConnector</code>
+                                                                                    com.tridion.cache.RMICacheChannelConnector
+                                                                                </code>
                                                                                 . This Connector requires a Cache
                                                                                 Channel Service.
                                                                             </li>
                                                                             <li>To use JMS, set to
                                                                                 <code>
-                                                                                    com.tridion.cache.JMSCacheChannelConnector</code>
+                                                                                    com.tridion.cache.JMSCacheChannelConnector
+                                                                                </code>
                                                                                 . Only use this value if you are
                                                                                 familiar with JMS, and if you have a
                                                                                 standalone JMS client, or a JMS client

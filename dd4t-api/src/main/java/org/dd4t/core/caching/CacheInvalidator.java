@@ -21,7 +21,7 @@ package org.dd4t.core.caching;
  */
 public interface CacheInvalidator {
 
-    void flush();
+    void flush ();
 
-    void invalidate(String key);
+    void invalidate (String key);
 }

@@ -23,5 +23,5 @@ import org.dd4t.providers.PayloadCacheProvider;
  */
 public interface CacheProviderFactory {
 
-    PayloadCacheProvider getCacheProvider();
+    PayloadCacheProvider getCacheProvider ();
 }

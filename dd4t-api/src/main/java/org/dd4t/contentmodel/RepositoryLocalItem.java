@@ -30,51 +30,51 @@ public interface RepositoryLocalItem extends Item {
      *
      * @return
      */
-    OrganizationalItem getOrganizationalItem();
+    OrganizationalItem getOrganizationalItem ();
 
     /**
      * Set the organizational item
      *
      * @param organizationalItem
      */
-    void setOrganizationalItem(OrganizationalItem organizationalItem);
+    void setOrganizationalItem (OrganizationalItem organizationalItem);
 
     /**
      * Get the publication
      *
      * @return
      */
-    Publication getOwningPublication();
+    Publication getOwningPublication ();
 
     /**
      * Set the owning publication
      *
      * @param publication
      */
-    void setOwningPublication(Publication publication);
+    void setOwningPublication (Publication publication);
 
     /**
      * Get the owning publication
      *
      * @return
      */
-    Publication getPublication();
+    Publication getPublication ();
 
     /**
      * Set the publication
      *
      * @param publication
      */
-    void setPublication(Publication publication);
+    void setPublication (Publication publication);
 
-    void setLastPublishedDate(DateTime date);
+    void setLastPublishedDate (DateTime date);
 
-    DateTime getLastPublishedDate();
+    DateTime getLastPublishedDate ();
 
     /**
      * Get the Schema
      *
      * @return
      */
-    Schema getSchema();
+    Schema getSchema ();
 }

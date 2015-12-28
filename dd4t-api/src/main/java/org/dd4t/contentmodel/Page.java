@@ -27,84 +27,84 @@ public interface Page extends RepositoryLocalItem {
      *
      * @return the page template object
      */
-    PageTemplate getPageTemplate();
+    PageTemplate getPageTemplate ();
 
     /**
      * Set the page template
      *
      * @param pageTemplate
      */
-    void setPageTemplate(PageTemplate pageTemplate);
+    void setPageTemplate (PageTemplate pageTemplate);
 
     /**
      * Get the file name
      *
      * @return the name of the file
      */
-    String getFileName();
+    String getFileName ();
 
     /**
      * Set the file name
      *
      * @param fileName
      */
-    void setFileName(String fileName);
+    void setFileName (String fileName);
 
     /**
      * Get the file extension of the page
      *
      * @return the file extension
      */
-    String getFileExtension();
+    String getFileExtension ();
 
     /**
      * Set the file extension
      *
      * @param fileExtension
      */
-    void setFileExtension(String fileExtension);
+    void setFileExtension (String fileExtension);
 
     /**
      * Get the metadata as a map of fields
      */
-    Map<String, Field> getMetadata();
+    Map<String, Field> getMetadata ();
 
     /**
      * Set the metadata
      */
-    void setMetadata(Map<String, Field> metadata);
+    void setMetadata (Map<String, Field> metadata);
 
     /**
      * Get the list of component presentations on the page
      *
      * @return a list of component presentation
      */
-    List<ComponentPresentation> getComponentPresentations();
+    List<ComponentPresentation> getComponentPresentations ();
 
     /**
      * Set the component presentations
      *
      * @param componentPresentations
      */
-    void setComponentPresentations(List<ComponentPresentation> componentPresentations);
+    void setComponentPresentations (List<ComponentPresentation> componentPresentations);
 
-    List<Category> getCategories();
+    List<Category> getCategories ();
 
-    void setCategories(List<Category> categories);
+    void setCategories (List<Category> categories);
 
-    StructureGroup getStructureGroup();
+    StructureGroup getStructureGroup ();
 
-    void setStructureGroup(StructureGroup structureGroup);
+    void setStructureGroup (StructureGroup structureGroup);
 
-    int getVersion();
-
-    @Override
-    DateTime getLastPublishedDate();
+    int getVersion ();
 
     @Override
-    void setLastPublishedDate(DateTime date);
+    DateTime getLastPublishedDate ();
 
-    DateTime getRevisionDate();
+    @Override
+    void setLastPublishedDate (DateTime date);
 
-    void setRevisionDate(DateTime date);
+    DateTime getRevisionDate ();
+
+    void setRevisionDate (DateTime date);
 }

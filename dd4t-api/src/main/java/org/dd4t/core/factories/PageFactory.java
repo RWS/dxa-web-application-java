@@ -30,7 +30,7 @@ public interface PageFactory extends Factory {
      * @return a Page Object
      * @throws FactoryException
      */
-    Page getPage(String uri) throws FactoryException;
+    Page getPage (String uri) throws FactoryException;
 
     /**
      * Find page by its URL. The url and publication id are specified. No
@@ -40,7 +40,7 @@ public interface PageFactory extends Factory {
      * @return a Page Object
      * @throws org.dd4t.core.exceptions.FactoryException
      */
-    Page findPageByUrl(String url, int publicationId) throws FactoryException;
+    Page findPageByUrl (String url, int publicationId) throws FactoryException;
 
     /**
      * Find the source of the Page by Url. The url and publication id are specified.
@@ -48,7 +48,7 @@ public interface PageFactory extends Factory {
      * @return The page source as string
      * @throws FactoryException
      */
-    String findSourcePageByUrl(String url, int publicationId) throws FactoryException;
+    String findSourcePageByUrl (String url, int publicationId) throws FactoryException;
 
     /**
      * Find the source of the Page by Tcm Id.
@@ -57,17 +57,17 @@ public interface PageFactory extends Factory {
      * @return The page source as String
      * @throws FactoryException
      */
-    String findSourcePageByTcmId(String tcmId) throws FactoryException;
+    String findSourcePageByTcmId (String tcmId) throws FactoryException;
 
     /**
      * Find the TCM Uri of a page by URL
      *
-     * @param url the URL
+     * @param url           the URL
      * @param publicationId the Publication Id
      * @return a TCMURI if found.
      * @throws FactoryException
      */
-    TCMURI findPageIdByUrl(String url, int publicationId ) throws FactoryException;
+    TCMURI findPageIdByUrl (String url, int publicationId) throws FactoryException;
 
     /**
      * Deserializes a JSON encoded String into an object of the given type, which must
@@ -78,14 +78,15 @@ public interface PageFactory extends Factory {
      * @return the deserialized object
      */
     <T extends Page> T deserialize (final String source, final Class<? extends T> clazz) throws FactoryException;
+
     /**
      * Method to check whether a page exists in the Tridion Broker.
      *
-     * @param url the URL to check
+     * @param url           the URL to check
      * @param publicationId the publication Id for the url
      * @return true if the page url exists in the broker
      */
-    Boolean isPagePublished(String url, int publicationId);
+    Boolean isPagePublished (String url, int publicationId);
 }
 
 

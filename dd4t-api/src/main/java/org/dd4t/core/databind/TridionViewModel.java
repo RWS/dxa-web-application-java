@@ -20,28 +20,32 @@ import org.dd4t.core.util.TCMURI;
 import org.joda.time.DateTime;
 
 /**
- *
  * @author R. Kempees
  * @since 12/11/14.
  */
 public interface TridionViewModel extends BaseViewModel {
 
-	TCMURI getTcmUri();
-	void setTcmUri(TCMURI tcmUri);
+    TCMURI getTcmUri ();
 
-	TCMURI getTemplateUri();
-	void setTemplateUri (TCMURI tcmUri);
+    void setTcmUri (TCMURI tcmUri);
 
-	DateTime getLastModified();
-	void setLastModified(DateTime lastModified);
+    TCMURI getTemplateUri ();
 
-	DateTime getLastPublishDate();
-	void setLastPublishDate(DateTime lastPublishDate);
+    void setTemplateUri (TCMURI tcmUri);
 
-	String getXPath(final String fieldName);
-	void addXpmEntry(final String fieldName, final String xpath, final boolean multiValued);
+    DateTime getLastModified ();
 
-	boolean setGenericComponentOnComponentPresentation();
+    void setLastModified (DateTime lastModified);
 
-	boolean isMultiValued(final String fieldName);
+    DateTime getLastPublishDate ();
+
+    void setLastPublishDate (DateTime lastPublishDate);
+
+    String getXPath (final String fieldName);
+
+    void addXpmEntry (final String fieldName, final String xpath, final boolean multiValued);
+
+    boolean setGenericComponentOnComponentPresentation ();
+
+    boolean isMultiValued (final String fieldName);
 }

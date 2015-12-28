@@ -24,17 +24,17 @@ import org.dd4t.core.exceptions.SerializationException;
 
 public interface LinkResolver {
 
-	String resolve(Component component, Page page) throws SerializationException, ItemNotFoundException;
+    String resolve (Component component, Page page) throws SerializationException, ItemNotFoundException;
 
-	String resolve(Component component) throws ItemNotFoundException, SerializationException;
-	
-	String resolve(ComponentPresentation cp) throws ItemNotFoundException, SerializationException;
+    String resolve (Component component) throws ItemNotFoundException, SerializationException;
 
-	String resolve(String componentId) throws SerializationException, ItemNotFoundException;
+    String resolve (ComponentPresentation cp) throws ItemNotFoundException, SerializationException;
 
-	String resolve(String componentId, String pageId) throws ItemNotFoundException, SerializationException;
+    String resolve (String componentId) throws SerializationException, ItemNotFoundException;
 
-	String getContextPath();
+    String resolve (String componentId, String pageId) throws ItemNotFoundException, SerializationException;
 
-	void setContextPath(String contextPath);
+    String getContextPath ();
+
+    void setContextPath (String contextPath);
 }

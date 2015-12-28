@@ -9,17 +9,17 @@ import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
  *
  * @author R. Kempees
  */
-@ViewModel(rootElementNames = {"embeddableTestTwo"})
+@ViewModel (rootElementNames = {"embeddableTestTwo"})
 public class EmbeddedTwo extends TridionViewModelBase {
 
-	@ViewModelProperty
-	private String testfieldTwo;
+    @ViewModelProperty
+    private String testfieldTwo;
 
-	public String getTestfieldTwo () {
-		return testfieldTwo;
-	}
+    public String getTestfieldTwo () {
+        return testfieldTwo;
+    }
 
-	public void setTestfieldTwo (final String testfieldTwo) {
-		this.testfieldTwo = testfieldTwo;
-	}
+    public void setTestfieldTwo (final String testfieldTwo) {
+        this.testfieldTwo = testfieldTwo;
+    }
 }

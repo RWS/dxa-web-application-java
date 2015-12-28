@@ -48,7 +48,7 @@ public class JSONSerializer implements Serializer {
     }
 
     @Override
-    public <T> T deserialize(final String content, final Class<T> aClass) throws SerializationException {
+    public <T> T deserialize (final String content, final Class<T> aClass) throws SerializationException {
         try {
             return MAPPER.readValue(content, aClass);
         } catch (IOException e) {
@@ -58,7 +58,7 @@ public class JSONSerializer implements Serializer {
     }
 
     @Override
-    public String serialize(final Object item) throws SerializationException {
+    public String serialize (final Object item) throws SerializationException {
         try {
             LOG.debug("Serializing a {}", item.getClass());
             return MAPPER.writeValueAsString(item);

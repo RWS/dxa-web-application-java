@@ -15,7 +15,7 @@
 <c:forEach var="componentPresentation" items="${pageModel.componentPresentations}">
     <p>${componentPresentation.component.title}</p>
 </c:forEach>
-<dd4t:componentpresentations />
+<dd4t:componentpresentations/>
 
 </body>
 </html>

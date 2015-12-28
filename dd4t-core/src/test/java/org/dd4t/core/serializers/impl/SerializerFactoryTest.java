@@ -19,16 +19,16 @@ import static org.junit.Assert.assertEquals;
 
 public class SerializerFactoryTest {
     @Before
-    public void setUp() throws Exception {
+    public void setUp () throws Exception {
         // Load Spring
         ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
 
         Serializer serializer = new org.dd4t.core.serializers.impl.json.JSONSerializer();
-	    SerializerFactory.setSerializer(serializer);
+        SerializerFactory.setSerializer(serializer);
     }
 
     @Test
-    public void testDeserializePage() throws Exception {
+    public void testDeserializePage () throws Exception {
 
         String notFoundPage = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("test.json").toURI()));
 

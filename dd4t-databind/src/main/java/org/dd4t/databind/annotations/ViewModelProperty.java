@@ -26,14 +26,15 @@ import java.lang.annotation.Target;
 /**
  * @author R. Kempees
  */
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
+@Target (ElementType.FIELD)
+@Retention (RetentionPolicy.RUNTIME)
 public @interface ViewModelProperty {
-	/*
-	Entity field name in essence is the Tridion component field name
-	 */
-	String entityFieldName() default "";
+    /*
+    Entity field name in essence is the Tridion component field name
+     */
+    String entityFieldName () default "";
 
-	FieldType tridionFieldType() default FieldType.TEXT;
-	boolean isMetadata() default false;
+    FieldType tridionFieldType () default FieldType.TEXT;
+
+    boolean isMetadata () default false;
 }

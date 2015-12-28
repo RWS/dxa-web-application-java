@@ -35,32 +35,32 @@ import java.util.Map;
  */
 public class ComponentPresentationImpl implements ComponentPresentation {
 
-    @JsonProperty("Component")
-    @JsonDeserialize(as = ComponentImpl.class)
+    @JsonProperty ("Component")
+    @JsonDeserialize (as = ComponentImpl.class)
     private Component component;
 
-    @JsonProperty("ComponentTemplate")
-    @JsonDeserialize(as = ComponentTemplateImpl.class)
+    @JsonProperty ("ComponentTemplate")
+    @JsonDeserialize (as = ComponentTemplateImpl.class)
     private ComponentTemplate componentTemplate;
 
-    @JsonProperty(value = "ExtensionData", required = false)
+    @JsonProperty (value = "ExtensionData", required = false)
     @JsonDeserialize (contentAs = FieldSetImpl.class)
     private Map<String, FieldSet> extensionData;
 
-    @JsonProperty("IsDynamic")
+    @JsonProperty ("IsDynamic")
     private boolean isDynamic;
 
-    @JsonProperty("RenderedContent")
+    @JsonProperty ("RenderedContent")
     private String renderedContent;
 
-    @JsonProperty("OrderOnPage")
+    @JsonProperty ("OrderOnPage")
     private int orderOnPage;
 
     @JsonIgnore
-    private Map<String,BaseViewModel> baseViewModels;
+    private Map<String, BaseViewModel> baseViewModels;
 
-	@JsonIgnore
-	private String rawComponentContent;
+    @JsonIgnore
+    private String rawComponentContent;
 
     /**
      * Get the component
@@ -68,7 +68,7 @@ public class ComponentPresentationImpl implements ComponentPresentation {
      * @return the component
      */
     @Override
-    public Component getComponent() {
+    public Component getComponent () {
         return component;
     }
 
@@ -78,7 +78,7 @@ public class ComponentPresentationImpl implements ComponentPresentation {
      * @param component
      */
     @Override
-    public void setComponent(Component component) {
+    public void setComponent (Component component) {
         this.component = component;
     }
 
@@ -88,7 +88,7 @@ public class ComponentPresentationImpl implements ComponentPresentation {
      * @return the component template
      */
     @Override
-    public ComponentTemplate getComponentTemplate() {
+    public ComponentTemplate getComponentTemplate () {
         return componentTemplate;
     }
 
@@ -98,71 +98,76 @@ public class ComponentPresentationImpl implements ComponentPresentation {
      * @param componentTemplate
      */
     @Override
-    public void setComponentTemplate(ComponentTemplate componentTemplate) {
+    public void setComponentTemplate (ComponentTemplate componentTemplate) {
         this.componentTemplate = componentTemplate;
     }
 
     @Override
-    public String getRenderedContent() {
+    public String getRenderedContent () {
         return renderedContent;
     }
 
     @Override
-    public void setRenderedContent(String renderedContent) {
+    public void setRenderedContent (String renderedContent) {
         this.renderedContent = renderedContent;
     }
 
     @Override
-    public boolean isDynamic() {
+    public boolean isDynamic () {
         return isDynamic;
     }
 
     @Override
-    public void setIsDynamic(final boolean isDynamic) {
+    public void setIsDynamic (final boolean isDynamic) {
         this.isDynamic = isDynamic;
     }
 
-    public int getOrderOnPage() {
+    public int getOrderOnPage () {
         return orderOnPage;
     }
 
     @Override
-    public void setOrderOnPage(final int orderOnPage) {
+    public void setOrderOnPage (final int orderOnPage) {
         this.orderOnPage = orderOnPage;
     }
 
-    @Override public Map<String, BaseViewModel> getAllViewModels () {
+    @Override
+    public Map<String, BaseViewModel> getAllViewModels () {
         if (this.baseViewModels == null) {
             return new HashMap<>();
         }
         return this.baseViewModels;
     }
 
-    @Override public void setViewModel (final Map<String, BaseViewModel> models) {
+    @Override
+    public void setViewModel (final Map<String, BaseViewModel> models) {
         this.baseViewModels = models;
     }
 
-    @Override public BaseViewModel getViewModel (String key) {
+    @Override
+    public BaseViewModel getViewModel (String key) {
         if (this.baseViewModels != null && this.baseViewModels.containsKey(key)) {
             return this.baseViewModels.get(key);
         }
         return null;
     }
 
-	/**
-	 * Sets the raw component content form the broker.
-	 * Needed to build DCP strong models and to
-	 * have all needed meta information on the CP and CT.
-	 *
-	 * @param rawComponentContent the Json or XML Component String from the broker.
-	 */
-	@Override public void setRawComponentContent (final String rawComponentContent) {
-		this.rawComponentContent = rawComponentContent;
-	}
+    /**
+     * Sets the raw component content form the broker.
+     * Needed to build DCP strong models and to
+     * have all needed meta information on the CP and CT.
+     *
+     * @param rawComponentContent the Json or XML Component String from the broker.
+     */
+    @Override
+    public void setRawComponentContent (final String rawComponentContent) {
+        this.rawComponentContent = rawComponentContent;
+    }
 
-	@Override public String getRawComponentContent () {
-		return this.rawComponentContent;
-	}
+    @Override
+    public String getRawComponentContent () {
+        return this.rawComponentContent;
+    }
 
     @Override
     public Map<String, FieldSet> getExtensionData () {

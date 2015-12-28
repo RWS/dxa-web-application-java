@@ -21,19 +21,19 @@ package org.dd4t.core.caching;
  * cache. The payload is wrapped inside this cache element object, so we can
  * differentiate between null and not-null payloads. The cache element can also
  * contain empty (null) payloads.
- * 
+ *
  * @author Mihai Cadariu
  */
 public interface CacheElement<T> {
-	T getPayload();
+    T getPayload ();
 
-	void setPayload(T payload);
+    void setPayload (T payload);
 
-	boolean isExpired();
+    boolean isExpired ();
 
-	void setExpired(boolean update);
+    void setExpired (boolean update);
 
-	String getDependentKey();
+    String getDependentKey ();
 
-	void setDependentKey(String dependentKey);
+    void setDependentKey (String dependentKey);
 }

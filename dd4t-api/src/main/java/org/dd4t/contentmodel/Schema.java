@@ -23,5 +23,5 @@ package org.dd4t.contentmodel;
  */
 public interface Schema extends Item {
 
-    String getRootElement();
+    String getRootElement ();
 }

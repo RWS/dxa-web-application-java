@@ -25,7 +25,7 @@ public class JSONSerializerTest {
     JSONSerializer serializer;
 
     @Before
-    public void setUp() throws SerializationException {
+    public void setUp () throws SerializationException {
 
         Reflections reflections = new Reflections("org.dd4t.contentmodel");
         fields = reflections.getSubTypesOf(Field.class);
@@ -39,8 +39,8 @@ public class JSONSerializerTest {
      * This unit test, test if the items inherited from Item is serializable and deserializable
      */
     @Test
-    public void testSerializationJItems() throws SerializationException, IllegalAccessException, InstantiationException {
-        for (Class<? extends Item> item :items) {
+    public void testSerializationJItems () throws SerializationException, IllegalAccessException, InstantiationException {
+        for (Class<? extends Item> item : items) {
             LOG.info("Test Item: " + item);
 
             if (Modifier.isAbstract(item.getModifiers())) {
@@ -63,8 +63,8 @@ public class JSONSerializerTest {
      * This unit test, test if the fields inherited from Item is serializable and deserializable
      */
     @Test
-    public void testSerializationFields() throws SerializationException, IllegalAccessException, InstantiationException {
-        for (Class<? extends Field> field: fields) {
+    public void testSerializationFields () throws SerializationException, IllegalAccessException, InstantiationException {
+        for (Class<? extends Field> field : fields) {
 
             if (Modifier.isAbstract(field.getModifiers())) {
                 LOG.info(field + " is an abstract class, skipping in test");

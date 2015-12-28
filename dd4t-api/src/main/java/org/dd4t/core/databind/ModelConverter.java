@@ -25,5 +25,5 @@ import org.dd4t.core.exceptions.SerializationException;
  * @since 19/11/14.
  */
 public interface ModelConverter {
-	<T extends BaseViewModel> T convertSource(Object data, T model) throws SerializationException;
+    <T extends BaseViewModel> T convertSource (Object data, T model) throws SerializationException;
 }

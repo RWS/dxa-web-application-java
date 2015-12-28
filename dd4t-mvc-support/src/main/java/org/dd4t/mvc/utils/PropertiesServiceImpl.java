@@ -31,28 +31,30 @@ import java.util.Properties;
  */
 public class PropertiesServiceImpl extends PropertiesServiceBase {
 
-	private static final Logger LOG = LoggerFactory.getLogger(PropertiesServiceImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PropertiesServiceImpl.class);
 
-	private PropertiesServiceImpl () {
-	}
+    private PropertiesServiceImpl () {
+    }
 
-	@Override public void load (String propertiesFile) {
-		LOG.debug("Loading file " + propertiesFile);
-		try {
-			InputStream input = PropertiesServiceImpl.class.getClassLoader().getResourceAsStream(propertiesFile);
-			if (input == null) {
-				throw new IOException("Cannot find properties file '" + propertiesFile + "' in classpath");
-			}
+    @Override
+    public void load (String propertiesFile) {
+        LOG.debug("Loading file " + propertiesFile);
+        try {
+            InputStream input = PropertiesServiceImpl.class.getClassLoader().getResourceAsStream(propertiesFile);
+            if (input == null) {
+                throw new IOException("Cannot find properties file '" + propertiesFile + "' in classpath");
+            }
 
-			properties = new Properties();
-			properties.load(input);
-		} catch (IOException ioe) {
-			LOG.error("Failed to load properties file " + propertiesFile, ioe);
-		}
-	}
+            properties = new Properties();
+            properties.load(input);
+        } catch (IOException ioe) {
+            LOG.error("Failed to load properties file " + propertiesFile, ioe);
+        }
+    }
 
-	@Required public void setLocation (String location) {
-		LOG.debug("Load Properties from: {}", location);
-		load(location);
-	}
+    @Required
+    public void setLocation (String location) {
+        LOG.debug("Load Properties from: {}", location);
+        load(location);
+    }
 }

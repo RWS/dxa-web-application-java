@@ -27,11 +27,11 @@ import com.tridion.storage.dao.BaseDAO;
  * @author R. Kempees, M. Cadariu
  */
 public class DaoUtils {
-	public static BaseDAO getStorageDAO (int publicationId, StorageTypeMapping storageTypeMapping) throws StorageException {
-		return StorageManagerFactory.getDAO(publicationId, storageTypeMapping);
-	}
+    public static BaseDAO getStorageDAO (int publicationId, StorageTypeMapping storageTypeMapping) throws StorageException {
+        return StorageManagerFactory.getDAO(publicationId, storageTypeMapping);
+    }
 
-	private DaoUtils(){
+    private DaoUtils () {
 
-	}
+    }
 }

@@ -38,116 +38,114 @@ import java.util.Locale;
  */
 public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
 
-	private static final Logger LOG = LoggerFactory.getLogger(BaseComponentPresentationsTag.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BaseComponentPresentationsTag.class);
+    private static final String ANCHOR_FORMAT = "<a name=\"%d\"></a>\n";
 
-	private String schema;
-	private String rootElement;
-	private String view;
-	private Boolean addAnchor = true;
-	private Integer start;
-	private Integer end;
-	private String region;
+    private String schema;
+    private String rootElement;
+    private String view;
+    private Boolean addAnchor = false;
+    private Integer start;
+    private Integer end;
+    private String region;
 
-	public int getAnchorCount(HttpServletRequest request) {
-		int counter = 0;
+    public int getAnchorCount (HttpServletRequest request) {
+        int counter = 0;
 
-		if (null != request.getAttribute("anchorCounter")) {
-			counter = (Integer) request.getAttribute("anchorCounter") + 1;
-		}
-		request.setAttribute("anchorCounter", counter);
-		return counter;
-	}
+        if (null != request.getAttribute("anchorCounter")) {
+            counter = (Integer) request.getAttribute("anchorCounter") + 1;
+        }
+        request.setAttribute("anchorCounter", counter);
+        return counter;
+    }
 
-	protected abstract List<ComponentPresentation> getComponentPresentations(Page page);
+    protected abstract List<ComponentPresentation> getComponentPresentations (Page page);
 
-	@Override
-	public void doTag() throws JspException, IOException {
-		final Page page = (Page) getJspContext().getAttribute(Constants.PAGE_MODEL_KEY, PageContext.REQUEST_SCOPE);
+    @Override
+    public void doTag () throws JspException, IOException {
+        final Page page = (Page) getJspContext().getAttribute(Constants.PAGE_MODEL_KEY, PageContext.REQUEST_SCOPE);
 
-		if (page != null) {
-			final PageContext pageContext = (PageContext) getJspContext();
-			List<ComponentPresentation> filteredComponentPresentations = RenderUtils.filterComponentPresentations(
-					getComponentPresentations(page),
-					getSchema(), getRootElement(), getView(), this.getRegion());
-			String out = "";
+        if (page != null) {
+            final PageContext pageContext = (PageContext) getJspContext();
+            List<ComponentPresentation> filteredComponentPresentations = RenderUtils.filterComponentPresentations(getComponentPresentations(page), getSchema(), getRootElement(), getView(), this.getRegion());
+            String out = "";
 
-			if (start != null || end != null) {
-				int size = filteredComponentPresentations.size();
-				int startPos = (start != null) ? start : 0;
-				int endPos = (end != null) ? end : size;
+            if (start != null || end != null) {
+                int size = filteredComponentPresentations.size();
+                int startPos = (start != null) ? start : 0;
+                int endPos = (end != null) ? end : size;
 
-				if (startPos <= endPos && startPos <= size && endPos <= size) {
-					filteredComponentPresentations = filteredComponentPresentations.subList(startPos, endPos);
-				} else {
-					LOG.error("start {} and end {} filtering incorrect for number of component presentations ({}) on page {}", size, page.getId());
-				}
-			}
+                if (startPos <= endPos && startPos <= size && endPos <= size) {
+                    filteredComponentPresentations = filteredComponentPresentations.subList(startPos, endPos);
+                } else {
+                    LOG.error("start {} and end {} filtering incorrect for number of component presentations ({}) on page {}", size, page.getId());
+                }
+            }
 
-			final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
-			final HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
+            final HttpServletRequest request = (HttpServletRequest) pageContext.getRequest();
+            final HttpServletResponse response = (HttpServletResponse) pageContext.getResponse();
 
-			try {
-				out = RenderUtils.renderComponentPresentations(request, response, filteredComponentPresentations);
-			} catch (FactoryException e) {
-				LOG.error(e.getLocalizedMessage(),e);
-			}
+            try {
+                out = RenderUtils.renderComponentPresentations(request, response, filteredComponentPresentations);
+            } catch (FactoryException e) {
+                LOG.error(e.getLocalizedMessage(), e);
+            }
 
-			if (addAnchor) {
-				// TODO: pageContext.getOut().write(String.format(ANCHOR_FORMAT, getAnchorCount(request)) + out);
-				pageContext.getOut().write(out);
-			} else {
-				pageContext.getOut().write(out);
-			}
-		} else {
-			LOG.warn("The JSP context does not contain an attribute called '" + Constants.PAGE_MODEL_KEY + "'.");
-		}
-	}
+            if (addAnchor) {
+                pageContext.getOut().write(String.format(ANCHOR_FORMAT, getAnchorCount(request)) + out);
+            } else {
+                pageContext.getOut().write(out);
+            }
+        } else {
+            LOG.warn("The JSP context does not contain an attribute called '" + Constants.PAGE_MODEL_KEY + "'.");
+        }
+    }
 
-	public String getSchema() {
-		return schema;
-	}
+    public String getSchema () {
+        return schema;
+    }
 
-	public void setSchema(final String schema) {
-		this.schema = schema.toLowerCase(Locale.getDefault());
-	}
+    public void setSchema (final String schema) {
+        this.schema = schema.toLowerCase(Locale.getDefault());
+    }
 
-	public String getRootElement() {
-		return rootElement;
-	}
+    public String getRootElement () {
+        return rootElement;
+    }
 
-	public void setRootElement(final String rootElement) {
-		this.rootElement = rootElement;
-	}
+    public void setRootElement (final String rootElement) {
+        this.rootElement = rootElement;
+    }
 
-	public String getView() {
-		return view;
-	}
+    public String getView () {
+        return view;
+    }
 
-	public void setView(final String view) {
-		this.view = view.toLowerCase(Locale.getDefault());
-	}
+    public void setView (final String view) {
+        this.view = view.toLowerCase(Locale.getDefault());
+    }
 
-	public Boolean isAddAnchor() {
-		return addAnchor;
-	}
+    public Boolean isAddAnchor () {
+        return addAnchor;
+    }
 
-	public void setAddAnchor(final Boolean addAnchor) {
-		this.addAnchor = addAnchor;
-	}
+    public void setAddAnchor (final Boolean addAnchor) {
+        this.addAnchor = addAnchor;
+    }
 
-	public void setStart(final Integer start) {
-		this.start = start;
-	}
+    public void setStart (final Integer start) {
+        this.start = start;
+    }
 
-	public void setEnd(final Integer end) {
-		this.end = end;
-	}
+    public void setEnd (final Integer end) {
+        this.end = end;
+    }
 
-	public String getRegion () {
-		return region;
-	}
+    public String getRegion () {
+        return region;
+    }
 
-	public void setRegion (final String region) {
-		this.region = region;
-	}
+    public void setRegion (final String region) {
+        this.region = region;
+    }
 }

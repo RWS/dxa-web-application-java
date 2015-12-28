@@ -34,23 +34,30 @@ import java.util.Set;
  */
 public interface DataBinder {
 
-	<T extends Page> T buildPage(final String source, final Class<T> aClass) throws SerializationException;
-	<T extends ComponentPresentation> T buildComponentPresentation (final String source, final Class<T> componentPresentationClass) throws SerializationException;
+    <T extends Page> T buildPage (final String source, final Class<T> aClass) throws SerializationException;
 
-	Map<String,BaseViewModel> buildModels(final Object source, final Set<String> modelNames, final String templateUri) throws SerializationException;
-	<T extends BaseViewModel> T buildModel(final Object rawData, final String modelName, final String templateUri) throws SerializationException;
-	<T extends BaseViewModel> T buildModel (final Object source, final Class modelClass, final String templateUri) throws SerializationException;
+    <T extends ComponentPresentation> T buildComponentPresentation (final String source, final Class<T> componentPresentationClass) throws SerializationException;
 
-	@Deprecated
-	ComponentPresentation buildDynamicComponentPresentation (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException;
-	<T extends Component> T buildComponent(final Object source, final Class<T> aClass) throws SerializationException;
+    Map<String, BaseViewModel> buildModels (final Object source, final Set<String> modelNames, final String templateUri) throws SerializationException;
 
-	String findComponentTemplateViewName(ComponentTemplate template) throws IOException;
-	/*
-	 * Object should be cast to whatever the implementation has as raw
-	 * deserialization object. For Jackson this is JsonNode
-	 */
-	String getRootElementName(Object componentNode);
-	boolean renderDefaultComponentModelsOnly ();
-	boolean renderDefaultComponentsIfNoModelFound();
+    <T extends BaseViewModel> T buildModel (final Object rawData, final String modelName, final String templateUri) throws SerializationException;
+
+    <T extends BaseViewModel> T buildModel (final Object source, final Class modelClass, final String templateUri) throws SerializationException;
+
+    @Deprecated
+    ComponentPresentation buildDynamicComponentPresentation (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException;
+
+    <T extends Component> T buildComponent (final Object source, final Class<T> aClass) throws SerializationException;
+
+    String findComponentTemplateViewName (ComponentTemplate template) throws IOException;
+
+    /*
+     * Object should be cast to whatever the implementation has as raw
+     * deserialization object. For Jackson this is JsonNode
+     */
+    String getRootElementName (Object componentNode);
+
+    boolean renderDefaultComponentModelsOnly ();
+
+    boolean renderDefaultComponentsIfNoModelFound ();
 }

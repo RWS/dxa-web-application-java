@@ -11,7 +11,7 @@ public class DateUtilsTest {
     public static final String timeWithoutMS = "2015-07-04T19:30:02";
 
     @Test
-    public void testConvertStringToDateWithMS() {
+    public void testConvertStringToDateWithMS () {
         DateTime date = DateUtils.convertStringToDate(timeWithMS);
 
         assertNotNull("Unexpected null result in timeWithMS", date);
@@ -19,7 +19,7 @@ public class DateUtilsTest {
     }
 
     @Test
-    public void testConvertStringToDateWithoutMS() {
+    public void testConvertStringToDateWithoutMS () {
         DateTime date = DateUtils.convertStringToDate(timeWithoutMS);
 
         assertNotNull("Unexpected null result in timeWithoutMS", date);

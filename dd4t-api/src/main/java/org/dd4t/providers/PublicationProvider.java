@@ -16,7 +16,7 @@
 
 package org.dd4t.providers;
 
-import org.dd4t.core.util.PublicationDescriptor;
+import org.dd4t.contentmodel.PublicationDescriptor;
 
 /**
  * dd4t-2
@@ -24,21 +24,21 @@ import org.dd4t.core.util.PublicationDescriptor;
  * @author R. Kempees
  */
 public interface PublicationProvider {
-	int discoverPublicationIdByPageUrlPath (final String url);
+    int discoverPublicationIdByPageUrlPath (final String url);
 
-	int discoverPublicationByBaseUrl(String fullUrl);
+    int discoverPublicationByBaseUrl (String fullUrl);
 
-	String discoverPublicationUrl(final int publicationId);
+    String discoverPublicationUrl (final int publicationId);
 
-	String discoverPublicationPath (int publicationId);
+    String discoverPublicationPath (int publicationId);
 
-	String discoverImagesUrl (int publicationId);
+    String discoverImagesUrl (int publicationId);
 
-	String discoverImagesPath (int publicationId);
+    String discoverImagesPath (int publicationId);
 
-	String discoverPublicationTitle (int publicationId);
+    String discoverPublicationTitle (int publicationId);
 
-	String discoverPublicationKey (int publicationId);
+    String discoverPublicationKey (int publicationId);
 
-	PublicationDescriptor getPublicationDescriptor(int publicationId);
+    PublicationDescriptor getPublicationDescriptor (int publicationId);
 }

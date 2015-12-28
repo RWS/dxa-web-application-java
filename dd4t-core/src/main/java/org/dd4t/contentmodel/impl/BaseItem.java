@@ -33,66 +33,66 @@ import java.util.Map;
  */
 public abstract class BaseItem implements Item {
 
-	@JsonProperty ("Id")
-	private String id;
+    @JsonProperty ("Id")
+    private String id;
 
-	@JsonProperty ("Title")
-	private String title;
+    @JsonProperty ("Title")
+    private String title;
 
-	@JsonProperty ("CustomProperties")
-	private Map<String, Object> customProperties = new HashMap<>();
+    @JsonProperty ("CustomProperties")
+    private Map<String, Object> customProperties = new HashMap<>();
 
-	@JsonProperty (value = "ExtensionData", required = false)
-	@JsonDeserialize (contentAs = FieldSetImpl.class)
-	private Map<String, FieldSet> extensionData;
+    @JsonProperty (value = "ExtensionData", required = false)
+    @JsonDeserialize (contentAs = FieldSetImpl.class)
+    private Map<String, FieldSet> extensionData;
 
-	@Override
-	public String getId () {
-		return id;
-	}
+    @Override
+    public String getId () {
+        return id;
+    }
 
-	@Override
-	public void setId (String id) {
-		this.id = id;
-	}
+    @Override
+    public void setId (String id) {
+        this.id = id;
+    }
 
-	@Override
-	public String getTitle () {
-		return title;
-	}
+    @Override
+    public String getTitle () {
+        return title;
+    }
 
-	@Override
-	public void setTitle (String title) {
-		this.title = title;
-	}
+    @Override
+    public void setTitle (String title) {
+        this.title = title;
+    }
 
-	@Override
-	public Map<String, Object> getCustomProperties () {
-		return customProperties;
-	}
+    @Override
+    public Map<String, Object> getCustomProperties () {
+        return customProperties;
+    }
 
-	@Override
-	public void setCustomProperties (Map<String, Object> customProperties) {
-		this.customProperties = customProperties;
-	}
+    @Override
+    public void setCustomProperties (Map<String, Object> customProperties) {
+        this.customProperties = customProperties;
+    }
 
-	@Override
-	public void addCustomProperty (String key, Object value) {
-		customProperties.put(key, value);
-	}
+    @Override
+    public void addCustomProperty (String key, Object value) {
+        customProperties.put(key, value);
+    }
 
-	@Override
-	public Object getCustomProperty (String key) {
-		return customProperties.get(key);
-	}
+    @Override
+    public Object getCustomProperty (String key) {
+        return customProperties.get(key);
+    }
 
-	@Override
-	public Map<String, FieldSet> getExtensionData () {
-		return this.extensionData;
-	}
+    @Override
+    public Map<String, FieldSet> getExtensionData () {
+        return this.extensionData;
+    }
 
-	@Override
-	public void setExtensionData (Map<String, FieldSet> extensionData) {
-		this.extensionData = extensionData;
-	}
+    @Override
+    public void setExtensionData (Map<String, FieldSet> extensionData) {
+        this.extensionData = extensionData;
+    }
 }

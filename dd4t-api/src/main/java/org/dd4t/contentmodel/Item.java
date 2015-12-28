@@ -30,28 +30,28 @@ public interface Item {
      *
      * @return the tridion id i.e. tcm:1-1-32
      */
-    String getId();
+    String getId ();
 
     /**
      * Set the id
      *
      * @param id
      */
-    void setId(String id);
+    void setId (String id);
 
     /**
      * Get the title
      *
      * @return
      */
-    String getTitle();
+    String getTitle ();
 
     /**
      * Set the title
      *
      * @param title
      */
-    void setTitle(String title);
+    void setTitle (String title);
 
     /**
      * Add a custom property
@@ -59,7 +59,7 @@ public interface Item {
      * @param key
      * @param value
      */
-    void addCustomProperty(String key, Object value);
+    void addCustomProperty (String key, Object value);
 
     /**
      * Get a custom property
@@ -67,23 +67,23 @@ public interface Item {
      * @param key
      * @return the property object
      */
-    Object getCustomProperty(String key);
+    Object getCustomProperty (String key);
 
     /**
      * Get the Map of custom properties
      *
      * @return the map of custom properties
      */
-    Map<String, Object> getCustomProperties();
+    Map<String, Object> getCustomProperties ();
 
     /**
      * Set the map of custom properties
      *
      * @param customProperties
      */
-    void setCustomProperties(Map<String, Object> customProperties);
+    void setCustomProperties (Map<String, Object> customProperties);
 
-    Map<String, FieldSet> getExtensionData();
+    Map<String, FieldSet> getExtensionData ();
 
-    void setExtensionData(Map<String, FieldSet> extensionData);
+    void setExtensionData (Map<String, FieldSet> extensionData);
 }

@@ -41,11 +41,11 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
     private PayloadCacheProvider cacheProvider;
     private BinaryProvider binaryProvider;
 
-    protected BinaryFactoryImpl() {
+    protected BinaryFactoryImpl () {
         LOG.debug("Create new instance");
     }
 
-    public static BinaryFactoryImpl getInstance() {
+    public static BinaryFactoryImpl getInstance () {
         return INSTANCE;
     }
 
@@ -58,7 +58,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
      * @throws org.dd4t.core.exceptions.FactoryException
      */
     @Override
-    public Binary getBinaryByURI(final String tcmUri) throws FactoryException {
+    public Binary getBinaryByURI (final String tcmUri) throws FactoryException {
         LOG.debug("Enter getBinaryByURI with uri: {}", tcmUri);
 
         CacheElement<Binary> cacheElement = cacheProvider.loadPayloadFromLocalCache(tcmUri);
@@ -69,10 +69,10 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);
                     try {
-		                    binary = binaryProvider.getBinaryByURI(tcmUri);
-		                    cacheElement.setPayload(binary);
-		                    TCMURI binaryURI = new TCMURI(tcmUri);
-		                    cacheProvider.storeInItemCache(tcmUri, cacheElement, binaryURI.getPublicationId(), binaryURI.getItemId());
+                        binary = binaryProvider.getBinaryByURI(tcmUri);
+                        cacheElement.setPayload(binary);
+                        TCMURI binaryURI = new TCMURI(tcmUri);
+                        cacheProvider.storeInItemCache(tcmUri, cacheElement, binaryURI.getPublicationId(), binaryURI.getItemId());
                         LOG.debug("Added binary with uri: {} to cache", tcmUri);
                     } catch (ParseException e) {
                         cacheElement.setPayload(null);
@@ -95,7 +95,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
 
     /**
      * Get a binary by the url and publicationId.
-     *
+     * <p/>
      * Null values should be handled on the controller level
      *
      * @param url           String representing the path part of the binary URL
@@ -104,7 +104,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
      * @throws org.dd4t.core.exceptions.FactoryException
      */
     @Override
-    public Binary getBinaryByURL(final String url, final int publicationId) throws FactoryException {
+    public Binary getBinaryByURL (final String url, final int publicationId) throws FactoryException {
         LOG.debug("Enter getBinaryByURL with url: {} and publicationId: {}", url, publicationId);
 
         String key = getCacheKey(url, publicationId);
@@ -139,15 +139,15 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
     }
 
     @Override
-    public void setCacheProvider(final PayloadCacheProvider cacheAgent) {
+    public void setCacheProvider (final PayloadCacheProvider cacheAgent) {
         cacheProvider = cacheAgent;
     }
 
-    public void setBinaryProvider(final BinaryProvider binaryProvider) {
+    public void setBinaryProvider (final BinaryProvider binaryProvider) {
         this.binaryProvider = binaryProvider;
     }
 
-    private String getCacheKey(String url, int publicationId) {
+    private String getCacheKey (String url, int publicationId) {
         return String.format("B-%s-%d", url, publicationId);
     }
 }

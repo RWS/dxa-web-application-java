@@ -28,103 +28,109 @@ import java.util.Map;
  * Extend your Tridion models from here for
  * XPM support and generic Tridion Item data.
  *
- * TODO: Do we want the ComponentType,
- * Categories, Schema, Title, Keywords, Version, Publication and Org Item nodes in here?
- *
  * @author R. Kempees
  */
 public abstract class TridionViewModelBase extends ViewModelBase implements TridionViewModel {
 
-	private TCMURI itemTcmUri;
-	private TCMURI templateUri;
-	private DateTime lastModifiedDate;
-	private DateTime lastPublishDate;
-	private boolean setGenericComponentOnComponentPresentation;
+    private TCMURI itemTcmUri;
+    private TCMURI templateUri;
+    private DateTime lastModifiedDate;
+    private DateTime lastPublishDate;
+    private boolean setGenericComponentOnComponentPresentation;
 
-	private transient Map<String, XPMInfo> fieldMap = new HashMap<String, XPMInfo>();
+    private transient Map<String, XPMInfo> fieldMap = new HashMap<String, XPMInfo>();
 
-	@Override
-	protected void setGenericParameters () {
-		super.setGenericParameters();
-		final ViewModel viewModelAnnotation = this.getClass().getAnnotation(ViewModel.class);
-		this.setGenericComponentOnComponentPresentation = viewModelAnnotation.setComponentObject();
-	}
+    @Override
+    protected void setGenericParameters () {
+        super.setGenericParameters();
+        final ViewModel viewModelAnnotation = this.getClass().getAnnotation(ViewModel.class);
+        this.setGenericComponentOnComponentPresentation = viewModelAnnotation.setComponentObject();
+    }
 
-	@Override public TCMURI getTcmUri () {
-		return this.itemTcmUri;
-	}
+    @Override
+    public TCMURI getTcmUri () {
+        return this.itemTcmUri;
+    }
 
-	@Override public void setTcmUri (final TCMURI tcmUri) {
-		this.itemTcmUri = tcmUri;
-	}
+    @Override
+    public void setTcmUri (final TCMURI tcmUri) {
+        this.itemTcmUri = tcmUri;
+    }
 
-	@Override public TCMURI getTemplateUri () {
-		return this.templateUri;
-	}
+    @Override
+    public TCMURI getTemplateUri () {
+        return this.templateUri;
+    }
 
-	@Override public void setTemplateUri (final TCMURI tcmUri) {
-		this.templateUri = tcmUri;
-	}
+    @Override
+    public void setTemplateUri (final TCMURI tcmUri) {
+        this.templateUri = tcmUri;
+    }
 
-	@Override public DateTime getLastModified () {
-		return this.lastModifiedDate;
-	}
+    @Override
+    public DateTime getLastModified () {
+        return this.lastModifiedDate;
+    }
 
-	@Override public void setLastModified (final DateTime lastModified) {
-		this.lastModifiedDate = lastModified;
-	}
+    @Override
+    public void setLastModified (final DateTime lastModified) {
+        this.lastModifiedDate = lastModified;
+    }
 
-	@Override public DateTime getLastPublishDate () {
-		return this.lastPublishDate;
-	}
+    @Override
+    public DateTime getLastPublishDate () {
+        return this.lastPublishDate;
+    }
 
-	@Override public void setLastPublishDate (final DateTime lastPublishDate) {
-		this.lastPublishDate = lastPublishDate;
-	}
+    @Override
+    public void setLastPublishDate (final DateTime lastPublishDate) {
+        this.lastPublishDate = lastPublishDate;
+    }
 
-	@Override public boolean setGenericComponentOnComponentPresentation () {
-		return setGenericComponentOnComponentPresentation;
-	}
+    @Override
+    public boolean setGenericComponentOnComponentPresentation () {
+        return setGenericComponentOnComponentPresentation;
+    }
 
-	@Override
-	public boolean isMultiValued (final String fieldName) {
-		return getFieldMap().get(fieldName).isMultiValued();
-	}
+    @Override
+    public boolean isMultiValued (final String fieldName) {
+        return getFieldMap().get(fieldName).isMultiValued();
+    }
 
-	@Override
-	public String getXPath(final String fieldName) {
-		XPMInfo xpmInfo = fieldMap.get(fieldName);
-		if (xpmInfo != null) {
-			return xpmInfo.getXpath();
-		} else {
-			throw new IllegalArgumentException("Unknown field='" + fieldName + "' in " + getFieldMap().keySet());
-		}
-	}
+    @Override
+    public String getXPath (final String fieldName) {
+        XPMInfo xpmInfo = fieldMap.get(fieldName);
+        if (xpmInfo != null) {
+            return xpmInfo.getXpath();
+        } else {
+            throw new IllegalArgumentException("Unknown field='" + fieldName + "' in " + getFieldMap().keySet());
+        }
+    }
 
-	@Override
-	public void addXpmEntry(final String fieldName, final String xpath, final boolean multiValued) {
-		fieldMap.put(fieldName, new XPMInfo(xpath, multiValued));
-	}
+    @Override
+    public void addXpmEntry (final String fieldName, final String xpath, final boolean multiValued) {
+        fieldMap.put(fieldName, new XPMInfo(xpath, multiValued));
+    }
 
-	public Map<String, XPMInfo> getFieldMap() {
-		return fieldMap;
-	}
+    public Map<String, XPMInfo> getFieldMap () {
+        return fieldMap;
+    }
 
-	public static class XPMInfo {
-		private final String xpath;
-		private final boolean multiValued;
+    public static class XPMInfo {
+        private final String xpath;
+        private final boolean multiValued;
 
-		XPMInfo(final String xpath, final boolean multiValued) {
-			this.xpath = xpath;
-			this.multiValued = multiValued;
-		}
+        XPMInfo (final String xpath, final boolean multiValued) {
+            this.xpath = xpath;
+            this.multiValued = multiValued;
+        }
 
-		public String getXpath() {
-			return xpath;
-		}
+        public String getXpath () {
+            return xpath;
+        }
 
-		public boolean isMultiValued() {
-			return multiValued;
-		}
-	}
+        public boolean isMultiValued () {
+            return multiValued;
+        }
+    }
 }

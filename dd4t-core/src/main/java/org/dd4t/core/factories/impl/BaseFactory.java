@@ -36,10 +36,10 @@ import java.util.List;
  * @author bjornl, rai
  */
 public abstract class BaseFactory {
-	private static final Logger LOG = LoggerFactory.getLogger(BaseFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BaseFactory.class);
     protected PayloadCacheProvider cacheProvider;
     protected List<Processor> processors;
-	private Class requestContextClass;
+    private Class requestContextClass;
 
     public List<Processor> getProcessors () {
         if (processors == null) {
@@ -50,6 +50,7 @@ public abstract class BaseFactory {
 
     /**
      * Configure through Spring
+     *
      * @param processors list of Processors to run
      */
     public void setProcessors (List<Processor> processors) {
@@ -78,32 +79,32 @@ public abstract class BaseFactory {
     }
 
     private void execute (Processor processor, Item item, RequestContext context) throws ProcessorException {
-        processor.execute(item,context);
+        processor.execute(item, context);
     }
 
     /**
      * Set the cache agent.
      */
-    public void setCacheProvider(PayloadCacheProvider cacheAgent) {
+    public void setCacheProvider (PayloadCacheProvider cacheAgent) {
         cacheProvider = cacheAgent;
     }
 
-	protected RequestContext getRequestContext() {
+    protected RequestContext getRequestContext () {
 
         if (requestContextClass == null) {
             requestContextClass = HttpRequestContext.class;
         }
 
-		if (RequestContext.class.isAssignableFrom(requestContextClass)) {
-			try {
-				return (RequestContext) requestContextClass.newInstance();
-			} catch (InstantiationException | IllegalAccessException e) {
-				LOG.error(e.getLocalizedMessage(), e);
-			}
-		}
-		LOG.error("Class {} does not extend from AbstractRequestContext!", requestContextClass.getCanonicalName());
-		return null;
-	}
+        if (RequestContext.class.isAssignableFrom(requestContextClass)) {
+            try {
+                return (RequestContext) requestContextClass.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                LOG.error(e.getLocalizedMessage(), e);
+            }
+        }
+        LOG.error("Class {} does not extend from AbstractRequestContext!", requestContextClass.getCanonicalName());
+        return null;
+    }
 
     public void setRequestContextClass (final Class requestContextClass) {
         this.requestContextClass = requestContextClass;

@@ -18,7 +18,7 @@ package org.dd4t.core.processors;
 
 /**
  * RunPhase
- *
+ * <p/>
  * Used to configure custom processors and the phase
  * in which they should run when the Factory classes go to
  * work.
@@ -26,5 +26,5 @@ package org.dd4t.core.processors;
  * @author R. Kempees
  */
 public enum RunPhase {
-	BEFORE_CACHING, AFTER_CACHING, BOTH
+    BEFORE_CACHING, AFTER_CACHING, BOTH
 }

@@ -38,7 +38,7 @@ public class DcpResolver extends BaseProcessor implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(DcpResolver.class);
 
     @Override
-    public void execute(Item item, RequestContext context) {
+    public void execute (Item item, RequestContext context) {
         LOG.debug("Processing item: {} ", item);
         if (item instanceof Page) {
             final Page page = (Page) item;
@@ -52,7 +52,7 @@ public class DcpResolver extends BaseProcessor implements Processor {
                     try {
                         final ComponentPresentation componentPresentation = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(cp.getComponent().getId(), cp.getComponentTemplate().getId());
                         cp.setComponent(componentPresentation.getComponent());
-	                    cp.setViewModel(componentPresentation.getAllViewModels());
+                        cp.setViewModel(componentPresentation.getAllViewModels());
                     } catch (FactoryException e) {
                         LOG.error("Unable to find dynamic component by id " + cp.getComponent().getId(), e);
                     }

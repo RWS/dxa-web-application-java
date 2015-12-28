@@ -23,9 +23,9 @@ import java.io.InputStream;
  */
 public interface BinaryData {
 
-    byte[] getBytes();
+    byte[] getBytes ();
 
-    InputStream getInputStream();
+    InputStream getInputStream ();
 
-    long getDataSize();
+    long getDataSize ();
 }

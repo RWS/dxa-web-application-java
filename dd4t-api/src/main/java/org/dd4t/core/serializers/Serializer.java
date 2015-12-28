@@ -25,19 +25,19 @@ import org.dd4t.core.exceptions.SerializationException;
  * @author R. Kempees
  */
 public interface Serializer {
-	/**
-	 * @param content serialized content string coming from the DD4T providers
-	 * @param aClass  concrete type of desired deserialized class
-	 * @param <T> The generic type of desired class
-	 * @return DD4T Tridion Model Object
-	 * @throws SerializationException
-	 */
-	<T> T deserialize(String content, Class<T> aClass) throws SerializationException;
+    /**
+     * @param content serialized content string coming from the DD4T providers
+     * @param aClass  concrete type of desired deserialized class
+     * @param <T>     The generic type of desired class
+     * @return DD4T Tridion Model Object
+     * @throws SerializationException
+     */
+    <T> T deserialize (String content, Class<T> aClass) throws SerializationException;
 
-	/**
-	 * @param item the Object to Serialize
-	 * @return serialized string
-	 * @throws SerializationException
-	 */
-	String serialize(Object item) throws SerializationException;
+    /**
+     * @param item the Object to Serialize
+     * @return serialized string
+     * @throws SerializationException
+     */
+    String serialize (Object item) throws SerializationException;
 }

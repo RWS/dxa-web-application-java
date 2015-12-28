@@ -25,18 +25,18 @@ import java.util.List;
 
 public class TextField extends BaseField implements Field {
 
-    @JsonProperty("CategoryId")
+    @JsonProperty ("CategoryId")
     private String categoryId;
 
-    @JsonProperty("CategoryName")
+    @JsonProperty ("CategoryName")
     private String categoryName;
 
-    public TextField() {
+    public TextField () {
         setFieldType(FieldType.TEXT);
     }
 
     @Override
-    public List<Object> getValues() {
+    public List<Object> getValues () {
         List<String> textValues = getTextValues();
         List<Object> l = new LinkedList<>();
 
@@ -47,19 +47,19 @@ public class TextField extends BaseField implements Field {
         return l;
     }
 
-    public String getCategoryName() {
+    public String getCategoryName () {
         return categoryName;
     }
 
-    public void setCategoryName(String categoryName) {
+    public void setCategoryName (String categoryName) {
         this.categoryName = categoryName;
     }
 
-    public String getCategoryId() {
+    public String getCategoryId () {
         return categoryId;
     }
 
-    public void setCategoryId(String categoryId) {
+    public void setCategoryId (String categoryId) {
         this.categoryId = categoryId;
     }
 }

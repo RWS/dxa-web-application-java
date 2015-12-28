@@ -19,41 +19,41 @@ public class TCMURITest {
 
     private final TCMURI tcmUri = new TCMURI(PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
 
-    @Test public void
-    convert_to_string_using_format() throws ParseException {
+    @Test
+    public void convert_to_string_using_format () throws ParseException {
         final String uri = String.format("tcm:%s-%s-%s", PUBLICATION_ID, ITEM_ID, ITEM_TYPE);
 
         assertThat(tcmUri.toString(), is(uri));
         assertThat(new TCMURI(uri).toString(), is(uri));
     }
 
-    @Test public void
-    return_item_type() {
+    @Test
+    public void return_item_type () {
         assertEquals(ITEM_TYPE, tcmUri.getItemType());
     }
 
-    @Test public void
-    return_item_id() {
+    @Test
+    public void return_item_id () {
         assertEquals(ITEM_ID, tcmUri.getItemId());
     }
 
-    @Test public void
-    return_publication_id() {
+    @Test
+    public void return_publication_id () {
         assertEquals(PUBLICATION_ID, tcmUri.getPublicationId());
     }
 
-    @Test public void
-    return_version() {
+    @Test
+    public void return_version () {
         assertEquals(VERSION, tcmUri.getVersion());
     }
 
-    @Test public void
-    tcmUri_be_valid() {
+    @Test
+    public void tcmUri_be_valid () {
         assertThat(TCMURI.isValid(tcmUri.toString()), is(true));
     }
 
-    @Test public void
-    throws_exception_when_uri_is_null() {
+    @Test
+    public void throws_exception_when_uri_is_null () {
         try {
             new TCMURI(null);
             fail("Exception expected");
@@ -63,8 +63,8 @@ public class TCMURITest {
         }
     }
 
-    @Test public void
-    throws_exception_when_uri_has_wrong_format() {
+    @Test
+    public void throws_exception_when_uri_has_wrong_format () {
         final String uri = String.format("wrong:%s-%s-%s", PUBLICATION_ID, ITEM_ID, ITEM_TYPE);
 
         try {
@@ -75,8 +75,8 @@ public class TCMURITest {
         }
     }
 
-    @Test public void
-    throws_exception_when_uri_has_only_publication_id() {
+    @Test
+    public void throws_exception_when_uri_has_only_publication_id () {
         final String uri = String.format("tcm:%s#bad", PUBLICATION_ID);
 
         try {
@@ -87,8 +87,8 @@ public class TCMURITest {
         }
     }
 
-    @Test public void
-    build_when_url_only_mandatory_parameters_and_put_default() throws ParseException {
+    @Test
+    public void build_when_url_only_mandatory_parameters_and_put_default () throws ParseException {
         final String uri = String.format("tcm:%s-%s", PUBLICATION_ID, ITEM_ID);
 
         TCMURI tcmUri = new TCMURI(uri);
@@ -99,8 +99,8 @@ public class TCMURITest {
         assertThat(tcmUri.getVersion(), is(DEFAULT_VERSION));
     }
 
-    @Test public void
-    throws_exception_when_publication_id_is_not_a_number() {
+    @Test
+    public void throws_exception_when_publication_id_is_not_a_number () {
         final String uri = String.format("tcm:%s-%s-%s", "aString", ITEM_ID, ITEM_TYPE);
 
         try {
@@ -111,16 +111,16 @@ public class TCMURITest {
         }
     }
 
-    @Test public void
-    return_item_type_16_when_is_not_part_of_URI() throws ParseException {
+    @Test
+    public void return_item_type_16_when_is_not_part_of_URI () throws ParseException {
         final String uri = String.format("tcm:%s-%s", PUBLICATION_ID, ITEM_ID);
 
         TCMURI tcmUri = new TCMURI(uri);
         assertThat(tcmUri.getItemType(), is(16));
     }
 
-    @Test public void
-    return_version_when_is_part_of_uri() throws ParseException {
+    @Test
+    public void return_version_when_is_part_of_uri () throws ParseException {
         final String uri = String.format("tcm:%s-%s-%s-v%s", PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
 
         TCMURI tcmUri = new TCMURI(uri);
@@ -128,8 +128,8 @@ public class TCMURITest {
         assertThat(tcmUri.getVersion(), is(VERSION));
     }
 
-    @Test public void
-    return_version_and_item_type_16_when_uri_has_version_but_not_item_type() throws ParseException {
+    @Test
+    public void return_version_and_item_type_16_when_uri_has_version_but_not_item_type () throws ParseException {
         final String uri = String.format("tcm:%s-%s-v%s", PUBLICATION_ID, ITEM_ID, VERSION);
 
         TCMURI tcmUri = new TCMURI(uri);
@@ -137,14 +137,14 @@ public class TCMURITest {
         assertThat(tcmUri.getVersion(), is(VERSION));
     }
 
-    @Test(expected = IllegalArgumentException.class) public void
-    throws_exception_when_long_can_not_be_converted_to_int() {
+    @Test (expected = IllegalArgumentException.class)
+    public void throws_exception_when_long_can_not_be_converted_to_int () {
         TCMURI.safeLongToInt(Long.MAX_VALUE);
         TCMURI.safeLongToInt(Long.MIN_VALUE);
     }
 
-    @Test public void
-    create_tcmUri_with_builder() throws ParseException {
+    @Test
+    public void create_tcmUri_with_builder () throws ParseException {
         final String uri = String.format("tcm:%s-%s-%s-v%s", PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
 
         TCMURI tcmUri = new TCMURI.Builder(uri).create();
@@ -155,14 +155,12 @@ public class TCMURITest {
         assertThat(tcmUri.getVersion(), is(VERSION));
     }
 
-    @Test public void
-    create_tcm_uri_with_builder_overwrite_version_from_url() throws ParseException {
+    @Test
+    public void create_tcm_uri_with_builder_overwrite_version_from_url () throws ParseException {
         final String uri = String.format("tcm:%s-%s-%s-v%s", PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
         final int version = 4;
 
-        TCMURI tcmUri = new TCMURI.Builder(uri)
-                .version(version)
-                .create();
+        TCMURI tcmUri = new TCMURI.Builder(uri).version(version).create();
 
         assertThat(tcmUri.getPublicationId(), is(PUBLICATION_ID));
         assertThat(tcmUri.getItemId(), is(ITEM_ID));
@@ -170,10 +168,9 @@ public class TCMURITest {
         assertThat(tcmUri.getVersion(), is(version));
     }
 
-    @Test public void
-    build_with_only_mandatory_fields_and_default() throws ParseException {
-        TCMURI tcmUri = new TCMURI.Builder(PUBLICATION_ID, ITEM_ID)
-                .create();
+    @Test
+    public void build_with_only_mandatory_fields_and_default () throws ParseException {
+        TCMURI tcmUri = new TCMURI.Builder(PUBLICATION_ID, ITEM_ID).create();
 
         assertThat(tcmUri.getPublicationId(), is(PUBLICATION_ID));
         assertThat(tcmUri.getItemId(), is(ITEM_ID));
@@ -181,8 +178,8 @@ public class TCMURITest {
         assertThat(tcmUri.getVersion(), is(DEFAULT_VERSION));
     }
 
-    @Test public void
-    create_using_uri_and_version() throws ParseException {
+    @Test
+    public void create_using_uri_and_version () throws ParseException {
         final String uri = String.format("tcm:%s-%s-v%s", PUBLICATION_ID, ITEM_ID, VERSION);
         final int version = 4;
 
@@ -192,9 +189,8 @@ public class TCMURITest {
     }
 
 
-    @Test public void
-    convert_safely_long_to_int() {
-        assertThat(TCMURI.safeLongToInt(Integer.MAX_VALUE),
-                is(Integer.MAX_VALUE));
+    @Test
+    public void convert_safely_long_to_int () {
+        assertThat(TCMURI.safeLongToInt(Integer.MAX_VALUE), is(Integer.MAX_VALUE));
     }
 }

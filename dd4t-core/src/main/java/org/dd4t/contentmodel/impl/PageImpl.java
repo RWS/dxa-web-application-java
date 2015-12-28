@@ -28,32 +28,33 @@ import java.util.List;
  */
 public class PageImpl extends BasePage implements GenericPage, HasMetadata {
 
-    @JsonProperty("Filename")
+    @JsonProperty ("Filename")
     protected String fileName;
 
-	@JsonProperty("PageTemplate")
-    @JsonDeserialize(as = PageTemplateImpl.class)
+    @JsonProperty ("PageTemplate")
+    @JsonDeserialize (as = PageTemplateImpl.class)
     protected PageTemplate pageTemplate;
 
-	@JsonProperty("ComponentPresentations")
-    @JsonDeserialize(contentAs = ComponentPresentation.class)
+    @JsonProperty ("ComponentPresentations")
+    @JsonDeserialize (contentAs = ComponentPresentation.class)
     protected List<ComponentPresentation> componentPresentations;
 
-	@JsonProperty("StructureGroup") @JsonDeserialize(as = StructureGroupImpl.class)
+    @JsonProperty ("StructureGroup")
+    @JsonDeserialize (as = StructureGroupImpl.class)
     protected StructureGroup structureGroup;
 
     @Override
-    public PageTemplate getPageTemplate() {
+    public PageTemplate getPageTemplate () {
         return pageTemplate;
     }
 
     @Override
-    public void setPageTemplate(PageTemplate pageTemplate) {
+    public void setPageTemplate (PageTemplate pageTemplate) {
         this.pageTemplate = pageTemplate;
     }
 
     @Override
-    public List<ComponentPresentation> getComponentPresentations() {
+    public List<ComponentPresentation> getComponentPresentations () {
         if (componentPresentations == null) {
             componentPresentations = new ArrayList<>();
         }
@@ -61,7 +62,7 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
     }
 
     @Override
-    public void setComponentPresentations(List<ComponentPresentation> componentPresentations) {
+    public void setComponentPresentations (List<ComponentPresentation> componentPresentations) {
         this.componentPresentations = componentPresentations;
     }
 
@@ -69,7 +70,7 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
      * Get the file name
      */
     @Override
-    public String getFileName() {
+    public String getFileName () {
         return fileName;
     }
 
@@ -77,7 +78,7 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
      * Set the file name
      */
     @Override
-    public void setFileName(String fileName) {
+    public void setFileName (String fileName) {
         this.fileName = fileName;
     }
 
@@ -86,7 +87,7 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
      * page template but also set here for clarity).
      */
     @Override
-    public String getFileExtension() {
+    public String getFileExtension () {
         if (this.getPageTemplate() != null) {
             return this.getPageTemplate().getFileExtension();
         } else {
@@ -99,19 +100,19 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
      * because that is were the extension is determined.
      */
     @Override
-    public void setFileExtension(String fileExtension) {
+    public void setFileExtension (String fileExtension) {
         if (this.getPageTemplate() != null) {
             this.getPageTemplate().setFileExtension(fileExtension);
         }
     }
 
     @Override
-    public StructureGroup getStructureGroup() {
+    public StructureGroup getStructureGroup () {
         return structureGroup;
     }
 
     @Override
-    public void setStructureGroup(StructureGroup structureGroup) {
+    public void setStructureGroup (StructureGroup structureGroup) {
         this.structureGroup = structureGroup;
     }
 }

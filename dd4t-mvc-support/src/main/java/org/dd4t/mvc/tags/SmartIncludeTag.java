@@ -57,127 +57,127 @@ import java.net.URL;
  */
 public class SmartIncludeTag extends TagSupport {
 
-	private static final Logger LOG = LoggerFactory.getLogger(SmartIncludeTag.class);
-	private String page;
-	private transient PublicationResolver publicationResolver = PublicationResolverFactory.getPublicationResolver();
+    private static final Logger LOG = LoggerFactory.getLogger(SmartIncludeTag.class);
+    private String page;
+    private transient PublicationResolver publicationResolver = PublicationResolverFactory.getPublicationResolver();
 
-	@Override
-	public int doStartTag () throws JspException {
-		final HttpServletRequest currentRequest = (HttpServletRequest) pageContext.getRequest();
+    @Override
+    public int doStartTag () throws JspException {
+        final HttpServletRequest currentRequest = (HttpServletRequest) pageContext.getRequest();
 
-		if (currentRequest.getDispatcherType() == DispatcherType.INCLUDE || currentRequest.getAttribute(Constants.SMART_INCLUDE_URL) != null) {
-			LOG.debug("Already including.");
-			return SKIP_BODY;
-		}
+        if (currentRequest.getDispatcherType() == DispatcherType.INCLUDE || currentRequest.getAttribute(Constants.SMART_INCLUDE_URL) != null) {
+            LOG.debug("Already including.");
+            return SKIP_BODY;
+        }
 
-		String includeUrl = page;
+        String includeUrl = page;
 
-		final PageFactory pageFactory = PageFactoryImpl.getInstance();
-		try {
-			final int publicationId = publicationResolver.getPublicationId();
-			boolean pageFound;
+        final PageFactory pageFactory = PageFactoryImpl.getInstance();
+        try {
+            final int publicationId = publicationResolver.getPublicationId();
+            boolean pageFound;
 
-			// prepend the current request URL
-			// Test if the inclusion exists. If not, move up the tree
-			final String requestUrl = HttpUtils.getOriginalUri(currentRequest);
-			// We do this to prevent query string hassles and not have other edge cases.
-			final URL aUrl = new URL(String.format("http://localhost%s", requestUrl));
-			String testPath = aUrl.getPath();
+            // prepend the current request URL
+            // Test if the inclusion exists. If not, move up the tree
+            final String requestUrl = HttpUtils.getOriginalUri(currentRequest);
+            // We do this to prevent query string hassles and not have other edge cases.
+            final URL aUrl = new URL(String.format("http://localhost%s", requestUrl));
+            String testPath = aUrl.getPath();
 
 
-			if (testPath.endsWith(".html") || testPath.endsWith(".xml") || testPath.endsWith(".txt")) {
-				testPath = testPath.substring(0, testPath.lastIndexOf("/"));
-			}
+            if (testPath.endsWith(".html") || testPath.endsWith(".xml") || testPath.endsWith(".txt")) {
+                testPath = testPath.substring(0, testPath.lastIndexOf("/"));
+            }
 
-			if (testPath.equals("/") && !includeUrl.startsWith("/")) {
-				includeUrl = "/" + includeUrl;
-			}
+            if (testPath.equals("/") && !includeUrl.startsWith("/")) {
+                includeUrl = "/" + includeUrl;
+            }
 
-			if (includeUrl.startsWith("/")) {
-				pageFound = pageFactory.isPagePublished(includeUrl, publicationId);
-			} else {
-				LOG.debug("Current path={}", testPath);
+            if (includeUrl.startsWith("/")) {
+                pageFound = pageFactory.isPagePublished(includeUrl, publicationId);
+            } else {
+                LOG.debug("Current path={}", testPath);
 
-				String url = String.format("%s/%s", testPath, includeUrl);
-				pageFound = pageFactory.isPagePublished(url, publicationId);
+                String url = String.format("%s/%s", testPath, includeUrl);
+                pageFound = pageFactory.isPagePublished(url, publicationId);
 
-				if (pageFound) {
-					includeUrl = url;
-				} else {
-					while (testPath.length() > 0 && !pageFound) {
-						if (testPath.length() > 1) {
-							testPath = testPath.substring(0, testPath.lastIndexOf("/"));
-						}
+                if (pageFound) {
+                    includeUrl = url;
+                } else {
+                    while (testPath.length() > 0 && !pageFound) {
+                        if (testPath.length() > 1) {
+                            testPath = testPath.substring(0, testPath.lastIndexOf("/"));
+                        }
 
-						url = String.format("%s/%s", testPath, includeUrl);
+                        url = String.format("%s/%s", testPath, includeUrl);
 
-						LOG.debug("Testing URL {}", url);
+                        LOG.debug("Testing URL {}", url);
 
-						if (pageFactory.isPagePublished(url, publicationId)) {
-							pageFound = true;
-							includeUrl = url;
-						}
-					}
-				}
-			}
+                        if (pageFactory.isPagePublished(url, publicationId)) {
+                            pageFound = true;
+                            includeUrl = url;
+                        }
+                    }
+                }
+            }
 
-			if (!pageFound) {
-				return SKIP_BODY;
-			}
-			includePage(currentRequest, includeUrl);
-		} catch (IOException | ServletException e) {
-			LOG.error(e.getMessage(), e);
-			throw new JspException(e);
-		}
+            if (!pageFound) {
+                return SKIP_BODY;
+            }
+            includePage(currentRequest, includeUrl);
+        } catch (IOException | ServletException e) {
+            LOG.error(e.getMessage(), e);
+            throw new JspException(e);
+        }
 
-		return SKIP_BODY;
-	}
+        return SKIP_BODY;
+    }
 
-	/**
-	 * Performs the actual page inclusion by using the current
-	 * RequestDispatcher. When inclusion is performed, the Smart Include URL is reset to prevent circular inclusions.
-	 *
-	 * @param currentRequest the current HttpServletRequest
-	 * @param includeUrl     the final determined URL to include
-	 * @throws ServletException
-	 * @throws IOException
-	 */
-	private void includePage (final HttpServletRequest currentRequest, final String includeUrl) throws ServletException, IOException {
-		pageContext.getRequest().setAttribute(Constants.SMART_INCLUDE_URL, includeUrl);
-		LOG.debug(">> Including: {}", includeUrl);
+    /**
+     * Performs the actual page inclusion by using the current
+     * RequestDispatcher. When inclusion is performed, the Smart Include URL is reset to prevent circular inclusions.
+     *
+     * @param currentRequest the current HttpServletRequest
+     * @param includeUrl     the final determined URL to include
+     * @throws ServletException
+     * @throws IOException
+     */
+    private void includePage (final HttpServletRequest currentRequest, final String includeUrl) throws ServletException, IOException {
+        pageContext.getRequest().setAttribute(Constants.SMART_INCLUDE_URL, includeUrl);
+        LOG.debug(">> Including: {}", includeUrl);
 
-		String renderedInclude = RenderUtils.dispatchBufferedRequest(currentRequest, (HttpServletResponse) this.pageContext.getResponse(), includeUrl);
-		pageContext.getOut().print(renderedInclude);
+        String renderedInclude = RenderUtils.dispatchBufferedRequest(currentRequest, (HttpServletResponse) this.pageContext.getResponse(), includeUrl);
+        pageContext.getOut().print(renderedInclude);
 
-		currentRequest.setAttribute(Constants.SMART_INCLUDE_URL, null);
-		LOG.debug("<< End including {}", includeUrl);
-	}
+        currentRequest.setAttribute(Constants.SMART_INCLUDE_URL, null);
+        LOG.debug("<< End including {}", includeUrl);
+    }
 
-	/**
-	 * @return int
-	 * @throws JspException
-	 * @see super.doEndTag()
-	 */
-	@Override
-	public int doEndTag () throws JspException {
-		return SKIP_BODY;
-	}
+    /**
+     * @return int
+     * @throws JspException
+     * @see super.doEndTag()
+     */
+    @Override
+    public int doEndTag () throws JspException {
+        return SKIP_BODY;
+    }
 
-	/**
-	 * Gets the set page URL
-	 *
-	 * @return String the URL
-	 */
-	public String getPage () {
-		return page;
-	}
+    /**
+     * Gets the set page URL
+     *
+     * @return String the URL
+     */
+    public String getPage () {
+        return page;
+    }
 
-	/**
-	 * Set page url to include. Must be a published DD4T Tridion URL
-	 *
-	 * @param page the page URL to include
-	 */
-	public void setPage (final String page) {
-		this.page = page;
-	}
+    /**
+     * Set page url to include. Must be a published DD4T Tridion URL
+     *
+     * @param page the page URL to include
+     */
+    public void setPage (final String page) {
+        this.page = page;
+    }
 }

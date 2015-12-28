@@ -34,12 +34,12 @@ public class JMSExceptionListener implements ExceptionListener {
     private JMSCacheMonitor monitor;
 
     @Override
-    public void onException(JMSException jmse) {
+    public void onException (JMSException jmse) {
         LOG.error("JMS exception occurred", jmse);
         monitor.setMQServerStatusDown();
     }
 
-    public void setMonitor(JMSCacheMonitor monitor) {
+    public void setMonitor (JMSCacheMonitor monitor) {
         this.monitor = monitor;
     }
 }

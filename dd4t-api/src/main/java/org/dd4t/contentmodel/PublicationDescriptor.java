@@ -14,40 +14,39 @@
  * limitations under the License.
  */
 
-package org.dd4t.core.util;
+package org.dd4t.contentmodel;
 
 /**
  * dd4t-2
  *
- * TODO: move to somewhere else.
  * @author R. Kempees
  */
 public interface PublicationDescriptor {
-	int getId ();
+    int getId ();
 
-	void setId (int id);
+    void setId (int id);
 
-	String getKey ();
+    String getKey ();
 
-	void setKey (String key);
+    void setKey (String key);
 
-	String getTitle ();
+    String getTitle ();
 
-	void setTitle (String title);
+    void setTitle (String title);
 
-	String getMultimediaPath ();
+    String getMultimediaPath ();
 
-	void setMultimediaPath (String multimediaPath);
+    void setMultimediaPath (String multimediaPath);
 
-	String getMultimediaUrl ();
+    String getMultimediaUrl ();
 
-	void setMultimediaUrl (String multimediaUrl);
+    void setMultimediaUrl (String multimediaUrl);
 
-	String getPublicationUrl ();
+    String getPublicationUrl ();
 
-	void setPublicationUrl (String publicationUrl);
+    void setPublicationUrl (String publicationUrl);
 
-	String getPublicationPath ();
+    String getPublicationPath ();
 
-	void setPublicationPath (String publicationPath);
+    void setPublicationPath (String publicationPath);
 }

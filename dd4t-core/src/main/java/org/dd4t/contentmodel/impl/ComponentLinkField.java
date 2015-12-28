@@ -25,12 +25,12 @@ import java.util.List;
 
 public class ComponentLinkField extends BaseField implements Field {
 
-    public ComponentLinkField() {
+    public ComponentLinkField () {
         setFieldType(FieldType.COMPONENTLINK);
     }
 
     @Override
-    public List<Object> getValues() {
+    public List<Object> getValues () {
         List<Component> compValues = getLinkedComponentValues();
         List<Object> l = new LinkedList<Object>();
 

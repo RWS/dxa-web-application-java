@@ -4,7 +4,7 @@
 
     <groupId>org.dd4t</groupId>
     <artifactId>dd4t-spring-mvc-archetype</artifactId>
-    <version>1.5-SNAPSHOT</version>
+    <version>1.6-SNAPSHOT</version>
     <packaging>maven-archetype</packaging>
 
     <name>dd4t-spring-mvc-archetype</name>

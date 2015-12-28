@@ -23,12 +23,16 @@ import org.dd4t.core.caching.Cachable;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.CacheInvalidator;
 import org.dd4t.core.caching.impl.CacheElementImpl;
+import org.dd4t.core.services.PropertiesService;
+import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.TridionUtils;
 import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
@@ -61,8 +65,18 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator, 
     private int cacheTTL = 3599;
     private boolean checkForPreview = false;
 
+    @Resource
+    private PropertiesService propertiesService;
+
     EHCacheProvider () {
         LOG.debug("Starting cache provider");
+    }
+
+    @PostConstruct
+    protected void init() {
+        expiredTTL = Integer.parseInt(propertiesService.getProperty(Constants.CACHE_EXPIRED_TTL,"299"));
+        cacheDependencyTTL = Integer.parseInt(propertiesService.getProperty(Constants.CACHE_DEPENDENCY_TTL,"299"));
+        cacheTTL = Integer.parseInt(propertiesService.getProperty(Constants.CACHE_TTL,"3599"));
     }
 
     public boolean doCheckForPreview () {
@@ -387,5 +401,9 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator, 
         cacheElement.setPayload(ob);
 
         storeInItemCache(key, cacheElement, dependingPublicationId, dependingItemId);
+    }
+
+    public void setPropertiesService (final PropertiesService propertiesService) {
+        this.propertiesService = propertiesService;
     }
 }

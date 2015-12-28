@@ -26,10 +26,10 @@ import org.dd4t.core.factories.BinaryFactory;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 
+import javax.annotation.Resource;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -85,10 +85,10 @@ public class AbstractBinaryController {
 
     private static final String CONTENT_LENGTH = "Content-Length";
 
-    @Autowired
+    @Resource
     private PublicationResolver publicationResolver;
 
-    @Autowired
+    @Resource
     private BinaryFactory binaryFactory;
 
     // Set's the root folder for temporary binary storage

@@ -17,6 +17,8 @@
 package org.dd4t.core.caching.jms.impl;
 
 import org.dd4t.core.caching.CacheInvalidator;
+import org.dd4t.core.services.PropertiesService;
+import org.dd4t.core.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,9 @@ public class JMSCacheMonitor {
 
     @Resource
     private CacheInvalidator cacheInvalidator;
+    @Resource
+    private PropertiesService propertiesService;
+
     private MQServerStatus serverStatus = MQServerStatus.UP; // assume it's down
 
     private final Runnable monitor = new Runnable() {
@@ -68,7 +73,7 @@ public class JMSCacheMonitor {
     @PostConstruct
     public void init () {
         LOG.debug("Create new instance");
-
+        monitorServiceInterval = Integer.parseInt(propertiesService.getProperty(Constants.MONITOR_SERVICE_INTERVAL,"30000"));
         LOG.debug("Using Monitor interval (or cache refresh time when JMS is down) = {} seconds", monitorServiceInterval, monitorServiceInterval / 1000);
         thread = new Thread(monitor);
         thread.setName("Dd4tWebAppJMSMonitorThread");
@@ -127,6 +132,10 @@ public class JMSCacheMonitor {
 
     public void setCacheInvalidator (CacheInvalidator cacheInvalidator) {
         this.cacheInvalidator = cacheInvalidator;
+    }
+
+    public void setPropertiesService (final PropertiesService propertiesService) {
+        this.propertiesService = propertiesService;
     }
 
     public enum MQServerStatus {

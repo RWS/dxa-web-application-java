@@ -40,6 +40,13 @@ public class Constants {
     public static final DateTime THE_YEAR_ZERO = new DateTime(0, 1, 1, 0, 0);
     public static final String TCM_ZERO_URI = "tcm:0-0-0";
 
+    // Properties file constants
+
+    public static final String MONITOR_SERVICE_INTERVAL= "monitor.service.interval";
+    public static final String CACHE_EXPIRED_TTL = "cache.expired.ttl";
+    public static final String CACHE_DEPENDENCY_TTL = "cache.dependency.ttl";
+    public static final String CACHE_TTL = "cache.ttl";
+
     private Constants () {
 
     }

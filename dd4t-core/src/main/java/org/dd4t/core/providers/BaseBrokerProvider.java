@@ -17,6 +17,7 @@
 package org.dd4t.core.providers;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.CharEncoding;
 import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.util.CompressionUtils;
@@ -58,7 +59,7 @@ public abstract class BaseBrokerProvider {
             StringBuilder sb = new StringBuilder();
             String line;
             try {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(is, CharEncoding.UTF_8));
                 while ((line = reader.readLine()) != null) {
                     sb.append(line).append("\n");
                 }
@@ -104,7 +105,7 @@ public abstract class BaseBrokerProvider {
             }
 
             LOG.debug("End decoding and decompressing");
-            return new String(decoded, "UTF-8");
+            return new String(decoded, CharEncoding.UTF_8);
         } catch (UnsupportedEncodingException uee) {
             throw new SerializationException("Failed to convert bytes to UTF-8", uee);
         }
@@ -124,7 +125,7 @@ public abstract class BaseBrokerProvider {
 
         String encoded = null;
         try {
-            encoded = URL_CODER.encodeAsString(url.getBytes("UTF-8"));
+            encoded = URL_CODER.encodeAsString(url.getBytes(CharEncoding.UTF_8));
         } catch (UnsupportedEncodingException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }

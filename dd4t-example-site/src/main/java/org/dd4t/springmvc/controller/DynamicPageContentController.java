@@ -24,9 +24,9 @@ import org.dd4t.springmvc.view.model.RenderedComponent;
 import org.dd4t.springmvc.view.model.ViewRegion;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,7 +36,7 @@ public class DynamicPageContentController extends BaseDD4TController implements
     private static Logger logger = LoggerFactory
             .getLogger(DynamicPageContentController.class);
 
-    @Autowired
+    @Resource
     private IViewHandler<ComponentPresentation> componentViewManager;
 
     public IViewHandler<ComponentPresentation> getComponentViewManager() {

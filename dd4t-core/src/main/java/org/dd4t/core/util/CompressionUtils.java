@@ -18,6 +18,7 @@ package org.dd4t.core.util;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.CharEncoding;
 import org.dd4t.core.exceptions.SerializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -91,7 +92,7 @@ public class CompressionUtils {
             baos = new ByteArrayOutputStream();
             gos = new GZIPOutputStream(baos);
 
-            gos.write(content.getBytes("UTF-8"));
+            gos.write(content.getBytes(CharEncoding.UTF_8));
             gos.close();
 
             return baos.toByteArray();
@@ -184,7 +185,7 @@ public class CompressionUtils {
         if (message == null) {
             return null;
         } else {
-            return encodeBase64(message.getBytes(Charset.forName("UTF-8")));
+            return encodeBase64(message.getBytes(Charset.forName(CharEncoding.UTF_8)));
         }
     }
 
@@ -201,7 +202,7 @@ public class CompressionUtils {
 
         byte[] result;
         try {
-            result = message.getBytes("UTF-8");
+            result = message.getBytes(CharEncoding.UTF_8);
         } catch (UnsupportedEncodingException uee) {
             LOG.error(uee.getLocalizedMessage(), uee);
             result = message.getBytes();

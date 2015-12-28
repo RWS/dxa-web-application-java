@@ -16,6 +16,7 @@
 
 package org.dd4t.core.resolvers.impl;
 
+import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
@@ -202,7 +203,7 @@ public class DefaultLinkResolver implements LinkResolver {
         if (!StringUtils.isEmpty(replacementText)) {
             if (getEncodeUrl()) {
                 try {
-                    replacementText = URLEncoder.encode(replacementText, "UTF-8");
+                    replacementText = URLEncoder.encode(replacementText, CharEncoding.UTF_8);
                 } catch (UnsupportedEncodingException e) {
                     LOG.warn("Not possible to encode string: " + replacementText, e);
                     return "";

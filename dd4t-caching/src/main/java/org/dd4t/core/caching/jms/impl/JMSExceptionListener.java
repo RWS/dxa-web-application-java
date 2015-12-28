@@ -18,8 +18,8 @@ package org.dd4t.core.caching.jms.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
 
@@ -30,7 +30,7 @@ public class JMSExceptionListener implements ExceptionListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(JMSExceptionListener.class);
 
-    @Autowired
+    @Resource
     private JMSCacheMonitor monitor;
 
     @Override

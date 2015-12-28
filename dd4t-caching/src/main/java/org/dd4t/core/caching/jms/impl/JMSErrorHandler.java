@@ -18,8 +18,9 @@ package org.dd4t.core.caching.jms.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ErrorHandler;
+
+import javax.annotation.Resource;
 
 /**
  * Spring JMS error handler, alternative to the JMSExceptionListener which isn't always easy to hook up.
@@ -30,7 +31,7 @@ public class JMSErrorHandler implements ErrorHandler {
 
     private static final Logger LOG = LoggerFactory.getLogger(JMSErrorHandler.class);
 
-    @Autowired
+    @Resource
     private JMSCacheMonitor monitor;
 
     @Override

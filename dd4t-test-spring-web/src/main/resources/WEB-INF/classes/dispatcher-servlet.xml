@@ -61,8 +61,6 @@
     <bean id="publicationProvider" class="org.dd4t.providers.impl.BrokerPublicationProvider">
         <property name="publicationDescriptor" value="org.dd4t.contentmodel.impl.PublicationDescriptorImpl" />
         <property name="cacheProvider" ref="cacheProvider" />
-
-        <!-- Set to true if you want or need to use cd_dynamic to resolve publication Ids -->
     </bean>
 
     <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver"/>
@@ -147,7 +145,7 @@
 
         Make sure to set the brokerURL, userName and password properties,
         as well as the JMS topic in the listener config
-
+    -->
 
     <bean id="cacheMessageListener" class="org.dd4t.core.caching.jms.impl.JMSCacheMessageListener"/>
     <bean id="jmsExceptionListener" class="org.dd4t.core.caching.jms.impl.JMSExceptionListener"/>
@@ -163,5 +161,5 @@
     <jms:listener-container container-type="default" destination-type="topic" connection-factory="connectionFactory" acknowledge="auto">
         <jms:listener destination="[JMS-TOPIC]" ref="cacheMessageListener" method="onMessage"/>
     </jms:listener-container>
-    -->
+
 </beans>

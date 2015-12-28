@@ -117,7 +117,6 @@
             <artifactId>commons-collections</artifactId>
         </dependency>
 
-
         <!-- JSoup -->
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -128,7 +127,6 @@
         <dependency>
             <groupId>net.java.dev.rome</groupId>
             <artifactId>rome</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
     </dependencies>

@@ -98,7 +98,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
                 getXpmMetadata().get("ComponentModified"),
                 getXpmMetadata().get("ComponentTemplateID"),
                 getXpmMetadata().get("ComponentTemplateModified"),
-                getXpmMetadata().get("IsRepositoryPublished")
+                Boolean.parseBoolean(getXpmMetadata().get("IsRepositoryPublished"))
         );
     }
 

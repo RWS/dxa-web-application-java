@@ -49,9 +49,6 @@
     <profiles>
         <profile>
             <id>core-module</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <dependencies>
                 <dependency>
                     <artifactId>dxa-module-core</artifactId>

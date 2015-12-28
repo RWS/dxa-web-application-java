@@ -93,6 +93,53 @@
                 </dependency>
             </dependencies>
         </profile>
+
+        <profile>
+            <id>cd-7.1.0</id>
+            <properties>
+                <build.classifier>7.1.0</build.classifier>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sdl.dxa</groupId>
+                        <artifactId>dxa-bom-2013sp1</artifactId>
+                        <version>${dxa.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+        </profile>
+        <profile>
+            <id>cd-8.1.0</id>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sdl.dxa</groupId>
+                        <artifactId>dxa-bom-web8</artifactId>
+                        <version>${dxa.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+            <dependencies>
+                <!--todo remove-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_content_client</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_content_common</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>content-ambient-client</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
     <!-- Dependencies -->
@@ -101,40 +148,40 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-api</artifactId>
-            <version>${dxa.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-impl</artifactId>
-            <version>${dxa.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa.modules</groupId>
             <artifactId>dxa-module-core</artifactId>
-            <version>${dxa.version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>3.1.4.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>3.1.4.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>3.1.4.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.6.4</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
         </dependency>
     </dependencies>
 

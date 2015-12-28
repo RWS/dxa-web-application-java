@@ -103,7 +103,7 @@ public class PageController extends BaseController {
      */
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {MediaType.TEXT_HTML_VALUE})
     public String handleGetPage(HttpServletRequest request) throws Exception {
-        final String requestPath = webRequestContext.getRequestPath();
+        final String requestPath = /*webRequestContext.getBaseUrl() +*/ webRequestContext.getRequestPath();
         LOG.trace("handleGetPage: requestPath={}", requestPath);
 
         final Localization localization = webRequestContext.getLocalization();

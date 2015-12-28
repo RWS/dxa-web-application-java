@@ -52,18 +52,10 @@
     <profiles>
         <profile>
             <id>cd-7.1.0</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <dependencies>
-                <!--<dependency>-->
-                    <!--<groupId>com.sdl.dxa</groupId>-->
-                    <!--<artifactId>tridion-versions-resolver</artifactId>-->
-                    <!--<version>${project.version}</version>-->
-                <!--</dependency>-->
                 <dependency>
                     <groupId>com.sdl.dxa</groupId>
-                    <artifactId>tridion-versions-resolver-web7</artifactId>
+                    <artifactId>dxa-tridion-2013sp1-provider</artifactId>
                 </dependency>
 
                 <!-- Tridion Content Delivery -->
@@ -202,12 +194,7 @@
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa</groupId>
-                    <artifactId>tridion-versions-resolver</artifactId>
-                    <version>${project.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.sdl.dxa</groupId>
-                    <artifactId>tridion-versions-resolver-web8</artifactId>
+                    <artifactId>dxa-web8-provider</artifactId>
                 </dependency>
 
                 <!-- Tridion Content Delivery -->
@@ -299,6 +286,70 @@
                     <groupId>com.sdl.web</groupId>
                     <artifactId>web-oauth-common</artifactId>
                 </dependency>
+                <dependency>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_client</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_client_api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_edm</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_parser</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_renderer</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>commons-configuration</groupId>
+                    <artifactId>commons-configuration</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>commons-beanutils</groupId>
+                    <artifactId>commons-beanutils</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-jexl</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.scala-lang</groupId>
+                    <artifactId>scala-library</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>javax.cache</groupId>
+                    <artifactId>cache-api</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.ehcache</groupId>
+                    <artifactId>jcache</artifactId>
+                </dependency>
             </dependencies>
         </profile>
     </profiles>
@@ -308,7 +359,6 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-api</artifactId>
-            <version>${project.version}</version>
         </dependency>
 
         <!-- Spring Framework -->
@@ -382,42 +432,18 @@
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-api</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.tridion.contentdelivery</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-core</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.tridion.contentdelivery</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-databind</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.tridion.contentdelivery</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-providers</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.tridion.contentdelivery</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

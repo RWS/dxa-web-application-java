@@ -31,7 +31,8 @@ public class WebRequestContextImpl implements WebRequestContext {
     private static final Logger LOG = LoggerFactory.getLogger(WebRequestContextImpl.class);
     private static final int DEFAULT_WIDTH = 1024;
     private static final int MAX_WIDTH = 1024;
-    private final MediaHelper mediaHelper;
+    @Autowired
+    private MediaHelper mediaHelper;
     private Localization localization;
     private boolean hasNoLocalization;
     private Integer maxMediaWidth;
@@ -50,15 +51,6 @@ public class WebRequestContextImpl implements WebRequestContext {
     @Autowired
     private ContextEngine contextEngine;
     private Stack<RegionModel> parentRegionstack = new Stack<>();
-
-    @Autowired
-    public WebRequestContextImpl(MediaHelper mediaHelper) {
-        this.mediaHelper = mediaHelper;
-    }
-
-    public WebRequestContextImpl() {
-        this.mediaHelper = null;
-    }
 
     @Override
     public Localization getLocalization() {

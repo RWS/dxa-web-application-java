@@ -96,13 +96,13 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
     private static <T> T findPage(String path, Localization localization, TryFindPage<T> callback)
             throws ContentProviderException {
-        String processedPath = processPath(path);
+        String processedPath = processPath(path, localization);
         final int publicationId = Integer.parseInt(localization.getId());
 
         LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
         T page = callback.tryFindPage(processedPath, publicationId);
         if (page == null && !path.endsWith("/") && !hasExtension(path)) {
-            processedPath = processPath(path + "/");
+            processedPath = processPath(path + "/", localization);
             LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
             page = callback.tryFindPage(processedPath, publicationId);
         }
@@ -114,7 +114,8 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         return page;
     }
 
-    private static String processPath(String path) {
+    private static String processPath(String path, Localization localization) {
+
         if (StringUtils.isEmpty(path)) {
             return DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
         }
@@ -139,6 +140,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                 final org.dd4t.contentmodel.Page genericPage;
                 try {
                     if (dd4tPageFactory.isPagePublished(path, publicationId)) {
+                        //todo
                         genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
                     } else {
                         return null;

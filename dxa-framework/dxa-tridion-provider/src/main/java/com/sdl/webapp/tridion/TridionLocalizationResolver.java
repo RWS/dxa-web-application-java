@@ -6,7 +6,6 @@ import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.api.localization.LocalizationResolverException;
-import com.sdl.webapp.tridion.versions.TridionVersionsConflictResolver;
 import com.tridion.dynamiccontent.publication.PublicationMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

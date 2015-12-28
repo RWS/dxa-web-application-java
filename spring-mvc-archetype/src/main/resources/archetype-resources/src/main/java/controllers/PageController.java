@@ -23,6 +23,9 @@ import org.dd4t.contentmodel.Page;
 import org.dd4t.mvc.controllers.AbstractPageController;
 import org.springframework.ui.Model;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -35,9 +38,7 @@ import java.io.IOException;
 public class PageController extends AbstractPageController {
 
 	/**
-	 * All page requests are handled by this method. The page meta XML is
-	 * queried based on the request URI, the page meta XML contains the actual
-	 * view name to be rendered.
+	 * All page requests with the configured extensions are handled by this method.
 	 *
 	 * @param model
 	 * @param request

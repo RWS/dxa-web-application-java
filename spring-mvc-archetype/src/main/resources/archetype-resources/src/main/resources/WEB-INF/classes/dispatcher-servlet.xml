@@ -14,7 +14,7 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list merge="true">
-                <value>classpath:dd4t.properties</value>
+                <value>classpath:WEB-INF/classes/dd4t.properties</value>
             </list>
         </property>
         <property name="ignoreUnresolvablePlaceholders" value="true"/>

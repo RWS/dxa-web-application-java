@@ -32,8 +32,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <!-- TODO: Change when released -->
-        <dd4t.version>2.0.1-beta</dd4t.version>
+        <!-- Change when released -->
+        <dd4t.version>2.0.2</dd4t.version>
         <!-- Versions for the Tridion CD stack. Can be removed in a remote scenario -->
         <tridion.version>7.1.0</tridion.version>
         <activation.version>1.1.1</activation.version>
@@ -46,7 +46,6 @@
         <easymock.version>3.2</easymock.version>
         <el-impl.version>2.2</el-impl.version>
         <guava.version>17.0</guava.version>
-        <hibernate.version>4.0.1.Final</hibernate.version>
         <httpcomponents.version>4.3.3</httpcomponents.version>
         <jackson.version>2.6.4</jackson.version>
         <javax.jms.version>1.1-rev-1</javax.jms.version>
@@ -68,6 +67,16 @@
         <urlrewritefilter.version>4.0.3</urlrewritefilter.version>
         <woodstox.version>4.4.1</woodstox.version>
         <xml-apis.version>1.4.01</xml-apis.version>
+
+        <!-- Versions for the Tridion CD stack. Can be removed in a remote scenario -->
+        <hibernate.version>4.0.1.Final</hibernate.version>
+        <hibernate-jpa.version>1.0.1.Final</hibernate-jpa.version>
+        <commons-dbcp-version>1.4</commons-dbcp-version>
+        <commons-pool-version>1.5.3</commons-pool-version>
+        <easylicense-version>2.5</easylicense-version>
+        <json-smart-version>1.1.1</json-smart-version>
+        <xalan-version>2.7.1</xalan-version>
+        <sqljdbc4-version>4.0.0</sqljdbc4-version>
 
     </properties>
 

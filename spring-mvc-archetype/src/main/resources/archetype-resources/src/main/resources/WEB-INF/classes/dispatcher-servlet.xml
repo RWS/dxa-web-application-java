@@ -9,8 +9,35 @@
         http://www.springframework.org/schema/context/spring-context-3.1.xsd
         http://www.springframework.org/schema/jms
         http://www.springframework.org/schema/jms/spring-jms.xsd">
+
+    <!-- Configure PlaceHolder Properties -->
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations">
+            <list merge="true">
+                <value>classpath:dd4t.properties</value>
+            </list>
+        </property>
+        <property name="ignoreUnresolvablePlaceholders" value="true"/>
+        <property name="ignoreResourceNotFound" value="true"/>
+    </bean>
+
     <!-- Change this to the base-package where your overridden controllers are -->
     <context:component-scan base-package="${package}.controllers" annotation-config="true"/>
+
+    <!-- DD4T Controllers -->
+    <bean id="pageController" class="${package}.controllers.PageController">
+        <property name="pageViewPath" value="pages/"/>
+        <property name="publicationResolver" ref="publicationResolver" />
+        <property name="pageFactory" ref="pageFactory"/>
+    </bean>
+
+    <bean id="componentPresentationController" class="${package}.controllers.ComponentPresentationController">
+        <property name="componentViewPath" value="components/"/>
+    </bean>
+
+    <bean id="binaryController" class="${package}.controllers.BinaryController">
+        <property name="binaryRootFolder" value="/media"/>
+    </bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/"/>
@@ -20,7 +47,7 @@
     <bean id="publicationResolver" class="org.dd4t.core.resolvers.impl.UrlPublicationResolver">
         <property name="publicationProvider" ref="publicationProvider" />
         <!-- Set to true to use cd_dynamic_conf.xml to figure out publication Ids -->
-        <property name="useCdDynamic" value="false" />
+        <property name="useCdDynamic" value="${publication.resolving.use.cd.dynamic}" />
     </bean>
 
     <bean id="propertiesService" class="org.dd4t.mvc.utils.PropertiesServiceImpl">
@@ -29,6 +56,12 @@
 
     <bean id="publicationResolverFactory" factory-method="getInstance" class="org.dd4t.mvc.utils.PublicationResolverFactory">
         <property name="publicationResolver" ref="publicationResolver" />
+    </bean>
+
+    <!-- Factory Processor Beans -->
+    <bean id="linkResolverProcessor"
+          class="org.dd4t.core.processors.impl.LinkingProcessor">
+        <property name="runPhase" value="AFTER_CACHING" />
     </bean>
 
     <!-- DD4T Provider beans -->
@@ -68,32 +101,27 @@
         <property name="pageProvider" ref="pageProvider" />
         <property name="cacheProvider" ref="cacheProvider" />
         <property name="requestContextClass" value="org.dd4t.core.util.HttpRequestContext" />
+        <property name="processors">
+            <list>
+                <ref bean="linkResolverProcessor" />
+            </list>
+        </property>
     </bean>
     <bean id="componentPresentationFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl" factory-method="getInstance">
         <property name="componentPresentationProvider" ref="componentPresentationProvider" />
         <property name="cacheProvider" ref="cacheProvider" />
         <property name="requestContextClass" value="org.dd4t.core.util.HttpRequestContext" />
+        <property name="processors">
+            <list>
+                <ref bean="linkResolverProcessor" />
+            </list>
+        </property>
     </bean>
 
     <bean id="binaryFactory" class="org.dd4t.core.factories.impl.BinaryFactoryImpl" factory-method="getInstance">
         <property name="binaryProvider" ref="binaryProvider" />
         <property name="cacheProvider" ref="cacheProvider" />
         <property name="requestContextClass" value="org.dd4t.core.util.HttpRequestContext" />
-    </bean>
-
-    <!-- DD4T Controllers -->
-    <bean id="pageController" class="${package}.controllers.PageController">
-        <property name="pageViewPath" value="pages/"/>
-        <property name="publicationResolver" ref="publicationResolver" />
-        <property name="pageFactory" ref="pageFactory"/>
-    </bean>
-
-    <bean id="componentPresentationController" class="${package}.controllers.ComponentPresentationController">
-        <property name="componentViewPath" value="components/"/>
-    </bean>
-
-    <bean id="binaryController" class="${package}.controllers.BinaryController">
-        <property name="binaryRootFolder" value="/media"/>
     </bean>
 
     <bean id="serializer" class="org.dd4t.core.serializers.impl.json.JSONSerializer"/>
@@ -113,8 +141,8 @@
     <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
     <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
         <!-- Set this value to your own models package root -->
-        <property name="viewModelPackageRoot" value="${package}.models" />
-        <property name="viewModelMetaKeyName" value="view" />
+        <property name="viewModelPackageRoot" value="${databind.viewmodels.rootpackage}" />
+        <property name="viewModelMetaKeyName" value="${databind.viewmodels.ct.metadata.viewnamekey}" />
         <!-- Set these to your need. If you only want regular Components set to true -->
         <property name="renderDefaultComponentModelsOnly" value="false" />
         <property name="renderDefaultComponentsIfNoModelFound" value="true" />
@@ -132,8 +160,8 @@
 
     <!-- Experience Manager -->
     <bean id="xpmRender" class="org.dd4t.mvc.utils.XPMRenderer" factory-method="getInstance">
-        <property name="enabled" value="false"/>
-        <property name="cmsUrl" value="http://cms-url"/>
+        <property name="enabled" value="${xpm.enabled}"/>
+        <property name="cmsUrl" value="${xpm.cmsUrl}"/>
     </bean>
 
     <!--
@@ -142,7 +170,7 @@
 
         Make sure to set the brokerURL, userName and password properties,
         as well as the JMS topic in the listener config
-
+    -->
 
     <bean id="cacheMessageListener" class="org.dd4t.core.caching.jms.impl.JMSCacheMessageListener"/>
     <bean id="jmsExceptionListener" class="org.dd4t.core.caching.jms.impl.JMSExceptionListener"/>
@@ -150,15 +178,14 @@
     <bean id="jmsTransportListener" class="org.dd4t.core.caching.jms.impl.JMSTransportListener"/>
 
     <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://localhost:61616?wireFormat.maxInactivityDuration=60000"/>
+        <property name="brokerURL" value="${jms.brokerUrl}"/>
+        <property name="userName" value="${jms.userName}"/>
+        <property name="password" value="${jms.password}"/>
         <property name="exceptionListener" ref="jmsExceptionListener"/>
         <property name="transportListener" ref="jmsTransportListener"/>
-        <property name="userName" value="[JMS-USERNAME]"/>
-        <property name="password" value="[JMS-PASSWORD]"/>
     </bean>
 
     <jms:listener-container container-type="default" destination-type="topic" connection-factory="connectionFactory" acknowledge="auto">
-        <jms:listener destination="[JMS-TOPIC]" ref="cacheMessageListener" method="onMessage"/>
+        <jms:listener destination="${jms.topicName}" ref="cacheMessageListener" method="onMessage"/>
     </jms:listener-container>
-    -->
 </beans>

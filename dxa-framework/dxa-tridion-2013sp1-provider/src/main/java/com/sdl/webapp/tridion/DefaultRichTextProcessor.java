@@ -16,6 +16,7 @@ import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.XMLUtils;
+import com.sdl.webapp.tridion.xpath.XPathResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
@@ -45,9 +46,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.sdl.webapp.tridion.xpath.XPathResolver.XLINK_NS_URI;
-import static com.sdl.webapp.tridion.xpath.XPathResolver.XPATH_IMAGES;
-import static com.sdl.webapp.tridion.xpath.XPathResolver.XPATH_LINKS;
 import static java.lang.Long.parseLong;
 import static javax.xml.xpath.XPathConstants.NODESET;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
@@ -139,7 +137,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
     private List<EntityModel> resolveImages(Document doc, Localization localization) throws ContentProviderException, SemanticMappingException {
         List<Node> entityElements;
         try {
-            entityElements = new NodeListAdapter((NodeList) XPATH_IMAGES.expr().get().evaluate(doc, NODESET));
+            entityElements = new NodeListAdapter((NodeList) XPathResolver.XPATH_IMAGES.expr().get().evaluate(doc, NODESET));
         } catch (XPathExpressionException e) {
             LOG.warn("Error while evaluation XPath expression", e);
             return null;
@@ -166,7 +164,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
     private void resolveLinks(Document document) {
         final List<Node> linkElements;
         try {
-            linkElements = new NodeListAdapter((NodeList) XPATH_LINKS.expr().get().evaluate(document, NODESET));
+            linkElements = new NodeListAdapter((NodeList) XPathResolver.XPATH_LINKS.expr().get().evaluate(document, NODESET));
         } catch (XPathExpressionException e) {
             LOG.warn("Error while evaluation XPath expression", e);
             return;
@@ -184,7 +182,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 
             if (isEmpty(linkUrl)) {
                 // Resolve a dynamic component link
-                linkUrl = linkResolver.resolveLink(linkElement.getAttributeNS(XLINK_NS_URI, "href"), null, true);
+                linkUrl = linkResolver.resolveLink(linkElement.getAttributeNS(XPathResolver.XLINK_NS_URI, "href"), null, true);
             }
 
             if (!isEmpty(linkUrl)) {
@@ -233,7 +231,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
     }
 
     private String getLinkName(Element linkElement) {
-        final String componentUri = linkElement.getAttributeNS(XLINK_NS_URI, "href");
+        final String componentUri = linkElement.getAttributeNS(XPathResolver.XLINK_NS_URI, "href");
 
         try {
             // NOTE: This DD4T method requires a template URI but it does not actually use it; pass a dummy value

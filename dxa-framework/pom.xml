@@ -53,512 +53,34 @@
 
     <properties>
         <java-version>1.7</java-version>
-
-        <dd4t-version>2.0.2-DXA</dd4t-version>
-
-        <spring-version>3.1.4.RELEASE</spring-version>
-
-        <guava-version>18.0</guava-version>
-        <ehcache-version>2.8.2</ehcache-version>
-
-        <hibernate-version>4.2.12.Final</hibernate-version>
-        <hibernate-jpa-2.0-version>1.0.1.Final</hibernate-jpa-2.0-version>
-
-        <commons-beanutils-version>1.8.3</commons-beanutils-version>
-        <commons-codec-version>1.8</commons-codec-version>
-        <commons-configuration-version>1.9</commons-configuration-version>
-        <commons-dbcp-version>1.4</commons-dbcp-version>
-        <commons-io-version>2.4</commons-io-version>
-        <commons-jexl-version>2.1.1</commons-jexl-version>
-
-        <httpcomponents-client-version>4.3.3</httpcomponents-client-version>
-        <httpcomponents-core-version>4.3.3</httpcomponents-core-version>
-
-        <joda-time-version>2.5</joda-time-version>
-
-        <jackson-version>2.4.3</jackson-version>
-        <woodstox-version>4.4.1</woodstox-version>
-
-        <patricia-trie-version>0.7</patricia-trie-version>
         <slf4j-version>1.7.7</slf4j-version>
         <logback-version>1.0.13</logback-version>
-
-        <snakeyaml-version>1.12</snakeyaml-version>
-
-        <ua-parser-version>1.2.2</ua-parser-version>
-
-        <servlet-api-version>3.1.0</servlet-api-version>
-        <jsp-api-version>2.3.1</jsp-api-version>
-        <jstl-version>1.2</jstl-version>
-
-        <jms-api-version>1.1-rev-1</jms-api-version>
-
-        <easylicense-version>2.5</easylicense-version>
-        <json-smart-version>1.1.1</json-smart-version>
-        <xalan-version>2.7.1</xalan-version>
-
-        <sqljdbc4-version>4.0</sqljdbc4-version>
-
+        <hibernate-version>4.2.12.Final</hibernate-version>
         <junit-version>4.11</junit-version>
         <hamcrest-version>1.3</hamcrest-version>
         <mockito-version>1.10.8</mockito-version>
-        <reflections-version>0.9.9-RC2</reflections-version>
-
-        <solr-solrj.version>5.3.1</solr-solrj.version>
+        <spring-version>3.1.4.RELEASE</spring-version>
+        <ehcache-version>2.8.2</ehcache-version>
+        <cglib.version>2.2.2</cglib.version>
+        <jcache.version>1.0.1</jcache.version>
     </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-tridion-provider</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-common-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-common-impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.google.code.gson</groupId>
-                <artifactId>gson</artifactId>
-                <version>2.3.1</version>
-            </dependency>
-
-            <!-- Spring Framework -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring-version}</version>
-                <scope>compile</scope>
-                <exclusions>
-                    <!-- Exclude Commons Logging because we use SLF4J and Logback instead -->
-                    <!-- See: http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#overview-logging -->
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-
-            <!-- Use an older version of Spring ORM to solve issues with CWD repository -->
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-orm</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-web</artifactId>
-                <version>${spring-version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-webmvc</artifactId>
-                <version>${spring-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-test</artifactId>
-                <version>${spring-version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>2.2.2</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <!-- Hibernate -->
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-entitymanager</artifactId>
-                <version>${hibernate-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate.javax.persistence</groupId>
-                <artifactId>hibernate-jpa-2.0-api</artifactId>
-                <version>${hibernate-jpa-2.0-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-ehcache</artifactId>
-                <version>${hibernate-version}</version>
-            </dependency>
-
-            <!-- Ehcache -->
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>${ehcache-version}</version>
-            </dependency>
-
-            <!-- Apache Commons -->
-            <dependency>
-                <groupId>commons-beanutils</groupId>
-                <artifactId>commons-beanutils</artifactId>
-                <version>${commons-beanutils-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-codec</groupId>
-                <artifactId>commons-codec</artifactId>
-                <version>${commons-codec-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-configuration</groupId>
-                <artifactId>commons-configuration</artifactId>
-                <version>${commons-configuration-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-dbcp</groupId>
-                <artifactId>commons-dbcp</artifactId>
-                <version>${commons-dbcp-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons-io-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-jexl</artifactId>
-                <version>${commons-jexl-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.scala-lang</groupId>
-                <artifactId>scala-library</artifactId>
-                <version>2.10.5</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.0</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>3.2.1</version>
-                <scope>compile</scope>
-            </dependency>
-
-            <!-- Apache HttpComponents -->
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <scope>runtime</scope>
-                <version>${httpcomponents-client-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpcore</artifactId>
-                <version>${httpcomponents-core-version}</version>
-            </dependency>
-
-            <!-- Google Guava -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava-version}</version>
-            </dependency>
-
-            <!-- Joda Time -->
-            <dependency>
-                <groupId>joda-time</groupId>
-                <artifactId>joda-time</artifactId>
-                <version>${joda-time-version}</version>
-            </dependency>
-
-            <!-- Jackson and related libraries -->
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-core</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-annotations</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-joda</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.dataformat</groupId>
-                <artifactId>jackson-dataformat-xml</artifactId>
-                <version>${jackson-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.codehaus.woodstox</groupId>
-                <artifactId>woodstox-core-asl</artifactId>
-                <version>${woodstox-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <!--todo move solr to module-->
-            <dependency>
-                <groupId>org.apache.solr</groupId>
-                <artifactId>solr-solrj</artifactId>
-                <version>${solr-solrj.version}</version>
-            </dependency>
-
-            <!-- SnakeYAML -->
-            <dependency>
-                <groupId>org.yaml</groupId>
-                <artifactId>snakeyaml</artifactId>
-                <version>${snakeyaml-version}</version>
-            </dependency>
-
-            <!-- JSoup -->
-            <dependency>
-                <groupId>org.jsoup</groupId>
-                <artifactId>jsoup</artifactId>
-                <version>1.7.3</version>
-            </dependency>
-
-            <!-- User agent string parser -->
-            <dependency>
-                <groupId>ua_parser</groupId>
-                <artifactId>ua-parser</artifactId>
-                <version>${ua-parser-version}</version>
-            </dependency>
-
-            <!-- Patricia Trie -->
-            <dependency>
-                <groupId>org.ardverk</groupId>
-                <artifactId>patricia-trie</artifactId>
-                <version>${patricia-trie-version}</version>
-            </dependency>
-
-            <!-- SLF4J and Logback -->
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>${slf4j-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-simple</artifactId>
-                <version>${slf4j-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>jcl-over-slf4j</artifactId>
-                <version>${slf4j-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>${logback-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <!-- Servlet and JSP APIs -->
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${servlet-api-version}</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>javax.servlet.jsp-api</artifactId>
-                <version>${jsp-api-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>${jstl-version}</version>
-            </dependency>
-
-            <!-- JMS API -->
-            <dependency>
-                <groupId>javax.jms</groupId>
-                <artifactId>jms-api</artifactId>
-                <version>${jms-api-version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.java.dev.rome</groupId>
-                <artifactId>rome</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-
-            <!-- Miscellaneous libraries used by Tridion CD -->
-            <dependency>
-                <groupId>com.vs.ezlicrun</groupId>
-                <artifactId>easylicense</artifactId>
-                <version>${easylicense-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.vs</groupId>
-                <artifactId>easylicense</artifactId>
-                <version>${easylicense-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>net.minidev</groupId>
-                <artifactId>json-smart</artifactId>
-                <version>${json-smart-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>xalan</groupId>
-                <artifactId>xalan</artifactId>
-                <version>${xalan-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- Microsoft SQL Server JDBC driver -->
-            <dependency>
-                <groupId>com.microsoft.sqlserver</groupId>
-                <artifactId>sqljdbc4</artifactId>
-                <version>${sqljdbc4-version}</version>
-                <scope>runtime</scope>
-            </dependency>
-
-            <!-- JUnit and other test libraries -->
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-core</artifactId>
-                <version>${hamcrest-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-library</artifactId>
-                <version>${hamcrest-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
-                <version>${mockito-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections</artifactId>
-                <version>${reflections-version}</version>
-                <scope>test</scope>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.cache</groupId>
-                <artifactId>cache-api</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ehcache</groupId>
-                <artifactId>jcache</artifactId>
-                <version>1.0.1</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dd4t</groupId>
-                <artifactId>dd4t-api</artifactId>
-                <version>${dd4t-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.tridion.contentdelivery</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.dd4t</groupId>
-                <artifactId>dd4t-core</artifactId>
-                <version>${dd4t-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.tridion.contentdelivery</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.dd4t</groupId>
-                <artifactId>dd4t-databind</artifactId>
-                <version>${dd4t-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.tridion.contentdelivery</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.dd4t</groupId>
-                <artifactId>dd4t-providers</artifactId>
-                <version>${dd4t-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.tridion.contentdelivery</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
         <!-- SLF4J and Logback -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j-version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
+            <version>${logback-version}</version>
         </dependency>
 
         <!-- Hibernate Entitymanager - Necessary to stop warning about missing classes -->
@@ -566,43 +88,59 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-entitymanager</artifactId>
+            <version>${hibernate-version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
+            <version>${cglib.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- JUnit and Spring Test -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <version>${junit-version}</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
+            <version>${hamcrest-version}</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-library</artifactId>
+            <version>${hamcrest-version}</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
+            <version>${mockito-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
+            <version>${spring-version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
+            <version>${ehcache-version}</version>
         </dependency>
         <dependency>
             <groupId>org.ehcache</groupId>
             <artifactId>jcache</artifactId>
+            <version>${jcache.version}</version>
         </dependency>
     </dependencies>
 

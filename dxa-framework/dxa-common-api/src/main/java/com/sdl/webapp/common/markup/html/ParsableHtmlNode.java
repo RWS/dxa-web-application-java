@@ -47,6 +47,29 @@ public class ParsableHtmlNode extends HtmlNode {
         return this.html;
     }
 
+    /* TODO: Refactor to this to solve issues with additional <html> tags in the markup
+
+    public Elements getHtmlElements() {
+        if (this.html == null) {
+            Document doc = Jsoup.parse(this.htmlText);
+            List<Node> htmlNodes = doc.childNodes();
+            Node firstNode = htmlNodes.get(0);
+            if (firstNode instanceof Element) {
+                Element element = (Element) firstNode;
+                Elements elements = element.select("body");
+                if (elements.size() > 0) {
+                    this.html = new Elements(elements.first().children());
+                }
+                else {
+                    this.html = doc.children();
+                }
+            }
+        }
+        return this.html;
+    }
+
+    */
+
     @Override
     protected String renderHtml() {
         if (this.html != null) {

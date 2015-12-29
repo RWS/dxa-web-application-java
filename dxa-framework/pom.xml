@@ -5,9 +5,13 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.sdl.dxa</groupId>
+    <parent>
+        <groupId>com.sdl.dxa</groupId>
+        <artifactId>dxa-parent</artifactId>
+        <version>1.3-SNAPSHOT</version>
+    </parent>
+
     <artifactId>dxa-framework</artifactId>
-    <version>1.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Parent for DXA API framework</name>
@@ -52,6 +56,9 @@
     </modules>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <java-version>1.7</java-version>
         <spring-version>3.1.4.RELEASE</spring-version>
         <dd4t-version>2.0.2-DXA</dd4t-version>

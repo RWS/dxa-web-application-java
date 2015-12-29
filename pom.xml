@@ -6,7 +6,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-parent</artifactId>
-    <version>1.2-SNAPSHOT</version>
+    <version>1.2.1-NC</version>
     <packaging>pom</packaging>
 
     <name>Parent for all Digital Experince Accelerator projects</name>

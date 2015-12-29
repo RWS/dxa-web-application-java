@@ -1,40 +1,31 @@
 dd4t-2-java
 ======
 
- - Current stable version: **2.0.1-beta**
+ - Current stable version: **2.0.2**
  - Maven Central: [org.dd4t](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.dd4t%22)
- - Current stable archetype version: [1.4](http://search.maven.org/#artifactdetails%7Corg.dd4t%7Cdd4t-spring-mvc-archetype%7C1.4%7Cmaven-archetype)
+ - Current stable archetype version: [1.5](http://search.maven.org/#artifactdetails%7Corg.dd4t%7Cdd4t-spring-mvc-archetype%7C1.4%7Cmaven-archetype)
 
-##Prerequisites
+##Prerequisites and Java dependencies
 
 1. Download and install Maven: https://maven.apache.org/run-maven/index.html
 2. Install all Tridion dependencies (aka JAR files) in your local Maven repository as these are not available in Maven Central. The general command to do this is:
 
 		mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_broker -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_broker-7.1.0.jar
-		
-	Repeat for all other Tridion jar files.
 	
-	Note that if you use SQL server, you need to install the jar dependency as follows:
-	
-		mvn -q install:install-file -DgroupId=com.microsoft.sqlserver -DartifactId=sqljdbc4 -Dversion=4.0.0 -Dpackaging=jar -Dfile=sqljdbc4-4.0.0.jar
+To make this process a little more convenient, an install script was created to do this for all other required jars which are not in Maven Central.
 
+* Windows: https://raw.githubusercontent.com/dd4t/dd4t-2-java/master/dd4t-providers/mvn-install.bat
+* Linux, OS X: https://raw.githubusercontent.com/dd4t/dd4t-2-java/master/dd4t-providers/mvn-install.sh
 
-	If you do not use SQL server, remove the following dependency:
-	
-	    <dependency>
-            <groupId>com.microsoft.sqlserver</groupId>
-            <artifactId>sqljdbc4</artifactId>
-            <version>${sqljdbc4-version}</version>
-            <scope>runtime</scope>
-        </dependency>
+Run this script in the directory where your Tridion jars are. Note that you have to rename them. For example, *cd_core.jar* has to become *cd_core-7.1.0.jar*. In addition to the Tridion jar, the script also installs the third party dependencies *easylicense-2.5.jar*,*sqljdbc4-4.0.0.jar*, *jdbcpool-1.0.jar* and the Tridion Contextual Web Delivery libraries should you need them.
 
- In the above example, we install the Tridion 2013 SP1 Jar files, **to which we have appended the version number.** For older versions or for other version type (eg. -Dversion=2013SP1), you have to change the version property on your POM as well:
+In the above example, we install the Tridion 2013 SP1 Jar files, **to which we have appended the version number.** For older versions or for other version type (eg. -Dversion=2013SP1), you have to change the version property on your POM and in the script as well:
  
  		<!-- Set the correct version for your local or central setup -->
  		<properties>
 		    <tridion.version>7.1.0</tridion.version>
 		</properties>
-
+		
 	A fairly normal setup for a DD4T 2 web application with Tridion dependencies included is: 
 	
 	     <dependency>
@@ -78,7 +69,7 @@ dd4t-2-java
             <version>${tridion.version}</version>
         </dependency>
         
-	Next, Tridion expects the following third party dependencies which are not in Maven Central and therefore have to be installed locally as well:
+Next, Tridion expects the following third party dependencies which are not in Maven Central and therefore have to be installed locally as well:
 	
 		<dependency>
             <groupId>com.vs.ezlicrun</groupId>
@@ -98,18 +89,45 @@ dd4t-2-java
 	
 	
 	These dependencies depend on the following properties in your POM:
-	
 
 		<properties>
 			<sqljdbc4-version>4.0.0</sqljdbc4-version>
 			<easylicense-version>2.5</easylicense-version>
 		<properties>
 
-	Note that depending on your requirements or already present setup, version numbers may differ. Further reading on this can be done [here](http://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html). In addition, the [Maven 4 Tridion](https://code.google.com/p/maven-4-tridion/) project automates much of these steps.
+Note that depending on your requirements or already present setup, version numbers may differ. Further reading on this can be done [here](http://maven.apache.org/guides/mini/guide-3rd-party-jars-local.html). 
 	
 ##Fetching the latest version from Maven Central
 
-dd4t-2-java is now always released to Maven Central, which means you do not have to download the source and embed it into your project anymore. Addionally, dd4t-2-java comes with a Maven archetype, which is also available on Maven Central.
+dd4t-2-java is released to Maven Central, which means you do not have to download the source and embed it into your project anymore. The following core dependencies are usually always required:
+
+       <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-core</artifactId>
+            <version>${dd4t.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-mvc-support</artifactId>
+            <version>${dd4t.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-api</artifactId>
+            <version>${dd4t.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-providers</artifactId>
+            <version>${dd4t.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-caching</artifactId>
+            <version>${dd4t.version}</version>
+        </dependency>
+
+Addionally, dd4t-2-java comes with a Maven archetype, which is also available on Maven Central. It is recommended to get started with the Archetype for quick and painless setup of your web application.
 
 ###Creating a bare dd4t-2-java Spring MVC web application
 
@@ -119,15 +137,13 @@ To create a complete, but minimal Spring MVC web application to develop with, cr
 1. Create an empty directory where you want to develop the web application in
 2. Execute the following command after replacing the parameters in between the brackets ([com.example] and [mywebapp]):
 
-		mvn archetype:generate -DgroupId=[com.example] -DartifactId=[mywebapp] -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.4  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
+		mvn archetype:generate -DgroupId=[com.example] -DartifactId=[mywebapp] -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.5  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
 
 3. Enter the requested information. Maven will ask you to specify a version (defaults to 1.0-SNAPSHOT) and will then ask you to confirm the settings.
 
-
 4. The web application project is created if you see the following Maven output:
 
-
-		$ mvn archetype:generate -DgroupId=com.example -DartifactId=mywebapp -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.4  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
+		$ mvn archetype:generate -DgroupId=com.example -DartifactId=mywebapp -DarchetypeGroupId=org.dd4t -DarchetypeArtifactId=dd4t-spring-mvc-archetype -DarchetypeVersion=1.5  -DarchetypeCatalog=remote -DarchetypeCatalog=http://repo1.maven.org/maven2
 		[INFO] Scanning for projects...
 		[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
                                                                          
@@ -178,7 +194,7 @@ For setting up a webapp based on the dd4t-2-java through your IDE, you will need
 
 2. Archetype ArtifactId=**dd4t-spring-mvc-archetype**
 
-3. ArchetypeVersion=**1.4**
+3. ArchetypeVersion=**1.5**
 
  - For **Eclipse** you need the **m2eclipse** plugin. A nice guide on how to fully integrate can be found here: http://www.theserverside.com/news/1363817/Introduction-to-m2eclipse
  

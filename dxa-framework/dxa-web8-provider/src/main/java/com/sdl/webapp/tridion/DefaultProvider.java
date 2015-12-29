@@ -79,6 +79,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     @Autowired
     private ModelBuilderPipeline modelBuilderPipeline;
     @Autowired
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     private ObjectMapper objectMapper;
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -92,6 +93,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     private BinaryFactory binaryFactory;
 
     @Autowired
+    @SuppressWarnings("SpringJavaAutowiringInspection")
     private WebRequestContext webRequestContext;
 
     private static <T> T findPage(String path, Localization localization, TryFindPage<T> callback)

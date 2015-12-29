@@ -302,10 +302,56 @@
                 <version>${jstl-version}</version>
             </dependency>
 
+            <!-- Apache HttpComponents -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <scope>runtime</scope>
+                <version>${httpcomponents-client-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcomponents-core-version}</version>
+            </dependency>
+
+            <!-- SnakeYAML -->
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml-version}</version>
+            </dependency>
+
+            <!-- User agent string parser -->
+            <dependency>
+                <groupId>ua_parser</groupId>
+                <artifactId>ua-parser</artifactId>
+                <version>${ua-parser-version}</version>
+            </dependency>
+
+            <!-- Patricia Trie -->
+            <dependency>
+                <groupId>org.ardverk</groupId>
+                <artifactId>patricia-trie</artifactId>
+                <version>${patricia-trie-version}</version>
+            </dependency>
+
+            <!-- Hibernate EHCache -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-ehcache</artifactId>
+                <version>${hibernate-version}</version>
+            </dependency>
+
             <!-- SLF4J and Logback -->
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
                 <version>${slf4j-version}</version>
             </dependency>
             <dependency>

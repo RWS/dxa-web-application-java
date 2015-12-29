@@ -10,8 +10,8 @@
     <packaging>war</packaging>
 
     <properties>
-        <dxa.version>1.3-SNAPSHOT</dxa.version>
         <java-version>1.7</java-version>
+        <dxa.version>1.3-SNAPSHOT</dxa.version>
     </properties>
 
     <build>
@@ -97,22 +97,49 @@
         <profile>
             <id>cd-7.1.0</id>
 
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sdl.dxa</groupId>
+                        <artifactId>dxa-bom-2013sp1</artifactId>
+                        <version>${dxa.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa</groupId>
                     <artifactId>dxa-tridion-2013sp1-provider</artifactId>
-                    <version>1.3-SNAPSHOT</version>
+                    <version>${dxa.version}</version>
                 </dependency>
             </dependencies>
         </profile>
         <profile>
             <id>cd-8.1.0</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sdl.dxa</groupId>
+                        <artifactId>dxa-bom-web8</artifactId>
+                        <version>${dxa.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
 
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa</groupId>
                     <artifactId>dxa-web8-provider</artifactId>
-                    <version>1.3-SNAPSHOT</version>
+                    <version>${dxa.version}</version>
                 </dependency>
             </dependencies>
             <!--<dependencies>-->
@@ -139,49 +166,40 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-api</artifactId>
-            <version>1.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-impl</artifactId>
-            <version>1.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa.modules</groupId>
             <artifactId>dxa-module-core</artifactId>
-            <version>1.3-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>3.1.4.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>3.1.4.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
-            <version>3.1.4.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>3.1.4.RELEASE</version>
         </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.12</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>3.1.0</version>
         </dependency>
     </dependencies>
 

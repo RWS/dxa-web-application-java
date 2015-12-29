@@ -517,7 +517,6 @@
                 <scope>runtime</scope>
             </dependency>
 
-            <!--todo move solr to module-->
             <dependency>
                 <groupId>org.apache.solr</groupId>
                 <artifactId>solr-solrj</artifactId>

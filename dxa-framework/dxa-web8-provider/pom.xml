@@ -188,6 +188,18 @@
             <groupId>com.sdl</groupId>
             <artifactId>odata_renderer</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sdl</groupId>
+            <artifactId>odata_client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cwd_odata_client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cwd_odata_common</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.sdl.web</groupId>
@@ -202,14 +214,6 @@
             <groupId>com.tridion</groupId>
             <artifactId>cwd_api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd_odata_client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd_odata_common</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -218,6 +222,11 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
         </dependency>
 
         <dependency>

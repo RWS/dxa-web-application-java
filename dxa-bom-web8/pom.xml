@@ -49,12 +49,10 @@
     <properties>
         <java.version>1.8</java.version>
         <dd4t-version>2.0.2-DXA</dd4t-version>
-        <build.classifier>8.1.0</build.classifier>
 
-        <tridion-cd-version>8.1.0</tridion-cd-version>
-        <tridion-cwd-version>8.1.0</tridion-cwd-version>
-        <odata-version>2.0.0</odata-version>
-
+        <cd.version>8.1.0</cd.version>
+        <cwd.version>8.1.0</cwd.version>
+        <odata.version>2.0.0</odata.version>
 
         <spring-version>3.1.4.RELEASE</spring-version>
 

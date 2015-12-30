@@ -7,7 +7,7 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>1.2.1-NC</version>
+        <version>1.2.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-common-impl</artifactId>

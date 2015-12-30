@@ -6,7 +6,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-parent</artifactId>
-    <version>1.2.1-NC</version>
+    <version>1.2.2-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Parent for all Digital Experince Accelerator projects</name>
@@ -390,7 +390,7 @@
         <java-version>1.7</java-version>
 
         <!-- Dynamic Delivery for Tridion (DD4T) -->
-        <dd4t-version>2.0.2-DXA</dd4t-version>
+        <dd4t-version>2.0.2</dd4t-version>
     </properties>
 
     <!-- Dependency management -->

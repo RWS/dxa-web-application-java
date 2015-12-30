@@ -390,7 +390,7 @@
         <java-version>1.7</java-version>
 
         <!-- Dynamic Delivery for Tridion (DD4T) -->
-        <dd4t-version>2.0.2</dd4t-version>
+        <dd4t-version>2.0.2-DXA</dd4t-version>
     </properties>
 
     <!-- Dependency management -->

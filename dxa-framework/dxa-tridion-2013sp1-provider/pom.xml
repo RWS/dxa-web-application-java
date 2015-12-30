@@ -76,6 +76,10 @@
         </dependency>
 
         <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_broker</artifactId>
         </dependency>

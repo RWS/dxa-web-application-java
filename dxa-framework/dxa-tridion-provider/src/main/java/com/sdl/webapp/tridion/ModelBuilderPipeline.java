@@ -8,19 +8,23 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
+@org.springframework.stereotype.Component
 public class ModelBuilderPipeline {
 
     private List<PageBuilder> pageBuilderHandlers;
 
     private List<EntityBuilder> entityBuilderHandlers;
 
+    @Autowired
     public void setPageBuilderHandlers(List<PageBuilder> handlers) {
         this.pageBuilderHandlers = handlers;
     }
 
+    @Autowired
     public void setEntityBuilderHandlers(List<EntityBuilder> handlers) {
         this.entityBuilderHandlers = handlers;
     }

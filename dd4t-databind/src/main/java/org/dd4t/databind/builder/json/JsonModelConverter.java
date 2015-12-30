@@ -51,7 +51,7 @@ import java.util.Map;
  */
 public class JsonModelConverter extends AbstractModelConverter implements ModelConverter {
     private static final Logger LOG = LoggerFactory.getLogger(JsonModelConverter.class);
-    private Class<org.dd4t.contentmodel.Field> concreteFieldImpl;
+    private Class<? extends org.dd4t.contentmodel.Field> concreteFieldImpl;
 
     public JsonModelConverter () {
 

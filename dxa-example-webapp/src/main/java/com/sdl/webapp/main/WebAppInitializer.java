@@ -1,6 +1,6 @@
 package com.sdl.webapp.main;
 
-import com.sdl.dxa.core.SpringConfiguration;
+import com.sdl.webapp.common.impl.SpringConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;

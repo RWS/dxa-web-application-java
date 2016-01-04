@@ -28,11 +28,10 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
-    private final LocalizationResolver localizationResolver;
+    private LocalizationResolver localizationResolver;
 
-    private final WebRequestContext webRequestContext;
+    private WebRequestContext webRequestContext;
 
-    @Autowired
     public LocalizationResolverInterceptor(LocalizationResolver localizationResolver, WebRequestContext webRequestContext) {
         this.localizationResolver = localizationResolver;
         this.webRequestContext = webRequestContext;

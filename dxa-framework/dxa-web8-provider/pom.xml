@@ -24,6 +24,7 @@
     <properties>
         <cd.version>8.1.0</cd.version>
         <odata.version>2.0.0</odata.version>
+        <!-- Java 8 is set for CDaaS, but Spring 3 we're using doesn't support Java 8 features!  -->
         <java-version>1.8</java-version>
     </properties>
 

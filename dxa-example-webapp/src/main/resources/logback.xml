@@ -2,7 +2,7 @@
     <!-- Properties and variables -->
     <property name="log.pattern" value="%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/>
     <property name="log.history" value="7"/>
-    <property name="log.level" value="WARN"/>
+    <property name="log.level" value="INFO"/>
     <property name="log.encoding" value="UTF-8"/>
     <property name="log.folder" value="../logs/DXA"/>
 
@@ -201,20 +201,20 @@
     <logger name="org.dd4t" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="com.sdl.webapp" level="DEBUG">
+    <logger name="com.sdl.webapp" level="${log.level}">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="com.sdl.webapp.common.impl" level="DEBUG">
+    <logger name="com.sdl.webapp.common.impl" level="${log.level}">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="com.sdl.webapp.common.impl.taglib.dxa" level="DEBUG">
+    <logger name="com.sdl.webapp.common.impl.taglib.dxa" level="${log.level}">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="com.sdl.webapp.main.controller.core" level="DEBUG">
+    <logger name="com.sdl.webapp.main.controller.core" level="${log.level}">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="DEBUG">
+    <root level="${log.level}">
         <appender-ref ref="STDOUT"/>
     </root>
 

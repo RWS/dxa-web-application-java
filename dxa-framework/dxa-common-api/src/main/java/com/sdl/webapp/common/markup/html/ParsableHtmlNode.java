@@ -16,38 +16,13 @@ import java.util.List;
 public class ParsableHtmlNode extends HtmlNode {
 
     private String htmlText;
-    private Element html = null;
+    private Elements html = null;
 
     public ParsableHtmlNode(String htmlText) {
         this.htmlText = htmlText;
     }
 
     // TODO: Wrap JSoup API totally here...???
-
-    public Element getHtmlElement() {
-        if (this.html == null) {
-            Element htmlElement = null;
-            Document doc = Jsoup.parse(this.htmlText);
-            List<Node> htmlNodes = doc.childNodes();
-            Node firstNode = htmlNodes.get(0);
-            if (firstNode instanceof Element) {
-                Element element = (Element) firstNode;
-                Elements elements = element.select("body");
-                if (elements.size() > 0) {
-                    if (elements.first().children().size() == 1) {
-                        htmlElement = elements.first().child(0);
-                    }
-                }
-                if (htmlElement == null) {
-                    htmlElement = doc.child(0);
-                }
-            }
-            this.html = htmlElement;
-        }
-        return this.html;
-    }
-
-    /* TODO: Refactor to this to solve issues with additional <html> tags in the markup
 
     public Elements getHtmlElements() {
         if (this.html == null) {
@@ -67,8 +42,6 @@ public class ParsableHtmlNode extends HtmlNode {
         }
         return this.html;
     }
-
-    */
 
     @Override
     protected String renderHtml() {

@@ -14,6 +14,7 @@ import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import org.jsoup.nodes.Comment;
 import org.jsoup.nodes.Element;
 import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
 
 /**
  * Region XPM Markup
@@ -51,10 +52,14 @@ public class RegionXpmMarkup implements MarkupDecorator {
                     // Inject the region markup with the XPM markup
                     //
                     ParsableHtmlNode regionMarkup = (ParsableHtmlNode) markup;
-                    Element html = regionMarkup.getHtmlElement();
-                    if (html != null && !this.isFirstNodeXpmEntityXPMMarkup(html)) {
-                        html.prepend(buildXpmMarkup(region, webRequestContext.getLocalization()).toHtml());
-                        markupInjected = true;
+                    Elements html = regionMarkup.getHtmlElements();
+                    if ( html.size() == 1 ) {
+                        // Only inject the region markup when there is one surrounding tag around the region markup (as it normally should)
+                        //
+                        if (html != null && !this.isFirstNodeXpmEntityXPMMarkup(html.first())) {
+                            html.first().prepend(buildXpmMarkup(region, webRequestContext.getLocalization()).toHtml());
+                            markupInjected = true;
+                        }
                     }
                 }
 

@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.markup.html;
 
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -18,7 +19,7 @@ public class ParsableHtmlNodeTest {
 
         String htmlTxt = "<div id='region'><p>Hello there!!!</p><a href='#'>LINK</a></div>";
         ParsableHtmlNode markup = new ParsableHtmlNode(htmlTxt);
-        Element html = markup.getHtmlElement();
+        Elements html = markup.getHtmlElements();
         String xpmMarkup = "<!-- Start Component Presentation -->";
         html.prepend(xpmMarkup);
 

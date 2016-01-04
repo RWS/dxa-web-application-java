@@ -41,15 +41,25 @@ public class EntityXpmMarkup implements MarkupDecorator {
                 // Inject the XPM markup inside the entity markup
                 //
                 ParsableHtmlNode entityMarkup = (ParsableHtmlNode) markup;
-                Element html = entityMarkup.getHtmlElement();
+                Elements html = entityMarkup.getHtmlElements();
                 if (html != null) {   // If an HTML element (not a comment etc)
-                    html.prepend(buildXpmMarkup(entity, webRequestContext.getLocalization()).toHtml());
+
+                    if ( html.size() == 0 ) {
+                        // Empty markup -> skip generating XPM markup
+                        //
+                        return markup;
+                    }
+                    if ( html.size() == 1 ) {
+                        // Only inject the XPM entity markup when there is one surrounding tag around all content (recommended approach)
+                        //
+                        html.prepend(buildXpmMarkup(entity, webRequestContext.getLocalization()).toHtml());
+                        markupInjected = true;
+                    }
+
                     Elements properties = html.select("[data-entity-property-xpath]");
                     for (Element property : properties) {
                         processProperty(property);
                     }
-
-                    markupInjected = true;
                 }
             }
 

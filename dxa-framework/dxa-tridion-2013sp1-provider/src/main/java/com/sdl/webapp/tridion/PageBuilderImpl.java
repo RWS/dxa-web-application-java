@@ -170,7 +170,7 @@ final class PageBuilderImpl implements PageBuilder {
                     regionMap.add(model);
                 } else {
                     if (!regionMap.get(model.getName()).getMvcData().equals(model.getMvcData())) {
-                        LOG.warn("Region '%s' is defined with conflicting MVC data: [%s] and [%s]. Using the former.", new Object[]{model.getName(), regionMap.get(model.getName()).getMvcData(), model.getMvcData()});
+                        LOG.warn("Region '%s' is defined with conflicting MVC data: [%s] and [%s]. Using the former.", model.getName(), regionMap.get(model.getName()).getMvcData(), model.getMvcData());
                         for (EntityModel e : model.getEntities()) {
                             regionMap.get(model.getName()).addEntity(e);
                         }

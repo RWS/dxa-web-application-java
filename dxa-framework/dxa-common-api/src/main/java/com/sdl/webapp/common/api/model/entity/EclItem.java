@@ -1,25 +1,17 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Function;
-import com.google.common.collect.Maps;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
-import com.sdl.webapp.common.util.FieldUtils;
-import org.dd4t.contentmodel.Field;
-import org.dd4t.contentmodel.FieldSet;
-import org.dd4t.contentmodel.impl.EmbeddedField;
-import org.springframework.util.CollectionUtils;
+import com.sdl.webapp.common.util.ApplicationContextHolder;
+import com.sdl.webapp.common.util.Dd4tUtils;
+import com.sdl.webapp.common.util.Dd4tUtilsDelegate;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.div;
@@ -78,37 +70,9 @@ public abstract class EclItem extends MediaItem {
         this.externalMetadata = externalMetadata;
     }
 
-    public Object getFromExternalMetadataOrAlternative(String key, Object alternative) {
-        final Object obj = new NestedCustomMap(getExternalMetadata(),
-                new Function<Entry<String, Map<String, Object>>, Map<String, Object>>() {
-            @Override
-            public Map<String, Object> apply(Entry<String, Map<String, Object>> pair) {
-                String key = pair.getKey();
-                Map<String, Object> map = pair.getValue();
-
-                Object o = map.get(key);
-                Map content;
-                if (o instanceof FieldSet) {
-                    content = ((FieldSet) o).getContent();
-                } else if (o instanceof EmbeddedField) {
-                    content = ((EmbeddedField) o).getEmbeddedValues().get(0).getContent();
-                } else {
-                    throw new UnsupportedOperationException("Unsupported format of ECL metadata structure");
-                }
-                //noinspection unchecked
-                return content;
-            }
-        }).get(key);
-
-        if (obj == null) {
-            return alternative;
-        }
-
-        if (obj instanceof Field) {
-            return FieldUtils.getStringValue((Field) obj);
-        }
-
-        return alternative;
+    public Object getFromExternalMetadataOrAlternative(Map<String, Object> externalMetadata, String key, Object alternative) {
+        Dd4tUtils dd4tUtils = ApplicationContextHolder.getContext().getBean(Dd4tUtilsDelegate.class);
+        return dd4tUtils.getFromNestedMultiLevelMapOrAlternative(externalMetadata, key, alternative);
     }
 
     @Override
@@ -202,41 +166,4 @@ public abstract class EclItem extends MediaItem {
                 '}';
     }
 
-    public static class NestedCustomMap {
-        private Map<String, Object> map;
-        private Function<Entry<String, Map<String, Object>>, Map<String, Object>> loadNestedFunction;
-
-        public NestedCustomMap(Map<String, Object> map,
-                               Function<Entry<String, Map<String, Object>>, Map<String, Object>> function) {
-            this.map = map;
-            this.loadNestedFunction = function;
-        }
-
-        public Map<String, Object> getMap() {
-            return map;
-        }
-
-        public Object get(String key) {
-            if (key == null || CollectionUtils.isEmpty(map)) {
-                return null;
-            }
-
-            final List<String> keys = Arrays.asList(key.split("/"));
-            final Iterator<String> iterator = keys.iterator();
-            Map<String, Object> currentMap = map;
-            while (iterator.hasNext()) {
-                String current = iterator.next();
-                if (!iterator.hasNext()) { //last element
-                    return currentMap.get(current);
-                }
-
-                currentMap = loadNestedFunction.apply(Maps.immutableEntry(current, currentMap));
-                if (currentMap == null) {
-                    return null;
-                }
-            }
-
-            return null;
-        }
-    }
 }

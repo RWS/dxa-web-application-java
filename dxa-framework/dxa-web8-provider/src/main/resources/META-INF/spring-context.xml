@@ -39,4 +39,13 @@
         <property name="taxonomyProvider" ref="taxonomyProvider"/>
         <property name="cacheProvider" ref="cacheProvider"/>
     </bean>
+
+    <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver">
+        <property name="contextPath" value=""/>
+        <property name="linkProvider" ref="linkProvider"/>
+    </bean>
+
+    <bean id="richTextWithLinksResolver" class="org.dd4t.core.processors.impl.RichTextWithLinksResolver">
+        <property name="linkResolver" ref="linkResolver"/>
+    </bean>
 </beans>

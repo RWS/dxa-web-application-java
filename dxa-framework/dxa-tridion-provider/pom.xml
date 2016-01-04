@@ -13,7 +13,7 @@
     <artifactId>dxa-tridion-provider</artifactId>
 
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Contains providers of Tridion functionality</description>
+    <description>Contains common dependencies for Tridion Providers</description>
     <url>https://github.com/sdl/dxa-web-application-java</url>
 
     <scm>
@@ -118,24 +118,6 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <!-- DD4T -->
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-providers</artifactId>
         </dependency>
     </dependencies>
 

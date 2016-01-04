@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api.model.entity;
+package com.sdl.webapp.common.util;
 
 import com.google.common.base.Function;
 import org.junit.Test;
@@ -34,7 +34,7 @@ public class NestedCustomMapTest {
         map3.put("Level3", expected);
 
         //when
-        final String result = (String) new EclItem.NestedCustomMap(map, SIMPLE_FUNCTION).get("Level1/Level2/Level3");
+        final String result = (String) new NestedCustomMap(map, SIMPLE_FUNCTION).get("Level1/Level2/Level3");
 
         //then
         assertEquals(expected, result);
@@ -48,7 +48,7 @@ public class NestedCustomMapTest {
         map.put("Level1", expected);
 
         //when
-        final String result = (String) new EclItem.NestedCustomMap(map, SIMPLE_FUNCTION).get("Level1");
+        final String result = (String) new NestedCustomMap(map, SIMPLE_FUNCTION).get("Level1");
 
         //then
         assertEquals(expected, result);
@@ -59,7 +59,7 @@ public class NestedCustomMapTest {
         //given
         final Map<String, Object> map = new HashMap<>();
         //when
-        final String result = (String) new EclItem.NestedCustomMap(map, SIMPLE_FUNCTION).get("Level1");
+        final String result = (String) new NestedCustomMap(map, SIMPLE_FUNCTION).get("Level1");
 
         //then
         assertNull(result);

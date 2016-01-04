@@ -46,9 +46,10 @@
     </licenses>
 
     <dependencies>
+
         <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-core</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
 
         <!-- Spring Framework -->

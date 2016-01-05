@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Sdl.Web.Tridion</RootNamespace>
     <AssemblyName>Sdl.Web.Tridion.Templates</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -31,6 +32,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="Microsoft.OData.Client">
+      <HintPath>..\_references\cm-8.1\Microsoft.OData.Client.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.IO.Compression" />
@@ -69,6 +74,10 @@
       <HintPath>..\_references\2013-sp1\Tridion.Logging.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Tridion.TopologyManager.Client">
+      <HintPath>..\_references\cm-8.1\Tridion.TopologyManager.Client.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\GeneralExtensionMethods.cs" />
@@ -87,6 +96,7 @@
     <Compile Include="Templates\RenderComponentPresentations.cs" />
     <Compile Include="Common\TemplateBase.cs" />
     <Compile Include="Templates\ResolveRichText.cs" />
+    <Compile Include="TopologyManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\PublishHtmlDesignParameters.xsd">

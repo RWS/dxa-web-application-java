@@ -9,19 +9,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-
 public class JsonView extends MappingJackson2JsonView {
 
-    WebRequestContext context;
+    @Autowired
+    private WebRequestContext context;
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    public JsonView(WebRequestContext context) {
-        this.context = context;
-        setObjectMapper(objectMapper);
-        setExtractValueFromSingleKeyModel(true);
-    }
 
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {

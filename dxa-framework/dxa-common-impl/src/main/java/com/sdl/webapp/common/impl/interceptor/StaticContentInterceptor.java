@@ -33,15 +33,11 @@ import java.net.URL;
 public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);
 
-    private final ContentProvider contentProvider;
-
-    private final WebRequestContext webRequestContext;
+    @Autowired
+    private ContentProvider contentProvider;
 
     @Autowired
-    public StaticContentInterceptor(ContentProvider contentProvider, WebRequestContext webRequestContext) {
-        this.contentProvider = contentProvider;
-        this.webRequestContext = webRequestContext;
-    }
+    private WebRequestContext webRequestContext;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {

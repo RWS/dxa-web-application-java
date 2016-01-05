@@ -35,16 +35,7 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
     private static final String VIEW_RESOLVER_SUFFIX = ".jsp";
 
     @Autowired
-    private LocalizationResolver localizationResolver;
-
-    @Autowired
-    private ContentProvider contentProvider;
-
-    @Autowired
     private WebRequestContext webRequestContext;
-
-    @Autowired
-    private DataFormatter dataFormatter;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -55,12 +46,12 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public HandlerInterceptor localizationResolverInterceptor() {
-        return new LocalizationResolverInterceptor(localizationResolver, webRequestContext);
+        return new LocalizationResolverInterceptor();
     }
 
     @Bean
     public HandlerInterceptor staticContentInterceptor() {
-        return new StaticContentInterceptor(contentProvider, webRequestContext);
+        return new StaticContentInterceptor();
     }
 
     @Bean
@@ -87,17 +78,19 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean(name = "rssFeedView")
     public RssView rssFeedView() {
-        return new RssView(webRequestContext);
+        return new RssView();
     }
 
     @Bean(name = "atomFeedView")
     public AtomView atomFeedView() {
-        return new AtomView(webRequestContext);
+        return new AtomView();
     }
 
     @Bean(name = "jsonFeedView")
     public JsonView jsonFeedView() {
-        return new JsonView(webRequestContext);
+        JsonView jsonView = new JsonView();
+        jsonView.setExtractValueFromSingleKeyModel(true);
+        return jsonView;
     }
 
     @Bean

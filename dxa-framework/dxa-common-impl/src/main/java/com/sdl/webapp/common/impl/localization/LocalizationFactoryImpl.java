@@ -61,19 +61,14 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private static final String FILES_NODE_NAME = "files";
 
-    private final ContentProvider contentProvider;
-
-    private final WebApplicationContext webApplicationContext;
-
-    private final ObjectMapper objectMapper;
+    @Autowired
+    private ContentProvider contentProvider;
 
     @Autowired
-    public LocalizationFactoryImpl(ContentProvider contentProvider,
-                                   WebApplicationContext webApplicationContext, ObjectMapper objectMapper) {
-        this.contentProvider = contentProvider;
-        this.webApplicationContext = webApplicationContext;
-        this.objectMapper = objectMapper;
-    }
+    private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Override
     public Localization createLocalization(String id, String path) throws LocalizationFactoryException {

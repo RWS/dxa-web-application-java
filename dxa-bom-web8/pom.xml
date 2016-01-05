@@ -279,6 +279,22 @@
             </dependency>
 
             <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_preview_content_client</artifactId>
+                <version>${cd.version}-1241</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_preview_content_common</artifactId>
+                <version>${cd.version}-1241</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.web</groupId>
+                <artifactId>content-ambient-client</artifactId>
+                <version>${cd.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_api</artifactId>
                 <version>${odata.version}</version>

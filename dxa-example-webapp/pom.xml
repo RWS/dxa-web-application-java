@@ -145,22 +145,20 @@
                     <artifactId>dxa-web8-provider</artifactId>
                     <version>${dxa.version}</version>
                 </dependency>
+
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_content_client</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_content_common</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>content-ambient-client</artifactId>
+                </dependency>
             </dependencies>
-            <!--<dependencies>-->
-                <!--&lt;!&ndash;todo remove&ndash;&gt;-->
-                <!--<dependency>-->
-                    <!--<groupId>com.tridion</groupId>-->
-                    <!--<artifactId>cd_preview_content_client</artifactId>-->
-                <!--</dependency>-->
-                <!--<dependency>-->
-                    <!--<groupId>com.tridion</groupId>-->
-                    <!--<artifactId>cd_preview_content_common</artifactId>-->
-                <!--</dependency>-->
-                <!--<dependency>-->
-                    <!--<groupId>com.sdl.web</groupId>-->
-                    <!--<artifactId>content-ambient-client</artifactId>-->
-                <!--</dependency>-->
-            <!--</dependencies>-->
         </profile>
     </profiles>
 

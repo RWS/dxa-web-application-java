@@ -63,7 +63,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                 // Try getting data using each of the field semantics in order
                 for (FieldSemantics fieldSemantics : registrySemantics) {
                     // Find the matching semantic field
-                    final SemanticField semanticField = findMatchingSemanticField(semanticFields, fieldSemantics);
+                    final SemanticField semanticField = findFieldForGivenSemantics(semanticFields, fieldSemantics);
                     if (semanticField != null) {
                         foundMatch = true;
                         LOG.trace("Match found: {} -> {}", fieldSemantics, semanticField);
@@ -166,23 +166,28 @@ public class SemanticMapperImpl implements SemanticMapper {
         }
     }
 
-    private SemanticField findMatchingSemanticField(Map<FieldSemantics, SemanticField> semanticFields,
-                                                    FieldSemantics fieldSemantics) {
+    private SemanticField findFieldForGivenSemantics(Map<FieldSemantics, SemanticField> fields, FieldSemantics semantics) {
 
-        for (Map.Entry<FieldSemantics, SemanticField> entry : semanticFields.entrySet()) {
+        SemanticField field = fields.get(semantics);
+
+        if (field != null) {
+            return field;
+        }
+
+        for (Map.Entry<FieldSemantics, SemanticField> entry : fields.entrySet()) {
             FieldSemantics key = entry.getKey();
 
-            if (key.equals(fieldSemantics) ||
-                    (key.isStandardMetadataField() && Objects.equals(key.getPropertyName(), fieldSemantics.getPropertyName()))) {
+            if (key.isStandardMetadataField() && Objects.equals(key.getPropertyName(), semantics.getPropertyName())) {
                 return entry.getValue();
             }
         }
 
         // Search all embedded fields recursively
-        for (SemanticField semanticField : semanticFields.values()) {
-            SemanticField matchingField = findMatchingSemanticField(semanticField.getEmbeddedFields(), fieldSemantics);
-            if (matchingField != null) {
-                return matchingField;
+        for (SemanticField semanticField : fields.values()) {
+            field = findFieldForGivenSemantics(semanticField.getEmbeddedFields(), semantics);
+
+            if (field != null) {
+                return field;
             }
         }
 

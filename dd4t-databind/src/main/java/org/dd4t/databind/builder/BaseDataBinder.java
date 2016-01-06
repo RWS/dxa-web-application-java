@@ -60,20 +60,20 @@ public abstract class BaseDataBinder {
     protected String viewModelPackageRoot;
     protected boolean renderDefaultComponentModelsOnly;
     protected boolean renderDefaultComponentsIfNoModelFound;
-    protected Class<ComponentPresentation> concreteComponentPresentationImpl;
-    protected Class<ComponentTemplate> concreteComponentTemplateImpl;
-    protected Class<Component> concreteComponentImpl;
-    protected Class<Field> concreteFieldImpl;
+    protected Class<? extends ComponentPresentation> concreteComponentPresentationImpl;
+    protected Class<? extends ComponentTemplate> concreteComponentTemplateImpl;
+    protected Class<? extends Component> concreteComponentImpl;
+    protected Class<? extends Field> concreteFieldImpl;
 
-    public void setConcreteComponentTemplateImpl (final Class<ComponentTemplate> concreteComponentTemplateImpl) {
+    public void setConcreteComponentTemplateImpl (final Class<? extends ComponentTemplate> concreteComponentTemplateImpl) {
         this.concreteComponentTemplateImpl = concreteComponentTemplateImpl;
     }
 
-    public void setConcreteComponentPresentationImpl (final Class<ComponentPresentation> concreteComponentPresentationImpl) {
+    public void setConcreteComponentPresentationImpl (final Class<? extends ComponentPresentation> concreteComponentPresentationImpl) {
         this.concreteComponentPresentationImpl = concreteComponentPresentationImpl;
     }
 
-    public void setConcreteComponentImpl (final Class<Component> concreteComponentImpl) {
+    public void setConcreteComponentImpl (final Class<? extends Component> concreteComponentImpl) {
         this.concreteComponentImpl = concreteComponentImpl;
     }
 
@@ -105,19 +105,19 @@ public abstract class BaseDataBinder {
         return renderDefaultComponentsIfNoModelFound;
     }
 
-    public Class<ComponentPresentation> getConcreteComponentPresentationImpl () {
+    public Class<? extends ComponentPresentation> getConcreteComponentPresentationImpl () {
         return concreteComponentPresentationImpl;
     }
 
-    public Class<ComponentTemplate> getConcreteComponentTemplateImpl () {
+    public Class<? extends ComponentTemplate> getConcreteComponentTemplateImpl () {
         return concreteComponentTemplateImpl;
     }
 
-    public Class<Component> getConcreteComponentImpl () {
+    public Class<? extends Component> getConcreteComponentImpl () {
         return concreteComponentImpl;
     }
 
-    public void setConcreteFieldImpl (final Class<Field> concreteFieldImpl) {
+    public void setConcreteFieldImpl (final Class<? extends Field> concreteFieldImpl) {
         this.concreteFieldImpl = concreteFieldImpl;
     }
 
@@ -141,7 +141,7 @@ public abstract class BaseDataBinder {
         return viewModelPackageRoot;
     }
 
-    public Class<Field> getConcreteFieldImpl () {
+    public Class<? extends Field> getConcreteFieldImpl () {
         return concreteFieldImpl;
     }
 

@@ -191,7 +191,7 @@ public class AbstractBinaryController {
                         float factor = (float) resizeToWidth / w;
                         int newH = Math.round(factor * h);
 
-                        BufferedImage after = new BufferedImage(resizeToWidth, newH, BufferedImage.TYPE_INT_RGB);
+                        BufferedImage after = new BufferedImage(resizeToWidth, newH, BufferedImage.TYPE_INT_ARGB);
                         Graphics g = after.createGraphics();
                         g.drawImage(before, 0, 0, resizeToWidth, newH, null);
                         g.dispose();

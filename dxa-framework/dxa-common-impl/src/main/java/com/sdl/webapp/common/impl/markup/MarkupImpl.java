@@ -3,12 +3,14 @@ package com.sdl.webapp.common.impl.markup;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntityInfo;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticPropertyInfo;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.markup.Markup;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
@@ -56,8 +58,11 @@ public class MarkupImpl implements Markup {
 
     @Override
     public String versionedContent(String path) {
-        return webRequestContext.getContextPath() + webRequestContext.getLocalization().localizePath(
-                "/system/" + webRequestContext.getLocalization().getVersion() + path);
+        Localization localization = webRequestContext.getLocalization();
+        if (localization == null) {
+            throw new NotFoundException("Localization for " + path + " not found.");
+        }
+        return webRequestContext.getContextPath() + localization.localizePath("/system/" + localization.getVersion() + path);
     }
 
     @Override

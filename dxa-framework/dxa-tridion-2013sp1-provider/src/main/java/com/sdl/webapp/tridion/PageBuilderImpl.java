@@ -56,6 +56,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("Duplicates")
 @Component
 final class PageBuilderImpl implements PageBuilder {
     public static final String IMAGE_FIELD_NAME = "image";

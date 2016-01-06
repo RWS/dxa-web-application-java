@@ -35,6 +35,7 @@ import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+@SuppressWarnings("Duplicates")
 @org.springframework.stereotype.Component
 final class EntityBuilderImpl implements EntityBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(EntityBuilderImpl.class);

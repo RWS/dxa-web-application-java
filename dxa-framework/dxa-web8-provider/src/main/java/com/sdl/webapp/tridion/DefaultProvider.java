@@ -57,6 +57,7 @@ import java.util.regex.Pattern;
 /**
  * Implementation of {@code ContentProvider} that uses DD4T to provide content.
  */
+@SuppressWarnings("Duplicates")
 @Component
 public final class DefaultProvider implements ContentProvider, NavigationProvider {
     public static final String DEFAULT_PAGE_NAME = "index";

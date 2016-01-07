@@ -7,7 +7,6 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
-import org.springframework.web.context.support.XmlWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.servlet.DispatcherServlet;
 
@@ -31,8 +30,6 @@ public class WebAppInitializer implements WebApplicationInitializer {
     // The problem is as soon you have stuff in web.xml etc those things are deployed first
 
     private static final Logger LOG = LoggerFactory.getLogger(WebAppInitializer.class);
-
-    private static final String ROOT_APP_CONTEXT_CONFIG_LOCATION = "classpath*:/META-INF/spring-context.xml";
 
     private static final String AMBIENT_DATA_SERVLET_FILTER_NAME = "AmbientDataServletFilter";
 
@@ -62,10 +59,9 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        registerDispatcherServlet(servletContext);
+        setupSpringContext(servletContext);
         registerCharacterEncodingFilter(servletContext);
         registerHttpUploadServlet(servletContext);
-        registerContextLoaderListener(servletContext);
         registerImageTransformerServlet(servletContext);
         registerPreviewSessionListener(servletContext);
         registerWebServiceServlet(servletContext);
@@ -79,15 +75,6 @@ public class WebAppInitializer implements WebApplicationInitializer {
         encodingFilter.setInitParameter("encoding", "UTF-8");
         encodingFilter.setInitParameter("forceEncoding", "true");
         encodingFilter.addMappingForUrlPatterns(null, false, "/*");
-    }
-
-    private void registerContextLoaderListener(ServletContext servletContext) {
-        LOG.debug("Initializing root application context");
-        XmlWebApplicationContext rootAppContext = new XmlWebApplicationContext();
-        rootAppContext.setConfigLocation(ROOT_APP_CONTEXT_CONFIG_LOCATION);
-
-        LOG.debug("Registering ContextLoaderListener");
-        servletContext.addListener(new ContextLoaderListener(rootAppContext));
     }
 
     private void registerImageTransformerServlet(ServletContext servletContext) {
@@ -133,12 +120,15 @@ public class WebAppInitializer implements WebApplicationInitializer {
         }
     }
 
-    private void registerDispatcherServlet(ServletContext servletContext) {
+    private void setupSpringContext(ServletContext servletContext) {
         LOG.debug("Initializing servlet application context");
         AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
         servletAppContext.register(SpringConfiguration.class);
 
-        LOG.debug("Registering DispatcherServlet");
+        LOG.debug("Registering Spring ContextLoaderListener");
+        servletContext.addListener(new ContextLoaderListener(servletAppContext));
+
+        LOG.debug("Registering Spring DispatcherServlet");
         ServletRegistration.Dynamic registration = servletContext.addServlet(DISPATCHER_SERVLET_NAME,
                 new DispatcherServlet(servletAppContext));
         registration.setLoadOnStartup(1);

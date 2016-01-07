@@ -3,20 +3,16 @@ package com.sdl.webapp.common.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.ContentProvider;
-import com.sdl.webapp.common.api.formats.DataFormatter;
-import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.impl.interceptor.LocalizationResolverInterceptor;
 import com.sdl.webapp.common.impl.interceptor.StaticContentInterceptor;
 import com.sdl.webapp.common.impl.interceptor.ThreadLocalInterceptor;
 import com.sdl.webapp.common.views.AtomView;
 import com.sdl.webapp.common.views.JsonView;
 import com.sdl.webapp.common.views.RssView;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.Ordered;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ViewResolver;
@@ -29,13 +25,11 @@ import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
 @EnableWebMvc
+@ImportResource({"classpath*:/META-INF/spring-context.xml"})
 @ComponentScan(basePackages = {"com.sdl.webapp"})
 public class SpringConfiguration extends WebMvcConfigurerAdapter {
     private static final String VIEW_RESOLVER_PREFIX = "/WEB-INF/Views/";
     private static final String VIEW_RESOLVER_SUFFIX = ".jsp";
-
-    @Autowired
-    private WebRequestContext webRequestContext;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

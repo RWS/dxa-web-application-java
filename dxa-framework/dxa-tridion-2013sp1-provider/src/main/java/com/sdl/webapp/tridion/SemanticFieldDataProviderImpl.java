@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+@SuppressWarnings("Duplicates")
 public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticFieldDataProviderImpl.class);
     protected static final String METADATA_PATH = "Metadata";

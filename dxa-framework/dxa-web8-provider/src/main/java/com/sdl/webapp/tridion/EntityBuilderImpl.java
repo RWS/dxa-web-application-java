@@ -35,6 +35,7 @@ import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+@SuppressWarnings("Duplicates")
 @org.springframework.stereotype.Component
 final class EntityBuilderImpl implements EntityBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(EntityBuilderImpl.class);
@@ -59,23 +60,6 @@ final class EntityBuilderImpl implements EntityBuilder {
     @Autowired
     private ModelBuilderPipeline builder;
 
-    private static class GetEntityData {
-        String viewName, schemaRoot;
-
-        public GetEntityData(String viewName, String schemaRoot) {
-            this.viewName = viewName;
-            this.schemaRoot = schemaRoot;
-        }
-    }
-
-    private static abstract class GetEntityClass<T> {
-        protected abstract Class<? extends AbstractEntityModel> get(T data) throws DxaException, ContentProviderException;
-
-        protected Class<? extends AbstractEntityModel> onException(T data) throws ContentProviderException {
-            return null;
-        }
-    }
-
     @Override
     public EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel,
                                     Localization localization) throws ContentProviderException {
@@ -95,28 +79,8 @@ final class EntityBuilderImpl implements EntityBuilder {
             return null;
         }
 
-        Class<? extends AbstractEntityModel> entityClass = getEntityClass(new GetEntityClass<GetEntityData>() {
-            @Override
-            protected Class<? extends AbstractEntityModel> get(GetEntityData data) throws DxaException, ContentProviderException {
-                final Class<? extends AbstractEntityModel> entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getViewEntityClass(data.viewName);
-                if (entityClass == null) {
-                    throw new ContentProviderException("Cannot determine entity type for view name: '" + data.viewName +
-                            "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
-                }
-                return entityClass;
-            }
 
-            @Override
-            protected Class<? extends AbstractEntityModel> onException(GetEntityData data) throws ContentProviderException {
-                final Class<? extends AbstractEntityModel> entityClass =
-                        (Class<? extends AbstractEntityModel>) semanticMappingRegistry.getEntityClass(data.schemaRoot);
-                if (entityClass == null) {
-                    throw new ContentProviderException("Cannot determine entity type for view name: '" + data.viewName +
-                            "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
-                }
-                return entityClass;
-            }
-        }, new GetEntityData(viewName, component.getSchema().getRootElement()));
+        Class<? extends AbstractEntityModel> entityClass = getEntityClass(viewName, component.getSchema().getRootElement());
 
         final SemanticSchema semanticSchema = getSemanticSchema(component, localization);
         final AbstractEntityModel entity = (AbstractEntityModel) createEntity(component, localization, entityClass, semanticSchema);
@@ -151,7 +115,8 @@ final class EntityBuilderImpl implements EntityBuilder {
         return createEntity(component, localization, entityClass, getSemanticSchema(component, localization));
     }
 
-    private EntityModel createEntity(Component component, Localization localization,
+    private EntityModel createEntity(Component component,
+                                     Localization localization,
                                      Class<? extends AbstractEntityModel> entityClass,
                                      SemanticSchema semanticSchema) throws ContentProviderException {
         final AbstractEntityModel entity;
@@ -171,13 +136,22 @@ final class EntityBuilderImpl implements EntityBuilder {
         return entity;
     }
 
+    private Class<? extends AbstractEntityModel> getEntityClass(String viewName, String schemaRoot)
+            throws ContentProviderException {
+        Class<? extends AbstractEntityModel> entityClass;
 
-    private <T> Class<? extends AbstractEntityModel> getEntityClass(GetEntityClass<T> getEntityClass, T data) throws ContentProviderException {
         try {
-            return getEntityClass.get(data);
+            entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getViewEntityClass(viewName);
         } catch (DxaException e) {
-            return getEntityClass.onException(data);
+            entityClass = (Class<? extends AbstractEntityModel>) semanticMappingRegistry.getEntityClass(schemaRoot);
         }
+
+        if (entityClass == null) {
+            throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
+                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+        }
+
+        return entityClass;
     }
 
     private SemanticSchema getSemanticSchema(Component component, Localization localization) {

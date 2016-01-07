@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("Duplicates")
 @Component
 public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+@SuppressWarnings("Duplicates")
 public final class FieldUtils {
 
     public static final Function<Double, String> DOUBLE_TO_STRING_FUNCTION = new Function<Double, String>() {

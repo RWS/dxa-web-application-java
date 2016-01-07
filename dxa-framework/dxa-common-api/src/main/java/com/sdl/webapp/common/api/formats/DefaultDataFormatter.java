@@ -18,7 +18,6 @@ import java.util.Map;
  * Helper bean to handle the different formatters
  */
 @Component
-@ComponentScan(basePackages = {"com.sdl.webapp.main", "com.sdl.webapp.common.controller", "com.sdl.webapp.addon"})
 public class DefaultDataFormatter implements DataFormatter {
 
     @Autowired

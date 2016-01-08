@@ -54,17 +54,6 @@
 
     <profiles>
         <profile>
-            <id>default</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>dxa-tridion-provider</module>
-                <module>dxa-tridion-2013sp1-provider</module>
-                <module>dxa-web8-provider</module>
-            </modules>
-        </profile>
-        <profile>
             <id>cd-7.1.0</id>
             <modules>
                 <module>dxa-tridion-provider</module>

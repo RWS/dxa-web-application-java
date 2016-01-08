@@ -47,6 +47,11 @@
         </developer>
     </developers>
 
+    <modules>
+        <module>dxa-common-api</module>
+        <module>dxa-common-impl</module>
+    </modules>
+
     <profiles>
         <profile>
             <id>default</id>
@@ -54,8 +59,9 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>dxa-common-api</module>
-                <module>dxa-common-impl</module>
+                <module>dxa-tridion-provider</module>
+                <module>dxa-tridion-2013sp1-provider</module>
+                <module>dxa-web8-provider</module>
             </modules>
         </profile>
         <profile>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>dxa-framework</artifactId>
@@ -71,46 +71,7 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-tridion-provider</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-providers</artifactId>
-            <version>${dd4t-version}</version>
-            <classifier>${cd.version}</classifier>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.tridion.contentdelivery</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sdl</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.dd4t</groupId>
-                    <artifactId>*</artifactId>
-                </exclusion>
-            </exclusions>
+            <classifier>8.1.0</classifier>
         </dependency>
 
         <dependency>
@@ -320,6 +281,56 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-providers</artifactId>
+            <classifier>8.1.0</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet.jsp</groupId>
+            <artifactId>javax.servlet.jsp-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>jstl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
         </dependency>
     </dependencies>
 

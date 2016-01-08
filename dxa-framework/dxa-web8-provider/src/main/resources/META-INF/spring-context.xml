@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
     <context:annotation-config/>
@@ -9,43 +9,4 @@
 
     <bean id="dynamicMappingRetriever" class="com.tridion.dynamiccontent.DynamicMappingsRetriever"/>
 
-    <bean id="binaryFactory" class="com.tridion.content.BinaryFactory"/>
-    <bean id="dynamicMetaRetriever" class="com.tridion.dynamiccontent.DynamicMetaRetriever"/>
-
-    <bean id="cacheProvider" class="org.dd4t.core.providers.EHCacheProvider">
-        <property name="checkForPreview" value="true"/>
-    </bean>
-
-    <bean id="componentPresentationProvider" class="com.sdl.webapp.tridion.BrokerComponentPresentationProvider">
-        <!-- TODO: CHANGE!!! -->
-        <property name="contentIsCompressed" value="false"/>
-
-        <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl"/>
-        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl"/>
-        <property name="cacheProvider" ref="cacheProvider"/>
-    </bean>
-
-    <bean id="componentPresentationFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl">
-        <property name="componentPresentationProvider" ref="componentPresentationProvider"/>
-        <property name="cacheProvider" ref="cacheProvider"/>
-    </bean>
-
-    <bean id="pageFactory" class="org.dd4t.core.factories.impl.PageFactoryImpl">
-        <property name="pageProvider" ref="pageProvider"/>
-        <property name="cacheProvider" ref="cacheProvider"/>
-    </bean>
-
-    <bean id="taxonomyFactory" class="org.dd4t.core.factories.impl.TaxonomyFactoryImpl" factory-method="getInstance">
-        <property name="taxonomyProvider" ref="taxonomyProvider"/>
-        <property name="cacheProvider" ref="cacheProvider"/>
-    </bean>
-
-    <bean id="linkResolver" class="org.dd4t.core.resolvers.impl.DefaultLinkResolver">
-        <property name="contextPath" value=""/>
-        <property name="linkProvider" ref="linkProvider"/>
-    </bean>
-
-    <bean id="richTextWithLinksResolver" class="org.dd4t.core.processors.impl.RichTextWithLinksResolver">
-        <property name="linkResolver" ref="linkResolver"/>
-    </bean>
 </beans>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -123,6 +123,7 @@
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-tridion-provider</artifactId>
                 <version>${project.version}</version>
+                <classifier>7.1.0</classifier>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
@@ -779,6 +780,7 @@
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-providers</artifactId>
                 <version>${dd4t-version}</version>
+                <classifier>7.1.0</classifier>
                 <exclusions>
                     <exclusion>
                         <groupId>com.tridion.contentdelivery</groupId>

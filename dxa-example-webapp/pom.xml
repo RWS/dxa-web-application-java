@@ -100,7 +100,9 @@
 
         <profile>
             <id>cd-7.1.0</id>
-
+            <properties>
+                <build.classifier>7.1.0</build.classifier>
+            </properties>
             <dependencyManagement>
                 <dependencies>
                     <dependency>
@@ -126,7 +128,9 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-
+            <properties>
+                <build.classifier>8.1.0</build.classifier>
+            </properties>
             <dependencyManagement>
                 <dependencies>
                     <dependency>
@@ -146,6 +150,7 @@
                     <version>${dxa.version}</version>
                 </dependency>
 
+                <!--todo move to profile?-->
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_preview_content_client</artifactId>

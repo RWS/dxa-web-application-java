@@ -14,6 +14,13 @@ public interface ViewModel {
     Map<String, String> getXpmMetadata();
 
     // TODO: Is this the right way forward? Is it not better to use markup decorators for this?
+
+    /**
+     * Gets the XPM markup to be output by the Html.DxaRegionMarkup() method.
+     *
+     * @param localization the context localization
+     * @return the XPM markup
+     */
     String getXpmMarkup(Localization localization);
 
     String getHtmlClasses();

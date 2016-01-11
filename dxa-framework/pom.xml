@@ -137,6 +137,7 @@
 
         <cglib.version>2.2.2</cglib.version>
         <jcache.version>1.0.1</jcache.version>
+        <lombok.version>1.16.6</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -297,6 +298,13 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>compile</scope>
             </dependency>
 
             <dependency>
@@ -647,6 +655,11 @@
             <groupId>org.ehcache</groupId>
             <artifactId>jcache</artifactId>
             <version>${jcache.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
         </dependency>
     </dependencies>
 

@@ -92,6 +92,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         return pixelRatio;
     }
 
+    @Override
     public ScreenWidth getScreenWidth() {
         if (screenwidth == null) {
             screenwidth = calculateScreenWidth();

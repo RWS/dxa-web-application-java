@@ -90,6 +90,8 @@ public interface WebRequestContext {
      */
     int getDisplayWidth();
 
+    ScreenWidth getScreenWidth();
+
     /**
      * Gets the pixel ratio of the current request.
      *

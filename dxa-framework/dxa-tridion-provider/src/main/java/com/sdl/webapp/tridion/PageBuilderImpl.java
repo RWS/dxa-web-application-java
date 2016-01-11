@@ -166,7 +166,7 @@ final class PageBuilderImpl implements PageBuilder {
         final RegionModelSet cpRegions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization, this.viewModelRegistry);
         if (cpRegions != null) {
             for (RegionModel model : cpRegions) {
-                if (!regionMap.containsKey(model.getName())) {
+                if (!regionMap.containsName(model.getName())) {
                     regionMap.add(model);
                 } else {
                     if (!regionMap.get(model.getName()).getMvcData().equals(model.getMvcData())) {
@@ -186,7 +186,7 @@ final class PageBuilderImpl implements PageBuilder {
             final RegionModel includePageRegion = getRegionFromIncludePage(includePageModel, include);
 
             RegionModel existingRegion;
-            if (regionMap.containsKey(includePageRegion.getName())) {
+            if (regionMap.containsName(includePageRegion.getName())) {
                 // Region with same name already exists; merge include Page Region.
                 existingRegion = regionMap.get(includePageRegion.getName());
 

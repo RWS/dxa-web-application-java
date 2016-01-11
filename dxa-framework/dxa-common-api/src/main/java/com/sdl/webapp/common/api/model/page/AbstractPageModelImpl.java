@@ -95,7 +95,7 @@ public abstract class AbstractPageModelImpl implements PageModel {
 
     @Override
     public boolean containsRegion(String regionName) {
-        return getRegions().containsKey(regionName);
+        return getRegions().containsName(regionName);
     }
 
     @Override

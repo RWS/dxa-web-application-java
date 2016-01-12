@@ -1,4 +1,4 @@
-package com.sdl.webapp.tridion;
+package com.sdl.webapp.tridion.mapping;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -26,6 +26,7 @@ import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.dd4t.util.FieldUtils;
+import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

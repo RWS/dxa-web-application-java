@@ -1,4 +1,4 @@
-package com.sdl.webapp.tridion;
+package com.sdl.webapp.tridion.linking;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.LinkResolver;

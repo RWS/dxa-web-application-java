@@ -1,4 +1,4 @@
-package com.sdl.webapp.tridion;
+package com.sdl.webapp.tridion.compatibility;
 
 import com.tridion.dynamiccontent.publication.PublicationMapping;
 

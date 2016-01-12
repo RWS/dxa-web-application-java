@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion;
 
+import com.sdl.webapp.tridion.compatibility.DifferenceResolver;
 import com.tridion.configuration.ConfigurationException;
 import com.tridion.dynamiccontent.DynamicMappingsRetriever;
 import com.tridion.dynamiccontent.publication.PublicationMapping;

@@ -29,8 +29,7 @@ import java.util.Objects;
 
 import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.CORE_REGION;
 
-@Getter
-@Setter
+
 @EqualsAndHashCode(of = {"name"})
 public class RegionModelImpl implements RegionModel {
 
@@ -55,22 +54,34 @@ public class RegionModelImpl implements RegionModel {
     private static final String XPM_COMPONENT_TYPE_MARKUP = "{schema: \"%s\", template: \"%s\"}";
 
     @JsonProperty("Name")
+    @Getter
     // TODO: Should we really expose a setter for the region name when we already set that in the constructor?
+    @Setter
     private String name;
 
     @JsonIgnore
+    @Getter
+    @Setter
     private String htmlClasses;
 
     @JsonProperty("Entities")
+    @Getter
+    @Setter
     private List<EntityModel> entities = new ArrayList<>();
 
     @JsonProperty("XpmMetadata")
+    @Getter
+//    setter explicitly defined
     private Map<String, String> xpmMetadata = new HashMap<>();
 
     @JsonProperty("MvcData")
+    @Getter
+    @Setter
     private MvcData mvcData;
 
     @JsonProperty("Regions")
+    @Getter
+    @Setter
     private RegionModelSet regions;
 
     public RegionModelImpl(String name) throws DxaException {

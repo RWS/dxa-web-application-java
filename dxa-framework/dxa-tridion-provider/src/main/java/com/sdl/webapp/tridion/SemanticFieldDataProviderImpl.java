@@ -13,6 +13,7 @@ import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
 import com.sdl.webapp.tridion.fields.converters.ComponentLinkFieldConverter;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
+import com.sdl.webapp.tridion.mapping.ModelBuilderPipeline;
 import lombok.ToString;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Field;

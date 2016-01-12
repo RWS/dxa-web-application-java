@@ -1,4 +1,4 @@
-package com.sdl.webapp.tridion;
+package com.sdl.webapp.tridion.mapping;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -15,6 +15,7 @@ import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.XMLUtils;
+import com.sdl.webapp.tridion.linking.TridionLinkResolver;
 import com.sdl.webapp.tridion.xpath.XPathResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;

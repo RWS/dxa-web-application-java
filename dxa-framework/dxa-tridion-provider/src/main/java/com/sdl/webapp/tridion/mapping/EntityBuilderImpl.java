@@ -1,4 +1,4 @@
-package com.sdl.webapp.tridion;
+package com.sdl.webapp.tridion.mapping;
 
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -15,9 +15,9 @@ import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.dd4t.util.FieldUtils;
+import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl.ComponentEntity;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
-import lombok.extern.slf4j.Slf4j;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
@@ -25,6 +25,8 @@ import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Multimedia;
 import org.joda.time.format.ISODateTimeFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -35,8 +37,9 @@ import java.util.Objects;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @org.springframework.stereotype.Component
-@Slf4j
 final class EntityBuilderImpl implements EntityBuilder {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EntityBuilderImpl.class);
 
     private static final String DEFAULT_AREA_NAME = "Core";
     private static final String DEFAULT_CONTROLLER_NAME = "Entity";
@@ -63,17 +66,17 @@ final class EntityBuilderImpl implements EntityBuilder {
                                     Localization localization) throws ContentProviderException {
         final Component component = componentPresentation.getComponent();
         final String componentId = component.getId();
-        log.debug("Creating entity for component: {}", componentId);
+        LOG.debug("Creating entity for component: {}", componentId);
 
         final Map<String, Field> templateMeta = componentPresentation.getComponentTemplate().getMetadata();
         if (templateMeta == null) {
-            log.warn("ComponentPresentation without template metadata, skipping: {}", componentId);
+            LOG.warn("ComponentPresentation without template metadata, skipping: {}", componentId);
             return null;
         }
 
         final String viewName = FieldUtils.getStringValue(templateMeta, "view");
         if (isEmpty(viewName)) {
-            log.warn("ComponentPresentation without a view, skipping: {}", componentId);
+            LOG.warn("ComponentPresentation without a view, skipping: {}", componentId);
             return null;
         }
 
@@ -119,7 +122,7 @@ final class EntityBuilderImpl implements EntityBuilder {
                                      SemanticSchema semanticSchema) throws ContentProviderException {
         final AbstractEntityModel entity;
 
-        log.debug("Creating entity for component: {}", component.getId());
+        LOG.debug("Creating entity for component: {}", component.getId());
         try {
             entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
                     new SemanticFieldDataProviderImpl(new ComponentEntity(component), fieldConverterRegistry, this.builder));

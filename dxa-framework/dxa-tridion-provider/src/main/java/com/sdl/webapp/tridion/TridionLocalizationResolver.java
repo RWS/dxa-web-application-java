@@ -7,8 +7,7 @@ import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.api.localization.LocalizationResolverException;
 import com.tridion.dynamiccontent.publication.PublicationMapping;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
@@ -22,8 +21,8 @@ import java.util.Map;
  * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
  */
 @Component
+@Slf4j
 public class TridionLocalizationResolver implements LocalizationResolver {
-    private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationResolver.class);
 
     private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<String, Localization>());
 
@@ -35,7 +34,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
     @Override
     public Localization getLocalization(String url) throws LocalizationResolverException {
-        LOG.trace("getLocalization: {}", url);
+        log.trace("getLocalization: {}", url);
 
         final PublicationMapping publicationMapping;
         try {
@@ -65,7 +64,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
         }
         String localizationId = localization.getId();
         if (localizations.remove(localizationId) != null) {
-            LOG.debug("Removed cached localization with id: {}", localizationId);
+            log.debug("Removed cached localization with id: {}", localizationId);
             return true;
         }
         return false;

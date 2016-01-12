@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion;
 
-import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
@@ -56,8 +55,6 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 
     public static final String EMBEDDED_ENTITY = "EmbeddedEntity";
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRichTextProcessor.class);
-    @Autowired
-    private MediaHelper mediaHelper;
 
     @Autowired
     private WebRequestContext webRequestContext;

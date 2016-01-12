@@ -1,5 +1,6 @@
-package com.sdl.webapp.tridion;
+package com.sdl.webapp.config;
 
+import com.sdl.webapp.tridion.DCPDataBinderWrapper;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.dd4t.contentmodel.impl.ComponentImpl;
 import org.dd4t.contentmodel.impl.ComponentPresentationImpl;

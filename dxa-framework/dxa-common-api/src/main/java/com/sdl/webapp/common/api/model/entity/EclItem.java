@@ -7,7 +7,6 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import com.sdl.webapp.common.util.Dd4tUtils;
-import com.sdl.webapp.common.util.Dd4tUtilsDelegate;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -71,7 +70,7 @@ public abstract class EclItem extends MediaItem {
     }
 
     public Object getFromExternalMetadataOrAlternative(Map<String, Object> externalMetadata, String key, Object alternative) {
-        Dd4tUtils dd4tUtils = ApplicationContextHolder.getContext().getBean(Dd4tUtilsDelegate.class);
+        Dd4tUtils dd4tUtils = ApplicationContextHolder.getContext().getBean(Dd4tUtils.class);
         return dd4tUtils.getFromNestedMultiLevelMapOrAlternative(externalMetadata, key, alternative);
     }
 

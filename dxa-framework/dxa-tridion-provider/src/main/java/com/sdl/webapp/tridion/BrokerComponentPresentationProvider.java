@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.tridion.dcp.ComponentPresentationFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
-import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.impl.ComponentPresentationImpl;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
@@ -22,11 +21,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * BrokerComponentPresentationProvider
- * - Temporary override of the standard DD4T DCP provider to correct the DCP implementation.
- * *
- *
- * @author nic
+ * BrokerComponentPresentationProvider temporary overrides of the standard DD4T DCP provider to correct the DCP implementation.
  */
 public class BrokerComponentPresentationProvider extends BaseBrokerProvider implements ComponentPresentationProvider {
 
@@ -34,9 +29,6 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 
     private static final Map<Integer, ComponentPresentationFactory> FACTORY_CACHE = new ConcurrentHashMap<>();
     private static final String ERROR_MESSAGE = "Component Presentation not found for componentId: %d, templateId: %d and publicationId: %d";
-
-    private Class<? extends ComponentPresentation> concreteComponentPresentation;
-    private Class<? extends ComponentTemplate> concreteComponentTemplateImpl;
 
     /**
      * Retrieves content of a Dynamic Component Presentation by looking up its componentId and publicationId.
@@ -126,13 +118,5 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
     @Override
     public List<ComponentPresentation> getDynamicComponentPresentations(final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
         return Collections.emptyList();
-    }
-
-    public void setConcreteComponentPresentation(final Class<? extends ComponentPresentation> concreteComponentPresentation) {
-        this.concreteComponentPresentation = concreteComponentPresentation;
-    }
-
-    public void setConcreteComponentTemplateImpl(final Class<? extends ComponentTemplate> concreteComponentTemplateImpl) {
-        this.concreteComponentTemplateImpl = concreteComponentTemplateImpl;
     }
 }

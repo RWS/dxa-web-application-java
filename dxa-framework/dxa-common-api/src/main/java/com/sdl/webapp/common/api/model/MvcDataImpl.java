@@ -3,8 +3,10 @@ package com.sdl.webapp.common.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.HashMap;
@@ -13,6 +15,8 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
 @Setter
+@ToString
+@EqualsAndHashCode
 @Accessors(chain = true)
 public class MvcDataImpl implements MvcData {
     @JsonProperty("ControllerAreaName")
@@ -43,18 +47,6 @@ public class MvcDataImpl implements MvcData {
     private Map<String, Object> metadata = new HashMap<>();
 
     public MvcDataImpl() {
-    }
-
-    public MvcDataImpl(MvcData mvcData) {
-        this.controllerAreaName = mvcData.getControllerAreaName();
-        this.controllerName = mvcData.getControllerName();
-        this.actionName = mvcData.getActionName();
-        this.areaName = mvcData.getAreaName();
-        this.viewName = mvcData.getViewName();
-        this.regionAreaName = mvcData.getRegionAreaName();
-        this.regionName = mvcData.getRegionName();
-        this.routeValues = new HashMap<>(mvcData.getRouteValues());
-        this.metadata = new HashMap<>(mvcData.getMetadata());
     }
 
     /**

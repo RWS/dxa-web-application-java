@@ -17,9 +17,6 @@
     <bean id="componentPresentationProvider" class="com.sdl.webapp.tridion.BrokerComponentPresentationProvider">
         <!-- TODO: CHANGE!!! -->
         <property name="contentIsCompressed" value="false"/>
-
-        <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl"/>
-        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl"/>
         <property name="cacheProvider" ref="cacheProvider"/>
     </bean>
 

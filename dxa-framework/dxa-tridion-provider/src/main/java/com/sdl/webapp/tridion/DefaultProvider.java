@@ -29,14 +29,13 @@ import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.ComponentMetaFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.PageFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
@@ -55,13 +54,14 @@ import java.util.regex.Pattern;
 
 
 /**
- * Implementation of {@code ContentProvider} that uses DD4T to provide content.
+ * Implementation of {@link ContentProvider} that uses DD4T to provide content.
  */
 @Component
+@Slf4j
 public final class DefaultProvider implements ContentProvider, NavigationProvider {
-    public static final String DEFAULT_PAGE_NAME = "index";
-    public static final String DEFAULT_PAGE_EXTENSION = ".html";
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultProvider.class);
+    private static final String DEFAULT_PAGE_NAME = "index";
+    private static final String DEFAULT_PAGE_EXTENSION = ".html";
+
     private static final String STATIC_FILES_DIR = "BinaryData";
 
     private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
@@ -74,15 +74,19 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
     @Autowired
     private PageFactory dd4tPageFactory;
+
     @Autowired
     private ComponentPresentationFactory dd4tComponentPresentationFactory;
+
     @Autowired
     private ModelBuilderPipeline modelBuilderPipeline;
+
     @Autowired
-    @SuppressWarnings("SpringJavaAutowiringInspection")
     private ObjectMapper objectMapper;
+
     @Autowired
     private WebApplicationContext webApplicationContext;
+
     @Autowired
     private LinkResolver linkResolver;
 
@@ -93,19 +97,18 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     private BinaryFactory binaryFactory;
 
     @Autowired
-    @SuppressWarnings("SpringJavaAutowiringInspection")
     private WebRequestContext webRequestContext;
 
     private static <T> T findPage(String path, Localization localization, TryFindPage<T> callback)
             throws ContentProviderException {
-        String processedPath = processPath(path, localization);
+        String processedPath = processPath(path);
         final int publicationId = Integer.parseInt(localization.getId());
 
-        LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
+        log.debug("Try to find page: [{}] {}", publicationId, processedPath);
         T page = callback.tryFindPage(processedPath, publicationId);
         if (page == null && !path.endsWith("/") && !hasExtension(path)) {
-            processedPath = processPath(path + "/", localization);
-            LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
+            processedPath = processPath(path + "/");
+            log.debug("Try to find page: [{}] {}", publicationId, processedPath);
             page = callback.tryFindPage(processedPath, publicationId);
         }
 
@@ -116,7 +119,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         return page;
     }
 
-    private static String processPath(String path, Localization localization) {
+    private static String processPath(String path) {
 
         if (StringUtils.isEmpty(path)) {
             return DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
@@ -142,13 +145,12 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                 final org.dd4t.contentmodel.Page genericPage;
                 try {
                     if (dd4tPageFactory.isPagePublished(path, publicationId)) {
-                        //todo
                         genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
                     } else {
                         return null;
                     }
                 } catch (ItemNotFoundException e) {
-                    LOG.debug("Page not found: [{}] {}", publicationId, path);
+                    log.debug("Page not found: [{}] {}", publicationId, path);
                     return null;
                 } catch (FactoryException e) {
                     throw new ContentProviderException("Exception while getting page model for: [" + publicationId +
@@ -188,7 +190,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                 try {
                     pageContent = dd4tPageFactory.findSourcePageByUrl(path, publicationId);
                 } catch (ItemNotFoundException e) {
-                    LOG.debug("Page not found: [{}] {}", publicationId, path);
+                    log.debug("Page not found: [{}] {}", publicationId, path);
                     return null;
                 } catch (FactoryException e) {
                     throw new ContentProviderException("Exception while getting page content for: [" + publicationId +
@@ -210,12 +212,12 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         if (contentList.getContentType() != null) {
             brokerQuery.setSchemaId(mapSchema(contentList.getContentType().getKey(), localization));
         } else {
-            LOG.error("ContentList {} - ContentType is null", contentList.getId());
+            log.error("ContentList {} - ContentType is null", contentList.getId());
         }
         if (contentList.getSort() != null) {
             brokerQuery.setSort(contentList.getSort().getKey());
         } else {
-            LOG.error("ContentList {} - Sort is null", contentList.getId());
+            log.error("ContentList {} - Sort is null", contentList.getId());
         }
 
         // Execute query
@@ -240,7 +242,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         try {
             return Integer.parseInt(schemaId);
         } catch (NumberFormatException e) {
-            LOG.warn("Error while parsing schema id: {}", schemaId, e);
+            log.warn("Error while parsing schema id: {}", schemaId, e);
             return 0;
         }
     }
@@ -254,8 +256,8 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     @Override
     public StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
             throws ContentProviderException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("getStaticContent: {} [{}] {}", path, localizationId, localizationPath);
+        if (log.isTraceEnabled()) {
+            log.trace("getStaticContent: {} [{}] {}", path, localizationId, localizationPath);
         }
 
         final String contentPath;
@@ -290,7 +292,6 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 
-
     private String prependFullUrlIfNeeded(String path) {
         String baseUrl = webRequestContext.getBaseUrl();
         if (path.contains(baseUrl)) {
@@ -303,7 +304,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
             throws ContentProviderException {
         final File file = new File(new File(new File(new File(
                 webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localizationId), path);
-        LOG.trace("getStaticContentFile: {}", file);
+        log.trace("getStaticContentFile: {}", file);
 
         final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
 
@@ -347,10 +348,10 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                     content = ImageUtils.resizeImage(content, pathInfo);
                 }
 
-                LOG.debug("Writing binary content to file: {}", file);
+                log.debug("Writing binary content to file: {}", file);
                 Files.write(file.toPath(), content);
             } else {
-                LOG.debug("File does not need to be refreshed: {}", file);
+                log.debug("File does not need to be refreshed: {}", file);
             }
 
             return new StaticContentFile(file, binaryMeta.getType());

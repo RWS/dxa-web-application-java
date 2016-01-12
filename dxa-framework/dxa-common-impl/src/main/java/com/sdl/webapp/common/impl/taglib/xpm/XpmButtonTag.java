@@ -18,7 +18,7 @@ public class XpmButtonTag extends XpmMarkupTag {
     }
 
     private boolean isInclude() {
-        return this.region.getXpmMetadata().get(RegionModelImpl.IncludedFromPageIdXpmMetadataKey) == null;
+        return this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY) == null;
     }
 
     @Override
@@ -42,8 +42,8 @@ public class XpmButtonTag extends XpmMarkupTag {
                     .build();
         } else {
             String path = this.pageContext.getServletContext().getContextPath();
-            String title = "Edit " + this.region.getXpmMetadata().get(RegionModelImpl.IncludedFromPageTitleXpmMetadataKey);
-            String editUrl = "/" + path + this.region.getXpmMetadata().get(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey);
+            String title = "Edit " + this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
+            String editUrl = "/" + path + this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY);
             return HtmlBuilders.div()
                     .withClass("xpm-button")
                     .withAttribute("style", "z-index:1")

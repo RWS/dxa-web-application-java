@@ -25,8 +25,9 @@ import com.sdl.webapp.common.api.model.page.PageModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.util.FieldUtils;
+import com.sdl.webapp.dd4t.util.FieldUtils;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
@@ -42,8 +43,6 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.resolvers.LinkResolver;
 import org.joda.time.format.ISODateTimeFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -57,9 +56,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
+@Slf4j
 final class PageBuilderImpl implements PageBuilder {
-    public static final String IMAGE_FIELD_NAME = "image";
-    private static final Logger LOG = LoggerFactory.getLogger(PageBuilderImpl.class);
+    private static final String IMAGE_FIELD_NAME = "image";
     private static final String REGION_FOR_PAGE_TITLE_COMPONENT = "Main";
     private static final String STANDARD_METADATA_FIELD_NAME = "standardMeta";
     private static final String STANDARD_METADATA_TITLE_FIELD_NAME = "name";
@@ -118,16 +117,16 @@ final class PageBuilderImpl implements PageBuilder {
             region.setMvcData(regionMvcData);
             ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
 
-            xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageIdXpmMetadataKey, page.getId());
-            xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageTitleXpmMetadataKey, page.getTitle());
-            xpmMetaDataBuilder.put(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey, includeFileName);
+            xpmMetaDataBuilder.put(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY, page.getId());
+            xpmMetaDataBuilder.put(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY, page.getTitle());
+            xpmMetaDataBuilder.put(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY, includeFileName);
 
             region.setRegions(new RegionModelSetImpl());
             region.setXpmMetadata(xpmMetaDataBuilder.build());
             return region;
 
         } catch (DxaException e) {
-            LOG.error("Error creating new MvcData from includepage", e);
+            log.error("Error creating new MvcData from includepage", e);
             return null;
         }
     }
@@ -170,7 +169,7 @@ final class PageBuilderImpl implements PageBuilder {
                     regionMap.add(model);
                 } else {
                     if (!regionMap.get(model.getName()).getMvcData().equals(model.getMvcData())) {
-                        LOG.warn("Region '%s' is defined with conflicting MVC data: [%s] and [%s]. Using the former.", model.getName(), regionMap.get(model.getName()).getMvcData(), model.getMvcData());
+                        log.warn("Region '%s' is defined with conflicting MVC data: [%s] and [%s]. Using the former.", model.getName(), regionMap.get(model.getName()).getMvcData(), model.getMvcData());
                         for (EntityModel e : model.getEntities()) {
                             regionMap.get(model.getName()).addEntity(e);
                         }
@@ -193,11 +192,11 @@ final class PageBuilderImpl implements PageBuilder {
                 existingRegion.getRegions().addAll(includePageModel.getRegions());
 
                 if (existingRegion.getXpmMetadata() != null) {
-                    existingRegion.getXpmMetadata().remove(RegionModelImpl.IncludedFromPageIdXpmMetadataKey);
-                    existingRegion.getXpmMetadata().remove(RegionModelImpl.IncludedFromPageTitleXpmMetadataKey);
-                    existingRegion.getXpmMetadata().remove(RegionModelImpl.IncludedFromPageFileNameXpmMetadataKey);
+                    existingRegion.getXpmMetadata().remove(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY);
+                    existingRegion.getXpmMetadata().remove(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
+                    existingRegion.getXpmMetadata().remove(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY);
                 }
-                LOG.info("Merged Include Page [%s] into Region [%s]. Note that merged Regions can't be edited properly in XPM (yet).",
+                log.info("Merged Include Page [%s] into Region [%s]. Note that merged Regions can't be edited properly in XPM (yet).",
                         includePageModel, existingRegion);
             } else {
                 includePageRegion.getRegions().addAll(includePageModel.getRegions());
@@ -255,7 +254,7 @@ final class PageBuilderImpl implements PageBuilder {
 
         String htmlClasses = FieldUtils.getStringValue(genericPage.getPageTemplate().getMetadata(), "htmlClasses");
         if (!Strings.isNullOrEmpty(htmlClasses)) {
-            pageModel.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\-\\ ]", ""));
+            pageModel.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\- ]", ""));
         }
 
         return pageModel;
@@ -282,7 +281,7 @@ final class PageBuilderImpl implements PageBuilder {
 
         if (pageTemplateMeta == null || !pageTemplateMeta.containsKey(REGIONS_METADATA_FIELD_NAME))// TODO: "region" instead of "regions"
         {
-            LOG.debug("No Region metadata defined for Page Template '{}'.", pageTemplate.getId());
+            log.debug("No Region metadata defined for Page Template '{}'.", pageTemplate.getId());
             return regions;
         }
 
@@ -291,7 +290,7 @@ final class PageBuilderImpl implements PageBuilder {
             for (FieldSet regionField : regionsMetaField.getEmbeddedValues()) {
                 Map<String, Field> region = regionField.getContent();
                 if (!region.containsKey(REGIONS_METADATA_FIELD_NAME_VIEW)) {
-                    LOG.warn("Region metadata without 'view' field encountered in metadata of Page Template '{}'.", pageTemplate.getId());
+                    log.warn("Region metadata without 'view' field encountered in metadata of Page Template '{}'.", pageTemplate.getId());
                     continue;
                 }
                 String view = FieldUtils.getStringValue(region, REGIONS_METADATA_FIELD_NAME_VIEW);
@@ -313,7 +312,7 @@ final class PageBuilderImpl implements PageBuilder {
                     RegionModel regionModel = CreateRegionModel(regionMvcData);
                     regions.add(regionModel);
                 } catch (IllegalAccessException | InstantiationException | DxaException | InvocationTargetException | NoSuchMethodException e) {
-                    LOG.error("Error creating region for view '{}'.", view, e);
+                    log.error("Error creating region for view '{}'.", view, e);
                 }
 
             }
@@ -431,7 +430,7 @@ final class PageBuilderImpl implements PageBuilder {
                     try {
                         value = linkResolver.resolve(componentId);
                     } catch (SerializationException | ItemNotFoundException e) {
-                        LOG.warn("Error while resolving link: {}", componentId);
+                        log.warn("Error while resolving link: {}", componentId);
                         value = componentId;
                     }
                     break;

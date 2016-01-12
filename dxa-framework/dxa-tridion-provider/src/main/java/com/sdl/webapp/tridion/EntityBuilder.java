@@ -7,9 +7,6 @@ import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 
-/**
- * Entity Builder interface
- */
 public interface EntityBuilder {
     EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel, Localization localization)
             throws ContentProviderException;

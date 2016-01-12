@@ -1,16 +1,16 @@
-package com.sdl.webapp.common.util;
+package com.sdl.webapp.dd4t.util;
 
 import com.google.common.base.Function;
+import com.sdl.webapp.common.util.Dd4tUtils;
+import com.sdl.webapp.common.util.NestedCustomMap;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.impl.EmbeddedField;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
-@Primary
 public class Dd4tUtilsImpl implements Dd4tUtils {
     @Override
     public Object getFromNestedMultiLevelMapOrAlternative(Map<String, Object> multiLevelMap, String key, Object alternative) {

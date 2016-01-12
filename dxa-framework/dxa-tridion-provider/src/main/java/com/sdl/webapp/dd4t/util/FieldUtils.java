@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.util;
+package com.sdl.webapp.dd4t.util;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;

@@ -10,7 +10,7 @@
     <packaging>war</packaging>
 
     <properties>
-        <dxa.version>1.2-SNAPSHOT</dxa.version>
+        <dxa.version>1.2</dxa.version>
         <java-version>1.7</java-version>
     </properties>
 

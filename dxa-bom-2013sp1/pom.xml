@@ -170,6 +170,12 @@
                 <version>${project.version}</version>
                 <scope>runtime</scope>
             </dependency>
+            <dependency>
+                <artifactId>dxa-module-smarttarget</artifactId>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <version>${project.version}</version>
+                <scope>runtime</scope>
+            </dependency>
 
             <!-- Tridion Content Delivery (CD) -->
             <dependency>

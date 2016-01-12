@@ -97,6 +97,17 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>smarttarget-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-smarttarget</artifactId>
+                    <version>${dxa.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
 
         <profile>
             <id>cd-7.1.0</id>

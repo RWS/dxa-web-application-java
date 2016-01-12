@@ -24,4 +24,6 @@ public interface MvcData {
     Map<String, String> getRouteValues();
 
     Map<String, Object> getMetadata();
+
+    void mergeIn(MvcData mvcData);
 }

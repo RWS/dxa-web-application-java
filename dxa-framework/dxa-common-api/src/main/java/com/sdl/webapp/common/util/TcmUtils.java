@@ -11,15 +11,36 @@ import java.util.StringTokenizer;
  */
 public final class TcmUtils {
 
+    public static final int TEMPLATE_ITEM_TYPE = 32;
+
+    private static final String TCM_S_S = "tcm:%s-%s";
+    private static final String TCM_S_S_S = "tcm:%s-%s-%s";
+
     private TcmUtils() {
     }
 
     static public String buildPublicationTcmUri(int publicationId) {
-        return "tcm:0-" + publicationId + "-1";
+        return String.format(TCM_S_S_S, 0, publicationId, 1);
+    }
+
+    static public String buildTemplateTcmUri(String publicationId, String itemId) {
+        return String.format(TCM_S_S_S, publicationId, itemId, TEMPLATE_ITEM_TYPE);
+    }
+
+    static public String buildTcmUri(String publicationId, String itemId) {
+        return String.format(TCM_S_S, publicationId, itemId);
+    }
+
+    static public String buildTcmUri(int publicationId, int itemId) {
+        return String.format(TCM_S_S, publicationId, itemId);
+    }
+
+    static public String buildTcmUri(String publicationId, String itemId, String itemType) {
+        return String.format(TCM_S_S_S, publicationId, itemId, itemType);
     }
 
     static public String buildTcmUri(int publicationId, int itemId, int itemType) {
-        return "tcm:" + publicationId + "-" + itemId + "-" + itemType;
+        return String.format(TCM_S_S_S, publicationId, itemId, itemType);
     }
 
     static public int getItemId(String tcmUri) {

@@ -29,6 +29,7 @@ import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.ComponentMetaFactory;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
@@ -52,6 +53,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static com.sdl.webapp.common.util.TcmUtils.buildTcmUri;
+import static com.sdl.webapp.common.util.TcmUtils.buildTemplateTcmUri;
 
 
 /**
@@ -165,17 +169,24 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     }
 
     @Override
-    public EntityModel getEntityModel(String id, final Localization localization) throws DxaException {
+    public EntityModel getEntityModel(@NonNull String id, final Localization localization) throws DxaException {
 
         String[] idParts = id.split("-");
         if (idParts.length != 2) {
-            throw new DxaException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", id));
+            throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", id));
         }
-        String componentUri = String.format("tcm:%s-%s", localization.getId(), idParts[0]);
-        String templateUri = String.format("tcm:%s-%s-32", localization.getId(), idParts[1]);
+
+        // todo TcmUtils is moved in a feature branch
+        String componentUri = buildTcmUri(localization.getId(), idParts[0]);
+        String templateUri = buildTemplateTcmUri(localization.getId(), idParts[1]);
+
         try {
             final ComponentPresentation componentPresentation = this.dd4tComponentPresentationFactory.getComponentPresentation(componentUri, templateUri);
-            return modelBuilderPipeline.createEntityModel(componentPresentation, localization);
+            EntityModel entityModel = modelBuilderPipeline.createEntityModel(componentPresentation, localization);
+            if (entityModel.getXpmMetadata() != null) {
+                entityModel.getXpmMetadata().put("IsQueryBased", String.valueOf(true));
+            }
+            return entityModel;
 
         } catch (FactoryException e) {
             throw new DxaItemNotFoundException(id);

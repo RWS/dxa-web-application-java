@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.model.MvcData;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -13,6 +12,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -22,7 +22,6 @@ import java.util.Map;
 @ToString
 @EqualsAndHashCode
 @Builder(toBuilder = true)
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public class MvcDataImpl implements MvcData {
     @JsonProperty("ControllerAreaName")
     private String controllerAreaName;
@@ -46,10 +45,28 @@ public class MvcDataImpl implements MvcData {
     private String regionName;
 
     @JsonIgnore
-    private Map<String, String> routeValues;
+    private Map<String, String> routeValues = new HashMap<>();
 
     @JsonIgnore
-    private Map<String, Object> metadata;
+    private Map<String, Object> metadata = new HashMap<>();
+
+    @SuppressWarnings("unused")
+    /**
+     * Default field initialization for Lombok Builder.
+     */
+    protected MvcDataImpl(String controllerAreaName, String controllerName, String actionName, String areaName,
+                          String viewName, String regionAreaName, String regionName,
+                          Map<String, String> routeValues, Map<String, Object> metadata) {
+        this.controllerName = controllerName;
+        this.actionName = actionName;
+        this.viewName = viewName;
+        this.regionAreaName = regionAreaName;
+        this.regionName = regionName;
+        this.controllerAreaName = controllerAreaName == null ? "Core" : controllerAreaName;
+        this.areaName = areaName == null ? "Core" : areaName;
+        this.routeValues = routeValues == null ? new HashMap<String, String>() : routeValues;
+        this.metadata = metadata == null ? new HashMap<String, Object>() : metadata;
+    }
 
     protected MvcDataImpl() {
     }

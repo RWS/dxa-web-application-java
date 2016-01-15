@@ -6,6 +6,7 @@ import org.junit.Test;
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl.builder;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class MvcDataCreatorTest {
 
@@ -169,6 +170,20 @@ public class MvcDataCreatorTest {
         //then
         assertEquals(mvcData, mvcData1);
         assertEquals(mvcData, mvcData2);
+    }
+
+    @Test
+    public void shouldFillInDefaultValues() {
+        //given
+
+        //when
+        MvcDataImpl mvcData = creator().builder().build();
+
+        //then
+        assertNotNull(mvcData.getMetadata());
+        assertNotNull(mvcData.getRouteValues());
+        assertNotNull(mvcData.getAreaName());
+        assertNotNull(mvcData.getControllerAreaName());
     }
 
     private void assertPartsAreSet(Parts parts, MvcData mvcData) {

@@ -155,7 +155,9 @@ final class PageBuilderImpl implements PageBuilder {
 
         final RegionModelSet regionMap = this.createPredefinedRegions(genericPage.getPageTemplate());
 
-        final RegionModelSet cpRegions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization, this.viewModelRegistry);
+        final RegionModelSet cpRegions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator,
+                genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(),
+                localization, this.viewModelRegistry);
         if (cpRegions != null) {
             for (RegionModel model : cpRegions) {
                 if (!regionMap.containsName(model.getName())) {

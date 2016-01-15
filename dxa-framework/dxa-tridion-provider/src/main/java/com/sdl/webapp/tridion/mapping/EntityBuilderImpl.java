@@ -83,6 +83,11 @@ final class EntityBuilderImpl implements EntityBuilder {
 
         Class<? extends AbstractEntityModel> entityClass = getEntityClass(viewName, component.getSchema().getRootElement());
 
+        if (entityClass == null) {
+            LOG.error("Skipping entity. Can't find the class of an entity for view name {} and component {}", viewName, component);
+            return null;
+        }
+
         final SemanticSchema semanticSchema = getSemanticSchema(component, localization);
         final AbstractEntityModel entity = (AbstractEntityModel) createEntity(component, localization, entityClass, semanticSchema);
 
@@ -148,8 +153,9 @@ final class EntityBuilderImpl implements EntityBuilder {
         }
 
         if (entityClass == null) {
-            throw new ContentProviderException("Cannot determine entity type for view name: '" + viewName +
+            LOG.error("Cannot determine entity type for view name: '" + viewName +
                     "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+            return null;
         }
 
         return entityClass;

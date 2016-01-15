@@ -5,7 +5,8 @@ import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
+import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import org.slf4j.Logger;
@@ -81,19 +82,9 @@ public class Download extends MediaItem {
 
     @Override
     public MvcData getMvcData() {
-        return new MvcDataImpl("Core:Entity:Download").defaults(MvcDataImpl.Defaults.CORE_ENTITY);
+        return MvcDataCreator.creator()
+                .fromQualifiedName("Core:Entity:Download")
+                .defaults(DefaultsMvcData.CORE_ENTITY)
+                .create();
     }
-
-
-    @Override
-    public String toString() {
-        return "Download{" +
-                "url='" + getUrl() + '\'' +
-                ", fileName='" + getFileName() + '\'' +
-                ", fileSize=" + getFileSize() +
-                ", mimeType='" + getMimeType() + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
-
 }

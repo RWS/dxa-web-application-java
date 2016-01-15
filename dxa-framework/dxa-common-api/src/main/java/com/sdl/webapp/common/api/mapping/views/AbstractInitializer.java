@@ -2,10 +2,11 @@ package com.sdl.webapp.common.api.mapping.views;
 
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,10 +54,11 @@ public abstract class AbstractInitializer {
             }
         }
 
-        MvcDataImpl mvcData = new MvcDataImpl();
-        mvcData.setAreaName(getAreaName());
-        mvcData.setViewName(viewName);
-        mvcData.setControllerName(controllerName);
+        MvcData mvcData = MvcDataImpl.builder()
+                .areaName(getAreaName())
+                .viewName(viewName)
+                .controllerName(controllerName)
+                .build();
 
         viewModelRegistry.registerViewModel(mvcData, entityClass);
     }

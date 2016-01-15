@@ -2,7 +2,7 @@ package com.sdl.webapp.common.impl.taglib.dxa;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import org.slf4j.Logger;
@@ -40,7 +40,9 @@ public class EntityTag extends AbstractMarkupTag {
         WebRequestContext webRequestContext = this.getWebRequestContext();
 
         if (!isNullOrEmpty(viewName)) {
-            entity.getMvcData().mergeIn(new MvcDataImpl(viewName));
+            MvcDataCreator.creator(entity.getMvcData())
+                    .mergeIn(
+                            MvcDataCreator.creator().fromQualifiedName(viewName).create());
         }
 
         try {

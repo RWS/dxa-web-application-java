@@ -8,11 +8,11 @@ import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.dd4t.util.FieldUtils;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
@@ -252,26 +252,19 @@ final class EntityBuilderImpl implements EntityBuilder {
     }
 
     private MvcData createMvcData(ComponentPresentation componentPresentation) {
-        // todo remove duplication from MvcDataImpl
-        final MvcDataImpl mvcData = new MvcDataImpl();
-
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
         final Map<String, Field> templateMeta = componentTemplate.getMetadata();
 
         final String[] controllerNameParts = getControllerNameParts(templateMeta);
-        mvcData.setControllerAreaName(controllerNameParts[0]);
-        mvcData.setControllerName(controllerNameParts[1]);
-        mvcData.setActionName(getActionName(templateMeta));
-
         final String[] viewNameParts = getViewNameParts(componentTemplate);
-        mvcData.setAreaName(viewNameParts[0]);
-        mvcData.setViewName(viewNameParts[1]);
-
         final String[] regionNameParts = getRegionNameParts(templateMeta);
-        mvcData.setRegionAreaName(regionNameParts[0]);
-        mvcData.setRegionName(regionNameParts[1]);
+
+        final String actionName = getActionName(templateMeta);
+
+        final Map<String, Object> mvcMetadata = this.getMvcMetadata(componentPresentation.getComponentTemplate());
 
         final Map<String, String> routeValues = new HashMap<>();
+
         String routeValuesStrings = FieldUtils.getStringValue(templateMeta, "routeValues");
         if (routeValuesStrings != null) {
             for (String value : routeValuesStrings.split(",")) {
@@ -281,10 +274,18 @@ final class EntityBuilderImpl implements EntityBuilder {
                 }
             }
         }
-        mvcData.setRouteValues(routeValues);
-        mvcData.setMetadata(this.getMvcMetadata(componentPresentation.getComponentTemplate()));
 
-        return mvcData;
+        return MvcDataImpl.builder()
+                .controllerAreaName(controllerNameParts[0])
+                .controllerName(controllerNameParts[1])
+                .areaName(viewNameParts[0])
+                .viewName(viewNameParts[1])
+                .regionAreaName(regionNameParts[0])
+                .regionName(regionNameParts[1])
+                .actionName(actionName)
+                .metadata(mvcMetadata)
+                .routeValues(routeValues)
+                .build();
     }
 
     private String[] getControllerNameParts(Map<String, Field> templateMeta) {

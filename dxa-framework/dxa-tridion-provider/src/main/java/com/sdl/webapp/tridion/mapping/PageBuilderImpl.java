@@ -15,12 +15,13 @@ import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
+import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.model.page.PageModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
@@ -106,13 +107,16 @@ final class PageBuilderImpl implements PageBuilder {
     private RegionModel getRegionFromIncludePage(PageModel page, String includeFileName) {
         try {
             String regionName = page.getName().replace(" ", "-");
-            MvcDataImpl regionMvcData = new MvcDataImpl(regionName);
-
             //if a include page title contains an area name, remove it from the region name, as this name should not be qualified
             if (regionName.contains(":")) {
                 regionName = regionName.substring(regionName.indexOf(":") + 1);
             }
-            regionMvcData = InitializeRegionMvcData(regionMvcData);
+
+            MvcData regionMvcData = MvcDataCreator.creator()
+                    .fromQualifiedName(regionName)
+                    .defaults(DefaultsMvcData.CORE_REGION)
+                    .create();
+
             RegionModelImpl region = new RegionModelImpl(regionName);
             region.setName(regionName);
             region.setMvcData(regionMvcData);
@@ -130,18 +134,6 @@ final class PageBuilderImpl implements PageBuilder {
             log.error("Error creating new MvcData from includepage", e);
             return null;
         }
-    }
-
-    private MvcDataImpl InitializeRegionMvcData(MvcDataImpl regionMvcData) {
-        if (Strings.isNullOrEmpty(regionMvcData.getControllerName())) {
-            regionMvcData.setControllerName(REGION_CONTROLLER_NAME);
-            regionMvcData.setControllerAreaName(DEFAULT_AREA_NAME);
-        } else if (Strings.isNullOrEmpty(regionMvcData.getControllerAreaName())) {
-            regionMvcData.setControllerAreaName(regionMvcData.getAreaName());
-        }
-        regionMvcData.setActionName(REGION_ACTION_NAME);
-
-        return regionMvcData;
     }
 
     @Override
@@ -227,7 +219,7 @@ final class PageBuilderImpl implements PageBuilder {
             } catch (InstantiationException e) {
                 throw new DxaException(String.format("Error instantiating new page of type %s", pageModelType), e);
             } catch (IllegalAccessException e) {
-                throw new DxaException(String.format("Illegal access exception when instantiationg new page of type %s", pageModelType), e);
+                throw new DxaException(String.format("Illegal access exception when instantiating new page of type %s", pageModelType), e);
             }
         } else {
             // Custom Page Model and Page metadata is present; do full-blown model mapping.
@@ -304,13 +296,15 @@ final class PageBuilderImpl implements PageBuilder {
                     }
                 }
 
-                MvcDataImpl regionMvcData = new MvcDataImpl(view);
-                regionMvcData.setRegionName(name);
-                regionMvcData = InitializeRegionMvcData(regionMvcData);
-
+                MvcData regionMvcData = MvcDataCreator.creator()
+                        .fromQualifiedName(view)
+                        .defaults(DefaultsMvcData.CORE_REGION)
+                        .builder()
+                        .regionName(name)
+                        .build();
 
                 try {
-                    RegionModel regionModel = CreateRegionModel(regionMvcData);
+                    RegionModel regionModel = createRegionModel(regionMvcData);
                     regions.add(regionModel);
                 } catch (IllegalAccessException | InstantiationException | DxaException | InvocationTargetException | NoSuchMethodException e) {
                     log.error("Error creating region for view '{}'.", view, e);
@@ -321,7 +315,7 @@ final class PageBuilderImpl implements PageBuilder {
         return regions;
     }
 
-    private RegionModel CreateRegionModel(MvcData regionMvcData) throws IllegalAccessException, InstantiationException, DxaException, NoSuchMethodException, InvocationTargetException {
+    private RegionModel createRegionModel(MvcData regionMvcData) throws IllegalAccessException, InstantiationException, DxaException, NoSuchMethodException, InvocationTargetException {
         Class regionModelType = this.viewModelRegistry.getViewModelType(regionMvcData);
 
         RegionModel regionModel = (RegionModel) regionModelType.getDeclaredConstructor(String.class).newInstance(regionMvcData.getViewName());
@@ -483,33 +477,24 @@ final class PageBuilderImpl implements PageBuilder {
     }
 
     private MvcData createPageMvcData(PageTemplate pageTemplate) {
-        final MvcDataImpl mvcData = new MvcDataImpl();
-
-        mvcData.setControllerAreaName(DEFAULT_AREA_NAME);
-        mvcData.setControllerName(PAGE_CONTROLLER_NAME);
-        mvcData.setActionName(PAGE_ACTION_NAME);
-
         final String[] viewNameParts = getPageViewNameParts(pageTemplate);
-        mvcData.setAreaName(viewNameParts[0]);
-        mvcData.setViewName(viewNameParts[1]);
-
-        mvcData.setMetadata(this.getMvcMetadata(pageTemplate));
-
-        return mvcData;
+        return MvcDataCreator.creator()
+                .defaults(DefaultsMvcData.CORE_PAGE)
+                .builder()
+                .areaName(viewNameParts[0])
+                .viewName(viewNameParts[1])
+                .metadata(getMvcMetadata(pageTemplate))
+                .build();
     }
 
     private MvcData createRegionMvcData(ComponentTemplate componentTemplate) {
-        final MvcDataImpl mvcData = new MvcDataImpl();
-
-        mvcData.setControllerAreaName(DEFAULT_AREA_NAME);
-        mvcData.setControllerName(REGION_CONTROLLER_NAME);
-        mvcData.setActionName(REGION_ACTION_NAME);
-
         final String[] viewNameParts = getRegionViewNameParts(componentTemplate);
-        mvcData.setAreaName(viewNameParts[0]);
-        mvcData.setViewName(viewNameParts[1]);
-
-        return mvcData;
+        return MvcDataCreator.creator()
+                .defaults(DefaultsMvcData.CORE_REGION)
+                .builder()
+                .areaName(viewNameParts[0])
+                .viewName(viewNameParts[1])
+                .build();
     }
 
     private String[] getPageViewNameParts(PageTemplate pageTemplate) {

@@ -8,9 +8,9 @@ import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.xpm.ComponentType;
 import com.sdl.webapp.common.api.xpm.XpmRegion;
 import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.CORE_REGION;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
 
 
 @EqualsAndHashCode(of = {"name"})
@@ -93,10 +93,12 @@ public class RegionModelImpl implements RegionModel {
 
     public RegionModelImpl(String name, String qualifiedViewName) throws DxaException {
         this(name);
-        this.setMvcData(new MvcDataImpl()
-                .setRegionName(qualifiedViewName)
-                .setViewName(qualifiedViewName)
-                .defaults(CORE_REGION));
+        this.setMvcData(MvcDataCreator.creator()
+                .defaults(CORE_REGION)
+                .builder()
+                .regionName(qualifiedViewName)
+                .viewName(qualifiedViewName)
+                .build());
     }
 
     @Override

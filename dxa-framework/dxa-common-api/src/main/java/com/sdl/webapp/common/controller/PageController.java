@@ -101,7 +101,7 @@ public class PageController extends BaseController {
      * @param request The request.
      * @return The view name of the page.
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {MediaType.TEXT_HTML_VALUE})
+    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {MediaType.TEXT_HTML_VALUE, MediaType.ALL_VALUE})
     public String handleGetPage(HttpServletRequest request) throws Exception {
         final String requestPath = webRequestContext.getRequestPath();
         LOG.trace("handleGetPage: requestPath={}", requestPath);

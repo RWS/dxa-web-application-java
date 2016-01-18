@@ -110,6 +110,24 @@
         </profile>
 
         <profile>
+            <id>staging-8.1.0</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_content_client</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_content_common</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>content-ambient-client</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
             <id>cd-7.1.0</id>
             <properties>
                 <build.classifier>7.1.0</build.classifier>
@@ -159,20 +177,6 @@
                     <groupId>com.sdl.dxa</groupId>
                     <artifactId>dxa-web8-provider</artifactId>
                     <version>${dxa.version}</version>
-                </dependency>
-
-                <!--todo move to profile?-->
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_content_client</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_content_common</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>content-ambient-client</artifactId>
                 </dependency>
             </dependencies>
         </profile>

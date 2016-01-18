@@ -7,22 +7,8 @@
     <context:annotation-config/>
     <context:component-scan base-package="com.sdl.webapp.tridion"/>
 
-    <bean id="binaryFactory" class="com.tridion.content.BinaryFactory"/>
-    <bean id="dynamicMetaRetriever" class="com.tridion.dynamiccontent.DynamicMetaRetriever"/>
-
     <bean id="cacheProvider" class="org.dd4t.core.providers.EHCacheProvider">
         <property name="checkForPreview" value="true"/>
-    </bean>
-
-    <bean id="componentPresentationProvider" class="com.sdl.webapp.tridion.BrokerComponentPresentationProvider">
-        <!-- TODO: CHANGE!!! -->
-        <property name="contentIsCompressed" value="false"/>
-        <property name="cacheProvider" ref="cacheProvider"/>
-    </bean>
-
-    <bean id="componentPresentationFactory" class="org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl">
-        <property name="componentPresentationProvider" ref="componentPresentationProvider"/>
-        <property name="cacheProvider" ref="cacheProvider"/>
     </bean>
 
     <bean id="pageFactory" class="org.dd4t.core.factories.impl.PageFactoryImpl">

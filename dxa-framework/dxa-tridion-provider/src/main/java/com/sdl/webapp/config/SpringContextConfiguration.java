@@ -10,27 +10,11 @@ import org.dd4t.core.serializers.impl.json.JSONSerializer;
 import org.dd4t.databind.DataBindFactory;
 import org.dd4t.databind.builder.json.JsonDataBinder;
 import org.dd4t.databind.builder.json.JsonModelConverter;
-import org.dd4t.providers.impl.BrokerLinkProvider;
-import org.dd4t.providers.impl.BrokerPageProvider;
-import org.dd4t.providers.impl.BrokerTaxonomyProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SpringContextConfiguration {
-//    DD4T beans
-    @Bean
-    public BrokerLinkProvider linkProvider() {
-        BrokerLinkProvider linkProvider = new BrokerLinkProvider();
-        linkProvider.setContentIsCompressed("false");
-        return linkProvider;
-    }
-    @Bean
-    public BrokerPageProvider pageProvider() {
-        BrokerPageProvider pageProvider = new BrokerPageProvider();
-        pageProvider.setContentIsCompressed("false");
-        return pageProvider;
-    }
 
     @Bean
     public JSONSerializer serializer() {
@@ -42,10 +26,6 @@ public class SpringContextConfiguration {
         return new SerializerFactory(serializer());
     }
 
-    @Bean
-    public BrokerTaxonomyProvider taxonomyProvider() {
-        return new BrokerTaxonomyProvider();
-    }
 
     @Bean
     public JsonModelConverter modelConverter() {

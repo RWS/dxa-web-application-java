@@ -9,4 +9,7 @@
 
     <import resource="classpath:com/sdl/context/engine/repository/beans-sdl-context-engine.xml"/>
 
+    <bean id="binaryFactory" class="com.tridion.content.BinaryFactory"/>
+    <bean id="dynamicMetaRetriever" class="com.tridion.dynamiccontent.DynamicMetaRetriever"/>
+
 </beans>

@@ -50,20 +50,19 @@
     <modules>
         <module>dxa-common-api</module>
         <module>dxa-common-impl</module>
+        <module>dxa-tridion-provider</module>
     </modules>
 
     <profiles>
         <profile>
             <id>cd-7.1.0</id>
             <modules>
-                <module>dxa-tridion-provider</module>
                 <module>dxa-tridion-2013sp1-provider</module>
             </modules>
         </profile>
         <profile>
             <id>cd-8.1.0</id>
             <modules>
-                <module>dxa-tridion-provider</module>
                 <module>dxa-web8-provider</module>
             </modules>
         </profile>
@@ -156,6 +155,12 @@
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-tridion-provider</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

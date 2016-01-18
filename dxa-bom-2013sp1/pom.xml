@@ -123,7 +123,6 @@
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-tridion-provider</artifactId>
                 <version>${project.version}</version>
-                <classifier>7.1.0</classifier>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>

@@ -7,6 +7,4 @@
     <context:annotation-config/>
     <context:component-scan base-package="com.sdl.webapp.tridion"/>
 
-    <bean id="dynamicMappingRetriever" class="com.tridion.dynamiccontent.DynamicMappingsRetriever"/>
-
 </beans>

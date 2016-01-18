@@ -7,8 +7,8 @@ import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.tridion.content.BinaryFactory;
-import com.tridion.dynamiccontent.DynamicMetaRetriever;
+import com.sdl.webapp.common.util.ImageUtils;
+import com.sdl.webapp.tridion.query.BrokerQuery;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.PageFactory;
@@ -23,6 +23,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
@@ -32,10 +34,10 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
-public class DefaultProviderTest {
+public class AbstractDefaultProviderTest {
 
     @Autowired
-    private DefaultProvider defaultProvider;
+    private AbstractDefaultProvider abstractDefaultProvider;
     @Autowired
     private ModelBuilderPipeline modelBuilderPipeline;
 
@@ -49,7 +51,7 @@ public class DefaultProviderTest {
                 .thenReturn(entity);
 
         //when
-        EntityModel entityModel = defaultProvider.getEntityModel("1-1", localization);
+        EntityModel entityModel = abstractDefaultProvider.getEntityModel("1-1", localization);
 
         //then
         assertEquals(entityModel.getXpmMetadata().get("IsQueryBased"), String.valueOf(true));
@@ -58,7 +60,7 @@ public class DefaultProviderTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfIdIsWrong() throws DxaException {
         //when
-        defaultProvider.getEntityModel("1", null);
+        abstractDefaultProvider.getEntityModel("1", null);
 
         //then
         //exception is thrown
@@ -67,7 +69,7 @@ public class DefaultProviderTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfIdIsEmpty() throws DxaException {
         //when
-        defaultProvider.getEntityModel("", null);
+        abstractDefaultProvider.getEntityModel("", null);
 
         //then
         //exception is thrown
@@ -76,7 +78,7 @@ public class DefaultProviderTest {
     @Test(expected = NullPointerException.class)
     public void shouldThrowExceptionIfIdIsNull() throws DxaException {
         //when
-        defaultProvider.getEntityModel(null, null);
+        abstractDefaultProvider.getEntityModel(null, null);
 
         //then
         //exception is thrown
@@ -85,8 +87,18 @@ public class DefaultProviderTest {
     @Configuration
     static class SpringContext {
         @Bean
-        public DefaultProvider defaultProvider() {
-            return new DefaultProvider();
+        public AbstractDefaultProvider defaultProvider() {
+            return new AbstractDefaultProvider() {
+                @Override
+                protected StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException {
+                    return mock(StaticContentFile.class);
+                }
+
+                @Override
+                protected BrokerQuery instantiateBrokerQuery() {
+                    return mock(BrokerQuery.class);
+                }
+            };
         }
 
         @Bean
@@ -117,16 +129,6 @@ public class DefaultProviderTest {
         @Bean
         public LinkResolver linkResolver() {
             return mock(LinkResolver.class);
-        }
-
-        @Bean
-        public DynamicMetaRetriever dynamicMetaRetriever() {
-            return mock(DynamicMetaRetriever.class);
-        }
-
-        @Bean
-        public BinaryFactory binaryFactory() {
-            return mock(BinaryFactory.class);
         }
 
         @Bean

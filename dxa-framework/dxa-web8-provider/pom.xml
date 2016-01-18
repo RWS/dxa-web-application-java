@@ -71,7 +71,6 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-tridion-provider</artifactId>
-            <classifier>8.1.0</classifier>
         </dependency>
 
         <dependency>

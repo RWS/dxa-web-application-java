@@ -2,6 +2,7 @@ package com.sdl.webapp.tridion.mapping;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
@@ -15,7 +16,6 @@ import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.XMLUtils;
-import com.sdl.webapp.tridion.linking.TridionLinkResolver;
 import com.sdl.webapp.tridion.xpath.XPathResolver;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
@@ -61,7 +61,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
     private WebRequestContext webRequestContext;
 
     @Autowired
-    private TridionLinkResolver linkResolver;
+    private LinkResolver linkResolver;
 
     @Autowired
     private ViewModelRegistry viewModelRegistry;

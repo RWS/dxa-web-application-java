@@ -1,6 +1,7 @@
 package com.sdl.webapp.tridion.mapping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.Files;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -9,7 +10,6 @@ import com.sdl.webapp.common.api.content.NavigationProvider;
 import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
-import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -23,12 +23,6 @@ import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.tridion.query.BrokerQuery;
 import com.sdl.webapp.tridion.query.BrokerQueryException;
-import com.tridion.content.BinaryFactory;
-import com.tridion.data.BinaryData;
-import com.tridion.dynamiccontent.DynamicMetaRetriever;
-import com.tridion.meta.BinaryMeta;
-import com.tridion.meta.ComponentMeta;
-import com.tridion.meta.ComponentMetaFactory;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
@@ -39,7 +33,6 @@ import org.dd4t.core.factories.PageFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.ByteArrayInputStream;
@@ -48,7 +41,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -61,9 +53,8 @@ import static com.sdl.webapp.util.dd4t.TcmUtils.buildTemplateTcmUri;
 /**
  * Implementation of {@link ContentProvider} that uses DD4T to provide content.
  */
-@Component
-public final class DefaultProvider implements ContentProvider, NavigationProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultProvider.class);
+public abstract class AbstractDefaultProvider implements ContentProvider, NavigationProvider {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractDefaultProvider.class);
 
     private static final String DEFAULT_PAGE_NAME = "index";
     private static final String DEFAULT_PAGE_EXTENSION = ".html";
@@ -75,8 +66,6 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
     private static final String NAVIGATION_MODEL_URL = "/navigation.json";
     private static final String TYPE_STRUCTURE_GROUP = "StructureGroup";
-
-    private static final Object LOCK = new Object();
 
     @Autowired
     private PageFactory dd4tPageFactory;
@@ -95,12 +84,6 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
     @Autowired
     private LinkResolver linkResolver;
-
-    @Autowired
-    private DynamicMetaRetriever dynamicMetaRetriever;
-
-    @Autowired
-    private BinaryFactory binaryFactory;
 
     @Autowired
     private WebRequestContext webRequestContext;
@@ -143,6 +126,8 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         return path.lastIndexOf('.') > path.lastIndexOf('/');
     }
 
+    protected abstract StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException;
+
     @Override
     public PageModel getPageModel(String path, final Localization localization) throws ContentProviderException {
         return findPage(path, localization, new TryFindPage<PageModel>() {
@@ -163,7 +148,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
                             "] " + path, e);
                 }
 
-                return modelBuilderPipeline.createPageModel(genericPage, localization, DefaultProvider.this);
+                return modelBuilderPipeline.createPageModel(genericPage, localization, AbstractDefaultProvider.this);
             }
         });
     }
@@ -218,7 +203,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
     @Override
     public void populateDynamicList(ContentList contentList, Localization localization) throws ContentProviderException {
-        final BrokerQuery brokerQuery = new BrokerQuery();
+        final BrokerQuery brokerQuery = instantiateBrokerQuery();
         brokerQuery.setStart(contentList.getStart());
         brokerQuery.setPublicationId(Integer.parseInt(localization.getId()));
         brokerQuery.setPageSize(contentList.getPageSize());
@@ -247,6 +232,8 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
         contentList.setHasMore(brokerQuery.isHasMore());
     }
+
+    protected abstract BrokerQuery instantiateBrokerQuery();
 
     private int mapSchema(String schemaKey, Localization localization) {
         final String[] parts = schemaKey.split("\\.");
@@ -305,7 +292,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 
-    private String prependFullUrlIfNeeded(String path) {
+    protected String prependFullUrlIfNeeded(String path) {
         String baseUrl = webRequestContext.getBaseUrl();
         if (path.contains(baseUrl)) {
             return path;
@@ -323,51 +310,7 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
 
         final int publicationId = Integer.parseInt(localizationId);
         try {
-            BinaryMeta binaryMeta;
-            ComponentMetaFactory factory = new ComponentMetaFactory(publicationId);
-            ComponentMeta componentMeta;
-            int itemId;
-            synchronized (LOCK) {
-                binaryMeta = dynamicMetaRetriever.getBinaryMetaByURL(prependFullUrlIfNeeded(pathInfo.getFileName()));
-                if (binaryMeta == null) {
-                    throw new StaticContentNotFoundException("No binary meta found for: [" + publicationId + "] " +
-                            pathInfo.getFileName());
-                }
-                itemId = (int) binaryMeta.getURI().getItemId();
-                componentMeta = factory.getMeta(itemId);
-                if (componentMeta == null) {
-                    throw new StaticContentNotFoundException("No meta meta found for: [" + publicationId + "] " +
-                            pathInfo.getFileName());
-                }
-            }
-
-            boolean refresh;
-            if (file.exists()) {
-                refresh = file.lastModified() < componentMeta.getLastPublicationDate().getTime();
-            } else {
-                refresh = true;
-                if (!file.getParentFile().exists()) {
-                    if (!file.getParentFile().mkdirs()) {
-                        throw new ContentProviderException("Failed to create parent directory for file: " + file);
-                    }
-                }
-            }
-
-            if (refresh) {
-                BinaryData binaryData = binaryFactory.getBinary(publicationId, itemId, binaryMeta.getVariantId());
-
-                byte[] content = binaryData.getBytes();
-                if (pathInfo.isImage() && pathInfo.isResized()) {
-                    content = ImageUtils.resizeImage(content, pathInfo);
-                }
-
-                LOG.debug("Writing binary content to file: {}", file);
-                Files.write(file.toPath(), content);
-            } else {
-                LOG.debug("File does not need to be refreshed: {}", file);
-            }
-
-            return new StaticContentFile(file, binaryMeta.getType());
+            return getStaticContentFile(file, pathInfo, publicationId);
         } catch (IOException e) {
             throw new ContentProviderException("Exception while getting static content for: [" + publicationId + "] "
                     + path, e);
@@ -443,6 +386,29 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         return new NavigationLinks(links);
     }
 
+    protected boolean isToBeRefreshed(File file, long time) throws ContentProviderException {
+        boolean refresh;
+        if (file.exists()) {
+            refresh = file.lastModified() < time;
+        } else {
+            refresh = true;
+            if (!file.getParentFile().exists()) {
+                if (!file.getParentFile().mkdirs()) {
+                    throw new ContentProviderException("Failed to create parent directory for file: " + file);
+                }
+            }
+        }
+        return refresh;
+    }
+
+    protected void writeToFile(File file, ImageUtils.StaticContentPathInfo pathInfo, byte[] content) throws ContentProviderException, IOException {
+        if (pathInfo.isImage() && pathInfo.isResized()) {
+            content = ImageUtils.resizeImage(content, pathInfo);
+        }
+
+        Files.write(content, file);
+    }
+
     private boolean createBreadcrumbLinks(SitemapItem item, String requestPath, List<Link> links) {
         if (requestPath.startsWith(item.getUrl().toLowerCase())) {
             // Add link for this matching item
@@ -489,11 +455,11 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
         T tryFindPage(String path, int publicationId) throws ContentProviderException;
     }
 
-    private static final class StaticContentFile {
+    protected static final class StaticContentFile {
         private final File file;
         private final String contentType;
 
-        private StaticContentFile(File file, String contentType) {
+        protected StaticContentFile(File file, String contentType) {
             this.file = file;
             this.contentType = StringUtils.isEmpty(contentType) ? DEFAULT_CONTENT_TYPE : contentType;
         }
@@ -506,6 +472,4 @@ public final class DefaultProvider implements ContentProvider, NavigationProvide
             return contentType;
         }
     }
-
-
 }

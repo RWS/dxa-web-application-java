@@ -9,7 +9,10 @@ import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
+import javax.annotation.PostConstruct;
+import java.util.Collections;
 import java.util.List;
 
 @org.springframework.stereotype.Component
@@ -27,6 +30,12 @@ public class ModelBuilderPipeline {
     @Autowired
     public void setEntityBuilderHandlers(List<EntityBuilder> handlers) {
         this.entityBuilderHandlers = handlers;
+    }
+
+    @PostConstruct
+    public void init() {
+        Collections.sort(pageBuilderHandlers, AnnotationAwareOrderComparator.INSTANCE);
+        Collections.sort(entityBuilderHandlers, AnnotationAwareOrderComparator.INSTANCE);
     }
 
     public PageModel createPageModel(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider) throws ContentProviderException {

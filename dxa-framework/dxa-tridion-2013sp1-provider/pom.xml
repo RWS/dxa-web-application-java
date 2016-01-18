@@ -141,6 +141,15 @@
             <artifactId>cd_cache</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.tridion.smarttarget</groupId>
+            <artifactId>smarttarget_core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.smarttarget</groupId>
+            <artifactId>smarttarget_entitymodel</artifactId>
+        </dependency>
+
         <!-- Third-party libraries used by Tridion Content Delivery -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -210,7 +219,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-jexl</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>org.dd4t</groupId>

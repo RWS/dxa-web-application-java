@@ -14,10 +14,10 @@ import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.dd4t.util.FieldUtils;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl.ComponentEntity;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
+import com.sdl.webapp.util.dd4t.FieldUtils;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
@@ -37,7 +37,7 @@ import java.util.Objects;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @org.springframework.stereotype.Component
-final class EntityBuilderImpl implements EntityBuilder {
+public final class EntityBuilderImpl implements EntityBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityBuilderImpl.class);
 

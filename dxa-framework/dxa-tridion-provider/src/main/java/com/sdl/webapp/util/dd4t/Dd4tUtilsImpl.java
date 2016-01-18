@@ -1,4 +1,4 @@
-package com.sdl.webapp.dd4t.util;
+package com.sdl.webapp.util.dd4t;
 
 import com.google.common.base.Function;
 import com.sdl.webapp.common.util.Dd4tUtils;

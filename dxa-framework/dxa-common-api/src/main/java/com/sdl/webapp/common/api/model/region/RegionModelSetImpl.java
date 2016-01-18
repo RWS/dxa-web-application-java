@@ -7,38 +7,60 @@ import lombok.ToString;
 
 import java.util.AbstractSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 @EqualsAndHashCode(callSuper = false)
 @ToString
 public class RegionModelSetImpl extends AbstractSet<RegionModel> implements RegionModelSet {
 
-    private Map<String, RegionModel> modelMap = new HashMap<>();
+    private Map<String, RegionModel> modelMapByName = new HashMap<>();
+    private Map<Class<? extends RegionModel>, Set<RegionModel>> modelMapByClass = new HashMap<>();
 
     @Override
     public Iterator<RegionModel> iterator() {
-        return modelMap.values().iterator();
+        return modelMapByName.values().iterator();
     }
 
     @Override
     public int size() {
-        return modelMap.size();
+        return modelMapByName.size();
     }
 
     @Override
     public boolean add(RegionModel regionModel) {
-        return !Objects.equals(modelMap.put(regionModel.getName(), regionModel), regionModel);
+        if (!Objects.equals(modelMapByName.put(regionModel.getName(), regionModel), regionModel)) {
+            Set<RegionModel> modelSet = modelMapByClass.get(regionModel.getClass());
+            if (modelSet == null) {
+                modelSet = new HashSet<>();
+                modelMapByClass.put(regionModel.getClass(), modelSet);
+            }
+            modelSet.add(regionModel);
+            return true;
+        }
+        return false;
     }
 
     @Override
     public RegionModel get(String name) {
-        return modelMap.get(name);
+        return modelMapByName.get(name);
+    }
+
+    @Override
+    public Set<RegionModel> get(Class<? extends RegionModel> clazz) {
+        return modelMapByClass.get(clazz);
     }
 
     @Override
     public boolean containsName(final String name) {
-        return modelMap.containsKey(name);
+        return modelMapByName.containsKey(name);
+    }
+
+    @Override
+    public boolean containsClass(Class<? extends RegionModel> clazz) {
+        return modelMapByClass.containsKey(clazz);
     }
 }

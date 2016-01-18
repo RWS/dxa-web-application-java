@@ -1,13 +1,9 @@
-package com.sdl.webapp.common.util;
+package com.sdl.webapp.util.dd4t;
 
 import java.util.StringTokenizer;
 
 /**
- * TCM Utils
- * <p/>
  * Simple utility functions to process TCM-URIs.
- *
- * @author nic
  */
 public final class TcmUtils {
 

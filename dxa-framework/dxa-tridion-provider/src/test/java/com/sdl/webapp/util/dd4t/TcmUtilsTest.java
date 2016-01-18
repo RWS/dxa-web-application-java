@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.util;
+package com.sdl.webapp.util.dd4t;
 
 import org.junit.Test;
 
@@ -57,4 +57,5 @@ public class TcmUtilsTest {
         assertEquals(expected, result);
         assertEquals(expected, result2);
     }
+
 }

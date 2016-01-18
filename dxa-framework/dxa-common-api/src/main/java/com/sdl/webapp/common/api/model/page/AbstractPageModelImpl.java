@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
+import org.apache.commons.collections.CollectionUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -95,7 +96,7 @@ public abstract class AbstractPageModelImpl implements PageModel {
 
     @Override
     public boolean containsRegion(String regionName) {
-        return getRegions().containsName(regionName);
+        return CollectionUtils.isEmpty(getRegions()) || getRegions().containsName(regionName);
     }
 
     @Override

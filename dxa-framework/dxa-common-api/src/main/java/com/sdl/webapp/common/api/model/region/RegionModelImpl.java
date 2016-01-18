@@ -32,7 +32,6 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGIO
 
 @EqualsAndHashCode(of = {"name"})
 public class RegionModelImpl implements RegionModel {
-
     /**
      * The XPM metadata key used for the ID of the (Include) Page from which the Region originates.
      * Avoid using this in implementation code because it may change in a future release.

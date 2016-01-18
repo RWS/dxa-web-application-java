@@ -7,11 +7,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 
-/**
- * MimeUtils
- *
- * @author nic
- */
 public final class MimeUtils {
 
     static HashMap<String, String> MIME_TYPES = new HashMap<>();

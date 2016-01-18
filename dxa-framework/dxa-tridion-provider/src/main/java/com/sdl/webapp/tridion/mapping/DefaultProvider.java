@@ -54,8 +54,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import static com.sdl.webapp.common.util.TcmUtils.buildTcmUri;
-import static com.sdl.webapp.common.util.TcmUtils.buildTemplateTcmUri;
+import static com.sdl.webapp.util.dd4t.TcmUtils.buildTcmUri;
+import static com.sdl.webapp.util.dd4t.TcmUtils.buildTemplateTcmUri;
 
 
 /**

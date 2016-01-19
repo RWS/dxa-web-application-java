@@ -53,12 +53,15 @@ public abstract class BaseFormatter implements DataFormatter {
      */
     public List<String> getValidTypes(List<String> allowedTypes) {
         List<String> res = new ArrayList<String>();
-        String[] acceptTypes = request.getHeader("Accept").split(",");
-        if (acceptTypes != null) {
-            for (String type : acceptTypes) {
-                for (String mediaType : allowedTypes) {
-                    if (type.contains(mediaType)) {
-                        res.add(type);
+        String requestHeader = request.getHeader("Accept");
+        if (requestHeader != null) {
+            String[] acceptTypes = requestHeader.split(",");
+            if (acceptTypes != null) {
+                for (String type : acceptTypes) {
+                    for (String mediaType : allowedTypes) {
+                        if (type.contains(mediaType)) {
+                            res.add(type);
+                        }
                     }
                 }
             }

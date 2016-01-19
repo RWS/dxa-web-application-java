@@ -108,6 +108,9 @@
         <prudent>true</prudent>
     </appender>
     <appender name="rollingADFLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="com.sdl.webapp.common.impl.LogbackRepeatingToSingleFilter">
+            <loggerName>com.tridion.ambientdata.AmbientDataContext</loggerName>
+        </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${log.folder}/cd_adf.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>${log.history}</maxHistory>
@@ -142,6 +145,9 @@
         <prudent>true</prudent>
     </appender>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="com.sdl.webapp.common.impl.LogbackRepeatingToSingleFilter">
+            <loggerName>com.tridion.ambientdata.AmbientDataContext</loggerName>
+        </filter>
         <encoder>
             <pattern>${log.pattern}</pattern>
         </encoder>

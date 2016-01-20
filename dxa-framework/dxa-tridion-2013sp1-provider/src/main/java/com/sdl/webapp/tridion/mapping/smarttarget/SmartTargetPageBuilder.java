@@ -9,6 +9,9 @@ import com.sdl.webapp.common.api.model.entity.smarttarget.SmartTargetPageModel;
 import com.sdl.webapp.common.api.model.entity.smarttarget.SmartTargetPromotion;
 import com.sdl.webapp.common.api.model.entity.smarttarget.SmartTargetRegion;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
+import com.sdl.webapp.util.dd4t.TcmUtils;
+import com.tridion.ambientdata.AmbientDataContext;
+import com.tridion.ambientdata.claimstore.ClaimStore;
 import com.tridion.smarttarget.SmartTargetException;
 import com.tridion.smarttarget.analytics.tracking.ExperimentDimensions;
 import com.tridion.smarttarget.query.ExperimentCookie;
@@ -16,11 +19,16 @@ import com.tridion.smarttarget.query.Item;
 import com.tridion.smarttarget.query.Promotion;
 import com.tridion.smarttarget.query.ResultSet;
 import com.tridion.smarttarget.query.ResultSetImpl;
+import com.tridion.smarttarget.query.builder.PageCriteria;
+import com.tridion.smarttarget.query.builder.PublicationCriteria;
+import com.tridion.smarttarget.query.builder.QueryBuilder;
+import com.tridion.smarttarget.query.builder.RegionCriteria;
+import com.tridion.smarttarget.utils.AmbientDataHelper;
 import com.tridion.smarttarget.utils.CookieProcessor;
+import com.tridion.smarttarget.utils.TcmUri;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.dd4t.core.util.TCMURI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -35,7 +43,6 @@ import java.util.Map;
 
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Collections2.transform;
-import static com.sdl.webapp.util.dd4t.TcmUtils.buildTcmUri;
 
 @Component
 @Order(1000)
@@ -52,7 +59,15 @@ public class SmartTargetPageBuilder extends AbstractSmartTargetPageBuilder {
 
     @Override
     protected void processQueryAndPromotions(Localization localization, SmartTargetPageModel stPageModel, String promotionViewName) {
-        @NonNull final ResultSet resultSet = executeSmartTargetQuery(stPageModel, localization);
+        @NonNull final ResultSet resultSet;
+        try {
+            resultSet = executeSmartTargetQuery(stPageModel, localization);
+        } catch (SmartTargetException e) {
+            log.error("Smart target exception", e);
+            //todo do something more adequate
+            return;
+        }
+
         @NonNull final List<Promotion> promotions = resultSet.getPromotions() == null ?
                 Collections.<Promotion>emptyList() : resultSet.getPromotions();
         log.debug("SmartTarget query returned {} Promotions.", promotions.size());
@@ -162,14 +177,22 @@ public class SmartTargetPageBuilder extends AbstractSmartTargetPageBuilder {
     }
 
     @SneakyThrows(ParseException.class)
-    private ResultSet executeSmartTargetQuery(SmartTargetPageModel stPageModel, Localization localization) {
-        int publicationId = Integer.parseInt(localization.getId());
-        TCMURI pageUri = new TCMURI(buildTcmUri(publicationId, Integer.parseInt(stPageModel.getId()), 64));
-        TCMURI publicationUri = new TCMURI(buildTcmUri(0, publicationId, 1));
+    private ResultSet executeSmartTargetQuery(SmartTargetPageModel stPageModel, Localization localization) throws SmartTargetException {
+        TcmUri pageUri = new TcmUri(TcmUtils.buildPageTcmUri(localization.getId(), stPageModel.getId()));
+        TcmUri publicationUri = new TcmUri(TcmUtils.buildPublicationTcmUri(pageUri.getPublicationId()));
 
-        //todo implement
+        ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
+        String triggers = AmbientDataHelper.getTriggers(claimStore);
 
+        QueryBuilder queryBuilder = new QueryBuilder()
+                .addCriteria(new PublicationCriteria(publicationUri))
+                .addCriteria(new PageCriteria(pageUri));
+        queryBuilder.parseQueryString(triggers);
 
-        return null;
+        for (SmartTargetRegion region : stPageModel.getRegions().get(SmartTargetRegion.class)) {
+            queryBuilder.addCriteria(new RegionCriteria(region.getName()));
+        }
+
+        return queryBuilder.execute();
     }
 }

@@ -7,7 +7,9 @@ import java.util.StringTokenizer;
  */
 public final class TcmUtils {
 
+    public static final int PUBLICATION_ITEM_TYPE = 1;
     public static final int TEMPLATE_ITEM_TYPE = 32;
+    public static final int PAGE_ITEM_TYPE = 64;
 
     private static final String TCM_S_S = "tcm:%s-%s";
     private static final String TCM_S_S_S = "tcm:%s-%s-%s";
@@ -16,11 +18,15 @@ public final class TcmUtils {
     }
 
     static public String buildPublicationTcmUri(int publicationId) {
-        return String.format(TCM_S_S_S, 0, publicationId, 1);
+        return String.format(TCM_S_S_S, 0, publicationId, PUBLICATION_ITEM_TYPE);
     }
 
     static public String buildTemplateTcmUri(String publicationId, String itemId) {
         return String.format(TCM_S_S_S, publicationId, itemId, TEMPLATE_ITEM_TYPE);
+    }
+
+    static public String buildPageTcmUri(String publicationId, String itemId) {
+        return String.format(TCM_S_S_S, publicationId, itemId, PAGE_ITEM_TYPE);
     }
 
     static public String buildTcmUri(String publicationId, String itemId) {

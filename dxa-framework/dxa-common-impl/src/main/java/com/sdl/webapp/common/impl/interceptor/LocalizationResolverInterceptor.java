@@ -41,8 +41,8 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
         webRequestContext.setContextPath(urlPathHelper.getOriginatingContextPath(request));
         webRequestContext.setRequestPath(urlPathHelper.getOriginatingRequestUri(request));
 
-        webRequestContext.setIsInclude(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null);
-        webRequestContext.setIsDeveloperMode(request.getRequestURI().contains("//localhost"));
+        webRequestContext.setInclude(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null);
+        webRequestContext.setDeveloperMode(request.getRequestURI().contains("//localhost"));
 
         // Check if the cookie set by CID is present
         webRequestContext.setContextCookiePresent(false);
@@ -62,7 +62,7 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
         final Localization localization = localizationResolver.getLocalization(fullUrl);
         if (LOG.isTraceEnabled()) {
             LOG.trace("Localization for {} is: [{}] {}",
-                    new Object[]{fullUrl, localization.getId(), localization.getPath()});
+                    fullUrl, localization.getId(), localization.getPath());
         }
         webRequestContext.setLocalization(localization);
 

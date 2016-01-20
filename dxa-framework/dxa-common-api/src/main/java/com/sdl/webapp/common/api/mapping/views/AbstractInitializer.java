@@ -21,7 +21,7 @@ public abstract class AbstractInitializer {
     private ViewModelRegistry viewModelRegistry;
 
     @PostConstruct
-    public final void initialize() {
+    private void initialize() {
         if (getClass().isAnnotationPresent(RegisteredView.class)) {
             LOG.debug("AutoRegistering (@RegisteredView present) view for module {}", getAreaName());
             registerViewEntry(getClass().getAnnotation(RegisteredView.class));

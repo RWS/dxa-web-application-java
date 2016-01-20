@@ -166,16 +166,5 @@
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
         </dependency>
-
-        <!--<dependency>-->
-        <!--<groupId>com.tridion.smarttarget</groupId>-->
-        <!--<artifactId>smarttarget_core</artifactId>-->
-        <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-        <!--<groupId>com.tridion.smarttarget</groupId>-->
-        <!--<artifactId>smarttarget_entitymodel</artifactId>-->
-        <!--<scope>provided</scope>-->
-        <!--</dependency>-->
     </dependencies>
 </project>

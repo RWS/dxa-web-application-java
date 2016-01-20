@@ -140,15 +140,6 @@
             <artifactId>cd_cache</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.tridion.smarttarget</groupId>
-            <artifactId>smarttarget_core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.smarttarget</groupId>
-            <artifactId>smarttarget_entitymodel</artifactId>
-        </dependency>
-
         <!-- Third-party libraries used by Tridion Content Delivery -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -292,6 +283,15 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tridion.smarttarget</groupId>
+            <artifactId>smarttarget_core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.smarttarget</groupId>
+            <artifactId>smarttarget_entitymodel</artifactId>
         </dependency>
     </dependencies>
 

@@ -50,8 +50,9 @@ public class RegionModelSetImpl extends AbstractSet<RegionModel> implements Regi
     }
 
     @Override
-    public Set<RegionModel> get(Class<? extends RegionModel> clazz) {
-        return modelMapByClass.get(clazz);
+    public <T extends RegionModel> Set<T> get(Class<T> clazz) {
+        //noinspection unchecked
+        return (Set<T>) modelMapByClass.get(clazz);
     }
 
     @Override

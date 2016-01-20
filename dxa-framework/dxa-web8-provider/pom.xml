@@ -213,15 +213,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.tridion.smarttarget</groupId>
-            <artifactId>smarttarget_core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.smarttarget</groupId>
-            <artifactId>smarttarget_entitymodel</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -339,6 +330,15 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.tridion.smarttarget</groupId>
+            <artifactId>smarttarget_core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion.smarttarget</groupId>
+            <artifactId>smarttarget_entitymodel</artifactId>
         </dependency>
     </dependencies>
 

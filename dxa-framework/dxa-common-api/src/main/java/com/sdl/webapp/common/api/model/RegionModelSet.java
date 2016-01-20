@@ -6,7 +6,7 @@ public interface RegionModelSet extends Set<RegionModel> {
 
     RegionModel get(String name);
 
-    Set<RegionModel> get(Class<? extends RegionModel> clazz);
+    <T extends RegionModel> Set<T> get(Class<T> clazz);
 
     boolean containsName(String name);
 

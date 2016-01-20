@@ -8,6 +8,8 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.impl.contextengine.BrowserClaims;
 import com.sdl.webapp.common.impl.contextengine.DeviceClaims;
+import lombok.Getter;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Stack;
 
 
@@ -27,14 +30,25 @@ import java.util.Stack;
 @Component
 @Primary
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Setter
+@Getter
 public class WebRequestContextImpl implements WebRequestContext {
     private static final Logger LOG = LoggerFactory.getLogger(WebRequestContextImpl.class);
     private static final int DEFAULT_WIDTH = 1024;
     private static final int MAX_WIDTH = 1024;
+
     @Autowired
     private MediaHelper mediaHelper;
+
+    @Autowired
+    private HttpServletRequest servletRequest;
+
+    @Autowired
+    private ContextEngine contextEngine;
+
+    private Stack<RegionModel> parentRegionstack = new Stack<>();
     private Localization localization;
-    private boolean hasNoLocalization;
+    private boolean noLocalization;
     private Integer maxMediaWidth;
     private Double pixelRatio;
     private ScreenWidth screenwidth;
@@ -44,32 +58,13 @@ public class WebRequestContextImpl implements WebRequestContext {
     private String contextPath;
     private String requestPath;
     private String pageId;
-    private Boolean isDeveloperMode;
-    private Boolean isInclude;
+    private boolean developerMode;
+    private boolean include;
     private Stack<Integer> containerSizeStack = new Stack<>();
 
-    @Autowired
-    private ContextEngine contextEngine;
-    private Stack<RegionModel> parentRegionstack = new Stack<>();
-
     @Override
-    public Localization getLocalization() {
-        return localization;
-    }
-
-    @Override
-    public void setLocalization(Localization localization) {
-        this.localization = localization;
-    }
-
-    @Override
-    public boolean getHasNoLocalization() {
-        return hasNoLocalization;
-    }
-
-    @Override
-    public void setHasNoLocalization(boolean value) {
-        hasNoLocalization = value;
+    public String getFullUrl() {
+        return baseUrl + contextPath + requestPath;
     }
 
     @Override
@@ -101,91 +96,10 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     @Override
-    public boolean isContextCookiePresent() {
-        return contextCookiePresent;
-    }
-
-    @Override
-    public void setContextCookiePresent(boolean present) {
-        this.contextCookiePresent = present;
-    }
-
-    @Override
-    public String getBaseUrl() {
-        return baseUrl;
-    }
-
-    @Override
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
-    }
-
-    @Override
-    public String getContextPath() {
-        return contextPath;
-    }
-
-    @Override
-    public void setContextPath(String contextPath) {
-        this.contextPath = contextPath;
-    }
-
-    @Override
-    public String getRequestPath() {
-        return requestPath;
-    }
-
-    @Override
-    public void setRequestPath(String requestPath) {
-        this.requestPath = requestPath;
-    }
-
-    @Override
-    public String getFullUrl() {
-        return baseUrl + contextPath + requestPath;
-    }
-
-    @Override
-    public ContextEngine getContextEngine() {
-        return this.contextEngine;
-    }
-
-    @Override
-    public String getPageId() {
-        return pageId;
-    }
-
-    @Override
-    public void setPageId(String value) {
-        this.pageId = value;
-    }
-
-    @Override
     public boolean isDeveloperMode() {
-        if (this.isDeveloperMode == null) {
-            this.isDeveloperMode = getIsDeveloperMode();
-        }
-        return this.isDeveloperMode;
+        return this.developerMode;
     }
 
-    private boolean getIsDeveloperMode() {
-        return this.isDeveloperMode;
-    }
-
-    @Override
-    public void setIsDeveloperMode(boolean value) {
-        this.isDeveloperMode = value;
-    }
-
-    @Override
-    public boolean getIsInclude() {
-        return this.isInclude;
-    }
-
-    @Override
-    public void setIsInclude(boolean value) {
-        this.isInclude = value;
-    }
 
     @Override
     public boolean isPreview() {

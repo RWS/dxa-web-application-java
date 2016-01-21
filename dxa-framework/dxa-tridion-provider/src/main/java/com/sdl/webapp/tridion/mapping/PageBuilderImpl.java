@@ -48,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -61,7 +60,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
-@Order(value = Ordered.HIGHEST_PRECEDENCE)
 public final class PageBuilderImpl implements PageBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(EntityBuilderImpl.class);
 
@@ -108,6 +106,11 @@ public final class PageBuilderImpl implements PageBuilder {
 
     @Autowired
     private ComponentPresentationFactory dd4tComponentPresentationFactory;
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
+    }
 
     private RegionModel getRegionFromIncludePage(PageModel page, String includeFileName) {
         try {

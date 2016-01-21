@@ -5,4 +5,10 @@ import lombok.ToString;
 
 @ToString
 public class PageModelImpl extends AbstractPageModelImpl implements PageModel {
+    public PageModelImpl() {
+    }
+
+    public PageModelImpl(PageModel other) {
+        super(other);
+    }
 }

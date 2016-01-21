@@ -30,7 +30,6 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
@@ -45,7 +44,6 @@ import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Collections2.transform;
 
 @Component
-@Order(1000)
 @Slf4j
 public class SmartTargetPageBuilder extends AbstractSmartTargetPageBuilder {
 
@@ -59,12 +57,17 @@ public class SmartTargetPageBuilder extends AbstractSmartTargetPageBuilder {
 
     @Override
     protected void processQueryAndPromotions(Localization localization, SmartTargetPageModel stPageModel, String promotionViewName) {
-        @NonNull final ResultSet resultSet;
+        final ResultSet resultSet;
         try {
-            resultSet = executeSmartTargetQuery(stPageModel, localization);
+            resultSet = executeSmartTargetQuery(stPageModel);
         } catch (SmartTargetException e) {
             log.error("Smart target exception", e);
             //todo do something more adequate
+            return;
+        }
+
+        if (resultSet == null) {
+            log.warn("SmartTarget API returned null as a result for query. This can be because of timeout. Skipping processing promotions.");
             return;
         }
 
@@ -177,17 +180,19 @@ public class SmartTargetPageBuilder extends AbstractSmartTargetPageBuilder {
     }
 
     @SneakyThrows(ParseException.class)
-    private ResultSet executeSmartTargetQuery(SmartTargetPageModel stPageModel, Localization localization) throws SmartTargetException {
-        TcmUri pageUri = new TcmUri(TcmUtils.buildPageTcmUri(localization.getId(), stPageModel.getId()));
+    private ResultSet executeSmartTargetQuery(SmartTargetPageModel stPageModel) throws SmartTargetException {
+        TcmUri pageUri = new TcmUri(stPageModel.getId());
         TcmUri publicationUri = new TcmUri(TcmUtils.buildPublicationTcmUri(pageUri.getPublicationId()));
 
         ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
         String triggers = AmbientDataHelper.getTriggers(claimStore);
 
-        QueryBuilder queryBuilder = new QueryBuilder()
+        QueryBuilder queryBuilder = new QueryBuilder();
+        queryBuilder.setMaxItems(100);
+        queryBuilder.parseQueryString(triggers);
+        queryBuilder
                 .addCriteria(new PublicationCriteria(publicationUri))
                 .addCriteria(new PageCriteria(pageUri));
-        queryBuilder.parseQueryString(triggers);
 
         for (SmartTargetRegion region : stPageModel.getRegions().get(SmartTargetRegion.class)) {
             queryBuilder.addCriteria(new RegionCriteria(region.getName()));

@@ -31,6 +31,11 @@ public abstract class AbstractSmartTargetPageBuilder implements PageBuilder {
     private SmartTargetEnabled smartTargetEnabled;
 
     @Override
+    public int getOrder() {
+        return 1000;
+    }
+
+    @Override
     public PageModel createPage(Page page, PageModel pageModel, Localization localization, ContentProvider contentProvider)
             throws ContentProviderException {
 
@@ -68,7 +73,11 @@ public abstract class AbstractSmartTargetPageBuilder implements PageBuilder {
                 return stPageModel;
             }
 
-            processMetadataForCurrentRegionModel(stPageModel, metadata, regionName);
+            if (!(stPageModel.getRegions().get(regionName) instanceof SmartTargetRegion)) {
+                continue;
+            }
+
+            processMetadataForCurrentRegionModel(stPageModel, metadata, (SmartTargetRegion) stPageModel.getRegions().get(regionName));
 
             String promotionViewName = getPromotionViewName(localization);
             log.debug("Using promotion view name {}", promotionViewName);
@@ -94,8 +103,7 @@ public abstract class AbstractSmartTargetPageBuilder implements PageBuilder {
         return regionName;
     }
 
-    private void processMetadataForCurrentRegionModel(SmartTargetPageModel stPageModel, Map<String, Field> metadata, String regionName) {
-        SmartTargetRegion regionModel = (SmartTargetRegion) stPageModel.getRegions().get(regionName);
+    private void processMetadataForCurrentRegionModel(SmartTargetPageModel stPageModel, Map<String, Field> metadata, SmartTargetRegion regionModel) {
         regionModel.setMaxItems(100);
         if (metadata.containsKey("maxItems")) {
             String value = FieldUtils.getStringValue(metadata.get("maxItems"));

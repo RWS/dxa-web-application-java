@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api.model.entity.smarttarget;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Data;
@@ -30,6 +31,10 @@ public class SmartTargetRegion extends RegionModelImpl {
 
     public SmartTargetRegion(String name, String qualifiedViewName) throws DxaException {
         super(name, qualifiedViewName);
+    }
+
+    public SmartTargetRegion(MvcData mvcData) throws DxaException {
+        super(mvcData);
     }
 
     @Override

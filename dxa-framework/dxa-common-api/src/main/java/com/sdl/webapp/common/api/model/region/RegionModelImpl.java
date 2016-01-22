@@ -100,6 +100,11 @@ public class RegionModelImpl implements RegionModel {
                 .build());
     }
 
+    public RegionModelImpl(MvcData mvcData) throws DxaException {
+        this(mvcData.getRegionName());
+        this.mvcData = mvcData;
+    }
+
     @Override
     public void addEntity(EntityModel entity) {
         this.entities.add(entity);

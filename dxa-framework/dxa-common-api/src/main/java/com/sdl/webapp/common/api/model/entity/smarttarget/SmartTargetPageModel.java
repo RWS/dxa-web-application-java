@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity.smarttarget;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.page.AbstractPageModelImpl;
 import lombok.EqualsAndHashCode;
@@ -15,6 +16,7 @@ public class SmartTargetPageModel extends AbstractPageModelImpl {
     @Getter
     @Setter
     @Accessors(chain = true)
+    @JsonProperty("AllowDuplicates")
     private boolean allowDuplicates;
 
     public SmartTargetPageModel() {

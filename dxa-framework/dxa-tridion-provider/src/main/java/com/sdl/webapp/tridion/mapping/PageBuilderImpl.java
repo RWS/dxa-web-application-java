@@ -1,10 +1,8 @@
 package com.sdl.webapp.tridion.mapping;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.RegionBuilder;
@@ -22,6 +20,7 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl.MvcDataImplBuilder;
 import com.sdl.webapp.common.api.model.page.PageModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
@@ -29,6 +28,7 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
 import com.sdl.webapp.util.dd4t.FieldUtils;
+import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
@@ -50,6 +50,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,6 +59,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Component
 public final class PageBuilderImpl implements PageBuilder {
@@ -85,9 +88,6 @@ public final class PageBuilderImpl implements PageBuilder {
 
     @Autowired
     private LinkResolver linkResolver;
-
-    @Autowired
-    private ConditionalEntityEvaluator conditionalEntityEvaluator;
 
     @Autowired
     private WebRequestContext webRequestContext;
@@ -140,6 +140,7 @@ public final class PageBuilderImpl implements PageBuilder {
 
         } catch (DxaException e) {
             LOG.error("Error creating new MvcData from includepage", e);
+            //todo return something but not null
             return null;
         }
     }
@@ -155,31 +156,15 @@ public final class PageBuilderImpl implements PageBuilder {
             throw new ContentProviderException(e);
         }
 
-
         String localizationPath = localization.getPath();
         if (!localizationPath.endsWith("/")) {
             localizationPath = localizationPath + "/";
         }
 
-        final RegionModelSet regionMap = this.createPredefinedRegions(genericPage.getPageTemplate());
+        final RegionModelSet regions = mergeAllTopLevelRegions(this.createPredefinedRegions(genericPage.getPageTemplate()),
+                this.regionBuilder.buildRegions(page, genericPage.getComponentPresentations(),
+                        new DD4TRegionBuilderCallback(), localization));
 
-        final RegionModelSet cpRegions = this.regionBuilder.buildRegions(page, this.conditionalEntityEvaluator,
-                genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(),
-                localization, this.viewModelRegistry);
-        if (cpRegions != null) {
-            for (RegionModel model : cpRegions) {
-                if (!regionMap.containsName(model.getName())) {
-                    regionMap.add(model);
-                } else {
-                    if (!regionMap.get(model.getName()).getMvcData().equals(model.getMvcData())) {
-                        LOG.warn("Region '%s' is defined with conflicting MVC data: [%s] and [%s]. Using the former.", model.getName(), regionMap.get(model.getName()).getMvcData(), model.getMvcData());
-                        for (EntityModel e : model.getEntities()) {
-                            regionMap.get(model.getName()).addEntity(e);
-                        }
-                    }
-                }
-            }
-        }
         // Get and add includes
         final String pageTypeId = genericPage.getPageTemplate().getId().split("-")[1];
         for (String include : localization.getIncludes(pageTypeId)) {
@@ -188,28 +173,54 @@ public final class PageBuilderImpl implements PageBuilder {
             final RegionModel includePageRegion = getRegionFromIncludePage(includePageModel, include);
 
             RegionModel existingRegion;
-            if (regionMap.containsName(includePageRegion.getName())) {
-                // Region with same name already exists; merge include Page Region.
-                existingRegion = regionMap.get(includePageRegion.getName());
+            if (includePageRegion != null) {
+                if (regions.containsName(includePageRegion.getName())) {
+                    // Region with same name already exists; merge include Page Region.
+                    existingRegion = regions.get(includePageRegion.getName());
 
-                existingRegion.getRegions().addAll(includePageModel.getRegions());
+                    existingRegion.getRegions().addAll(includePageModel.getRegions());
 
-                if (existingRegion.getXpmMetadata() != null) {
-                    existingRegion.getXpmMetadata().remove(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY);
-                    existingRegion.getXpmMetadata().remove(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
-                    existingRegion.getXpmMetadata().remove(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY);
+                    Map<String, String> xpmMetadata = existingRegion.getXpmMetadata();
+                    if (xpmMetadata != null) {
+                        xpmMetadata.remove(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY);
+                        xpmMetadata.remove(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
+                        xpmMetadata.remove(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY);
+                    }
+
+                    LOG.info("Merged Include Page [%s] into Region [%s]. Note that merged Regions can't be edited properly in XPM (yet).",
+                            includePageModel, existingRegion);
+                } else {
+                    includePageRegion.getRegions().addAll(includePageModel.getRegions());
+                    regions.add(includePageRegion);
                 }
-                LOG.info("Merged Include Page [%s] into Region [%s]. Note that merged Regions can't be edited properly in XPM (yet).",
-                        includePageModel, existingRegion);
-            } else {
-                includePageRegion.getRegions().addAll(includePageModel.getRegions());
-                regionMap.add(includePageRegion);
             }
         }
 
-        page.setRegions(regionMap);
+        page.setRegions(regions);
 
         return page;
+    }
+
+    private RegionModelSet mergeAllTopLevelRegions(@NonNull RegionModelSet predefinedRegions, @NonNull RegionModelSet regions) {
+        for (RegionModel model : regions) {
+            RegionModel predefined = predefinedRegions.get(model.getName());
+
+            if (predefined == null) {
+                predefinedRegions.add(model);
+                continue;
+            }
+
+            if (!Objects.equals(predefined.getMvcData(), model.getMvcData())) {
+                LOG.warn("Region '%s' is defined with conflicting MVC data: [%s] and [%s]. Using the former.",
+                        model.getName(), predefined.getMvcData(), model.getMvcData());
+
+                for (EntityModel entityModel : model.getEntities()) {
+                    predefined.addEntity(entityModel);
+                }
+            }
+        }
+
+        return predefinedRegions;
     }
 
     private PageModel createPageModel(org.dd4t.contentmodel.Page genericPage, Localization localization) throws DxaException, ContentProviderException {
@@ -256,7 +267,7 @@ public final class PageBuilderImpl implements PageBuilder {
         pageModel.setMvcData(createPageMvcData(genericPage.getPageTemplate()));
 
         String htmlClasses = FieldUtils.getStringValue(genericPage.getPageTemplate().getMetadata(), "htmlClasses");
-        if (!Strings.isNullOrEmpty(htmlClasses)) {
+        if (!isNullOrEmpty(htmlClasses)) {
             pageModel.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\- ]", ""));
         }
 
@@ -278,12 +289,12 @@ public final class PageBuilderImpl implements PageBuilder {
 
     private RegionModelSet createPredefinedRegions(PageTemplate pageTemplate) {
 
-        final Map<String, Field> pageTemplateMeta = pageTemplate.getMetadata();
-
         RegionModelSet regions = new RegionModelSetImpl();
 
-        if (pageTemplateMeta == null || !pageTemplateMeta.containsKey(REGIONS_METADATA_FIELD_NAME))// TODO: "region" instead of "regions"
-        {
+        final Map<String, Field> pageTemplateMeta = pageTemplate.getMetadata();
+
+        // TODO: "region" instead of "regions"
+        if (pageTemplateMeta == null || !pageTemplateMeta.containsKey(REGIONS_METADATA_FIELD_NAME)) {
             LOG.debug("No Region metadata defined for Page Template '{}'.", pageTemplate.getId());
             return regions;
         }
@@ -296,28 +307,23 @@ public final class PageBuilderImpl implements PageBuilder {
                     LOG.warn("Region metadata without 'view' field encountered in metadata of Page Template '{}'.", pageTemplate.getId());
                     continue;
                 }
-                String view = FieldUtils.getStringValue(region, REGIONS_METADATA_FIELD_NAME_VIEW);
 
-                String name = view;
+                String viewName = FieldUtils.getStringValue(region, REGIONS_METADATA_FIELD_NAME_VIEW);
+                String regionName = null;
                 if (region.containsKey(REGIONS_METADATA_FIELD_NAME_NAME)) {
-                    name = FieldUtils.getStringValue(region, REGIONS_METADATA_FIELD_NAME_NAME);
-                    if (Strings.isNullOrEmpty(name)) {
-                        name = view;
-                    }
+                    regionName = FieldUtils.getStringValue(region, REGIONS_METADATA_FIELD_NAME_NAME);
                 }
 
-                MvcData regionMvcData = MvcDataCreator.creator()
-                        .fromQualifiedName(view)
+                MvcDataImplBuilder mvcDataBuilder = MvcDataCreator.creator()
+                        .fromQualifiedName(viewName)
                         .defaults(DefaultsMvcData.CORE_REGION)
                         .builder()
-                        .regionName(name)
-                        .build();
+                        .regionName(isNullOrEmpty(regionName) ? viewName : regionName);
 
                 try {
-                    RegionModel regionModel = createRegionModel(regionMvcData);
-                    regions.add(regionModel);
+                    regions.add(createRegionModel(mvcDataBuilder.build()));
                 } catch (IllegalAccessException | InstantiationException | DxaException | InvocationTargetException | NoSuchMethodException e) {
-                    LOG.error("Error creating region for view '{}'.", view, e);
+                    LOG.error("Error creating region for view '{}'.", viewName, e);
                 }
 
             }
@@ -325,12 +331,11 @@ public final class PageBuilderImpl implements PageBuilder {
         return regions;
     }
 
-    private RegionModel createRegionModel(MvcData regionMvcData) throws IllegalAccessException, InstantiationException, DxaException, NoSuchMethodException, InvocationTargetException {
-        Class regionModelType = this.viewModelRegistry.getViewModelType(regionMvcData);
-
-        RegionModel regionModel = (RegionModel) regionModelType.getDeclaredConstructor(String.class).newInstance(regionMvcData.getViewName());
-        regionModel.setMvcData(regionMvcData);
-        return regionModel;
+    private RegionModel createRegionModel(MvcData regionMvcData)
+            throws IllegalAccessException, InstantiationException, DxaException, NoSuchMethodException, InvocationTargetException {
+        Class<? extends ViewModel> regionModelType = this.viewModelRegistry.getViewModelType(regionMvcData);
+        Constructor<? extends ViewModel> constructor = regionModelType.getDeclaredConstructor(MvcData.class);
+        return (RegionModel) constructor.newInstance(regionMvcData);
     }
 
     private String extract(Map<String, Field> metaMap, String key) {
@@ -349,7 +354,7 @@ public final class PageBuilderImpl implements PageBuilder {
         String title = pageMeta.get("title");
         String image = pageMeta.get(IMAGE_FIELD_NAME);
 
-        if (Strings.isNullOrEmpty(title) || Strings.isNullOrEmpty(description)) {
+        if (isNullOrEmpty(title) || isNullOrEmpty(description)) {
             for (ComponentPresentation cp : page.getComponentPresentations()) {
                 if (Objects.equals(REGION_FOR_PAGE_TITLE_COMPONENT, getRegionName(cp))) {
                     final org.dd4t.contentmodel.Component component = cp.getComponent();
@@ -358,20 +363,20 @@ public final class PageBuilderImpl implements PageBuilder {
                     BaseField standardMetaField = (BaseField) metadata.get(STANDARD_METADATA_FIELD_NAME);
                     if (standardMetaField != null && !standardMetaField.getEmbeddedValues().isEmpty()) {
                         final Map<String, Field> standardMeta = standardMetaField.getEmbeddedValues().get(0).getContent();
-                        if (Strings.isNullOrEmpty(title) && standardMeta.containsKey(STANDARD_METADATA_TITLE_FIELD_NAME)) {
+                        if (isNullOrEmpty(title) && standardMeta.containsKey(STANDARD_METADATA_TITLE_FIELD_NAME)) {
                             title = extract(standardMeta, STANDARD_METADATA_TITLE_FIELD_NAME);
                         }
-                        if (Strings.isNullOrEmpty(description) && standardMeta.containsKey(STANDARD_METADATA_DESCRIPTION_FIELD_NAME)) {
+                        if (isNullOrEmpty(description) && standardMeta.containsKey(STANDARD_METADATA_DESCRIPTION_FIELD_NAME)) {
                             description = extract(standardMeta, STANDARD_METADATA_DESCRIPTION_FIELD_NAME);
                         }
                     }
 
                     final Map<String, Field> content = component.getContent();
-                    if (Strings.isNullOrEmpty(title) && content.containsKey(COMPONENT_PAGE_TITLE_FIELD_NAME)) {
+                    if (isNullOrEmpty(title) && content.containsKey(COMPONENT_PAGE_TITLE_FIELD_NAME)) {
                         title = extract(content, COMPONENT_PAGE_TITLE_FIELD_NAME);
                     }
 
-                    if (Strings.isNullOrEmpty(image) && content.containsKey(IMAGE_FIELD_NAME)) {
+                    if (isNullOrEmpty(image) && content.containsKey(IMAGE_FIELD_NAME)) {
                         image = ((BaseField) content.get(IMAGE_FIELD_NAME))
                                 .getLinkedComponentValues().get(0).getMultimedia().getUrl();
                     }
@@ -381,7 +386,7 @@ public final class PageBuilderImpl implements PageBuilder {
         }
 
         // Use page title if no title found
-        if (Strings.isNullOrEmpty(title)) {
+        if (isNullOrEmpty(title)) {
             title = page.getTitle();
             if (title.equalsIgnoreCase("index") || title.equalsIgnoreCase("default")) {
                 // Use default page title from configuration if nothing better was found
@@ -397,16 +402,16 @@ public final class PageBuilderImpl implements PageBuilder {
         pageMeta.put("og:type", "article");
         pageMeta.put("og:locale", localization.getCulture());
 
-        if (!Strings.isNullOrEmpty(description)) {
+        if (!isNullOrEmpty(description)) {
             pageMeta.put("og:description", description);
         }
 
-        if (!Strings.isNullOrEmpty(image)) {
+        if (!isNullOrEmpty(image)) {
             pageMeta.put("og:image", webRequestContext.getBaseUrl() + webRequestContext.getContextPath() + image);
         }
 
         if (!pageMeta.containsKey("description")) {
-            pageMeta.put("description", !Strings.isNullOrEmpty(description) ? description : title);
+            pageMeta.put("description", !isNullOrEmpty(description) ? description : title);
         }
 
         String titlePostfix = localization.getResource("core.pageTitleSeparator") + localization.getResource("core.pageTitlePostfix");
@@ -458,10 +463,10 @@ public final class PageBuilderImpl implements PageBuilder {
         final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
         if (templateMeta != null) {
             String regionName = FieldUtils.getStringValue(templateMeta, "regionName");
-            if (Strings.isNullOrEmpty(regionName)) {
+            if (isNullOrEmpty(regionName)) {
                 //fallback if region name field is empty, use regionView name
                 regionName = FieldUtils.getStringValue(templateMeta, "regionView");
-                if (Strings.isNullOrEmpty(regionName)) {
+                if (isNullOrEmpty(regionName)) {
                     regionName = DEFAULT_REGION_NAME;
                 }
             }
@@ -509,7 +514,7 @@ public final class PageBuilderImpl implements PageBuilder {
 
     private String[] getPageViewNameParts(PageTemplate pageTemplate) {
         String fullName = FieldUtils.getStringValue(pageTemplate.getMetadata(), "view");
-        if (Strings.isNullOrEmpty(fullName)) {
+        if (isNullOrEmpty(fullName)) {
             fullName = pageTemplate.getTitle().replaceAll(" ", "");
         }
         return splitName(fullName);
@@ -517,7 +522,7 @@ public final class PageBuilderImpl implements PageBuilder {
 
     private String[] getRegionViewNameParts(ComponentTemplate componentTemplate) {
         String fullName = FieldUtils.getStringValue(componentTemplate.getMetadata(), "regionView");
-        if (Strings.isNullOrEmpty(fullName)) {
+        if (isNullOrEmpty(fullName)) {
             final Matcher matcher = REGION_VIEW_NAME_PATTERN.matcher(componentTemplate.getTitle());
             fullName = matcher.matches() ? matcher.group(1) : DEFAULT_REGION_NAME;
         }

@@ -6,9 +6,9 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.AbstractSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -17,8 +17,8 @@ import java.util.Set;
 @ToString
 public class RegionModelSetImpl extends AbstractSet<RegionModel> implements RegionModelSet {
 
-    private Map<String, RegionModel> modelMapByName = new HashMap<>();
-    private Map<Class<? extends RegionModel>, Set<RegionModel>> modelMapByClass = new HashMap<>();
+    private Map<String, RegionModel> modelMapByName = new LinkedHashMap<>();
+    private Map<Class<? extends RegionModel>, Set<RegionModel>> modelMapByClass = new LinkedHashMap<>();
 
     @Override
     public Iterator<RegionModel> iterator() {

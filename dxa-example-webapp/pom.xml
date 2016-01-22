@@ -6,11 +6,11 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-example-webapp</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.1</version>
     <packaging>war</packaging>
 
     <properties>
-        <dxa.version>1.2.1-SNAPSHOT</dxa.version>
+        <dxa.version>1.2.1</dxa.version>
         <java-version>1.7</java-version>
     </properties>
 

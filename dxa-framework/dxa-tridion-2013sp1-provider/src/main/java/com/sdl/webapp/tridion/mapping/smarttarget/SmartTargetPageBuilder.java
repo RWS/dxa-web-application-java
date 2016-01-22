@@ -167,7 +167,7 @@ public class SmartTargetPageBuilder extends AbstractSmartTargetPageBuilder {
                         public SmartTargetItem apply(Item input) {
                             String id = null;
                             try {
-                                id = String.format("%s-%s", input.getId(), input.getTemplateUri().getItemId());
+                                id = String.format("%s-%s", input.getComponentUri().getItemId(), input.getTemplateUri().getItemId());
                             } catch (SmartTargetException e) {
                                 log.error("Smart target exception", e);
                                 //todo do something more adequate

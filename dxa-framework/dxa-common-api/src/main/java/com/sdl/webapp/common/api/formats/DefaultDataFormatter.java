@@ -122,15 +122,18 @@ public class DefaultDataFormatter implements DataFormatter {
      */
     private double getHtmlAcceptScore() {
         double score = 0.0;
-        String[] acceptTypes = request.getHeader("Accept").split(",");
-        for (String type : acceptTypes) {
-            if (type.contains("html")) {
-                double thisScore = getScoreFromAcceptString(type);
-                if (thisScore > score) {
-                    score = thisScore;
-                }
-                if (score == 1) {
-                    break;
+        String requestHeader = request.getHeader("Accept");
+        if (requestHeader != null) {
+            String[] acceptTypes = requestHeader.split(",");
+            for (String type : acceptTypes) {
+                if (type.contains("html")) {
+                    double thisScore = getScoreFromAcceptString(type);
+                    if (thisScore > score) {
+                        score = thisScore;
+                    }
+                    if (score == 1) {
+                        break;
+                    }
                 }
             }
         }

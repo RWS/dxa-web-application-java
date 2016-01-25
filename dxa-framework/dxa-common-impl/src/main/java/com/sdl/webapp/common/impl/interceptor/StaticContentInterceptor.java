@@ -26,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.management.ManagementFactory;
 import java.net.URL;
 
 /**
@@ -70,21 +71,19 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
                 try {
                     staticContentItem = contentProvider.getStaticContent(requestPath, localization.getId(), localization.getPath());
                 } catch (StaticContentNotFoundException e) {
-                    fallbackForContentProvider(request, requestPath, res, e);
+                    fallbackForContentProvider(req, requestPath, res);
                 }
 
                 if (staticContentItem != null) {
 
-                    // http://stackoverflow.com/questions/1587667/should-http-304-not-modified-responses-contain-cache-control-headers
-                    setCaching(res, staticContentItem);
+                    res.getHeaders().setContentType(MediaType.parseMediaType(staticContentItem.getContentType()));
 
-                    if (staticContentItem.getLastModified() > req.getHeaders().getIfNotModifiedSince() + 1000L) {
-                        res.setStatusCode(HttpStatus.OK);
+                    // http://stackoverflow.com/questions/1587667/should-http-304-not-modified-responses-contain-cache-control-headers
+                    if (isToBeRefreshed(res, req.getHeaders().getIfNotModifiedSince(),
+                            staticContentItem.getLastModified(), staticContentItem.isVersioned())) {
                         try (final InputStream in = staticContentItem.getContent(); final OutputStream out = res.getBody()) {
                             IOUtils.copy(in, out);
                         }
-                    } else {
-                        res.setStatusCode(HttpStatus.NOT_MODIFIED);
                     }
                 }
             } catch (IOException | ContentProviderException e) {
@@ -99,40 +98,45 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
         return true;
     }
 
-    private void setCaching(ServletServerHttpResponse res, StaticContentItem staticContentItem) {
-        if (staticContentItem.isVersioned()) {
+    private boolean isToBeRefreshed(ServletServerHttpResponse res, long notModifiedSince, long lastModified, boolean isVersioned) {
+        if (isVersioned) {
             res.getHeaders().setCacheControl(CACHE_CONTROL_WEEK);
-            res.getHeaders().setExpires(staticContentItem.getLastModified() + Weeks.ONE.toStandardSeconds().getSeconds() * 1000L);
+            res.getHeaders().setExpires(lastModified + Weeks.ONE.toStandardSeconds().getSeconds() * 1000L);
         } else {
             res.getHeaders().setCacheControl(CACHE_CONTROL_HOUR);
-            res.getHeaders().setExpires(staticContentItem.getLastModified() + Hours.ONE.toStandardSeconds().getSeconds() * 1000L);
+            res.getHeaders().setExpires(lastModified + Hours.ONE.toStandardSeconds().getSeconds() * 1000L);
         }
-        res.getHeaders().setLastModified(staticContentItem.getLastModified());
-        res.getHeaders().setContentType(MediaType.parseMediaType(staticContentItem.getContentType()));
+        res.getHeaders().setLastModified(lastModified);
+
+        if (lastModified > notModifiedSince + 1000L) {
+            res.setStatusCode(HttpStatus.OK);
+            return true;
+        } else {
+            res.setStatusCode(HttpStatus.NOT_MODIFIED);
+            return false;
+        }
     }
 
-    private void fallbackForContentProvider(HttpServletRequest request, String requestPath,
-                                            ServletServerHttpResponse res, StaticContentNotFoundException e)
+    private void fallbackForContentProvider(ServletServerHttpRequest req, String requestPath,
+                                            ServletServerHttpResponse res)
             throws IOException, StaticContentNotFoundException {
         LOG.debug("Static resource not found in static content provider. Fallback to webapp content...");
 
-        URL contentResource = request.getServletContext().getResource(requestPath);
+        URL contentResource = req.getServletRequest().getServletContext().getResource(requestPath);
         if (contentResource == null) {
-            contentResource = request.getServletContext().getClassLoader().getResource(requestPath);
+            contentResource = req.getServletRequest().getServletContext().getClassLoader().getResource(requestPath);
         }
-        if (contentResource != null) {
-            res.setStatusCode(HttpStatus.OK);
-            // TODO: Set last modified on these resources as well!!
-            //res.getHeaders().setLastModified(...);
 
+        if (contentResource != null) {
             String mimeType = MimeUtils.getMimeType(contentResource);
             res.getHeaders().setContentType(MediaType.parseMediaType(mimeType));
 
-            try (final InputStream in = contentResource.openStream(); final OutputStream out = res.getBody()) {
-                IOUtils.copy(in, out);
+            if (isToBeRefreshed(res, req.getHeaders().getIfNotModifiedSince(),
+                    ManagementFactory.getRuntimeMXBean().getStartTime(), false)) {
+                try (final InputStream in = contentResource.openStream(); final OutputStream out = res.getBody()) {
+                    IOUtils.copy(in, out);
+                }
             }
-        } else {
-            throw e;
         }
     }
 }

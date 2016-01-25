@@ -24,11 +24,18 @@ public interface StaticContentItem {
     String getContentType();
 
     /**
-     * Returns an {@code InputStream} from which the content of the static content item can be read. Callers are
+     * Returns an {@link InputStream} from which the content of the static content item can be read. Callers are
      * expected to close the stream.
      *
-     * @return An {@code InputStream} from which the content of the static content item can be read.
+     * @return An {@link InputStream} from which the content of the static content item can be read.
      * @throws IOException When an I/O error occurs while opening the stream.
      */
     InputStream getContent() throws IOException;
+
+    /**
+     * Returns whether the file is versioned.
+     *
+     * @return whether the file is versioned
+     */
+    boolean isVersioned();
 }

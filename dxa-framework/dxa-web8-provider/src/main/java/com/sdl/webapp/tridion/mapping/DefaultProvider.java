@@ -31,6 +31,7 @@ public class DefaultProvider extends AbstractDefaultProvider {
     private BinaryFactory binaryFactory;
 
     @Override
+    @SuppressWarnings("Duplicates")
     protected DefaultProvider.StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException {
         BinaryMeta binaryMeta;
         ComponentMetaFactory factory = new ComponentMetaFactory(publicationId);

@@ -254,7 +254,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
      */
 
     @Override
-    public StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
+    public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
         if (LOG.isTraceEnabled()) {
             LOG.trace("getStaticContent: {} [{}] {}", path, localizationId, localizationPath);
@@ -285,6 +285,11 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
             public InputStream getContent() throws IOException {
                 return new FileInputStream(staticContentFile.getFile());
             }
+
+            @Override
+            public boolean isVersioned() {
+                return path.contains("/system/");
+            }
         };
     }
 
@@ -302,8 +307,11 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
 
     private StaticContentFile getStaticContentFile(String path, String localizationId)
             throws ContentProviderException {
-        final File file = new File(new File(new File(new File(
-                webApplicationContext.getServletContext().getRealPath("/")), STATIC_FILES_DIR), localizationId), path);
+        String parentPath = StringUtils.join(new String[]{
+                webApplicationContext.getServletContext().getRealPath("/"), STATIC_FILES_DIR, localizationId
+        }, File.separator);
+
+        final File file = new File(parentPath, path);
         LOG.trace("getStaticContentFile: {}", file);
 
         final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);

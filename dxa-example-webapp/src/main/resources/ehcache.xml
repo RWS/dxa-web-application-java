@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="DD4T"-->
-         <!--xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false">-->
+<ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd" updateCheck="false">
     <!--
         Items that depend on other items stay in cache eternally. They are expired by (un-)publishing the dependent item.
         Items that don't depend on other items stay in cache for TTL & TTI defined below.
@@ -8,7 +8,6 @@
         TTL 3600 = 1 hour
         TTI 60 = 1 min
     -->
-<ehcache>
     <defaultCache
            eternal="false"
            maxEntriesLocalHeap="10000"
@@ -16,15 +15,15 @@
            timeToIdleSeconds="60"
            memoryStoreEvictionPolicy="LRU">
     </defaultCache>
-    <!--<cache name="DD4T-Objects"-->
-           <!--eternal="false"-->
-           <!--maxEntriesLocalHeap="10000"-->
-           <!--timeToLiveSeconds="3600"-->
-           <!--timeToIdleSeconds="60"-->
-           <!--memoryStoreEvictionPolicy="LRU">-->
-    <!--</cache>-->
-    <!--<cache name="DD4T-Dependencies"-->
-           <!--maxEntriesLocalHeap="50000"-->
-           <!--memoryStoreEvictionPolicy="LRU">-->
-    <!--</cache>-->
+    <cache name="DD4T-Objects"
+           eternal="false"
+           maxEntriesLocalHeap="10000"
+           timeToLiveSeconds="3600"
+           timeToIdleSeconds="60"
+           memoryStoreEvictionPolicy="LRU">
+    </cache>
+    <cache name="DD4T-Dependencies"
+           maxEntriesLocalHeap="50000"
+           memoryStoreEvictionPolicy="LRU">
+    </cache>
 </ehcache>

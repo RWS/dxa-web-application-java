@@ -24,9 +24,11 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
         HttpServletRequest request = HttpUtils.getCurrentRequest();
 
         String contextCookie = null;
-        for (Cookie cookie : request.getCookies()) {
-            if ("context".equals(cookie.getName())) {
-                contextCookie = cookie.getValue();
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("context".equals(cookie.getName())) {
+                    contextCookie = cookie.getValue();
+                }
             }
         }
 

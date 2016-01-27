@@ -43,7 +43,7 @@ public class ParsableHtmlNode extends HtmlNode {
     }
 
     @Override
-    protected String renderHtml() {
+    public String renderHtml() {
         if (this.html != null) {
             return this.html.outerHtml();
         } else {

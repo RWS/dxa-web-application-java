@@ -62,8 +62,8 @@ public class MvcDataImpl implements MvcData {
         this.viewName = viewName;
         this.regionAreaName = regionAreaName;
         this.regionName = regionName;
-        this.controllerAreaName = controllerAreaName == null ? "Core" : controllerAreaName;
-        this.areaName = areaName == null ? "Core" : areaName;
+        this.controllerAreaName = controllerAreaName;
+        this.areaName = areaName;
         this.routeValues = routeValues == null ? new HashMap<String, String>() : routeValues;
         this.metadata = metadata == null ? new HashMap<String, Object>() : metadata;
     }
@@ -81,15 +81,5 @@ public class MvcDataImpl implements MvcData {
         this.regionName = mvcData.getRegionName();
         this.routeValues = mvcData.getRouteValues();
         this.metadata = mvcData.getMetadata();
-    }
-
-    @Override
-    public String getControllerAreaName() {
-        return controllerAreaName == null ? "Core" : controllerAreaName;
-    }
-
-    @Override
-    public String getAreaName() {
-        return areaName == null ? "Core" : areaName;
     }
 }

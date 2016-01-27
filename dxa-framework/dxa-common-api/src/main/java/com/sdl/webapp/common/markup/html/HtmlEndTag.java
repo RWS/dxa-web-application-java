@@ -17,7 +17,7 @@ public final class HtmlEndTag extends HtmlRenderable {
     }
 
     @Override
-    protected String renderHtml() {
+    public String renderHtml() {
         return StringUtils.isEmpty(tagName) ? "" : "</" + tagName + ">";
     }
 

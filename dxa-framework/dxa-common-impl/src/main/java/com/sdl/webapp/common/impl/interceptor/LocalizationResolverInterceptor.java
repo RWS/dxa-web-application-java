@@ -42,7 +42,7 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
         webRequestContext.setRequestPath(urlPathHelper.getOriginatingRequestUri(request));
 
         webRequestContext.setInclude(request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null);
-        webRequestContext.setDeveloperMode(request.getRequestURI().contains("//localhost"));
+        webRequestContext.setDeveloperMode(request.getServerName().contains("localhost"));
 
         // Check if the cookie set by CID is present
         webRequestContext.setContextCookiePresent(false);

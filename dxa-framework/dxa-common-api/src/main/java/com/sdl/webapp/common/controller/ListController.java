@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.ContentList;
+import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +27,7 @@ import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREF
  * This handles include requests to /system/mvc/Core/List/{regionName}/{entityId}
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + CoreAreaConstants.CORE_AREA_NAME + "/" + CoreAreaConstants.LIST_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + "/" + DefaultsMvcData.CoreAreaConstants.LIST_CONTROLLER_NAME)
 public class ListController extends EntityController {
     private static final Logger LOG = LoggerFactory.getLogger(ListController.class);
 
@@ -48,7 +49,7 @@ public class ListController extends EntityController {
      * @param entityId The entity id.
      * @return The name of the entity view that should be rendered for this request.
      */
-    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.LIST_ACTION_NAME + "/{entityId}")
+    @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.LIST_ACTION_NAME + "/{entityId}")
     public String handleGetList(HttpServletRequest request, @PathVariable String entityId) throws Exception {
         LOG.trace("handleGetList: entityId={}", entityId);
         // The List action is effectively just an alias for the general Entity action (we keep it for backward compatibility).

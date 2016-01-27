@@ -18,27 +18,30 @@ public class MvcDataCreatorTest {
         String viewName = "YouTubeVideo";
 
         //when
-        MvcData mvcDataFull = creator().fromQualifiedName(fullName).create();
-        MvcData mvcDataHalf = creator().fromQualifiedName(areaViewName).create();
-        MvcData mvcDataShort = creator().fromQualifiedName(viewName).create();
+        MvcData mvcDataFull = creator()
+                .fromQualifiedName(fullName)
+                .defaults(DefaultsMvcData.CORE_ENTITY)
+                .create();
+        MvcData mvcDataHalf = creator()
+                .fromQualifiedName(areaViewName)
+                .defaults(DefaultsMvcData.CORE_ENTITY)
+                .create();
+        MvcData mvcDataShort = creator()
+                .fromQualifiedName(viewName)
+                .defaults(DefaultsMvcData.CORE_ENTITY)
+                .create();
 
         //then
-        assertPartsAreSet(new Parts()
-                        .controllerAreaName("Core")
-                        .controllerName("Entity")
-                        .areaName("Core")
-                        .viewName(viewName),
-                mvcDataFull);
-        assertPartsAreSet(new Parts()
-                        .controllerAreaName("Core")
-                        .areaName("Core")
-                        .viewName(viewName),
-                mvcDataHalf);
-        assertPartsAreSet(new Parts()
-                        .controllerAreaName("Core")
-                        .areaName("Core")
-                        .viewName(viewName),
-                mvcDataShort);
+        Parts parts = new Parts()
+                .controllerAreaName("Core")
+                .controllerName("Entity")
+                .areaName("Core")
+                .actionName("Entity")
+                .viewName(viewName);
+
+        assertPartsAreSet(parts, mvcDataFull);
+        assertPartsAreSet(parts, mvcDataHalf);
+        assertPartsAreSet(parts, mvcDataShort);
 
         //when
         mvcDataFull = creator(mvcDataFull).defaults(DefaultsMvcData.CORE_ENTITY).create();
@@ -182,8 +185,6 @@ public class MvcDataCreatorTest {
         //then
         assertNotNull(mvcData.getMetadata());
         assertNotNull(mvcData.getRouteValues());
-        assertNotNull(mvcData.getAreaName());
-        assertNotNull(mvcData.getControllerAreaName());
     }
 
     private void assertPartsAreSet(Parts parts, MvcData mvcData) {

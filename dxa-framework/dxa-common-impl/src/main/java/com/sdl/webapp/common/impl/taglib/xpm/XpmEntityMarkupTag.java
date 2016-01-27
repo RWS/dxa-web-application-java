@@ -18,7 +18,7 @@ public class XpmEntityMarkupTag extends XpmMarkupTag {
     public HtmlNode generateXpmMarkup() {
         return new HtmlNode() {
             @Override
-            protected String renderHtml() {
+            public String renderHtml() {
                 return entity.getXpmMarkup(getLocalization());
             }
         };

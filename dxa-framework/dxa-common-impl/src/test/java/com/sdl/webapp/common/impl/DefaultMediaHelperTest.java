@@ -4,22 +4,27 @@ import com.sdl.webapp.common.api.MediaHelper;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * Unit tests for {@link GenericMediaHelper}.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = AbstractMediaHelperTestConfig.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 public class DefaultMediaHelperTest {
 
     @Autowired
     private MediaHelper mediaHelper;
-
     @Autowired
     private MockWebRequestContext webRequestContext;
 
@@ -76,5 +81,30 @@ public class DefaultMediaHelperTest {
         assertThat(mediaHelper.getResponsiveImageUrl("/example.jpg", "639", 2.5, 12), is("/example_w640_h256_n.jpg"));
         assertThat(mediaHelper.getResponsiveImageUrl("/example.jpg", "640", 2.5, 12), is("/example_w640_h256_n.jpg"));
         assertThat(mediaHelper.getResponsiveImageUrl("/example.jpg", "641", 2.5, 12), is("/example_w1024_h410_n.jpg"));
+    }
+
+    @Configuration
+    public static class AbstractMediaHelperTestConfig {
+
+        @Bean
+        public MediaHelper mediaHelper() {
+            return new DefaultMediaHelper();
+        }
+
+        @Bean
+        //todo refactor to use normal mocks
+        public MockWebRequestContext webRequestContext() {
+            return new MockWebRequestContext();
+        }
+
+        @Bean
+        public MockContextEngine contextEngine() {
+            return new MockContextEngine(new MockContextClaimsProvider());
+        }
+
+        @Bean
+        public HttpServletRequest servletRequest() {
+            return mock(HttpServletRequest.class);
+        }
     }
 }

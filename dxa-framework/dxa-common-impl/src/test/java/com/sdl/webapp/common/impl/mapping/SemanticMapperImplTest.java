@@ -3,17 +3,22 @@ package com.sdl.webapp.common.impl.mapping;
 import com.sdl.webapp.common.api.mapping.semantic.FieldData;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.Article;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +37,7 @@ import static org.mockito.Mockito.when;
  * Unit tests for {@code SemanticMapperImpl}.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = SemanticMapperImplTestConfig.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 public class SemanticMapperImplTest {
 
     private static final Map<FieldSemantics, SemanticField> EMPTY_FIELDS_MAP = Collections.emptyMap();
@@ -101,5 +106,23 @@ public class SemanticMapperImplTest {
         assertThat(propertyData.entrySet(), hasSize(2));
         assertThat(propertyData, hasEntry("headline", "HeadlineField"));
         assertThat(propertyData, hasEntry("date", "DateCreatedField"));
+    }
+
+    /**
+     * Spring configuration for {@code SemanticMapperImplTest}.
+     */
+    @Configuration
+    public static class SemanticMapperImplTestConfig {
+
+        @Bean
+        public SemanticMapperImpl semanticMapperImpl() {
+            return new SemanticMapperImpl(semanticMappingRegistry());
+        }
+
+        public SemanticMappingRegistry semanticMappingRegistry() {
+            SemanticMappingRegistryImpl semanticMappingRegistry = new SemanticMappingRegistryImpl();
+            semanticMappingRegistry.registerEntities(AbstractEntityModel.class.getPackage().getName());
+            return semanticMappingRegistry;
+        }
     }
 }

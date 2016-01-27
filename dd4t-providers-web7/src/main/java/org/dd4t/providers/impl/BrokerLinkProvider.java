@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * Provider implementation to wrap around the ComponentLinker.
  * TODO: decompress!
  *
+ * TODO: for web-8 REST don't use content-compatible
  * @author rooudsho, Mihai Cadariu
  */
 public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvider {

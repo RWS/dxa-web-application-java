@@ -197,19 +197,21 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
      * Tridion), so it can be used inside a URL: lower case and all spaces and
      * underscores are replaced by dashes (-).
      */
-    public static String stringToDashCase (String value) {
+    @Deprecated
+    private static String stringToDashCase (String value) {
         if (value == null) {
             return "";
         }
         return value.replaceAll("[^a-zA-Z0-9]", "_").replaceAll("([_]+)", "_").toLowerCase();
     }
 // TODO Remove after testing
-
+    @Deprecated
     public void setConcreteComponentPresentation (final Class<? extends org.dd4t.contentmodel.ComponentPresentation> concreteComponentPresentation) {
         this.concreteComponentPresentation = concreteComponentPresentation;
     }
 
     // TODO Remove after testing
+    @Deprecated
     public void setConcreteComponentTemplateImpl (final Class<? extends ComponentTemplate> concreteComponentTemplateImpl) {
         this.concreteComponentTemplateImpl = concreteComponentTemplateImpl;
     }

@@ -4,7 +4,7 @@
 
 # Set version parameter to version you want to install
 
-TRIDION_VERSION="7.1.0"
+TRIDION_VERSION="8.1.0"
 TRIDION_CWD_VERSION="7.1.2"
 
 echo cd_ambient-$TRIDION_VERSION.jar

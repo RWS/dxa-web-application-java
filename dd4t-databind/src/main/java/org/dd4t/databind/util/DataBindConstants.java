@@ -24,7 +24,7 @@ package org.dd4t.databind.util;
  */
 public class DataBindConstants {
     public static final String VIEW_MODEL_DEFAULT_NAMESPACE = "org.dd4t.web.models";
-    public static final String VIEW_MODEL_DEFAULT_META_KEY = "viewName";
+    public static final String VIEW_MODEL_DEFAULT_META_KEY = "view";
 
     public static final String SCHEMA_NODE_NAME = "Schema";
     public static final String COMPONENT_NODE_NAME = "Component";

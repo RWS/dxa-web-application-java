@@ -67,6 +67,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
         Page page;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);
@@ -129,6 +130,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
         Page page;
 
         if (cacheElement.isExpired() || cacheElement.getPayload() == null) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired() || cacheElement.getPayload() == null) {
                     cacheElement.setExpired(false);
@@ -205,6 +207,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
         String page;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);
@@ -255,6 +258,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
         String pageSource;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);

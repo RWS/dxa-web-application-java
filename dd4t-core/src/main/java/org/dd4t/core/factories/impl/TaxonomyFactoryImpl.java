@@ -71,6 +71,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         Keyword taxonomy;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);
@@ -133,6 +134,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         Keyword taxonomy;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);

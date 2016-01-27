@@ -51,6 +51,7 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
         Integer result = -1;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);
@@ -192,6 +193,7 @@ public class BrokerPublicationProvider extends BaseBrokerProvider implements Pub
         PublicationMeta publicationMeta = null;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);

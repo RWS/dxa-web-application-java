@@ -12,5 +12,4 @@ public interface ContextClaimsProvider {
      * TSI-789: this functionality overlaps with "Context Expressions".
      */
     String getDeviceFamily();
-
 }

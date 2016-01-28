@@ -21,15 +21,13 @@ public class ContextEngineImpl implements ContextEngine {
     private Map<String, Object> claims;
     private Map<Class, ContextClaims> stronglyTypedClaims = new HashMap<Class, ContextClaims>();
     private String deviceFamily;
-    private ContextClaimsProvider provider;
 
     @Autowired
-    public ContextEngineImpl(ContextClaimsProvider provider) {
-        this.provider = provider;
-    }
+    private ContextClaimsProvider provider;
 
     @Override
     public <T extends ContextClaims> T getClaims(Class<T> cls) {
+
         ContextClaims retval;
 
         try {

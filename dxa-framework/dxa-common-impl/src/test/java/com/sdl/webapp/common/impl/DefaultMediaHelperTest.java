@@ -1,11 +1,14 @@
 package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
+import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -26,7 +29,7 @@ public class DefaultMediaHelperTest {
     @Autowired
     private MediaHelper mediaHelper;
     @Autowired
-    private MockWebRequestContext webRequestContext;
+    private WebRequestContextImpl webRequestContext;
 
     @Test
     public void testGetResponsiveWidthAbsoluteWidthFactor() {
@@ -92,19 +95,23 @@ public class DefaultMediaHelperTest {
         }
 
         @Bean
-        //todo refactor to use normal mocks
-        public MockWebRequestContext webRequestContext() {
-            return new MockWebRequestContext();
+        public WebRequestContextImpl webRequestContext() {
+            return new WebRequestContextImpl();
         }
 
         @Bean
-        public MockContextEngine contextEngine() {
-            return new MockContextEngine(new MockContextClaimsProvider());
+        public ContextClaimsProvider contextClaimsProvider() {
+            return mock(ContextClaimsProvider.class);
+        }
+
+        @Bean
+        public ContextEngine contextEngine() {
+            return mock(ContextEngine.class);
         }
 
         @Bean
         public HttpServletRequest servletRequest() {
-            return mock(HttpServletRequest.class);
+            return new MockHttpServletRequest();
         }
     }
 }

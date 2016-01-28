@@ -19,19 +19,50 @@ import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Slf4j
 public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsProvider {
 
     private static final String TAF_CLAIM_CONTEXT = "taf:claim:context:";
+    private static final Pattern GT_PATTERN = Pattern.compile(">", Pattern.LITERAL);
+    private static final Pattern LT_PATTERN = Pattern.compile("<", Pattern.LITERAL);
+
+    private static boolean isInFamily(String expectedValue, String claimValueForUri) {
+        boolean inFamily;
+        if (expectedValue.startsWith("<")) {
+            int value = Integer.parseInt(LT_PATTERN.matcher(expectedValue).replaceAll(Matcher.quoteReplacement("")));
+            int claimValue = Integer.parseInt(claimValueForUri);
+
+            inFamily = !(claimValue >= value);
+        } else if (expectedValue.startsWith(">")) {
+            int value = Integer.parseInt(GT_PATTERN.matcher(expectedValue).replaceAll(Matcher.quoteReplacement("")));
+            int claimValue = Integer.parseInt(claimValueForUri);
+
+            inFamily = !(claimValue <= value);
+        } else {
+            inFamily = Objects.equal(claimValueForUri, expectedValue);
+        }
+        return inFamily;
+    }
+
+    private static String appendAspectName(String aspectName) {
+        String claimNamePrefix = TAF_CLAIM_CONTEXT;
+        if (!Strings.isNullOrEmpty(aspectName)) {
+            claimNamePrefix += aspectName + ':';
+        }
+        return claimNamePrefix;
+    }
 
     @Override
     public Map<String, Object> getContextClaims(String aspectName) {
         String claimNamePrefix = appendAspectName(aspectName);
 
-        Map<String, Object> result = new HashMap<>();
-
-        for (Entry<URI, Object> claim : getCurrentClaims().entrySet()) {
+        Set<Entry<URI, Object>> entries = getCurrentClaims().entrySet();
+        Map<String, Object> result = new HashMap<>(entries.size());
+        for (Entry<URI, Object> claim : entries) {
             String claimName = claim.getKey().toString();
             if (!claimName.startsWith(claimNamePrefix)) {
                 continue;
@@ -74,9 +105,10 @@ public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsP
 
                 URI uri;
                 try {
+                    //noinspection ObjectAllocationInLoop
                     uri = new URI(c.getAttribute("uri"));
                 } catch (URISyntaxException e) {
-                    log.error("Invalid TAF URI : " + c.getAttribute("uri"), e);
+                    log.error("Invalid TAF URI : {}", c.getAttribute("uri"), e);
                     continue;
                 }
 
@@ -98,31 +130,4 @@ public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsP
     protected abstract Map<URI, Object> getCurrentClaims();
 
     protected abstract String getClaimValueForURI(URI uri);
-
-    private boolean isInFamily(String expectedValue, String claimValueForUri) {
-        boolean inFamily;
-        if (expectedValue.startsWith("<")) {
-            int value = Integer.parseInt(expectedValue.replace("<", ""));
-            int claimValue = Integer.parseInt(claimValueForUri);
-
-            inFamily = !(claimValue >= value);
-        } else if (expectedValue.startsWith(">")) {
-            int value = Integer.parseInt(expectedValue.replace(">", ""));
-            int claimValue = Integer.parseInt(claimValueForUri);
-
-            inFamily = !(claimValue <= value);
-        } else {
-            inFamily = Objects.equal(claimValueForUri, expectedValue);
-        }
-        return inFamily;
-    }
-
-
-    private String appendAspectName(String aspectName) {
-        String claimNamePrefix = TAF_CLAIM_CONTEXT;
-        if (!Strings.isNullOrEmpty(aspectName)) {
-            claimNamePrefix += aspectName + ":";
-        }
-        return claimNamePrefix;
-    }
 }

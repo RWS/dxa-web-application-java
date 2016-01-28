@@ -15,9 +15,35 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @Component
 public class ContextServiceClaimsProvider implements ContextClaimsProvider {
+
+    private static Map<String, Object> getClaimsMap(ContextMap<? extends Aspect> contextMap, String aspectName) {
+        if (Strings.isNullOrEmpty(aspectName)) {
+            Set<String> keySet = contextMap.keySet();
+            Map<String, Object> result = new HashMap<>(keySet.size());
+            for (String key : keySet) {
+                if (!Strings.isNullOrEmpty(key)) {
+                    result.putAll(getClaimsMap(contextMap, key));
+                }
+            }
+
+            return result;
+        } else {
+            return getClaimsForAspect(contextMap, aspectName);
+        }
+    }
+
+    private static Map<String, Object> getClaimsForAspect(ContextMap<? extends Aspect> contextMap, String aspectName) {
+        Aspect aspect = contextMap.get(aspectName);
+        Map<String, Object> result = new HashMap<>(aspect.size());
+        for (String key : aspect.keySet()) {
+            result.put(String.format("%s.%s", aspectName, key), aspect.get(key));
+        }
+        return result;
+    }
 
     @Override
     public Map<String, Object> getContextClaims(String aspectName) throws DxaException {
@@ -53,30 +79,5 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
     public String getDeviceFamily() {
         // TODO TSI-789: this functionality overlaps with "Context Expressions"
         return null;
-    }
-
-    private Map<String, Object> getClaimsMap(ContextMap<? extends Aspect> contextMap, String aspectName) {
-        if (Strings.isNullOrEmpty(aspectName)) {
-            Map<String, Object> result = new HashMap<>();
-
-            for (String key : contextMap.keySet()) {
-                if (!Strings.isNullOrEmpty(key)) {
-                    result.putAll(getClaimsMap(contextMap, key));
-                }
-            }
-
-            return result;
-        } else {
-            return getClaimsForAspect(contextMap, aspectName);
-        }
-    }
-
-    private Map<String, Object> getClaimsForAspect(ContextMap<? extends Aspect> contextMap, String aspectName) {
-        Aspect aspect = contextMap.get(aspectName);
-        Map<String, Object> result = new HashMap<>();
-        for (String key : aspect.keySet()) {
-            result.put(String.format("%s.%s", aspectName, key), aspect.get(key));
-        }
-        return result;
     }
 }

@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.markup;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
@@ -31,4 +32,5 @@ public interface Markup {
 
     String siteMapList(SitemapItem item);
 
+    WebRequestContext getWebRequestContext();
 }

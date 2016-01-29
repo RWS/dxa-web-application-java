@@ -78,7 +78,7 @@ public class WebRequestContextImpl implements WebRequestContext {
     @Override
     public double getPixelRatio() {
         if (pixelRatio == null) {
-            pixelRatio = this.getContextEngine().getClaims(DeviceClaims.class).getPixelRatio();
+            pixelRatio = this.contextEngine.getClaims(DeviceClaims.class).getPixelRatio();
             if (pixelRatio == null) {
                 pixelRatio = 1.0;
                 LOG.debug("Pixel ratio ADF claim not available - using default value: {}", pixelRatio);
@@ -112,13 +112,13 @@ public class WebRequestContextImpl implements WebRequestContext {
     public int getDisplayWidth() {
         if (displayWidth == null) {
 
-            this.displayWidth = this.getContextEngine().getClaims(BrowserClaims.class).getDisplayWidth();
+            this.displayWidth = this.contextEngine.getClaims(BrowserClaims.class).getDisplayWidth();
             if (displayWidth == null) {
                 displayWidth = DEFAULT_WIDTH;
             }
 
             // NOTE: The context engine uses a default browser width of 800, which we override to 1024
-            if (displayWidth == 800 && isContextCookiePresent()) {
+            if (displayWidth == 800 && this.contextCookiePresent) {
                 displayWidth = DEFAULT_WIDTH;
             }
         }
@@ -126,7 +126,7 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     protected ScreenWidth calculateScreenWidth() {
-        int width = isContextCookiePresent() ? this.getDisplayWidth() : MAX_WIDTH;
+        int width = this.contextCookiePresent ? this.getDisplayWidth() : MAX_WIDTH;
         if (width < this.mediaHelper.getSmallScreenBreakpoint()) {
             return ScreenWidth.EXTRA_SMALL;
         }
@@ -155,7 +155,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         if (containerSize == 0) {
             containerSize = this.mediaHelper.getGridSize();
         }
-        if (this.containerSizeStack.size() > 0) {
+        if (!this.containerSizeStack.isEmpty()) {
             int parentContainerSize = this.containerSizeStack.peek();
             containerSize = containerSize * parentContainerSize / this.mediaHelper.getGridSize();
         }

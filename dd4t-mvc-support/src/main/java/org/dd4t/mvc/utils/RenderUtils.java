@@ -27,7 +27,7 @@ import org.dd4t.core.exceptions.RenderException;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.TCMURI;
-import org.dd4t.databind.util.DataBindConstants;
+import org.dd4t.databind.DataBindFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,15 +60,12 @@ public class RenderUtils {
      * that parameter is returned. Otherwise the title of the component template
      * is returned.
      */
-    public static String getViewName (ComponentPresentation cp) {
+    public static String getViewName (final ComponentPresentation cp) {
         ComponentTemplate componentTemplate = cp.getComponentTemplate();
-        Map<String, Field> metadata = componentTemplate.getMetadata();
+        String viewNameKey = DataBindFactory.findComponentTemplateViewName(componentTemplate);
 
-        if (metadata != null && metadata.containsKey(DataBindConstants.VIEW_MODEL_DEFAULT_META_KEY)) {
-            String viewName = (String) metadata.get(DataBindConstants.VIEW_MODEL_DEFAULT_META_KEY).getValues().get(0);
-            if (StringUtils.isNotEmpty(viewName)) {
-                return viewName.toLowerCase();
-            }
+        if (StringUtils.isNotEmpty(viewNameKey)) {
+            return viewNameKey;
         }
 
         return componentTemplate.getTitle().toLowerCase();

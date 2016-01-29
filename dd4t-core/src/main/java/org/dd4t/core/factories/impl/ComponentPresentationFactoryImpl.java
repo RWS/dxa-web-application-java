@@ -91,6 +91,7 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
         ComponentPresentation componentPresentation;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
 

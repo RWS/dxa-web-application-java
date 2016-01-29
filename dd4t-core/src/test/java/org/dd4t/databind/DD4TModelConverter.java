@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dd4t.test;
+package org.dd4t.databind;
 /**
  * Created by rai on 03/06/14.
  */
@@ -25,7 +25,6 @@ import org.apache.commons.io.IOUtils;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.util.CompressionUtils;
-import org.dd4t.databind.DataBindFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -45,7 +44,7 @@ public class DD4TModelConverter {
 
 
 //		System.out.println(testXml + xml2 + xml3);
-		String completeXml = FileUtils.readFileToString(new File("dd4t-test/target/classes/xml-without-java-xslt.xml"));
+//		String completeXml = FileUtils.readFileToString(new File("dd4t-test/target/classes/xml-without-java-xslt.xml"));
 //
 		String homepage = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("test.json").toURI()));
 		//System.out.println(completeXml);

@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.impl;
+package com.sdl.webapp.common.impl.util;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -6,20 +6,17 @@ import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.FilterReply;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Setter;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 public class LogbackRepeatingToSingleFilter extends Filter<ILoggingEvent> {
+    private Set<EventData> events = new HashSet<>(16);
 
-    private Set<EventData> events = new HashSet<>();
-
+    @Setter
     private String loggerName;
-
-    public void setLoggerName(String loggerName) {
-        this.loggerName = loggerName;
-    }
 
     @Override
     public FilterReply decide(ILoggingEvent event) {

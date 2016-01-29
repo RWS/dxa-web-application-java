@@ -1,16 +1,14 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
-import com.sdl.webapp.common.util.ApplicationContextHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.w3c.dom.Node;
 
 import java.util.UUID;
@@ -24,16 +22,13 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.img;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.span;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+@EqualsAndHashCode(callSuper = true)
+@Data
 @SemanticEntity(entityName = "VideoObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class YouTubeVideo extends MediaItem {
 
-    private static final Logger LOG = LoggerFactory.getLogger(YouTubeVideo.class);
-
-
     private static final int DEFAULT_WIDTH = 640;
     private static final int DEFAULT_HEIGHT = 390;
-
-    final MediaHelper mediaHelper = ApplicationContextHolder.getContext().getBean(MediaHelper.class);
 
     @JsonProperty("Headline")
     private String headline;
@@ -46,52 +41,6 @@ public class YouTubeVideo extends MediaItem {
 
     @JsonProperty("Height")
     private int height = DEFAULT_HEIGHT;
-
-    public String getHeadline() {
-        return headline;
-    }
-
-    public void setHeadline(String headline) {
-        this.headline = headline;
-    }
-
-    public String getYouTubeId() {
-        return youTubeId;
-    }
-
-    public void setYouTubeId(String youTubeId) {
-        this.youTubeId = youTubeId;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    @Override
-    public String toString() {
-        return "YouTubeVideo{" +
-                "url='" + getUrl() + '\'' +
-                ", fileName='" + getFileName() + '\'' +
-                ", fileSize=" + getFileSize() +
-                ", mimeType='" + getMimeType() + '\'' +
-                ", headline='" + headline + '\'' +
-                ", youTubeId='" + youTubeId + '\'' +
-                ", width=" + width +
-                ", height=" + height +
-                '}';
-    }
 
     @Override
     public void readFromXhtmlElement(Node xhtmlElement) {
@@ -135,13 +84,13 @@ public class YouTubeVideo extends MediaItem {
 
         final HtmlElement playButtonOverlay = i().withClass("fa fa-play-circle").build();
 
-        return (getIsEmbedded() ? span() : div())
+        return (isEmbedded() ? span() : div())
                 .withAttribute("class", "embed-video")
                 .withNode(
-                        img(contextPath + placeholderImageUrl).withAlt(getHeadline()).build())
+                        img(contextPath + placeholderImageUrl).withAlt(this.headline).build())
                 .withNode(
                         button("button")
-                                .withAttribute("data-video", getYouTubeId())
+                                .withAttribute("data-video", this.youTubeId)
                                 .withClass(cssClass)
                                 .withNode(playButtonOverlay)
                                 .build())
@@ -151,7 +100,7 @@ public class YouTubeVideo extends MediaItem {
     private HtmlElement getYouTubeEmbed(String cssClass) {
         return iframe()
                 .withId("video" + UUID.randomUUID().toString())
-                .withAttribute("src", "https://www.youtube.com/embed/" + getYouTubeId() + "?version=3&enablejsapi=1")
+                .withAttribute("src", "https://www.youtube.com/embed/" + this.youTubeId + "?version=3&enablejsapi=1")
                 .withAttribute("allowfullscreen", "true")
                 .withAttribute("frameborder", "0")
                 .withClass(cssClass)

@@ -78,9 +78,9 @@ public class YouTubeVideo extends MediaItem {
 
     private HtmlElement getYouTubePlaceholder(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
 
-        double imageAspect = (aspect == 0.0) ? mediaHelper.getDefaultMediaAspect() : aspect;
+        double imageAspect = (aspect == 0.0) ? getMediaHelper().getDefaultMediaAspect() : aspect;
 
-        String placeholderImageUrl = mediaHelper.getResponsiveImageUrl(this.getUrl(), widthFactor, imageAspect, containerSize);
+        String placeholderImageUrl = getMediaHelper().getResponsiveImageUrl(this.getUrl(), widthFactor, imageAspect, containerSize);
 
         final HtmlElement playButtonOverlay = i().withClass("fa fa-play-circle").build();
 

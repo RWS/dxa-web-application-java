@@ -53,7 +53,7 @@ public class Image extends MediaItem {
             throw new DxaException("URL is null for image component: " + this);
         }
 
-        return img(mediaHelper.getResponsiveImageUrl(getUrl(), widthFactor, aspect, containerSize))
+        return img(getMediaHelper().getResponsiveImageUrl(getUrl(), widthFactor, aspect, containerSize))
                 .withAlt(this.alternateText)
                 .withClass(cssClass)
                 .withAttribute("data-aspect", String.valueOf((Math.round(aspect * 100) / 100)))

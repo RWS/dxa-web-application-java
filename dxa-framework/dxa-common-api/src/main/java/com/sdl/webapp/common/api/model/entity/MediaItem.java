@@ -42,24 +42,29 @@ public abstract class MediaItem extends AbstractEntityModel {
                     .put("video/quicktime", "video")
                     .put("video/mpeg", "video")
                     .build();
-    protected MediaHelper mediaHelper =
-            ApplicationContextHolder.getContext().getBean(MediaHelper.MediaHelperFactory.class).getMediaHelperInstance();
+
+    private MediaHelper mediaHelper;
     @SemanticProperty("s:contentUrl")
     @JsonProperty("Url")
     private String url;
-
     @JsonProperty("IsEmbedded")
     private boolean isEmbedded;
-
     @JsonProperty("FileName")
     private String fileName;
-
     @SemanticProperty("s:contentSize")
     @JsonProperty("FileSize")
     private int fileSize;
-
     @JsonProperty("MimeType")
     private String mimeType;
+
+    protected MediaHelper getMediaHelper() {
+        if (this.mediaHelper == null) {
+            this.mediaHelper = ApplicationContextHolder.getContext().getBean(MediaHelper.MediaHelperFactory.class)
+                    .getMediaHelperInstance();
+        }
+
+        return this.mediaHelper;
+    }
 
     @JsonIgnore
     public boolean isImage() {

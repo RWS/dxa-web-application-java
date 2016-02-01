@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,10 @@ public class EclItemTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private static String removeXmlFromXpmString(String expectedXpmMarkup) {
+        return expectedXpmMarkup.replaceFirst("<!-- Start Component Presentation: ", "").replaceFirst("-->", "");
+    }
+
     @Test
     public void shouldPutComponentIdToMetadataIfEclUriIsSet() throws IOException {
         //given
@@ -58,10 +63,6 @@ public class EclItemTest {
         assertTrue(resultXpmMarkup.endsWith("-->"));
         assertEquals(readJsonToMap(removeXmlFromXpmString(expectedXpmMarkup)),
                 readJsonToMap(removeXmlFromXpmString(resultXpmMarkup)));
-    }
-
-    private String removeXmlFromXpmString(String expectedXpmMarkup) {
-        return expectedXpmMarkup.replaceFirst("<!-- Start Component Presentation: ", "").replaceFirst("-->", "");
     }
 
     private Map<String, String> readJsonToMap(String str) throws IOException {
@@ -158,6 +159,11 @@ public class EclItemTest {
             objectMapper.registerModule(new JodaModule());
             objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
             return objectMapper;
+        }
+
+        @Bean
+        public MediaHelper.MediaHelperFactory mediaHelperFactory() {
+            return mock(MediaHelper.MediaHelperFactory.class);
         }
     }
 }

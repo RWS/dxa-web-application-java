@@ -108,7 +108,7 @@
         <prudent>true</prudent>
     </appender>
     <appender name="rollingADFLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <filter class="com.sdl.webapp.common.impl.LogbackRepeatingToSingleFilter">
+        <filter class="com.sdl.webapp.common.impl.util.LogbackRepeatingToSingleFilter">
             <loggerName>com.tridion.ambientdata.AmbientDataContext</loggerName>
         </filter>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -145,7 +145,7 @@
         <prudent>true</prudent>
     </appender>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
-        <filter class="com.sdl.webapp.common.impl.LogbackRepeatingToSingleFilter">
+        <filter class="com.sdl.webapp.common.impl.util.LogbackRepeatingToSingleFilter">
             <loggerName>com.tridion.ambientdata.AmbientDataContext</loggerName>
         </filter>
         <encoder>

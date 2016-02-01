@@ -51,6 +51,34 @@ public class MarkupImpl implements Markup {
         this.webRequestContext = webRequestContext;
     }
 
+    private static HtmlElement siteMapListHelper(SitemapItem item) {
+        if (!item.getUrl().endsWith("/index")) {
+            final SimpleElementBuilder itemElementBuilder = HtmlBuilders.element("li")
+                    .withNode(HtmlBuilders.a(item.getUrl()).withTitle(item.getTitle()).withTextualContent(item.getTitle())
+                            .build());
+
+            if (!item.getItems().isEmpty()) {
+                final SimpleElementBuilder childListBuilder = HtmlBuilders.element("ul").withClass("list-unstyled");
+                for (SitemapItem child : item.getItems()) {
+                    final HtmlElement childElement = siteMapListHelper(child);
+                    if (childElement != null) {
+                        childListBuilder.withNode(childElement);
+                    }
+                }
+                itemElementBuilder.withNode(childListBuilder.build());
+            }
+
+            return itemElementBuilder.build();
+        }
+
+        return null;
+    }
+
+    @Override
+    public WebRequestContext getWebRequestContext() {
+        return webRequestContext;
+    }
+
     @Override
     public String url(String path) {
         return webRequestContext.getContextPath() + path;
@@ -82,7 +110,7 @@ public class MarkupImpl implements Markup {
                 final String prefix = entityInfo.getPrefix();
                 if (!Strings.isNullOrEmpty(prefix)) {
                     vocabularies.add(prefix + ": " + entityInfo.getVocabulary());
-                    entityTypes.add(prefix + ":" + entityInfo.getEntityName());
+                    entityTypes.add(prefix + ':' + entityInfo.getEntityName());
                 }
             }
         }
@@ -125,7 +153,7 @@ public class MarkupImpl implements Markup {
         for (SemanticPropertyInfo propertyInfo : semanticMappingRegistry.getPropertyInfo(field)) {
             final String prefix = propertyInfo.getPrefix();
             if (publicPrefixes.contains(prefix)) {
-                propertyTypes.add(prefix + ":" + propertyInfo.getPropertyName());
+                propertyTypes.add(prefix + ':' + propertyInfo.getPropertyName());
             }
         }
 
@@ -138,8 +166,8 @@ public class MarkupImpl implements Markup {
             if (propertyData != null) {
                 String xpath = propertyData.get(fieldName);
                 if (!Strings.isNullOrEmpty(xpath)) {
-                    xpath += xpath.endsWith("]") ? "" : ("[" + (index + 1) + "]");
-                    markup += " " + new HtmlAttribute("data-entity-property-xpath", xpath).toHtml();
+                    xpath += xpath.endsWith("]") ? "" : ("[" + (index + 1) + ']');
+                    markup += ' ' + new HtmlAttribute("data-entity-property-xpath", xpath).toHtml();
                 }
             }
         }
@@ -186,28 +214,5 @@ public class MarkupImpl implements Markup {
     public String siteMapList(SitemapItem item) {
         final HtmlElement htmlElement = siteMapListHelper(item);
         return htmlElement != null ? htmlElement.toHtml() : "";
-    }
-
-    private HtmlElement siteMapListHelper(SitemapItem item) {
-        if (!item.getUrl().endsWith("/index")) {
-            final SimpleElementBuilder itemElementBuilder = HtmlBuilders.element("li")
-                    .withNode(HtmlBuilders.a(item.getUrl()).withTitle(item.getTitle()).withTextualContent(item.getTitle())
-                            .build());
-
-            if (!item.getItems().isEmpty()) {
-                final SimpleElementBuilder childListBuilder = HtmlBuilders.element("ul").withClass("list-unstyled");
-                for (SitemapItem child : item.getItems()) {
-                    final HtmlElement childElement = siteMapListHelper(child);
-                    if (childElement != null) {
-                        childListBuilder.withNode(childElement);
-                    }
-                }
-                itemElementBuilder.withNode(childListBuilder.build());
-            }
-
-            return itemElementBuilder.build();
-        }
-
-        return null;
     }
 }

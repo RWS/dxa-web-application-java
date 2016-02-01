@@ -12,12 +12,13 @@ import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
+import lombok.Data;
 import lombok.SneakyThrows;
 
 import java.util.Map;
-import java.util.Objects;
 
 @SemanticMappingIgnore
+@Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
 
@@ -37,57 +38,10 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     private String htmlClasses;
 
     @Override
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    @Override
-    public Map<String, String> getXpmMetadata() {
-        return xpmMetadata;
-    }
-
-    public void setXpmMetadata(Map<String, String> xpmMetadata) {
-        this.xpmMetadata = xpmMetadata;
-    }
-
-    @Override
-    public Map<String, String> getXpmPropertyMetadata() {
-        return xpmPropertyMetadata;
-    }
-
-    public void setXpmPropertyMetadata(Map<String, String> propertyData) {
-        this.xpmPropertyMetadata = propertyData;
-    }
-
-    @Override
-    public MvcData getMvcData() {
-        return mvcData;
-    }
-
-    public void setMvcData(MvcData mvcData) {
-        this.mvcData = mvcData;
-    }
-
-    @Override
-    public String getHtmlClasses() {
-        return this.htmlClasses;
-    }
-
-    @Override
-    public void setHtmlClasses(String htmlClasses) {
-        this.htmlClasses = htmlClasses;
-    }
-
-
-    @Override
     @SneakyThrows(JsonProcessingException.class)
     public String getXpmMarkup(Localization localization) {
-        return getXpmMetadata() == null ? "" : String.format("<!-- Start Component Presentation: %s -->",
-                ApplicationContextHolder.getContext().getBean(ObjectMapper.class).writeValueAsString(getXpmMetadata()));
+        return this.xpmMetadata == null ? "" : String.format("<!-- Start Component Presentation: %s -->",
+                ApplicationContextHolder.getContext().getBean(ObjectMapper.class).writeValueAsString(this.xpmMetadata));
     }
 
     @Override
@@ -98,22 +52,5 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
                                 " Alternatively, override method %s.toHtmlElement().",
                         getClass().getName(), getClass().getName())
         );
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AbstractEntityModel that = (AbstractEntityModel) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(xpmMetadata, that.xpmMetadata) &&
-                Objects.equals(xpmPropertyMetadata, that.xpmPropertyMetadata) &&
-                Objects.equals(mvcData, that.mvcData) &&
-                Objects.equals(htmlClasses, that.htmlClasses);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, xpmMetadata, xpmPropertyMetadata, mvcData, htmlClasses);
     }
 }

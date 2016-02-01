@@ -20,7 +20,7 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
 /**
- * Unit tests for {@link GenericMediaHelper}.
+ * Unit tests for {@link DefaultMediaHelper}.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
@@ -95,6 +95,11 @@ public class DefaultMediaHelperTest {
         }
 
         @Bean
+        public MediaHelper.ResponsiveMediaUrlBuilder responsiveMediaUrlBuilder() {
+            return new DefaultMediaHelper.DefaultResponsiveMediaUrlBuilder();
+        }
+
+        @Bean
         public WebRequestContextImpl webRequestContext() {
             return new WebRequestContextImpl();
         }
@@ -113,5 +118,6 @@ public class DefaultMediaHelperTest {
         public HttpServletRequest servletRequest() {
             return new MockHttpServletRequest();
         }
+
     }
 }

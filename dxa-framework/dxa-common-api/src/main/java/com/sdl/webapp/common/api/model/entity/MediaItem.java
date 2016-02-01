@@ -16,6 +16,12 @@ import org.w3c.dom.Node;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG;
 
+/**
+ * <p>Abstract MediaItem class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SemanticEntity(entityName = "MediaObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
@@ -57,6 +63,11 @@ public abstract class MediaItem extends AbstractEntityModel {
     @JsonProperty("MimeType")
     private String mimeType;
 
+    /**
+     * <p>Getter for the field <code>mediaHelper</code>.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.api.MediaHelper} object.
+     */
     protected MediaHelper getMediaHelper() {
         if (this.mediaHelper == null) {
             this.mediaHelper = ApplicationContextHolder.getContext().getBean(MediaHelper.MediaHelperFactory.class)
@@ -66,17 +77,32 @@ public abstract class MediaItem extends AbstractEntityModel {
         return this.mediaHelper;
     }
 
+    /**
+     * <p>isImage.</p>
+     *
+     * @return a boolean.
+     */
     @JsonIgnore
     public boolean isImage() {
         return false;
     }
 
+    /**
+     * <p>getIconClass.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     @JsonIgnore
     public String getIconClass() {
         String fileType = MIME_TYPE_TO_ICON_CLASS_MAPPING.get(this.getMimeType());
         return fileType != null ? String.format("fa-file-%s-o", fileType) : "fa-file";
     }
 
+    /**
+     * <p>getFriendlyFileSize.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     @JsonIgnore
     public String getFriendlyFileSize() {
         String[] sizes = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
@@ -90,6 +116,9 @@ public abstract class MediaItem extends AbstractEntityModel {
         return String.format("%s %s", Math.ceil(len), sizes[order]);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlElement toHtmlElement() throws DxaException {
         return this.toHtmlElement("100%");
@@ -100,6 +129,7 @@ public abstract class MediaItem extends AbstractEntityModel {
      *
      * @param widthFactor The factor to apply to the width - can be % (eg "100%") or absolute (eg "120")
      * @return The HTML element representation
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
      */
     public abstract HtmlElement toHtmlElement(String widthFactor) throws DxaException;
 
@@ -111,6 +141,7 @@ public abstract class MediaItem extends AbstractEntityModel {
      * @param cssClass      Optional CSS class name(s) to apply
      * @param containerSize The size (in grid column units) of the containing element
      * @return The HTML element representation
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
      */
     public abstract HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException;
 
@@ -123,11 +154,14 @@ public abstract class MediaItem extends AbstractEntityModel {
      * @param containerSize The size (in grid column units) of the containing element
      * @param contextPath   Context path to prepend the urls
      * @return The HTML element representation
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
      */
     public abstract HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException;
 
     /**
      * Read properties from XHTML element.
+     *
+     * @param xhtmlElement a {@link org.w3c.dom.Node} object.
      */
     public void readFromXhtmlElement(Node xhtmlElement) {
         // Return the Item (Reference) ID part of the TCM URI.

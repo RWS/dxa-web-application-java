@@ -14,6 +14,12 @@ import java.io.IOException;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
+/**
+ * <p>EntityTag class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class EntityTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(EntityTag.class);
 
@@ -23,18 +29,36 @@ public class EntityTag extends AbstractMarkupTag {
 
     private String viewName;
 
+    /**
+     * <p>Setter for the field <code>containerSize</code>.</p>
+     *
+     * @param containerSize a int.
+     */
     public void setContainerSize(int containerSize) {
         this.containerSize = containerSize;
     }
 
+    /**
+     * <p>Setter for the field <code>entity</code>.</p>
+     *
+     * @param entity a {@link com.sdl.webapp.common.api.model.EntityModel} object.
+     */
     public void setEntity(EntityModel entity) {
         this.entity = entity;
     }
 
+    /**
+     * <p>Setter for the field <code>viewName</code>.</p>
+     *
+     * @param viewName a {@link java.lang.String} object.
+     */
     public void setViewName(String viewName) {
         this.viewName = viewName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
         WebRequestContext webRequestContext = this.getWebRequestContext();

@@ -6,18 +6,32 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * <p>Abstract AbstractTridionLinkResolver class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public abstract class AbstractTridionLinkResolver implements LinkResolver {
     //TODO : move these back to defaultcontentprovider once class is moved to new package
+    /**
+     * Constant <code>DEFAULT_PAGE_NAME="index"</code>
+     */
     public static final String DEFAULT_PAGE_NAME = "index";
+    /**
+     * Constant <code>DEFAULT_PAGE_EXTENSION=".html"</code>
+     */
     public static final String DEFAULT_PAGE_EXTENSION = ".html";
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractTridionLinkResolver.class);
 
+    /** {@inheritDoc} */
     @Override
     public String resolveLink(String url, String localizationId) {
         return resolveLink(url, localizationId, false);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String resolveLink(String url, String localizationId, boolean resolveToBinary) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
@@ -28,7 +42,7 @@ public abstract class AbstractTridionLinkResolver implements LinkResolver {
                 if (resolvedUrl.endsWith(DEFAULT_PAGE_EXTENSION)) {
                     resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_EXTENSION.length());
                 }
-                if (resolvedUrl.endsWith("/" + DEFAULT_PAGE_NAME)) {
+                if (resolvedUrl.endsWith('/' + DEFAULT_PAGE_NAME)) {
                     resolvedUrl = resolvedUrl.substring(0, resolvedUrl.length() - DEFAULT_PAGE_NAME.length());
                 }
             }
@@ -36,6 +50,7 @@ public abstract class AbstractTridionLinkResolver implements LinkResolver {
         return resolvedUrl;
     }
 
+    /** {@inheritDoc} */
     public String resolveLink(String uri, int publicationId, boolean isBinary) {
         if (uri == null || !uri.startsWith("tcm:")) {
             return uri;
@@ -73,6 +88,15 @@ public abstract class AbstractTridionLinkResolver implements LinkResolver {
         }
     }
 
+    /**
+     * <p>resolveLink.</p>
+     *
+     * @param linkStrategy a {@link com.sdl.webapp.tridion.linking.AbstractTridionLinkResolver.BasicLinkStrategy} object.
+     * @param publicationId a int.
+     * @param itemId a int.
+     * @param uri a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     protected abstract String resolveLink(BasicLinkStrategy linkStrategy, int publicationId, int itemId, String uri);
 
     private String resolveLink(BasicLinkStrategy linkStrategy, int publicationId, int itemId) {

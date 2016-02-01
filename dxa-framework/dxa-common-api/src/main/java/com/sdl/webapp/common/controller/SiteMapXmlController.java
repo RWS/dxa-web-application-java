@@ -24,6 +24,9 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
 
 /**
  * Controller which returns the sitemap in XML format.
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 @Controller
 public class SiteMapXmlController {
@@ -35,6 +38,13 @@ public class SiteMapXmlController {
 
     private final Markup markup;
 
+    /**
+     * <p>Constructor for SiteMapXmlController.</p>
+     *
+     * @param webRequestContext  a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     * @param navigationProvider a {@link com.sdl.webapp.common.api.content.NavigationProvider} object.
+     * @param markup             a {@link com.sdl.webapp.common.markup.Markup} object.
+     */
     @Autowired
     public SiteMapXmlController(WebRequestContext webRequestContext, NavigationProvider navigationProvider,
                                 Markup markup) {
@@ -43,11 +53,26 @@ public class SiteMapXmlController {
         this.markup = markup;
     }
 
+    private static void writeSitemapItemsXml(List<SitemapItem> items, PrintWriter out) {
+        for (SitemapItem item : items) {
+            if (item.getType().equals("Page") && item.getUrl().startsWith("/")) {
+                out.println("<url>");
+                out.println("<loc>" + item.getUrl() + "</loc>");
+                if (item.getPublishedDate() != null) {
+                    out.println("<lastmod>" + item.getPublishedDate() + "</lastmod>");
+                }
+                out.println("</url>");
+            } else {
+                writeSitemapItemsXml(item.getItems(), out);
+            }
+        }
+    }
+
     /**
      * Handles a request for the sitemap in XML format.
      *
      * @return The sitemap in XML format.
-     * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
+     * @throws com.sdl.webapp.common.api.content.NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
     @RequestMapping(method = RequestMethod.GET, value = "/sitemap.xml", produces = "application/xml; charset=utf-8")
     @ResponseBody
@@ -67,21 +92,13 @@ public class SiteMapXmlController {
         return sw.toString();
     }
 
-    private void writeSitemapItemsXml(List<SitemapItem> items, PrintWriter out) {
-        for (SitemapItem item : items) {
-            if (item.getType().equals("Page") && item.getUrl().startsWith("/")) {
-                out.println("<url>");
-                out.println("<loc>" + item.getUrl() + "</loc>");
-                if (item.getPublishedDate() != null) {
-                    out.println("<lastmod>" + item.getPublishedDate() + "</lastmod>");
-                }
-                out.println("</url>");
-            } else {
-                writeSitemapItemsXml(item.getItems(), out);
-            }
-        }
-    }
-
+    /**
+     * <p>handleException.</p>
+     *
+     * @param request   a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param exception a {@link java.lang.Exception} object.
+     * @return a {@link java.lang.String} object.
+     */
     @ExceptionHandler(Exception.class)
     public String handleException(HttpServletRequest request, Exception exception) {
         request.setAttribute(MARKUP, markup);

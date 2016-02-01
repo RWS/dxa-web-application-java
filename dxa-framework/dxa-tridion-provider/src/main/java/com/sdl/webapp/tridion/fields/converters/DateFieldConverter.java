@@ -12,15 +12,27 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+/**
+ * <p>DateFieldConverter class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class DateFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.DATE};
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FieldType[] supportedFieldTypes() {
         return SUPPORTED_FIELD_TYPES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<DateTime> dateTimeValues = new ArrayList<>();

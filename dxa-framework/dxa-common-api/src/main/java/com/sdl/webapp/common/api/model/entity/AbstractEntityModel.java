@@ -18,6 +18,12 @@ import lombok.SneakyThrows;
 import java.util.Map;
 
 @SemanticMappingIgnore
+/**
+ * <p>Abstract AbstractEntityModel class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
@@ -37,6 +43,9 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     @JsonProperty("HtmlClasses")
     private String htmlClasses;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SneakyThrows(JsonProcessingException.class)
     public String getXpmMarkup(Localization localization) {
@@ -44,6 +53,9 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
                 ApplicationContextHolder.getContext().getBean(ObjectMapper.class).writeValueAsString(this.xpmMetadata));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlElement toHtmlElement() throws DxaException {
         throw new UnsupportedOperationException(

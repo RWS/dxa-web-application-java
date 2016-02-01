@@ -11,10 +11,21 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+/**
+ * <p>FieldConverterRegistry class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class FieldConverterRegistry {
 
     private final Map<FieldType, FieldConverter> fieldConverters = new HashMap<>();
 
+    /**
+     * <p>Constructor for FieldConverterRegistry.</p>
+     *
+     * @param fieldConverterList a {@link java.util.List} object.
+     */
     @Autowired
     public FieldConverterRegistry(List<FieldConverter> fieldConverterList) {
         for (FieldConverter fieldConverter : fieldConverterList) {
@@ -24,6 +35,13 @@ public class FieldConverterRegistry {
         }
     }
 
+    /**
+     * <p>getFieldConverterFor.</p>
+     *
+     * @param fieldType a {@link org.dd4t.contentmodel.FieldType} object.
+     * @return a {@link com.sdl.webapp.tridion.fields.converters.FieldConverter} object.
+     * @throws com.sdl.webapp.tridion.fields.exceptions.UnsupportedFieldTypeException if any.
+     */
     public FieldConverter getFieldConverterFor(FieldType fieldType) throws UnsupportedFieldTypeException {
         final FieldConverter fieldConverter = fieldConverters.get(fieldType);
         if (fieldConverter == null) {

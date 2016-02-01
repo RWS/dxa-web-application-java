@@ -6,6 +6,9 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 
 /**
  * Navigation provider.
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public interface NavigationProvider {
 
@@ -14,7 +17,7 @@ public interface NavigationProvider {
      *
      * @param localization The localization.
      * @return The navigation model as a {@code SitemapItem}.
-     * @throws NavigationProviderException If an error occurred so that the navigation model could not be retrieved.
+     * @throws com.sdl.webapp.common.api.content.NavigationProviderException If an error occurred so that the navigation model could not be retrieved.
      */
     SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException;
 
@@ -24,7 +27,7 @@ public interface NavigationProvider {
      * @param requestPath  The request path.
      * @param localization The localization.
      * @return A {@code NavigationLinks} object containing navigation links.
-     * @throws NavigationProviderException If an error occurred so that the navigation links could not be retrieved.
+     * @throws com.sdl.webapp.common.api.content.NavigationProviderException If an error occurred so that the navigation links could not be retrieved.
      */
     NavigationLinks getTopNavigationLinks(String requestPath, Localization localization)
             throws NavigationProviderException;
@@ -35,7 +38,7 @@ public interface NavigationProvider {
      * @param requestPath  The request path.
      * @param localization The localization.
      * @return A {@code NavigationLinks} object containing navigation links.
-     * @throws NavigationProviderException If an error occurred so that the navigation links could not be retrieved.
+     * @throws com.sdl.webapp.common.api.content.NavigationProviderException If an error occurred so that the navigation links could not be retrieved.
      */
     NavigationLinks getContextNavigationLinks(String requestPath, Localization localization)
             throws NavigationProviderException;
@@ -46,7 +49,7 @@ public interface NavigationProvider {
      * @param requestPath  The request path.
      * @param localization The localization.
      * @return A {@code NavigationLinks} object containing navigation links.
-     * @throws NavigationProviderException If an error occurred so that the navigation links could not be retrieved.
+     * @throws com.sdl.webapp.common.api.content.NavigationProviderException If an error occurred so that the navigation links could not be retrieved.
      */
     NavigationLinks getBreadcrumbNavigationLinks(String requestPath, Localization localization)
             throws NavigationProviderException;

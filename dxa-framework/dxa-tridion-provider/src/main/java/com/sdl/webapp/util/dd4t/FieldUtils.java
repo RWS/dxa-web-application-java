@@ -13,8 +13,17 @@ import java.util.Map;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
 
+/**
+ * <p>FieldUtils class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public final class FieldUtils {
 
+    /**
+     * Constant <code>DOUBLE_TO_STRING_FUNCTION</code>
+     */
     public static final Function<Double, String> DOUBLE_TO_STRING_FUNCTION = new Function<Double, String>() {
         @Override
         public String apply(Double input) {
@@ -22,6 +31,9 @@ public final class FieldUtils {
         }
     };
 
+    /**
+     * Constant <code>COMPONENT_TO_STRING_FUNCTION</code>
+     */
     public static final Function<Component, String> COMPONENT_TO_STRING_FUNCTION = new Function<Component, String>() {
         @Override
         public String apply(Component input) {
@@ -29,6 +41,7 @@ public final class FieldUtils {
         }
     };
 
+    /** Constant <code>KEYWORD_TO_STRING_FUNCTION</code> */
     public static final Function<Keyword, String> KEYWORD_TO_STRING_FUNCTION = new Function<Keyword, String>() {
         @Override
         public String apply(Keyword input) {
@@ -39,11 +52,24 @@ public final class FieldUtils {
     private FieldUtils() {
     }
 
+    /**
+     * <p>getStringValue.</p>
+     *
+     * @param field a {@link org.dd4t.contentmodel.Field} object.
+     * @return a {@link java.lang.String} object.
+     */
     public static String getStringValue(Field field) {
         final List<String> values = getStringValues(field);
         return !values.isEmpty() ? values.get(0) : null;
     }
 
+    /**
+     * <p>getStringValue.</p>
+     *
+     * @param fields a {@link java.util.Map} object.
+     * @param name a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     public static String getStringValue(Map<String, Field> fields, String name) {
         return fields != null ? getStringValue(fields.get(name)) : null;
     }

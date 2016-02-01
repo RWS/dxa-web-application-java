@@ -9,6 +9,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
+/**
+ * <p>DefaultMediaHelper class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @Component
 public class DefaultMediaHelper implements MediaHelper {
 
@@ -26,6 +32,12 @@ public class DefaultMediaHelper implements MediaHelper {
     @Autowired
     private ResponsiveMediaUrlBuilder responsiveMediaUrlBuilder;
 
+    /**
+     * <p>roundWidth.</p>
+     *
+     * @param width a int.
+     * @return a int.
+     */
     protected static int roundWidth(int width) {
         // Round the width to the nearest set limit point - important as we do not want to swamp the cache
         // with lots of different sized versions of the same image
@@ -39,10 +51,20 @@ public class DefaultMediaHelper implements MediaHelper {
         throw new IllegalStateException("Should normally never be reached");
     }
 
+    /**
+     * <p>normalizeDimension.</p>
+     *
+     * @param dimension a int.
+     * @param aspect    a double.
+     * @return a int.
+     */
     protected static int normalizeDimension(int dimension, double aspect) {
         return (int) Math.ceil(dimension / aspect);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getResponsiveImageUrl(String url, String widthFactor, double aspect, int containerSize) {
         final int width = roundWidth(getResponsiveWidth(widthFactor, containerSize));
@@ -60,6 +82,7 @@ public class DefaultMediaHelper implements MediaHelper {
                 .build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getResponsiveWidth(String widthFactor, int containerSize) {
         final int gridSize = GRID_SIZE;
@@ -123,16 +146,19 @@ public class DefaultMediaHelper implements MediaHelper {
         return (int) Math.ceil(width);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getResponsiveHeight(String widthFactor, double aspect, int containerSize) {
         return normalizeDimension(getResponsiveWidth(widthFactor, containerSize), aspect);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getGridSize() {
         return GRID_SIZE;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ScreenWidth getScreenWidth() {
         final int displayWidth = webRequestContext.getDisplayWidth();
@@ -147,26 +173,31 @@ public class DefaultMediaHelper implements MediaHelper {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getSmallScreenBreakpoint() {
         return SMALL_SCREEN_BREAKPOINT;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getMediumScreenBreakpoint() {
         return MEDIUM_SCREEN_BREAKPOINT;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getLargeScreenBreakpoint() {
         return LARGE_SCREEN_BREAKPOINT;
     }
 
+    /** {@inheritDoc} */
     @Override
     public double getDefaultMediaAspect() {
         return DEFAULT_MEDIA_ASPECT;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDefaultMediaFill() {
         return DEFAULT_MEDIA_FILL;

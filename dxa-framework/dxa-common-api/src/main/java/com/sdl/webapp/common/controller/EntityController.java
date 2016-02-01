@@ -21,11 +21,15 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODE
 
 /**
  * Entity controller for the Core area.
- * <p/>
+ * <p>
  * This handles include requests to /system/mvc/Core/Entity/{regionName}/{entityId}
+ * </p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + "/" + ENTITY_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + '/' + ENTITY_CONTROLLER_NAME)
 public class EntityController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(EntityController.class);
 
@@ -37,6 +41,7 @@ public class EntityController extends BaseController {
      * @param entityId The entity id.
      * @return The name of the entity view that should be rendered for this request.
      * @throws ContentProviderException If an error occurs so that the entity cannot not be retrieved.
+     * @throws java.lang.Exception if any.
      */
     @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.ENTITY_ACTION_NAME + "/{entityId}")
     public String handleGetEntity(HttpServletRequest request,
@@ -45,6 +50,14 @@ public class EntityController extends BaseController {
         return handleEntityRequest(request, entityId);
     }
 
+    /**
+     * <p>handleEntityRequest.</p>
+     *
+     * @param request  a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param entityId a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     * @throws java.lang.Exception if any.
+     */
     protected String handleEntityRequest(HttpServletRequest request, String entityId) throws Exception {
         LOG.trace("handleGetEntity: entityId={}", entityId);
 

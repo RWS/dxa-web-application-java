@@ -22,6 +22,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Component
+/**
+ * <p>ViewModelRegistryImpl class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewModelRegistryImpl.class);
@@ -34,13 +40,16 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Autowired
     private SemanticMappingRegistry semanticMappingRegistry;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void registerViewModel(MvcData viewData, Class<? extends ViewModel> entityClass) {
         try {
             if (lock.tryLock(10, TimeUnit.SECONDS)) {
                 if (viewData != null) {
                     if (viewEntityClassMap.containsKey(viewData)) {
-                        LOG.warn("View % registered multiple times.", viewData);
+                        LOG.warn("View {} registered multiple times.", viewData);
                         return;
                     }
                     viewEntityClassMap.put(viewData, entityClass);
@@ -54,6 +63,9 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Class<? extends ViewModel> getViewModelType(final MvcData viewData) {
 
@@ -88,6 +100,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames) {
         Class<? extends ViewModel> entityClass = null;
@@ -104,6 +117,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         return entityClass;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) {
 
@@ -116,6 +130,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         return getViewModelType(mvcData);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ViewModel> getViewEntityClass(final String viewName) throws DxaException {
 

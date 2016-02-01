@@ -9,6 +9,12 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+/**
+ * <p>SmartTargetPageModel class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @EqualsAndHashCode(callSuper = true)
 @ToString
 public class SmartTargetPageModel extends AbstractPageModelImpl {
@@ -19,9 +25,17 @@ public class SmartTargetPageModel extends AbstractPageModelImpl {
     @JsonProperty("AllowDuplicates")
     private boolean allowDuplicates;
 
+    /**
+     * <p>Constructor for SmartTargetPageModel.</p>
+     */
     public SmartTargetPageModel() {
     }
 
+    /**
+     * <p>Constructor for SmartTargetPageModel.</p>
+     *
+     * @param other a {@link com.sdl.webapp.common.api.model.PageModel} object.
+     */
     public SmartTargetPageModel(PageModel other) {
         super(other);
     }

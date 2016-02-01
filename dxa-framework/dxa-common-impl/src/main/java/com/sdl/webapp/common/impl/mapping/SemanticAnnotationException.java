@@ -3,11 +3,20 @@ package com.sdl.webapp.common.impl.mapping;
 /**
  * Thrown by {@code SemanticMappingRegistry} when semantic annotations are specified incorrectly on an entity class
  * or a field of an entity class.
- * <p/>
+ * <p>
  * This is a {@code RuntimeException} because when this happens, it most likely means there is a bug in the code.
+ * </p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public class SemanticAnnotationException extends RuntimeException {
 
+    /**
+     * <p>Constructor for SemanticAnnotationException.</p>
+     *
+     * @param message a {@link java.lang.String} object.
+     */
     public SemanticAnnotationException(String message) {
         super(message);
     }

@@ -18,10 +18,14 @@ import java.util.Set;
 
 /**
  * Semantics converter.
- * <p/>
+ * <p>
  * The web application needs the semantics configuration information in a different format than what is provided in
  * the JSON configuration files for the localization. This class converts the semantics into the format that the web
  * application needs.
+ * </p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public final class SemanticsConverter {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticsConverter.class);
@@ -36,7 +40,7 @@ public final class SemanticsConverter {
      * @param jsonSchemas      A list of {@code JsonSchema} objects from the localization configuration.
      * @param jsonVocabularies A list of {@code JsonVocabulary} objects from the localization configuration.
      * @return A list of {@code SemanticSchema} objects.
-     * @throws LocalizationFactoryException If there is an error in the configuration data.
+     * @throws com.sdl.webapp.common.api.localization.LocalizationFactoryException If there is an error in the configuration data.
      */
     public static List<SemanticSchema> convertSemantics(List<JsonSchema> jsonSchemas,
                                                         List<JsonVocabulary> jsonVocabularies)

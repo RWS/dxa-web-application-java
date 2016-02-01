@@ -6,29 +6,52 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+/**
+ * <p>Localization interface.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public interface Localization {
+    /**
+     * <p>getId.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     String getId();
 
+    /**
+     * <p>getPath.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     String getPath();
 
     /**
      * Determines if the specified URL refers to static content in this localization.
      *
      * @return {@code true} if the specified URL refers to static content in this localization, {@code false} otherwise.
+     * @param url a {@link java.lang.String} object.
      */
     boolean isStaticContent(String url);
 
     /**
+     * <p>isDefault.</p>
+     *
      * @return {@code true} when this is the default localization, {@code false} otherwise.
      */
     boolean isDefault();
 
     /**
+     * <p>isStaging.</p>
+     *
      * @return {@code true} if this localization is in staging mode, {@code false} otherwise.
      */
     boolean isStaging();
 
     /**
+     * <p>getVersion.</p>
+     *
      * @return The localization version number.
      */
     String getVersion();
@@ -41,11 +64,15 @@ public interface Localization {
     String getCulture();
 
     /**
-     * @return The Java {@link Locale} of this localization.
+     * <p>getLocale.</p>
+     *
+     * @return The Java {@link java.util.Locale} of this localization.
      */
     Locale getLocale();
 
     /**
+     * <p>getSiteLocalizations.</p>
+     *
      * @return The site localizations associated with this localization.
      */
     List<SiteLocalization> getSiteLocalizations();

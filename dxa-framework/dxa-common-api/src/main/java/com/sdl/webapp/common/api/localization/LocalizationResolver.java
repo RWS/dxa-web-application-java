@@ -2,6 +2,9 @@ package com.sdl.webapp.common.api.localization;
 
 /**
  * Localization resolver.
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public interface LocalizationResolver {
 
@@ -10,7 +13,7 @@ public interface LocalizationResolver {
      *
      * @param url The URL.
      * @return The {@code Localization} for this URL.
-     * @throws LocalizationResolverException If an error occurred so that the localization could not be determined.
+     * @throws com.sdl.webapp.common.api.localization.LocalizationResolverException If an error occurred so that the localization could not be determined.
      */
     Localization getLocalization(String url) throws LocalizationResolverException;
 
@@ -18,6 +21,7 @@ public interface LocalizationResolver {
      * Refreshes the specified localization, so that its configuration is reloaded.
      *
      * @param localization localization to be refreshed
+     * @return a boolean.
      */
     boolean refreshLocalization(Localization localization);
 }

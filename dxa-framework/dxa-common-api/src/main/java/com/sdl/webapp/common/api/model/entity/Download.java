@@ -22,6 +22,12 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.small;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/**
+ * <p>Download class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @SemanticEntity(entityName = "DataDownload", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Download extends MediaItem {
 
@@ -34,24 +40,41 @@ public class Download extends MediaItem {
     @JsonProperty("Description")
     private String description;
 
+    /**
+     * <p>Getter for the field <code>description</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * <p>Setter for the field <code>description</code>.</p>
+     *
+     * @param description a {@link java.lang.String} object.
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlElement toHtmlElement(String widthFactor) throws DxaException {
         return toHtmlElement(widthFactor, 0, "", 0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException {
         return toHtmlElement(widthFactor, aspect, cssClass, containerSize, "");
     }
 
+    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException {
         if (isEmpty(getUrl())) {
@@ -69,17 +92,19 @@ public class Download extends MediaItem {
                         ).withNode(
                                 small().withClass("size").withTextualContent(format("(%s)", getFriendlyFileSize())).build()
                         ).withNode(
-                                (isEmpty(getDescription()) ? empty() : small().withTextualContent(getDescription())).build()
+                                (isEmpty(description) ? empty() : small().withTextualContent(description)).build()
                         ).build()
                 ).build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void readFromXhtmlElement(Node xhtmlElement) {
         super.readFromXhtmlElement(xhtmlElement);
         this.setMvcData(getMvcData());
     }
 
+    /** {@inheritDoc} */
     @Override
     public MvcData getMvcData() {
         return MvcDataCreator.creator()

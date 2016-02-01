@@ -16,6 +16,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+/**
+ * <p>XhtmlFieldConverter class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class XhtmlFieldConverter extends AbstractFieldConverter {
     private static final Logger LOG = LoggerFactory.getLogger(XhtmlFieldConverter.class);
 
@@ -24,17 +30,29 @@ public class XhtmlFieldConverter extends AbstractFieldConverter {
     private final RichTextProcessor richTextProcessor;
     private final WebRequestContext webRequestContext;
 
+    /**
+     * <p>Constructor for XhtmlFieldConverter.</p>
+     *
+     * @param richTextProcessor a {@link com.sdl.webapp.common.api.content.RichTextProcessor} object.
+     * @param webRequestContext a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     */
     @Autowired
     public XhtmlFieldConverter(RichTextProcessor richTextProcessor, WebRequestContext webRequestContext) {
         this.richTextProcessor = richTextProcessor;
         this.webRequestContext = webRequestContext;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FieldType[] supportedFieldTypes() {
         return SUPPORTED_FIELD_TYPES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<RichText> fieldValues = new ArrayList<>();

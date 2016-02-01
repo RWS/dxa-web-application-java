@@ -7,6 +7,12 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 
+/**
+ * <p>MimeUtils class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public final class MimeUtils {
 
     static HashMap<String, String> MIME_TYPES = new HashMap<>();
@@ -179,6 +185,13 @@ public final class MimeUtils {
     private MimeUtils() {
     }
 
+    /**
+     * <p>getMimeType.</p>
+     *
+     * @param url a {@link java.net.URL} object.
+     * @return a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     static public String getMimeType(URL url) throws IOException {
 
         // First try to get MIME type by peeking the input stream
@@ -194,8 +207,14 @@ public final class MimeUtils {
         return mimeType;
     }
 
+    /**
+     * <p>getMimeType.</p>
+     *
+     * @param filename a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     static public String getMimeType(String filename) {
-        int suffixIndex = filename.lastIndexOf(".");
+        int suffixIndex = filename.lastIndexOf('.');
         if (suffixIndex != -1) {
             String suffix = filename.substring(suffixIndex + 1);
             return MIME_TYPES.get(suffix);

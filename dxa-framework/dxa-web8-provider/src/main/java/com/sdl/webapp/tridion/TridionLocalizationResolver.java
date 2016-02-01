@@ -7,10 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
+/**
+ * <p>TridionLocalizationResolver class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class TridionLocalizationResolver extends AbstractTridionLocalizationResolver {
     @Autowired
     private DynamicMappingsRetriever dynamicMappingsRetriever;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected PublicationMappingData getPublicationMappingData(String url) throws PublicationMappingNotFoundException {
         try {

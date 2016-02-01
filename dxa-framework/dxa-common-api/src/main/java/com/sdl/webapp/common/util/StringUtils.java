@@ -6,10 +6,17 @@ import java.util.regex.Pattern;
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/**
+ * <p>StringUtils class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public final class StringUtils {
 
     /**
      * Replaces {0}-like placeholders in the string to format to Java's %1$s preserving the order of elements.
+     *
      * @param cmFormatString format string with {0}, {1}, ... as placeholders
      * @return same format string with replaced {0}... to %1$s
      */

@@ -24,6 +24,12 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
+/**
+ * <p>Abstract AbstractAdfContextClaimsProvider class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsProvider {
 
     private static final String TAF_CLAIM_CONTEXT = "taf:claim:context:";
@@ -56,6 +62,9 @@ public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsP
         return claimNamePrefix;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, Object> getContextClaims(String aspectName) {
         String claimNamePrefix = appendAspectName(aspectName);
@@ -75,6 +84,9 @@ public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsP
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDeviceFamily() {
         // TODO TSI-789: this functionality overlaps with "Context Expressions".
@@ -127,7 +139,18 @@ public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsP
         return result;
     }
 
+    /**
+     * <p>getCurrentClaims.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     protected abstract Map<URI, Object> getCurrentClaims();
 
+    /**
+     * <p>getClaimValueForURI.</p>
+     *
+     * @param uri a {@link java.net.URI} object.
+     * @return a {@link java.lang.String} object.
+     */
     protected abstract String getClaimValueForURI(URI uri);
 }

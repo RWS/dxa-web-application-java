@@ -8,6 +8,12 @@ import lombok.Data;
 import java.util.List;
 
 @Data
+/**
+ * <p>Abstract BrokerQuery class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public abstract class BrokerQuery {
     private int schemaId;
     private int publicationId;
@@ -20,5 +26,11 @@ public abstract class BrokerQuery {
 
     // TODO: Add filters for custom meta data
 
+    /**
+     * <p>executeQuery.</p>
+     *
+     * @return a {@link java.util.List} object.
+     * @throws com.sdl.webapp.tridion.query.BrokerQueryException if any.
+     */
     public abstract List<Teaser> executeQuery() throws BrokerQueryException;
 }

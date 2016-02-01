@@ -24,8 +24,12 @@ import java.util.Stack;
 
 /**
  * Implementation of {@code WebRequestContext}.
- * <p/>
+ * <p>
  * This implementation gets information about the display width etc. from the Ambient Data Framework.
+ * </p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 @Component
 @Primary
@@ -62,11 +66,17 @@ public class WebRequestContextImpl implements WebRequestContext {
     private boolean include;
     private Stack<Integer> containerSizeStack = new Stack<>();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getFullUrl() {
         return baseUrl + contextPath + requestPath;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getMaxMediaWidth() {
         if (maxMediaWidth == null) {
@@ -75,6 +85,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         return maxMediaWidth;
     }
 
+    /** {@inheritDoc} */
     @Override
     public double getPixelRatio() {
         if (pixelRatio == null) {
@@ -87,6 +98,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         return pixelRatio;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ScreenWidth getScreenWidth() {
         if (screenwidth == null) {
@@ -95,12 +107,14 @@ public class WebRequestContextImpl implements WebRequestContext {
         return screenwidth;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean isDeveloperMode() {
         return this.developerMode;
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean isPreview() {
         // Should return true if the request is from XPM (NOTE currently always true for staging as we cannot reliably
@@ -108,6 +122,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         return localization.isStaging();
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getDisplayWidth() {
         if (displayWidth == null) {
@@ -125,6 +140,11 @@ public class WebRequestContextImpl implements WebRequestContext {
         return displayWidth;
     }
 
+    /**
+     * <p>calculateScreenWidth.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.api.ScreenWidth} object.
+     */
     protected ScreenWidth calculateScreenWidth() {
         int width = this.contextCookiePresent ? this.getDisplayWidth() : MAX_WIDTH;
         if (width < this.mediaHelper.getSmallScreenBreakpoint()) {
@@ -139,16 +159,19 @@ public class WebRequestContextImpl implements WebRequestContext {
         return ScreenWidth.LARGE;
     }
 
+    /** {@inheritDoc} */
     @Override
     public int getContainerSize() {
         return this.containerSizeStack.peek();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void popContainerSize() {
         this.containerSizeStack.pop();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void pushContainerSize(int containerSize) {
 
@@ -162,6 +185,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         this.containerSizeStack.push(containerSize);
     }
 
+    /** {@inheritDoc} */
     @Override
     public RegionModel getParentRegion() {
         if (!parentRegionstack.isEmpty()) {
@@ -170,11 +194,13 @@ public class WebRequestContextImpl implements WebRequestContext {
         return null;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void popParentRegion() {
         this.parentRegionstack.pop();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void pushParentRegion(RegionModel parentRegion) {
         this.parentRegionstack.push(parentRegion);

@@ -10,9 +10,12 @@ import java.util.Set;
 
 /**
  * Semantic mapping registry.
- * <p/>
+ * <p>
  * The semantic mapping registry contains information about the entity classes, gathered from the semantic mapping
  * annotations declared on the classes and the fields of the classes.
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public interface SemanticMappingRegistry {
 
@@ -63,6 +66,7 @@ public interface SemanticMappingRegistry {
      * Get entity class.
      *
      * @return entity class
+     * @param entityName a {@link java.lang.String} object.
      */
     Class<? extends EntityModel> getEntityClass(String entityName);
 
@@ -71,6 +75,7 @@ public interface SemanticMappingRegistry {
      * Get entity class.
      *
      * @return entity class
+     * @param entityName a {@link java.lang.String} object.
      */
     Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName);
 

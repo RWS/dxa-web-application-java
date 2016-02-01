@@ -11,15 +11,29 @@ import java.util.Collections;
 import java.util.Map;
 
 @Component
+/**
+ * <p>AdfContextClaimsProvider class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @Profile("adf.context.provider")
 @Primary
 public class AdfContextClaimsProvider extends AbstractAdfContextClaimsProvider {
 
+    /**
+     * {@inheritDoc}
+     */
     protected String getClaimValueForURI(URI uri) {
         ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
         return currentClaimStore == null ? null : currentClaimStore.get(uri, String.class);
     }
 
+    /**
+     * <p>getCurrentClaims.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
     protected Map<URI, Object> getCurrentClaims() {
         ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
         return currentClaimStore == null ? Collections.<URI, Object>emptyMap() : currentClaimStore.getAll();

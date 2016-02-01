@@ -14,20 +14,34 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 
+/**
+ * <p>RichTextTag class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class RichTextTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RichTextTag.class);
 
     private RichText content;
 
+    /**
+     * <p>Setter for the field <code>content</code>.</p>
+     *
+     * @param content a {@link com.sdl.webapp.common.api.model.RichText} object.
+     */
     public void setContent(RichText content) {
         this.content = content;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
 
         final JspWriter out = pageContext.getOut();
-        StringBuilder builder = new StringBuilder();
+        StringBuilder builder = new StringBuilder(2048);
         try {
             for (RichTextFragment fragment : content.getFragments()) {
                 EntityModel entityModel = (fragment instanceof EntityModel ? (EntityModel) fragment : null);

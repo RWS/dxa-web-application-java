@@ -20,6 +20,9 @@ import java.util.Map;
 
 /**
  * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public abstract class AbstractTridionLocalizationResolver implements LocalizationResolver {
 
@@ -30,6 +33,27 @@ public abstract class AbstractTridionLocalizationResolver implements Localizatio
     @Autowired
     private LocalizationFactory localizationFactory;
 
+    /**
+     * Gets the publication mapping path. The returned path always starts with a "/" and does not end with a "/", unless
+     * the path is the root path "/" itself.
+     *
+     * @param originalPath The publication mapping original path
+     * @return The publication mapping path.
+     */
+    protected static String getPublicationMappingPath(String originalPath) {
+        String path = Strings.nullToEmpty(originalPath);
+        if (!path.startsWith("/")) {
+            path = '/' + path;
+        }
+        if (path.length() > 1 && path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+        return path;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SneakyThrows(UnsupportedEncodingException.class)
     public Localization getLocalization(String url) throws LocalizationResolverException {
@@ -44,6 +68,9 @@ public abstract class AbstractTridionLocalizationResolver implements Localizatio
         return localizations.get(data.id);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean refreshLocalization(Localization localization) {
         if (localization == null) {
@@ -57,6 +84,13 @@ public abstract class AbstractTridionLocalizationResolver implements Localizatio
         return false;
     }
 
+    /**
+     * <p>getPublicationMappingData.</p>
+     *
+     * @param url a {@link java.lang.String} object.
+     * @return a {@link com.sdl.webapp.tridion.AbstractTridionLocalizationResolver.PublicationMappingData} object.
+     * @throws com.sdl.webapp.tridion.PublicationMappingNotFoundException if any.
+     */
     protected abstract PublicationMappingData getPublicationMappingData(String url) throws PublicationMappingNotFoundException;
 
     private Localization createLocalization(String id, String path) throws LocalizationResolverException {
@@ -67,26 +101,8 @@ public abstract class AbstractTridionLocalizationResolver implements Localizatio
         }
     }
 
-    /**
-     * Gets the publication mapping path. The returned path always starts with a "/" and does not end with a "/", unless
-     * the path is the root path "/" itself.
-     *
-     * @param originalPath The publication mapping original path
-     * @return The publication mapping path.
-     */
-    protected String getPublicationMappingPath(String originalPath) {
-        String path = Strings.nullToEmpty(originalPath);
-        if (!path.startsWith("/")) {
-            path = "/" + path;
-        }
-        if (path.length() > 1 && path.endsWith("/")) {
-            path = path.substring(0, path.length() - 1);
-        }
-        return path;
-    }
-
     @AllArgsConstructor
-    protected class PublicationMappingData {
+    protected static class PublicationMappingData {
         protected String id, path;
     }
 }

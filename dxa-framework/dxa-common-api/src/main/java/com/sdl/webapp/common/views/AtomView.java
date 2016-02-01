@@ -22,6 +22,9 @@ import java.util.UUID;
 
 /**
  * Feed view for Atom representation of page
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public class AtomView extends AbstractAtomFeedView {
     private static final Logger LOG = LoggerFactory.getLogger(AtomView.class);
@@ -29,6 +32,9 @@ public class AtomView extends AbstractAtomFeedView {
     private WebRequestContext context;
     private DataFormatter formatter;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected void buildFeedMetadata(Map<String, Object> model, Feed feed, HttpServletRequest request) {
@@ -49,7 +55,7 @@ public class AtomView extends AbstractAtomFeedView {
         StringBuffer uri = request.getRequestURL();
         String queryString = request.getQueryString();
         if (queryString != null) {
-            uri.append("?").append(queryString);
+            uri.append('?').append(queryString);
         }
         List<Link> links = new ArrayList<>();
         Link l = new Link();
@@ -63,6 +69,9 @@ public class AtomView extends AbstractAtomFeedView {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected List<Entry> buildFeedEntries(Map<String, Object> model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         this.formatter = (DataFormatter) model.get("formatter");

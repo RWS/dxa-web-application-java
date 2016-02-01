@@ -17,12 +17,18 @@ import java.util.Map;
 
 /**
  * Feed view for RSS representation of page
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public class RssView extends AbstractRssFeedView {
     private static final Logger LOG = LoggerFactory.getLogger(RssView.class);
     @Autowired
     private WebRequestContext context;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected List<Item> buildFeedItems(Map<String, Object> model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
@@ -30,6 +36,9 @@ public class RssView extends AbstractRssFeedView {
         return (List<Item>) formatter.formatData(model.get("data"));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void buildFeedMetadata(Map<String, Object> model, Channel feed, HttpServletRequest request) {
         PageModel page = (PageModel) model.get("data");
@@ -40,7 +49,7 @@ public class RssView extends AbstractRssFeedView {
         StringBuffer uri = request.getRequestURL();
         String queryString = request.getQueryString();
         if (queryString != null) {
-            uri.append("?").append(queryString);
+            uri.append('?').append(queryString);
         }
         feed.setLink(uri.toString().replaceAll("[&?]format.*?(?=&|\\?|$)", ""));
         super.buildFeedMetadata(model, feed, request);

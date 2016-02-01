@@ -12,12 +12,21 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * <p>LogbackRepeatingToSingleFilter class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class LogbackRepeatingToSingleFilter extends Filter<ILoggingEvent> {
     private Set<EventData> events = new HashSet<>(16);
 
     @Setter
     private String loggerName;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FilterReply decide(ILoggingEvent event) {
         if (!Objects.equals(event.getLoggerName(), this.loggerName)) {

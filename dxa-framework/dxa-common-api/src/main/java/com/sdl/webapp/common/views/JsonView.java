@@ -9,6 +9,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
+/**
+ * <p>JsonView class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class JsonView extends MappingJackson2JsonView {
 
     @Autowired
@@ -17,6 +23,9 @@ public class JsonView extends MappingJackson2JsonView {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request, HttpServletResponse response) throws Exception {
         // If manipulation of the page is needed it can be performed here

@@ -36,6 +36,12 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
+/**
+ * <p>MarkupImpl class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class MarkupImpl implements Markup {
     private static final Logger LOG = LoggerFactory.getLogger(MarkupImpl.class);
 
@@ -45,6 +51,12 @@ public class MarkupImpl implements Markup {
 
     private final WebRequestContext webRequestContext;
 
+    /**
+     * <p>Constructor for MarkupImpl.</p>
+     *
+     * @param semanticMappingRegistry a {@link com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry} object.
+     * @param webRequestContext       a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     */
     @Autowired
     public MarkupImpl(SemanticMappingRegistry semanticMappingRegistry, WebRequestContext webRequestContext) {
         this.semanticMappingRegistry = semanticMappingRegistry;
@@ -74,16 +86,21 @@ public class MarkupImpl implements Markup {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public WebRequestContext getWebRequestContext() {
         return webRequestContext;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String url(String path) {
         return webRequestContext.getContextPath() + path;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String versionedContent(String path) {
         Localization localization = webRequestContext.getLocalization();
@@ -93,6 +110,7 @@ public class MarkupImpl implements Markup {
         return webRequestContext.getContextPath() + localization.localizePath("/system/" + localization.getVersion() + path);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String region(RegionModel region) {
         return Joiner.on(' ').join(Arrays.asList(
@@ -100,6 +118,7 @@ public class MarkupImpl implements Markup {
                 new HtmlAttribute("resource", region.getName()).toHtml()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public String entity(EntityModel entity) {
         final List<String> vocabularies = new ArrayList<>();
@@ -123,11 +142,13 @@ public class MarkupImpl implements Markup {
         return "";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String property(EntityModel entity, String fieldName) {
         return property(entity, fieldName, 0);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String property(EntityModel entity, String fieldName, int index) {
 
@@ -175,16 +196,19 @@ public class MarkupImpl implements Markup {
         return markup;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String resource(String key) {
         return webRequestContext.getLocalization().getResource(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String formatDate(DateTime dateTime) {
         return DateTimeFormat.fullDate().withLocale(webRequestContext.getLocalization().getLocale()).print(dateTime);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String formatDateDiff(DateTime dateTime) {
         final int dayDiff = Days.daysBetween(dateTime.toLocalDate(), LocalDate.now()).getDays();
@@ -200,16 +224,19 @@ public class MarkupImpl implements Markup {
                 .print(dateTime);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String formatMessage(String pattern, Object... args) {
         return MessageFormat.format(pattern, args);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String replaceLineEndsWithHtmlBreaks(String text) {
         return text.replaceAll("\\. ", "<br/>");
     }
 
+    /** {@inheritDoc} */
     @Override
     public String siteMapList(SitemapItem item) {
         final HtmlElement htmlElement = siteMapListHelper(item);

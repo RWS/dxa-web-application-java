@@ -19,6 +19,7 @@ import org.jsoup.select.Elements;
  * Entity XPM Markup
  *
  * @author nic
+ * @version 1.3-SNAPSHOT
  */
 public class EntityXpmMarkup implements MarkupDecorator {
 
@@ -28,6 +29,59 @@ public class EntityXpmMarkup implements MarkupDecorator {
 
     private static final String FIELD_PATTERN = "Start Component Field: {\"XPath\":\"%s\"}";
 
+    /**
+     * <p>processProperty.</p>
+     *
+     * @param propertyElement a {@link org.jsoup.nodes.Element} object.
+     */
+    protected static void processProperty(Element propertyElement) {
+
+        String xpath = propertyElement.attr("data-entity-property-xpath");
+
+        HtmlNode xpmMarkup = new HtmlCommentNode(String.format(FIELD_PATTERN, xpath));
+        if (propertyElement.childNodes().size() > 0) {
+
+            if (!propertyXpmMarkupAlreadyGenerated(propertyElement)) {
+                propertyElement.prepend(xpmMarkup.toHtml());
+            }
+        } else {
+            propertyElement.before(xpmMarkup.toHtml());
+        }
+        propertyElement.removeAttr("data-entity-property-xpath");
+    }
+
+    /**
+     * <p>propertyXpmMarkupAlreadyGenerated.</p>
+     *
+     * @param propertyElement a {@link org.jsoup.nodes.Element} object.
+     * @return a boolean.
+     */
+    protected static boolean propertyXpmMarkupAlreadyGenerated(Element propertyElement) {
+        int index = 0;
+        Node node = null;
+        while (index < propertyElement.childNodes().size()) {
+            node = propertyElement.childNode(index);
+            if (!(node instanceof TextNode)) {
+                break;
+            }
+            index++;
+        }
+        if (node != null && node instanceof Comment) {
+            Comment comment = (Comment) node;
+            if (comment.getData().contains("Start Component Field:")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static HtmlNode buildXpmMarkup(EntityModel entity, Localization localization) {
+        return new HtmlCommentNode(entity.getXpmMarkup(localization));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext) {
 
@@ -65,48 +119,12 @@ public class EntityXpmMarkup implements MarkupDecorator {
         return markup;
     }
 
-    protected void processProperty(Element propertyElement) {
-
-        String xpath = propertyElement.attr("data-entity-property-xpath");
-
-        HtmlNode xpmMarkup = new HtmlCommentNode(String.format(FIELD_PATTERN, xpath));
-        if (propertyElement.childNodes().size() > 0) {
-
-            if (!propertyXpmMarkupAlreadyGenerated(propertyElement)) {
-                propertyElement.prepend(xpmMarkup.toHtml());
-            }
-        } else {
-            propertyElement.before(xpmMarkup.toHtml());
-        }
-        propertyElement.removeAttr("data-entity-property-xpath");
-    }
-
-    protected boolean propertyXpmMarkupAlreadyGenerated(Element propertyElement) {
-        int index = 0;
-        Node node = null;
-        while (index < propertyElement.childNodes().size()) {
-            node = propertyElement.childNode(index);
-            if (!(node instanceof TextNode)) {
-                break;
-            }
-            index++;
-        }
-        if (node != null && node instanceof Comment) {
-            Comment comment = (Comment) node;
-            if (comment.getData().contains("Start Component Field:")) {
-                return true;
-            }
-        }
-        return false;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getPriority() {
         return 1;
-    }
-
-    private HtmlNode buildXpmMarkup(EntityModel entity, Localization localization) {
-        return new HtmlCommentNode(entity.getXpmMarkup(localization));
     }
 
 }

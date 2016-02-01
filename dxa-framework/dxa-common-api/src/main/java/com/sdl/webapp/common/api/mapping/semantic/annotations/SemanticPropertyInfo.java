@@ -6,12 +6,24 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * <p>SemanticPropertyInfo class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public final class SemanticPropertyInfo {
 
     private final String prefix;
 
     private final String propertyName;
 
+    /**
+     * <p>Constructor for SemanticPropertyInfo.</p>
+     *
+     * @param annotation a {@link com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty} object.
+     * @param field      a {@link java.lang.reflect.Field} object.
+     */
     public SemanticPropertyInfo(SemanticProperty annotation, Field field) {
         String n = annotation.propertyName();
         if (Strings.isNullOrEmpty(n)) {
@@ -32,6 +44,11 @@ public final class SemanticPropertyInfo {
         this.propertyName = n;
     }
 
+    /**
+     * <p>Constructor for SemanticPropertyInfo.</p>
+     *
+     * @param field a {@link java.lang.reflect.Field} object.
+     */
     public SemanticPropertyInfo(Field field) {
         this.prefix = SemanticEntityInfo.DEFAULT_PREFIX;
         this.propertyName = getDefaultPropertyName(field);
@@ -49,14 +66,27 @@ public final class SemanticPropertyInfo {
         return propertyName;
     }
 
+    /**
+     * <p>Getter for the field <code>prefix</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getPrefix() {
         return prefix;
     }
 
+    /**
+     * <p>Getter for the field <code>propertyName</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getPropertyName() {
         return propertyName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -66,11 +96,13 @@ public final class SemanticPropertyInfo {
                 Objects.equals(propertyName, that.propertyName);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
         return Objects.hash(prefix, propertyName);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "SemanticPropertyInfo{" +

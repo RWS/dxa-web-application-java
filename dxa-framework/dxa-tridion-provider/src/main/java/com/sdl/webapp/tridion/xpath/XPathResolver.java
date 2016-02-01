@@ -11,7 +11,10 @@ import javax.xml.xpath.XPathFactory;
 
 /**
  * Resolver for particular xPath string.
- * Uses {@link XPathExpression} which is not thread-safe.
+ * Uses {@link javax.xml.xpath.XPathExpression} which is not thread-safe.
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public enum XPathResolver {
     XPATH_LINKS("//a[@xlink:href]"),
@@ -19,7 +22,13 @@ public enum XPathResolver {
     XPATH_IMAGES("//img[@data-schemaUri]");
 
 
+    /**
+     * Constant <code>XHTML_NS_URI="http://www.w3.org/1999/xhtml"</code>
+     */
     public static final String XHTML_NS_URI = "http://www.w3.org/1999/xhtml";
+    /**
+     * Constant <code>XLINK_NS_URI="http://www.w3.org/1999/xlink"</code>
+     */
     public static final String XLINK_NS_URI = "http://www.w3.org/1999/xlink";
 
     private static final NamespaceContext NAMESPACE_CONTEXT = new SimpleNamespaceContext(
@@ -53,14 +62,29 @@ public enum XPathResolver {
         this.sourceString = sourceString;
     }
 
+    /**
+     * <p>Getter for the field <code>expression</code>.</p>
+     *
+     * @return a {@link java.lang.ThreadLocal} object.
+     */
     public ThreadLocal<XPathExpression> getExpression() {
         return expression;
     }
 
+    /**
+     * <p>expr.</p>
+     *
+     * @return a {@link java.lang.ThreadLocal} object.
+     */
     public ThreadLocal<XPathExpression> expr() {
-        return getExpression();
+        return expression;
     }
 
+    /**
+     * <p>Getter for the field <code>sourceString</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getSourceString() {
         return sourceString;
     }

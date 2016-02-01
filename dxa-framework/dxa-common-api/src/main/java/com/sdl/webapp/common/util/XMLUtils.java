@@ -20,6 +20,9 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Utilities for working with XML.
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public final class XMLUtils {
 
@@ -52,6 +55,14 @@ public final class XMLUtils {
     private XMLUtils() {
     }
 
+    /**
+     * <p>parse.</p>
+     *
+     * @param text a {@link java.lang.String} object.
+     * @return a {@link org.w3c.dom.Document} object.
+     * @throws java.io.IOException      if any.
+     * @throws org.xml.sax.SAXException if any.
+     */
     public static Document parse(String text) throws IOException, SAXException {
         final DocumentBuilder documentBuilder = DOCUMENT_BUILDER.get();
         final Document document = documentBuilder.parse(new InputSource(new StringReader(text)));
@@ -59,6 +70,13 @@ public final class XMLUtils {
         return document;
     }
 
+    /**
+     * <p>format.</p>
+     *
+     * @param document a {@link org.w3c.dom.Document} object.
+     * @return a {@link java.lang.String} object.
+     * @throws javax.xml.transform.TransformerException if any.
+     */
     public static String format(Document document) throws TransformerException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final Transformer transformer = TRANSFORMER.get();

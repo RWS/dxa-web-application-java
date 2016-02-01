@@ -19,6 +19,12 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.img;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/**
+ * <p>Image class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @SemanticEntity(entityName = "ImageObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 @ToString
 @Slf4j
@@ -30,22 +36,30 @@ public class Image extends MediaItem {
     @Setter
     private String alternateText;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @JsonIgnore
     public boolean isImage() {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlElement toHtmlElement(String widthFactor) throws DxaException {
         return this.toHtmlElement(widthFactor, 0, "", 0);
     }
 
+    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException {
         return toHtmlElement(widthFactor, aspect, cssClass, containerSize, "");
     }
 
+    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException {
         if (isEmpty(getUrl())) {
@@ -61,6 +75,7 @@ public class Image extends MediaItem {
                 .build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public void readFromXhtmlElement(Node xhtmlElement) {
         super.readFromXhtmlElement(xhtmlElement);
@@ -69,6 +84,7 @@ public class Image extends MediaItem {
         this.setMvcData(getMvcData());
     }
 
+    /** {@inheritDoc} */
     @Override
     public MvcData getMvcData() {
         return MvcDataCreator.creator()

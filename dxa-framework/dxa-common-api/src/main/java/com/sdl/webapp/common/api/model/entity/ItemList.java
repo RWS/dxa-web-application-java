@@ -8,6 +8,12 @@ import java.util.List;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG;
 
+/**
+ * <p>ItemList class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @SemanticEntity(entityName = "ItemList", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class ItemList extends AbstractEntityModel {
 
@@ -22,22 +28,45 @@ public class ItemList extends AbstractEntityModel {
     @SemanticProperty("s:itemListElement")
     private List<Teaser> itemListElements;
 
+    /**
+     * <p>Getter for the field <code>headline</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getHeadline() {
         return headline;
     }
 
+    /**
+     * <p>Setter for the field <code>headline</code>.</p>
+     *
+     * @param headline a {@link java.lang.String} object.
+     */
     public void setHeadline(String headline) {
         this.headline = headline;
     }
 
+    /**
+     * <p>Getter for the field <code>itemListElements</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<Teaser> getItemListElements() {
         return itemListElements;
     }
 
+    /**
+     * <p>Setter for the field <code>itemListElements</code>.</p>
+     *
+     * @param itemListElements a {@link java.util.List} object.
+     */
     public void setItemListElements(List<Teaser> itemListElements) {
         this.itemListElements = itemListElements;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         return "ItemList{" +

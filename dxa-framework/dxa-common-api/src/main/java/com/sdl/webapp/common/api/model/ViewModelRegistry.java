@@ -6,6 +6,9 @@ import java.util.Set;
 
 /**
  * Registry that maps view names to view model object types.
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public interface ViewModelRegistry {
     /**
@@ -13,10 +16,17 @@ public interface ViewModelRegistry {
      *
      * @param viewName The name of the entity view.
      * @return The type of the entity that this entity view needs.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
      */
     Class<? extends ViewModel> getViewEntityClass(String viewName) throws DxaException;
 
 
+    /**
+     * <p>getMappedModelTypes.</p>
+     *
+     * @param semanticTypeNames a {@link java.util.Set} object.
+     * @return a {@link java.lang.Class} object.
+     */
     Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames);
 
     /**
@@ -27,6 +37,13 @@ public interface ViewModelRegistry {
      */
     Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName);
 
+    /**
+     * <p>getViewModelType.</p>
+     *
+     * @param regionMvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
+     * @return a {@link java.lang.Class} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
     Class<? extends ViewModel> getViewModelType(MvcData regionMvcData) throws DxaException;
 
     /**

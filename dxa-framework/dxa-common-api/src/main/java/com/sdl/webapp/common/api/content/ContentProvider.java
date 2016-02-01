@@ -8,6 +8,9 @@ import com.sdl.webapp.common.exceptions.DxaException;
 
 /**
  * Content provider.
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public interface ContentProvider {
 
@@ -17,15 +20,18 @@ public interface ContentProvider {
      * @param path         The path of the page.
      * @param localization The localization.
      * @return The {@code Page}.
-     * @throws ContentProviderException If an error occurred so that the content of the page could be retrieved.
+     * @throws com.sdl.webapp.common.api.content.ContentProviderException If an error occurred so that the content of the page could be retrieved.
      */
     PageModel getPageModel(String path, Localization localization) throws ContentProviderException;
 
     /**
      * Get entity model by TCM URI
      *
+     * @param id the id of entity model
+     * @param localization the localization to get en entity from
      * @return the {@code Entity}
-     * @throws ContentProviderException
+     * @throws com.sdl.webapp.common.api.content.ContentProviderException contentProviderException
+     * @throws com.sdl.webapp.common.exceptions.DxaException dxaException
      */
     EntityModel getEntityModel(String id, Localization localization) throws ContentProviderException, DxaException;
 
@@ -34,7 +40,7 @@ public interface ContentProvider {
      *
      * @param contentList  The list to populate.
      * @param localization The localization.
-     * @throws ContentProviderException If an error occurred so that the content of the list could not be retrieved.
+     * @throws com.sdl.webapp.common.api.content.ContentProviderException If an error occurred so that the content of the list could not be retrieved.
      */
     void populateDynamicList(ContentList contentList, Localization localization) throws ContentProviderException;
 
@@ -45,7 +51,7 @@ public interface ContentProvider {
      * @param localizationId   The localization ID.
      * @param localizationPath The localization path.
      * @return The {@code StaticContentItem}.
-     * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
+     * @throws com.sdl.webapp.common.api.content.ContentProviderException If an error occurred so that the static content item could not be retrieved.
      */
     StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
             throws ContentProviderException;

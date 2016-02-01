@@ -9,15 +9,27 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
+/**
+ * <p>MultiLineTextFieldConverter class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class MultiLineTextFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.MULTILINETEXT};
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FieldType[] supportedFieldTypes() {
         return SUPPORTED_FIELD_TYPES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
         return field.getTextValues();

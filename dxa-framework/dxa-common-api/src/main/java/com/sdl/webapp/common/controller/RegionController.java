@@ -18,11 +18,15 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.REGION_MODE
 
 /**
  * Region controller for the Core area.
- * <p/>
+ * <p>
  * This handles include requests to /system/mvc/Core/Region/{regionName}
+ * </p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + "/" + DefaultsMvcData.CoreAreaConstants.REGION_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + '/' + DefaultsMvcData.CoreAreaConstants.REGION_CONTROLLER_NAME)
 public class RegionController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(RegionController.class);
 
@@ -32,6 +36,7 @@ public class RegionController extends BaseController {
      * @param request    The request.
      * @param regionName The region name.
      * @return The name of the region view that should be rendered for this request.
+     * @throws java.lang.Exception exception
      */
     @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.REGION_ACTION_NAME + "/{regionName}")
     public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName) throws Exception {

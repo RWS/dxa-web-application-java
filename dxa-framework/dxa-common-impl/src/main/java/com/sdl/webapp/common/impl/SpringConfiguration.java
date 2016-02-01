@@ -24,6 +24,12 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
 @Configuration
+/**
+ * <p>SpringConfiguration class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @EnableWebMvc
 @ImportResource({"classpath*:/META-INF/spring-context.xml"})
 @ComponentScan(basePackages = {"com.sdl.webapp"})
@@ -31,6 +37,9 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
     private static final String VIEW_RESOLVER_PREFIX = "/WEB-INF/Views/";
     private static final String VIEW_RESOLVER_SUFFIX = ".jsp";
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(localizationResolverInterceptor());
@@ -38,21 +47,41 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
         registry.addInterceptor(threadLocalInterceptor());
     }
 
+    /**
+     * <p>localizationResolverInterceptor.</p>
+     *
+     * @return a {@link org.springframework.web.servlet.HandlerInterceptor} object.
+     */
     @Bean
     public HandlerInterceptor localizationResolverInterceptor() {
         return new LocalizationResolverInterceptor();
     }
 
+    /**
+     * <p>staticContentInterceptor.</p>
+     *
+     * @return a {@link org.springframework.web.servlet.HandlerInterceptor} object.
+     */
     @Bean
     public HandlerInterceptor staticContentInterceptor() {
         return new StaticContentInterceptor();
     }
 
+    /**
+     * <p>threadLocalInterceptor.</p>
+     *
+     * @return a {@link org.springframework.web.servlet.HandlerInterceptor} object.
+     */
     @Bean
     public HandlerInterceptor threadLocalInterceptor() {
         return new ThreadLocalInterceptor();
     }
 
+    /**
+     * <p>viewResolver.</p>
+     *
+     * @return a {@link org.springframework.web.servlet.ViewResolver} object.
+     */
     @Bean
     public ViewResolver viewResolver() {
 
@@ -63,6 +92,11 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
         return viewResolver;
     }
 
+    /**
+     * <p>beanNameViewResolver.</p>
+     *
+     * @return a {@link org.springframework.web.servlet.view.BeanNameViewResolver} object.
+     */
     @Bean
     public BeanNameViewResolver beanNameViewResolver() {
         BeanNameViewResolver resolver = new BeanNameViewResolver();
@@ -70,16 +104,31 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
         return resolver;
     }
 
+    /**
+     * <p>rssFeedView.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.views.RssView} object.
+     */
     @Bean(name = "rssFeedView")
     public RssView rssFeedView() {
         return new RssView();
     }
 
+    /**
+     * <p>atomFeedView.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.views.AtomView} object.
+     */
     @Bean(name = "atomFeedView")
     public AtomView atomFeedView() {
         return new AtomView();
     }
 
+    /**
+     * <p>jsonFeedView.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.views.JsonView} object.
+     */
     @Bean(name = "jsonFeedView")
     public JsonView jsonFeedView() {
         JsonView jsonView = new JsonView();
@@ -87,6 +136,11 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
         return jsonView;
     }
 
+    /**
+     * <p>objectMapper.</p>
+     *
+     * @return a {@link com.fasterxml.jackson.databind.ObjectMapper} object.
+     */
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();

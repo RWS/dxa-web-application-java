@@ -18,6 +18,12 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
+/**
+ * <p>ContextServiceClaimsProvider class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class ContextServiceClaimsProvider implements ContextClaimsProvider {
 
     private static Map<String, Object> getClaimsMap(ContextMap<? extends Aspect> contextMap, String aspectName) {
@@ -45,6 +51,9 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, Object> getContextClaims(String aspectName) throws DxaException {
         HttpServletRequest request = HttpUtils.getCurrentRequest();
@@ -75,6 +84,9 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
         return getClaimsMap(contextMap, aspectName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDeviceFamily() {
         // TODO TSI-789: this functionality overlaps with "Context Expressions"

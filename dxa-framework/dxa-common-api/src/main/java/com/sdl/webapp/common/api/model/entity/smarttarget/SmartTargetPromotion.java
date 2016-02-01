@@ -9,6 +9,12 @@ import lombok.EqualsAndHashCode;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * <p>SmartTargetPromotion class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class SmartTargetPromotion extends AbstractEntityModel {
@@ -22,6 +28,9 @@ public class SmartTargetPromotion extends AbstractEntityModel {
     @JsonProperty("Items")
     private List<SmartTargetItem> items;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getXpmMarkup(Localization localization) {
         Map<String, String> xpmMetadata = getXpmMetadata();

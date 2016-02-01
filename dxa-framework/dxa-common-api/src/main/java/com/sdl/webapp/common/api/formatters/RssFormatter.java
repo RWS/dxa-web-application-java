@@ -10,10 +10,19 @@ import java.net.URISyntaxException;
 
 /**
  * Produces the feed in rss format
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public class RssFormatter extends FeedFormatter {
 
 
+    /**
+     * <p>Constructor for RssFormatter.</p>
+     *
+     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param context a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     */
     public RssFormatter(HttpServletRequest request, WebRequestContext context) {
         super(request, context);
         this.addMediaType("application/rss+xml");
@@ -21,10 +30,9 @@ public class RssFormatter extends FeedFormatter {
     }
 
     /**
-     * Returns the formatted data. Additional model processing can be implemented in extending classes
+     * {@inheritDoc}
      *
-     * @param model
-     * @return
+     * Returns the formatted data. Additional model processing can be implemented in extending classes
      */
     @Override
     public Object formatData(Object model) {
@@ -33,11 +41,9 @@ public class RssFormatter extends FeedFormatter {
     }
 
     /**
-     * Gets a syndication Entry from a teaser
+     * {@inheritDoc}
      *
-     * @param item (@see Teaser)
-     * @return
-     * @throws URISyntaxException
+     * Gets a syndication Entry from a teaser
      */
     public Object getSyndicationItemFromTeaser(Teaser item) throws URISyntaxException {
         Item si = new Item();

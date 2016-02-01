@@ -10,12 +10,27 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
+/**
+ * <p>Abstract HtmlElementTag class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public abstract class HtmlElementTag extends TagSupport {
 
     private HtmlElement element;
 
+    /**
+     * <p>generateElement.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.markup.html.HtmlElement} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
     protected abstract HtmlElement generateElement() throws DxaException;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
         try {
@@ -31,6 +46,9 @@ public abstract class HtmlElementTag extends TagSupport {
         return EVAL_BODY_INCLUDE;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doEndTag() throws JspException {
         if (element != null) {

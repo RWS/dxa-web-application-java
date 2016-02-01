@@ -14,6 +14,12 @@ import java.io.IOException;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 
+/**
+ * <p>PageTag class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class PageTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(PageTag.class);
 
@@ -21,14 +27,27 @@ public class PageTag extends TagSupport {
 
     private String viewName;
 
+    /**
+     * <p>Setter for the field <code>name</code>.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * <p>Setter for the field <code>viewName</code>.</p>
+     *
+     * @param viewName a {@link java.lang.String} object.
+     */
     public void setViewName(String viewName) {
         this.viewName = viewName;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);

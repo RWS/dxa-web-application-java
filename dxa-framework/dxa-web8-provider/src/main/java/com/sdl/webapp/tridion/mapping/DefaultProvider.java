@@ -20,6 +20,12 @@ import java.io.File;
 import java.io.IOException;
 
 @Component
+/**
+ * <p>DefaultProvider class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class DefaultProvider extends AbstractDefaultProvider {
     private static final Object LOCK = new Object();
     private static final Logger LOG = LoggerFactory.getLogger(DefaultProvider.class);
@@ -30,6 +36,9 @@ public class DefaultProvider extends AbstractDefaultProvider {
     @Autowired
     private BinaryFactory binaryFactory;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("Duplicates")
     protected DefaultProvider.StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException {
@@ -65,6 +74,9 @@ public class DefaultProvider extends AbstractDefaultProvider {
         return new StaticContentFile(file, binaryMeta.getType());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected BrokerQuery instantiateBrokerQuery() {
         return new BrokerQueryImpl();

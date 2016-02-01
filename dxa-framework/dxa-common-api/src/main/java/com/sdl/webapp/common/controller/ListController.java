@@ -23,11 +23,15 @@ import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREF
 
 /**
  * List controller for the Core area.
- * <p/>
+ * <p>
  * This handles include requests to /system/mvc/Core/List/{regionName}/{entityId}
+ * </p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + "/" + DefaultsMvcData.CoreAreaConstants.LIST_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + '/' + DefaultsMvcData.CoreAreaConstants.LIST_CONTROLLER_NAME)
 public class ListController extends EntityController {
     private static final Logger LOG = LoggerFactory.getLogger(ListController.class);
 
@@ -36,10 +40,21 @@ public class ListController extends EntityController {
     @Autowired
     private final ContentProvider contentProvider;
 
+    /**
+     * <p>Constructor for ListController.</p>
+     *
+     * @param webRequestContext a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     * @param contentProvider   a {@link com.sdl.webapp.common.api.content.ContentProvider} object.
+     */
     @Autowired
     public ListController(WebRequestContext webRequestContext, ContentProvider contentProvider) {
         this.webRequestContext = webRequestContext;
         this.contentProvider = contentProvider;
+    }
+
+    private static int getIntParameter(HttpServletRequest request, String parameterName, int defaultValue) {
+        final String parameter = request.getParameter(parameterName);
+        return !Strings.isNullOrEmpty(parameter) ? Integer.parseInt(parameter) : defaultValue;
     }
 
     /**
@@ -48,6 +63,7 @@ public class ListController extends EntityController {
      * @param request  The request.
      * @param entityId The entity id.
      * @return The name of the entity view that should be rendered for this request.
+     * @throws java.lang.Exception exception
      */
     @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.LIST_ACTION_NAME + "/{entityId}")
     public String handleGetList(HttpServletRequest request, @PathVariable String entityId) throws Exception {
@@ -56,6 +72,9 @@ public class ListController extends EntityController {
         return handleEntityRequest(request, entityId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected ViewModel enrichModel(ViewModel model, HttpServletRequest request) throws Exception {
         if (model instanceof ContentList) {
@@ -84,11 +103,5 @@ public class ListController extends EntityController {
             }
         }
         return model;
-    }
-
-
-    private int getIntParameter(HttpServletRequest request, String parameterName, int defaultValue) {
-        final String parameter = request.getParameter(parameterName);
-        return !Strings.isNullOrEmpty(parameter) ? Integer.parseInt(parameter) : defaultValue;
     }
 }

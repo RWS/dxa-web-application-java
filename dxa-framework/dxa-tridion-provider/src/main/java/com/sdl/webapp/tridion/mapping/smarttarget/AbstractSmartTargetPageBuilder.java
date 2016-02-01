@@ -24,17 +24,77 @@ import java.util.Map;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Slf4j
+/**
+ * <p>Abstract AbstractSmartTargetPageBuilder class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public abstract class AbstractSmartTargetPageBuilder implements PageBuilder {
 
     private static final String PROMOTION_VIEW_NAME_CONFIG = "smarttarget.smartTargetEntityPromotion";
     @Autowired
     private SmartTargetEnabled smartTargetEnabled;
 
+    private static String getViewNameFromMetadata(Map<String, Field> metadata) {
+        String regionName = FieldUtils.getStringValue(metadata.get("name"));
+        if (isNullOrEmpty(regionName)) {
+            regionName = MvcDataCreator.creator()
+                    .fromQualifiedName(FieldUtils.getStringValue(metadata.get("view")))
+                    .create()
+                    .getViewName();
+        }
+        return regionName;
+    }
+
+    private static void processMetadataForCurrentRegionModel(SmartTargetPageModel stPageModel, Map<String, Field> metadata, SmartTargetRegion regionModel) {
+        regionModel.setMaxItems(100);
+        if (metadata.containsKey("maxItems")) {
+            String value = FieldUtils.getStringValue(metadata.get("maxItems"));
+            if (value != null) {
+                regionModel.setMaxItems(Integer.parseInt(value));
+            }
+        }
+    }
+
+    private static String getPromotionViewName(Localization localization) {
+        String promotionViewName = localization.getConfiguration(PROMOTION_VIEW_NAME_CONFIG);
+        if (isNullOrEmpty(promotionViewName)) {
+            log.warn("No view name for SmartTarget promotions is configured in CM, {}", PROMOTION_VIEW_NAME_CONFIG);
+            promotionViewName = "SmartTarget:Entity:Promotion";
+        }
+        return promotionViewName;
+    }
+
+    private static boolean getAllowDuplicatesFromConfig(PageTemplate pageTemplate, @NonNull Localization localization) {
+        String allowDuplicationOnSamePage = null;
+        if (pageTemplate != null && pageTemplate.getMetadata() != null
+                && pageTemplate.getMetadata().containsKey("allowDuplicationOnSamePage")) {
+            allowDuplicationOnSamePage = FieldUtils.getStringValue(pageTemplate.getMetadata().get("allowDuplicationOnSamePage"));
+        }
+
+        if (isNullOrEmpty(allowDuplicationOnSamePage) || allowDuplicationOnSamePage.equalsIgnoreCase("Use core configuration")) {
+            allowDuplicationOnSamePage = localization.getConfiguration("smarttarget.allowDuplicationOnSamePageConfig");
+
+            if (isNullOrEmpty(allowDuplicationOnSamePage)) {
+                return true;
+            }
+        }
+
+        return Boolean.parseBoolean(allowDuplicationOnSamePage);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getOrder() {
         return 1000;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public PageModel createPage(Page page, PageModel pageModel, Localization localization, ContentProvider contentProvider)
             throws ContentProviderException {
@@ -88,57 +148,21 @@ public abstract class AbstractSmartTargetPageBuilder implements PageBuilder {
         return stPageModel;
     }
 
+    /**
+     * <p>isImplemented.</p>
+     *
+     * @return a boolean.
+     */
     protected abstract boolean isImplemented();
 
+    /**
+     * <p>processQueryAndPromotions.</p>
+     *
+     * @param localization      a {@link com.sdl.webapp.common.api.localization.Localization} object.
+     * @param stPageModel       a {@link com.sdl.webapp.common.api.model.entity.smarttarget.SmartTargetPageModel} object.
+     * @param promotionViewName a {@link java.lang.String} object.
+     */
     protected abstract void processQueryAndPromotions(Localization localization, SmartTargetPageModel stPageModel, String promotionViewName);
-
-    private String getViewNameFromMetadata(Map<String, Field> metadata) {
-        String regionName = FieldUtils.getStringValue(metadata.get("name"));
-        if (isNullOrEmpty(regionName)) {
-            regionName = MvcDataCreator.creator()
-                    .fromQualifiedName(FieldUtils.getStringValue(metadata.get("view")))
-                    .create()
-                    .getViewName();
-        }
-        return regionName;
-    }
-
-    private void processMetadataForCurrentRegionModel(SmartTargetPageModel stPageModel, Map<String, Field> metadata, SmartTargetRegion regionModel) {
-        regionModel.setMaxItems(100);
-        if (metadata.containsKey("maxItems")) {
-            String value = FieldUtils.getStringValue(metadata.get("maxItems"));
-            if (value != null) {
-                regionModel.setMaxItems(Integer.parseInt(value));
-            }
-        }
-    }
-
-    private String getPromotionViewName(Localization localization) {
-        String promotionViewName = localization.getConfiguration(PROMOTION_VIEW_NAME_CONFIG);
-        if (isNullOrEmpty(promotionViewName)) {
-            log.warn("No view name for SmartTarget promotions is configured in CM, {}", PROMOTION_VIEW_NAME_CONFIG);
-            promotionViewName = "SmartTarget:Entity:Promotion";
-        }
-        return promotionViewName;
-    }
-
-    private boolean getAllowDuplicatesFromConfig(PageTemplate pageTemplate, @NonNull Localization localization) {
-        String allowDuplicationOnSamePage = null;
-        if (pageTemplate != null && pageTemplate.getMetadata() != null
-                && pageTemplate.getMetadata().containsKey("allowDuplicationOnSamePage")) {
-            allowDuplicationOnSamePage = FieldUtils.getStringValue(pageTemplate.getMetadata().get("allowDuplicationOnSamePage"));
-        }
-
-        if (isNullOrEmpty(allowDuplicationOnSamePage) || allowDuplicationOnSamePage.equalsIgnoreCase("Use core configuration")) {
-            allowDuplicationOnSamePage = localization.getConfiguration("smarttarget.allowDuplicationOnSamePageConfig");
-
-            if (isNullOrEmpty(allowDuplicationOnSamePage)) {
-                return true;
-            }
-        }
-
-        return Boolean.parseBoolean(allowDuplicationOnSamePage);
-    }
 
     public interface SmartTargetEnabled {
         boolean isEnabled();

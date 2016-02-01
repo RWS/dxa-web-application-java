@@ -22,6 +22,12 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.img;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.span;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/**
+ * <p>YouTubeVideo class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SemanticEntity(entityName = "VideoObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
@@ -42,6 +48,9 @@ public class YouTubeVideo extends MediaItem {
     @JsonProperty("Height")
     private int height = DEFAULT_HEIGHT;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void readFromXhtmlElement(Node xhtmlElement) {
         super.readFromXhtmlElement(xhtmlElement);
@@ -51,6 +60,9 @@ public class YouTubeVideo extends MediaItem {
         this.setMvcData(getMvcData());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MvcData getMvcData() {
         return MvcDataCreator.creator()
@@ -59,16 +71,19 @@ public class YouTubeVideo extends MediaItem {
                 .create();
     }
 
+    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor) throws DxaException {
         return toHtmlElement(widthFactor, 0, "", 0);
     }
 
+    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) {
         return toHtmlElement(widthFactor, aspect, cssClass, containerSize, "");
     }
 
+    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
         return isEmpty(getUrl()) ?

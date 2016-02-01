@@ -15,6 +15,12 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * <p>ImageUtils class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public final class ImageUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(ImageUtils.class);
@@ -22,6 +28,14 @@ public final class ImageUtils {
     private ImageUtils() {
     }
 
+    /**
+     * <p>resizeImage.</p>
+     *
+     * @param original an array of byte.
+     * @param pathInfo a {@link com.sdl.webapp.common.util.ImageUtils.StaticContentPathInfo} object.
+     * @return an array of byte.
+     * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
+     */
     public static byte[] resizeImage(byte[] original, StaticContentPathInfo pathInfo) throws ContentProviderException {
         try {
             final BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(original));
@@ -69,7 +83,7 @@ public final class ImageUtils {
 
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Image: {}, cropX = {}, cropY = {}, sourceW = {}, sourceH = {}, targetW = {}, targetH = {}",
-                        new Object[]{ pathInfo.getFileName(), cropX, cropY, sourceW, sourceH, targetW, targetH });
+                        pathInfo.getFileName(), cropX, cropY, sourceW, sourceH, targetW, targetH);
             }
 
             if (targetW == sourceW && targetH == sourceH) {

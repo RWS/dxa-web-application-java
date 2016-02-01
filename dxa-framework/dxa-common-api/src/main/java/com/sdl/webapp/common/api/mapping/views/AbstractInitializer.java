@@ -14,6 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * <p>Abstract AbstractInitializer class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public abstract class AbstractInitializer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractInitializer.class);
@@ -37,6 +43,11 @@ public abstract class AbstractInitializer {
         }
     }
 
+    /**
+     * <p>getAreaName.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     protected abstract String getAreaName();
 
     private void registerViewEntry(RegisteredView viewEntry) {

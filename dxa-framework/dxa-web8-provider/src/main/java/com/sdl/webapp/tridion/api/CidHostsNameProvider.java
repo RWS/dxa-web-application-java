@@ -11,6 +11,12 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @Component
+/**
+ * <p>CidHostsNameProvider class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @Primary
 public class CidHostsNameProvider implements MediaHelper.ResponsiveMediaUrlBuilder.HostsNamesProvider {
 
@@ -19,6 +25,9 @@ public class CidHostsNameProvider implements MediaHelper.ResponsiveMediaUrlBuild
 
     private String hostname, cidHostname;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SneakyThrows(UnknownHostException.class)
     public String getHostname() {
@@ -28,6 +37,9 @@ public class CidHostsNameProvider implements MediaHelper.ResponsiveMediaUrlBuild
         return hostname;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getCidHostname() {
         if (cidHostname == null) {

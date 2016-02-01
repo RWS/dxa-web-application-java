@@ -32,7 +32,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+/**
+ * <p>SemanticFieldDataProviderImpl class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider {
+    /**
+     * Constant <code>METADATA_PATH="Metadata"</code>
+     */
     protected static final String METADATA_PATH = "Metadata";
     private static final Logger LOG = LoggerFactory.getLogger(SemanticFieldDataProviderImpl.class);
     protected final SemanticEntity semanticEntity;
@@ -45,6 +54,13 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
 
     protected int embeddingLevel = 0;
 
+    /**
+     * <p>Constructor for SemanticFieldDataProviderImpl.</p>
+     *
+     * @param semanticEntity         a {@link com.sdl.webapp.tridion.SemanticFieldDataProviderImpl.SemanticEntity} object.
+     * @param fieldConverterRegistry a {@link com.sdl.webapp.tridion.fields.FieldConverterRegistry} object.
+     * @param builder                a {@link com.sdl.webapp.tridion.mapping.ModelBuilderPipeline} object.
+     */
     public SemanticFieldDataProviderImpl(SemanticEntity semanticEntity, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
         this.semanticEntity = semanticEntity;
         this.semanticEntity.injectDataProvider(this);
@@ -52,16 +68,57 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
         this.builder = builder;
     }
 
+    /**
+     * <p>findField.</p>
+     *
+     * @param path   a {@link com.sdl.webapp.common.api.mapping.semantic.config.FieldPath} object.
+     * @param fields a {@link java.util.Map} object.
+     * @return a {@link org.dd4t.contentmodel.Field} object.
+     */
+    protected static Field findField(FieldPath path, Map<String, Field> fields) {
+        while (true) {
+            if (path == null) {
+                return null;
+            }
+
+            final Field field = fields.get(path.getHead());
+            if (!path.hasTail() || field == null) {
+                return field;
+            }
+
+            if (field.getFieldType() == FieldType.EMBEDDED) {
+                final List<FieldSet> embeddedValues = ((BaseField) field).getEmbeddedValues();
+                if (embeddedValues != null && !embeddedValues.isEmpty()) {
+                    path = path.getTail();
+                    fields = embeddedValues.get(0).getContent();
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
+     * <p>pushEmbeddingLevel.</p>
+     *
+     * @param embeddedFields a {@link java.util.Map} object.
+     */
     public void pushEmbeddingLevel(Map<String, Field> embeddedFields) {
         embeddingLevel++;
         embeddedFieldsStack.push(embeddedFields);
     }
 
+    /**
+     * <p>popEmbeddingLevel.</p>
+     */
     public void popEmbeddingLevel() {
         embeddingLevel--;
         embeddedFieldsStack.pop();
     }
 
+    /** {@inheritDoc} */
     @Override
     public FieldData getFieldData(SemanticField semanticField, TypeDescriptor targetType) throws SemanticMappingException {
         LOG.trace("semanticField: {}, targetType: {}", semanticField, targetType);
@@ -99,6 +156,7 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
         return new FieldData(fieldValue, field.getXPath());
     }
 
+    /** {@inheritDoc} */
     @Override
     public Object getSelfFieldData(TypeDescriptor targetType) throws SemanticMappingException {
         final Class<?> targetClass = targetType.getObjectType();
@@ -110,6 +168,7 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Map<String, String> getAllFieldData() throws SemanticMappingException {
         final Map<String, String> fieldData = new HashMap<>();
@@ -153,28 +212,6 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
         }
 
         return fieldData;
-    }
-
-    protected Field findField(FieldPath path, Map<String, Field> fields) {
-        if (path == null) {
-            return null;
-        }
-
-        final Field field = fields.get(path.getHead());
-        if (!path.hasTail() || field == null) {
-            return field;
-        }
-
-        if (field.getFieldType() == FieldType.EMBEDDED) {
-            final List<FieldSet> embeddedValues = ((BaseField) field).getEmbeddedValues();
-            if (embeddedValues != null && !embeddedValues.isEmpty()) {
-                return findField(path.getTail(), embeddedValues.get(0).getContent());
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
     }
 
     public interface SemanticEntity {

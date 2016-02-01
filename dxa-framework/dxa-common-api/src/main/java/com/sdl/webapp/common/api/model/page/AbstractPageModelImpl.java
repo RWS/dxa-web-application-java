@@ -18,6 +18,12 @@ import java.util.Map;
 
 import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
+/**
+ * <p>Abstract AbstractPageModelImpl class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode
 @Setter
@@ -51,9 +57,17 @@ public abstract class AbstractPageModelImpl implements PageModel {
     @JsonProperty("MvcData")
     protected MvcData mvcData;
 
+    /**
+     * <p>Constructor for AbstractPageModelImpl.</p>
+     */
     public AbstractPageModelImpl() {
     }
 
+    /**
+     * <p>Constructor for AbstractPageModelImpl.</p>
+     *
+     * @param other a {@link com.sdl.webapp.common.api.model.PageModel} object.
+     */
     public AbstractPageModelImpl(PageModel other) {
         this.id = other.getId();
         this.name = other.getName();
@@ -66,27 +80,34 @@ public abstract class AbstractPageModelImpl implements PageModel {
         this.xpmMetadata.putAll(other.getXpmMetadata());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean containsRegion(String regionName) {
-        return !isEmpty(getRegions()) && getRegions().containsName(regionName);
+        return !isEmpty(this.regions) && this.regions.containsName(regionName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setXpmMetadata(Map<String, String> xpmMetadata) {
         this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getXpmMarkup(Localization localization) {
-        if (getXpmMetadata() == null) {
+        if (this.xpmMetadata == null) {
             return "";
         }
 
         String cmsUrl;
-        if (!getXpmMetadata().containsKey("CmsUrl")) {
+        if (!this.xpmMetadata.containsKey("CmsUrl")) {
             cmsUrl = localization.getConfiguration("core.cmsurl");
         } else {
-            cmsUrl = getXpmMetadata().get("CmsUrl");
+            cmsUrl = this.xpmMetadata.get("CmsUrl");
         }
         if (cmsUrl.endsWith("/")) {
             // remove trailing slash from cmsUrl if present
@@ -94,10 +115,10 @@ public abstract class AbstractPageModelImpl implements PageModel {
         }
 
         return String.format(XPM_PAGE_SETTINGS_MARKUP,
-                getXpmMetadata().get("PageID"),
-                getXpmMetadata().get("PageModified"),
-                getXpmMetadata().get("PageTemplateID"),
-                getXpmMetadata().get("PageTemplateModified")
+                this.xpmMetadata.get("PageID"),
+                this.xpmMetadata.get("PageModified"),
+                this.xpmMetadata.get("PageTemplateID"),
+                this.xpmMetadata.get("PageTemplateModified")
         ) + String.format(XPM_PAGE_SCRIPT, cmsUrl);
     }
 }

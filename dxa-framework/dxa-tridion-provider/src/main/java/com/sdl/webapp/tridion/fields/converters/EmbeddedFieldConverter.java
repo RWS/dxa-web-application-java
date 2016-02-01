@@ -19,22 +19,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+/**
+ * <p>EmbeddedFieldConverter class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class EmbeddedFieldConverter implements FieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.EMBEDDED};
 
     private final SemanticMapper semanticMapper;
 
+    /**
+     * <p>Constructor for EmbeddedFieldConverter.</p>
+     *
+     * @param semanticMapper a {@link com.sdl.webapp.common.api.mapping.semantic.SemanticMapper} object.
+     */
     @Autowired
     public EmbeddedFieldConverter(SemanticMapper semanticMapper) {
         this.semanticMapper = semanticMapper;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FieldType[] supportedFieldTypes() {
         return SUPPORTED_FIELD_TYPES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType,
                                 SemanticFieldDataProviderImpl semanticFieldDataProvider, ModelBuilderPipeline builder) throws FieldConverterException {

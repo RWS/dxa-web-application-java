@@ -15,15 +15,29 @@ import java.io.IOException;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 
+/**
+ * <p>EntitiesTag class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class EntitiesTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(EntitiesTag.class);
 
     private int containerSize;
 
+    /**
+     * <p>Setter for the field <code>containerSize</code>.</p>
+     *
+     * @param containerSize a int.
+     */
     public void setContainerSize(int containerSize) {
         this.containerSize = containerSize;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);

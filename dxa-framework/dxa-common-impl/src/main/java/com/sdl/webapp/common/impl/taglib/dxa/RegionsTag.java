@@ -17,20 +17,39 @@ import java.util.Set;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
+/**
+ * <p>RegionsTag class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class RegionsTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionsTag.class);
 
     private Set<String> excludes;
     private int containerSize;
 
+    /**
+     * <p>setExclude.</p>
+     *
+     * @param exclude a {@link java.lang.String} object.
+     */
     public void setExclude(String exclude) {
         this.excludes = commaDelimitedListToSet(exclude);
     }
 
+    /**
+     * <p>Setter for the field <code>containerSize</code>.</p>
+     *
+     * @param containerSize a int.
+     */
     public void setContainerSize(int containerSize) {
         this.containerSize = containerSize;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);

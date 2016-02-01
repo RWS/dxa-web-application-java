@@ -38,6 +38,12 @@ import java.util.Objects;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @org.springframework.stereotype.Component
+/**
+ * <p>EntityBuilderImpl class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public final class EntityBuilderImpl implements EntityBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityBuilderImpl.class);
@@ -62,6 +68,137 @@ public final class EntityBuilderImpl implements EntityBuilder {
     @Autowired
     private ModelBuilderPipeline builder;
 
+    private static SemanticSchema getSemanticSchema(Component component, Localization localization) {
+        return localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
+    }
+
+    private static void fillItemWithExternalMetadata(EclItem eclItem, Map<String, FieldSet> extensionData) {
+        FieldSet externalEclFieldSet = extensionData.get("ECL-ExternalMetadata");
+        Map<String, Object> externalMetadata = new HashMap<>(externalEclFieldSet.getContent().size());
+        for (Map.Entry<String, Field> entry : externalEclFieldSet.getContent().entrySet()) {
+            final List<Object> values = entry.getValue().getValues();
+
+            if (!values.isEmpty()) {
+                externalMetadata.put(entry.getKey(), values.get(0));
+            }
+        }
+        eclItem.setExternalMetadata(externalMetadata);
+    }
+
+    private static void fillItemWithEclData(EclItem eclItem, Map<String, FieldSet> extensionData) {
+        FieldSet eclFieldSet = extensionData.get("ECL");
+        eclItem.setDisplayTypeId(getValueFromFieldSet(eclFieldSet, "DisplayTypeId"));
+        eclItem.setTemplateFragment(getValueFromFieldSet(eclFieldSet, "TemplateFragment"));
+        String fileName = getValueFromFieldSet(eclFieldSet, "FileName");
+        if (!isEmpty(fileName)) {
+            eclItem.setFileName(fileName);
+        }
+        String mimeType = getValueFromFieldSet(eclFieldSet, "MimeType");
+        if (!isEmpty(mimeType)) {
+            eclItem.setMimeType(mimeType);
+        }
+    }
+
+    private static String getValueFromFieldSet(FieldSet eclFieldSet, String fieldName) {
+        if (eclFieldSet != null) {
+            Map<String, Field> fieldSetContent = eclFieldSet.getContent();
+            if (fieldSetContent != null) {
+                Field field = fieldSetContent.get(fieldName);
+                if (field != null) {
+                    return Objects.toString(field.getValues().get(0));
+                }
+            }
+        }
+        return null;
+    }
+
+    private static void createEntityData(AbstractEntityModel entity, ComponentPresentation componentPresentation) {
+        final Component component = componentPresentation.getComponent();
+        final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
+
+        Map<String, String> xpmMetaData = new HashMap<>();
+
+        if (entity instanceof EclItem) {
+            xpmMetaData.put("ComponentID", ((EclItem) entity).getUri());
+        } else {
+            xpmMetaData.put("ComponentID", component.getId());
+        }
+        xpmMetaData.put("ComponentModified",
+                ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
+        xpmMetaData.put("ComponentTemplateID", componentTemplate.getId());
+        xpmMetaData.put("ComponentTemplateModified",
+                ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
+
+        xpmMetaData.put("IsRepositoryPublished", String.valueOf(componentPresentation.isDynamic()));
+
+        entity.setXpmMetadata(xpmMetaData);
+
+    }
+
+    private static String[] getControllerNameParts(Map<String, Field> templateMeta) {
+        String fullName = FieldUtils.getStringValue(templateMeta, "controller");
+        if (isEmpty(fullName)) {
+            fullName = DEFAULT_CONTROLLER_NAME;
+        }
+        return splitName(fullName);
+    }
+
+    private static String getActionName(Map<String, Field> templateMeta) {
+        String actionName = FieldUtils.getStringValue(templateMeta, "action");
+        if (isEmpty(actionName)) {
+            actionName = DEFAULT_ACTION_NAME;
+        }
+        return actionName;
+    }
+
+    private static String[] getViewNameParts(ComponentTemplate componentTemplate) {
+        String fullName = FieldUtils.getStringValue(componentTemplate.getMetadata(), "view");
+        if (isEmpty(fullName)) {
+            fullName = componentTemplate.getTitle().replaceAll("\\[.*\\]|\\s", "");
+        }
+        return splitName(fullName);
+    }
+
+    private static String[] getRegionNameParts(Map<String, Field> templateMeta) {
+        String fullName = FieldUtils.getStringValue(templateMeta, "regionView");
+        if (isEmpty(fullName)) {
+            fullName = DEFAULT_REGION_NAME;
+        }
+        return splitName(fullName);
+    }
+
+    private static String[] splitName(String name) {
+        final String[] parts = name.split(":");
+        return parts.length > 1 ? parts : new String[]{DEFAULT_AREA_NAME, name};
+    }
+
+    private static Map<String, Object> getMvcMetadata(ComponentTemplate componentTemplate) {
+
+        // TODO: Move this code into a generic MvcDataHelper class
+
+        Map<String, Object> metadata = new HashMap<>();
+        Map<String, Field> metadataFields = componentTemplate.getMetadata();
+
+        for (Map.Entry<String, Field> entry : metadataFields.entrySet()) {
+            String fieldName = entry.getKey();
+            if (fieldName.equals("view") ||
+                    fieldName.equals("regionView") ||
+                    fieldName.equals("controller") ||
+                    fieldName.equals("action") ||
+                    fieldName.equals("routeValues")) {
+                continue;
+            }
+            Field field = entry.getValue();
+            if (field.getValues().size() > 0) {
+                metadata.put(fieldName, field.getValues().get(0).toString()); // Assume single-value text fields for template metadata
+            }
+        }
+        return metadata;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel,
                                     Localization localization) throws ContentProviderException {
@@ -98,6 +235,9 @@ public final class EntityBuilderImpl implements EntityBuilder {
         return entity;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EntityModel createEntity(final Component component, EntityModel originalEntityModel, final Localization localization)
             throws ContentProviderException {
@@ -110,7 +250,9 @@ public final class EntityBuilderImpl implements EntityBuilder {
         return createEntity(component, localization, entityClass, semanticSchema);
     }
 
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
             throws ContentProviderException {
@@ -157,10 +299,6 @@ public final class EntityBuilderImpl implements EntityBuilder {
         return entityClass;
     }
 
-    private SemanticSchema getSemanticSchema(Component component, Localization localization) {
-        return localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-    }
-
     private void processMediaItems(Component component, Localization localization, AbstractEntityModel entity) {
         if (entity instanceof MediaItem && component.getMultimedia() != null && !isEmpty(component.getMultimedia().getUrl())) {
             final Multimedia multimedia = component.getMultimedia();
@@ -190,69 +328,6 @@ public final class EntityBuilderImpl implements EntityBuilder {
         }
     }
 
-    private void fillItemWithExternalMetadata(EclItem eclItem, Map<String, FieldSet> extensionData) {
-        FieldSet externalEclFieldSet = extensionData.get("ECL-ExternalMetadata");
-        Map<String, Object> externalMetadata = new HashMap<>(externalEclFieldSet.getContent().size());
-        for (Map.Entry<String, Field> entry : externalEclFieldSet.getContent().entrySet()) {
-            final List<Object> values = entry.getValue().getValues();
-
-            if (values.size() > 0) {
-                externalMetadata.put(entry.getKey(), values.get(0));
-            }
-        }
-        eclItem.setExternalMetadata(externalMetadata);
-    }
-
-    private void fillItemWithEclData(EclItem eclItem, Map<String, FieldSet> extensionData) {
-        FieldSet eclFieldSet = extensionData.get("ECL");
-        eclItem.setDisplayTypeId(getValueFromFieldSet(eclFieldSet, "DisplayTypeId"));
-        eclItem.setTemplateFragment(getValueFromFieldSet(eclFieldSet, "TemplateFragment"));
-        String fileName = getValueFromFieldSet(eclFieldSet, "FileName");
-        if (!isEmpty(fileName)) {
-            eclItem.setFileName(fileName);
-        }
-        String mimeType = getValueFromFieldSet(eclFieldSet, "MimeType");
-        if (!isEmpty(mimeType)) {
-            eclItem.setMimeType(mimeType);
-        }
-    }
-
-    private String getValueFromFieldSet(FieldSet eclFieldSet, String fieldName) {
-        if (eclFieldSet != null) {
-            Map<String, Field> fieldSetContent = eclFieldSet.getContent();
-            if (fieldSetContent != null) {
-                Field field = fieldSetContent.get(fieldName);
-                if (field != null) {
-                    return Objects.toString(field.getValues().get(0));
-                }
-            }
-        }
-        return null;
-    }
-
-    private void createEntityData(AbstractEntityModel entity, ComponentPresentation componentPresentation) {
-        final Component component = componentPresentation.getComponent();
-        final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
-
-        Map<String, String> xpmMetaData = new HashMap<>();
-
-        if (entity instanceof EclItem) {
-            xpmMetaData.put("ComponentID", ((EclItem) entity).getUri());
-        } else {
-            xpmMetaData.put("ComponentID", component.getId());
-        }
-        xpmMetaData.put("ComponentModified",
-                ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
-        xpmMetaData.put("ComponentTemplateID", componentTemplate.getId());
-        xpmMetaData.put("ComponentTemplateModified",
-                ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
-
-        xpmMetaData.put("IsRepositoryPublished", String.valueOf(componentPresentation.isDynamic()));
-
-        entity.setXpmMetadata(xpmMetaData);
-
-    }
-
     private MvcData createMvcData(ComponentPresentation componentPresentation) {
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
         final Map<String, Field> templateMeta = componentTemplate.getMetadata();
@@ -263,7 +338,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
         final String actionName = getActionName(templateMeta);
 
-        final Map<String, Object> mvcMetadata = this.getMvcMetadata(componentPresentation.getComponentTemplate());
+        final Map<String, Object> mvcMetadata = EntityBuilderImpl.getMvcMetadata(componentPresentation.getComponentTemplate());
 
         final Map<String, String> routeValues = new HashMap<>();
 
@@ -288,66 +363,5 @@ public final class EntityBuilderImpl implements EntityBuilder {
                 .metadata(mvcMetadata)
                 .routeValues(routeValues)
                 .build();
-    }
-
-    private String[] getControllerNameParts(Map<String, Field> templateMeta) {
-        String fullName = FieldUtils.getStringValue(templateMeta, "controller");
-        if (isEmpty(fullName)) {
-            fullName = DEFAULT_CONTROLLER_NAME;
-        }
-        return splitName(fullName);
-    }
-
-    private String getActionName(Map<String, Field> templateMeta) {
-        String actionName = FieldUtils.getStringValue(templateMeta, "action");
-        if (isEmpty(actionName)) {
-            actionName = DEFAULT_ACTION_NAME;
-        }
-        return actionName;
-    }
-
-    private String[] getViewNameParts(ComponentTemplate componentTemplate) {
-        String fullName = FieldUtils.getStringValue(componentTemplate.getMetadata(), "view");
-        if (isEmpty(fullName)) {
-            fullName = componentTemplate.getTitle().replaceAll("\\[.*\\]|\\s", "");
-        }
-        return splitName(fullName);
-    }
-
-    private String[] getRegionNameParts(Map<String, Field> templateMeta) {
-        String fullName = FieldUtils.getStringValue(templateMeta, "regionView");
-        if (isEmpty(fullName)) {
-            fullName = DEFAULT_REGION_NAME;
-        }
-        return splitName(fullName);
-    }
-
-    private String[] splitName(String name) {
-        final String[] parts = name.split(":");
-        return parts.length > 1 ? parts : new String[]{DEFAULT_AREA_NAME, name};
-    }
-
-    private Map<String, Object> getMvcMetadata(ComponentTemplate componentTemplate) {
-
-        // TODO: Move this code into a generic MvcDataHelper class
-
-        Map<String, Object> metadata = new HashMap<>();
-        Map<String, Field> metadataFields = componentTemplate.getMetadata();
-
-        for (Map.Entry<String, Field> entry : metadataFields.entrySet()) {
-            String fieldName = entry.getKey();
-            if (fieldName.equals("view") ||
-                    fieldName.equals("regionView") ||
-                    fieldName.equals("controller") ||
-                    fieldName.equals("action") ||
-                    fieldName.equals("routeValues")) {
-                continue;
-            }
-            Field field = entry.getValue();
-            if (field.getValues().size() > 0) {
-                metadata.put(fieldName, field.getValues().get(0).toString()); // Assume single-value text fields for template metadata
-            }
-        }
-        return metadata;
     }
 }

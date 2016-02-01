@@ -15,6 +15,12 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 @EqualsAndHashCode
+/**
+ * <p>SmartTargetItem class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 @ToString
 @Slf4j
 public class SmartTargetItem {
@@ -28,11 +34,22 @@ public class SmartTargetItem {
     @JsonProperty("EntityId")
     private String entityId;
 
+    /**
+     * <p>Constructor for SmartTargetItem.</p>
+     *
+     * @param entityId     a {@link java.lang.String} object.
+     * @param localization a {@link com.sdl.webapp.common.api.localization.Localization} object.
+     */
     public SmartTargetItem(String entityId, Localization localization) {
         this.localization = localization;
         this.entityId = entityId;
     }
 
+    /**
+     * <p>Getter for the field <code>entity</code>.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.api.model.EntityModel} object.
+     */
     public EntityModel getEntity() {
         if (this.entity == null) {
             ContentProvider contentProvider = ApplicationContextHolder.getContext().getBean(ContentProvider.class);

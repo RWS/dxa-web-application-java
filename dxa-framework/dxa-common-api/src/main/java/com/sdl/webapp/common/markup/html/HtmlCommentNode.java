@@ -15,7 +15,7 @@ public final class HtmlCommentNode extends HtmlNode {
     }
 
     @Override
-    protected String renderHtml() {
+    public String renderHtml() {
         return "<!-- " + text.replaceAll("<!--", "").replaceAll("-->", "") + " -->";
     }
 

@@ -26,7 +26,7 @@ public final class HtmlStartTag extends HtmlRenderable {
     }
 
     @Override
-    protected String renderHtml() {
+    public String renderHtml() {
         if (StringUtils.isEmpty(tagName)) {
             return "";
         }

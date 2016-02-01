@@ -8,11 +8,13 @@ import com.sdl.webapp.common.api.mapping.semantic.config.FieldPath;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
-import com.sdl.webapp.common.util.FieldUtils;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
 import com.sdl.webapp.tridion.fields.converters.ComponentLinkFieldConverter;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
+import com.sdl.webapp.tridion.mapping.ModelBuilderPipeline;
+import com.sdl.webapp.util.dd4t.FieldUtils;
+import lombok.ToString;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
@@ -31,9 +33,8 @@ import java.util.Map;
 import java.util.Stack;
 
 public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(SemanticFieldDataProviderImpl.class);
     protected static final String METADATA_PATH = "Metadata";
-
+    private static final Logger LOG = LoggerFactory.getLogger(SemanticFieldDataProviderImpl.class);
     protected final SemanticEntity semanticEntity;
 
     protected final FieldConverterRegistry fieldConverterRegistry;
@@ -183,6 +184,7 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
         void injectDataProvider(SemanticFieldDataProviderImpl fieldDataProvider);
     }
 
+    @ToString
     public static class PageEntity implements SemanticEntity {
         private org.dd4t.contentmodel.Page page;
         private SemanticFieldDataProviderImpl fieldDataProvider;
@@ -211,15 +213,9 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
         public void injectDataProvider(SemanticFieldDataProviderImpl fieldDataProvider) {
             this.fieldDataProvider = fieldDataProvider;
         }
-
-        @Override
-        public String toString() {
-            return "PageEntity{" +
-                    "page=" + page +
-                    '}';
-        }
     }
 
+    @ToString
     public static class ComponentEntity implements SemanticEntity {
         private Component component;
         private SemanticFieldDataProviderImpl fieldDataProvider;
@@ -247,13 +243,6 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
         @Override
         public void injectDataProvider(SemanticFieldDataProviderImpl fieldDataProvider) {
             this.fieldDataProvider = fieldDataProvider;
-        }
-
-        @Override
-        public String toString() {
-            return "ComponentEntity{" +
-                    "component=" + component +
-                    '}';
         }
     }
 }

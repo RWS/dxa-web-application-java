@@ -2,9 +2,9 @@ package com.sdl.webapp.common.impl.taglib.dxa;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -17,7 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
 import java.io.IOException;
 
-import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.CORE_REGION;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -63,10 +63,11 @@ public class RegionTag extends AbstractMarkupTag {
             this.pageContext.setAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE, "1");
             // Create a new Region Model which reflects the Page Model
             String regionName = page.getName().replace(" ", "-");
-            MvcData mvcData = new MvcDataImpl()
-                    .setRegionName(regionName)
-                    .setViewName(regionName)
-                    .defaults(CORE_REGION);
+            MvcData mvcData = MvcDataCreator.creator()
+                    .defaults(CORE_REGION)
+                    .builder()
+                    .regionName(regionName)
+                    .viewName(regionName).build();
 
             RegionModelImpl includeRegion = null;
             try {
@@ -91,10 +92,13 @@ public class RegionTag extends AbstractMarkupTag {
             RegionModelImpl placeholderRegion = null;
             try {
                 placeholderRegion = new RegionModelImpl(name);
-                MvcData mvcData = new MvcDataImpl()
-                        .setRegionName(name)
-                        .setViewName(isEmpty(emptyViewName) ? name : emptyViewName)
-                        .defaults(CORE_REGION);
+                MvcData mvcData = MvcDataCreator.creator()
+                        .defaults(CORE_REGION)
+                        .builder()
+                        .regionName(name)
+                        .viewName(isEmpty(emptyViewName) ? name : emptyViewName)
+                        .build();
+
                 placeholderRegion.setMvcData(mvcData);
             } catch (DxaException e) {
                 LOG.error("Exception when creating new placeholderRegion {}", name, e);

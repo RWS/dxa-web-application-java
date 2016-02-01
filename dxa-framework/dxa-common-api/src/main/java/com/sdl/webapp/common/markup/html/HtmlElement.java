@@ -32,7 +32,7 @@ public final class HtmlElement extends HtmlNode {
     }
 
     @Override
-    protected String renderHtml() {
+    public String renderHtml() {
         final StringBuilder sb = new StringBuilder().append(startTag.toHtml());
         for (HtmlNode node : content) {
             sb.append(node.toHtml());

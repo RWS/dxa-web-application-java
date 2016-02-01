@@ -16,6 +16,7 @@ import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,13 +27,15 @@ public class DefaultRegionBuilder implements RegionBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRegionBuilder.class);
 
+    @Autowired
+    private ViewModelRegistry viewModelRegistry;
+
+    @Autowired
+    private ConditionalEntityEvaluator conditionalEntityEvaluator;
+
     @Override
-    public RegionModelSet buildRegions(PageModel page,
-                                       ConditionalEntityEvaluator conditionalEntityEvaluator,
-                                       List<?> sourceList,
-                                       RegionBuilderCallback callback,
-                                       Localization localization,
-                                       ViewModelRegistry viewModelRegistry) throws ContentProviderException {
+    public RegionModelSet buildRegions(PageModel page, List<?> sourceList, RegionBuilderCallback callback,
+                                       Localization localization) throws ContentProviderException {
 
         RegionModelSet regions = new RegionModelSetImpl();
         for (Object source : sourceList) {

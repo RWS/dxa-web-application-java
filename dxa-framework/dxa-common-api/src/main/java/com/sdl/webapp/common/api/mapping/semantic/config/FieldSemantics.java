@@ -28,6 +28,10 @@ public final class FieldSemantics {
         return propertyName;
     }
 
+    public boolean isStandardMetadataField() {
+        return Objects.equals(this.entityName, "StandardMetadata");
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

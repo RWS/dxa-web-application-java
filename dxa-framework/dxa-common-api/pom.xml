@@ -46,9 +46,10 @@
     </licenses>
 
     <dependencies>
+
         <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-core</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
 
         <!-- Spring Framework -->
@@ -117,7 +118,6 @@
             <artifactId>commons-collections</artifactId>
         </dependency>
 
-
         <!-- JSoup -->
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -128,7 +128,6 @@
         <dependency>
             <groupId>net.java.dev.rome</groupId>
             <artifactId>rome</artifactId>
-            <version>1.0.0</version>
         </dependency>
 
     </dependencies>

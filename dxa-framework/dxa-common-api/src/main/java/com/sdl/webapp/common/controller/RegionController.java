@@ -3,6 +3,7 @@ package com.sdl.webapp.common.controller;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
+import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -21,7 +22,7 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.REGION_MODE
  * This handles include requests to /system/mvc/Core/Region/{regionName}
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + CoreAreaConstants.CORE_AREA_NAME + "/" + CoreAreaConstants.REGION_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + "/" + DefaultsMvcData.CoreAreaConstants.REGION_CONTROLLER_NAME)
 public class RegionController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(RegionController.class);
 
@@ -32,7 +33,7 @@ public class RegionController extends BaseController {
      * @param regionName The region name.
      * @return The name of the region view that should be rendered for this request.
      */
-    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.REGION_ACTION_NAME + "/{regionName}")
+    @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.REGION_ACTION_NAME + "/{regionName}")
     public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName) throws Exception {
         LOG.trace("handleGetRegion: regionName={}", regionName);
 

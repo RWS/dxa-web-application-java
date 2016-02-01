@@ -1,27 +1,35 @@
 package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
+import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
+
+import javax.servlet.http.HttpServletRequest;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.mock;
 
 /**
  * Unit tests for {@link GenericMediaHelper}.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = AbstractMediaHelperTestConfig.class)
+@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 public class DefaultMediaHelperTest {
 
     @Autowired
     private MediaHelper mediaHelper;
-
     @Autowired
-    private MockWebRequestContext webRequestContext;
+    private WebRequestContextImpl webRequestContext;
 
     @Test
     public void testGetResponsiveWidthAbsoluteWidthFactor() {
@@ -76,5 +84,34 @@ public class DefaultMediaHelperTest {
         assertThat(mediaHelper.getResponsiveImageUrl("/example.jpg", "639", 2.5, 12), is("/example_w640_h256_n.jpg"));
         assertThat(mediaHelper.getResponsiveImageUrl("/example.jpg", "640", 2.5, 12), is("/example_w640_h256_n.jpg"));
         assertThat(mediaHelper.getResponsiveImageUrl("/example.jpg", "641", 2.5, 12), is("/example_w1024_h410_n.jpg"));
+    }
+
+    @Configuration
+    public static class AbstractMediaHelperTestConfig {
+
+        @Bean
+        public MediaHelper mediaHelper() {
+            return new DefaultMediaHelper();
+        }
+
+        @Bean
+        public WebRequestContextImpl webRequestContext() {
+            return new WebRequestContextImpl();
+        }
+
+        @Bean
+        public ContextClaimsProvider contextClaimsProvider() {
+            return mock(ContextClaimsProvider.class);
+        }
+
+        @Bean
+        public ContextEngine contextEngine() {
+            return mock(ContextEngine.class);
+        }
+
+        @Bean
+        public HttpServletRequest servletRequest() {
+            return new MockHttpServletRequest();
+        }
     }
 }

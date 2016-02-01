@@ -15,7 +15,7 @@ public class HtmlMultiNode extends HtmlNode {
     }
 
     @Override
-    protected String renderHtml() {
+    public String renderHtml() {
         final StringBuilder sb = new StringBuilder();
         for (HtmlNode node : nodes) {
             sb.append(node.toHtml());

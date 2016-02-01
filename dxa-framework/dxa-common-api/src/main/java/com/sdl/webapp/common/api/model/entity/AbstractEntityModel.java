@@ -2,6 +2,8 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -9,18 +11,15 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
+import com.sdl.webapp.common.util.ApplicationContextHolder;
+import lombok.SneakyThrows;
 
 import java.util.Map;
 import java.util.Objects;
 
-/**
- * Abstract superclass for implementations of {@code Entity}.
- */
 @SemanticMappingIgnore
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
-
-    private static final String XPM_COMPONENT_PRESENTATION_MARKUP = "<!-- Start Component Presentation: {\"ComponentID\" : \"%s\", \"ComponentModified\" : \"%s\", \"ComponentTemplateID\" : \"%s\", \"ComponentTemplateModified\" : \"%s\", \"IsRepositoryPublished\" : %b} -->";
 
     @JsonProperty("Id")
     private String id;
@@ -36,7 +35,6 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
 
     @JsonProperty("HtmlClasses")
     private String htmlClasses;
-
 
     @Override
     public String getId() {
@@ -86,20 +84,10 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
 
 
     @Override
+    @SneakyThrows(JsonProcessingException.class)
     public String getXpmMarkup(Localization localization) {
-        if (getXpmMetadata() == null) {
-            return "";
-        }
-
-        // TODO: Consider data-driven approach (i.e. just render all XpmMetadata key/value pairs)
-        return String.format(
-                XPM_COMPONENT_PRESENTATION_MARKUP,
-                getXpmMetadata().get("ComponentID"),
-                getXpmMetadata().get("ComponentModified"),
-                getXpmMetadata().get("ComponentTemplateID"),
-                getXpmMetadata().get("ComponentTemplateModified"),
-                getXpmMetadata().get("IsRepositoryPublished")
-        );
+        return getXpmMetadata() == null ? "" : String.format("<!-- Start Component Presentation: %s -->",
+                ApplicationContextHolder.getContext().getBean(ObjectMapper.class).writeValueAsString(getXpmMetadata()));
     }
 
     @Override

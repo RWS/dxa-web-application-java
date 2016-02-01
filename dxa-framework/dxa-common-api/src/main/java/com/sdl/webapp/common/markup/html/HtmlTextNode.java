@@ -20,7 +20,7 @@ public final class HtmlTextNode extends HtmlNode {
     }
 
     @Override
-    protected String renderHtml() {
+    public String renderHtml() {
         return escape ? HtmlUtils.htmlEscape(text) : text;
     }
 

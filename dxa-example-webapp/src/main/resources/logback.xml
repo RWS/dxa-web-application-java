@@ -7,18 +7,6 @@
     <property name="log.folder" value="../logs/DXA"/>
 
     <!-- Appenders -->
-    <appender name="rollingCoreLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.folder}/cd_core.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>${log.history}</maxHistory>
-        </rollingPolicy>
-        <encoder>
-            <charset>${log.encoding}</charset>
-            <pattern>${log.pattern}</pattern>
-        </encoder>
-        <prudent>true</prudent>
-    </appender>
-
     <appender name="rollingDebugLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <fileNamePattern>${log.folder}/cd_debug.%d{yyyy-MM-dd}.log</fileNamePattern>
@@ -31,42 +19,221 @@
         <prudent>true</prudent>
     </appender>
 
+    <appender name="rollingTransportLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_transport.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+    <appender name="rollingDeployerLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_deployer.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+    <appender name="rollingMonitorLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_monitor.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+    <appender name="rollingCoreLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_core.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+    <appender name="rollingSessionPreviewLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_preview.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+    <appender name="rollingContentLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_content.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+    <appender name="rollingDiscoveryLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_discovery.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+    <appender name="rollingUGCLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_ugc.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+    <appender name="rollingADFLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="com.sdl.webapp.common.impl.LogbackRepeatingToSingleFilter">
+            <loggerName>com.tridion.ambientdata.AmbientDataContext</loggerName>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_adf.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+    <appender name="rollingOAuthLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/cd_oauth.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
+
+    <appender name="dxaLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/dxa.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <charset>${log.encoding}</charset>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="com.sdl.webapp.common.impl.LogbackRepeatingToSingleFilter">
+            <loggerName>com.tridion.ambientdata.AmbientDataContext</loggerName>
+        </filter>
         <encoder>
             <pattern>${log.pattern}</pattern>
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <!-- Loggers -->
+    <logger name="com.tridion" level="${log.level}"/>
+    <logger name="com.sdl" level="${log.level}"/>
+    <logger name="com.tridion.transport">
+        <appender-ref ref="rollingTransportLog"/>
+    </logger>
+    <logger name="com.sdl.delivery.deployer">
+        <appender-ref ref="rollingDeployerLog"/>
+    </logger>
+    <logger name="com.tridion.transport.transportpackage">
+        <appender-ref ref="rollingDeployerLog"/>
+    </logger>
+    <logger name="com.tridion.transformer">
+        <appender-ref ref="rollingDeployerLog"/>
+    </logger>
+    <logger name="com.tridion.deployer">
+        <appender-ref ref="rollingDeployerLog"/>
+    </logger>
+    <logger name="com.tridion.tcdl">
+        <appender-ref ref="rollingDeployerLog"/>
+    </logger>
+    <logger name="com.tridion.event">
+        <appender-ref ref="rollingDeployerLog"/>
+    </logger>
+    <logger name="com.tridion.monitor">
+        <appender-ref ref="rollingMonitorLog"/>
+    </logger>
+    <logger name="com.tridion.preview">
+        <appender-ref ref="rollingSessionPreviewLog"/>
+    </logger>
+    <logger name="com.tridion.storage.persistence.session">
+        <appender-ref ref="rollingSessionPreviewLog"/>
+    </logger>
+    <logger name="com.sdl.web.content">
+        <appender-ref ref="rollingContentLog"/>
+    </logger>
+    <logger name="com.sdl.web.discovery">
+        <appender-ref ref="rollingDiscoveryLog"/>
+    </logger>
+    <logger name="com.sdl.web.ugc">
+        <appender-ref ref="rollingUGCLog"/>
+    </logger>
+    <logger name="com.sdl.web.ambient">
+        <appender-ref ref="rollingADFLog"/>
+    </logger>
+    <logger name="com.tridion.ambientdata">
+        <appender-ref ref="rollingADFLog"/>
+    </logger>
+    <logger name="com.sdl.web.oauth">
+        <appender-ref ref="rollingOAuthLog"/>
+    </logger>
+    <logger name="Tridion.ContentDelivery" level="${log.level}">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+    <logger name="com.sdl.web">
+        <appender-ref ref="rollingCoreLog"/>
+    </logger>
+
+    <!-- Loggers -->
+    <logger name="org.springframework" level="INFO">
+        <appender-ref ref="dxaLog"/>
+    </logger>
+    <logger name="org.dd4t" level="INFO">
+        <appender-ref ref="dxaLog"/>
+    </logger>
+    <logger name="com.sdl.webapp" level="${log.level}">
+        <appender-ref ref="dxaLog"/>
+    </logger>
+    <logger name="com.sdl.webapp.common.impl" level="${log.level}">
+        <appender-ref ref="dxaLog"/>
+    </logger>
+    <logger name="com.sdl.webapp.common.impl.taglib.dxa" level="${log.level}">
+        <appender-ref ref="dxaLog"/>
+    </logger>
+    <logger name="com.sdl.webapp.main.controller.core" level="${log.level}">
+        <appender-ref ref="dxaLog"/>
+    </logger>
+
+    <root level="${log.level}">
         <appender-ref ref="STDOUT"/>
     </root>
 
-    <!-- Loggers -->
-    <logger name="org.hibernate" level="WARN">
-        <appender-ref ref="rollingCoreLog"/>
-    </logger>
-    <logger name="org.springframework" level="INFO">
-        <appender-ref ref="rollingCoreLog"/>
-    </logger>
-    <logger name="org.springframework.web" level="INFO">
-        <appender-ref ref="rollingCoreLog"/>
-    </logger>
-    <logger name="org.dd4t" level="INFO">
-        <appender-ref ref="rollingCoreLog"/>
-    </logger>
-    <logger name="com.tridion" level="WARN">
-        <appender-ref ref="rollingCoreLog"/>
-    </logger>
-    <logger name="com.sdl.webapp" level="DEBUG">
-        <appender-ref ref="rollingCoreLog"/>
-    </logger>
-    <logger name="com.sdl.webapp.common.impl" level="DEBUG">
-        <appender-ref ref="rollingDebugLog"/>
-    </logger>
-    <logger name="com.sdl.webapp.common.impl.taglib.dxa" level="DEBUG">
-        <appender-ref ref="rollingDebugLog"/>
-    </logger>
-    <logger name="com.sdl.webapp.main.controller.core" level="DEBUG">
-        <appender-ref ref="rollingDebugLog"/>
-    </logger>
+
 </configuration>

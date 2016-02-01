@@ -1,18 +1,14 @@
 package com.sdl.webapp.common.api.model.page;
 
 import com.sdl.webapp.common.api.model.PageModel;
+import lombok.ToString;
 
-/**
- * Implementation of {@code PageModel}.
- */
+@ToString
 public class PageModelImpl extends AbstractPageModelImpl implements PageModel {
+    public PageModelImpl() {
+    }
 
-    @Override
-    public String toString() {
-        return "PageModelImpl{" +
-                "id='" + id + '\'' +
-                ", title='" + title + '\'' +
-                ", mvcData='" + mvcData + '\'' +
-                '}';
+    public PageModelImpl(PageModel other) {
+        super(other);
     }
 }

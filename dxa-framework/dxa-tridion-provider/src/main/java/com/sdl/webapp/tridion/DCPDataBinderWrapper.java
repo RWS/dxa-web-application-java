@@ -12,11 +12,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * DCP Data Binder Wrapper
- *
- * @author nic
- */
 public class DCPDataBinderWrapper implements DataBinder {
 
     private DataBinder dataBinder;

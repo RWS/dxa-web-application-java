@@ -29,7 +29,7 @@ public class XpmPageMarkupTag extends XpmMarkupTag {
 
         return new HtmlNode() {
             @Override
-            protected String renderHtml() {
+            public String renderHtml() {
                 return page.getXpmMarkup(getLocalization());
             }
         };

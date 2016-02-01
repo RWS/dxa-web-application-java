@@ -5,9 +5,9 @@ import com.google.common.collect.Maps;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,7 +112,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             return retval;
         }
         //Fallback
-        MvcData mvcData = new MvcDataImpl(semanticTypeName);
+        MvcData mvcData = MvcDataCreator.creator().fromQualifiedName(semanticTypeName).create();
         return getViewModelType(mvcData);
     }
 

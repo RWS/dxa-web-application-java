@@ -9,15 +9,23 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.apache.commons.collections.CollectionUtils.isEmpty;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode
+@Setter
+@Getter
 public abstract class AbstractPageModelImpl implements PageModel {
 
-    private static final String XpmPageSettingsMarkup = "<!-- Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\",\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"} -->";
-    private static final String XpmPageScript = "<script type=\"text/javascript\" language=\"javascript\" defer=\"defer\" src=\"%s/WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js\" id=\"tridion.siteedit\"></script>";
+    private static final String XPM_PAGE_SETTINGS_MARKUP = "<!-- Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\",\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"} -->";
+    private static final String XPM_PAGE_SCRIPT = "<script type=\"text/javascript\" language=\"javascript\" defer=\"defer\" src=\"%s/WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js\" id=\"tridion.siteedit\"></script>";
 
     @JsonProperty("Id")
     protected String id;
@@ -43,89 +51,29 @@ public abstract class AbstractPageModelImpl implements PageModel {
     @JsonProperty("MvcData")
     protected MvcData mvcData;
 
-    @Override
-    public String getId() {
-        return id;
+    public AbstractPageModelImpl() {
     }
 
-    @Override
-    public void setId(String id) {
-        this.id = id;
-    }
+    public AbstractPageModelImpl(PageModel other) {
+        this.id = other.getId();
+        this.name = other.getName();
+        this.title = other.getTitle();
+        this.htmlClasses = other.getHtmlClasses();
+        this.mvcData = other.getMvcData();
 
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    @Override
-    public String getTitle() {
-        return title;
-    }
-
-    @Override
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    @Override
-    public Map<String, String> getMeta() {
-        return meta;
-    }
-
-    @Override
-    public void setMeta(Map<String, String> meta) {
-        this.meta = meta;
-    }
-
-    @Override
-    public RegionModelSet getRegions() {
-        return regions;
-    }
-
-    @Override
-    public void setRegions(RegionModelSet regions) {
-        this.regions = regions;
+        this.regions.addAll(other.getRegions());
+        this.meta.putAll(other.getMeta());
+        this.xpmMetadata.putAll(other.getXpmMetadata());
     }
 
     @Override
     public boolean containsRegion(String regionName) {
-        return getRegions().containsKey(regionName);
-    }
-
-    @Override
-    public Map<String, String> getXpmMetadata() {
-        return xpmMetadata;
+        return !isEmpty(getRegions()) && getRegions().containsName(regionName);
     }
 
     @Override
     public void setXpmMetadata(Map<String, String> xpmMetadata) {
         this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
-    }
-
-    @Override
-    public MvcData getMvcData() {
-        return mvcData;
-    }
-
-    @Override
-    public void setMvcData(MvcData mvcData) {
-        this.mvcData = mvcData;
-    }
-
-    @Override
-    public String getHtmlClasses() {
-        return this.htmlClasses;
-    }
-
-    @Override
-    public void setHtmlClasses(String htmlClasses) {
-        this.htmlClasses = htmlClasses;
     }
 
     @Override
@@ -145,15 +93,11 @@ public abstract class AbstractPageModelImpl implements PageModel {
             cmsUrl = cmsUrl.substring(0, cmsUrl.length() - 1);
         }
 
-        return String.format(
-                XpmPageSettingsMarkup,
+        return String.format(XPM_PAGE_SETTINGS_MARKUP,
                 getXpmMetadata().get("PageID"),
                 getXpmMetadata().get("PageModified"),
                 getXpmMetadata().get("PageTemplateID"),
                 getXpmMetadata().get("PageTemplateModified")
-        ) +
-                String.format(XpmPageScript, cmsUrl);
+        ) + String.format(XPM_PAGE_SCRIPT, cmsUrl);
     }
-
-
 }

@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.model;
 
 import java.util.List;
 
-/**
- * Region model.
- */
 public interface RegionModel extends ViewModel {
 
     String getName();

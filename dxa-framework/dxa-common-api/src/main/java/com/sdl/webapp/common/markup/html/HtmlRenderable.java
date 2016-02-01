@@ -20,7 +20,7 @@ public abstract class HtmlRenderable {
         return result;
     }
 
-    protected abstract String renderHtml();
+    public abstract String renderHtml();
 
     @Override
     public String toString() {

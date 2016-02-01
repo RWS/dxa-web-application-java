@@ -26,7 +26,7 @@ public class XpmRegionMarkupTag extends XpmMarkupTag {
 
         return new HtmlNode() {
             @Override
-            protected String renderHtml() {
+            public String renderHtml() {
                 return region.getXpmMarkup(getLocalization());
             }
         };

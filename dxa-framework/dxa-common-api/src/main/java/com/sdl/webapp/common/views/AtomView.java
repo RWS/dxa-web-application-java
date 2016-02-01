@@ -9,6 +9,7 @@ import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Link;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.feed.AbstractAtomFeedView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,13 +25,9 @@ import java.util.UUID;
  */
 public class AtomView extends AbstractAtomFeedView {
     private static final Logger LOG = LoggerFactory.getLogger(AtomView.class);
-    WebRequestContext context;
+    @Autowired
+    private WebRequestContext context;
     private DataFormatter formatter;
-
-    public AtomView(WebRequestContext context) {
-        this.context = context;
-    }
-
 
     @Override
     @SuppressWarnings("unchecked")

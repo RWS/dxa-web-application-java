@@ -15,7 +15,10 @@ public class ItemList extends AbstractEntityModel {
     @SemanticProperty("s:headline")
     private String headline;
 
-    @JsonProperty("ItemListElement")
+    // single/plural ending explanation: schema.org & CM say it is element (single) because CM operates with them as with
+    // single entities.
+    // So since we actually have multiple elements it was decided to call it elements (plural) in DXA.
+    @JsonProperty("ItemListElements")
     @SemanticProperty("s:itemListElement")
     private List<Teaser> itemListElements;
 

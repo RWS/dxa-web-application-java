@@ -23,7 +23,7 @@ public final class HtmlAttribute extends HtmlRenderable {
     }
 
     @Override
-    protected String renderHtml() {
+    public String renderHtml() {
         return String.format("%s=\"%s\"", name, HtmlUtils.htmlEscape(value == null ? "" : value));
     }
 

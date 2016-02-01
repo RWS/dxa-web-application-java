@@ -21,6 +21,7 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @Component
@@ -62,7 +63,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                 // Try getting data using each of the field semantics in order
                 for (FieldSemantics fieldSemantics : registrySemantics) {
                     // Find the matching semantic field
-                    final SemanticField semanticField = findMatchingSemanticField(semanticFields, fieldSemantics);
+                    final SemanticField semanticField = findFieldForGivenSemantics(semanticFields, fieldSemantics);
                     if (semanticField != null) {
                         foundMatch = true;
                         LOG.trace("Match found: {} -> {}", fieldSemantics, semanticField);
@@ -165,34 +166,33 @@ public class SemanticMapperImpl implements SemanticMapper {
         }
     }
 
-    private SemanticField findMatchingSemanticField(Map<FieldSemantics, SemanticField> semanticFields,
-                                                    FieldSemantics fieldSemantics) {
-        SemanticField matchingField = null;
+    private SemanticField findFieldForGivenSemantics(Map<FieldSemantics, SemanticField> fields, FieldSemantics semantics) {
 
-        for (Map.Entry<FieldSemantics, SemanticField> entry : semanticFields.entrySet()) {
-            FieldSemantics f = entry.getKey();
-            if (f.getEntityName().equals(fieldSemantics.getEntityName())
-                    && f.getPropertyName().equals(fieldSemantics.getPropertyName())
-                    && f.getVocabulary().equals(fieldSemantics.getVocabulary())) {
-                matchingField = entry.getValue();
-            } else {
-                if (f.getEntityName().equals("StandardMetadata")
-                        && f.getPropertyName().equals(fieldSemantics.getPropertyName())) {
-                    matchingField = entry.getValue();
-                }
+        SemanticField field = fields.get(semantics);
+
+        if (field != null) {
+            return field;
+        }
+
+        for (Map.Entry<FieldSemantics, SemanticField> entry : fields.entrySet()) {
+            FieldSemantics key = entry.getKey();
+
+            if (key.isStandardMetadataField() && Objects.equals(key.getPropertyName(), semantics.getPropertyName())) {
+                return entry.getValue();
             }
         }
 
-        if (matchingField == null) {
-            // Search all embedded fields recursively
-            for (SemanticField semanticField : semanticFields.values()) {
-                matchingField = findMatchingSemanticField(semanticField.getEmbeddedFields(), fieldSemantics);
-                if (matchingField != null) {
-                    break;
-                }
+        // Search all embedded fields recursively
+        for (SemanticField semanticField : fields.values()) {
+            field = findFieldForGivenSemantics(semanticField.getEmbeddedFields(), semantics);
+
+            if (field != null) {
+                return field;
             }
         }
 
-        return matchingField;
+        return null;
     }
+
+
 }

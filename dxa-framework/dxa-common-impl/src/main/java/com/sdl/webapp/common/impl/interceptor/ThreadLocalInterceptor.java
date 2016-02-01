@@ -8,11 +8,6 @@ import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-/**
- * ThreadLocalInterceptor
- *
- * @author nic
- */
 public class ThreadLocalInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired

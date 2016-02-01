@@ -3,33 +3,38 @@ package com.sdl.webapp.common.impl.contextengine;
 import com.sdl.webapp.common.api.contextengine.ContextClaims;
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
+import com.sdl.webapp.common.exceptions.DxaException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Component
+@Scope(value = "request")
 public class ContextEngineImpl implements ContextEngine {
+    private static final Logger LOG = LoggerFactory.getLogger(ContextEngineImpl.class);
 
     private Map<String, Object> claims;
     private Map<Class, ContextClaims> stronglyTypedClaims = new HashMap<Class, ContextClaims>();
     private String deviceFamily;
-    private ContextClaimsProvider provider;
 
     @Autowired
-    public ContextEngineImpl(ContextClaimsProvider provider) {
-        this.provider = provider;
-    }
+    private ContextClaimsProvider provider;
 
     @Override
     public <T extends ContextClaims> T getClaims(Class<T> cls) {
+
         ContextClaims retval;
 
-        if (this.claims == null) {
-            this.claims = provider.getContextClaims(null);
-        }
         try {
+            if (this.claims == null) {
+                this.claims = provider.getContextClaims(null);
+            }
+
             retval = cls.newInstance();
             if (!this.stronglyTypedClaims.containsKey(cls)) {
                 retval.setClaims(this.claims);
@@ -38,12 +43,8 @@ public class ContextEngineImpl implements ContextEngine {
                 retval = this.stronglyTypedClaims.get(cls);
             }
             return (T) retval;
-        } catch (InstantiationException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (InstantiationException | IllegalAccessException | DxaException e) {
+            LOG.error("Exception during getClaims()", e);
         }
         return null;
     }

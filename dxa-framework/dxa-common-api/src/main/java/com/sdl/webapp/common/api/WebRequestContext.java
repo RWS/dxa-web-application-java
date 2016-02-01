@@ -4,6 +4,8 @@ import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModel;
 
+import javax.servlet.ServletRequest;
+
 /**
  * Provides information relevant for the current request.
  */
@@ -90,6 +92,8 @@ public interface WebRequestContext {
      */
     int getDisplayWidth();
 
+    ScreenWidth getScreenWidth();
+
     /**
      * Gets the pixel ratio of the current request.
      *
@@ -132,9 +136,9 @@ public interface WebRequestContext {
 
     // TODO: Should we have setters in this interface??
 
-    boolean getHasNoLocalization();
+    boolean isNoLocalization();
 
-    void setHasNoLocalization(boolean value);
+    void setNoLocalization(boolean value);
 
     String getPageId();
 
@@ -142,15 +146,17 @@ public interface WebRequestContext {
 
     boolean isDeveloperMode();
 
-    boolean getIsInclude();
+    void setDeveloperMode(boolean value);
 
-    void setIsInclude(boolean value);
+    boolean isInclude();
 
-    void setIsDeveloperMode(boolean value);
+    void setInclude(boolean value);
 
     RegionModel getParentRegion();
 
     void pushParentRegion(RegionModel value);
 
     void popParentRegion();
+
+    ServletRequest getServletRequest();
 }

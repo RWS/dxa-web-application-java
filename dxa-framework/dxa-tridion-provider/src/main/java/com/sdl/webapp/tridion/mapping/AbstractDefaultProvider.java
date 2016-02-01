@@ -56,6 +56,8 @@ import static com.sdl.webapp.util.dd4t.TcmUtils.buildTemplateTcmUri;
 public abstract class AbstractDefaultProvider implements ContentProvider, NavigationProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDefaultProvider.class);
 
+    private static final Object LOCK = new Object();
+
     private static final String DEFAULT_PAGE_NAME = "index";
     private static final String DEFAULT_PAGE_EXTENSION = ".html";
 
@@ -96,7 +98,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
         T page = callback.tryFindPage(processedPath, publicationId);
         if (page == null && !path.endsWith("/") && !hasExtension(path)) {
-            processedPath = processPath(path + "/");
+            processedPath = processPath(path + '/');
             LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
             page = callback.tryFindPage(processedPath, publicationId);
         }
@@ -126,6 +128,105 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return path.lastIndexOf('.') > path.lastIndexOf('/');
     }
 
+    protected static boolean isToBeRefreshed(File file, long time) throws ContentProviderException {
+        boolean refresh;
+        if (file.exists()) {
+            refresh = file.lastModified() < time;
+        } else {
+            refresh = true;
+            if (!file.getParentFile().exists()) {
+                if (!file.getParentFile().mkdirs()) {
+                    throw new ContentProviderException("Failed to create parent directory for file: " + file);
+                }
+            }
+        }
+        return refresh;
+    }
+
+    protected static void writeToFile(File file, ImageUtils.StaticContentPathInfo pathInfo, byte[] content) throws ContentProviderException, IOException {
+        if (pathInfo.isImage() && pathInfo.isResized()) {
+            content = ImageUtils.resizeImage(content, pathInfo);
+        }
+
+        Files.write(content, file);
+    }
+
+    private static int mapSchema(String schemaKey, Localization localization) {
+        final String[] parts = schemaKey.split("\\.");
+        final String configKey = parts.length > 1 ? (parts[0] + ".schemas." + parts[1]) : ("core.schemas." + parts[0]);
+        final String schemaId = localization.getConfiguration(configKey);
+        try {
+            return Integer.parseInt(schemaId);
+        } catch (NumberFormatException e) {
+            LOG.warn("Error while parsing schema id: {}", schemaId, e);
+            return 0;
+        }
+    }
+
+    private static String removeVersionNumber(String path) {
+        return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
+    }
+
+    private static boolean createBreadcrumbLinks(SitemapItem item, String requestPath, List<Link> links) {
+        if (requestPath.startsWith(item.getUrl().toLowerCase())) {
+            // Add link for this matching item
+            links.add(createLinkForItem(item));
+
+            // Add links for the following matching subitems
+            boolean firstItem = true;
+            for (SitemapItem subItem : item.getItems()) {
+                // Fix to correct the breadcrumb
+                // TODO: Implement this propertly
+                if (firstItem) {
+                    firstItem = false;
+                } else {
+                    if (createBreadcrumbLinks(subItem, requestPath, links)) {
+                        return true;
+                    }
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private static List<Link> createLinksForVisibleItems(Iterable<SitemapItem> items) {
+        final List<Link> links = new ArrayList<>();
+        for (SitemapItem item : items) {
+            if (item.isVisible()) {
+                links.add(createLinkForItem(item));
+            }
+        }
+        return links;
+    }
+
+    private static Link createLinkForItem(SitemapItem item) {
+        final Link link = new Link();
+        link.setUrl(item.getUrl());
+        link.setLinkText(item.getTitle());
+        return link;
+    }
+
+    private static SitemapItem findContextNavigationStructureGroup(SitemapItem item, String requestPath) {
+        if (item.getType().equals(TYPE_STRUCTURE_GROUP) && requestPath.startsWith(item.getUrl().toLowerCase())) {
+            // Check if there is a matching subitem, if yes, then return it
+            for (SitemapItem subItem : item.getItems()) {
+                final SitemapItem matchingSubItem = findContextNavigationStructureGroup(subItem, requestPath);
+                if (matchingSubItem != null) {
+                    return matchingSubItem;
+                }
+            }
+
+            // Otherwise return this matching item
+            return item;
+        }
+
+        // No matching item
+        return null;
+    }
+
     protected abstract StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException;
 
     @Override
@@ -135,10 +236,12 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
             public PageModel tryFindPage(String path, int publicationId) throws ContentProviderException {
                 final org.dd4t.contentmodel.Page genericPage;
                 try {
-                    if (dd4tPageFactory.isPagePublished(path, publicationId)) {
-                        genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
-                    } else {
-                        return null;
+                    synchronized (LOCK) {
+                        if (dd4tPageFactory.isPagePublished(path, publicationId)) {
+                            genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
+                        } else {
+                            return null;
+                        }
                     }
                 } catch (ItemNotFoundException e) {
                     LOG.debug("Page not found: [{}] {}", publicationId, path);
@@ -166,7 +269,10 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         String templateUri = buildTemplateTcmUri(localization.getId(), idParts[1]);
 
         try {
-            final ComponentPresentation componentPresentation = this.dd4tComponentPresentationFactory.getComponentPresentation(componentUri, templateUri);
+            final ComponentPresentation componentPresentation;
+            synchronized (LOCK) {
+                componentPresentation = this.dd4tComponentPresentationFactory.getComponentPresentation(componentUri, templateUri);
+            }
             EntityModel entityModel = modelBuilderPipeline.createEntityModel(componentPresentation, localization);
             if (entityModel.getXpmMetadata() != null) {
                 entityModel.getXpmMetadata().put("IsQueryBased", String.valueOf(true));
@@ -186,7 +292,9 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
             public InputStream tryFindPage(String path, int publicationId) throws ContentProviderException {
                 final String pageContent;
                 try {
-                    pageContent = dd4tPageFactory.findSourcePageByUrl(path, publicationId);
+                    synchronized (LOCK) {
+                        pageContent = dd4tPageFactory.findSourcePageByUrl(path, publicationId);
+                    }
                 } catch (ItemNotFoundException e) {
                     LOG.debug("Page not found: [{}] {}", publicationId, path);
                     return null;
@@ -233,20 +341,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         contentList.setHasMore(brokerQuery.isHasMore());
     }
 
-    protected abstract BrokerQuery instantiateBrokerQuery();
-
-    private int mapSchema(String schemaKey, Localization localization) {
-        final String[] parts = schemaKey.split("\\.");
-        final String configKey = parts.length > 1 ? (parts[0] + ".schemas." + parts[1]) : ("core.schemas." + parts[0]);
-        final String schemaId = localization.getConfiguration(configKey);
-        try {
-            return Integer.parseInt(schemaId);
-        } catch (NumberFormatException e) {
-            LOG.warn("Error while parsing schema id: {}", schemaId, e);
-            return 0;
-        }
-    }
-
     /**
      * Implementation of {@code StaticContentProvider} that uses DD4T to provide static content.
      * <p/>
@@ -270,6 +364,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
 
         final StaticContentFile staticContentFile = getStaticContentFile(contentPath, localizationId);
 
+        //noinspection ReturnOfInnerClass
         return new StaticContentItem() {
             @Override
             public long getLastModified() {
@@ -291,38 +386,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
                 return path.contains("/system/");
             }
         };
-    }
-
-    private String removeVersionNumber(String path) {
-        return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
-    }
-
-    protected String prependFullUrlIfNeeded(String path) {
-        String baseUrl = webRequestContext.getBaseUrl();
-        if (path.contains(baseUrl)) {
-            return path;
-        }
-        return baseUrl + path;
-    }
-
-    private StaticContentFile getStaticContentFile(String path, String localizationId)
-            throws ContentProviderException {
-        String parentPath = StringUtils.join(new String[]{
-                webApplicationContext.getServletContext().getRealPath("/"), STATIC_FILES_DIR, localizationId
-        }, File.separator);
-
-        final File file = new File(parentPath, path);
-        LOG.trace("getStaticContentFile: {}", file);
-
-        final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
-
-        final int publicationId = Integer.parseInt(localizationId);
-        try {
-            return getStaticContentFile(file, pathInfo, publicationId);
-        } catch (IOException e) {
-            throw new ContentProviderException("Exception while getting static content for: [" + publicationId + "] "
-                    + path, e);
-        }
     }
 
     @Override
@@ -365,24 +428,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return new NavigationLinks(links);
     }
 
-    private SitemapItem findContextNavigationStructureGroup(SitemapItem item, String requestPath) {
-        if (item.getType().equals(TYPE_STRUCTURE_GROUP) && requestPath.startsWith(item.getUrl().toLowerCase())) {
-            // Check if there is a matching subitem, if yes, then return it
-            for (SitemapItem subItem : item.getItems()) {
-                final SitemapItem matchingSubItem = findContextNavigationStructureGroup(subItem, requestPath);
-                if (matchingSubItem != null) {
-                    return matchingSubItem;
-                }
-            }
-
-            // Otherwise return this matching item
-            return item;
-        }
-
-        // No matching item
-        return null;
-    }
-
     @Override
     public NavigationLinks getBreadcrumbNavigationLinks(String requestPath, Localization localization)
             throws NavigationProviderException {
@@ -394,69 +439,34 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return new NavigationLinks(links);
     }
 
-    protected boolean isToBeRefreshed(File file, long time) throws ContentProviderException {
-        boolean refresh;
-        if (file.exists()) {
-            refresh = file.lastModified() < time;
-        } else {
-            refresh = true;
-            if (!file.getParentFile().exists()) {
-                if (!file.getParentFile().mkdirs()) {
-                    throw new ContentProviderException("Failed to create parent directory for file: " + file);
-                }
-            }
+    protected abstract BrokerQuery instantiateBrokerQuery();
+
+    protected String prependFullUrlIfNeeded(String path) {
+        String baseUrl = webRequestContext.getBaseUrl();
+        if (path.contains(baseUrl)) {
+            return path;
         }
-        return refresh;
+        return baseUrl + path;
     }
 
-    protected void writeToFile(File file, ImageUtils.StaticContentPathInfo pathInfo, byte[] content) throws ContentProviderException, IOException {
-        if (pathInfo.isImage() && pathInfo.isResized()) {
-            content = ImageUtils.resizeImage(content, pathInfo);
+    private StaticContentFile getStaticContentFile(String path, String localizationId)
+            throws ContentProviderException {
+        String parentPath = StringUtils.join(new String[]{
+                webApplicationContext.getServletContext().getRealPath("/"), STATIC_FILES_DIR, localizationId
+        }, File.separator);
+
+        final File file = new File(parentPath, path);
+        LOG.trace("getStaticContentFile: {}", file);
+
+        final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
+
+        final int publicationId = Integer.parseInt(localizationId);
+        try {
+            return getStaticContentFile(file, pathInfo, publicationId);
+        } catch (IOException e) {
+            throw new ContentProviderException("Exception while getting static content for: [" + publicationId + "] "
+                    + path, e);
         }
-
-        Files.write(content, file);
-    }
-
-    private boolean createBreadcrumbLinks(SitemapItem item, String requestPath, List<Link> links) {
-        if (requestPath.startsWith(item.getUrl().toLowerCase())) {
-            // Add link for this matching item
-            links.add(createLinkForItem(item));
-
-            // Add links for the following matching subitems
-            boolean firstItem = true;
-            for (SitemapItem subItem : item.getItems()) {
-                // Fix to correct the breadcrumb
-                // TODO: Implement this propertly
-                if (firstItem) {
-                    firstItem = false;
-                } else {
-                    if (createBreadcrumbLinks(subItem, requestPath, links)) {
-                        return true;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private List<Link> createLinksForVisibleItems(Iterable<SitemapItem> items) {
-        final List<Link> links = new ArrayList<>();
-        for (SitemapItem item : items) {
-            if (item.isVisible()) {
-                links.add(createLinkForItem(item));
-            }
-        }
-        return links;
-    }
-
-    private Link createLinkForItem(SitemapItem item) {
-        final Link link = new Link();
-        link.setUrl(item.getUrl());
-        link.setLinkText(item.getTitle());
-        return link;
     }
 
     private interface TryFindPage<T> {

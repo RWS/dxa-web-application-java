@@ -70,7 +70,7 @@ public abstract class AbstractInitializer {
             }
         }
 
-        MvcData mvcData = MvcDataImpl.builder()
+        MvcData mvcData = MvcDataImpl.newBuilder()
                 .areaName(getAreaName())
                 .viewName(viewName)
                 .controllerName(controllerName)

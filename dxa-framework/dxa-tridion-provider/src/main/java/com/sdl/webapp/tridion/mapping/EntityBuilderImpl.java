@@ -352,7 +352,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
             }
         }
 
-        return MvcDataImpl.builder()
+        return MvcDataImpl.newBuilder()
                 .controllerAreaName(controllerNameParts[0])
                 .controllerName(controllerNameParts[1])
                 .areaName(viewNameParts[0])

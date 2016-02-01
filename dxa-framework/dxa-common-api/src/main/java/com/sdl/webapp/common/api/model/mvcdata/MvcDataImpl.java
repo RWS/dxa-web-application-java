@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.model.MvcData;
 import lombok.AccessLevel;
-import lombok.Builder;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,59 +15,13 @@ import lombok.experimental.Accessors;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * package com.sdl.webapp.common.api.model.mvcdata;
- * <p/>
- * import com.fasterxml.jackson.annotation.JsonIgnore;
- * import com.fasterxml.jackson.annotation.JsonInclude;
- * import com.fasterxml.jackson.annotation.JsonProperty;
- * import com.sdl.webapp.common.api.model.MvcData;
- * import lombok.AccessLevel;
- * import lombok.Builder;
- * import lombok.EqualsAndHashCode;
- * import lombok.Getter;
- * import lombok.Setter;
- * import lombok.ToString;
- * import lombok.experimental.Accessors;
- * <p/>
- * import java.util.HashMap;
- * import java.util.Map;
- *
- * @JsonInclude(JsonInclude.Include.NON_NULL)
- * @Getter
- * @Setter(value = AccessLevel.PROTECTED)
- * @Accessors(chain = true)
- * @ToString
- * @EqualsAndHashCode
- * @Builder(toBuilder = true)
- * public class MvcDataImpl implements MvcData {
- * @JsonProperty("ControllerAreaName") private String controllerAreaName;
- * @JsonProperty("ControllerName") private String controllerName;
- * @JsonProperty("ActionName") private String actionName;
- * @JsonProperty("AreaName") private String areaName;
- * @JsonProperty("ViewName") private String viewName;
- * @JsonProperty("RegionAreaName") private String regionAreaName;
- * @JsonProperty("RegionName") private String regionName;
- * @JsonIgnore private Map<String, String> routeValues = new HashMap<>();
- * @JsonIgnore private Map<String, Object> metadata = new HashMap<>();
- * @param controllerAreaName a {@link String} object.
- * @param controllerName a {@link String} object.
- * @param actionName a {@link String} object.
- * @param areaName a {@link String} object.
- * @param viewName a {@link String} object.
- * @param regionAreaName a {@link String} object.
- * @param regionName a {@link String} object.
- * @param routeValues a {@link Map} object.
- * @param metadata a {@link Map} object.
- */
-
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
-@Setter(value = AccessLevel.PROTECTED)
+@Setter(AccessLevel.PROTECTED)
 @Accessors(chain = true)
 @ToString
 @EqualsAndHashCode
-@Builder(toBuilder = true)
+@AllArgsConstructor
 public class MvcDataImpl implements MvcData {
     @JsonProperty("ControllerAreaName")
     private String controllerAreaName;
@@ -95,23 +49,6 @@ public class MvcDataImpl implements MvcData {
 
     @JsonIgnore
     private Map<String, Object> metadata = new HashMap<>();
-    @SuppressWarnings("unused")
-    /**
-     * Default field initialization for Lombok Builder.
-     */
-    protected MvcDataImpl(String controllerAreaName, String controllerName, String actionName, String areaName,
-                          String viewName, String regionAreaName, String regionName,
-                          Map<String, String> routeValues, Map<String, Object> metadata) {
-        this.controllerName = controllerName;
-        this.actionName = actionName;
-        this.viewName = viewName;
-        this.regionAreaName = regionAreaName;
-        this.regionName = regionName;
-        this.controllerAreaName = controllerAreaName;
-        this.areaName = areaName;
-        this.routeValues = routeValues == null ? new HashMap<String, String>() : routeValues;
-        this.metadata = metadata == null ? new HashMap<String, Object>() : metadata;
-    }
 
     /**
      * <p>Constructor for MvcDataImpl.</p>
@@ -134,5 +71,90 @@ public class MvcDataImpl implements MvcData {
         this.regionName = mvcData.getRegionName();
         this.routeValues = mvcData.getRouteValues();
         this.metadata = mvcData.getMetadata();
+    }
+
+    public static MvcDataImplBuilder newBuilder() {
+        return new MvcDataImplBuilder();
+    }
+
+    public MvcDataImplBuilder toBuilder() {
+        return MvcDataImplBuilder.toBuilder(this);
+    }
+
+    /**
+     * Builder for MvcData. Lombok's implementation fails on Javadoc.
+     */
+    public static class MvcDataImplBuilder {
+        private String controllerAreaName;
+        private String controllerName;
+        private String actionName;
+        private String areaName;
+        private String viewName;
+        private String regionAreaName;
+        private String regionName;
+        private Map<String, String> routeValues = new HashMap<>();
+        private Map<String, Object> metadata = new HashMap<>();
+
+        protected static MvcDataImplBuilder toBuilder(MvcData mvcData) {
+            return (new MvcDataImplBuilder())
+                    .controllerAreaName(mvcData.getControllerAreaName())
+                    .controllerName(mvcData.getControllerName())
+                    .actionName(mvcData.getActionName())
+                    .areaName(mvcData.getAreaName())
+                    .viewName(mvcData.getViewName())
+                    .regionAreaName(mvcData.getRegionAreaName())
+                    .regionName(mvcData.getRegionName())
+                    .routeValues(mvcData.getRouteValues())
+                    .metadata(mvcData.getMetadata());
+        }
+
+        public MvcDataImplBuilder controllerAreaName(String controllerAreaName) {
+            this.controllerAreaName = controllerAreaName;
+            return this;
+        }
+
+        public MvcDataImplBuilder controllerName(String controllerName) {
+            this.controllerName = controllerName;
+            return this;
+        }
+
+        public MvcDataImplBuilder actionName(String actionName) {
+            this.actionName = actionName;
+            return this;
+        }
+
+        public MvcDataImplBuilder areaName(String areaName) {
+            this.areaName = areaName;
+            return this;
+        }
+
+        public MvcDataImplBuilder viewName(String viewName) {
+            this.viewName = viewName;
+            return this;
+        }
+
+        public MvcDataImplBuilder regionAreaName(String regionAreaName) {
+            this.regionAreaName = regionAreaName;
+            return this;
+        }
+
+        public MvcDataImplBuilder regionName(String regionName) {
+            this.regionName = regionName;
+            return this;
+        }
+
+        public MvcDataImplBuilder routeValues(Map<String, String> routeValues) {
+            this.routeValues = routeValues;
+            return this;
+        }
+
+        public MvcDataImplBuilder metadata(Map<String, Object> metadata) {
+            this.metadata = metadata;
+            return this;
+        }
+
+        public MvcDataImpl build() {
+            return new MvcDataImpl(controllerAreaName, controllerName, actionName, areaName, viewName, regionAreaName, regionName, routeValues, metadata);
+        }
     }
 }

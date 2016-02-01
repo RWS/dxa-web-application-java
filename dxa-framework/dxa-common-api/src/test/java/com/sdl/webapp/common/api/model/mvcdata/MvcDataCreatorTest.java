@@ -4,11 +4,19 @@ import com.sdl.webapp.common.api.model.MvcData;
 import org.junit.Test;
 
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
-import static com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl.builder;
+import static com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl.newBuilder;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class MvcDataCreatorTest {
+
+    private static void assertPartsAreSet(Parts parts, MvcData mvcData) {
+        assertEquals(parts.controllerAreaName, mvcData.getControllerAreaName());
+        assertEquals(parts.controllerName, mvcData.getControllerName());
+        assertEquals(parts.actionName, mvcData.getActionName());
+        assertEquals(parts.areaName, mvcData.getAreaName());
+        assertEquals(parts.viewName, mvcData.getViewName());
+    }
 
     @Test
     public void shouldShouldCorrectlyParseDifferentTypeOfInitNames() {
@@ -152,7 +160,7 @@ public class MvcDataCreatorTest {
                 .areaName("Test4")
                 .build();
 
-        MvcData mvcData1 = creator(builder()
+        MvcData mvcData1 = creator(newBuilder()
                 .actionName("Test")
                 .controllerAreaName("Test2")
                 .controllerName("Test3")
@@ -161,7 +169,7 @@ public class MvcDataCreatorTest {
                 .defaults(DefaultsMvcData.CORE_ENTITY)
                 .create();
 
-        MvcData mvcData2 = creator(new MvcDataImpl()
+        MvcData mvcData2 = creator(new MvcDataImpl.MvcDataImplBuilder().build()
                 .setActionName("Test")
                 .setControllerAreaName("Test2")
                 .setControllerName("Test3")
@@ -187,15 +195,7 @@ public class MvcDataCreatorTest {
         assertNotNull(mvcData.getRouteValues());
     }
 
-    private void assertPartsAreSet(Parts parts, MvcData mvcData) {
-        assertEquals(parts.controllerAreaName, mvcData.getControllerAreaName());
-        assertEquals(parts.controllerName, mvcData.getControllerName());
-        assertEquals(parts.actionName, mvcData.getActionName());
-        assertEquals(parts.areaName, mvcData.getAreaName());
-        assertEquals(parts.viewName, mvcData.getViewName());
-    }
-
-    private class Parts {
+    private static class Parts {
         String controllerAreaName;
         String controllerName;
         String actionName;

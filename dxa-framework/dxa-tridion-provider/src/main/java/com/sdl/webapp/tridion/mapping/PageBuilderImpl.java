@@ -20,7 +20,7 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
-import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl.MvcDataImplBuilder;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.model.page.PageModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
@@ -385,7 +385,7 @@ public final class PageBuilderImpl implements PageBuilder {
                     regionName = FieldUtils.getStringValue(region, REGIONS_METADATA_FIELD_NAME_NAME);
                 }
 
-                MvcDataImplBuilder mvcDataBuilder = MvcDataCreator.creator()
+                MvcDataImpl.MvcDataImplBuilder mvcDataBuilder = MvcDataCreator.creator()
                         .fromQualifiedName(viewName)
                         .defaults(DefaultsMvcData.CORE_REGION)
                         .builder()

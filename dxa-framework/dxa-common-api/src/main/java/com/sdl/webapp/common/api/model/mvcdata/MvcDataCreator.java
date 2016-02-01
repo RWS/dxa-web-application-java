@@ -38,7 +38,7 @@ public final class MvcDataCreator {
     /**
      * <p>creator.</p>
      *
-     * @param builder a {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl.MvcDataImplBuilder} object.
+     * @param builder a {@link MvcDataImpl.MvcDataImplBuilder} object.
      * @return a {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator} object.
      */
     public static MvcDataCreator creator(MvcDataImpl.MvcDataImplBuilder builder) {
@@ -81,7 +81,7 @@ public final class MvcDataCreator {
                             "or 'AreaName:ControllerName:ViewName.'", qualifiedViewName));
         }
 
-        MvcDataImpl.MvcDataImplBuilder builder = MvcDataImpl.builder();
+        MvcDataImpl.MvcDataImplBuilder builder = MvcDataImpl.newBuilder();
 
         switch (parts.length) {
             case 1:
@@ -136,7 +136,7 @@ public final class MvcDataCreator {
     /**
      * <p>builder.</p>
      *
-     * @return a {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl.MvcDataImplBuilder} object.
+     * @return a {@link MvcDataImpl.MvcDataImplBuilder} object.
      */
     public MvcDataImpl.MvcDataImplBuilder builder() {
         return this.mvcData.toBuilder();

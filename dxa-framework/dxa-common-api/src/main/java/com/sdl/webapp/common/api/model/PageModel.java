@@ -100,5 +100,5 @@ public interface PageModel extends ViewModel {
      *
      * @param xpmMetaData a {@link java.util.Map} object.
      */
-    void setXpmMetadata(Map<String, String> xpmMetaData);
+    void setXpmMetadata(Map<String, Object> xpmMetaData);
 }

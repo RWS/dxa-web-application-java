@@ -116,7 +116,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
         final Component component = componentPresentation.getComponent();
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
 
-        Map<String, String> xpmMetaData = new HashMap<>();
+        Map<String, Object> xpmMetaData = new HashMap<>();
 
         if (entity instanceof EclItem) {
             xpmMetaData.put("ComponentID", ((EclItem) entity).getUri());
@@ -129,7 +129,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
         xpmMetaData.put("ComponentTemplateModified",
                 ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
 
-        xpmMetaData.put("IsRepositoryPublished", String.valueOf(componentPresentation.isDynamic()));
+        xpmMetaData.put("IsRepositoryPublished", componentPresentation.isDynamic());
 
         entity.setXpmMetadata(xpmMetaData);
 

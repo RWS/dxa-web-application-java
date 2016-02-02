@@ -134,7 +134,7 @@ public class SmartTargetPageBuilder extends AbstractSmartTargetPageBuilder {
                                           final SmartTargetRegion smartTargetRegion, final String currentRegionName) {
         if (localization.isStaging()) {
             // The SmartTarget API provides the entire XPM markup tag; put it in XpmMetadata["Query"]
-            smartTargetRegion.setXpmMetadata(new HashMap<String, String>() {{
+            smartTargetRegion.setXpmMetadata(new HashMap<String, Object>() {{
                 put("Query", ResultSetImpl.getExperienceManagerMarkup(currentRegionName, smartTargetRegion.getMaxItems(), promotions));
             }});
         }
@@ -145,7 +145,7 @@ public class SmartTargetPageBuilder extends AbstractSmartTargetPageBuilder {
         return new SmartTargetPromotion() {{
             setMvcData(MvcDataCreator.creator().fromQualifiedName(promotionViewName).create());
 
-            setXpmMetadata(new HashMap<String, String>() {{
+            setXpmMetadata(new HashMap<String, Object>() {{
                 put("PromotionID", promotion.getPromotionId());
                 put("RegionID", regionName);
             }});

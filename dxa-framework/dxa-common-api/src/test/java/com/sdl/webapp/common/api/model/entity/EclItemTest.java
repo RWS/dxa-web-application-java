@@ -52,7 +52,7 @@ public class EclItemTest {
         EclItem eclItem = new EclItem() {
         };
         eclItem.setUri(uri);
-        eclItem.setXpmMetadata(new HashMap<String, String>());
+        eclItem.setXpmMetadata(new HashMap<String, Object>());
 
         //when
         String resultXpmMarkup = eclItem.getXpmMarkup(null);

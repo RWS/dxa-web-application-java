@@ -51,7 +51,7 @@ public class XpmPageMarkupTag extends XpmMarkupTag {
 
     }
 
-    private Localization getLocalization() {
+    Localization getLocalization() {
         return WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
                 .getBean(WebRequestContext.class).getLocalization();
     }

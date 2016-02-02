@@ -25,7 +25,7 @@ public class EntityXpmMarkup implements MarkupDecorator {
 
     private static final String COMPONENT_PRESENTATION_PATTERN = "Start Component Presentation: " +
             "{\"ComponentID\":\"%s\",\"ComponentModified\":\"%s\",\"ComponentTemplateID\":\"%s\"," +
-            "\"ComponentTemplateModified\":\"%s\",\"IsRepositoryPublished\":%s}";
+            "\"ComponentTemplateModified\":\"%s\",\"IsRepositoryPublished\":%b}";
 
     private static final String FIELD_PATTERN = "Start Component Field: {\"XPath\":\"%s\"}";
 

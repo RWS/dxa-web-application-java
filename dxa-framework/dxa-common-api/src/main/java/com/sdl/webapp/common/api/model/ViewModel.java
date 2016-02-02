@@ -24,7 +24,7 @@ public interface ViewModel {
      *
      * @return a {@link java.util.Map} object.
      */
-    Map<String, String> getXpmMetadata();
+    Map<String, Object> getXpmMetadata();
 
     // TODO: Is this the right way forward? Is it not better to use markup decorators for this?
 

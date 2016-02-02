@@ -33,7 +33,7 @@ public class SmartTargetPromotion extends AbstractEntityModel {
      */
     @Override
     public String getXpmMarkup(Localization localization) {
-        Map<String, String> xpmMetadata = getXpmMetadata();
+        Map<String, Object> xpmMetadata = getXpmMetadata();
         if (xpmMetadata == null) {
             return "";
         }

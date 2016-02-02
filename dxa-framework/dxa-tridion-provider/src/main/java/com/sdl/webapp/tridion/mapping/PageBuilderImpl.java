@@ -129,7 +129,7 @@ public final class PageBuilderImpl implements PageBuilder {
             RegionModelImpl region = new RegionModelImpl(regionName);
             region.setName(regionName);
             region.setMvcData(regionMvcData);
-            ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
+            ImmutableMap.Builder<String, Object> xpmMetaDataBuilder = ImmutableMap.builder();
 
             xpmMetaDataBuilder.put(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY, page.getId());
             xpmMetaDataBuilder.put(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY, page.getTitle());
@@ -189,10 +189,10 @@ public final class PageBuilderImpl implements PageBuilder {
         return null;
     }
 
-    private static Map<String, String> createXpmMetaData(org.dd4t.contentmodel.Page page, Localization localization) {
+    private static Map<String, Object> createXpmMetaData(org.dd4t.contentmodel.Page page, Localization localization) {
         final PageTemplate pageTemplate = page.getPageTemplate();
 
-        ImmutableMap.Builder<String, String> xpmMetaDataBuilder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, Object> xpmMetaDataBuilder = ImmutableMap.builder();
         xpmMetaDataBuilder.put("PageID", page.getId());
         xpmMetaDataBuilder.put("PageModified", ISODateTimeFormat.dateHourMinuteSecond().print(page.getRevisionDate()));
         xpmMetaDataBuilder.put("PageTemplateID", pageTemplate.getId());
@@ -272,7 +272,7 @@ public final class PageBuilderImpl implements PageBuilder {
 
                     existingRegion.getRegions().addAll(includePageModel.getRegions());
 
-                    Map<String, String> xpmMetadata = existingRegion.getXpmMetadata();
+                    Map<String, Object> xpmMetadata = existingRegion.getXpmMetadata();
                     if (xpmMetadata != null) {
                         xpmMetadata.remove(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY);
                         xpmMetadata.remove(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);

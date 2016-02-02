@@ -296,7 +296,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
             throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", id));
         }
 
-        // todo TcmUtils is moved in a feature branch
         String componentUri = buildTcmUri(localization.getId(), idParts[0]);
         String templateUri = buildTemplateTcmUri(localization.getId(), idParts[1]);
 
@@ -307,7 +306,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
             }
             EntityModel entityModel = modelBuilderPipeline.createEntityModel(componentPresentation, localization);
             if (entityModel.getXpmMetadata() != null) {
-                entityModel.getXpmMetadata().put("IsQueryBased", String.valueOf(true));
+                entityModel.getXpmMetadata().put("IsQueryBased", true);
             }
             return entityModel;
 

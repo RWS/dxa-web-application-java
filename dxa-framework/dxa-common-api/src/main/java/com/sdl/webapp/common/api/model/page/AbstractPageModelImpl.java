@@ -52,7 +52,7 @@ public abstract class AbstractPageModelImpl implements PageModel {
     protected RegionModelSet regions = new RegionModelSetImpl();
 
     @JsonProperty("XpmMetadata")
-    protected Map<String, String> xpmMetadata = new HashMap<>();
+    protected Map<String, Object> xpmMetadata = new HashMap<>();
 
     @JsonProperty("MvcData")
     protected MvcData mvcData;
@@ -92,7 +92,7 @@ public abstract class AbstractPageModelImpl implements PageModel {
      * {@inheritDoc}
      */
     @Override
-    public void setXpmMetadata(Map<String, String> xpmMetadata) {
+    public void setXpmMetadata(Map<String, Object> xpmMetadata) {
         this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
     }
 
@@ -107,7 +107,7 @@ public abstract class AbstractPageModelImpl implements PageModel {
         if (!this.xpmMetadata.containsKey("CmsUrl")) {
             cmsUrl = localization.getConfiguration("core.cmsurl");
         } else {
-            cmsUrl = this.xpmMetadata.get("CmsUrl");
+            cmsUrl = String.valueOf(this.xpmMetadata.get("CmsUrl"));
         }
         if (cmsUrl.endsWith("/")) {
             // remove trailing slash from cmsUrl if present

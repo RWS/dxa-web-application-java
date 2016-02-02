@@ -32,7 +32,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     private String id;
 
     @JsonProperty("XpmMetadata")
-    private Map<String, String> xpmMetadata;
+    private Map<String, Object> xpmMetadata;
 
     @JsonProperty("XpmPropertyMetadata")
     private Map<String, String> xpmPropertyMetadata;

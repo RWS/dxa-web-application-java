@@ -77,7 +77,7 @@ public class RegionModelImpl implements RegionModel {
     @JsonProperty("XpmMetadata")
     @Getter
 //    setter explicitly defined
-    private Map<String, String> xpmMetadata = new HashMap<>();
+    private Map<String, Object> xpmMetadata = new HashMap<>();
 
     @JsonProperty("MvcData")
     @Getter
@@ -163,7 +163,7 @@ public class RegionModelImpl implements RegionModel {
      *
      * @param xpmMetadata a {@link java.util.Map} object.
      */
-    public void setXpmMetadata(Map<String, String> xpmMetadata) {
+    public void setXpmMetadata(Map<String, Object> xpmMetadata) {
         this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
     }
 

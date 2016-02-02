@@ -81,7 +81,7 @@ public class SmartTargetRegion extends RegionModelImpl {
      * @return the "Start Query" XPM markup if the site is a staging site or an empty string otherwise
      */
     public String getStartQueryXpmMarkup() {
-        Map<String, String> xpmMetadata = this.getXpmMetadata();
-        return xpmMetadata != null && xpmMetadata.containsKey("Query") ? xpmMetadata.get("Query") : "";
+        Map<String, Object> xpmMetadata = this.getXpmMetadata();
+        return String.valueOf(xpmMetadata != null && xpmMetadata.containsKey("Query") ? xpmMetadata.get("Query") : "");
     }
 }

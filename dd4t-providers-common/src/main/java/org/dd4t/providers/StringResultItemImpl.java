@@ -1,4 +1,4 @@
-package org.dd4t.core.providers;
+package org.dd4t.providers;
 
 import org.dd4t.core.util.Constants;
 import org.dd4t.providers.ProviderResultItem;

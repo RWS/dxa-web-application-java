@@ -16,31 +16,14 @@
 
 package org.dd4t.providers.impl;
 
-import com.tridion.broker.StorageException;
 import com.tridion.dcp.ComponentPresentation;
 import com.tridion.dcp.ComponentPresentationFactory;
-import com.tridion.storage.ComponentPresentationMeta;
-import com.tridion.storage.StorageTypeMapping;
-import com.tridion.storage.dao.ComponentPresentationMetaDAO;
-import com.tridion.util.TCMURI;
 import org.apache.commons.lang3.StringUtils;
-import org.dd4t.contentmodel.ComponentTemplate;
-import org.dd4t.contentmodel.Field;
-import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.providers.BaseBrokerProvider;
-import org.dd4t.core.util.Constants;
+import org.dd4t.providers.AbstractComponentPresentationProvider;
 import org.dd4t.providers.ComponentPresentationProvider;
-import org.dd4t.providers.util.DaoUtils;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -48,15 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * Provides access to Dynamic Component Presentations stored in the Content Delivery database. It uses CD API to retrieve
  * raw DCP content from the database. Access to these objects is not cached, and as such must be cached externally.
  */
-public class BrokerComponentPresentationProvider extends BaseBrokerProvider implements ComponentPresentationProvider {
+public class BrokerComponentPresentationProvider extends AbstractComponentPresentationProvider implements ComponentPresentationProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentPresentationProvider.class);
     private static final Map<Integer, ComponentPresentationFactory> FACTORY_CACHE = new ConcurrentHashMap<>();
-    private static final String ERROR_MESSAGE = "Component Presentation not found for componentId: %d, templateId: %d and publicationId: %d";
-
-    private Class<? extends org.dd4t.contentmodel.ComponentPresentation> concreteComponentPresentation;
-    private Class<? extends ComponentTemplate> concreteComponentTemplateImpl;
-
 
     /**
      * Retrieves content of a Dynamic Component Presentation by looking up its componentId and publicationId.
@@ -97,122 +74,16 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
         String resultString;
         if (templateId != 0) {
             result = factory.getComponentPresentation(componentId, templateId);
-
-            if (result == null) {
-                LOG.info(String.format(ERROR_MESSAGE, componentId, templateId, publicationId));
-                throw new ItemNotFoundException(String.format(ERROR_MESSAGE, componentId, templateId, publicationId));
-            }
-
-            resultString = result.getContent();
         } else {
             result = factory.getComponentPresentationWithHighestPriority(componentId);
-            if (result == null) {
-                LOG.info(String.format(ERROR_MESSAGE, componentId, templateId, publicationId));
-                throw new ItemNotFoundException(String.format(ERROR_MESSAGE, componentId, templateId, publicationId));
-            }
-
-            resultString = result.getContent();
         }
+
+        assertQueryResultNotNull(result,componentId,templateId,publicationId);
+        resultString = result.getContent();
 
         if (!StringUtils.isEmpty(resultString)) {
             return decodeAndDecompressContent(resultString);
         }
         return null;
-    }
-
-    /**
-     * Convenience method to obtain a list of component presentations for the same template id.
-     *
-     * @param itemUris      array of found Component TCM_ZERO_URI IDs
-     * @param templateId    the CT Id to fetch DCPs on
-     * @param publicationId the current Publication Id
-     * @return a List of Component Presentations
-     * @throws org.dd4t.core.exceptions.ItemNotFoundException
-     * @throws org.dd4t.core.exceptions.SerializationException
-     */
-    @Override
-    public List<String> getDynamicComponentPresentations (final String[] itemUris, final int templateId, final int publicationId) throws ItemNotFoundException, SerializationException {
-        List<String> componentPresentations = new ArrayList<>();
-
-        for (String itemUri : itemUris) {
-            try {
-                org.dd4t.core.util.TCMURI uri = new org.dd4t.core.util.TCMURI(itemUri);
-                componentPresentations.add(getDynamicComponentPresentation(uri.getItemId(), templateId, publicationId));
-            } catch (ParseException e) {
-                throw new SerializationException(e);
-            }
-        }
-        return componentPresentations;
-    }
-
-    // TODO Remove after testing
-    @Deprecated
-    private org.dd4t.contentmodel.ComponentPresentation constructComponentPresentation (String componentSource, int publicationId, int componentId, int componentTemplateId, ComponentPresentation componentPresentation) {
-        try {
-
-            // TODO: with the dd4t-2 DCP TBBs this is now not necessary anymore. Return a simple String with teh content!
-            final ComponentPresentationMetaDAO componentPresentationMetaDAO = (ComponentPresentationMetaDAO) DaoUtils.getStorageDAO(publicationId, StorageTypeMapping.COMPONENT_PRESENTATION_META);
-            final ComponentPresentationMeta componentPresentationMeta = componentPresentationMetaDAO.findByPrimaryKey(publicationId, componentId, componentTemplateId);
-
-            final org.dd4t.contentmodel.ComponentPresentation componentPresentationResult = this.concreteComponentPresentation.newInstance();
-            final ComponentTemplate componentTemplate = this.concreteComponentTemplateImpl.newInstance();
-            componentPresentationResult.setRawComponentContent(componentSource);
-            componentPresentationResult.setIsDynamic(componentPresentation.isDynamic());
-            componentTemplate.setId(new TCMURI(publicationId, componentTemplateId, 32, 0).toString());
-            componentTemplate.setTitle(componentPresentationMeta.getTemplateMeta().getTitle());
-            final DateTime dateTime = new DateTime(componentPresentationMeta.getTemplateMeta().getLastPublishDate());
-            componentTemplate.setRevisionDate(dateTime);
-            final Map<String, Field> metadata = new HashMap<>();
-
-            // TODO: this is a hack - Update: can now be removed!
-            // Component Template Custom Meta is not published with
-            // the component template, so we cannot read the viewName.
-            // Therefore, the only supported way for now is use the lower cased
-            // template name as view model name...
-
-            // We should actually fix this in the Generate Dynamic Component TBB to also
-            // include CT data.
-
-            final List<String> values = new ArrayList<>();
-            values.add(stringToDashCase(componentTemplate.getTitle()));
-
-            TextField field = new TextField();
-            field.setName(Constants.VIEW_NAME_FIELD);
-            field.setTextValues(values);
-            metadata.put(Constants.VIEW_NAME_FIELD, field);
-
-            componentTemplate.setMetadata(metadata);
-            componentPresentationResult.setComponentTemplate(componentTemplate);
-            return componentPresentationResult;
-        } catch (InstantiationException | StorageException | IllegalAccessException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-        }
-        return null;
-    }
-
-    // TODO: move away from this.
-
-    /**
-     * Utility method to fix a constant value (probably a CMS-able value from
-     * Tridion), so it can be used inside a URL: lower case and all spaces and
-     * underscores are replaced by dashes (-).
-     */
-    @Deprecated
-    private static String stringToDashCase (String value) {
-        if (value == null) {
-            return "";
-        }
-        return value.replaceAll("[^a-zA-Z0-9]", "_").replaceAll("([_]+)", "_").toLowerCase();
-    }
-// TODO Remove after testing
-    @Deprecated
-    public void setConcreteComponentPresentation (final Class<? extends org.dd4t.contentmodel.ComponentPresentation> concreteComponentPresentation) {
-        this.concreteComponentPresentation = concreteComponentPresentation;
-    }
-
-    // TODO Remove after testing
-    @Deprecated
-    public void setConcreteComponentTemplateImpl (final Class<? extends ComponentTemplate> concreteComponentTemplateImpl) {
-        this.concreteComponentTemplateImpl = concreteComponentTemplateImpl;
     }
 }

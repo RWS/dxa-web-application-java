@@ -8,7 +8,6 @@
     <artifactId>dd4t-parent</artifactId>
     <packaging>pom</packaging>
     <version>2.0.4-SNAPSHOT</version>
-
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Parent for all DD4T projects.</description>
     <url>https://github.com/dd4t</url>
@@ -69,6 +68,7 @@
         <jsp-api.version>2.2</jsp-api.version>
         <jstl.version>1.2</jstl.version>
         <junit.version>4.11</junit.version>
+        <sdl.odata.client.version>2.0.4</sdl.odata.client.version>
         <resteasy.version>3.0.8.Final</resteasy.version>
         <selenium-java.version>2.42.2</selenium-java.version>
         <selenium.version>1.0.1</selenium.version>
@@ -76,6 +76,7 @@
         <spring.version>3.2.0.RELEASE</spring.version>
         <tridion.version>7.1.0</tridion.version>
         <tridion.web8.version>8.1.0</tridion.web8.version>
+
         <urlrewritefilter.version>4.0.3</urlrewritefilter.version>
         <woodstox.version>4.4.1</woodstox.version>
         <xml-apis.version>1.4.01</xml-apis.version>
@@ -285,13 +286,13 @@
                 <module>dd4t-core</module>
                 <module>dd4t-compatibility</module>
                 <module>dd4t-databind</module>
+                <module>dd4t-providers-common</module>
                 <module>dd4t-providers-web7</module>
                 <module>dd4t-providers-web8</module>
                 <module>dd4t-caching</module>
                 <module>dd4t-mvc-support</module>
                 <module>dd4t-test-spring-web</module>
                 <module>dd4t-example-site</module>
-                <!--<module>spring-mvc-archetype</module>-->
             </modules>
 
         </profile>
@@ -312,6 +313,7 @@
                 <module>dd4t-core</module>
                 <module>dd4t-compatibility</module>
                 <module>dd4t-databind</module>
+                <module>dd4t-providers-common</module>
                 <module>dd4t-providers-web7</module>
                 <module>dd4t-providers-web8</module>
                 <module>dd4t-caching</module>

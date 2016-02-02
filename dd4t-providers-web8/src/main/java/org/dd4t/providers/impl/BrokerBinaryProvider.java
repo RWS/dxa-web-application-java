@@ -16,11 +16,12 @@
 
 package org.dd4t.providers.impl;
 
+import com.sdl.web.api.content.BinaryContentRetriever;
+import com.sdl.web.api.dynamic.BinaryContentRetrieverImpl;
 import com.sdl.web.api.meta.WebBinaryMetaFactory;
 import com.sdl.web.api.meta.WebBinaryMetaFactoryImpl;
 import com.sdl.web.api.meta.WebComponentMetaFactory;
 import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
-import com.tridion.content.BinaryFactory;
 import com.tridion.data.BinaryData;
 import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
@@ -29,9 +30,9 @@ import org.dd4t.contentmodel.impl.BinaryDataImpl;
 import org.dd4t.contentmodel.impl.BinaryImpl;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.TCMURI;
+import org.dd4t.providers.BaseBrokerProvider;
 import org.dd4t.providers.BinaryProvider;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -43,13 +44,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Provides access to Binaries stored in the Content Delivery database.
+ * Provides access to Binaries stored in the Content Delivery database through the Web 8
+ * REST client.
  * Access to these objects is not cached, and as such must be cached externally.
  */
 public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(BrokerBinaryProvider.class);
-    private static final BinaryFactory BINARY_FACTORY = new BinaryFactory();
+
+    private static final BinaryContentRetriever BINARY_CONTENT_RETRIEVER = new BinaryContentRetrieverImpl();
     private static final WebBinaryMetaFactory WEB_BINARY_META_FACTORY = new WebBinaryMetaFactoryImpl();
     private static final Map<Integer, WebComponentMetaFactory> FACTORY_CACHE = new ConcurrentHashMap<>();
 
@@ -103,7 +106,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
     @Override
     public byte[] getBinaryContentById (int id, int publication) throws ItemNotFoundException {
 
-        final BinaryData binaryData = BINARY_FACTORY.getBinary(id, publication, null);
+        final BinaryData binaryData = BINARY_CONTENT_RETRIEVER.getBinary(publication,id);
 
         if (binaryData == null || binaryData.getDataSize() > 0 ) {
             throw new ItemNotFoundException("Unable to find binary content by id: tcm:" + publication+"-"+id);
@@ -141,7 +144,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
      */
 
     public BinaryData getBinaryDataById (int id, int publication) throws ItemNotFoundException {
-        final BinaryData binaryData = BINARY_FACTORY.getBinary(publication,id);
+        final BinaryData binaryData = BINARY_CONTENT_RETRIEVER.getBinary(publication,id);
         if (binaryData == null) {
             throw new ItemNotFoundException("Unable to find binary by id '" + id + "' and publication '" + publication + "'.");
         }

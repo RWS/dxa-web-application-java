@@ -36,12 +36,12 @@ import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.providers.BaseBrokerProvider;
-import org.dd4t.core.providers.StringResultItemImpl;
 import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.TCMURI;
+import org.dd4t.providers.BaseBrokerProvider;
 import org.dd4t.providers.PageProvider;
 import org.dd4t.providers.ProviderResultItem;
+import org.dd4t.providers.StringResultItemImpl;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,7 +127,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
      * @param url         String representing the path part of the page URL
      * @param publication int representing the Publication id of the page
      * @return String representing the content of the Page
-     * @throws IOException           if the character stream cannot be read
+     * @throws SerializationException           if the character stream cannot be read
      * @throws ItemNotFoundException if the requested page does not exist
      */
     @Override
@@ -233,7 +233,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
         Integer result = null;
 
         if (cacheElement.isExpired()) {
-
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);

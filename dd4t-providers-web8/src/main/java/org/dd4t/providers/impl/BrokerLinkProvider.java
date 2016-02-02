@@ -16,24 +16,24 @@
 
 package org.dd4t.providers.impl;
 
-import com.tridion.linking.ComponentLink;
-import com.tridion.linking.Link;
+
+import com.sdl.web.api.linking.ComponentLink;
+import com.sdl.web.api.linking.ComponentLinkImpl;
+import com.sdl.web.api.linking.Link;
 import com.tridion.util.TCMURI;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.Constants;
+import org.dd4t.providers.BaseBrokerProvider;
 import org.dd4t.providers.LinkProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Provider implementation to wrap around the ComponentLinker.
- * TODO: decompress!
- *
- * TODO: for web-8 REST don't use content-compatible
- * @author rooudsho, Mihai Cadariu
+ * TODO: Dynamic Component Links! Nice!
+ * @author rooudsho, Mihai Cadariu, rai
  */
 public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvider {
 
@@ -49,7 +49,7 @@ public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvid
     public String resolveComponent (String targetComponentURI) {
         try {
             TCMURI componentURI = new TCMURI(targetComponentURI);
-            ComponentLink componentLink = new ComponentLink(componentURI.getPublicationId());
+            ComponentLink componentLink = new ComponentLinkImpl(componentURI.getPublicationId());
             Link link = componentLink.getLink(componentURI.getItemId());
 
             if (link.isResolved()) {
@@ -97,8 +97,7 @@ public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvid
     private static String getLinkAsString (final String sourcePageUri, final String targetComponentUri, final String componentTemplateUri) {
         try {
             TCMURI componentURI = new TCMURI(targetComponentUri);
-
-            ComponentLink componentLink = new ComponentLink(componentURI.getPublicationId());
+            ComponentLink componentLink = new ComponentLinkImpl(componentURI.getPublicationId());
             Link link = componentLink.getLink(sourcePageUri, targetComponentUri, componentTemplateUri, "", "", true, false);
 
             if (link.isResolved()) {
@@ -109,4 +108,6 @@ public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvid
         }
         return null;
     }
+
+    // TODO resolveDynamicComponent
 }

@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package org.dd4t.providers.impl;
+package org.dd4t.providers;
 
 import org.dd4t.core.caching.Cachable;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.impl.CacheElementImpl;
-import org.dd4t.providers.CacheProvider;
-import org.dd4t.providers.PayloadCacheProvider;
 
 import java.util.Collection;
 

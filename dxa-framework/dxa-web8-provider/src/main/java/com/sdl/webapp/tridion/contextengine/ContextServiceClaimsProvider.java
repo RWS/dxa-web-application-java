@@ -26,6 +26,8 @@ import java.util.Set;
  */
 public class ContextServiceClaimsProvider implements ContextClaimsProvider {
 
+    private static final String CONTEXT_COOKIE_NAME = "context";
+
     private static Map<String, Object> getClaimsMap(ContextMap<? extends Aspect> contextMap, String aspectName) {
         if (Strings.isNullOrEmpty(aspectName)) {
             Set<String> keySet = contextMap.keySet();
@@ -58,19 +60,15 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
     public Map<String, Object> getContextClaims(String aspectName) throws DxaException {
         HttpServletRequest request = HttpUtils.getCurrentRequest();
 
-        String contextCookie = null;
-        if (request.getCookies() != null) {
-            for (Cookie cookie : request.getCookies()) {
-                if ("context".equals(cookie.getName())) {
-                    contextCookie = cookie.getValue();
-                }
-            }
-        }
-
         EvidenceBuilder evidenceBuilder = new EvidenceBuilder()
                 .with("user-agent", request.getHeader("user-agent"));
-        if (contextCookie != null) {
-            evidenceBuilder.with("cookie", contextCookie);
+
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if (CONTEXT_COOKIE_NAME.equals(cookie.getName())) {
+                    evidenceBuilder.with("cookie", CONTEXT_COOKIE_NAME + '=' + cookie.getValue());
+                }
+            }
         }
 
         ContextMap<? extends Aspect> contextMap;

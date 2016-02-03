@@ -58,23 +58,23 @@ public interface MediaHelper {
     ScreenWidth getScreenWidth();
 
     /**
-     * <p>getSmallScreenBreakpoint.</p>
+     * <p>Point after which the screen is small.</p>
      *
-     * @return a int.
+     * @return a value in pixels.
      */
     int getSmallScreenBreakpoint();
 
     /**
-     * <p>getMediumScreenBreakpoint.</p>
+     * <p>Point after which the screen is medium.</p>
      *
-     * @return a int.
+     * @return a value in pixels.
      */
     int getMediumScreenBreakpoint();
 
     /**
-     * <p>getLargeScreenBreakpoint.</p>
+     * <p>Point after which the screen is large.</p>
      *
-     * @return a int.
+     * @return a value in pixels.
      */
     int getLargeScreenBreakpoint();
 

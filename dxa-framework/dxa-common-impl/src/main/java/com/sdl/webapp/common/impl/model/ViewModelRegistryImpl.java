@@ -32,7 +32,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewModelRegistryImpl.class);
 
-    // todo TSI-1063 should not be static
     private static final Map<MvcData, Class<? extends ViewModel>> viewEntityClassMap = new HashMap<>();
 
     private static Lock lock = new ReentrantLock();

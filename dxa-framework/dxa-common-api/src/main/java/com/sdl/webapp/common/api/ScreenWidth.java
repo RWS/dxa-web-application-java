@@ -7,7 +7,24 @@ package com.sdl.webapp.common.api;
  * @version 1.3-SNAPSHOT
  */
 public enum ScreenWidth {
-    EXTRA_SMALL, SMALL, MEDIUM, LARGE;
+    EXTRA_SMALL(480), SMALL(940), MEDIUM(1140), LARGE(Integer.MAX_VALUE);
+
+    /**
+     * a point after which the size of bigger than this
+     */
+    private int breakpoint;
+
+    ScreenWidth(int breakpoint) {
+        this.breakpoint = breakpoint;
+    }
+
+    public int getBreakpoint() {
+        return breakpoint;
+    }
+
+    public boolean isThisScreenWidth(int width) {
+        return width < this.breakpoint;
+    }
 
     /**
      * <p>getColsIfExtraSmall.</p>

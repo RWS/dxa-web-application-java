@@ -20,45 +20,42 @@ public class DefaultMediaHelper implements MediaHelper {
 
     // TODO: Have the grid size configurable from the CMS settings
     private static final int GRID_SIZE = 12;
-    private static final int SMALL_SCREEN_BREAKPOINT = 480;
-    private static final int MEDIUM_SCREEN_BREAKPOINT = 940;
-    private static final int LARGE_SCREEN_BREAKPOINT = 1140;
     // Default media aspect is the golden ratio
     private static final double DEFAULT_MEDIA_ASPECT = 1.62;
     private static final String DEFAULT_MEDIA_FILL = "100%";
     private static final int[] IMAGE_WIDTHS = {160, 320, 640, 1024, 2048};
+
     @Autowired
     private WebRequestContext webRequestContext;
     @Autowired
     private ResponsiveMediaUrlBuilder responsiveMediaUrlBuilder;
 
     /**
-     * <p>roundWidth.</p>
+     * <p>Round the width to the nearest set limit point - important as we do not want to swamp the cache
+     * with lots of different sized versions of the same image.</p>
      *
-     * @param width a int.
-     * @return a int.
+     * @param width initial width of image requested
+     * @return the nearest (upper) point.
      */
     protected static int roundWidth(int width) {
-        // Round the width to the nearest set limit point - important as we do not want to swamp the cache
-        // with lots of different sized versions of the same image
-        for (int i = 0; i < IMAGE_WIDTHS.length; i++) {
-            if ((width <= IMAGE_WIDTHS[i]) || (i == (IMAGE_WIDTHS.length - 1))) {
-                return IMAGE_WIDTHS[i];
+
+        for (int imageWidth : IMAGE_WIDTHS) {
+            if (width <= imageWidth) {
+                return imageWidth;
             }
         }
 
-        // Note that this point will never be reached in practice
-        throw new IllegalStateException("Should normally never be reached");
+        return IMAGE_WIDTHS[IMAGE_WIDTHS.length - 1];
     }
 
     /**
-     * <p>normalizeDimension.</p>
+     * <p>divideByAspect.</p>
      *
      * @param dimension a int.
      * @param aspect    a double.
      * @return a int.
      */
-    protected static int normalizeDimension(int dimension, double aspect) {
+    protected static int divideByAspect(int dimension, double aspect) {
         return (int) Math.ceil(dimension / aspect);
     }
 
@@ -71,7 +68,7 @@ public class DefaultMediaHelper implements MediaHelper {
 
         // Height is calculated from the aspect ratio (0 means preserve aspect ratio)
         boolean aspectIzZero = aspect == 0.0;
-        final int height = aspectIzZero ? 0 : normalizeDimension(width, aspect);
+        final int height = aspectIzZero ? 0 : divideByAspect(width, aspect);
 
         return responsiveMediaUrlBuilder
                 .newInstance()
@@ -149,7 +146,7 @@ public class DefaultMediaHelper implements MediaHelper {
     /** {@inheritDoc} */
     @Override
     public int getResponsiveHeight(String widthFactor, double aspect, int containerSize) {
-        return normalizeDimension(getResponsiveWidth(widthFactor, containerSize), aspect);
+        return divideByAspect(getResponsiveWidth(widthFactor, containerSize), aspect);
     }
 
     /** {@inheritDoc} */
@@ -162,33 +159,32 @@ public class DefaultMediaHelper implements MediaHelper {
     @Override
     public ScreenWidth getScreenWidth() {
         final int displayWidth = webRequestContext.getDisplayWidth();
-        if (displayWidth < SMALL_SCREEN_BREAKPOINT) {
-            return ScreenWidth.EXTRA_SMALL;
-        } else if (displayWidth < MEDIUM_SCREEN_BREAKPOINT) {
-            return ScreenWidth.SMALL;
-        } else if (displayWidth < LARGE_SCREEN_BREAKPOINT) {
-            return ScreenWidth.MEDIUM;
-        } else {
-            return ScreenWidth.LARGE;
+
+        for (ScreenWidth screenWidth : ScreenWidth.values()) {
+            if (screenWidth.isThisScreenWidth(displayWidth)) {
+                return screenWidth;
+            }
         }
+
+        return ScreenWidth.LARGE;
     }
 
     /** {@inheritDoc} */
     @Override
     public int getSmallScreenBreakpoint() {
-        return SMALL_SCREEN_BREAKPOINT;
+        return ScreenWidth.EXTRA_SMALL.getBreakpoint();
     }
 
     /** {@inheritDoc} */
     @Override
     public int getMediumScreenBreakpoint() {
-        return MEDIUM_SCREEN_BREAKPOINT;
+        return ScreenWidth.SMALL.getBreakpoint();
     }
 
     /** {@inheritDoc} */
     @Override
     public int getLargeScreenBreakpoint() {
-        return LARGE_SCREEN_BREAKPOINT;
+        return ScreenWidth.MEDIUM.getBreakpoint();
     }
 
     /** {@inheritDoc} */

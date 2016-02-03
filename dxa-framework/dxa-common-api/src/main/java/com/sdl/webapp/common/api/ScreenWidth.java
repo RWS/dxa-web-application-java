@@ -71,6 +71,6 @@ public enum ScreenWidth {
     }
 
     private int getCols(ScreenWidth expected, int colsIfYes, int colsIfNot) {
-        return this == expected ? colsIfYes : colsIfNot;
+        return this.breakpoint <= expected.breakpoint ? colsIfYes : colsIfNot;
     }
 }

@@ -4,8 +4,13 @@ import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModel;
 
+import javax.servlet.ServletRequest;
+
 /**
  * Provides information relevant for the current request.
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public interface WebRequestContext {
 
@@ -60,8 +65,18 @@ public interface WebRequestContext {
      */
     String getFullUrl();
 
+    /**
+     * <p>isContextCookiePresent.</p>
+     *
+     * @return a boolean.
+     */
     boolean isContextCookiePresent();
 
+    /**
+     * <p>setContextCookiePresent.</p>
+     *
+     * @param present a boolean.
+     */
     void setContextCookiePresent(boolean present);
 
     /**
@@ -73,6 +88,8 @@ public interface WebRequestContext {
 
     /**
      * Sets the localization of the current request. This is normally called by {@code LocalizationResolverInterceptor}.
+     *
+     * @param localization a {@link com.sdl.webapp.common.api.localization.Localization} object.
      */
     void setLocalization(Localization localization);
 
@@ -89,6 +106,13 @@ public interface WebRequestContext {
      * @return The display width of the current request.
      */
     int getDisplayWidth();
+
+    /**
+     * <p>getScreenWidth.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.api.ScreenWidth} object.
+     */
+    ScreenWidth getScreenWidth();
 
     /**
      * Gets the pixel ratio of the current request.
@@ -114,7 +138,7 @@ public interface WebRequestContext {
     /**
      * Push container size for current context (rendering of a region or entity)
      *
-     * @param containerSize
+     * @param containerSize a int.
      */
     void pushContainerSize(int containerSize);
 
@@ -132,25 +156,85 @@ public interface WebRequestContext {
 
     // TODO: Should we have setters in this interface??
 
-    boolean getHasNoLocalization();
+    /**
+     * <p>isNoLocalization.</p>
+     *
+     * @return a boolean.
+     */
+    boolean isNoLocalization();
 
-    void setHasNoLocalization(boolean value);
+    /**
+     * <p>setNoLocalization.</p>
+     *
+     * @param value a boolean.
+     */
+    void setNoLocalization(boolean value);
 
+    /**
+     * <p>getPageId.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     String getPageId();
 
+    /**
+     * <p>setPageId.</p>
+     *
+     * @param value a {@link java.lang.String} object.
+     */
     void setPageId(String value);
 
+    /**
+     * <p>isDeveloperMode.</p>
+     *
+     * @return a boolean.
+     */
     boolean isDeveloperMode();
 
-    boolean getIsInclude();
+    /**
+     * <p>setDeveloperMode.</p>
+     *
+     * @param value a boolean.
+     */
+    void setDeveloperMode(boolean value);
 
-    void setIsInclude(boolean value);
+    /**
+     * <p>isInclude.</p>
+     *
+     * @return a boolean.
+     */
+    boolean isInclude();
 
-    void setIsDeveloperMode(boolean value);
+    /**
+     * <p>setInclude.</p>
+     *
+     * @param value a boolean.
+     */
+    void setInclude(boolean value);
 
+    /**
+     * <p>getParentRegion.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.api.model.RegionModel} object.
+     */
     RegionModel getParentRegion();
 
+    /**
+     * <p>pushParentRegion.</p>
+     *
+     * @param value a {@link com.sdl.webapp.common.api.model.RegionModel} object.
+     */
     void pushParentRegion(RegionModel value);
 
+    /**
+     * <p>popParentRegion.</p>
+     */
     void popParentRegion();
+
+    /**
+     * <p>getServletRequest.</p>
+     *
+     * @return a {@link javax.servlet.ServletRequest} object.
+     */
+    ServletRequest getServletRequest();
 }

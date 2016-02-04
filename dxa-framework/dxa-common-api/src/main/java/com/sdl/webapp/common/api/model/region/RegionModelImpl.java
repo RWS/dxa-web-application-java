@@ -1,7 +1,6 @@
 package com.sdl.webapp.common.api.model.region;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
@@ -9,14 +8,17 @@ import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.xpm.ComponentType;
 import com.sdl.webapp.common.api.xpm.XpmRegion;
 import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,41 +27,74 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.REGION;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
+
 
 /**
- * Implementation of {@code Region}.
+ * <p>RegionModelImpl class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@EqualsAndHashCode(of = {"name"})
 public class RegionModelImpl implements RegionModel {
+    /**
+     * The XPM metadata key used for the ID of the (Include) Page from which the Region originates.
+     * Avoid using this in implementation code because it may change in a future release.
+     */
+    public static final String INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY = "IncludedFromPageID";
+    /**
+     * The XPM metadata key used for the title of the (Include) Page from which the Region originates.
+     * Avoid using this in implementation code because it may change in a future release.
+     */
+    public static final String INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY = "IncludedFromPageTitle";
+    /**
+     * The XPM metadata key used for the file name of the (Include) Page from which the Region originates.
+     * Avoid using this in implementation code because it may change in a future release.
+     */
+    public static final String INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY = "IncludedFromPageFileName";
 
-    /*
-     * The XPM metadata key used for the ID of the (Include) Page from which the Region originates. Avoid using this in implementation code because it may change in a future release.
-     */
-    public static final String IncludedFromPageIdXpmMetadataKey = "IncludedFromPageID";
-    /*
-     * The XPM metadata key used for the title of the (Include) Page from which the Region originates. Avoid using this in implementation code because it may change in a future release.
-     */
-    public static final String IncludedFromPageTitleXpmMetadataKey = "IncludedFromPageTitle";
-    /*
-     * The XPM metadata key used for the file name of the (Include) Page from which the Region originates. Avoid using this in implementation code because it may change in a future release.
-     */
-    public static final String IncludedFromPageFileNameXpmMetadataKey = "IncludedFromPageFileName";
-    private final String XpmRegionMarkup = "<!-- Start Region: {title: \"%s\", allowedComponentTypes: [%s], minOccurs: %s} -->";
-    private final String XpmComponentTypeMarkup = "{schema: \"%s\", template: \"%s\"}";
+    private static final String XPM_REGION_MARKUP = "<!-- Start Region: {title: \"%s\", allowedComponentTypes: [%s], minOccurs: %s} -->";
+
+    private static final String XPM_COMPONENT_TYPE_MARKUP = "{schema: \"%s\", template: \"%s\"}";
+
     @JsonProperty("Name")
+    @Getter
+    // TODO: Should we really expose a setter for the region name when we already set that in the constructor?
+    @Setter
     private String name;
+
     @JsonIgnore
+    @Getter
+    @Setter
     private String htmlClasses;
+
     @JsonProperty("Entities")
-    private List<EntityModel> entities = new ArrayList<EntityModel>();
+    @Getter
+    @Setter
+    private List<EntityModel> entities = new ArrayList<>();
+
     @JsonProperty("XpmMetadata")
-    private Map<String, String> xpmMetadata = new HashMap<>();
+    @Getter
+//    setter explicitly defined
+    private Map<String, Object> xpmMetadata = new HashMap<>();
+
     @JsonProperty("MvcData")
+    @Getter
+    @Setter
     private MvcData mvcData;
+
     @JsonProperty("Regions")
+    @Getter
+    @Setter
     private RegionModelSet regions;
 
+    /**
+     * <p>Constructor for RegionModelImpl.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
     public RegionModelImpl(String name) throws DxaException {
         if (Strings.isNullOrEmpty(name)) {
             throw new DxaException("Region must have a non-empty name.");
@@ -67,38 +102,47 @@ public class RegionModelImpl implements RegionModel {
         this.setName(name);
     }
 
+    /**
+     * <p>Constructor for RegionModelImpl.</p>
+     *
+     * @param name              a {@link java.lang.String} object.
+     * @param qualifiedViewName a {@link java.lang.String} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
     public RegionModelImpl(String name, String qualifiedViewName) throws DxaException {
         this(name);
-        this.setMvcData(new MvcDataImpl()
-                .setRegionName(qualifiedViewName)
-                .setViewName(qualifiedViewName)
-                .defaults(REGION));
+        this.setMvcData(MvcDataCreator.creator()
+                .defaults(CORE_REGION)
+                .builder()
+                .regionName(qualifiedViewName)
+                .viewName(qualifiedViewName)
+                .build());
     }
 
-    @Override
-    public String getName() {
-        return name;
+    /**
+     * <p>Constructor for RegionModelImpl.</p>
+     *
+     * @param mvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
+    public RegionModelImpl(MvcData mvcData) throws DxaException {
+        this(mvcData.getRegionName());
+        this.mvcData = mvcData;
     }
 
-    // TODO: Should we really expose a setter for the region name when we already set that in the constructor?
-    public void setName(String name) {
-        this.name = name;
+    private static XpmRegionConfig getXpmRegionConfig() {
+        return ApplicationContextHolder.getContext().getBean(XpmRegionConfig.class);
     }
 
-    @Override
-    public List<EntityModel> getEntities() {
-        return entities;
-    }
-
-    public void setEntities(List<EntityModel> entities) {
-        this.entities = entities;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addEntity(EntityModel entity) {
         this.entities.add(entity);
     }
 
+    /** {@inheritDoc} */
     @Override
     public EntityModel getEntity(String entityId) {
         Collection<EntityModel> c = new ArrayList<>();
@@ -114,15 +158,16 @@ public class RegionModelImpl implements RegionModel {
         return null;
     }
 
-    @Override
-    public Map<String, String> getXpmMetadata() {
-        return xpmMetadata;
-    }
-
-    public void setXpmMetadata(Map<String, String> xpmMetadata) {
+    /**
+     * <p>Setter for the field <code>xpmMetadata</code>.</p>
+     *
+     * @param xpmMetadata a {@link java.util.Map} object.
+     */
+    public void setXpmMetadata(Map<String, Object> xpmMetadata) {
         this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getXpmMarkup(Localization localization) {
         XpmRegionConfig xpmRegionConfig = getXpmRegionConfig();
@@ -135,67 +180,14 @@ public class RegionModelImpl implements RegionModel {
         List<String> types = new ArrayList<>();
 
         for (ComponentType ct : xpmRegion.getComponentTypes()) {
-            types.add(String.format(XpmComponentTypeMarkup, ct.getSchemaId(), ct.getTemplateId()));
+            types.add(String.format(XPM_COMPONENT_TYPE_MARKUP, ct.getSchemaId(), ct.getTemplateId()));
         }
 
         // TODO: obtain MinOccurs & MaxOccurs from regions.json
         return String.format(
-                XpmRegionMarkup,
-                getName(),
+                XPM_REGION_MARKUP,
+                this.name,
                 Joiner.on(", ").join(types),
                 0);
-    }
-
-    private XpmRegionConfig getXpmRegionConfig() {
-        return ApplicationContextHolder.getContext().getBean(XpmRegionConfig.class);
-    }
-
-    @Override
-    public MvcData getMvcData() {
-        return mvcData;
-    }
-
-    public void setMvcData(MvcData mvcData) {
-        this.mvcData = mvcData;
-    }
-
-    @Override
-    public RegionModelSet getRegions() {
-        return regions;
-    }
-
-    public void setRegions(RegionModelSet mvcData) {
-        this.regions = mvcData;
-    }
-
-
-    @Override
-    public String getHtmlClasses() {
-        return this.htmlClasses;
-    }
-
-    @Override
-    public void setHtmlClasses(String value) {
-        this.htmlClasses = value;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        return obj instanceof RegionModel && ((RegionModel) obj).getName().equals(this.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return this.getName().hashCode();
-    }
-
-    @Override
-    public String toString() {
-        return "RegionImpl{" +
-                "name='" + name + '\'' +
-                ", entities=" + entities +
-                ", mvcData='" + mvcData + '\'' +
-                ", regions='" + regions + '\'' +
-                '}';
     }
 }

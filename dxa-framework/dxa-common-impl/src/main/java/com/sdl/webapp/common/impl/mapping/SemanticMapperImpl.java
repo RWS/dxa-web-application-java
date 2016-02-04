@@ -2,13 +2,13 @@ package com.sdl.webapp.common.impl.mapping;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.sdl.webapp.common.api.mapping.FieldData;
-import com.sdl.webapp.common.api.mapping.SemanticFieldDataProvider;
-import com.sdl.webapp.common.api.mapping.SemanticMapper;
-import com.sdl.webapp.common.api.mapping.SemanticMappingException;
-import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
-import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
-import com.sdl.webapp.common.api.mapping.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.FieldData;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
@@ -21,9 +21,16 @@ import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @Component
+/**
+ * <p>SemanticMapperImpl class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class SemanticMapperImpl implements SemanticMapper {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMapperImpl.class);
 
@@ -32,12 +39,59 @@ public class SemanticMapperImpl implements SemanticMapper {
 
     private final SemanticMappingRegistry registry;
 
+    /**
+     * <p>Constructor for SemanticMapperImpl.</p>
+     *
+     * @param registry a {@link com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry} object.
+     */
     @Autowired
     public SemanticMapperImpl(SemanticMappingRegistry registry) {
         this.registry = registry;
     }
 
+    private static <T extends ViewModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("entityClass: {}", entityClass.getName());
+        }
+        try {
+            return entityClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SemanticMappingException("Exception while creating instance of entity class: " +
+                    entityClass.getName(), e);
+        }
+    }
 
+    private static SemanticField findFieldForGivenSemantics(Map<FieldSemantics, SemanticField> fields, FieldSemantics semantics) {
+
+        SemanticField field = fields.get(semantics);
+
+        if (field != null) {
+            return field;
+        }
+
+        for (Map.Entry<FieldSemantics, SemanticField> entry : fields.entrySet()) {
+            FieldSemantics key = entry.getKey();
+
+            if (key.isStandardMetadataField() && Objects.equals(key.getPropertyName(), semantics.getPropertyName())) {
+                return entry.getValue();
+            }
+        }
+
+        // Search all embedded fields recursively
+        for (SemanticField semanticField : fields.values()) {
+            field = findFieldForGivenSemantics(semanticField.getEmbeddedFields(), semantics);
+
+            if (field != null) {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T extends ViewModel> T createEntity(Class<? extends T> entityClass,
                                                 final Map<FieldSemantics, SemanticField> semanticFields,
@@ -62,7 +116,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                 // Try getting data using each of the field semantics in order
                 for (FieldSemantics fieldSemantics : registrySemantics) {
                     // Find the matching semantic field
-                    final SemanticField semanticField = findMatchingSemanticField(semanticFields, fieldSemantics);
+                    final SemanticField semanticField = findFieldForGivenSemantics(semanticFields, fieldSemantics);
                     if (semanticField != null) {
                         foundMatch = true;
                         LOG.trace("Match found: {} -> {}", fieldSemantics, semanticField);
@@ -139,7 +193,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                     // This not necessarily means there is a problem; for some components in the input, not all fields
                     // of the entity are mapped
                     LOG.trace("No match found for field: {}; registry semantics: {} did not match with supplied " +
-                            "semantics: {}", new Object[]{field, registrySemantics, semanticFields});
+                            "semantics: {}", field, registrySemantics, semanticFields);
                 }
             }
         });
@@ -153,46 +207,4 @@ public class SemanticMapperImpl implements SemanticMapper {
     }
 
 
-    private <T extends ViewModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("entityClass: {}", entityClass.getName());
-        }
-        try {
-            return entityClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SemanticMappingException("Exception while creating instance of entity class: " +
-                    entityClass.getName(), e);
-        }
-    }
-
-    private SemanticField findMatchingSemanticField(Map<FieldSemantics, SemanticField> semanticFields,
-                                                    FieldSemantics fieldSemantics) {
-        SemanticField matchingField = null;
-
-        for (Map.Entry<FieldSemantics, SemanticField> entry : semanticFields.entrySet()) {
-            FieldSemantics f = entry.getKey();
-            if (f.getEntityName().equals(fieldSemantics.getEntityName())
-                    && f.getPropertyName().equals(fieldSemantics.getPropertyName())
-                    && f.getVocabulary().equals(fieldSemantics.getVocabulary())) {
-                matchingField = entry.getValue();
-            } else {
-                if (f.getEntityName().equals("StandardMetadata")
-                        && f.getPropertyName().equals(fieldSemantics.getPropertyName())) {
-                    matchingField = entry.getValue();
-                }
-            }
-        }
-
-        if (matchingField == null) {
-            // Search all embedded fields recursively
-            for (SemanticField semanticField : semanticFields.values()) {
-                matchingField = findMatchingSemanticField(semanticField.getEmbeddedFields(), fieldSemantics);
-                if (matchingField != null) {
-                    break;
-                }
-            }
-        }
-
-        return matchingField;
-    }
 }

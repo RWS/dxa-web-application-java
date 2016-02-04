@@ -13,6 +13,7 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
  * Define Pluggable Markup Tag
  *
  * @author nic
+ * @version 1.3-SNAPSHOT
  */
 public class DefinePluggableMarkupTag extends BodyTagSupport {
 
@@ -22,10 +23,18 @@ public class DefinePluggableMarkupTag extends BodyTagSupport {
 
     private String label;
 
+    /**
+     * <p>Setter for the field <code>label</code>.</p>
+     *
+     * @param label a {@link java.lang.String} object.
+     */
     public void setLabel(String label) {
         this.label = label;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doAfterBody() throws JspException {
 
@@ -35,6 +44,11 @@ public class DefinePluggableMarkupTag extends BodyTagSupport {
         return SKIP_BODY;
     }
 
+    /**
+     * <p>getPluggableMarkupRegistry.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.markup.PluggableMarkupRegistry} object.
+     */
     protected PluggableMarkupRegistry getPluggableMarkupRegistry() {
         if (this.registry == null) {
             this.registry = WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())

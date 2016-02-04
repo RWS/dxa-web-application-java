@@ -6,10 +6,24 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 
+/**
+ * <p>Abstract XpmMarkupTag class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public abstract class XpmMarkupTag extends XpmIfEnabledTag {
 
+    /**
+     * <p>generateXpmMarkup.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.markup.html.HtmlNode} object.
+     */
     protected abstract HtmlNode generateXpmMarkup();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
         if (isPreview()) {

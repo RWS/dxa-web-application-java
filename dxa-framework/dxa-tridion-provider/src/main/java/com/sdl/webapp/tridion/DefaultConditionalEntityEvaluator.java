@@ -7,11 +7,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
+/**
+ * <p>DefaultConditionalEntityEvaluator class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class DefaultConditionalEntityEvaluator implements
         ConditionalEntityEvaluator {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultConditionalEntityEvaluator.class);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean includeEntity(EntityModel entity) {
         //TODO : currently, no implementation has been built, we just return true by default

@@ -5,13 +5,27 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 
 /**
- * MarkupDecorator
+ * <p>MarkupDecorator interface.</p>
  *
- * @author nic
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public interface MarkupDecorator {
 
-    public HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext);
+    /**
+     * <p>process.</p>
+     *
+     * @param markup            a {@link com.sdl.webapp.common.markup.html.HtmlNode} object.
+     * @param model             a {@link com.sdl.webapp.common.api.model.ViewModel} object.
+     * @param webRequestContext a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     * @return a {@link com.sdl.webapp.common.markup.html.HtmlNode} object.
+     */
+    HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext);
 
-    public int getPriority();
+    /**
+     * <p>getPriority.</p>
+     *
+     * @return a int.
+     */
+    int getPriority();
 }

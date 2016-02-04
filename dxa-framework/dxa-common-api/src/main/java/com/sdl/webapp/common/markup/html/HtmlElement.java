@@ -3,7 +3,14 @@ package com.sdl.webapp.common.markup.html;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
+import java.util.Objects;
 
+/**
+ * <p>HtmlElement class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public final class HtmlElement extends HtmlNode {
 
     private final HtmlStartTag startTag;
@@ -12,27 +19,53 @@ public final class HtmlElement extends HtmlNode {
 
     private final HtmlEndTag endTag;
 
+    /**
+     * <p>Constructor for HtmlElement.</p>
+     *
+     * @param tagName    a {@link java.lang.String} object.
+     * @param closeTag   a boolean.
+     * @param attributes a {@link java.util.List} object.
+     * @param content    a {@link java.util.List} object.
+     */
     public HtmlElement(String tagName, boolean closeTag, List<HtmlAttribute> attributes, List<HtmlNode> content) {
         this.startTag = new HtmlStartTag(tagName, attributes);
         this.content = ImmutableList.copyOf(content);
         this.endTag = closeTag ? new HtmlEndTag(tagName) : null;
     }
 
+    /**
+     * <p>Getter for the field <code>startTag</code>.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.markup.html.HtmlStartTag} object.
+     */
     public HtmlStartTag getStartTag() {
         return startTag;
     }
 
+    /**
+     * <p>Getter for the field <code>endTag</code>.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.markup.html.HtmlEndTag} object.
+     */
     public HtmlEndTag getEndTag() {
         return endTag;
     }
 
+    /**
+     * <p>Getter for the field <code>content</code>.</p>
+     *
+     * @return a {@link java.util.List} object.
+     */
     public List<HtmlNode> getContent() {
         return content;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected String renderHtml() {
-        final StringBuilder sb = new StringBuilder().append(startTag.toHtml());
+    public String renderHtml() {
+        final StringBuilder sb = new StringBuilder(1024).append(startTag.toHtml());
         for (HtmlNode node : content) {
             sb.append(node.toHtml());
         }
@@ -42,25 +75,20 @@ public final class HtmlElement extends HtmlNode {
         return sb.toString();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         HtmlElement that = (HtmlElement) o;
-
-        if (content != null ? !content.equals(that.content) : that.content != null) return false;
-        if (endTag != null ? !endTag.equals(that.endTag) : that.endTag != null) return false;
-        if (startTag != null ? !startTag.equals(that.startTag) : that.startTag != null) return false;
-
-        return true;
+        return Objects.equals(startTag, that.startTag) &&
+                Objects.equals(content, that.content) &&
+                Objects.equals(endTag, that.endTag);
     }
 
+    /** {@inheritDoc} */
     @Override
     public int hashCode() {
-        int result = startTag != null ? startTag.hashCode() : 0;
-        result = 31 * result + (content != null ? content.hashCode() : 0);
-        result = 31 * result + (endTag != null ? endTag.hashCode() : 0);
-        return result;
+        return Objects.hash(startTag, content, endTag);
     }
 }

@@ -2,9 +2,9 @@ package com.sdl.webapp.common.impl.taglib.dxa;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -17,10 +17,16 @@ import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
 import java.io.IOException;
 
-import static com.sdl.webapp.common.api.model.MvcDataImpl.Defaults.REGION;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
-import static org.springframework.util.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/**
+ * <p>RegionTag class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public class RegionTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionTag.class);
 
@@ -29,22 +35,45 @@ public class RegionTag extends AbstractMarkupTag {
     private String emptyViewName;
     private int containerSize;
 
+    /**
+     * <p>Setter for the field <code>name</code>.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * <p>Setter for the field <code>placeholder</code>.</p>
+     *
+     * @param placeholder a boolean.
+     */
     public void setPlaceholder(boolean placeholder) {
         this.placeholder = placeholder;
     }
 
+    /**
+     * <p>Setter for the field <code>emptyViewName</code>.</p>
+     *
+     * @param emptyViewName a {@link java.lang.String} object.
+     */
     public void setEmptyViewName(String emptyViewName) {
         this.emptyViewName = emptyViewName;
     }
 
+    /**
+     * <p>Setter for the field <code>containerSize</code>.</p>
+     *
+     * @param containerSize a int.
+     */
     public void setContainerSize(int containerSize) {
         this.containerSize = containerSize;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
         WebRequestContext webRequestContext = this.getWebRequestContext();
@@ -63,10 +92,11 @@ public class RegionTag extends AbstractMarkupTag {
             this.pageContext.setAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE, "1");
             // Create a new Region Model which reflects the Page Model
             String regionName = page.getName().replace(" ", "-");
-            MvcData mvcData = new MvcDataImpl()
-                    .setRegionName(regionName)
-                    .setViewName(regionName)
-                    .defaults(REGION);
+            MvcData mvcData = MvcDataCreator.creator()
+                    .defaults(CORE_REGION)
+                    .builder()
+                    .regionName(regionName)
+                    .viewName(regionName).build();
 
             RegionModelImpl includeRegion = null;
             try {
@@ -91,10 +121,13 @@ public class RegionTag extends AbstractMarkupTag {
             RegionModelImpl placeholderRegion = null;
             try {
                 placeholderRegion = new RegionModelImpl(name);
-                MvcData mvcData = new MvcDataImpl()
-                        .setRegionName(name)
-                        .setViewName(isEmpty(emptyViewName) ? name : emptyViewName)
-                        .defaults(REGION);
+                MvcData mvcData = MvcDataCreator.creator()
+                        .defaults(CORE_REGION)
+                        .builder()
+                        .regionName(name)
+                        .viewName(isEmpty(emptyViewName) ? name : emptyViewName)
+                        .build();
+
                 placeholderRegion.setMvcData(mvcData);
             } catch (DxaException e) {
                 LOG.error("Exception when creating new placeholderRegion {}", name, e);
@@ -113,12 +146,8 @@ public class RegionTag extends AbstractMarkupTag {
                 webRequestContext.pushContainerSize(containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
             } catch (ServletException | IOException e) {
-                try {
-                    LOG.error("Error while processing region tag", e);
-                    this.decorateInclude(ControllerUtils.getIncludeErrorPath(), region);
-                } catch (IOException | ServletException e1) {
-                    throw new JspException("Error while processing region tag, error view wasn't found", e1);
-                }
+                LOG.error("Error while processing region tag", e);
+                decorateException(region);
             } finally {
                 webRequestContext.popParentRegion();
                 webRequestContext.popContainerSize();

@@ -7,7 +7,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.SiteLocalization;
-import com.sdl.webapp.common.api.mapping.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,32 +18,61 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+@EqualsAndHashCode
 /**
- * Implementation of {@code Localization}.
+ * <p>LocalizationImpl class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
-class LocalizationImpl implements Localization {
+@ToString
+public class LocalizationImpl implements Localization {
 
     private static final String FAVICON_PATH = "/favicon.ico";
     private static final Pattern SYSTEM_ASSETS_PATTERN = Pattern.compile("/system(/v\\d+\\.\\d+)?/assets/.*");
+
+    @Getter
     private final String id;
+
+    @Getter
     private final String path;
+
     private final String mediaRoot;
+
     private final boolean default_;
+
+    @Getter
     private final boolean staging;
+
+    @Getter
     private final String version;
+
+    @Getter
     private final List<SiteLocalization> siteLocalizations;
+
     private final Map<String, String> configuration;
+
     private final Map<String, String> resources;
+
+    @Getter
     private final Map<Long, SemanticSchema> semanticSchemas;
+
     private final ListMultimap<String, String> includes;
+
     private LocalizationImpl(Builder builder) {
         this.id = builder.id;
         this.path = builder.path;
-        this.mediaRoot = builder.mediaRoot;
+
+        if (!builder.mediaRoot.startsWith("/")) {
+            String strFormat = this.path.endsWith("/") ? "%s%s" : "%s/%s";
+            this.mediaRoot = String.format(strFormat, this.path, builder.mediaRoot);
+        } else {
+            this.mediaRoot = builder.mediaRoot;
+        }
+
         this.default_ = builder.default_;
         this.staging = builder.staging;
         this.version = builder.version;
-
 
         this.siteLocalizations = builder.siteLocalizationsBuilder.build();
         this.configuration = builder.configurationBuilder.build();
@@ -50,20 +82,18 @@ class LocalizationImpl implements Localization {
 
     }
 
+    /**
+     * <p>newBuilder.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.impl.localization.LocalizationImpl.Builder} object.
+     */
     public static Builder newBuilder() {
         return new Builder();
     }
 
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public String getPath() {
-        return path;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isStaticContent(String url) {
         if (!url.startsWith(path)) {
@@ -77,106 +107,62 @@ class LocalizationImpl implements Localization {
         return p.equals(FAVICON_PATH) || SYSTEM_ASSETS_PATTERN.matcher(p).matches();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isDefault() {
         return default_;
     }
 
-    @Override
-    public boolean isStaging() {
-        return staging;
-    }
-
-    @Override
-    public String getVersion() {
-        return version;
-    }
-
+    /** {@inheritDoc} */
     @Override
     public List<String> getDataFormats() {
         String[] formats = getConfiguration("core.dataFormats").split("(\\s*)?,(\\s*)?");
         return Arrays.asList(formats);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getCulture() {
         return getConfiguration("core.culture");
     }
 
+    /** {@inheritDoc} */
     @Override
     public Locale getLocale() {
         return Locale.forLanguageTag(getCulture());
     }
 
-    @Override
-    public List<SiteLocalization> getSiteLocalizations() {
-        return siteLocalizations;
-    }
-
+    /** {@inheritDoc} */
     @Override
     public String getConfiguration(String key) {
         return configuration.get(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getResource(String key) {
         return resources.get(key);
     }
 
-    @Override
-    public Map<Long, SemanticSchema> getSemanticSchemas() {
-        return semanticSchemas;
-    }
-
+    /** {@inheritDoc} */
     @Override
     public List<String> getIncludes(String pageTypeId) {
         return includes.get(pageTypeId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String localizePath(String url) {
         if (!Strings.isNullOrEmpty(path)) {
             if (path.endsWith("/")) {
                 url = path + (url.startsWith("/") ? url.substring(1) : url);
             } else {
-                url = path + (url.startsWith("/") ? url : "/" + url);
+                url = path + (url.startsWith("/") ? url : '/' + url);
             }
         }
         return url;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        LocalizationImpl that = (LocalizationImpl) o;
-
-        if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        return !(path != null ? !path.equals(that.path) : that.path != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (path != null ? path.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "LocalizationImpl{" +
-                "id='" + id + '\'' +
-                ", path='" + path + '\'' +
-                ", mediaRoot='" + mediaRoot + '\'' +
-                ", default_=" + default_ +
-                ", staging=" + staging +
-                ", configuration=" + configuration +
-                ", resources=" + resources +
-                ", semanticSchemas=" + semanticSchemas +
-                ", includes=" + includes +
-                '}';
     }
 
     public static final class Builder {

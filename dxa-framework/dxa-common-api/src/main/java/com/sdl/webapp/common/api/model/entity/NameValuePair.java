@@ -1,15 +1,16 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
 
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
+import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 
 /**
  * NameValuePair
  *
  * @author nic
+ * @version 1.3-SNAPSHOT
  */
 @SemanticEntity(entityName = "NameValuePair", vocabulary = SDL_CORE, prefix = "nv")
 public class NameValuePair {
@@ -22,10 +23,20 @@ public class NameValuePair {
     @JsonProperty("Value")
     private String value;
 
+    /**
+     * <p>Getter for the field <code>name</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * <p>Getter for the field <code>value</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getValue() {
         return value;
     }

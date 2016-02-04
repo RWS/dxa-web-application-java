@@ -9,24 +9,52 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * <p>ControllerUtils class.</p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
+ */
 public final class ControllerUtils {
 
+    /**
+     * Constant <code>INCLUDE_PATH_PREFIX="/system/mvc/"</code>
+     */
     public static final String INCLUDE_PATH_PREFIX = "/system/mvc/";
 
-    public static final String SECTION_ERROR_VIEW = "Shared/SectionError";
-    public static final String NOT_FOUND_ERROR_VIEW = "Shared/NotFoundError";
-    public static final String SERVER_ERROR_VIEW = "Shared/ServerError";
+    /**
+     * Constant <code>SECTION_ERROR_VIEW="Shared/Error/SectionError"</code>
+     */
+    public static final String SECTION_ERROR_VIEW = "Shared/Error/SectionError";
+    /** Constant <code>VIEW_NOT_FOUND_ERROR_VIEW="Shared/Error/ViewNotFoundError"</code> */
+    public static final String VIEW_NOT_FOUND_ERROR_VIEW = "Shared/Error/ViewNotFoundError";
+    /** Constant <code>NOT_FOUND_ERROR_VIEW="Shared/Error/NotFoundError"</code> */
+    public static final String NOT_FOUND_ERROR_VIEW = "Shared/Error/NotFoundError";
+    /** Constant <code>SERVER_ERROR_VIEW="Shared/Error/ServerError"</code> */
+    public static final String SERVER_ERROR_VIEW = "Shared/Error/ServerError";
 
     private ControllerUtils() {
     }
 
+    /**
+     * <p>getIncludePath.</p>
+     *
+     * @param region a {@link com.sdl.webapp.common.api.model.RegionModel} object.
+     * @return a {@link java.lang.String} object.
+     */
     public static String getIncludePath(RegionModel region) {
         final MvcData mvcData = region.getMvcData();
         return getIncludePathPrefix(mvcData) +
-                region.getName() + "/" +
+                region.getName() + '/' +
                 getQueryParameters(mvcData);
     }
 
+    /**
+     * <p>getIncludePath.</p>
+     *
+     * @param entity a {@link com.sdl.webapp.common.api.model.EntityModel} object.
+     * @return a {@link java.lang.String} object.
+     */
     public static String getIncludePath(EntityModel entity) {
         final MvcData mvcData = entity.getMvcData();
         return getIncludePathPrefix(mvcData) +
@@ -34,15 +62,20 @@ public final class ControllerUtils {
                 getQueryParameters(mvcData);
     }
 
+    /**
+     * <p>getIncludeErrorPath.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public static String getIncludeErrorPath() {
         return ControllerUtils.INCLUDE_PATH_PREFIX + ControllerUtils.SECTION_ERROR_VIEW;
     }
 
     private static String getIncludePathPrefix(MvcData mvcData) {
         return INCLUDE_PATH_PREFIX +
-                mvcData.getControllerAreaName() + "/" +
-                mvcData.getControllerName() + "/" +
-                mvcData.getActionName() + "/";
+                mvcData.getControllerAreaName() + '/' +
+                mvcData.getControllerName() + '/' +
+                mvcData.getActionName() + '/';
     }
 
     private static String getQueryParameters(MvcData mvcData) {
@@ -51,6 +84,6 @@ public final class ControllerUtils {
             queryParams.add(entry.getKey() + '=' + entry.getValue());
         }
 
-        return queryParams.isEmpty() ? "" : ("?" + Joiner.on('&').join(queryParams));
+        return queryParams.isEmpty() ? "" : ('?' + Joiner.on('&').join(queryParams));
     }
 }

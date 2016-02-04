@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.ContentList;
+import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,11 +23,15 @@ import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREF
 
 /**
  * List controller for the Core area.
- * <p/>
+ * <p>
  * This handles include requests to /system/mvc/Core/List/{regionName}/{entityId}
+ * </p>
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + CoreAreaConstants.CORE_AREA_NAME + "/" + CoreAreaConstants.LIST_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + '/' + DefaultsMvcData.CoreAreaConstants.LIST_CONTROLLER_NAME)
 public class ListController extends EntityController {
     private static final Logger LOG = LoggerFactory.getLogger(ListController.class);
 
@@ -35,13 +40,21 @@ public class ListController extends EntityController {
     @Autowired
     private final ContentProvider contentProvider;
 
-    @Autowired
-    private HttpServletRequest request = null;
-
+    /**
+     * <p>Constructor for ListController.</p>
+     *
+     * @param webRequestContext a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     * @param contentProvider   a {@link com.sdl.webapp.common.api.content.ContentProvider} object.
+     */
     @Autowired
     public ListController(WebRequestContext webRequestContext, ContentProvider contentProvider) {
         this.webRequestContext = webRequestContext;
         this.contentProvider = contentProvider;
+    }
+
+    private static int getIntParameter(HttpServletRequest request, String parameterName, int defaultValue) {
+        final String parameter = request.getParameter(parameterName);
+        return !Strings.isNullOrEmpty(parameter) ? Integer.parseInt(parameter) : defaultValue;
     }
 
     /**
@@ -50,20 +63,23 @@ public class ListController extends EntityController {
      * @param request  The request.
      * @param entityId The entity id.
      * @return The name of the entity view that should be rendered for this request.
+     * @throws java.lang.Exception exception
      */
-    @RequestMapping(method = RequestMethod.GET, value = CoreAreaConstants.LIST_ACTION_NAME + "/{entityId}")
+    @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.LIST_ACTION_NAME + "/{entityId}")
     public String handleGetList(HttpServletRequest request, @PathVariable String entityId) throws Exception {
         LOG.trace("handleGetList: entityId={}", entityId);
-        this.request = request;
         // The List action is effectively just an alias for the general Entity action (we keep it for backward compatibility).
-        return handleGetEntity(request, entityId);
+        return handleEntityRequest(request, entityId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    protected ViewModel enrichModel(ViewModel model) throws Exception {
+    protected ViewModel enrichModel(ViewModel model, HttpServletRequest request) throws Exception {
         if (model instanceof ContentList) {
 
-            final ViewModel enrichedEntity = super.enrichModel(model);
+            final ViewModel enrichedEntity = super.enrichModel(model, request);
             final ContentList contentList = enrichedEntity instanceof EntityModel ? (ContentList) enrichedEntity : (ContentList) model;
 
             if (!contentList.getItemListElements().isEmpty()) {
@@ -87,11 +103,5 @@ public class ListController extends EntityController {
             }
         }
         return model;
-    }
-
-
-    private int getIntParameter(HttpServletRequest request, String parameterName, int defaultValue) {
-        final String parameter = request.getParameter(parameterName);
-        return !Strings.isNullOrEmpty(parameter) ? Integer.parseInt(parameter) : defaultValue;
     }
 }

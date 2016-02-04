@@ -9,18 +9,32 @@ import java.util.List;
 
 /**
  * BaseFormatter with base logic to be used by the format specific formatters
+ *
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public abstract class BaseFormatter implements DataFormatter {
-    private final List<String> _mediaTypes = new ArrayList<String>();
+    private final List<String> _mediaTypes = new ArrayList<>();
     WebRequestContext context;
     HttpServletRequest request;
 
+    /**
+     * <p>Constructor for BaseFormatter.</p>
+     *
+     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param context a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     */
     public BaseFormatter(HttpServletRequest request, WebRequestContext context) {
         this.context = context;
         this.request = request;
 
     }
 
+    /**
+     * <p>addMediaType.</p>
+     *
+     * @param mediaType a {@link java.lang.String} object.
+     */
     public void addMediaType(String mediaType) {
         _mediaTypes.add(mediaType);
     }
@@ -29,7 +43,7 @@ public abstract class BaseFormatter implements DataFormatter {
     /**
      * Gets the score depending on the media type
      *
-     * @return
+     * @return a double.
      */
     public double score() {
         double score = 0.0;
@@ -46,22 +60,19 @@ public abstract class BaseFormatter implements DataFormatter {
     }
 
     /**
-     * Gets the valid mediat types depending on the allowed types by the formatter
+     * {@inheritDoc}
      *
-     * @param allowedTypes
-     * @return
+     * Gets the valid mediat types depending on the allowed types by the formatter
      */
     public List<String> getValidTypes(List<String> allowedTypes) {
-        List<String> res = new ArrayList<String>();
+        List<String> res = new ArrayList<>();
         String requestHeader = request.getHeader("Accept");
         if (requestHeader != null) {
             String[] acceptTypes = requestHeader.split(",");
-            if (acceptTypes != null) {
-                for (String type : acceptTypes) {
-                    for (String mediaType : allowedTypes) {
-                        if (type.contains(mediaType)) {
-                            res.add(type);
-                        }
+            for (String type : acceptTypes) {
+                for (String mediaType : allowedTypes) {
+                    if (type.contains(mediaType)) {
+                        res.add(type);
                     }
                 }
             }
@@ -70,9 +81,9 @@ public abstract class BaseFormatter implements DataFormatter {
     }
 
     /**
-     * Whether to to add includes
+     * {@inheritDoc}
      *
-     * @return
+     * Whether to to add includes
      */
     @Override
     public boolean isAddIncludes() {
@@ -80,9 +91,9 @@ public abstract class BaseFormatter implements DataFormatter {
     }
 
     /**
-     * Whether model processing is required
+     * {@inheritDoc}
      *
-     * @return
+     * Whether model processing is required
      */
     @Override
     public boolean isProcessModel() {

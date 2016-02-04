@@ -9,15 +9,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * ThreadLocalInterceptor
+ * <p>ThreadLocalInterceptor class.</p>
  *
- * @author nic
+ * @author azarakovskiy
+ * @version 1.3-SNAPSHOT
  */
 public class ThreadLocalInterceptor extends HandlerInterceptorAdapter {
 
     @Autowired
     private ThreadLocalManager threadLocalManager;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
         if (request.getDispatcherType() != DispatcherType.INCLUDE) {

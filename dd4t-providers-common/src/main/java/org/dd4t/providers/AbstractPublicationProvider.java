@@ -130,6 +130,7 @@ public abstract class AbstractPublicationProvider extends BaseBrokerProvider imp
                         LOG.debug("Stored Publication Meta with key: {} in cache", key);
                     } else {
                         LOG.warn("No Publication Meta found for publication Id: {}", publicationId);
+                        // TODO: cache nulls?
                     }
 
                 } else {

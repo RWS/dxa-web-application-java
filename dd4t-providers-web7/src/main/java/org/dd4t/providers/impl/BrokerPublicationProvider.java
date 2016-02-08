@@ -57,8 +57,13 @@ public class BrokerPublicationProvider extends AbstractPublicationProvider imple
     }
 
     @Override
-    protected PublicationMeta loadPublicationMetaByConcreteFactory (final int publicationId) throws StorageException {
-        return PUBLICATION_META_FACTORY.getMeta(publicationId);
+    protected PublicationMeta loadPublicationMetaByConcreteFactory (final int publicationId) {
+        try {
+            return PUBLICATION_META_FACTORY.getMeta(publicationId);
+        } catch (StorageException e) {
+            LOG.error(e.getLocalizedMessage(),e);
+        }
+        return null;
     }
 
     @Override

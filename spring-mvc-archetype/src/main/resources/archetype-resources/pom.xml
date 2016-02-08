@@ -81,6 +81,8 @@
         <xalan-version>2.7.1</xalan-version>
         <sqljdbc4-version>4.0.0</sqljdbc4-version>
 
+        <!-- TODO: profile -->
+        <java.version>1.7</java.version>
     </properties>
 
     <build>
@@ -91,8 +93,8 @@
                 <version>2.5.1</version>
                 <inherited>true</inherited>
                 <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
+                    <source>${java.version}</source>
+                    <target>${java.version</target>
                 </configuration>
             </plugin>
             <plugin>

@@ -10,7 +10,7 @@
 
 	<artifactId>dd4t-example-site</artifactId>
 	<name>DD4T Example Site</name>
-
+<!-- TODO: profiles -->
 	<packaging>war</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -38,7 +38,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.dd4t</groupId>
-			<artifactId>dd4t-providers</artifactId>
+			<artifactId>dd4t-providers-common</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

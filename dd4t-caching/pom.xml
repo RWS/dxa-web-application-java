@@ -50,7 +50,7 @@
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_cache</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.build.version}</version>
             <scope>provided</scope>
         </dependency>
 

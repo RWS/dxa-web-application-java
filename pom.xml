@@ -40,11 +40,11 @@
         <url>git@github.com:/dd4t/dd4t-2-java.git</url>
     </scm>
 
+
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <project.skipTests>true</project.skipTests>
-
         <activation.version>1.1.1</activation.version>
         <activemq.version>5.10.0</activemq.version>
         <aspectj.version>1.8.1</aspectj.version>
@@ -73,29 +73,21 @@
         <selenium-java.version>2.42.2</selenium-java.version>
         <selenium.version>1.0.1</selenium.version>
         <slf4j.version>1.6.4</slf4j.version>
-        <spring.version>3.2.0.RELEASE</spring.version>
-        <tridion.version>7.1.0</tridion.version>
+
+        <tridion.web7.version>7.1.0</tridion.web7.version>
         <tridion.web8.version>8.1.0</tridion.web8.version>
 
         <urlrewritefilter.version>4.0.3</urlrewritefilter.version>
         <woodstox.version>4.4.1</woodstox.version>
         <xml-apis.version>1.4.01</xml-apis.version>
     </properties>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>2.5.1</version>
-                <inherited>true</inherited>
-                <configuration>
-                    <source>1.7</source>
-                    <target>1.7</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+
     <dependencyManagement>
+        <!-- Common 7.1.0, 8.1.0 -->
+
+
+
+
     <dependencies>
         <dependency>
             <groupId>commons-io</groupId>
@@ -151,6 +143,9 @@
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
+
+
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
@@ -294,7 +289,31 @@
                 <module>dd4t-test-spring-web</module>
                 <module>dd4t-example-site</module>
             </modules>
+        </profile>
+        <profile>
+            <id>cd-7.1.0</id>
+            <properties>
+                <tridion.build.version>7.1.0</tridion.build.version>
+                <java.version>1.7</java.version>
+                <spring.version>3.2.0.RELEASE</spring.version>
+            </properties>
 
+        </profile>
+        <profile>
+            <id>cd-8.1.0</id>
+            <properties>
+                <tridion.build.version>8.1.0</tridion.build.version>
+                <java.version>1.8</java.version>
+                <spring.version>4.1.7.RELEASE</spring.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>cd-8.1.0-inproc</id>
+            <properties>
+                <tridion.build.version>8.1.0</tridion.build.version>
+                <java.version>1.8</java.version>
+                <spring.version>4.1.7.RELEASE</spring.version>
+            </properties>
         </profile>
         <profile>
             <id>release-central</id>
@@ -376,4 +395,18 @@
             </build>
         </profile>
     </profiles>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <inherited>true</inherited>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

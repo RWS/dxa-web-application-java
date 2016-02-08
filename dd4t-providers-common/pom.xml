@@ -73,6 +73,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
+
     </dependencies>
 
     <profiles>
@@ -82,12 +83,12 @@
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_model</artifactId>
-                    <version>${tridion.version}</version>
+                    <version>${tridion.web7.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_core</artifactId>
-                    <version>${tridion.version}</version>
+                    <version>${tridion.web7.version}</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -106,7 +107,21 @@
                 </dependency>
             </dependencies>
         </profile>
-        <!-- TODO: add web8-inproc if so required -->
+        <profile>
+            <id>cd-8.1.0-inproc</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_model</artifactId>
+                    <version>${tridion.web8.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_core</artifactId>
+                    <version>${tridion.web8.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
 </project>

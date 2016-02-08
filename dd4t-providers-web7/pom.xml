@@ -66,43 +66,43 @@
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_broker</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.web7.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_cache</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.web7.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_core</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.web7.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_datalayer</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.web7.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_linking</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.web7.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_model</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.web7.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_dynamic</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.web7.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -110,7 +110,7 @@
     <!--
         TODO: the profiles need to move to the apps actually using them as
         well as the archetype
-    -->
+
     <profiles>
         <profile>
             <id>cd-7.1.0</id>
@@ -124,12 +124,12 @@
         <profile>
             <id>cd-8.1.0</id>
             <properties>
-                <tridion.version>8.1.0</tridion.version>
+                <tridion.build.version>8.1.0</tridion.build.version>
                 <java.version>1.8</java.version>
                 <build.classifier>8.1.0</build.classifier>
             </properties>
 
-        </profile>
+        </profile> -->
         <!-- This is for running the Web 8 jars in process -->
         <!-- TODO: inproc <profile>
             <id>cd-8.1.0-inproc</id>
@@ -188,6 +188,6 @@
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
-        </profile>-->
-    </profiles>
+        </profile>
+    </profiles>-->
 </project>

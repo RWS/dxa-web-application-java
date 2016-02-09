@@ -3,7 +3,6 @@ package com.sdl.webapp.common.api;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
-import org.springframework.stereotype.Component;
 
 /**
  * <p>MediaHelper interface.</p>
@@ -111,26 +110,6 @@ public interface MediaHelper {
     abstract class ResponsiveMediaUrlBuilder {
 
         public abstract ResponsiveMediaUrlBuilder.Builder newInstance();
-
-        public interface HostsNamesProvider {
-            String getHostname();
-
-            String getCidHostname();
-        }
-
-        @Component
-        public static class StubHostsNamesProvider implements HostsNamesProvider {
-
-            @Override
-            public String getHostname() {
-                throw new UnsupportedOperationException("Usage of stub implementation.");
-            }
-
-            @Override
-            public String getCidHostname() {
-                throw new UnsupportedOperationException("Usage of stub implementation.");
-            }
-        }
 
         @Setter
         @Getter

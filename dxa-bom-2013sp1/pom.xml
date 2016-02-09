@@ -334,6 +334,18 @@
                 <version>2014sp1</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.tridion.smarttarget</groupId>
+                <artifactId>session_cartridge</artifactId>
+                <version>2014sp1</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.tridion.smarttarget</groupId>
+                <artifactId>smarttarget_cartridge</artifactId>
+                <version>2014sp1</version>
+            </dependency>
+
             <!-- Spring Framework -->
             <dependency>
                 <groupId>org.springframework</groupId>

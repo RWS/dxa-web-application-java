@@ -37,6 +37,7 @@
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-client</artifactId>
+            <scope>provided</scope>
         </dependency>
 
         <!-- Note this dependency. We set scope = provided,
@@ -58,6 +59,7 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <version>${spring.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!--
@@ -68,6 +70,7 @@
             <groupId>net.sf.ehcache</groupId>
             <artifactId>ehcache</artifactId>
             <version>${ehcache.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

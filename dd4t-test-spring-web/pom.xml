@@ -247,8 +247,6 @@
                 <!-- Third-party libraries used by Tridion Content Delivery -->
 
 
-
-
                 <dependency>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-orm</artifactId>
@@ -257,12 +255,12 @@
                 <dependency>
                     <groupId>org.hibernate.javax.persistence</groupId>
                     <artifactId>hibernate-jpa-2.0-api</artifactId>
-                    <version>${hibernate-jpa.version}</version>
+                    <version>${hibernate.jpa.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-entitymanager</artifactId>
-                    <version>${hibernate-version}</version>
+                    <version>${hibernate.version}</version>
                     <exclusions>
                         <exclusion>
                             <groupId>xml-apis</groupId>
@@ -344,9 +342,6 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <dependencies>
-
-
-
                 <dependency>
                     <groupId>org.dd4t</groupId>
                     <artifactId>dd4t-providers-web8</artifactId>

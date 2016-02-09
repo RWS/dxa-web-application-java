@@ -89,9 +89,11 @@ public final class HttpUtils {
         return getFullUrl(request, getOriginalUri(request));
     }
 
+    // TODO: handle context paths better
+
     public static String getFullUrl (final HttpServletRequest request, final String location) {
         String contextPath = "/".equals(request.getContextPath()) ? "" : request.getContextPath();
-        return String.format("%s://%s:%d%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), contextPath, location);
+        return String.format("%s://%s:%d%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), contextPath, location.substring(contextPath.length()));
     }
 
     public static HttpServletRequest getCurrentRequest () {

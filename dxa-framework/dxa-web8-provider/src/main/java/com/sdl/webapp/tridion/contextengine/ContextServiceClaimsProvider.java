@@ -9,6 +9,7 @@ import com.sdl.context.odata.client.api.ODataContextEngine;
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.dd4t.core.util.HttpUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
@@ -27,6 +28,9 @@ import java.util.Set;
 public class ContextServiceClaimsProvider implements ContextClaimsProvider {
 
     private static final String CONTEXT_COOKIE_NAME = "context";
+
+    @Autowired
+    private ODataContextEngine oDataContextEngine;
 
     private static Map<String, Object> getClaimsMap(ContextMap<? extends Aspect> contextMap, String aspectName) {
         if (Strings.isNullOrEmpty(aspectName)) {
@@ -73,7 +77,7 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
 
         ContextMap<? extends Aspect> contextMap;
         try {
-            contextMap = new ODataContextEngine().resolve(evidenceBuilder.build());
+            contextMap = oDataContextEngine.resolve(evidenceBuilder.build());
 
         } catch (ResolverException e) {
             throw new DxaException("An error occurred while resolving evidence using the Context Service.", e);

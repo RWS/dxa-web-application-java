@@ -14,7 +14,7 @@
 
     <properties>
         <dxa.version>1.3-SNAPSHOT</dxa.version>
-        <java-version>1.7</java-version>
+        <java-version>1.8</java-version>
     </properties>
 
     <build>
@@ -47,18 +47,6 @@
     </build>
 
     <profiles>
-        <profile>
-            <id>core-module</id>
-            <dependencies>
-                <dependency>
-                    <artifactId>dxa-module-core</artifactId>
-                    <groupId>com.sdl.dxa.modules</groupId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-
         <profile>
             <id>cid-module</id>
             <dependencies>
@@ -103,38 +91,115 @@
                 </dependency>
             </dependencies>
         </profile>
-    </profiles>
+        <profile>
+            <id>smarttarget-2013sp1-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
+                    <version>${dxa.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>smarttarget-web8-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-smarttarget-web8</artifactId>
+                    <version>${dxa.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
 
-    <dependencyManagement>
-        <dependencies>
-            <!-- Remove if you want to manage your dependecies independently -->
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-parent</artifactId>
-                <version>${dxa.version}</version>
-                <scope>import</scope>
-				<type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+        <profile>
+            <id>staging-8.1.0</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_content_client</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_content_common</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>content-ambient-client</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <id>cd-7.1.0</id>
+            <properties>
+                <build.classifier>7.1.0</build.classifier>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sdl.dxa</groupId>
+                        <artifactId>dxa-bom-2013sp1</artifactId>
+                        <version>${dxa.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa</groupId>
+                    <artifactId>dxa-tridion-2013sp1-provider</artifactId>
+                    <version>${dxa.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>cd-8.1.0</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <build.classifier>8.1.0</build.classifier>
+            </properties>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>com.sdl.dxa</groupId>
+                        <artifactId>dxa-bom-web8</artifactId>
+                        <version>${dxa.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa</groupId>
+                    <artifactId>dxa-web8-provider</artifactId>
+                    <version>${dxa.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 
     <dependencies>
         <!-- SDL Digital Experience Accelerator -->
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-api</artifactId>
-            <version>${dxa.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-impl</artifactId>
-            <version>${dxa.version}</version>
-            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa.modules</groupId>
             <artifactId>dxa-module-core</artifactId>
-            <version>${dxa.version}</version>
         </dependency>
 
         <dependency>
@@ -149,10 +214,18 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
         <!-- Tests -->

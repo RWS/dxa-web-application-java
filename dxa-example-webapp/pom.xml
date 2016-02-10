@@ -108,6 +108,17 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>smarttarget-web8-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-smarttarget-web8</artifactId>
+                    <version>${dxa.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
 
         <profile>
             <id>staging-8.1.0</id>

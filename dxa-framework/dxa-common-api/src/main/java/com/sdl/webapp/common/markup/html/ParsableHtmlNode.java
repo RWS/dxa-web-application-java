@@ -10,9 +10,6 @@ import java.util.List;
 
 /**
  * <p>ParsableHtmlNode class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class ParsableHtmlNode extends HtmlNode {
 

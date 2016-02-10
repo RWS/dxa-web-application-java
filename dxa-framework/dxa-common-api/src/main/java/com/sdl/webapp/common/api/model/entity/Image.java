@@ -21,9 +21,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * <p>Image class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntity(entityName = "ImageObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 @ToString

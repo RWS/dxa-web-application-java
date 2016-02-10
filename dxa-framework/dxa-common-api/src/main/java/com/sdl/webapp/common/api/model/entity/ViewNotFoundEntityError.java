@@ -12,9 +12,6 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.span;
 
 /**
  * <p>ViewNotFoundEntityError class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

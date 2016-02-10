@@ -55,9 +55,6 @@ import static com.sdl.webapp.util.dd4t.TcmUtils.buildTemplateTcmUri;
 
 /**
  * Implementation of {@link com.sdl.webapp.common.api.content.ContentProvider} that uses DD4T to provide content.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class AbstractDefaultProvider implements ContentProvider, NavigationProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDefaultProvider.class);

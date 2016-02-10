@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.localization;
 
 /**
  * Localization resolver.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface LocalizationResolver {
 

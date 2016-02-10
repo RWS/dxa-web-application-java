@@ -5,9 +5,6 @@ import com.sdl.webapp.common.api.model.RichText;
 
 /**
  * <p>Paragraph class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class Paragraph extends AbstractEntityModel {
 

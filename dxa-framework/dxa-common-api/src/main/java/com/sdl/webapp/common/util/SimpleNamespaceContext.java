@@ -8,9 +8,6 @@ import java.util.Iterator;
 /**
  * Implementation of {@code javax.xml.namespace.NamespaceContext} that gets information from a fixed map containing
  * prefixes and namespace URIs.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class SimpleNamespaceContext implements NamespaceContext {
 

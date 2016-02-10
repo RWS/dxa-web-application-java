@@ -21,9 +21,6 @@ import java.util.List;
 @Component
 /**
  * <p>ComponentLinkFieldConverter class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 

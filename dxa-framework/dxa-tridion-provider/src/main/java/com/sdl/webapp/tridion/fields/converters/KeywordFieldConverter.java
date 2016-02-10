@@ -16,9 +16,6 @@ import java.util.List;
 @Component
 /**
  * <p>KeywordFieldConverter class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class KeywordFieldConverter extends AbstractFieldConverter {
 

@@ -9,9 +9,6 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 
 /**
  * <p>Link class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntity(entityName = "EmbeddedLink", vocabulary = SDL_CORE, prefix = "e")
 public class Link extends AbstractEntityModel {

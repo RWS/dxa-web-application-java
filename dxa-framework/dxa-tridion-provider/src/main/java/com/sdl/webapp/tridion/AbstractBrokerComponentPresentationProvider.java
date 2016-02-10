@@ -19,9 +19,6 @@ import java.util.List;
 
 /**
  * AbstractBrokerComponentPresentationProvider temporary overrides of the standard DD4T DCP provider to correct the DCP implementation.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class AbstractBrokerComponentPresentationProvider extends BaseBrokerProvider implements ComponentPresentationProvider {
 

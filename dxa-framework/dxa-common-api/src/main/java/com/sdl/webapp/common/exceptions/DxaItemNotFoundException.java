@@ -2,9 +2,6 @@ package com.sdl.webapp.common.exceptions;
 
 /**
  * Created by Administrator on 15/09/2015.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class DxaItemNotFoundException extends DxaException {
 

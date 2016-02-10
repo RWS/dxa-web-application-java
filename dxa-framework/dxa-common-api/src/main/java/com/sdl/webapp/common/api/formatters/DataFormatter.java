@@ -6,9 +6,6 @@ import java.util.List;
 
 /**
  * DataFormatter Interface for that defines the behavior of the formatters
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface DataFormatter {
     /**

@@ -14,9 +14,6 @@ import java.util.UUID;
 
 /**
  * <p>GoogleMapTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class GoogleMapTag extends AbstractGoogleMapTag {
 

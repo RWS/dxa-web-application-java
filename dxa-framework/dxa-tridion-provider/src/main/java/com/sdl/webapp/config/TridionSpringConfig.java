@@ -16,9 +16,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 /**
  * <p>TridionSpringConfig class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class TridionSpringConfig {
 

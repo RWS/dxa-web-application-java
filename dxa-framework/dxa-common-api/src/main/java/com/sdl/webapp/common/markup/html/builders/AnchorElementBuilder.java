@@ -2,9 +2,6 @@ package com.sdl.webapp.common.markup.html.builders;
 
 /**
  * <p>AnchorElementBuilder class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class AnchorElementBuilder extends AbstractElementBuilder<AnchorElementBuilder> {
 

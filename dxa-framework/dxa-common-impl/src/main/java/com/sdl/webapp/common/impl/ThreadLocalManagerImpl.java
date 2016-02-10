@@ -9,9 +9,6 @@ import java.util.List;
 @Component
 /**
  * <p>ThreadLocalManagerImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class ThreadLocalManagerImpl implements ThreadLocalManager {
 

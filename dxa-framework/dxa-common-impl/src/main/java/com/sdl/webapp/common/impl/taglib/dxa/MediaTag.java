@@ -10,9 +10,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * <p>MediaTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class MediaTag extends HtmlElementTag {
     private static final Logger LOG = LoggerFactory.getLogger(MediaTag.class);

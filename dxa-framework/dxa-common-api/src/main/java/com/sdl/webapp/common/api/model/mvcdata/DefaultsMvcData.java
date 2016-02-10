@@ -16,9 +16,6 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaCo
 @Getter
 /**
  * <p>DefaultsMvcData class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public enum DefaultsMvcData {
 

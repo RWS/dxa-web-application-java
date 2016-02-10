@@ -24,9 +24,6 @@ import java.util.concurrent.locks.ReentrantLock;
 @Component
 /**
  * <p>ViewModelRegistryImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 

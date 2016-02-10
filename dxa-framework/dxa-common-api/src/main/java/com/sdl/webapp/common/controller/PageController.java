@@ -61,9 +61,6 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
  * Main controller. This handles requests that come from the client.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Controller
 public class PageController extends BaseController {

@@ -18,9 +18,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 /**
  * <p>SpringContextConfiguration class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class SpringContextConfiguration {
 

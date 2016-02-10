@@ -27,9 +27,6 @@ import java.util.Set;
 @Component
 /**
  * <p>SemanticMapperImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class SemanticMapperImpl implements SemanticMapper {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMapperImpl.class);

@@ -4,9 +4,6 @@ import java.util.List;
 
 /**
  * <p>MarkupDecoratorRegistry interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface MarkupDecoratorRegistry {
 

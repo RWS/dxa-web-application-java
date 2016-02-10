@@ -26,9 +26,6 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 /**
  * <p>SpringConfiguration class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @EnableWebMvc
 @ImportResource({"classpath*:/META-INF/spring-context.xml"})

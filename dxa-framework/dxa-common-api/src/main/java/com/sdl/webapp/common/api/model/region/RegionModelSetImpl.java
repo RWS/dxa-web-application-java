@@ -15,9 +15,6 @@ import java.util.Set;
 
 /**
  * <p>RegionModelSetImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @EqualsAndHashCode(callSuper = false)
 @ToString

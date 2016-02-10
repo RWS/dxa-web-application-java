@@ -10,9 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * <p>ThreadLocalInterceptor class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class ThreadLocalInterceptor extends HandlerInterceptorAdapter {
 

@@ -37,9 +37,6 @@ import java.util.Set;
 
 /**
  * <p>SemanticMappingRegistryImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMappingRegistryImpl.class);

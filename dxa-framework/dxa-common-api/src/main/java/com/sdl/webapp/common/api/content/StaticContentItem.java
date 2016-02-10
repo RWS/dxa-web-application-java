@@ -5,9 +5,6 @@ import java.io.InputStream;
 
 /**
  * Static content item.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface StaticContentItem {
 

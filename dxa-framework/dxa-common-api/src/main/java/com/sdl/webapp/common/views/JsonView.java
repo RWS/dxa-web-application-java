@@ -11,9 +11,6 @@ import java.util.Map;
 
 /**
  * <p>JsonView class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class JsonView extends MappingJackson2JsonView {
 

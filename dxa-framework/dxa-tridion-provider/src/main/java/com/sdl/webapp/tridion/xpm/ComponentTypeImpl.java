@@ -5,9 +5,6 @@ import com.sdl.webapp.common.api.xpm.ComponentType;
 
 /**
  * <p>ComponentTypeImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class ComponentTypeImpl implements ComponentType {
 

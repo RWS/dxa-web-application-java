@@ -14,9 +14,6 @@ import java.util.Set;
 
 /**
  * <p>DCPDataBinderWrapper class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class DCPDataBinderWrapper implements DataBinder {
 

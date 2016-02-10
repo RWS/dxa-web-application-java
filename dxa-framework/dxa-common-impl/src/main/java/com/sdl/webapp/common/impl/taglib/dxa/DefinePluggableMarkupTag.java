@@ -13,7 +13,6 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
  * Define Pluggable Markup Tag
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 public class DefinePluggableMarkupTag extends BodyTagSupport {
 

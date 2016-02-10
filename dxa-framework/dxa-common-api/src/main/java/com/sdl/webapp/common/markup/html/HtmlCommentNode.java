@@ -4,9 +4,6 @@ import java.util.Objects;
 
 /**
  * <p>HtmlCommentNode class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class HtmlCommentNode extends HtmlNode {
 

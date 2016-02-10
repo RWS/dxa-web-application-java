@@ -2,9 +2,6 @@ package com.sdl.webapp.common.markup.html.builders;
 
 /**
  * <p>ButtonElementBuilder class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class ButtonElementBuilder extends AbstractElementBuilder<ButtonElementBuilder> {
 

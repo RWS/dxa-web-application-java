@@ -7,9 +7,6 @@ import java.util.Map;
 
 /**
  * <p>Configuration class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class Configuration extends AbstractEntityModel {
 

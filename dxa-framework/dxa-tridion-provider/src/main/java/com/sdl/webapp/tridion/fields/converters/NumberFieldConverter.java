@@ -13,9 +13,6 @@ import java.util.List;
 @Component
 /**
  * <p>NumberFieldConverter class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class NumberFieldConverter extends AbstractFieldConverter {
 

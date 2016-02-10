@@ -20,9 +20,6 @@ import java.util.Map;
 @SemanticMappingIgnore
 /**
  * <p>Abstract AbstractEntityModel class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

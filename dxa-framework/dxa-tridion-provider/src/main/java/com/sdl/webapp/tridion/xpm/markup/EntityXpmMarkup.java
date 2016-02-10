@@ -19,7 +19,6 @@ import org.jsoup.select.Elements;
  * Entity XPM Markup
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 public class EntityXpmMarkup implements MarkupDecorator {
 

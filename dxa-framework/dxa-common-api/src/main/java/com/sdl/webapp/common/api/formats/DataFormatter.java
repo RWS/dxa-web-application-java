@@ -4,9 +4,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 /**
  * DataFormatter, to be implemented by the class wiring the different format responses
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface DataFormatter {
     /**

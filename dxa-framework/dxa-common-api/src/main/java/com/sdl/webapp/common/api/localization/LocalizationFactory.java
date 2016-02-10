@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.localization;
 
 /**
  * Localization factory.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface LocalizationFactory {
 

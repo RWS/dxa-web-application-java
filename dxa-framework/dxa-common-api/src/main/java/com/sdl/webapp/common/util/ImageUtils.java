@@ -17,9 +17,6 @@ import java.util.regex.Pattern;
 
 /**
  * <p>ImageUtils class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class ImageUtils {
 

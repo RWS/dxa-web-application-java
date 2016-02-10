@@ -4,9 +4,6 @@ import java.util.StringTokenizer;
 
 /**
  * Simple utility functions to process TCM-URIs.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class TcmUtils {
 

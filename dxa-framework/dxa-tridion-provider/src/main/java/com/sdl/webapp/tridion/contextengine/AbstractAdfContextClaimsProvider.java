@@ -26,9 +26,6 @@ import java.util.regex.Pattern;
 @Slf4j
 /**
  * <p>Abstract AbstractAdfContextClaimsProvider class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsProvider {
 

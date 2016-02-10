@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.mapping.semantic;
 
 /**
  * <p>SemanticMappingException class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class SemanticMappingException extends Exception {
 

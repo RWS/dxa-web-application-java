@@ -21,9 +21,6 @@ import java.util.Set;
 @Component
 /**
  * <p>ContextServiceClaimsProvider class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class ContextServiceClaimsProvider implements ContextClaimsProvider {
 

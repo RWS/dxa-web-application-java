@@ -37,9 +37,6 @@ import static com.sdl.webapp.common.impl.localization.semantics.SemanticsConvert
  * The configuration of a localization is stored in a number of JSON files that are retrieved via the static content
  * provider.
  * </p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Component
 public class LocalizationFactoryImpl implements LocalizationFactory {

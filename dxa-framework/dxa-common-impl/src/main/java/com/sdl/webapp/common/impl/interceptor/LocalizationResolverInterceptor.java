@@ -21,9 +21,6 @@ import javax.servlet.http.HttpServletResponse;
  * This should be the first interceptor to be called for requests that are being handled by the Spring
  * {@code DispatcherServlet}.
  * </p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(LocalizationResolverInterceptor.class);

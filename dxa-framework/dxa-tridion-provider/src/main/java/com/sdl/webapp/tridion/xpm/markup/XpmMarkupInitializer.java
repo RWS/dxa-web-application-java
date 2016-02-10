@@ -11,7 +11,6 @@ import javax.annotation.PostConstruct;
  * XpmMarkupInitializer
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 @Component
 public class XpmMarkupInitializer {

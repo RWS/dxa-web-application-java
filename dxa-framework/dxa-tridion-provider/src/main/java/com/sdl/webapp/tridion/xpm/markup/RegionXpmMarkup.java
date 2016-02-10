@@ -19,7 +19,6 @@ import org.jsoup.nodes.Node;
  * Region XPM Markup
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 public class RegionXpmMarkup implements MarkupDecorator {
 

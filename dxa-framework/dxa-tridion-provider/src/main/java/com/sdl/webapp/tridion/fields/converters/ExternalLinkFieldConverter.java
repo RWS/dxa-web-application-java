@@ -11,9 +11,6 @@ import java.util.List;
 @Component
 /**
  * <p>ExternalLinkFieldConverter class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class ExternalLinkFieldConverter extends AbstractFieldConverter {
 

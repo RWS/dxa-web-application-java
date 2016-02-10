@@ -9,9 +9,6 @@ import org.dd4t.contentmodel.ComponentPresentation;
 
 /**
  * <p>EntityBuilder interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface EntityBuilder {
     /**

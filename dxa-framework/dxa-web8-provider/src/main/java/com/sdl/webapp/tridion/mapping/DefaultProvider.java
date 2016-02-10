@@ -22,9 +22,6 @@ import java.io.IOException;
 @Component
 /**
  * <p>DefaultProvider class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class DefaultProvider extends AbstractDefaultProvider {
     private static final Object LOCK = new Object();

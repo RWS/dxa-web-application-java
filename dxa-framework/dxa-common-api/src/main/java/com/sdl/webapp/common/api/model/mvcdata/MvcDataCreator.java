@@ -4,9 +4,6 @@ import com.sdl.webapp.common.api.model.MvcData;
 
 /**
  * <p>MvcDataCreator class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class MvcDataCreator {
 

@@ -34,9 +34,6 @@ import java.util.Stack;
 
 /**
  * <p>SemanticFieldDataProviderImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider {
     /**

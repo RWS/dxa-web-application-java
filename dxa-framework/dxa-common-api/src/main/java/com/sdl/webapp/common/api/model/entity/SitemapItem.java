@@ -8,9 +8,6 @@ import java.util.List;
 
 /**
  * <p>SitemapItem class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class SitemapItem extends AbstractEntityModel {
 

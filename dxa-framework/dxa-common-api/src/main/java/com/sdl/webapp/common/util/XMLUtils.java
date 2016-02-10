@@ -20,9 +20,6 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * Utilities for working with XML.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class XMLUtils {
 

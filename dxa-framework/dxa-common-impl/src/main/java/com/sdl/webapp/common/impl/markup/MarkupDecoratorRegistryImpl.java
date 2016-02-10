@@ -15,7 +15,6 @@ import java.util.Map;
  * MarkupDecoratorRegistryImpl
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 @Component
 public class MarkupDecoratorRegistryImpl implements MarkupDecoratorRegistry {

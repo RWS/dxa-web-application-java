@@ -13,9 +13,6 @@ import java.util.Map;
 @Component
 /**
  * <p>AdfContextClaimsProvider class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Profile("adf.context.provider")
 @Primary

@@ -4,9 +4,6 @@ import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 
 /**
  * <p>FieldConverterException class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class FieldConverterException extends SemanticMappingException {
 

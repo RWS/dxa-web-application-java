@@ -9,9 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 /**
  * <p>DefaultConditionalEntityEvaluator class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class DefaultConditionalEntityEvaluator implements
         ConditionalEntityEvaluator {

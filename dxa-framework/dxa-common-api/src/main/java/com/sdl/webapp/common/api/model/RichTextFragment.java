@@ -5,9 +5,6 @@ import com.sdl.webapp.common.markup.html.HtmlElement;
 
 /**
  * <p>RichTextFragment interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface RichTextFragment {
     /**

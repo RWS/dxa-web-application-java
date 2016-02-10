@@ -7,9 +7,6 @@ import java.lang.annotation.Target;
 
 /**
  * Set of views to be registered by {@link com.sdl.webapp.common.api.mapping.views.AbstractInitializer}.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)

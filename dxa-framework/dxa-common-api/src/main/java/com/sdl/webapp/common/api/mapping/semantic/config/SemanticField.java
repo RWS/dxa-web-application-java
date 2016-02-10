@@ -7,9 +7,6 @@ import java.util.Objects;
 
 /**
  * <p>SemanticField class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class SemanticField {
 

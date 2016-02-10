@@ -9,9 +9,6 @@ import javax.servlet.http.HttpServletRequest;
  * <p>
  * Resolves a view based model MVC data and it's view type. Can for example be used to route to contextual views.
  * </p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface ViewResolver {
 

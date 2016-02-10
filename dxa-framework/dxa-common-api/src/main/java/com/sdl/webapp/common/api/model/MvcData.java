@@ -4,9 +4,6 @@ import java.util.Map;
 
 /**
  * Data for the MVC framework to determine how a view model object should be handled.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface MvcData {
 

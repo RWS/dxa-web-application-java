@@ -7,9 +7,6 @@ import java.util.AbstractList;
 
 /**
  * Adapter to make dealing with {@code org.w3c.dom.NodeList} easier.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class NodeListAdapter extends AbstractList<Node> {
 

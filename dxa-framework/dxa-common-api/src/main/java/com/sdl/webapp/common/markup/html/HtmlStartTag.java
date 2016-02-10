@@ -8,9 +8,6 @@ import java.util.Objects;
 
 /**
  * <p>HtmlStartTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class HtmlStartTag extends HtmlRenderable {
 

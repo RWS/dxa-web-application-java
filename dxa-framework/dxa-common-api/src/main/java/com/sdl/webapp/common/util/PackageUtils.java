@@ -12,9 +12,6 @@ import java.io.IOException;
 
 /**
  * Utilities for working with Java packages.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class PackageUtils {
 

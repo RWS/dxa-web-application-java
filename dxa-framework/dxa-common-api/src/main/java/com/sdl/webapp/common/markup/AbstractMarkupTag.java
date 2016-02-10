@@ -16,9 +16,6 @@ import java.util.List;
 
 /**
  * <p>AbstractMarkupTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class AbstractMarkupTag extends TagSupport {
 

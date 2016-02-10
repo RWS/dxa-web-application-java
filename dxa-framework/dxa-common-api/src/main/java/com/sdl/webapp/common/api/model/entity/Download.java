@@ -24,9 +24,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * <p>Download class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntity(entityName = "DataDownload", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Download extends MediaItem {

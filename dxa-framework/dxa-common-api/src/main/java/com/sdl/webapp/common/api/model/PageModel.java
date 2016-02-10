@@ -4,9 +4,6 @@ import java.util.Map;
 
 /**
  * <p>PageModel interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface PageModel extends ViewModel {
 

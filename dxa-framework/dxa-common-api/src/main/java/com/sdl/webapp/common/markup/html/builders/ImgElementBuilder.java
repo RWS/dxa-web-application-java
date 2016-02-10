@@ -2,9 +2,6 @@ package com.sdl.webapp.common.markup.html.builders;
 
 /**
  * <p>ImgElementBuilder class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class ImgElementBuilder extends SrcElementBuilder<ImgElementBuilder> {
 

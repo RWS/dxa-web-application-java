@@ -16,9 +16,6 @@ import java.util.Map;
 @Component
 /**
  * <p>ContextEngineImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Scope(value = "request")
 public class ContextEngineImpl implements ContextEngine {

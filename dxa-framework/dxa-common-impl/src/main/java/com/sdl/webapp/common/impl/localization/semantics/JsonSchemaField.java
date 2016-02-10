@@ -6,9 +6,6 @@ import java.util.List;
 
 /**
  * <p>JsonSchemaField class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class JsonSchemaField {
 

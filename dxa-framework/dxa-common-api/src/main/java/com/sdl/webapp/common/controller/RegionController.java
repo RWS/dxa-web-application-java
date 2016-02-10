@@ -21,9 +21,6 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.REGION_MODE
  * <p>
  * This handles include requests to /system/mvc/Core/Region/{regionName}
  * </p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Controller
 @RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + '/' + DefaultsMvcData.CoreAreaConstants.REGION_CONTROLLER_NAME)

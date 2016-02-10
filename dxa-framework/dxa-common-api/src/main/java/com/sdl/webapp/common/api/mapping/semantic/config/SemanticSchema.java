@@ -11,9 +11,6 @@ import java.util.Set;
 
 /**
  * <p>SemanticSchema class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class SemanticSchema {
 

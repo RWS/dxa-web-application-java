@@ -20,9 +20,6 @@ import java.util.Map;
 
 /**
  * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class AbstractTridionLocalizationResolver implements LocalizationResolver {
 

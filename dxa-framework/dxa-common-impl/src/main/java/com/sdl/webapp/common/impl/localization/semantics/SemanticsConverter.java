@@ -23,9 +23,6 @@ import java.util.Set;
  * the JSON configuration files for the localization. This class converts the semantics into the format that the web
  * application needs.
  * </p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class SemanticsConverter {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticsConverter.class);

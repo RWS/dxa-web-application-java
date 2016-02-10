@@ -4,9 +4,6 @@ import java.util.Map;
 
 /**
  * <p>Dd4tUtils interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface Dd4tUtils {
     /**

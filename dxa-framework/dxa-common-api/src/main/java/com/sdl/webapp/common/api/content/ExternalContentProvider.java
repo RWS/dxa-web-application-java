@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletRequest;
  * Provider for external content provided through an ECL connector
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 public interface ExternalContentProvider {
 

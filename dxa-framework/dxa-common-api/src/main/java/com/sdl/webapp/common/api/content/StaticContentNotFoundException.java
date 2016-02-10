@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.content;
 
 /**
  * Thrown when a static content provider cannot find the requested static content.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class StaticContentNotFoundException extends ContentProviderException {
 

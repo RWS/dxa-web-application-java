@@ -24,9 +24,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * <p>YouTubeVideo class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @EqualsAndHashCode(callSuper = true)
 @Data

@@ -6,9 +6,6 @@ package com.sdl.webapp.common.api.mapping.semantic;
  * <p>
  * The field value is the actual value for the field of an entity. The property data is extra data which is stored in
  * the entity and which is used for semantic markup.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class FieldData {
 

@@ -11,9 +11,6 @@ import java.util.Map;
 
 /**
  * <p>NestedCustomMap class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class NestedCustomMap {
     private Map<String, Object> map;

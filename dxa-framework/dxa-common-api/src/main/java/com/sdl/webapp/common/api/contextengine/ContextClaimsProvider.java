@@ -6,9 +6,6 @@ import java.util.Map;
 
 /**
  * <p>ContextClaimsProvider interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface ContextClaimsProvider {
 

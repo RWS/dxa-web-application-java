@@ -40,9 +40,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @org.springframework.stereotype.Component
 /**
  * <p>EntityBuilderImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class EntityBuilderImpl implements EntityBuilder {
 

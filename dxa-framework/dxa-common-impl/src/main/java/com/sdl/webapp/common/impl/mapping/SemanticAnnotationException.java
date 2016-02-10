@@ -6,9 +6,6 @@ package com.sdl.webapp.common.impl.mapping;
  * <p>
  * This is a {@code RuntimeException} because when this happens, it most likely means there is a bug in the code.
  * </p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class SemanticAnnotationException extends RuntimeException {
 

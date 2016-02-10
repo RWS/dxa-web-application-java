@@ -16,9 +16,6 @@ import java.io.IOException;
 
 /**
  * <p>RichTextTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class RichTextTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RichTextTag.class);

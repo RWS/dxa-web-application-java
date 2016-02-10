@@ -239,6 +239,8 @@ public abstract class BaseDataBinder {
         for (String viewModelName : viewModelNames) {
             LOG.info("Storing viewModelName: {}, for class: {}", viewModelName, model.toString());
             if (VIEW_MODELS.containsKey(viewModelName)) {
+
+                // TODO: same name, different model!
                 LOG.warn("Key: {} already exists! Model for key is: {}", viewModelName, model.toString());
             } else {
                 VIEW_MODELS.put(viewModelName, model);

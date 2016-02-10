@@ -24,6 +24,7 @@ import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.tridion.query.BrokerQuery;
 import com.sdl.webapp.tridion.query.BrokerQueryException;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
@@ -34,12 +35,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.UriUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -261,7 +264,9 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
 
     /** {@inheritDoc} */
     @Override
+    @SneakyThrows(UnsupportedEncodingException.class)
     public PageModel getPageModel(String path, final Localization localization) throws ContentProviderException {
+        path = UriUtils.encodePath(path, "UTF-8");
         return findPage(path, localization, new TryFindPage<PageModel>() {
             @Override
             public PageModel tryFindPage(String path, int publicationId) throws ContentProviderException {

@@ -39,7 +39,7 @@
         <developerConnection>scm:git:git@github.com:/dd4t/dd4t-2-java.git</developerConnection>
         <url>git@github.com:/dd4t/dd4t-2-java.git</url>
     </scm>
-    <artifactId>dd4t-providers-inproc</artifactId>
+    <artifactId>dd4t-providers</artifactId>
     <packaging>jar</packaging>
 
 
@@ -67,43 +67,43 @@
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_broker</artifactId>
-            <version>${tridion.web7.version}</version>
+            <version>${tridion.build.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_cache</artifactId>
-            <version>${tridion.web7.version}</version>
+            <version>${tridion.build.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_core</artifactId>
-            <version>${tridion.web7.version}</version>
+            <version>${tridion.build.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_datalayer</artifactId>
-            <version>${tridion.web7.version}</version>
+            <version>${tridion.build.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_linking</artifactId>
-            <version>${tridion.web7.version}</version>
+            <version>${tridion.build.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_model</artifactId>
-            <version>${tridion.web7.version}</version>
+            <version>${tridion.build.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_dynamic</artifactId>
-            <version>${tridion.web7.version}</version>
+            <version>${tridion.build.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -116,87 +116,28 @@
         </dependency>
     </dependencies>
 
-    <!--
-        TODO: the profiles need to move to the apps actually using them as
-        well as the archetype
-
     <profiles>
         <profile>
-            <id>cd-7.1.0</id>
-            <properties>
-                <tridion.version>7.1.0</tridion.version>
-                <java.version>1.7</java.version>
-                <build.classifier>7.1.0</build.classifier>
-            </properties>
-
-        </profile>
-        <profile>
             <id>cd-8.1.0</id>
-            <properties>
-                <tridion.build.version>8.1.0</tridion.build.version>
-                <java.version>1.8</java.version>
-                <build.classifier>8.1.0</build.classifier>
-            </properties>
-
-        </profile> -->
-        <!-- This is for running the Web 8 jars in process -->
-        <!-- TODO: inproc <profile>
-            <id>cd-8.1.0-inproc</id>
-            <properties>
-                <tridion.version>8.1.0</tridion.version>
-                <java.version>1.8</java.version>
-                <build.classifier>8.1.0-inproc</build.classifier>
-            </properties>
             <dependencies>
                 <dependency>
                     <groupId>com.tridion</groupId>
-                    <artifactId>cd_broker</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_cache</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_core</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_datalayer</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_linking</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_model</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_dynamic</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
                     <artifactId>cd_common_util</artifactId>
-                    <version>${tridion.version}</version>
+                    <version>${tridion.web8.version}</version>
                     <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>
-    </profiles>-->
+        <profile>
+            <id>cd-8.1.0-inproc</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_util</artifactId>
+                    <version>${tridion.web8.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

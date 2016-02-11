@@ -6,9 +6,6 @@ import java.util.List;
 
 /**
  * <p>PluggableMarkupRegistry interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface PluggableMarkupRegistry {
 

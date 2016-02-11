@@ -6,9 +6,6 @@ import java.util.Set;
 
 /**
  * <p>Abstract ContextClaims class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class ContextClaims {
     private Map<String, Object> claims;

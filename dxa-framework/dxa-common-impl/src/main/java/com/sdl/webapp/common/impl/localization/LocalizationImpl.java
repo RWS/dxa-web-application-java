@@ -21,9 +21,6 @@ import java.util.regex.Pattern;
 @EqualsAndHashCode
 /**
  * <p>LocalizationImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @ToString
 public class LocalizationImpl implements Localization {

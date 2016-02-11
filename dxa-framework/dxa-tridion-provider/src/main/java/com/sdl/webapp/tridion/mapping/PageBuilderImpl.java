@@ -65,9 +65,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @Component
 /**
  * <p>PageBuilderImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class PageBuilderImpl implements PageBuilder {
     private static final Logger LOG = LoggerFactory.getLogger(PageBuilderImpl.class);

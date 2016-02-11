@@ -9,9 +9,6 @@ import java.lang.annotation.Target;
 
 /**
  * <p>RegisteredView class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

@@ -12,9 +12,6 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 
 /**
  * <p>Article class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntity(entityName = "Article", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Article extends AbstractEntityModel {

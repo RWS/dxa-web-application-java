@@ -5,9 +5,6 @@ import com.sdl.webapp.common.api.localization.SiteLocalization;
 
 /**
  * <p>SiteLocalizationImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class SiteLocalizationImpl implements SiteLocalization {
 

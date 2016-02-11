@@ -26,9 +26,6 @@ import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREF
  * <p>
  * This handles include requests to /system/mvc/Core/List/{regionName}/{entityId}
  * </p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Controller
 @RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + '/' + DefaultsMvcData.CoreAreaConstants.LIST_CONTROLLER_NAME)

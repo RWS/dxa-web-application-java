@@ -2,9 +2,6 @@ package com.sdl.webapp.common.exceptions;
 
 /**
  * <p>DxaException class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class DxaException extends Exception {
     /**

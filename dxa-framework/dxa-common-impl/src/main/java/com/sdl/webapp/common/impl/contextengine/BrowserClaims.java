@@ -7,9 +7,6 @@ import java.util.List;
 
 /**
  * <p>BrowserClaims class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class BrowserClaims extends ContextClaims {
 

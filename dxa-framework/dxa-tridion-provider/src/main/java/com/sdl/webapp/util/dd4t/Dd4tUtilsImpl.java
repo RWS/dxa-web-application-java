@@ -13,9 +13,6 @@ import java.util.Map;
 @Component
 /**
  * <p>Dd4tUtilsImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class Dd4tUtilsImpl implements Dd4tUtils {
     /**

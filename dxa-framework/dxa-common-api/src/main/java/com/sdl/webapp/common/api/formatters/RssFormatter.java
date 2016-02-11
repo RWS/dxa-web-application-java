@@ -10,9 +10,6 @@ import java.net.URISyntaxException;
 
 /**
  * Produces the feed in rss format
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class RssFormatter extends FeedFormatter {
 

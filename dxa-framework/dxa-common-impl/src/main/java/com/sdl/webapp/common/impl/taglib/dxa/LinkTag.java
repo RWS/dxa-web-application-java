@@ -10,9 +10,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * <p>LinkTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class LinkTag extends HtmlElementTag {
 

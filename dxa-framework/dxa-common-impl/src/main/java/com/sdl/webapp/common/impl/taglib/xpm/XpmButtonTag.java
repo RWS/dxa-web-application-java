@@ -10,9 +10,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>XpmButtonTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class XpmButtonTag extends XpmMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(XpmButtonTag.class);

@@ -16,7 +16,6 @@ import java.util.Map;
  * PluggableMarkupRegistryImpl
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 @Component
 public class PluggableMarkupRegistryImpl implements PluggableMarkupRegistry {

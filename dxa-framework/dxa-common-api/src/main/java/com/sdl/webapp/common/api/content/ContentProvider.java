@@ -8,9 +8,6 @@ import com.sdl.webapp.common.exceptions.DxaException;
 
 /**
  * Content provider.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface ContentProvider {
 

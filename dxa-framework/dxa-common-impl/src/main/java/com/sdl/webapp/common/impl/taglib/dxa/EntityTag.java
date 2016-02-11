@@ -16,9 +16,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * <p>EntityTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class EntityTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(EntityTag.class);

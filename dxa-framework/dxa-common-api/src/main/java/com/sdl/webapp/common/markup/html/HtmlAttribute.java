@@ -6,9 +6,6 @@ import java.util.Objects;
 
 /**
  * <p>HtmlAttribute class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class HtmlAttribute extends HtmlRenderable {
 

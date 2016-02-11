@@ -7,9 +7,6 @@ import java.util.Locale;
 
 /**
  * <p>Abstract AbstractGoogleMapTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class AbstractGoogleMapTag extends HtmlNodeTag {
 

@@ -25,9 +25,6 @@ import java.util.Map;
 @Component
 /**
  * <p>XpmRegionConfigImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class XpmRegionConfigImpl implements XpmRegionConfig {
     private static final Logger LOG = LoggerFactory.getLogger(XpmRegionConfigImpl.class);

@@ -9,9 +9,6 @@ import org.springframework.stereotype.Component;
 @Component
 /**
  * <p>TridionLocalizationResolver class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class TridionLocalizationResolver extends AbstractTridionLocalizationResolver {
     @Autowired

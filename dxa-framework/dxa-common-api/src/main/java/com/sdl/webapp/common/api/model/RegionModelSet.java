@@ -4,9 +4,6 @@ import java.util.Set;
 
 /**
  * <p>RegionModelSet interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface RegionModelSet extends Set<RegionModel> {
 

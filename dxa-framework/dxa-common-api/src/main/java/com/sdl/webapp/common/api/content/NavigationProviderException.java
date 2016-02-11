@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.content;
 
 /**
  * Thrown when an error occurs related to a navigation provider.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class NavigationProviderException extends ContentProviderException {
 

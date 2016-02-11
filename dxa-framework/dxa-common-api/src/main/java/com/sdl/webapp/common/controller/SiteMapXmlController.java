@@ -24,9 +24,6 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
 
 /**
  * Controller which returns the sitemap in XML format.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Controller
 public class SiteMapXmlController {

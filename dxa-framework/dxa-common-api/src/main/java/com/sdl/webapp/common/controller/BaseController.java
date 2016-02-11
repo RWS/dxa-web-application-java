@@ -30,9 +30,6 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODE
 
 /**
  * Abstract superclass for controllers with utility methods and exception handling.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Controller
 public abstract class BaseController {

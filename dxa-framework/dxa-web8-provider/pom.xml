@@ -26,6 +26,7 @@
         <odata.version>2.0.0</odata.version>
         <!-- Java 8 is set for CDaaS, but Spring 3 we're using doesn't support Java 8 features!  -->
         <java-version>1.8</java-version>
+        <super.basedir>${project.basedir}/../..</super.basedir>
     </properties>
 
     <licenses>
@@ -330,15 +331,6 @@
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.tridion.smarttarget</groupId>
-            <artifactId>smarttarget_core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion.smarttarget</groupId>
-            <artifactId>smarttarget_entitymodel</artifactId>
         </dependency>
     </dependencies>
 

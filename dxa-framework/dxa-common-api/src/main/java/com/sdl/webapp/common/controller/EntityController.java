@@ -24,9 +24,6 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODE
  * <p>
  * This handles include requests to /system/mvc/Core/Entity/{regionName}/{entityId}
  * </p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Controller
 @RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + '/' + ENTITY_CONTROLLER_NAME)

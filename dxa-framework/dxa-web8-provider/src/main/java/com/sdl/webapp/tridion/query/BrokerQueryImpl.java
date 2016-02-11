@@ -31,9 +31,6 @@ import java.util.Map;
 
 /**
  * <p>BrokerQueryImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SuppressWarnings("Duplicates")
 @EqualsAndHashCode(callSuper = true)

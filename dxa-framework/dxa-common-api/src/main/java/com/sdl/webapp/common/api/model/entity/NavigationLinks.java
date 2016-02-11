@@ -6,9 +6,6 @@ import java.util.List;
 
 /**
  * <p>NavigationLinks class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class NavigationLinks extends AbstractEntityModel {
 

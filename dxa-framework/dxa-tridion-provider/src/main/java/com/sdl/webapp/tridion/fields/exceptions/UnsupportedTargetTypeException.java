@@ -4,9 +4,6 @@ import org.springframework.core.convert.TypeDescriptor;
 
 /**
  * Thrown by a {@code FieldConverter} when the specified target type is not supported.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class UnsupportedTargetTypeException extends FieldConverterException {
 

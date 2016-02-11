@@ -51,24 +51,13 @@
         <module>dxa-common-api</module>
         <module>dxa-common-impl</module>
         <module>dxa-tridion-provider</module>
+        <module>dxa-tridion-2013sp1-provider</module>
+        <module>dxa-web8-provider</module>
     </modules>
 
-    <profiles>
-        <profile>
-            <id>cd-7.1.0</id>
-            <modules>
-                <module>dxa-tridion-2013sp1-provider</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>cd-8.1.0</id>
-            <modules>
-                <module>dxa-web8-provider</module>
-            </modules>
-        </profile>
-    </profiles>
-
     <properties>
+        <super.basedir>${project.basedir}/..</super.basedir>
+
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 

@@ -6,9 +6,6 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 
 /**
  * Navigation provider.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface NavigationProvider {
 

@@ -11,9 +11,6 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 
 /**
  * <p>Location class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntities({
         @SemanticEntity(entityName = "GeoCoordinates", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true),

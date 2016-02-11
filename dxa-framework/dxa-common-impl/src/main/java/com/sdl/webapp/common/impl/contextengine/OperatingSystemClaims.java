@@ -5,9 +5,6 @@ import com.sdl.webapp.common.api.contextengine.ContextClaims;
 
 /**
  * <p>OperatingSystemClaims class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class OperatingSystemClaims extends ContextClaims {
 

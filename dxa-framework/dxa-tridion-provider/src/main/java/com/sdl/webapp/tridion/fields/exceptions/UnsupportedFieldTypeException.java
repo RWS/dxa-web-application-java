@@ -4,9 +4,6 @@ import org.dd4t.contentmodel.FieldType;
 
 /**
  * Thrown by {@code FieldConverterRegistry} when there is no {@code FieldConverter} for the specified field type.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class UnsupportedFieldTypeException extends FieldConverterException {
 

@@ -4,9 +4,6 @@ import com.sdl.webapp.common.api.localization.LocalizationResolverException;
 
 /**
  * <p>PublicationMappingNotFoundException class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class PublicationMappingNotFoundException extends LocalizationResolverException {
 

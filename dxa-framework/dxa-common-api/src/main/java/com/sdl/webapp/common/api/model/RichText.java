@@ -12,9 +12,6 @@ import java.util.Objects;
 
 /**
  * <p>RichText class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class RichText {
 

@@ -6,9 +6,6 @@ import com.sdl.webapp.common.markup.html.HtmlNode;
 
 /**
  * <p>MarkupDecorator interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface MarkupDecorator {
 

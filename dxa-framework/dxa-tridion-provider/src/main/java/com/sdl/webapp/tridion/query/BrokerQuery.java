@@ -10,9 +10,6 @@ import java.util.List;
 @Data
 /**
  * <p>Abstract BrokerQuery class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class BrokerQuery {
     private int schemaId;

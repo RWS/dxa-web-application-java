@@ -13,9 +13,6 @@ import java.util.Set;
  * <p>
  * The semantic mapping registry contains information about the entity classes, gathered from the semantic mapping
  * annotations declared on the classes and the fields of the classes.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface SemanticMappingRegistry {
 

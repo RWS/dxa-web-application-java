@@ -7,9 +7,6 @@ import javax.servlet.http.HttpServletRequest;
 
 /**
  * Produces the feed in json format
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class JsonFormatter extends BaseFormatter {
 

@@ -18,9 +18,6 @@ import java.util.List;
 @Component
 /**
  * <p>XhtmlFieldConverter class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class XhtmlFieldConverter extends AbstractFieldConverter {
     private static final Logger LOG = LoggerFactory.getLogger(XhtmlFieldConverter.class);

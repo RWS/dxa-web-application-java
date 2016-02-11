@@ -8,9 +8,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 /**
  * <p>XpmRegionMarkupTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class XpmRegionMarkupTag extends XpmMarkupTag {
 

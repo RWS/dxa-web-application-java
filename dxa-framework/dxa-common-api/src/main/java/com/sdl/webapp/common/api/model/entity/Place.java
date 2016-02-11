@@ -9,9 +9,6 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 
 /**
  * <p>Place class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntity(entityName = "Place", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class Place extends AbstractEntityModel {

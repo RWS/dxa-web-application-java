@@ -19,9 +19,6 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 /**
  * <p>RegionsTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class RegionsTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionsTag.class);

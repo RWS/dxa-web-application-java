@@ -34,9 +34,6 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODE
  * This handles include requests to /system/mvc/Core/Navigation/Navigation/{regionName}/{entityId}
  * and /system/mvc/Core/Navigation/SiteMap/{regionName}/{entityId}
  * </p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Controller
 @RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + '/' + DefaultsMvcData.CoreAreaConstants.NAVIGATION_CONTROLLER_NAME)

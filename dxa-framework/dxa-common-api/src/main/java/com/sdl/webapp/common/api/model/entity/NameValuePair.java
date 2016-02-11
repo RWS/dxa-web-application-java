@@ -10,7 +10,6 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
  * NameValuePair
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntity(entityName = "NameValuePair", vocabulary = SDL_CORE, prefix = "nv")
 public class NameValuePair {

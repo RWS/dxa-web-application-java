@@ -5,9 +5,6 @@ import com.sdl.webapp.common.api.contextengine.ContextClaims;
 
 /**
  * <p>DeviceClaims class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class DeviceClaims extends ContextClaims {
 

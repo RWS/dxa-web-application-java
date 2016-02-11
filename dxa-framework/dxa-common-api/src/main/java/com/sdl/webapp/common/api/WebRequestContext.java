@@ -8,9 +8,6 @@ import javax.servlet.ServletRequest;
 
 /**
  * Provides information relevant for the current request.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface WebRequestContext {
 

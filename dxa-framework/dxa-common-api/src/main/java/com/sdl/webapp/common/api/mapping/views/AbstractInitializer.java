@@ -16,9 +16,6 @@ import javax.annotation.PostConstruct;
 
 /**
  * <p>Abstract AbstractInitializer class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class AbstractInitializer {
 

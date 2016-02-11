@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.xpm;
 
 /**
  * Created by Administrator on 17/09/2015.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface ComponentType {
 

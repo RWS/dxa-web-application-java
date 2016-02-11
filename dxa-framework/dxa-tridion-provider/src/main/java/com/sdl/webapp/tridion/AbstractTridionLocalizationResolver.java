@@ -20,9 +20,6 @@ import java.util.Map;
 
 /**
  * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class AbstractTridionLocalizationResolver implements LocalizationResolver {
 
@@ -59,7 +56,9 @@ public abstract class AbstractTridionLocalizationResolver implements Localizatio
     public Localization getLocalization(String url) throws LocalizationResolverException {
         LOG.trace("getLocalization: {}", url);
 
-        PublicationMappingData data = getPublicationMappingData(UriUtils.encodePath(url, "UTF-8"));
+        // truncating on first % because of TSI-1281
+        String path = UriUtils.encodePath(url, "UTF-8").split("%")[0];
+        PublicationMappingData data = getPublicationMappingData(path);
 
         if (!localizations.containsKey(data.id)) {
             localizations.put(data.id, createLocalization(data.id, data.path));

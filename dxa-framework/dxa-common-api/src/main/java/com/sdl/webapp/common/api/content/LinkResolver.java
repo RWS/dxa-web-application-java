@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.content;
 
 /**
  * Link resolver. Resolves links to components.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface LinkResolver {
 

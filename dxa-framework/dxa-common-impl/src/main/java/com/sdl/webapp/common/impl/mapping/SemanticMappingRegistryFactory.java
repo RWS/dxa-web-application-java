@@ -8,9 +8,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * Spring factory bean to create the {@code SemanticMappingRegistry} bean.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Component
 @Primary

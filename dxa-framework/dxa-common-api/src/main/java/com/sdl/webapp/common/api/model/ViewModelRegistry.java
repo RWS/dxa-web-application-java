@@ -6,9 +6,6 @@ import java.util.Set;
 
 /**
  * Registry that maps view names to view model object types.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface ViewModelRegistry {
     /**

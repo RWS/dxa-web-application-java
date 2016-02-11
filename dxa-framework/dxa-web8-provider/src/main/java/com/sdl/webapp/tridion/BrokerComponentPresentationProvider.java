@@ -14,9 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 /**
  * <p>BrokerComponentPresentationProvider class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class BrokerComponentPresentationProvider extends AbstractBrokerComponentPresentationProvider {
     private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentPresentationProvider.class);

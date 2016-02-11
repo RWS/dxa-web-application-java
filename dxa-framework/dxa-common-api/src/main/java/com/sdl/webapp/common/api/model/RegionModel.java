@@ -4,9 +4,6 @@ import java.util.List;
 
 /**
  * <p>RegionModel interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface RegionModel extends ViewModel {
 

@@ -18,9 +18,6 @@ import java.util.List;
 @org.springframework.stereotype.Component
 /**
  * <p>ModelBuilderPipeline class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class ModelBuilderPipeline {
 

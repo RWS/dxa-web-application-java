@@ -6,9 +6,6 @@ import lombok.ToString;
 @ToString
 /**
  * <p>PageModelImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class PageModelImpl extends AbstractPageModelImpl implements PageModel {
     /**

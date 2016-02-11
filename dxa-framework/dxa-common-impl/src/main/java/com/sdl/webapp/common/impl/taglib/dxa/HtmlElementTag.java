@@ -12,9 +12,6 @@ import java.io.IOException;
 
 /**
  * <p>Abstract HtmlElementTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class HtmlElementTag extends TagSupport {
 

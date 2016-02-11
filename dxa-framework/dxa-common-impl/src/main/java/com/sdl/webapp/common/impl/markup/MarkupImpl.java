@@ -38,9 +38,6 @@ import java.util.Set;
 @Component
 /**
  * <p>MarkupImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class MarkupImpl implements Markup {
     private static final Logger LOG = LoggerFactory.getLogger(MarkupImpl.class);

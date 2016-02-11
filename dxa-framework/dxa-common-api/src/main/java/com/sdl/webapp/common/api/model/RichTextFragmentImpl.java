@@ -6,9 +6,6 @@ import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 
 /**
  * <p>RichTextFragmentImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class RichTextFragmentImpl implements RichTextFragment {
 

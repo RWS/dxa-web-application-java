@@ -9,9 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 @Component
 /**
  * <p>DefaultViewResolver class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class DefaultViewResolver implements ViewResolver {
 

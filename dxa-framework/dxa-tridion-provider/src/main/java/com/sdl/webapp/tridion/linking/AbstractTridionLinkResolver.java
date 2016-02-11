@@ -8,9 +8,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>Abstract AbstractTridionLinkResolver class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class AbstractTridionLinkResolver implements LinkResolver {
     //TODO : move these back to defaultcontentprovider once class is moved to new package

@@ -9,9 +9,6 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 
 /**
  * <p>Notification class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntity(entityName = "NotificationBar", vocabulary = SDL_CORE, prefix = "nb")
 public class Notification extends AbstractEntityModel {

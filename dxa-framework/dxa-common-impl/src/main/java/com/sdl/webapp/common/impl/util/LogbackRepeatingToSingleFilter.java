@@ -14,9 +14,6 @@ import java.util.Set;
 
 /**
  * <p>LogbackRepeatingToSingleFilter class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class LogbackRepeatingToSingleFilter extends Filter<ILoggingEvent> {
     private Set<EventData> events = new HashSet<>(16);

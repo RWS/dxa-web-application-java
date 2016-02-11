@@ -20,9 +20,6 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 /**
  * <p>Abstract AbstractPageModelImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode

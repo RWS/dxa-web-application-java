@@ -36,9 +36,6 @@ import java.net.URL;
  * This should be configured to be called after the {@link com.sdl.webapp.common.impl.interceptor.LocalizationResolverInterceptor} for requests that are
  * being handled by the Spring {@link org.springframework.web.servlet.DispatcherServlet}.
  * </p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);

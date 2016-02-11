@@ -9,9 +9,6 @@ import java.util.Map;
  * Semantic field data provider.
  * <p>
  * This provides the actual data for a field during semantic mapping.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface SemanticFieldDataProvider {
 

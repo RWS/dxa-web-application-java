@@ -25,9 +25,6 @@ import java.util.List;
 
 /**
  * Base class to generate Syndication Lists
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class FeedFormatter extends BaseFormatter {
 

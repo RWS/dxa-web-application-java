@@ -32,7 +32,6 @@ import java.util.List;
  *  </pre>
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 public class RegisterSemanticClasses {
 

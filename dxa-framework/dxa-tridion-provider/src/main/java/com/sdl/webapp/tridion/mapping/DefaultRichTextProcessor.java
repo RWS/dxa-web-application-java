@@ -54,9 +54,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Component
 /**
  * <p>DefaultRichTextProcessor class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class DefaultRichTextProcessor implements RichTextProcessor {
 

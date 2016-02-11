@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.localization;
 
 /**
  * Thrown when an error occurs in a localization factory while creating a localization.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class LocalizationFactoryException extends Exception {
 

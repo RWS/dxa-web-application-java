@@ -2,9 +2,6 @@ package com.sdl.webapp.common.controller;
 
 /**
  * <p>RequestAttributeNames interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface RequestAttributeNames {
 

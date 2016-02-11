@@ -12,7 +12,6 @@ import java.io.IOException;
  * Pluggable Markup Tag
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 public class PluggableMarkupTag extends TagSupport {
 

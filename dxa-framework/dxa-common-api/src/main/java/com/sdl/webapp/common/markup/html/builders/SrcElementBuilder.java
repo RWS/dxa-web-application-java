@@ -2,9 +2,6 @@ package com.sdl.webapp.common.markup.html.builders;
 
 /**
  * <p>SrcElementBuilder class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class SrcElementBuilder<B extends AbstractElementBuilder<B>> extends AbstractElementBuilder<B> {
     /**

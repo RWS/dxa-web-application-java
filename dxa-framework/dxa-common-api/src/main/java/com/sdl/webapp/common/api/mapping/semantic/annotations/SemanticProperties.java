@@ -7,9 +7,6 @@ import java.lang.annotation.Target;
 
 /**
  * <p>SemanticProperties class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)

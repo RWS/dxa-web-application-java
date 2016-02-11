@@ -9,9 +9,6 @@ import com.sdl.webapp.common.markup.html.HtmlTextNode;
 
 /**
  * <p>Abstract AbstractElementBuilder class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class AbstractElementBuilder<B extends AbstractElementBuilder<B>> {
 

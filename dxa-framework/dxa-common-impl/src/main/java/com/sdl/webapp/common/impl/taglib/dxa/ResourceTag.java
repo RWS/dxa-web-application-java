@@ -13,9 +13,6 @@ import java.text.MessageFormat;
 
 /**
  * <p>ResourceTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class ResourceTag extends TagSupport {
 

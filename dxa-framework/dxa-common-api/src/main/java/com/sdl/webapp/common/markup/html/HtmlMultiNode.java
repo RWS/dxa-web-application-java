@@ -5,9 +5,6 @@ import java.util.Objects;
 
 /**
  * <p>HtmlMultiNode class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class HtmlMultiNode extends HtmlNode {
 

@@ -11,9 +11,6 @@ import org.springframework.stereotype.Component;
 @Slf4j
 /**
  * <p>DefaultMediaHelper class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @Component
 public class DefaultMediaHelper implements MediaHelper {

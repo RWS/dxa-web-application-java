@@ -20,9 +20,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * <p>Abstract EclItem class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
 public abstract class EclItem extends MediaItem {

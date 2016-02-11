@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion;
 
+import com.sdl.context.odata.client.api.ODataContextEngine;
 import com.tridion.content.BinaryFactory;
 import com.tridion.dynamiccontent.DynamicMappingsRetriever;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
@@ -17,9 +18,6 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 /**
  * <p>SpringContextConfiguration class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class SpringContextConfiguration {
 
@@ -116,5 +114,10 @@ public class SpringContextConfiguration {
     @Bean
     public DynamicMappingsRetriever dynamicMappingsRetriever() {
         return new DynamicMappingsRetriever();
+    }
+
+    @Bean
+    public ODataContextEngine oDataContextEngine() {
+        return new ODataContextEngine();
     }
 }

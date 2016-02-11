@@ -6,7 +6,6 @@ import java.util.StringTokenizer;
  * ECL Url
  *
  * @author nic
- * @version 1.3-SNAPSHOT
  */
 public class EclUrl {
 

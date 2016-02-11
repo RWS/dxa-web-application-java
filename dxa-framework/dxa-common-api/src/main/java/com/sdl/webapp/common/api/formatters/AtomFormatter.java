@@ -15,9 +15,6 @@ import java.util.UUID;
 
 /**
  * Produces the feed in atom format
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class AtomFormatter extends FeedFormatter {
 

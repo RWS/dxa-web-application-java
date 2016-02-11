@@ -8,9 +8,6 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 /**
  * <p>XpmIfEnabledTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class XpmIfEnabledTag extends TagSupport {
 

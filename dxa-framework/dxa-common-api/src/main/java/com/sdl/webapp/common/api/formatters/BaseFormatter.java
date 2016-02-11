@@ -9,9 +9,6 @@ import java.util.List;
 
 /**
  * BaseFormatter with base logic to be used by the format specific formatters
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public abstract class BaseFormatter implements DataFormatter {
     private final List<String> _mediaTypes = new ArrayList<>();

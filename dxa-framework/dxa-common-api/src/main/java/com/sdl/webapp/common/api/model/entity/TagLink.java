@@ -9,9 +9,6 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 
 /**
  * <p>TagLink class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntity(entityName = "SocialLink", vocabulary = SDL_CORE, prefix = "s")
 public class TagLink extends AbstractEntityModel {

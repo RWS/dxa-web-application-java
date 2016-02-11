@@ -12,9 +12,6 @@ import javax.xml.xpath.XPathFactory;
 /**
  * Resolver for particular xPath string.
  * Uses {@link javax.xml.xpath.XPathExpression} which is not thread-safe.
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public enum XPathResolver {
     XPATH_LINKS("//a[@xlink:href]"),

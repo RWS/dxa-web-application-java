@@ -8,9 +8,6 @@ import org.springframework.core.Ordered;
 
 /**
  * <p>PageBuilder interface.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public interface PageBuilder extends Ordered {
     /**

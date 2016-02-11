@@ -13,9 +13,6 @@ import java.util.Map;
 @Component
 /**
  * <p>TridionLinkResolver class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class TridionLinkResolver extends AbstractTridionLinkResolver {
 

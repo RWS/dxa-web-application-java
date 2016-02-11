@@ -15,9 +15,6 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * <p>FieldUtils class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class FieldUtils {
 

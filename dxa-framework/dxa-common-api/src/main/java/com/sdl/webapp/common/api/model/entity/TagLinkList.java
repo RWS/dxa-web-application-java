@@ -11,9 +11,6 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 
 /**
  * <p>TagLinkList class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @SemanticEntities({
         @SemanticEntity(entityName = "LinkList", vocabulary = SDL_CORE),

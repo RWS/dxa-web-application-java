@@ -11,9 +11,6 @@ import java.util.Map;
 
 /**
  * <p>ControllerUtils class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public final class ControllerUtils {
 

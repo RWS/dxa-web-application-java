@@ -32,9 +32,6 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGIO
 
 /**
  * <p>RegionModelImpl class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 @EqualsAndHashCode(of = {"name"})
 public class RegionModelImpl implements RegionModel {

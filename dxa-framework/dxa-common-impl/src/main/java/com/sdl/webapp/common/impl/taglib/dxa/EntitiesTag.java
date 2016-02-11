@@ -17,9 +17,6 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 
 /**
  * <p>EntitiesTag class.</p>
- *
- * @author azarakovskiy
- * @version 1.3-SNAPSHOT
  */
 public class EntitiesTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(EntitiesTag.class);

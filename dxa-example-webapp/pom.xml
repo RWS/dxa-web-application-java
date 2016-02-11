@@ -160,7 +160,10 @@
                 <dependency>
                     <groupId>com.sdl.dxa</groupId>
                     <artifactId>dxa-tridion-2013sp1-provider</artifactId>
-                    <version>${dxa.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.microsoft.sqlserver</groupId>
+                    <artifactId>sqljdbc4</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -188,7 +191,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa</groupId>
                     <artifactId>dxa-web8-provider</artifactId>
-                    <version>${dxa.version}</version>
                 </dependency>
             </dependencies>
         </profile>

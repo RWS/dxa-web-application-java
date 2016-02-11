@@ -320,6 +320,12 @@
                     <groupId>org.apache.activemq</groupId>
                     <artifactId>activemq-client</artifactId>
                 </dependency>
+
+                 <dependency>
+                     <groupId>net.sf.ehcache</groupId>
+                     <artifactId>ehcache</artifactId>
+                     <version>${ehcache.version}</version>
+                 </dependency>
             </dependencies>
             <build>
                 <plugins>
@@ -355,12 +361,6 @@
                 </dependency>
 
                 <dependency>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>content-dynamic</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
-
-                <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_ambient</artifactId>
                     <version>${tridion.web8.version}</version>
@@ -369,35 +369,35 @@
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_config_api</artifactId>
-                    <version>${tridion.web8.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
 
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_config_legacy</artifactId>
-                    <version>${tridion.web8.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_config</artifactId>
-                    <version>${tridion.web8.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_util</artifactId>
-                    <version>${tridion.web8.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
 
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_core</artifactId>
-                    <version>${tridion.web8.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
 
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_model</artifactId>
-                    <version>${tridion.web8.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
 
                 <dependency>
@@ -653,22 +653,22 @@
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_config_api</artifactId>
-                    <version>${tridion.web8.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_config_legacy</artifactId>
-                    <version>${tridion.web8.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_config</artifactId>
-                    <version>${tridion.web8.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_util</artifactId>
-                    <version>${tridion.web8.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
@@ -737,10 +737,11 @@
                     <version>${commons-pool-version}</version>
                 </dependency>
 
+                <!-- NOT public -->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>discovery-client</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
+                    <version>${tridion.web8.version}</version>
                 </dependency>
 
 

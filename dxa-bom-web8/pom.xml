@@ -119,6 +119,8 @@
         <cd_preview_content_client.version>8.1.0-1241</cd_preview_content_client.version>
         <cd_preview_content_common.version>8.1.0-1241</cd_preview_content_common.version>
         <content-ambient-client.version>8.1.0</content-ambient-client.version>
+
+        <lombok.version>1.16.6</lombok.version>
     </properties>
 
     <dependencyManagement>
@@ -374,6 +376,13 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
                 <version>1.1.3</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+                <scope>compile</scope>
             </dependency>
 
             <!-- Spring Framework -->

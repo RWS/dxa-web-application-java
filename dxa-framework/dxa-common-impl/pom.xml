@@ -46,6 +46,10 @@
         </developer>
     </developers>
 
+    <properties>
+        <super.basedir>${project.basedir}/../..</super.basedir>
+    </properties>
+
     <dependencies>
         <!-- SDL Digital Experience Accelerator -->
         <dependency>

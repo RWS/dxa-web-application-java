@@ -11,7 +11,13 @@ import org.springframework.stereotype.Component;
 import java.util.Map;
 
 @Component
+/**
+ * <p>Dd4tUtilsImpl class.</p>
+ */
 public class Dd4tUtilsImpl implements Dd4tUtils {
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getFromNestedMultiLevelMapOrAlternative(Map<String, Object> multiLevelMap, String key, Object alternative) {
         final Object obj = new NestedCustomMap(multiLevelMap, new Function<Map.Entry<String, Map<String, Object>>, Map<String, Object>>() {

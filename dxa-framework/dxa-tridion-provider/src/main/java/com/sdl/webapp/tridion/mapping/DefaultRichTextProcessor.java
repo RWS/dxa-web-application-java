@@ -52,8 +52,14 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Component
+/**
+ * <p>DefaultRichTextProcessor class.</p>
+ */
 public class DefaultRichTextProcessor implements RichTextProcessor {
 
+    /**
+     * Constant <code>EMBEDDED_ENTITY="EmbeddedEntity"</code>
+     */
     public static final String EMBEDDED_ENTITY = "EmbeddedEntity";
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRichTextProcessor.class);
 
@@ -69,6 +75,69 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
     @Autowired
     private ComponentPresentationFactory componentFactory;
 
+    private static <T extends ViewModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("entityClass: {}", entityClass.getName());
+        }
+        try {
+            return entityClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SemanticMappingException("Exception while creating instance of entity class: " + entityClass.getName(), e);
+        }
+    }
+
+    /**
+     * Allows to retrieve the inner xml of the first node &lt;xhtml&gt;&lt;/xhtml&gt; as String.
+     */
+    private static String innerXml(Node node) {
+        DOMImplementationLS lsImpl = (DOMImplementationLS) node.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
+        LSSerializer lsSerializer = lsImpl.createLSSerializer();
+        lsSerializer.getDomConfig().setParameter("xml-declaration", false);
+        NodeList childNodes = node.getChildNodes();
+        StringBuilder sb = new StringBuilder(2048);
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            sb.append(lsSerializer.writeToString(childNodes.item(i)));
+        }
+        return sb.toString();
+    }
+
+    private static void removeUnusedAttributes(Element element) {
+        NamedNodeMap attributes = element.getAttributes();
+        int length = attributes.getLength();
+        for (int i = 0; i < length; i++) {
+            Attr attribute = (Attr) attributes.item(i);
+            if (isUnusedAttribute(attribute)) {
+                element.removeAttributeNode(attribute);
+                i--;
+                length--;
+            }
+        }
+    }
+
+    private static boolean isUnusedAttribute(Attr attribute) {
+        return attribute != null && (StringUtils.startsWithAny(attribute.getLocalName(), "data-", "xlink")
+                || StringUtils.startsWithAny(attribute.getName(), "xlink:", "xmlns:"));
+    }
+
+    private static void moveChildrenToParentAndRemoveNode(Node node) {
+        // First get all the children into a new list
+        final List<Node> childNodes = new ArrayList<>(new NodeListAdapter(node.getChildNodes()));
+
+        // Then move the ones that are not attributes to the parent one by one
+        final Node parentNode = node.getParentNode();
+        for (Node childNode : childNodes) {
+            if (childNode.getNodeType() != Node.ATTRIBUTE_NODE) {
+                parentNode.insertBefore(childNode, node);
+            }
+        }
+
+        // And finally, remove the node itself from the parent
+        parentNode.removeChild(node);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RichText processRichText(String xhtml, Localization localization) {
         try {
@@ -80,17 +149,6 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
         } catch (SAXException | IOException | ContentProviderException | SemanticMappingException e) {
             LOG.warn("Exception while parsing or processing XML content", e);
             return new RichText(xhtml);
-        }
-    }
-
-    private <T extends ViewModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("entityClass: {}", entityClass.getName());
-        }
-        try {
-            return entityClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SemanticMappingException("Exception while creating instance of entity class: " + entityClass.getName(), e);
         }
     }
 
@@ -201,7 +259,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
                     + webRequestContext.getRequestPath();
 
             final String linkName = getLinkName(linkElement);
-            final String hash = !isEmpty(linkName) ? ("#" + linkName.replaceAll(" ", "_").toLowerCase()) : EMPTY;
+            final String hash = !isEmpty(linkName) ? ('#' + linkName.replaceAll(" ", "_").toLowerCase()) : EMPTY;
 
             if (fullRequestPath.equalsIgnoreCase(href)) {
                 linkElement.setAttribute("href", hash);
@@ -211,21 +269,6 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
                 linkElement.setAttribute("target", "_top");
             }
         }
-    }
-
-    /**
-     * Allows to retrieve the inner xml of the first node &lt;xhtml&gt;&lt;/xhtml&gt; as String.
-     */
-    private String innerXml(Node node) {
-        DOMImplementationLS lsImpl = (DOMImplementationLS) node.getOwnerDocument().getImplementation().getFeature("LS", "3.0");
-        LSSerializer lsSerializer = lsImpl.createLSSerializer();
-        lsSerializer.getDomConfig().setParameter("xml-declaration", false);
-        NodeList childNodes = node.getChildNodes();
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < childNodes.getLength(); i++) {
-            sb.append(lsSerializer.writeToString(childNodes.item(i)));
-        }
-        return sb.toString();
     }
 
     private String getLinkName(Element linkElement) {
@@ -241,40 +284,6 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
         } catch (FactoryException e) {
             return linkElement.getAttribute("title");
         }
-    }
-
-    private void removeUnusedAttributes(Element element) {
-        NamedNodeMap attributes = element.getAttributes();
-        int length = attributes.getLength();
-        for (int i = 0; i < length; i++) {
-            Attr attribute = (Attr) attributes.item(i);
-            if (isUnusedAttribute(attribute)) {
-                element.removeAttributeNode(attribute);
-                i--;
-                length--;
-            }
-        }
-    }
-
-    private boolean isUnusedAttribute(Attr attribute) {
-        return attribute != null && (StringUtils.startsWithAny(attribute.getLocalName(), "data-", "xlink")
-                || StringUtils.startsWithAny(attribute.getName(), "xlink:", "xmlns:"));
-    }
-
-    private void moveChildrenToParentAndRemoveNode(Node node) {
-        // First get all the children into a new list
-        final List<Node> childNodes = new ArrayList<>(new NodeListAdapter(node.getChildNodes()));
-
-        // Then move the ones that are not attributes to the parent one by one
-        final Node parentNode = node.getParentNode();
-        for (Node childNode : childNodes) {
-            if (childNode.getNodeType() != Node.ATTRIBUTE_NODE) {
-                parentNode.insertBefore(childNode, node);
-            }
-        }
-
-        // And finally, remove the node itself from the parent
-        parentNode.removeChild(node);
     }
 
 }

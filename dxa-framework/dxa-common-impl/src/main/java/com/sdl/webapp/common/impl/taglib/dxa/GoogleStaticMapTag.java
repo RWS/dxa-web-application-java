@@ -10,10 +10,16 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.UUID;
 
+/**
+ * <p>GoogleStaticMapTag class.</p>
+ */
 public class GoogleStaticMapTag extends AbstractGoogleMapTag {
 
     private static final HtmlAttribute CLASS_STATIC_MAP_ATTR = new HtmlAttribute("class", "static-map");
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlNode generateNode() {
         final WebRequestContext webRequestContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
@@ -23,7 +29,7 @@ public class GoogleStaticMapTag extends AbstractGoogleMapTag {
         final String latString = getLatString();
         final String lonString = getLonString();
 
-        final StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder(512);
         sb.append("?center=").append(latString).append(',').append(lonString);
         sb.append("&zoom=15");
         sb.append("&size=").append(getMapWidth()).append('x').append(getMapHeight());

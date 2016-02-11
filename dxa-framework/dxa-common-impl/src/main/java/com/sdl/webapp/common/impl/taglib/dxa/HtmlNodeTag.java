@@ -7,10 +7,21 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
+/**
+ * <p>Abstract HtmlNodeTag class.</p>
+ */
 public abstract class HtmlNodeTag extends TagSupport {
 
+    /**
+     * <p>generateNode.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.markup.html.HtmlNode} object.
+     */
     protected abstract HtmlNode generateNode();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
         final HtmlNode node = generateNode();

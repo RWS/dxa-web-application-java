@@ -10,19 +10,34 @@ import lombok.EqualsAndHashCode;
 
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.span;
 
+/**
+ * <p>ViewNotFoundEntityError class.</p>
+ */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ViewNotFoundEntityError extends AbstractEntityModel {
 
+    /**
+     * <p>renderHtml.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
     public String renderHtml() throws DxaException {
         return this.toHtmlElement().renderHtml();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlElement toHtmlElement() throws DxaException {
         return span().withTextualContent("No view found for " + getMvcData()).build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public MvcData getMvcData() {
         return MvcDataCreator.creator()

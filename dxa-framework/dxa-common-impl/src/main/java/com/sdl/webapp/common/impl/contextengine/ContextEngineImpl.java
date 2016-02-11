@@ -14,17 +14,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+/**
+ * <p>ContextEngineImpl class.</p>
+ */
 @Scope(value = "request")
 public class ContextEngineImpl implements ContextEngine {
     private static final Logger LOG = LoggerFactory.getLogger(ContextEngineImpl.class);
 
     private Map<String, Object> claims;
-    private Map<Class, ContextClaims> stronglyTypedClaims = new HashMap<Class, ContextClaims>();
+    private Map<Class, ContextClaims> stronglyTypedClaims = new HashMap<>();
     private String deviceFamily;
 
     @Autowired
     private ContextClaimsProvider provider;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T extends ContextClaims> T getClaims(Class<T> cls) {
 
@@ -49,6 +55,9 @@ public class ContextEngineImpl implements ContextEngine {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDeviceFamily() {
         if (this.deviceFamily != null) {

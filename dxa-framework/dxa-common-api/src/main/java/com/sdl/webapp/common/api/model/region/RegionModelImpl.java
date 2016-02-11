@@ -30,6 +30,9 @@ import java.util.Objects;
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
 
 
+/**
+ * <p>RegionModelImpl class.</p>
+ */
 @EqualsAndHashCode(of = {"name"})
 public class RegionModelImpl implements RegionModel {
     /**
@@ -71,7 +74,7 @@ public class RegionModelImpl implements RegionModel {
     @JsonProperty("XpmMetadata")
     @Getter
 //    setter explicitly defined
-    private Map<String, String> xpmMetadata = new HashMap<>();
+    private Map<String, Object> xpmMetadata = new HashMap<>();
 
     @JsonProperty("MvcData")
     @Getter
@@ -83,6 +86,12 @@ public class RegionModelImpl implements RegionModel {
     @Setter
     private RegionModelSet regions;
 
+    /**
+     * <p>Constructor for RegionModelImpl.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
     public RegionModelImpl(String name) throws DxaException {
         if (Strings.isNullOrEmpty(name)) {
             throw new DxaException("Region must have a non-empty name.");
@@ -90,6 +99,13 @@ public class RegionModelImpl implements RegionModel {
         this.setName(name);
     }
 
+    /**
+     * <p>Constructor for RegionModelImpl.</p>
+     *
+     * @param name              a {@link java.lang.String} object.
+     * @param qualifiedViewName a {@link java.lang.String} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
     public RegionModelImpl(String name, String qualifiedViewName) throws DxaException {
         this(name);
         this.setMvcData(MvcDataCreator.creator()
@@ -100,16 +116,30 @@ public class RegionModelImpl implements RegionModel {
                 .build());
     }
 
+    /**
+     * <p>Constructor for RegionModelImpl.</p>
+     *
+     * @param mvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
     public RegionModelImpl(MvcData mvcData) throws DxaException {
         this(mvcData.getRegionName());
         this.mvcData = mvcData;
     }
 
+    private static XpmRegionConfig getXpmRegionConfig() {
+        return ApplicationContextHolder.getContext().getBean(XpmRegionConfig.class);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void addEntity(EntityModel entity) {
         this.entities.add(entity);
     }
 
+    /** {@inheritDoc} */
     @Override
     public EntityModel getEntity(String entityId) {
         Collection<EntityModel> c = new ArrayList<>();
@@ -125,10 +155,16 @@ public class RegionModelImpl implements RegionModel {
         return null;
     }
 
-    public void setXpmMetadata(Map<String, String> xpmMetadata) {
+    /**
+     * <p>Setter for the field <code>xpmMetadata</code>.</p>
+     *
+     * @param xpmMetadata a {@link java.util.Map} object.
+     */
+    public void setXpmMetadata(Map<String, Object> xpmMetadata) {
         this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getXpmMarkup(Localization localization) {
         XpmRegionConfig xpmRegionConfig = getXpmRegionConfig();
@@ -147,12 +183,8 @@ public class RegionModelImpl implements RegionModel {
         // TODO: obtain MinOccurs & MaxOccurs from regions.json
         return String.format(
                 XPM_REGION_MARKUP,
-                getName(),
+                this.name,
                 Joiner.on(", ").join(types),
                 0);
-    }
-
-    private XpmRegionConfig getXpmRegionConfig() {
-        return ApplicationContextHolder.getContext().getBean(XpmRegionConfig.class);
     }
 }

@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+/**
+ * <p>ComponentLinkFieldConverter class.</p>
+ */
 public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.COMPONENTLINK, FieldType.MULTIMEDIALINK};
@@ -26,17 +29,27 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
     private final LinkResolver linkResolver;
     private final WebRequestContext webRequestContext;
 
+    /**
+     * <p>Constructor for ComponentLinkFieldConverter.</p>
+     *
+     * @param linkResolver      a {@link com.sdl.webapp.common.api.content.LinkResolver} object.
+     * @param webRequestContext a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     */
     @Autowired
     public ComponentLinkFieldConverter(LinkResolver linkResolver, WebRequestContext webRequestContext) {
         this.linkResolver = linkResolver;
         this.webRequestContext = webRequestContext;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FieldType[] supportedFieldTypes() {
         return SUPPORTED_FIELD_TYPES;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<Object> componentLinks = new ArrayList<>();
@@ -57,6 +70,14 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         return componentLinks;
     }
 
+    /**
+     * <p>createPageLink.</p>
+     *
+     * @param page a {@link org.dd4t.contentmodel.Page} object.
+     * @param targetClass a {@link java.lang.Class} object.
+     * @return a {@link java.lang.Object} object.
+     * @throws com.sdl.webapp.tridion.fields.exceptions.FieldConverterException if any.
+     */
     public Object createPageLink(org.dd4t.contentmodel.Page page, Class<?> targetClass)
             throws FieldConverterException {
         String pageId = page.getId();
@@ -73,6 +94,15 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         }
     }
 
+    /**
+     * <p>createComponentLink.</p>
+     *
+     * @param component a {@link org.dd4t.contentmodel.Component} object.
+     * @param targetClass a {@link java.lang.Class} object.
+     * @param builder a {@link com.sdl.webapp.tridion.mapping.ModelBuilderPipeline} object.
+     * @return a {@link java.lang.Object} object.
+     * @throws com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException if any.
+     */
     public Object createComponentLink(org.dd4t.contentmodel.Component component, Class<?> targetClass, ModelBuilderPipeline builder)
             throws SemanticMappingException {
         String componentId = component.getId();
@@ -101,8 +131,7 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
                 // Try to map using model field type
                 //
                 try {
-                    Object retval = builder.createEntityModel(component, localization, (Class<AbstractEntityModel>) targetClass);
-                    return retval;
+                    return builder.createEntityModel(component, localization, (Class<AbstractEntityModel>) targetClass);
                 } catch (ContentProviderException e2) {
                     throw new SemanticMappingException(e);
                 }

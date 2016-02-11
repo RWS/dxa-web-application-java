@@ -24,11 +24,11 @@ public interface StaticContentItem {
     String getContentType();
 
     /**
-     * Returns an {@link InputStream} from which the content of the static content item can be read. Callers are
+     * Returns an {@link java.io.InputStream} from which the content of the static content item can be read. Callers are
      * expected to close the stream.
      *
-     * @return An {@link InputStream} from which the content of the static content item can be read.
-     * @throws IOException When an I/O error occurs while opening the stream.
+     * @return An {@link java.io.InputStream} from which the content of the static content item can be read.
+     * @throws java.io.IOException When an I/O error occurs while opening the stream.
      */
     InputStream getContent() throws IOException;
 

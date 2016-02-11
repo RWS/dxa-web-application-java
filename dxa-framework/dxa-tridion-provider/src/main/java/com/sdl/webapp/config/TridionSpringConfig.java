@@ -14,24 +14,47 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+/**
+ * <p>TridionSpringConfig class.</p>
+ */
 public class TridionSpringConfig {
 
+    /**
+     * <p>serializer.</p>
+     *
+     * @return a {@link org.dd4t.core.serializers.impl.json.JSONSerializer} object.
+     */
     @Bean
     public JSONSerializer serializer() {
         return new JSONSerializer();
     }
 
+    /**
+     * <p>serializerFactory.</p>
+     *
+     * @return a {@link org.dd4t.core.serializers.impl.SerializerFactory} object.
+     */
     @Bean
     public SerializerFactory serializerFactory() {
         return new SerializerFactory(serializer());
     }
 
 
+    /**
+     * <p>modelConverter.</p>
+     *
+     * @return a {@link org.dd4t.databind.builder.json.JsonModelConverter} object.
+     */
     @Bean
     public JsonModelConverter modelConverter() {
         return new JsonModelConverter();
     }
 
+    /**
+     * <p>dataBinder.</p>
+     *
+     * @return a {@link org.dd4t.databind.builder.json.JsonDataBinder} object.
+     */
     @Bean
     public JsonDataBinder dataBinder() {
         JsonDataBinder dataBinder = JsonDataBinder.getInstance();
@@ -45,6 +68,11 @@ public class TridionSpringConfig {
         return dataBinder;
     }
 
+    /**
+     * <p>dcpDataBinderWrapper.</p>
+     *
+     * @return a {@link com.sdl.webapp.tridion.DCPDataBinderWrapper} object.
+     */
     @Bean
     public DCPDataBinderWrapper dcpDataBinderWrapper() {
         DCPDataBinderWrapper binderWrapper = new DCPDataBinderWrapper();
@@ -52,6 +80,11 @@ public class TridionSpringConfig {
         return binderWrapper;
     }
 
+    /**
+     * <p>databindFactory.</p>
+     *
+     * @return a {@link org.dd4t.databind.DataBindFactory} object.
+     */
     @Bean
     public DataBindFactory databindFactory() {
         DataBindFactory bindFactory = DataBindFactory.getInstance();

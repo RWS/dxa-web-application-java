@@ -23,6 +23,9 @@ public class RssView extends AbstractRssFeedView {
     @Autowired
     private WebRequestContext context;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected List<Item> buildFeedItems(Map<String, Object> model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
@@ -30,6 +33,9 @@ public class RssView extends AbstractRssFeedView {
         return (List<Item>) formatter.formatData(model.get("data"));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void buildFeedMetadata(Map<String, Object> model, Channel feed, HttpServletRequest request) {
         PageModel page = (PageModel) model.get("data");
@@ -40,7 +46,7 @@ public class RssView extends AbstractRssFeedView {
         StringBuffer uri = request.getRequestURL();
         String queryString = request.getQueryString();
         if (queryString != null) {
-            uri.append("?").append(queryString);
+            uri.append('?').append(queryString);
         }
         feed.setLink(uri.toString().replaceAll("[&?]format.*?(?=&|\\?|$)", ""));
         super.buildFeedMetadata(model, feed, request);

@@ -30,12 +30,13 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODE
 
 /**
  * Navigation controller for the Core area.
- * <p/>
+ * <p>
  * This handles include requests to /system/mvc/Core/Navigation/Navigation/{regionName}/{entityId}
  * and /system/mvc/Core/Navigation/SiteMap/{regionName}/{entityId}
+ * </p>
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + "/" + DefaultsMvcData.CoreAreaConstants.NAVIGATION_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + '/' + DefaultsMvcData.CoreAreaConstants.NAVIGATION_CONTROLLER_NAME)
 public class NavigationController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(NavigationController.class);
 
@@ -47,6 +48,12 @@ public class NavigationController extends BaseController {
 
     private final NavigationProvider navigationProvider;
 
+    /**
+     * <p>Constructor for NavigationController.</p>
+     *
+     * @param webRequestContext  a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     * @param navigationProvider a {@link com.sdl.webapp.common.api.content.NavigationProvider} object.
+     */
     @Autowired
     public NavigationController(WebRequestContext webRequestContext, NavigationProvider navigationProvider) {
         this.webRequestContext = webRequestContext;
@@ -63,6 +70,7 @@ public class NavigationController extends BaseController {
      * @param navType  Navigation type.
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
+     * @throws java.lang.Exception if any.
      */
     @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.NAVIGATION_ACTION_NAME + "/{entityId}")
     public String handleGetNavigation(HttpServletRequest request,
@@ -117,7 +125,7 @@ public class NavigationController extends BaseController {
      * @param request  The request.
      * @param entityId The name of the entity.
      * @return The name of the entity view that should be rendered for this request.
-     * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
+     * @throws com.sdl.webapp.common.api.content.NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
     @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.SITEMAP_ACTION_NAME + "/{entityId}")
     public String handleGetSiteMap(HttpServletRequest request,

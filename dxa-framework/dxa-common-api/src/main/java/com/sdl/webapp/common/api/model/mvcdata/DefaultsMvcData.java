@@ -14,6 +14,9 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaCo
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.SHARED_AREA_NAME;
 
 @Getter
+/**
+ * <p>DefaultsMvcData class.</p>
+ */
 public enum DefaultsMvcData {
 
     CORE_ENTITY("Core", CORE_AREA_NAME, ENTITY_CONTROLLER_NAME, ENTITY_ACTION_NAME),

@@ -19,6 +19,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 @EqualsAndHashCode
+/**
+ * <p>LocalizationImpl class.</p>
+ */
 @ToString
 public class LocalizationImpl implements Localization {
 
@@ -76,10 +79,18 @@ public class LocalizationImpl implements Localization {
 
     }
 
+    /**
+     * <p>newBuilder.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.impl.localization.LocalizationImpl.Builder} object.
+     */
     public static Builder newBuilder() {
         return new Builder();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isStaticContent(String url) {
         if (!url.startsWith(path)) {
@@ -93,49 +104,59 @@ public class LocalizationImpl implements Localization {
         return p.equals(FAVICON_PATH) || SYSTEM_ASSETS_PATTERN.matcher(p).matches();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isDefault() {
         return default_;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> getDataFormats() {
         String[] formats = getConfiguration("core.dataFormats").split("(\\s*)?,(\\s*)?");
         return Arrays.asList(formats);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getCulture() {
         return getConfiguration("core.culture");
     }
 
+    /** {@inheritDoc} */
     @Override
     public Locale getLocale() {
         return Locale.forLanguageTag(getCulture());
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getConfiguration(String key) {
         return configuration.get(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getResource(String key) {
         return resources.get(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> getIncludes(String pageTypeId) {
         return includes.get(pageTypeId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String localizePath(String url) {
         if (!Strings.isNullOrEmpty(path)) {
             if (path.endsWith("/")) {
                 url = path + (url.startsWith("/") ? url.substring(1) : url);
             } else {
-                url = path + (url.startsWith("/") ? url : "/" + url);
+                url = path + (url.startsWith("/") ? url : '/' + url);
             }
         }
         return url;

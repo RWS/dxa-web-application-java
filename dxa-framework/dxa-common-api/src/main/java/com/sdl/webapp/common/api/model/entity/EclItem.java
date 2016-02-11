@@ -18,6 +18,9 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.empty;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/**
+ * <p>Abstract EclItem class.</p>
+ */
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
 public abstract class EclItem extends MediaItem {
 
@@ -32,61 +35,111 @@ public abstract class EclItem extends MediaItem {
     @JsonProperty("EclExternalMetadata")
     private Map<String, Object> externalMetadata;
 
+    /**
+     * <p>getFromExternalMetadataOrAlternative.</p>
+     *
+     * @param externalMetadata a {@link java.util.Map} object.
+     * @param key              a {@link java.lang.String} object.
+     * @param alternative      a {@link java.lang.Object} object.
+     * @return a {@link java.lang.Object} object.
+     */
+    public static Object getFromExternalMetadataOrAlternative(Map<String, Object> externalMetadata, String key, Object alternative) {
+        Dd4tUtils dd4tUtils = ApplicationContextHolder.getContext().getBean(Dd4tUtils.class);
+        return dd4tUtils.getFromNestedMultiLevelMapOrAlternative(externalMetadata, key, alternative);
+    }
+
+    private static String getNodeValue(NamedNodeMap attributes, String name) {
+        final Node namedItem = attributes.getNamedItem(name);
+        return namedItem != null ? namedItem.getNodeValue() : null;
+    }
+
+    /**
+     * <p>Getter for the field <code>uri</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getUri() {
         return this.uri;
     }
 
+    /**
+     * <p>Setter for the field <code>uri</code>.</p>
+     *
+     * @param uri a {@link java.lang.String} object.
+     */
     public void setUri(String uri) {
         this.uri = uri;
     }
 
+    /**
+     * <p>Getter for the field <code>displayTypeId</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getDisplayTypeId() {
         return displayTypeId;
     }
 
+    /**
+     * <p>Setter for the field <code>displayTypeId</code>.</p>
+     *
+     * @param displayTypeId a {@link java.lang.String} object.
+     */
     public void setDisplayTypeId(String displayTypeId) {
         this.displayTypeId = displayTypeId;
     }
 
+    /**
+     * <p>Getter for the field <code>templateFragment</code>.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     public String getTemplateFragment() {
         return templateFragment;
     }
 
+    /**
+     * <p>Setter for the field <code>templateFragment</code>.</p>
+     *
+     * @param templateFragment a {@link java.lang.String} object.
+     */
     public void setTemplateFragment(String templateFragment) {
         this.templateFragment = templateFragment;
     }
 
     /**
-     * External metadata map for {@link EclItem}.
-     * <p/>
+     * External metadata map for {@link com.sdl.webapp.common.api.model.entity.EclItem}.
+     * <p>
      * Keys are the field names. Values can be simple types (String, Double, DateTime), nested Maps.
+     * </p>
+     *
+     * @return external metadata
      */
     public Map<String, Object> getExternalMetadata() {
         return externalMetadata;
     }
 
+    /**
+     * <p>Setter for the field <code>externalMetadata</code>.</p>
+     *
+     * @param externalMetadata a {@link java.util.Map} object.
+     */
     public void setExternalMetadata(Map<String, Object> externalMetadata) {
         this.externalMetadata = externalMetadata;
     }
 
-    public Object getFromExternalMetadataOrAlternative(Map<String, Object> externalMetadata, String key, Object alternative) {
-        Dd4tUtils dd4tUtils = ApplicationContextHolder.getContext().getBean(Dd4tUtils.class);
-        return dd4tUtils.getFromNestedMultiLevelMapOrAlternative(externalMetadata, key, alternative);
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlElement toHtmlElement(String widthFactor) throws DxaException {
         return toHtmlElement(widthFactor, 0.0, null, 0);
     }
 
     /**
-     * Returns an HTML representation.
+     * {@inheritDoc}
      *
-     * @param widthFactor   The factor to apply to the width - can be % (eg "100%") or absolute (eg "120") | <strong>ignored</strong>
-     * @param aspect        The aspect ratio to apply | <strong>ignored</strong>
-     * @param cssClass      Optional CSS class name(s) to apply
-     * @param containerSize The size (in grid column units) of the containing element | <strong>ignored</strong>
-     * @return string html representation
+     * Returns an HTML representation.
      */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException {
@@ -94,20 +147,15 @@ public abstract class EclItem extends MediaItem {
     }
 
     /**
-     * Returns an HTML representation.
+     * {@inheritDoc}
      *
-     * @param widthFactor   The factor to apply to the width - can be % (eg "100%") or absolute (eg "120") | <strong>ignored</strong>
-     * @param aspect        The aspect ratio to apply | <strong>ignored</strong>
-     * @param cssClass      Optional CSS class name(s) to apply
-     * @param containerSize The size (in grid column units) of the containing element | <strong>ignored</strong>
-     * @param contextPath   Context path | <strong>ignored</strong>
-     * @return string html representation
+     * Returns an HTML representation.
      */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException {
         if (isEmpty(templateFragment)) {
             throw new DxaException(format("Attempt to render an ECL Item for which no Template Fragment is available: " +
-                    "'%s' (DisplayTypeId: '%s')", getUri(), getDisplayTypeId()));
+                    "'%s' (DisplayTypeId: '%s')", this.uri, displayTypeId));
         }
 
         if (isEmpty(cssClass)) {
@@ -117,6 +165,7 @@ public abstract class EclItem extends MediaItem {
         return div().withClass(cssClass).withPureHtmlContent(templateFragment).build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getXpmMarkup(Localization localization) {
         if (getXpmMetadata() != null && !isEmpty(this.uri)) {
@@ -125,6 +174,7 @@ public abstract class EclItem extends MediaItem {
         return super.getXpmMarkup(localization);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void readFromXhtmlElement(Node xhtmlElement) {
         super.readFromXhtmlElement(xhtmlElement);
@@ -151,11 +201,7 @@ public abstract class EclItem extends MediaItem {
         }
     }
 
-    private String getNodeValue(NamedNodeMap attributes, String name) {
-        final Node namedItem = attributes.getNamedItem(name);
-        return namedItem != null ? namedItem.getNodeValue() : null;
-    }
-
+    /** {@inheritDoc} */
     @Override
     public String toString() {
         return "EclItem{" +

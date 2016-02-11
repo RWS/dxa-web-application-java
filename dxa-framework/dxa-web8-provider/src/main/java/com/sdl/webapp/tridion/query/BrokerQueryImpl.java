@@ -29,10 +29,66 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * <p>BrokerQueryImpl class.</p>
+ */
+@SuppressWarnings("Duplicates")
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class BrokerQueryImpl extends BrokerQuery {
 
+    /**
+     * <p>getTextFromCustomMeta.</p>
+     *
+     * @param meta      a {@link com.tridion.meta.CustomMeta} object.
+     * @param fieldName a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
+    protected static String getTextFromCustomMeta(CustomMeta meta, String fieldName) {
+        return meta.getNameValues().containsKey(fieldName) ? meta.getFirstValue(fieldName).toString() : null;
+    }
+
+    /**
+     * <p>getDateFromCustomMeta.</p>
+     *
+     * @param meta      a {@link com.tridion.meta.CustomMeta} object.
+     * @param fieldName a {@link java.lang.String} object.
+     * @return a {@link org.joda.time.DateTime} object.
+     */
+    protected static DateTime getDateFromCustomMeta(CustomMeta meta, String fieldName) {
+        if (meta.getNameValues().containsKey(fieldName)) {
+            Object firstValue = meta.getFirstValue(fieldName);
+            if (!firstValue.equals("")) {
+                return new DateTime(firstValue);
+            }
+        }
+
+        return null;
+    }
+
+    private static Teaser getTeaser(ComponentMeta compMeta) {
+        final Teaser result = new Teaser();
+
+        final Link link = new Link();
+        link.setUrl("tcm:" + compMeta.getPublicationId() + '-' + compMeta.getId());
+        result.setLink(link);
+
+        final CustomMeta customMeta = compMeta.getCustomMeta();
+
+        final DateTime date = getDateFromCustomMeta(customMeta, "dateCreated");
+        result.setDate(date != null ? date : new DateTime(compMeta.getLastPublicationDate()));
+
+        final String headline = getTextFromCustomMeta(customMeta, "name");
+        result.setHeadline(headline != null ? headline : compMeta.getTitle());
+
+        result.setText(new RichText(getTextFromCustomMeta(customMeta, "introText")));
+
+        return result;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Teaser> executeQuery() throws BrokerQueryException {
         final Query query = new Query(buildCriteria());
@@ -117,40 +173,5 @@ public class BrokerQueryImpl extends BrokerQuery {
                 // Default is to assume that its a custom metadata date field
                 return new CustomMetaKeyColumn(getSort(), MetadataType.DATE);
         }
-    }
-
-    protected String getTextFromCustomMeta(CustomMeta meta, String fieldName) {
-        return meta.getNameValues().containsKey(fieldName) ? meta.getFirstValue(fieldName).toString() : null;
-    }
-
-    protected DateTime getDateFromCustomMeta(CustomMeta meta, String fieldName) {
-        if (meta.getNameValues().containsKey(fieldName)) {
-            Object firstValue = meta.getFirstValue(fieldName);
-            if (!firstValue.equals("")) {
-                return new DateTime(firstValue);
-            }
-        }
-
-        return null;
-    }
-
-    private Teaser getTeaser(ComponentMeta compMeta) {
-        final Teaser result = new Teaser();
-
-        final Link link = new Link();
-        link.setUrl("tcm:" + compMeta.getPublicationId() + "-" + compMeta.getId());
-        result.setLink(link);
-
-        final CustomMeta customMeta = compMeta.getCustomMeta();
-
-        final DateTime date = getDateFromCustomMeta(customMeta, "dateCreated");
-        result.setDate(date != null ? date : new DateTime(compMeta.getLastPublicationDate()));
-
-        final String headline = getTextFromCustomMeta(customMeta, "name");
-        result.setHeadline(headline != null ? headline : compMeta.getTitle());
-
-        result.setText(new RichText(getTextFromCustomMeta(customMeta, "introText")));
-
-        return result;
     }
 }

@@ -32,10 +32,11 @@ import static com.sdl.webapp.common.impl.localization.semantics.SemanticsConvert
 
 /**
  * Implementation of {@code LocalizationFactory}.
- * <p/>
+ * <p>
  * This factory creates {@code Localization} instances and loads configuration information for each localization.
  * The configuration of a localization is stored in a number of JSON files that are retrieved via the static content
  * provider.
+ * </p>
  */
 @Component
 public class LocalizationFactoryImpl implements LocalizationFactory {
@@ -70,6 +71,9 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Localization createLocalization(String id, String path) throws LocalizationFactoryException {
         LOG.debug("createLocalization: [{}] {}", id, path);
@@ -164,6 +168,18 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         }
     }
 
+    /**
+     * <p>parseJsonFileObject.</p>
+     *
+     * @param contentProvider a {@link com.sdl.webapp.common.api.content.ContentProvider} object.
+     * @param filePath        a {@link java.lang.String} object.
+     * @param locId           a {@link java.lang.String} object.
+     * @param locPath         a {@link java.lang.String} object.
+     * @param resultType      a {@link com.fasterxml.jackson.core.type.TypeReference} object.
+     * @param <T>             a T object.
+     * @return a T object.
+     * @throws com.sdl.webapp.common.api.localization.LocalizationFactoryException if any.
+     */
     public <T> T parseJsonFileObject(ContentProvider contentProvider, String filePath, String locId,
                                      String locPath, TypeReference<T> resultType)
             throws LocalizationFactoryException {
@@ -178,6 +194,16 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         }
     }
 
+    /**
+     * <p>parseJsonFileTree.</p>
+     *
+     * @param contentProvider a {@link com.sdl.webapp.common.api.content.ContentProvider} object.
+     * @param filePath a {@link java.lang.String} object.
+     * @param locId a {@link java.lang.String} object.
+     * @param locPath a {@link java.lang.String} object.
+     * @return a {@link com.fasterxml.jackson.databind.JsonNode} object.
+     * @throws com.sdl.webapp.common.api.localization.LocalizationFactoryException if any.
+     */
     public JsonNode parseJsonFileTree(ContentProvider contentProvider, String filePath, String locId,
                                       String locPath)
             throws LocalizationFactoryException {
@@ -192,6 +218,16 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         }
     }
 
+    /**
+     * <p>parseJsonSubFiles.</p>
+     *
+     * @param contentProvider a {@link com.sdl.webapp.common.api.content.ContentProvider} object.
+     * @param rootNode a {@link com.fasterxml.jackson.databind.JsonNode} object.
+     * @param locId a {@link java.lang.String} object.
+     * @param locPath a {@link java.lang.String} object.
+     * @return a {@link java.util.Map} object.
+     * @throws com.sdl.webapp.common.api.localization.LocalizationFactoryException if any.
+     */
     public Map<String, String> parseJsonSubFiles(ContentProvider contentProvider, JsonNode rootNode,
                                                  String locId, String locPath)
             throws LocalizationFactoryException {

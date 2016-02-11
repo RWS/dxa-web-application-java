@@ -17,9 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Localization resolver interceptor. This interceptor determines the localization for the request and stores it in the
  * {@code WebRequestContext} so that it is available for other components when processing the request.
- * <p/>
+ * <p>
  * This should be the first interceptor to be called for requests that are being handled by the Spring
  * {@code DispatcherServlet}.
+ * </p>
  */
 public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(LocalizationResolverInterceptor.class);
@@ -34,6 +35,21 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     private WebRequestContext webRequestContext;
 
+    private static String getBaseUrl(HttpServletRequest request) {
+        final StringBuilder sb = new StringBuilder(16)
+                .append(request.getScheme()).append("://").append(request.getServerName());
+
+        int port = request.getServerPort();
+        if (port != DEFAULT_PORT) {
+            sb.append(':').append(port);
+        }
+
+        return sb.toString();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
             throws Exception {
@@ -69,21 +85,12 @@ public class LocalizationResolverInterceptor extends HandlerInterceptorAdapter {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
             throws Exception {
         LOG.trace("afterCompletion: {}", request.getRequestURL().toString());
-    }
-
-    private String getBaseUrl(HttpServletRequest request) {
-        final StringBuilder sb = new StringBuilder()
-                .append(request.getScheme()).append("://").append(request.getServerName());
-
-        int port = request.getServerPort();
-        if (port != DEFAULT_PORT) {
-            sb.append(':').append(port);
-        }
-
-        return sb.toString();
     }
 }

@@ -6,10 +6,20 @@ package com.sdl.webapp.common.api.model.entity;
 public class ExceptionEntity extends AbstractEntityModel {
     private Exception exception;
 
+    /**
+     * <p>Constructor for ExceptionEntity.</p>
+     *
+     * @param ex a {@link java.lang.Exception} object.
+     */
     public ExceptionEntity(Exception ex) {
         this.exception = ex;
     }
 
+    /**
+     * <p>Getter for the field <code>exception</code>.</p>
+     *
+     * @return a {@link java.lang.Exception} object.
+     */
     public Exception getException() {
         return this.exception;
     }

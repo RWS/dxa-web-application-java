@@ -25,6 +25,9 @@ import java.util.Objects;
 import java.util.Set;
 
 @Component
+/**
+ * <p>SemanticMapperImpl class.</p>
+ */
 public class SemanticMapperImpl implements SemanticMapper {
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMapperImpl.class);
 
@@ -33,12 +36,59 @@ public class SemanticMapperImpl implements SemanticMapper {
 
     private final SemanticMappingRegistry registry;
 
+    /**
+     * <p>Constructor for SemanticMapperImpl.</p>
+     *
+     * @param registry a {@link com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry} object.
+     */
     @Autowired
     public SemanticMapperImpl(SemanticMappingRegistry registry) {
         this.registry = registry;
     }
 
+    private static <T extends ViewModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("entityClass: {}", entityClass.getName());
+        }
+        try {
+            return entityClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new SemanticMappingException("Exception while creating instance of entity class: " +
+                    entityClass.getName(), e);
+        }
+    }
 
+    private static SemanticField findFieldForGivenSemantics(Map<FieldSemantics, SemanticField> fields, FieldSemantics semantics) {
+
+        SemanticField field = fields.get(semantics);
+
+        if (field != null) {
+            return field;
+        }
+
+        for (Map.Entry<FieldSemantics, SemanticField> entry : fields.entrySet()) {
+            FieldSemantics key = entry.getKey();
+
+            if (key.isStandardMetadataField() && Objects.equals(key.getPropertyName(), semantics.getPropertyName())) {
+                return entry.getValue();
+            }
+        }
+
+        // Search all embedded fields recursively
+        for (SemanticField semanticField : fields.values()) {
+            field = findFieldForGivenSemantics(semanticField.getEmbeddedFields(), semantics);
+
+            if (field != null) {
+                return field;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T extends ViewModel> T createEntity(Class<? extends T> entityClass,
                                                 final Map<FieldSemantics, SemanticField> semanticFields,
@@ -140,7 +190,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                     // This not necessarily means there is a problem; for some components in the input, not all fields
                     // of the entity are mapped
                     LOG.trace("No match found for field: {}; registry semantics: {} did not match with supplied " +
-                            "semantics: {}", new Object[]{field, registrySemantics, semanticFields});
+                            "semantics: {}", field, registrySemantics, semanticFields);
                 }
             }
         });
@@ -151,47 +201,6 @@ public class SemanticMapperImpl implements SemanticMapper {
         }
         LOG.trace("entity: {}", entity);
         return entity;
-    }
-
-
-    private <T extends ViewModel> T createInstance(Class<? extends T> entityClass) throws SemanticMappingException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("entityClass: {}", entityClass.getName());
-        }
-        try {
-            return entityClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
-            throw new SemanticMappingException("Exception while creating instance of entity class: " +
-                    entityClass.getName(), e);
-        }
-    }
-
-    private SemanticField findFieldForGivenSemantics(Map<FieldSemantics, SemanticField> fields, FieldSemantics semantics) {
-
-        SemanticField field = fields.get(semantics);
-
-        if (field != null) {
-            return field;
-        }
-
-        for (Map.Entry<FieldSemantics, SemanticField> entry : fields.entrySet()) {
-            FieldSemantics key = entry.getKey();
-
-            if (key.isStandardMetadataField() && Objects.equals(key.getPropertyName(), semantics.getPropertyName())) {
-                return entry.getValue();
-            }
-        }
-
-        // Search all embedded fields recursively
-        for (SemanticField semanticField : fields.values()) {
-            field = findFieldForGivenSemantics(semanticField.getEmbeddedFields(), semantics);
-
-            if (field != null) {
-                return field;
-            }
-        }
-
-        return null;
     }
 
 

@@ -11,15 +11,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+/**
+ * <p>NumberFieldConverter class.</p>
+ */
 public class NumberFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.NUMBER};
 
+    private static List<Integer> getIntegerValues(List<Double> numericValues) {
+        final List<Integer> integerValues = new ArrayList<>();
+        for (Double number : numericValues) {
+            integerValues.add((int) Math.round(number));
+        }
+        return integerValues;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FieldType[] supportedFieldTypes() {
         return SUPPORTED_FIELD_TYPES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<Double> numericValues = field.getNumericValues();
@@ -31,13 +48,5 @@ public class NumberFieldConverter extends AbstractFieldConverter {
         } else {
             throw new UnsupportedTargetTypeException(targetClass);
         }
-    }
-
-    private List<Integer> getIntegerValues(List<Double> numericValues) {
-        final List<Integer> integerValues = new ArrayList<>();
-        for (Double number : numericValues) {
-            integerValues.add((int) Math.round(number));
-        }
-        return integerValues;
     }
 }

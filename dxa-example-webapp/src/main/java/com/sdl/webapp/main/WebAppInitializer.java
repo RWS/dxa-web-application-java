@@ -17,7 +17,7 @@ import javax.servlet.ServletRegistration;
 
 /**
  * Web application initializer which configures the web application by registering listeners, filters and servlets.
- * <p/>
+ * <p>
  * Initialization and configuration for this web application is done purely in code, and not with a {@code web.xml}
  * deployment descriptor. Doing it in code provides more flexibility; for example, this enables the web application
  * to automatically detect and register the Contextual Image Delivery {@code ImageTransformerServlet} if it is present
@@ -57,27 +57,14 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
     private static final String PREVIEW_SESSION_LISTENER_CLASS_NAME = "com.tridion.storage.persistence.session.SessionManagementContextListener";
 
-    @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
-        setupSpringContext(servletContext);
-        registerCharacterEncodingFilter(servletContext);
-        registerHttpUploadServlet(servletContext);
-        registerImageTransformerServlet(servletContext);
-        registerPreviewSessionListener(servletContext);
-        registerWebServiceServlet(servletContext);
-        registerWebServiceListener(servletContext);
-
-        LOG.info("Web application initialization complete.");
-    }
-
-    private void registerCharacterEncodingFilter(ServletContext servletContext) {
+    private static void registerCharacterEncodingFilter(ServletContext servletContext) {
         FilterRegistration.Dynamic encodingFilter = servletContext.addFilter("encodingFilter", new CharacterEncodingFilter());
         encodingFilter.setInitParameter("encoding", "UTF-8");
         encodingFilter.setInitParameter("forceEncoding", "true");
         encodingFilter.addMappingForUrlPatterns(null, false, "/*");
     }
 
-    private void registerImageTransformerServlet(ServletContext servletContext) {
+    private static void registerImageTransformerServlet(ServletContext servletContext) {
         if (ClassUtils.isPresent(IMAGE_TRANSFORMER_SERVLET_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
             LOG.debug("Registering ImageTransformerServlet");
             ServletRegistration.Dynamic registration = servletContext.addServlet(IMAGE_TRANSFORMER_SERVLET_NAME,
@@ -88,7 +75,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
         }
     }
 
-    private void registerHttpUploadServlet(ServletContext servletContext) {
+    private static void registerHttpUploadServlet(ServletContext servletContext) {
         if (ClassUtils.isPresent(HTTP_UPLOAD_SERVLET_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
             LOG.debug("Registering HttpUploadServlet");
             ServletRegistration.Dynamic registration = servletContext.addServlet(HTTP_UPLOAD_SERVLET_NAME, HTTP_UPLOAD_SERVLET_CLASS_NAME);
@@ -96,14 +83,14 @@ public class WebAppInitializer implements WebApplicationInitializer {
         }
     }
 
-    private void registerPreviewSessionListener(ServletContext servletContext) {
+    private static void registerPreviewSessionListener(ServletContext servletContext) {
         if (ClassUtils.isPresent(PREVIEW_SESSION_LISTENER_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
             LOG.debug("Registering Preview Session Listener");
             servletContext.addListener(PREVIEW_SESSION_LISTENER_CLASS_NAME);
         }
     }
 
-    private void registerWebServiceServlet(ServletContext servletContext) {
+    private static void registerWebServiceServlet(ServletContext servletContext) {
         if (ClassUtils.isPresent(WEB_SERVICE_SERVLET_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
             LOG.debug("Registering Web Service Servlet");
             ServletRegistration.Dynamic registration = servletContext.addServlet(WEB_SERVICE_SERVLET_NAME, WEB_SERVICE_SERVLET_CLASS_NAME);
@@ -113,14 +100,14 @@ public class WebAppInitializer implements WebApplicationInitializer {
         }
     }
 
-    private void registerWebServiceListener(ServletContext servletContext) {
+    private static void registerWebServiceListener(ServletContext servletContext) {
         if (ClassUtils.isPresent(WEB_SERVICE_LISTENER_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
             LOG.debug("Registering Web Service Listener");
             servletContext.addListener(WEB_SERVICE_LISTENER_CLASS_NAME);
         }
     }
 
-    private void setupSpringContext(ServletContext servletContext) {
+    private static void setupSpringContext(ServletContext servletContext) {
         LOG.debug("Initializing servlet application context");
         AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
         servletAppContext.register(SpringConfiguration.class);
@@ -133,6 +120,19 @@ public class WebAppInitializer implements WebApplicationInitializer {
                 new DispatcherServlet(servletAppContext));
         registration.setLoadOnStartup(1);
         registration.addMapping(DISPATCHER_SERVLET_MAPPING);
+    }
+
+    @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+        setupSpringContext(servletContext);
+        registerCharacterEncodingFilter(servletContext);
+        registerHttpUploadServlet(servletContext);
+        registerImageTransformerServlet(servletContext);
+        registerPreviewSessionListener(servletContext);
+        registerWebServiceServlet(servletContext);
+        registerWebServiceListener(servletContext);
+
+        LOG.info("Web application initialization complete.");
     }
 
 }

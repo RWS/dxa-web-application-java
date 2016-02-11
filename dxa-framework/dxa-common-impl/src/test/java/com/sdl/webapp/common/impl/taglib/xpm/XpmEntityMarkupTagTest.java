@@ -20,7 +20,7 @@ public class XpmEntityMarkupTagTest {
     @Test
     @Ignore
     public void testGenerateXpmMarkup() {
-        final Map<String, String> entityData = new HashMap<>();
+        final Map<String, Object> entityData = new HashMap<>();
         entityData.put("ComponentID", "C123");
         entityData.put("ComponentModified", "2014-08-09T17:55:00+01:00");
         entityData.put("ComponentTemplateID", "T456");
@@ -36,7 +36,7 @@ public class XpmEntityMarkupTagTest {
     @Test
     @Ignore
     public void testGenerateXpmMarkupForQuery() {
-        final Map<String, String> entityData = new HashMap<>();
+        final Map<String, Object> entityData = new HashMap<>();
         entityData.put("ComponentID", "C123");
         entityData.put("ComponentModified", "2014-08-09T17:55:00+01:00");
         entityData.put("ComponentTemplateID", "tcm:0-0-0");
@@ -51,7 +51,7 @@ public class XpmEntityMarkupTagTest {
         //assertThat(setup(entityData).generateXpmMarkup(), is(expected));
     }
 
-    private XpmEntityMarkupTag setup(Map<String, String> entityData) {
+    private XpmEntityMarkupTag setup(Map<String, Object> entityData) {
         final EntityModel entity = mock(EntityModel.class);
         when(entity.getXpmMetadata()).thenReturn(entityData);
 

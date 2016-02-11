@@ -24,27 +24,51 @@ public abstract class AbstractBrokerComponentPresentationProvider extends BaseBr
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBrokerComponentPresentationProvider.class);
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentPresentation getDynamicComponentPresentation(int componentId, int publicationId)
             throws ItemNotFoundException, SerializationException {
         return getDynamicComponentPresentation(componentId, 0, publicationId);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ComponentPresentation getDynamicComponentPresentation(int componentId, int templateId, int publicationId)
             throws ItemNotFoundException, SerializationException {
         return getDynamicComponentPresentationInternal(componentId, templateId, publicationId);
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<ComponentPresentation> getDynamicComponentPresentations(final String[] itemUris, final int templateId, final int publicationId)
             throws ItemNotFoundException, SerializationException {
         return Collections.emptyList();
     }
 
+    /**
+     * <p>getDynamicComponentPresentationInternal.</p>
+     *
+     * @param componentId a int.
+     * @param templateId a int.
+     * @param publicationId a int.
+     * @return a {@link org.dd4t.contentmodel.ComponentPresentation} object.
+     * @throws org.dd4t.core.exceptions.ItemNotFoundException if any.
+     * @throws org.dd4t.core.exceptions.SerializationException if any.
+     */
     protected abstract ComponentPresentation getDynamicComponentPresentationInternal(int componentId, int templateId, int publicationId)
             throws ItemNotFoundException, SerializationException;
 
+    /**
+     * <p>getComponentPresentation.</p>
+     *
+     * @param dcpComponentPresentationRaw a {@link java.lang.String} object.
+     * @return a {@link org.dd4t.contentmodel.ComponentPresentation} object.
+     * @throws org.dd4t.core.exceptions.SerializationException if any.
+     */
     protected ComponentPresentation getComponentPresentation(String dcpComponentPresentationRaw) throws SerializationException {
         if (!StringUtils.isEmpty(dcpComponentPresentationRaw)) {
             try {

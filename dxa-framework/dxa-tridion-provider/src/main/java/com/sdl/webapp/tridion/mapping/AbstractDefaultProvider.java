@@ -24,6 +24,7 @@ import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.tridion.query.BrokerQuery;
 import com.sdl.webapp.tridion.query.BrokerQueryException;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.FactoryException;
@@ -34,12 +35,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.UriUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -51,7 +54,7 @@ import static com.sdl.webapp.util.dd4t.TcmUtils.buildTemplateTcmUri;
 
 
 /**
- * Implementation of {@link ContentProvider} that uses DD4T to provide content.
+ * Implementation of {@link com.sdl.webapp.common.api.content.ContentProvider} that uses DD4T to provide content.
  */
 public abstract class AbstractDefaultProvider implements ContentProvider, NavigationProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDefaultProvider.class);
@@ -128,6 +131,14 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return path.lastIndexOf('.') > path.lastIndexOf('/');
     }
 
+    /**
+     * <p>isToBeRefreshed.</p>
+     *
+     * @param file a {@link java.io.File} object.
+     * @param time a long.
+     * @return a boolean.
+     * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
+     */
     protected static boolean isToBeRefreshed(File file, long time) throws ContentProviderException {
         boolean refresh;
         if (file.exists()) {
@@ -143,6 +154,15 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return refresh;
     }
 
+    /**
+     * <p>writeToFile.</p>
+     *
+     * @param file     a {@link java.io.File} object.
+     * @param pathInfo a {@link com.sdl.webapp.common.util.ImageUtils.StaticContentPathInfo} object.
+     * @param content  an array of byte.
+     * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
+     * @throws java.io.IOException                                        if any.
+     */
     protected static void writeToFile(File file, ImageUtils.StaticContentPathInfo pathInfo, byte[] content) throws ContentProviderException, IOException {
         if (pathInfo.isImage() && pathInfo.isResized()) {
             content = ImageUtils.resizeImage(content, pathInfo);
@@ -227,10 +247,23 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return null;
     }
 
+    /**
+     * <p>getStaticContentFile.</p>
+     *
+     * @param file          a {@link java.io.File} object.
+     * @param pathInfo      a {@link com.sdl.webapp.common.util.ImageUtils.StaticContentPathInfo} object.
+     * @param publicationId a int.
+     * @return a {@link com.sdl.webapp.tridion.mapping.AbstractDefaultProvider.StaticContentFile} object.
+     * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
+     * @throws java.io.IOException                                        if any.
+     */
     protected abstract StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException;
 
+    /** {@inheritDoc} */
     @Override
+    @SneakyThrows(UnsupportedEncodingException.class)
     public PageModel getPageModel(String path, final Localization localization) throws ContentProviderException {
+        path = UriUtils.encodePath(path, "UTF-8");
         return findPage(path, localization, new TryFindPage<PageModel>() {
             @Override
             public PageModel tryFindPage(String path, int publicationId) throws ContentProviderException {
@@ -256,6 +289,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public EntityModel getEntityModel(@NonNull String id, final Localization localization) throws DxaException {
 
@@ -264,7 +298,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
             throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", id));
         }
 
-        // todo TcmUtils is moved in a feature branch
         String componentUri = buildTcmUri(localization.getId(), idParts[0]);
         String templateUri = buildTemplateTcmUri(localization.getId(), idParts[1]);
 
@@ -275,7 +308,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
             }
             EntityModel entityModel = modelBuilderPipeline.createEntityModel(componentPresentation, localization);
             if (entityModel.getXpmMetadata() != null) {
-                entityModel.getXpmMetadata().put("IsQueryBased", String.valueOf(true));
+                entityModel.getXpmMetadata().put("IsQueryBased", true);
             }
             return entityModel;
 
@@ -309,6 +342,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public void populateDynamicList(ContentList contentList, Localization localization) throws ContentProviderException {
         final BrokerQuery brokerQuery = instantiateBrokerQuery();
@@ -342,11 +376,13 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Implementation of {@code StaticContentProvider} that uses DD4T to provide static content.
-     * <p/>
+     * <p>
      * TODO: Should use DD4T BinaryFactory instead of calling the Tridion broker API directly.
+     * </p>
      */
-
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
@@ -388,6 +424,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         };
     }
 
+    /** {@inheritDoc} */
     @Override
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
         try {
@@ -409,6 +446,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return sitemapItem;
     }
 
+    /** {@inheritDoc} */
     @Override
     public NavigationLinks getTopNavigationLinks(String requestPath, Localization localization)
             throws NavigationProviderException {
@@ -416,6 +454,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return new NavigationLinks(createLinksForVisibleItems(navigationModel.getItems()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public NavigationLinks getContextNavigationLinks(String requestPath, Localization localization)
             throws NavigationProviderException {
@@ -428,6 +467,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return new NavigationLinks(links);
     }
 
+    /** {@inheritDoc} */
     @Override
     public NavigationLinks getBreadcrumbNavigationLinks(String requestPath, Localization localization)
             throws NavigationProviderException {
@@ -439,8 +479,19 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return new NavigationLinks(links);
     }
 
+    /**
+     * <p>instantiateBrokerQuery.</p>
+     *
+     * @return a {@link com.sdl.webapp.tridion.query.BrokerQuery} object.
+     */
     protected abstract BrokerQuery instantiateBrokerQuery();
 
+    /**
+     * <p>prependFullUrlIfNeeded.</p>
+     *
+     * @param path a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     protected String prependFullUrlIfNeeded(String path) {
         String baseUrl = webRequestContext.getBaseUrl();
         if (path.contains(baseUrl)) {

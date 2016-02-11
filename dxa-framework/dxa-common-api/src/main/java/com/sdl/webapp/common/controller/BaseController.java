@@ -50,10 +50,22 @@ public abstract class BaseController {
                 || !Objects.equals(mvcData.getControllerAreaName(), "Core");
     }
 
+    /**
+     * <p>Getter for the field <code>context</code>.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     */
     protected WebRequestContext getContext() {
         return context;
     }
 
+    /**
+     * <p>getRegionFromRequest.</p>
+     *
+     * @param request    a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param regionName a {@link java.lang.String} object.
+     * @return a {@link com.sdl.webapp.common.api.model.RegionModel} object.
+     */
     protected RegionModel getRegionFromRequest(HttpServletRequest request, String regionName) {
         RegionModel region = (RegionModel) request.getAttribute("_region_");
         if (region == null) {
@@ -63,6 +75,13 @@ public abstract class BaseController {
         return region;
     }
 
+    /**
+     * <p>getEntityFromRequest.</p>
+     *
+     * @param request  a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param entityId a {@link java.lang.String} object.
+     * @return a {@link com.sdl.webapp.common.api.model.EntityModel} object.
+     */
     protected EntityModel getEntityFromRequest(HttpServletRequest request, String entityId) {
         final EntityModel entity = (EntityModel) request.getAttribute("_entity_");
         if (entity == null) {
@@ -72,7 +91,15 @@ public abstract class BaseController {
         return entity;
     }
 
-    @RequestMapping(ControllerUtils.INCLUDE_PATH_PREFIX + SHARED_AREA_NAME + "/" + ERROR_CONTROLLER_NAME + "/" + ERROR_ACTION_NAME + "/{entityId}")
+    /**
+     * <p>handleViewNotFoundErrors.</p>
+     *
+     * @param request  a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param entityId a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     * @throws java.lang.Exception if any.
+     */
+    @RequestMapping(ControllerUtils.INCLUDE_PATH_PREFIX + SHARED_AREA_NAME + '/' + ERROR_CONTROLLER_NAME + '/' + ERROR_ACTION_NAME + "/{entityId}")
     public String handleViewNotFoundErrors(HttpServletRequest request, @PathVariable String entityId) throws Exception {
         LOG.warn("View for entity {} was not found, but the case is handled", entityId);
 
@@ -85,6 +112,11 @@ public abstract class BaseController {
         return ControllerUtils.SECTION_ERROR_VIEW;
     }
 
+    /**
+     * <p>handleJspIncludesErrors.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     @RequestMapping(value = ControllerUtils.INCLUDE_PATH_PREFIX + ControllerUtils.SECTION_ERROR_VIEW)
     public String handleJspIncludesErrors() {
         LOG.error("Unhandled exception from JSP include action");
@@ -92,16 +124,40 @@ public abstract class BaseController {
     }
 
 
+    /**
+     * <p>handleException.</p>
+     *
+     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param exception a {@link java.lang.Exception} object.
+     * @return a {@link java.lang.String} object.
+     */
     @ExceptionHandler(Exception.class)
     public String handleException(HttpServletRequest request, Exception exception) {
         LOG.error("Exception while processing request for: {}", request.getRequestURL(), exception);
         return ControllerUtils.SECTION_ERROR_VIEW;
     }
 
+    /**
+     * <p>resolveView.</p>
+     *
+     * @param mvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
+     * @param type a {@link java.lang.String} object.
+     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+     * @return a {@link java.lang.String} object.
+     */
     protected String resolveView(MvcData mvcData, String type, HttpServletRequest request) {
         return this.viewResolver.resolveView(mvcData, type, request);
     }
 
+    /**
+     * <p>resolveView.</p>
+     *
+     * @param viewBaseDir a {@link java.lang.String} object.
+     * @param view a {@link java.lang.String} object.
+     * @param mvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
+     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+     * @return a {@link java.lang.String} object.
+     */
     protected String resolveView(String viewBaseDir, String view, MvcData mvcData, HttpServletRequest request) {
         return this.viewResolver.resolveView(viewBaseDir, view, mvcData, request);
     }
@@ -110,9 +166,10 @@ public abstract class BaseController {
      * This is the method to override if you need to add custom model population logic,
      * first calling the base class and then adding your own logic
      *
-     * @param model The model which you wish to add data to.
+     * @param model              The model which you wish to add data to.
      * @param httpServletRequest http servlet request for current request, can be null
      * @return A fully populated view model combining CMS content with other data
+     * @throws java.lang.Exception exception
      */
     protected ViewModel enrichModel(ViewModel model, HttpServletRequest httpServletRequest) throws Exception {
         //Check if an exception was generated when creating the model, so now is the time to throw it
@@ -141,14 +198,15 @@ public abstract class BaseController {
 
     /**
      * Enriches a given Entity Model using an appropriate (custom) Controller.
-     *
-     * @param entity The Entity Model to enrich.
-     * @param request
-     * @return The enriched Entity Model.
-     * <p/>
+     * <p>
      * This method is different from EnrichModel in that it doesn't expect the current Controller to be able to enrich the Entity Model;
      * it creates a Controller associated with the Entity Model for that purpose.
+     * </p>
      * It is used by PageController.enrichEmbeddedModels.
+     *
+     * @param entity  The Entity Model to enrich.
+     * @param request request
+     * @return The enriched Entity Model.
      */
     protected EntityModel enrichEntityModel(EntityModel entity, HttpServletRequest request) {
         if (entity == null || entity.getMvcData() == null || !isCustomAction(entity.getMvcData())) {
@@ -169,7 +227,7 @@ public abstract class BaseController {
             HandlerMethod method = item.getValue();
 
             for (String urlPattern : mapping.getPatternsCondition().getPatterns()) {
-                if (urlPattern.contains("/" + controllerAreaName + "/" + controllerName)) {
+                if (urlPattern.contains('/' + controllerAreaName + '/' + controllerName)) {
                     HandlerMethod controllerMethod = handlerMethods.get(mapping);
                     BaseController controller = (BaseController) ApplicationContextHolder.getContext().getBean(controllerMethod.getBean().toString());
                     try {

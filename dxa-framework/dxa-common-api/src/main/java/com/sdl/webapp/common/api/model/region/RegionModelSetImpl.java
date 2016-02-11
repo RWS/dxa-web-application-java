@@ -13,6 +13,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * <p>RegionModelSetImpl class.</p>
+ */
 @EqualsAndHashCode(callSuper = false)
 @ToString
 public class RegionModelSetImpl extends AbstractSet<RegionModel> implements RegionModelSet {
@@ -20,16 +23,23 @@ public class RegionModelSetImpl extends AbstractSet<RegionModel> implements Regi
     private Map<String, RegionModel> modelMapByName = new LinkedHashMap<>();
     private Map<Class<? extends RegionModel>, Set<RegionModel>> modelMapByClass = new LinkedHashMap<>();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Iterator<RegionModel> iterator() {
         return modelMapByName.values().iterator();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int size() {
         return modelMapByName.size();
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean add(RegionModel regionModel) {
         if (!Objects.equals(modelMapByName.put(regionModel.getName(), regionModel), regionModel)) {
@@ -44,22 +54,26 @@ public class RegionModelSetImpl extends AbstractSet<RegionModel> implements Regi
         return false;
     }
 
+    /** {@inheritDoc} */
     @Override
     public RegionModel get(String name) {
         return modelMapByName.get(name);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <T extends RegionModel> Set<T> get(Class<T> clazz) {
         //noinspection unchecked
         return (Set<T>) modelMapByClass.get(clazz);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean containsName(final String name) {
         return modelMapByName.containsKey(name);
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean containsClass(Class<? extends RegionModel> clazz) {
         return modelMapByClass.containsKey(clazz);

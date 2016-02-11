@@ -23,6 +23,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @Component
+/**
+ * <p>DefaultRegionBuilder class.</p>
+ */
 public class DefaultRegionBuilder implements RegionBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRegionBuilder.class);
@@ -33,6 +36,9 @@ public class DefaultRegionBuilder implements RegionBuilder {
     @Autowired
     private ConditionalEntityEvaluator conditionalEntityEvaluator;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public RegionModelSet buildRegions(PageModel page, List<?> sourceList, RegionBuilderCallback callback,
                                        Localization localization) throws ContentProviderException {

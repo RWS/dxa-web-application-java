@@ -13,11 +13,17 @@ import org.springframework.stereotype.Component;
 @Primary
 public class SemanticMappingRegistryFactory extends AbstractFactoryBean<SemanticMappingRegistry> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Class<?> getObjectType() {
         return SemanticMappingRegistry.class;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected SemanticMappingRegistry createInstance() throws Exception {
         SemanticMappingRegistryImpl semanticMappingRegistry = new SemanticMappingRegistryImpl();

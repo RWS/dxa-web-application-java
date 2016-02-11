@@ -46,7 +46,7 @@ public class AbstractDefaultProviderTest {
         //given
         Localization localization = mock(Localization.class);
         EntityModel entity = mock(EntityModel.class);
-        when(entity.getXpmMetadata()).thenReturn(new HashMap<String, String>());
+        when(entity.getXpmMetadata()).thenReturn(new HashMap<String, Object>());
         when(modelBuilderPipeline.createEntityModel(Matchers.<ComponentPresentation>any(), Matchers.<Localization>any()))
                 .thenReturn(entity);
 
@@ -54,7 +54,7 @@ public class AbstractDefaultProviderTest {
         EntityModel entityModel = abstractDefaultProvider.getEntityModel("1-1", localization);
 
         //then
-        assertEquals(entityModel.getXpmMetadata().get("IsQueryBased"), String.valueOf(true));
+        assertEquals(entityModel.getXpmMetadata().get("IsQueryBased"), true);
     }
 
     @Test(expected = IllegalArgumentException.class)

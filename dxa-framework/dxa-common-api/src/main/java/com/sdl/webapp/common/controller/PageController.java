@@ -82,6 +82,17 @@ public class PageController extends BaseController {
     @Autowired
     private NavigationProvider navigationProvider;
 
+    /**
+     * <p>Constructor for PageController.</p>
+     *
+     * @param contentProvider   a {@link com.sdl.webapp.common.api.content.ContentProvider} object.
+     * @param linkResolver      a {@link com.sdl.webapp.common.api.content.LinkResolver} object.
+     * @param mediaHelper       a {@link com.sdl.webapp.common.api.MediaHelper} object.
+     * @param webRequestContext a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     * @param markup            a {@link com.sdl.webapp.common.markup.Markup} object.
+     * @param viewResolver      a {@link com.sdl.webapp.common.controller.ViewResolver} object.
+     * @param dataFormatter     a {@link com.sdl.webapp.common.api.formats.DataFormatter} object.
+     */
     @Autowired
     public PageController(ContentProvider contentProvider, LinkResolver linkResolver, MediaHelper mediaHelper,
                           WebRequestContext webRequestContext, Markup markup, ViewResolver viewResolver, DataFormatter dataFormatter) {
@@ -94,12 +105,17 @@ public class PageController extends BaseController {
         this.dataFormatters = dataFormatter;
     }
 
+    private static boolean isIncludeRequest(HttpServletRequest request) {
+        return request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null;
+    }
+
     /**
      * Gets a page requested by a client. This is the main handler method which gets called when a client sends a
      * request for a page.
      *
      * @param request The request.
      * @return The view name of the page.
+     * @throws java.lang.Exception exception
      */
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {MediaType.TEXT_HTML_VALUE, MediaType.ALL_VALUE})
     public String handleGetPage(HttpServletRequest request) throws Exception {
@@ -132,7 +148,13 @@ public class PageController extends BaseController {
         return this.viewResolver.resolveView(mvcData, "Page", request);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/**", params = { "format" },
+    /**
+     * <p>handleGetPageFormatted.</p>
+     *
+     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+     * @return a {@link org.springframework.web.servlet.ModelAndView} object.
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/**", params = {"format"},
             produces = {"application/rss+xml", MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
     public ModelAndView handleGetPageFormatted(final HttpServletRequest request) {
 
@@ -146,7 +168,16 @@ public class PageController extends BaseController {
         return dataFormatters.view(page);
     }
 
-
+    /**
+     * <p>handleResolve.</p>
+     *
+     * @param itemId         a {@link java.lang.String} object.
+     * @param localizationId a {@link java.lang.String} object.
+     * @param defaultPath    a {@link java.lang.String} object.
+     * @param defaultItem    a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/resolve/{itemId}")
     public String handleResolve(@PathVariable String itemId, @RequestParam String localizationId,
                                 @RequestParam(required = false) String defaultPath,
@@ -165,6 +196,18 @@ public class PageController extends BaseController {
         return "redirect:" + url;
     }
 
+    // Blank page for XPM
+
+    /**
+     * <p>handleResolveLoc.</p>
+     *
+     * @param itemId         a {@link java.lang.String} object.
+     * @param localizationId a {@link java.lang.String} object.
+     * @param defaultPath    a {@link java.lang.String} object.
+     * @param defaultItem    a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/{locPath}/resolve/{itemId}")
     public String handleResolveLoc(@PathVariable String itemId,
                                    @RequestParam String localizationId, @RequestParam String defaultPath,
@@ -172,13 +215,24 @@ public class PageController extends BaseController {
         return handleResolve(itemId, localizationId, defaultPath, defaultItem);
     }
 
-    // Blank page for XPM
+    /**
+     * <p>blankPage.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/se_blank.html", produces = "text/html")
     @ResponseBody
     public String blankPage() {
         return "";
     }
 
+    /**
+     * <p>handleGetNavigationJson.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     * @throws com.sdl.webapp.common.api.content.NavigationProviderException if any.
+     * @throws com.fasterxml.jackson.core.JsonProcessingException if any.
+     */
     @RequestMapping(method = RequestMethod.GET, value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public
     @ResponseBody
@@ -208,14 +262,16 @@ public class PageController extends BaseController {
     /**
      * Handles a {@code NotFoundException}.
      *
-     * @param request The request.
+     * @param request  The request.
+     * @param response response
      * @return The name of the view that renders the "not found" page.
+     * @throws java.lang.Exception exception
      */
     @ExceptionHandler(NotFoundException.class)
     public String handleNotFoundException(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // TODO TSI-775: No need to prefix with WebRequestContext.Localization.Path here (?)
         String path = webRequestContext.getLocalization().getPath();
-        String notFoundPageUrl = (path.endsWith("/") ? path : path + "/") + "error-404";
+        String notFoundPageUrl = (path.endsWith("/") ? path : path + '/') + "error-404";
 
         PageModel originalPageModel;
         try {
@@ -245,11 +301,9 @@ public class PageController extends BaseController {
     }
 
     /**
-     * Handles non-specific exceptions.
+     * {@inheritDoc}
      *
-     * @param request   The request.
-     * @param exception The exception.
-     * @return The name of the view that renders the "internal server error" page.
+     * Handles non-specific exceptions.
      */
     @ExceptionHandler(Exception.class)
     public String handleException(HttpServletRequest request, Exception exception) {
@@ -274,8 +328,8 @@ public class PageController extends BaseController {
      * Enriches all the Region/Entity Models embedded in the given Page Model.
      * Used by <see cref="FormatDataAttribute"/> to get all embedded Models enriched without rendering any Views.
      *
-     * @param model The Page Model to enrich.
-     * @param request
+     * @param model   The Page Model to enrich.
+     * @param request http request
      */
     private void enrichEmbeddedModels(PageModel model, HttpServletRequest request) {
         if (model == null) {
@@ -291,10 +345,5 @@ public class PageController extends BaseController {
                 }
             }
         }
-    }
-
-
-    private boolean isIncludeRequest(HttpServletRequest request) {
-        return request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null;
     }
 }

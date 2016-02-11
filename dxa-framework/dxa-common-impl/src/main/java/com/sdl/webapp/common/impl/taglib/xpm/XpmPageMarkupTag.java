@@ -7,6 +7,9 @@ import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+/**
+ * <p>XpmPageMarkupTag class.</p>
+ */
 public class XpmPageMarkupTag extends XpmMarkupTag {
 
     private static final String PAGE_PATTERN = "Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\"," +
@@ -20,13 +23,22 @@ public class XpmPageMarkupTag extends XpmMarkupTag {
 
     private PageModel page;
 
+    /**
+     * <p>Setter for the field <code>page</code>.</p>
+     *
+     * @param page a {@link com.sdl.webapp.common.api.model.PageModel} object.
+     */
     public void setPage(PageModel page) {
         this.page = page;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected HtmlNode generateXpmMarkup() {
 
+        //noinspection ReturnOfInnerClass
         return new HtmlNode() {
             @Override
             public String renderHtml() {
@@ -36,7 +48,7 @@ public class XpmPageMarkupTag extends XpmMarkupTag {
 
     }
 
-    private Localization getLocalization() {
+    Localization getLocalization() {
         return WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
                 .getBean(WebRequestContext.class).getLocalization();
     }

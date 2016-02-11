@@ -7,6 +7,11 @@ import org.dd4t.contentmodel.FieldType;
  */
 public class UnsupportedFieldTypeException extends FieldConverterException {
 
+    /**
+     * <p>Constructor for UnsupportedFieldTypeException.</p>
+     *
+     * @param fieldType a {@link org.dd4t.contentmodel.FieldType} object.
+     */
     public UnsupportedFieldTypeException(FieldType fieldType) {
         super("No field converter available for field type: " + fieldType);
     }

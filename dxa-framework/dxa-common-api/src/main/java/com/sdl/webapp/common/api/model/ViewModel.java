@@ -9,9 +9,19 @@ import java.util.Map;
  */
 public interface ViewModel {
 
+    /**
+     * <p>getMvcData.</p>
+     *
+     * @return a {@link com.sdl.webapp.common.api.model.MvcData} object.
+     */
     MvcData getMvcData();
 
-    Map<String, String> getXpmMetadata();
+    /**
+     * <p>getXpmMetadata.</p>
+     *
+     * @return a {@link java.util.Map} object.
+     */
+    Map<String, Object> getXpmMetadata();
 
     // TODO: Is this the right way forward? Is it not better to use markup decorators for this?
 
@@ -23,8 +33,18 @@ public interface ViewModel {
      */
     String getXpmMarkup(Localization localization);
 
+    /**
+     * <p>getHtmlClasses.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     String getHtmlClasses();
 
+    /**
+     * <p>setHtmlClasses.</p>
+     *
+     * @param s a {@link java.lang.String} object.
+     */
     void setHtmlClasses(String s);
 
 }

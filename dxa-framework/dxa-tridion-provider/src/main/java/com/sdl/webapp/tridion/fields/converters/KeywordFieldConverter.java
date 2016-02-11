@@ -14,15 +14,63 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
+/**
+ * <p>KeywordFieldConverter class.</p>
+ */
 public class KeywordFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.KEYWORD};
 
+    private static List<Tag> getTagValues(List<Keyword> keywordValues) {
+        final List<Tag> tagValues = new ArrayList<>();
+        for (Keyword keyword : keywordValues) {
+            final Tag tag = new Tag();
+            tag.setDisplayText(getKeywordDisplayText(keyword));
+            tag.setKey(getKeywordKey(keyword));
+            tag.setTagCategory(keyword.getTaxonomyId());
+            tagValues.add(tag);
+        }
+        return tagValues;
+    }
+
+    private static List<Boolean> getBooleanValues(List<Keyword> keywordValues) {
+        final List<Boolean> booleanValues = new ArrayList<>();
+        for (Keyword keyword : keywordValues) {
+            final String key = keyword.getKey();
+            final String title = keyword.getTitle();
+            booleanValues.add(Boolean.parseBoolean(Strings.isNullOrEmpty(key) ? title : key));
+        }
+        return booleanValues;
+    }
+
+    private static List<String> getStringValues(List<Keyword> keywordValues) {
+        final List<String> stringValues = new ArrayList<>();
+        for (Keyword keyword : keywordValues) {
+            stringValues.add(getKeywordDisplayText(keyword));
+        }
+        return stringValues;
+
+    }
+
+    private static String getKeywordDisplayText(Keyword keyword) {
+        return Strings.isNullOrEmpty(keyword.getDescription()) ? keyword.getTitle() : keyword.getDescription();
+    }
+
+    private static String getKeywordKey(Keyword keyword) {
+        return Strings.isNullOrEmpty(keyword.getKey()) ? keyword.getId() : keyword.getKey();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public FieldType[] supportedFieldTypes() {
         return SUPPORTED_FIELD_TYPES;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<Keyword> keywordValues = field.getKeywordValues();
@@ -36,44 +84,5 @@ public class KeywordFieldConverter extends AbstractFieldConverter {
         } else {
             throw new UnsupportedTargetTypeException(targetClass);
         }
-    }
-
-    private List<Tag> getTagValues(List<Keyword> keywordValues) {
-        final List<Tag> tagValues = new ArrayList<>();
-        for (Keyword keyword : keywordValues) {
-            final Tag tag = new Tag();
-            tag.setDisplayText(getKeywordDisplayText(keyword));
-            tag.setKey(getKeywordKey(keyword));
-            tag.setTagCategory(keyword.getTaxonomyId());
-            tagValues.add(tag);
-        }
-        return tagValues;
-    }
-
-    private List<Boolean> getBooleanValues(List<Keyword> keywordValues) {
-        final List<Boolean> booleanValues = new ArrayList<>();
-        for (Keyword keyword : keywordValues) {
-            final String key = keyword.getKey();
-            final String title = keyword.getTitle();
-            booleanValues.add(Boolean.parseBoolean(Strings.isNullOrEmpty(key) ? title : key));
-        }
-        return booleanValues;
-    }
-
-    private List<String> getStringValues(List<Keyword> keywordValues) {
-        final List<String> stringValues = new ArrayList<>();
-        for (Keyword keyword : keywordValues) {
-            stringValues.add(getKeywordDisplayText(keyword));
-        }
-        return stringValues;
-
-    }
-
-    private String getKeywordDisplayText(Keyword keyword) {
-        return Strings.isNullOrEmpty(keyword.getDescription()) ? keyword.getTitle() : keyword.getDescription();
-    }
-
-    private String getKeywordKey(Keyword keyword) {
-        return Strings.isNullOrEmpty(keyword.getKey()) ? keyword.getId() : keyword.getKey();
     }
 }

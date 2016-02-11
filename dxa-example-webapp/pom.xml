@@ -98,26 +98,23 @@
             </dependencies>
         </profile>
         <profile>
-            <id>smarttarget-module</id>
+            <id>smarttarget-2013sp1-module</id>
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-smarttarget</artifactId>
+                    <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
                     <version>${dxa.version}</version>
                     <scope>runtime</scope>
                 </dependency>
-
+            </dependencies>
+        </profile>
+        <profile>
+            <id>smarttarget-web8-module</id>
+            <dependencies>
                 <dependency>
-                    <groupId>com.tridion.smarttarget</groupId>
-                    <artifactId>session_cartridge</artifactId>
-                    <version>2014sp1</version>
-                    <scope>runtime</scope>
-                </dependency>
-
-                <dependency>
-                    <groupId>com.tridion.smarttarget</groupId>
-                    <artifactId>smarttarget_cartridge</artifactId>
-                    <version>2014sp1</version>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-smarttarget-web8</artifactId>
+                    <version>${dxa.version}</version>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

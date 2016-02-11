@@ -41,14 +41,27 @@ public class RegisterSemanticClasses {
     private String namespace;
     private List<String> namespaces;
 
+    /**
+     * <p>Setter for the field <code>namespace</code>.</p>
+     *
+     * @param namespace a {@link java.lang.String} object.
+     */
     public void setNamespace(String namespace) {
         this.namespace = namespace;
     }
 
+    /**
+     * <p>Setter for the field <code>namespaces</code>.</p>
+     *
+     * @param namespaces a {@link java.util.List} object.
+     */
     public void setNamespaces(List<String> namespaces) {
         this.namespaces = namespaces;
     }
 
+    /**
+     * <p>initialize.</p>
+     */
     @PostConstruct
     public void initialize() {
         if (namespace != null) {

@@ -12,15 +12,26 @@ public class NamedNodeMapAdapter extends AbstractList<Node> {
 
     private final NamedNodeMap namedNodeMap;
 
+    /**
+     * <p>Constructor for NamedNodeMapAdapter.</p>
+     *
+     * @param namedNodeMap a {@link org.w3c.dom.NamedNodeMap} object.
+     */
     public NamedNodeMapAdapter(NamedNodeMap namedNodeMap) {
         this.namedNodeMap = namedNodeMap;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Node get(int index) {
         return namedNodeMap.item(index);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int size() {
         return namedNodeMap.getLength();

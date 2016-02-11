@@ -8,17 +8,30 @@ import org.jsoup.select.Elements;
 
 import java.util.List;
 
+/**
+ * <p>ParsableHtmlNode class.</p>
+ */
 public class ParsableHtmlNode extends HtmlNode {
 
     private String htmlText;
     private Element html = null;
 
+    /**
+     * <p>Constructor for ParsableHtmlNode.</p>
+     *
+     * @param htmlText a {@link java.lang.String} object.
+     */
     public ParsableHtmlNode(String htmlText) {
         this.htmlText = htmlText;
     }
 
     // TODO: Wrap JSoup API totally here...???
 
+    /**
+     * <p>getHtmlElement.</p>
+     *
+     * @return a {@link org.jsoup.nodes.Element} object.
+     */
     public Element getHtmlElement() {
         if (this.html == null) {
             Element htmlElement = null;
@@ -42,6 +55,9 @@ public class ParsableHtmlNode extends HtmlNode {
         return this.html;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String renderHtml() {
         if (this.html != null) {

@@ -12,11 +12,17 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
+/**
+ * <p>BrokerComponentPresentationProvider class.</p>
+ */
 public class BrokerComponentPresentationProvider extends AbstractBrokerComponentPresentationProvider {
     private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentPresentationProvider.class);
     private static final Map<Integer, ComponentPresentationFactory> FACTORY_CACHE = new ConcurrentHashMap<>();
     private static final String ERROR_MESSAGE = "Component Presentation not found for componentId: %d, templateId: %d and publicationId: %d";
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected ComponentPresentation getDynamicComponentPresentationInternal(int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
         ComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);

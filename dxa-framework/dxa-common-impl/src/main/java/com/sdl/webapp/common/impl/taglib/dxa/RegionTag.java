@@ -21,6 +21,9 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGIO
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/**
+ * <p>RegionTag class.</p>
+ */
 public class RegionTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionTag.class);
 
@@ -29,22 +32,45 @@ public class RegionTag extends AbstractMarkupTag {
     private String emptyViewName;
     private int containerSize;
 
+    /**
+     * <p>Setter for the field <code>name</code>.</p>
+     *
+     * @param name a {@link java.lang.String} object.
+     */
     public void setName(String name) {
         this.name = name;
     }
 
+    /**
+     * <p>Setter for the field <code>placeholder</code>.</p>
+     *
+     * @param placeholder a boolean.
+     */
     public void setPlaceholder(boolean placeholder) {
         this.placeholder = placeholder;
     }
 
+    /**
+     * <p>Setter for the field <code>emptyViewName</code>.</p>
+     *
+     * @param emptyViewName a {@link java.lang.String} object.
+     */
     public void setEmptyViewName(String emptyViewName) {
         this.emptyViewName = emptyViewName;
     }
 
+    /**
+     * <p>Setter for the field <code>containerSize</code>.</p>
+     *
+     * @param containerSize a int.
+     */
     public void setContainerSize(int containerSize) {
         this.containerSize = containerSize;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
         WebRequestContext webRequestContext = this.getWebRequestContext();

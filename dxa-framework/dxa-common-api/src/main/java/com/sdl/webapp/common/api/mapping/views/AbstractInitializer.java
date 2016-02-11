@@ -14,6 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
+/**
+ * <p>Abstract AbstractInitializer class.</p>
+ */
 public abstract class AbstractInitializer {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractInitializer.class);
@@ -37,6 +40,11 @@ public abstract class AbstractInitializer {
         }
     }
 
+    /**
+     * <p>getAreaName.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     protected abstract String getAreaName();
 
     private void registerViewEntry(RegisteredView viewEntry) {
@@ -59,7 +67,7 @@ public abstract class AbstractInitializer {
             }
         }
 
-        MvcData mvcData = MvcDataImpl.builder()
+        MvcData mvcData = MvcDataImpl.newBuilder()
                 .areaName(getAreaName())
                 .viewName(viewName)
                 .controllerName(controllerName)

@@ -11,6 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
+/**
+ * <p>TridionLinkResolver class.</p>
+ */
 public class TridionLinkResolver extends AbstractTridionLinkResolver {
 
     private static final LinkStrategy BINARY_LINK_STRATEGY = new LinkStrategy() {
@@ -44,6 +47,9 @@ public class TridionLinkResolver extends AbstractTridionLinkResolver {
         strategiesMapping.put(BasicLinkStrategy.PAGE_LINK_STRATEGY, PAGE_LINK_STRATEGY);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected String resolveLink(BasicLinkStrategy linkStrategy, int publicationId, int itemId, String uri) {
         return resolveLink(strategiesMapping.get(linkStrategy), publicationId, itemId, uri);

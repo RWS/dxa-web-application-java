@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.MediaHelper;
+import com.sdl.webapp.common.api.ScreenWidth;
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import org.junit.Test;
@@ -8,14 +9,18 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import javax.servlet.http.HttpServletRequest;
 
+import static com.sdl.webapp.common.impl.DefaultMediaHelper.roundWidth;
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -24,6 +29,7 @@ import static org.mockito.Mockito.mock;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
+@ActiveProfiles("test")
 public class DefaultMediaHelperTest {
 
     @Autowired
@@ -86,7 +92,63 @@ public class DefaultMediaHelperTest {
         assertThat(mediaHelper.getResponsiveImageUrl("/example.jpg", "641", 2.5, 12), is("/example_w1024_h410_n.jpg"));
     }
 
+    @Test
+    public void shouldCorrectlyGiveBreakPointsForWidths() {
+        assertEquals(roundWidth(100), 160);
+        assertEquals(roundWidth(160), 160);
+        assertEquals(roundWidth(200), 320);
+        assertEquals(roundWidth(320), 320);
+        assertEquals(roundWidth(400), 640);
+        assertEquals(roundWidth(640), 640);
+        assertEquals(roundWidth(800), 1024);
+        assertEquals(roundWidth(1024), 1024);
+        assertEquals(roundWidth(1600), 2048);
+        assertEquals(roundWidth(2048), 2048);
+        assertEquals(roundWidth(3000), 2048);
+        assertEquals(roundWidth(4000), 2048);
+    }
+
+
+    @Test
+    public void shouldReturnTheCorrectScreenSizeByBreakPoint() {
+        //when
+        webRequestContext.setDisplayWidth(400);
+        //then
+        assertEquals(ScreenWidth.EXTRA_SMALL, mediaHelper.getScreenWidth());
+
+        //when
+        webRequestContext.setDisplayWidth(480);
+        //then
+        assertEquals(ScreenWidth.SMALL, mediaHelper.getScreenWidth());
+
+        //when
+        webRequestContext.setDisplayWidth(900);
+        //then
+        assertEquals(ScreenWidth.SMALL, mediaHelper.getScreenWidth());
+
+        //when
+        webRequestContext.setDisplayWidth(940);
+        //then
+        assertEquals(ScreenWidth.MEDIUM, mediaHelper.getScreenWidth());
+
+        //when
+        webRequestContext.setDisplayWidth(1100);
+        //then
+        assertEquals(ScreenWidth.MEDIUM, mediaHelper.getScreenWidth());
+
+        //when
+        webRequestContext.setDisplayWidth(1140);
+        //then
+        assertEquals(ScreenWidth.LARGE, mediaHelper.getScreenWidth());
+
+        //when
+        webRequestContext.setDisplayWidth(1280);
+        //then
+        assertEquals(ScreenWidth.LARGE, mediaHelper.getScreenWidth());
+    }
+
     @Configuration
+    @Profile("test")
     public static class AbstractMediaHelperTestConfig {
 
         @Bean

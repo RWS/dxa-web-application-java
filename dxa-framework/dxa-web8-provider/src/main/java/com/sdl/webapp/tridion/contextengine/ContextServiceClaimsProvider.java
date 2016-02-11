@@ -9,6 +9,7 @@ import com.sdl.context.odata.client.api.ODataContextEngine;
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.dd4t.core.util.HttpUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
@@ -18,7 +19,15 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
+/**
+ * <p>ContextServiceClaimsProvider class.</p>
+ */
 public class ContextServiceClaimsProvider implements ContextClaimsProvider {
+
+    private static final String CONTEXT_COOKIE_NAME = "context";
+
+    @Autowired
+    private ODataContextEngine oDataContextEngine;
 
     private static Map<String, Object> getClaimsMap(ContextMap<? extends Aspect> contextMap, String aspectName) {
         if (Strings.isNullOrEmpty(aspectName)) {
@@ -45,28 +54,27 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
         return result;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Map<String, Object> getContextClaims(String aspectName) throws DxaException {
         HttpServletRequest request = HttpUtils.getCurrentRequest();
 
-        String contextCookie = null;
+        EvidenceBuilder evidenceBuilder = new EvidenceBuilder()
+                .with("user-agent", request.getHeader("user-agent"));
+
         if (request.getCookies() != null) {
             for (Cookie cookie : request.getCookies()) {
-                if ("context".equals(cookie.getName())) {
-                    contextCookie = cookie.getValue();
+                if (CONTEXT_COOKIE_NAME.equals(cookie.getName())) {
+                    evidenceBuilder.with("cookie", CONTEXT_COOKIE_NAME + '=' + cookie.getValue());
                 }
             }
         }
 
-        EvidenceBuilder evidenceBuilder = new EvidenceBuilder()
-                .with("user-agent", request.getHeader("user-agent"));
-        if (contextCookie != null) {
-            evidenceBuilder.with("cookie", contextCookie);
-        }
-
         ContextMap<? extends Aspect> contextMap;
         try {
-            contextMap = new ODataContextEngine().resolve(evidenceBuilder.build());
+            contextMap = oDataContextEngine.resolve(evidenceBuilder.build());
 
         } catch (ResolverException e) {
             throw new DxaException("An error occurred while resolving evidence using the Context Service.", e);
@@ -75,6 +83,9 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
         return getClaimsMap(contextMap, aspectName);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getDeviceFamily() {
         // TODO TSI-789: this functionality overlaps with "Context Expressions"

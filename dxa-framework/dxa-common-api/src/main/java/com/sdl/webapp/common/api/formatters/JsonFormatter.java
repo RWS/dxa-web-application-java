@@ -4,7 +4,6 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.entity.Teaser;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URISyntaxException;
 
 /**
  * Produces the feed in json format
@@ -12,6 +11,12 @@ import java.net.URISyntaxException;
 public class JsonFormatter extends BaseFormatter {
 
 
+    /**
+     * <p>Constructor for JsonFormatter.</p>
+     *
+     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param context a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     */
     public JsonFormatter(HttpServletRequest request, WebRequestContext context) {
         super(request, context);
         this.addMediaType("application/json");
@@ -19,10 +24,9 @@ public class JsonFormatter extends BaseFormatter {
     }
 
     /**
-     * Returns the formatted data. Additional model processing can be implemented in extending classes
+     * {@inheritDoc}
      *
-     * @param model
-     * @return
+     * Returns the formatted data. Additional model processing can be implemented in extending classes
      */
     @Override
     public Object formatData(Object model) {
@@ -30,11 +34,9 @@ public class JsonFormatter extends BaseFormatter {
     }
 
     /**
-     * Not required for Json
+     * {@inheritDoc}
      *
-     * @param item
-     * @return
-     * @throws URISyntaxException
+     * Not required for Json
      */
     @Override
     public Object getSyndicationItemFromTeaser(Teaser item) throws Exception {

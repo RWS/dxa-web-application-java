@@ -7,10 +7,20 @@ import org.springframework.core.convert.TypeDescriptor;
  */
 public class UnsupportedTargetTypeException extends FieldConverterException {
 
+    /**
+     * <p>Constructor for UnsupportedTargetTypeException.</p>
+     *
+     * @param targetType a {@link org.springframework.core.convert.TypeDescriptor} object.
+     */
     public UnsupportedTargetTypeException(TypeDescriptor targetType) {
         super("Unsupported target type: " + targetType);
     }
 
+    /**
+     * <p>Constructor for UnsupportedTargetTypeException.</p>
+     *
+     * @param targetClass a {@link java.lang.Class} object.
+     */
     public UnsupportedTargetTypeException(Class<?> targetClass) {
         super("Unsupported target class: " + targetClass.getName());
     }

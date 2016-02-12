@@ -55,9 +55,15 @@
         <module>dxa-web8-provider</module>
     </modules>
 
-    <properties>
-        <super.basedir>${project.basedir}/..</super.basedir>
+    <repositories>
+        <repository>
+            <id>local-project-repo</id>
+            <name>local-project-repo</name>
+            <url>file:///${project.basedir}/../../local-project-repo</url>
+        </repository>
+    </repositories>
 
+    <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 

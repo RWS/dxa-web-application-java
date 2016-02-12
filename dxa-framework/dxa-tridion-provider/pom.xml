@@ -30,10 +30,6 @@
         </license>
     </licenses>
 
-    <properties>
-        <super.basedir>${project.basedir}/../..</super.basedir>
-    </properties>
-
     <developers>
         <developer>
             <id>rpannekoek</id>

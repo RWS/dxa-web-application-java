@@ -49,17 +49,6 @@
         </developer>
     </developers>
 
-    <properties>
-        <super.basedir>${project.basedir}</super.basedir>
-    </properties>
-
-    <repositories>
-        <repository>
-            <id>local-project-repo</id>
-            <url>file:///${super.basedir}/local-project-repo</url>
-        </repository>
-    </repositories>
-
     <profiles>
         <profile>
             <id>webapp</id>

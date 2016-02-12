@@ -45,10 +45,6 @@
         </license>
     </licenses>
 
-    <properties>
-        <super.basedir>${project.basedir}/../..</super.basedir>
-    </properties>
-
     <dependencies>
 
         <dependency>

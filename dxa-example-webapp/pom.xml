@@ -16,7 +16,6 @@
     <properties>
         <java-version>1.7</java-version>
         <dxa.version>1.3-SNAPSHOT</dxa.version>
-        <super.basedir>${project.basedir}/..</super.basedir>
     </properties>
 
     <build>

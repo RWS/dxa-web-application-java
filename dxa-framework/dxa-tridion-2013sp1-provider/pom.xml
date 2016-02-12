@@ -28,7 +28,6 @@
         <cd.version>7.1.0</cd.version>
         <cwd.version>7.1.2</cwd.version>
         <java-version>1.7</java-version>
-        <super.basedir>${project.basedir}/../..</super.basedir>
     </properties>
 
     <licenses>

@@ -3,6 +3,8 @@ package org.dd4t.mvc.controllers;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.dd4t.core.services.PropertiesService;
 import org.dd4t.core.util.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
@@ -16,6 +18,7 @@ import java.util.Locale;
  * @author R. Kempees
  */
 public abstract class AbstractBaseController {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseController.class);
     @Resource
     protected PublicationResolver publicationResolver;
     @Resource
@@ -27,7 +30,12 @@ public abstract class AbstractBaseController {
 
     @PostConstruct
     protected void init() {
-        removeContextPath = Boolean.valueOf(propertiesService.getProperty(Constants.PROPERTY_STRIP_CONTEXT_PATH,"false"));
+        String stripContext = propertiesService.getProperty(Constants.PROPERTY_STRIP_CONTEXT_PATH,"false");
+        if ("true".equalsIgnoreCase(stripContext)|| "false".equalsIgnoreCase(stripContext)) {
+            removeContextPath = Boolean.valueOf(stripContext);
+        } else {
+            LOG.warn("{} not set! If a Servlet Context path is present and it should be stripped, this will not be done.",Constants.PROPERTY_STRIP_CONTEXT_PATH);
+        }
     }
     /**
      * Create Date format for last-modified headers. Note that a constant

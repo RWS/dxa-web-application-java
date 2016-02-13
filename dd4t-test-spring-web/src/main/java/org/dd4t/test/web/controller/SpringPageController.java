@@ -38,9 +38,9 @@ public class SpringPageController extends AbstractPageController {
      * queried based on the request URI, the page meta XML contains the actual
      * view name to be rendered.
      *
-     * @param model
-     * @param request
-     * @param response
+     * @param model the Spring Model
+     * @param request the HttpServletRequest
+     * @param response the HttpServletResponse
      */
     @RequestMapping (value = {"/**/*.html", "/**/*.txt", "/**/*.xml"}, method = {RequestMethod.GET, RequestMethod.HEAD})
     @Override
@@ -62,20 +62,10 @@ public class SpringPageController extends AbstractPageController {
     }
 
     /**
-     * @param pageViewPath
+     * @param pageViewPath the path to the page views
      */
     @Override
     public void setPageViewPath (final String pageViewPath) {
         super.setPageViewPath(pageViewPath);
-    }
-
-    @Override
-    public boolean isRemoveContextPath () {
-        return super.isRemoveContextPath();
-    }
-
-    @Override
-    public void setRemoveContextPath (final boolean removeContextPath) {
-        super.setRemoveContextPath(removeContextPath);
     }
 }

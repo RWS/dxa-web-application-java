@@ -27,6 +27,7 @@ import com.tridion.broker.StorageException;
 import com.tridion.configuration.ConfigurationException;
 import com.tridion.meta.PageMeta;
 import com.tridion.meta.PublicationMeta;
+import org.dd4t.core.util.Constants;
 import org.dd4t.providers.AbstractPublicationProvider;
 import org.dd4t.providers.PublicationProvider;
 import org.slf4j.Logger;
@@ -67,7 +68,7 @@ public class BrokerPublicationProvider extends AbstractPublicationProvider imple
         }
 
         LOG.info("Could not find publication Id for url: {}", fullUrl);
-        return -1;
+        return Constants.UNKNOWN_PUBLICATION_ID;
     }
 
     @Override

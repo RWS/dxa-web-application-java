@@ -24,6 +24,7 @@ import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.BinaryFactory;
 import org.dd4t.core.resolvers.PublicationResolver;
+import org.dd4t.core.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -45,7 +46,6 @@ import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
-import java.util.TimeZone;
 
 // TODO: Split stuff between the factory and the real controller stuff
 
@@ -72,18 +72,6 @@ import java.util.TimeZone;
 public class AbstractBinaryController {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBinaryController.class);
-    private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
-
-    // The time zone
-    private static final TimeZone GMT = TimeZone.getTimeZone("GMT");
-
-    // The if-modified-since header
-    private static final String IF_MODIFIED_SINCE = "If-Modified-Since";
-
-    // The last-modified header
-    private static final String LAST_MODIFIED = "Last-Modified";
-
-    private static final String CONTENT_LENGTH = "Content-Length";
 
     @Resource
     private PublicationResolver publicationResolver;
@@ -130,7 +118,7 @@ public class AbstractBinaryController {
             }
 
             // Check if anything changed, if nothing changed return a 304
-            String modifiedHeader = request.getHeader(IF_MODIFIED_SINCE);
+            String modifiedHeader = request.getHeader(Constants.HEADER_IF_MODIFIED_SINCE);
             if (StringUtils.isNotEmpty(modifiedHeader) && createDateFormat().format(binary.getLastPublishedDate().toDate()).equals(modifiedHeader)) {
                 response.setStatus(HttpStatus.NOT_MODIFIED.value());
                 return;
@@ -207,8 +195,8 @@ public class AbstractBinaryController {
             }
 
             response.setContentType(getContentType(binary, path, request));
-            response.setHeader(CONTENT_LENGTH, Long.toString(contentLength));
-            response.setHeader(LAST_MODIFIED, createDateFormat().format(binary.getLastPublishedDate().toDate()));
+            response.setHeader(Constants.HEADER_CONTENT_LENGTH, Long.toString(contentLength));
+            response.setHeader(Constants.HEADER_LAST_MODIFIED, createDateFormat().format(binary.getLastPublishedDate().toDate()));
             response.setStatus(HttpStatus.OK.value());
 
             // Write binary data to output stream
@@ -251,8 +239,7 @@ public class AbstractBinaryController {
 
     protected String getBinaryPath (final HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-
-        if (removeContextPath) {
+        if (this.removeContextPath) {
             String contextPath = request.getContextPath();
             if (StringUtils.isNotEmpty(contextPath)) {
                 requestURI = requestURI.substring(contextPath.length());
@@ -344,8 +331,8 @@ public class AbstractBinaryController {
      * SimpleDateFormat is not allowed, it's access should be sync-ed.
      */
     private DateFormat createDateFormat () {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
-        dateFormat.setTimeZone(GMT);
+        SimpleDateFormat dateFormat = new SimpleDateFormat(Constants.HEADER_DATE_FORMAT, Locale.US);
+        dateFormat.setTimeZone(Constants.TIMEZONE_GMT);
 
         return dateFormat;
     }

@@ -22,8 +22,6 @@ import org.dd4t.contentmodel.Page;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
-import org.dd4t.core.resolvers.PublicationResolver;
-import org.dd4t.core.services.PropertiesService;
 import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.HttpUtils;
 import org.dd4t.mvc.utils.RenderUtils;
@@ -38,10 +36,6 @@ import javax.servlet.DispatcherType;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.TimeZone;
 
 /**
  * dd4t-2
@@ -53,26 +47,13 @@ import java.util.TimeZone;
  * @author R. Kempees
  */
 @Controller
-public abstract class AbstractPageController {
+public abstract class AbstractPageController extends AbstractBaseController {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractPageController.class);
-    private static final TimeZone GMT = TimeZone.getTimeZone("GMT");
-    private static final String LAST_MODIFIED = "Last-Modified";
-    private static final String DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
 
     @Resource
     protected PageFactoryImpl pageFactory;
 
-    @Resource
-    protected PublicationResolver publicationResolver;
-
-    @Resource
-    protected PropertiesService propertiesService;
-
     private String pageViewPath = "";
-    /**
-     * Boolean indicating if context path on the page URL should be removed, defaults to true
-     */
-    private boolean removeContextPath = false;
 
     /**
      * All page requests are handled by this method. The page meta XML is
@@ -84,7 +65,7 @@ public abstract class AbstractPageController {
      */
 
     public String showPage (Model model, HttpServletRequest request, HttpServletResponse response) throws IOException {
-        final String urlToFetch = HttpUtils.appendDefaultPageIfRequired(HttpUtils.getCurrentURL(request));
+        final String urlToFetch = HttpUtils.appendDefaultPageIfRequired(HttpUtils.getCurrentURL(request,this.removeContextPath));
         String url = adjustLocalErrorUrl(request, urlToFetch);
         url = HttpUtils.normalizeUrl(url);
 
@@ -99,7 +80,7 @@ public abstract class AbstractPageController {
 
             DateTime lastPublishDate = pageModel != null ? pageModel.getLastPublishedDate() : Constants.THE_YEAR_ZERO;
 
-            response.setHeader(LAST_MODIFIED, createDateFormat().format(lastPublishDate.toDate()));
+            response.setHeader(Constants.LAST_MODIFIED, createDateFormat().format(lastPublishDate.toDate()));
 
             model.addAttribute(Constants.REFERER, request.getHeader(HttpHeaders.REFERER));
             model.addAttribute(Constants.PAGE_MODEL_KEY, pageModel);
@@ -160,14 +141,6 @@ public abstract class AbstractPageController {
         this.pageViewPath = pageViewPath;
     }
 
-    public boolean isRemoveContextPath () {
-        return removeContextPath;
-    }
-
-    public void setRemoveContextPath (boolean removeContextPath) {
-        this.removeContextPath = removeContextPath;
-    }
-
 
     public PageFactoryImpl getPageFactory () {
         return pageFactory;
@@ -177,21 +150,4 @@ public abstract class AbstractPageController {
         this.pageFactory = pageFactory;
     }
 
-    public PublicationResolver getPublicationResolver () {
-        return publicationResolver;
-    }
-
-    public void setPublicationResolver (final PublicationResolver publicationResolver) {
-        this.publicationResolver = publicationResolver;
-    }
-
-    /**
-     * Create Date format for last-modified headers. Note that a constant
-     * SimpleDateFormat is not allowed, it's access should be sync-ed.
-     */
-    private static DateFormat createDateFormat () {
-        final SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT, Locale.US);
-        dateFormat.setTimeZone(GMT);
-        return dateFormat;
-    }
 }

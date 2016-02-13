@@ -35,7 +35,7 @@ public class SpringComponentPresentationController extends AbstractComponentPres
 
     /**
      * Renders the component/model, which must be put on the request using
-     * {@link ComponentUtils#setComponent}.
+     * {@link ComponentUtils#setComponentPresentation}.
      *
      * @param componentViewName the viewName to be used to render this component
      * @param componentId       the id as an int, not a tcm uri!
@@ -65,7 +65,7 @@ public class SpringComponentPresentationController extends AbstractComponentPres
     }
 
     /**
-     * @return, the component view path
+     * @return the component view path
      */
     @Override
     public String getComponentViewPath () {

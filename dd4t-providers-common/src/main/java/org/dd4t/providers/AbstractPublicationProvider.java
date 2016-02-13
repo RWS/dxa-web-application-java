@@ -5,6 +5,7 @@ import com.tridion.meta.PublicationMeta;
 import org.dd4t.contentmodel.PublicationDescriptor;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.CacheType;
+import org.dd4t.core.util.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public abstract class AbstractPublicationProvider extends BaseBrokerProvider imp
         LOG.debug("Discovering Publication id for url: {}", url);
         final String key = getKey(CacheType.DISCOVER_PUBLICATION_URL, url);
         final CacheElement<Integer> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
-        Integer result = -1;
+        Integer result = Constants.UNKNOWN_PUBLICATION_ID;
 
         if (cacheElement.isExpired()) {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
@@ -107,7 +108,7 @@ public abstract class AbstractPublicationProvider extends BaseBrokerProvider imp
             result = cacheElement.getPayload();
         }
 
-        return result == null ? -1 : result;
+        return result == null ? Constants.UNKNOWN_PUBLICATION_ID : result;
     }
 
     protected PublicationMeta getPublicationMeta (final int publicationId) {
@@ -115,7 +116,7 @@ public abstract class AbstractPublicationProvider extends BaseBrokerProvider imp
         final String key = getKey(CacheType.PUBLICATION_META, Integer.toString(publicationId));
         final CacheElement<PublicationMeta> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
 
-        PublicationMeta publicationMeta = null;
+        PublicationMeta publicationMeta;
 
         if (cacheElement.isExpired()) {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter

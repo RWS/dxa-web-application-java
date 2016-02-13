@@ -50,6 +50,8 @@
         <property name="publicationProvider" ref="publicationProvider" />
         <!-- Set to true to use cd_dynamic_conf.xml to figure out publication Ids -->
         <property name="useCdDynamic" value="${publication.resolving.use.cd.dynamic}" />
+        <!-- Set to true if you DON'T publish the context path as part of the Tridion Publication Url -->
+        <property name="stripServletContextPath" value="${publication.resolving.strip.context.path}" />
     </bean>
 
     <bean id="propertiesService" class="org.dd4t.mvc.utils.PropertiesServiceImpl">

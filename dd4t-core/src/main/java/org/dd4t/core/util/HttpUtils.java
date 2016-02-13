@@ -38,13 +38,9 @@ import java.net.InetAddress;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
-import java.nio.file.InvalidPathException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Utility class for Http related things.
@@ -70,7 +66,7 @@ public final class HttpUtils {
         }
     }
 
-    public static String getCurrentURL (final HttpServletRequest request) {
+    public static String getCurrentURL (final HttpServletRequest request, final boolean stripContextPath) {
         String url;
 
         DispatcherType dispatcherType = request.getDispatcherType();
@@ -82,18 +78,22 @@ public final class HttpUtils {
             url = getOriginalUri(request);
         }
 
-        return url;
+        return stripContextPath ? url.substring(getContextPath(request).length()) : url;
     }
 
-    public static String getOriginalFullUrl (final HttpServletRequest request) {
-        return getFullUrl(request, getOriginalUri(request));
+    public static String getOriginalFullUrl (final HttpServletRequest request, final boolean stripContextPath) {
+        return getFullUrl(request, getOriginalUri(request),stripContextPath);
     }
 
     // TODO: handle context paths better
 
-    public static String getFullUrl (final HttpServletRequest request, final String location) {
-        String contextPath = "/".equals(request.getContextPath()) ? "" : request.getContextPath();
-        return String.format("%s://%s:%d%s%s", request.getScheme(), request.getServerName(), request.getServerPort(), contextPath, location.substring(contextPath.length()));
+    public static String getFullUrl (final HttpServletRequest request, final String location, final boolean stripContextPath) {
+        String contextPath = getContextPath(request);
+        return String.format("%s://%s:%d%s", request.getScheme(), request.getServerName(), request.getServerPort(), stripContextPath ? location.substring(contextPath.length()) : location);
+    }
+
+    protected static String getContextPath (final HttpServletRequest request) {
+        return "/".equals(request.getContextPath()) ? "" : request.getContextPath();
     }
 
     public static HttpServletRequest getCurrentRequest () {
@@ -127,7 +127,7 @@ public final class HttpUtils {
     private static String getClientIP (final HttpServletRequest request) {
         String clientIP;
 
-        String s = request.getHeader("HTTP_X_FORWARDED_FOR");
+        String s = request.getHeader(Constants.HTTP_X_FORWARDED_FOR_HEADER);
         if (null != s) {
             clientIP = s.split(",")[0];
         } else {
@@ -229,7 +229,7 @@ public final class HttpUtils {
     }
 
     public static Cookie findCookieByName (String name) {
-        HttpServletRequest request = getCurrentRequest();
+        final HttpServletRequest request = getCurrentRequest();
         if (request == null) {
             return null;
         }
@@ -244,21 +244,6 @@ public final class HttpUtils {
         }
 
         return null;
-    }
-
-    public static String setSchemaForUrl (String input, String prepend) {
-        if (StringUtils.isEmpty(input)) {
-            return "";
-        }
-
-        if (StringUtils.isEmpty(prepend)) {
-            prepend = "http://";
-        }
-
-        if (!input.matches("^[\\w]+://.*")) {
-            return String.format("%s%s", prepend, input);
-        }
-        return input;
     }
 
     public static String appendDefaultPageIfRequired (String url) {
@@ -280,23 +265,6 @@ public final class HttpUtils {
 
     public static String normalizeUrl (String url) {
         return url == null ? null : url.replaceAll("//+", "/");
-    }
-
-
-    public static Locale buildLocale (String url) {
-        Locale pageLocale = null;
-        try {
-            Path path = Paths.get(url);
-            if (path != null) {
-                String[] pathInfo = path.subpath(0, 1).toString().split("_", 2);
-                if (pathInfo.length == 2) {
-                    pageLocale = new Locale(pathInfo[0], pathInfo[1]);
-                }
-            }
-        } catch (InvalidPathException ipe) {
-            LOG.error("Could not parse the path: " + url, ipe);
-        }
-        return pageLocale;
     }
 
     public static String removeNonAlphaNumeric (String key) {

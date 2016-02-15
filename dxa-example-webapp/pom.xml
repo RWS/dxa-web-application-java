@@ -13,6 +13,9 @@
     <artifactId>dxa-example-webapp</artifactId>
     <packaging>war</packaging>
 
+    <name>DXA - Example Webapp</name>
+    <description>Example web application for DXA</description>
+
     <properties>
         <java-version>1.7</java-version>
         <dxa.version>1.3.0-SNAPSHOT</dxa.version>

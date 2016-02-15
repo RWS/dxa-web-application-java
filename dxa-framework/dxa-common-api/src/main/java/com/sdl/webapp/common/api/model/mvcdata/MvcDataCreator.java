@@ -2,17 +2,19 @@ package com.sdl.webapp.common.api.model.mvcdata;
 
 import com.sdl.webapp.common.api.model.MvcData;
 
+import java.util.Map;
+
 /**
- * <p>MvcDataCreator class.</p>
+ * <p>Used to create {@link MvcData} instances.</p>
  */
 public final class MvcDataCreator {
 
     private MvcDataImpl mvcData;
 
     /**
-     * <p>creator.</p>
+     * <p>Returns an empty creator.</p>
      *
-     * @return a {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator} object.
+     * @return a new creator instance
      */
     public static MvcDataCreator creator() {
         MvcDataCreator creator = new MvcDataCreator();
@@ -21,10 +23,10 @@ public final class MvcDataCreator {
     }
 
     /**
-     * <p>creator.</p>
+     * <p>Returns a creator filled with data from {@link MvcData} instance.</p>
      *
-     * @param mvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     * @return a {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator} object.
+     * @param mvcData an object to copy in to creator
+     * @return a new creator instance
      */
     public static MvcDataCreator creator(MvcData mvcData) {
         MvcDataCreator creator = new MvcDataCreator();
@@ -33,10 +35,11 @@ public final class MvcDataCreator {
     }
 
     /**
-     * <p>creator.</p>
+     * <p>Returns a creator filled with data from
+     * {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl.MvcDataImplBuilder} instance.</p>
      *
-     * @param builder a {@link MvcDataImpl.MvcDataImplBuilder} object.
-     * @return a {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator} object.
+     * @param builder a builder to copy in to creator
+     * @return a new creator instance
      */
     public static MvcDataCreator creator(MvcDataImpl.MvcDataImplBuilder builder) {
         MvcDataCreator creator = new MvcDataCreator();
@@ -44,16 +47,17 @@ public final class MvcDataCreator {
         return creator;
     }
 
-    private static String mergeChoose(String oldValue, String newValue) {
-        return mergeChoose(oldValue, newValue, false);
+    private static <T> T mergeChoose(T oldValue, T newValue, Class<T> type) {
+        return mergeChoose(oldValue, newValue, false, type);
     }
 
-    private static String mergeChoose(String oldValue, String newValue, boolean emptyStringAware) {
-        return newValue == null || (emptyStringAware && newValue.isEmpty()) ? oldValue : newValue;
+    private static <T> T mergeChoose(T oldValue, T newValue, boolean emptyStringAware, Class<T> type) {
+        boolean f = (emptyStringAware && type.equals(String.class) && ((String) newValue).isEmpty());
+        return newValue == null || f ? oldValue : newValue;
     }
 
     /**
-     * <p>create.</p>
+     * <p>Creates an instance of {@link MvcData}.</p>
      *
      * @return a {@link com.sdl.webapp.common.api.model.MvcData} object.
      */
@@ -103,7 +107,7 @@ public final class MvcDataCreator {
     }
 
     /**
-     * <p>defaults.</p>
+     * <p>Applies default values from {@link DefaultsMvcData} object.</p>
      *
      * @param defaults a {@link com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData} object.
      * @return a {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator} object.
@@ -113,25 +117,8 @@ public final class MvcDataCreator {
     }
 
     /**
-     * <p>mergeIn.</p>
-     *
-     * @param toMerge a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     * @return a {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator} object.
-     */
-    public MvcDataCreator mergeIn(MvcData toMerge) {
-        String controllerName = mergeChoose(this.mvcData.getControllerName(), toMerge.getControllerName());
-        String areaName = mergeChoose(this.mvcData.getAreaName(), toMerge.getAreaName());
-        String viewName = mergeChoose(this.mvcData.getViewName(), toMerge.getViewName());
-
-        this.mvcData
-                .setControllerName(controllerName)
-                .setAreaName(areaName)
-                .setViewName(viewName);
-        return this;
-    }
-
-    /**
-     * <p>builder.</p>
+     * <p>Converts this creator to {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl.MvcDataImplBuilder}
+     * which has direct access to fields.</p>
      *
      * @return a {@link MvcDataImpl.MvcDataImplBuilder} object.
      */
@@ -140,7 +127,41 @@ public final class MvcDataCreator {
     }
 
     /**
-     * This method treats {@link #mergeChoose(String, String, boolean)} differently.
+     * <p>Merges the given {@link MvcData} object into the current creator.</p>
+     *
+     * @param toMerge a {@link com.sdl.webapp.common.api.model.MvcData} object to merge in.
+     * @return a {@link com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator} object.
+     */
+    public MvcDataCreator mergeIn(MvcData toMerge) {
+        String controllerName = mergeChoose(this.mvcData.getControllerName(), toMerge.getControllerName(), String.class);
+        String controllerAreaName = mergeChoose(this.mvcData.getControllerAreaName(), toMerge.getControllerAreaName(), String.class);
+        String actionName = mergeChoose(this.mvcData.getActionName(), toMerge.getActionName(), String.class);
+        String areaName = mergeChoose(this.mvcData.getAreaName(), toMerge.getAreaName(), String.class);
+        String viewName = mergeChoose(this.mvcData.getViewName(), toMerge.getViewName(), String.class);
+        String regionAreaName = mergeChoose(this.mvcData.getRegionAreaName(), toMerge.getRegionAreaName(), String.class);
+        String regionName = mergeChoose(this.mvcData.getRegionName(), toMerge.getRegionName(), String.class);
+
+        @SuppressWarnings("unchecked")
+        Map<String, String> routeValues = mergeChoose(this.mvcData.getRouteValues(), toMerge.getRouteValues(), Map.class);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> metadata = mergeChoose(this.mvcData.getRouteValues(), toMerge.getRouteValues(), Map.class);
+
+        this.mvcData
+                .setControllerName(controllerName)
+                .setControllerAreaName(controllerAreaName)
+                .setActionName(actionName)
+                .setAreaName(areaName)
+                .setViewName(viewName)
+                .setRegionAreaName(regionAreaName)
+                .setRegionName(regionName)
+                .setRouteValues(routeValues)
+                .setMetadata(metadata);
+
+        return this;
+    }
+
+    /**
+     * This method treats {@link #mergeChoose(Object, Object, Class)} differently.
      * <p/>
      * {@code newValue} in calls is actually an old value,
      * but if it happens to be null or empty, then it's replaced by a value
@@ -150,10 +171,10 @@ public final class MvcDataCreator {
      * {@code MvcData} saves the original value.
      */
     private MvcDataCreator defaultsInternal(DefaultsMvcData defaults) {
-        String controllerAreaName = mergeChoose(defaults.getControllerAreaName(), mvcData.getControllerAreaName());
-        String controllerName = mergeChoose(defaults.getControllerName(), mvcData.getControllerName());
-        String actionName = mergeChoose(defaults.getActionName(), mvcData.getActionName());
-        String areaName = mergeChoose(defaults.getAreaName(), mvcData.getAreaName());
+        String controllerAreaName = mergeChoose(defaults.getControllerAreaName(), mvcData.getControllerAreaName(), String.class);
+        String controllerName = mergeChoose(defaults.getControllerName(), mvcData.getControllerName(), String.class);
+        String actionName = mergeChoose(defaults.getActionName(), mvcData.getActionName(), String.class);
+        String areaName = mergeChoose(defaults.getAreaName(), mvcData.getAreaName(), String.class);
 
         this.mvcData
                 .setControllerAreaName(controllerAreaName)

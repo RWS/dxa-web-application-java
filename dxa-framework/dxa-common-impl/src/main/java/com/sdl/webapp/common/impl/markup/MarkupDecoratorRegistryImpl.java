@@ -21,6 +21,9 @@ public class MarkupDecoratorRegistryImpl implements MarkupDecoratorRegistry {
 
     private Map<String, List<MarkupDecorator>> markupDecorators = new HashMap<>();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void registerDecorator(String decoratorId, MarkupDecorator decorator) {
         List<MarkupDecorator> decoratorList = this.markupDecorators.get(decoratorId);
@@ -32,6 +35,9 @@ public class MarkupDecoratorRegistryImpl implements MarkupDecoratorRegistry {
         Collections.sort(decoratorList, new MarkupDecoratorComparator());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<MarkupDecorator> getDecorators(String decoratorId) {
         List<MarkupDecorator> decoratorList = this.markupDecorators.get(decoratorId);

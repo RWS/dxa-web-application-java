@@ -3,12 +3,14 @@ package com.sdl.webapp.common.impl.markup;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntityInfo;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticPropertyInfo;
+import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntityInfo;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticPropertyInfo;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.markup.Markup;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
@@ -34,6 +36,9 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
+/**
+ * <p>MarkupImpl class.</p>
+ */
 public class MarkupImpl implements Markup {
     private static final Logger LOG = LoggerFactory.getLogger(MarkupImpl.class);
 
@@ -43,23 +48,66 @@ public class MarkupImpl implements Markup {
 
     private final WebRequestContext webRequestContext;
 
+    /**
+     * <p>Constructor for MarkupImpl.</p>
+     *
+     * @param semanticMappingRegistry a {@link com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry} object.
+     * @param webRequestContext       a {@link com.sdl.webapp.common.api.WebRequestContext} object.
+     */
     @Autowired
     public MarkupImpl(SemanticMappingRegistry semanticMappingRegistry, WebRequestContext webRequestContext) {
         this.semanticMappingRegistry = semanticMappingRegistry;
         this.webRequestContext = webRequestContext;
     }
 
+    private static HtmlElement siteMapListHelper(SitemapItem item) {
+        if (!item.getUrl().endsWith("/index")) {
+            final SimpleElementBuilder itemElementBuilder = HtmlBuilders.element("li")
+                    .withNode(HtmlBuilders.a(item.getUrl()).withTitle(item.getTitle()).withTextualContent(item.getTitle())
+                            .build());
+
+            if (!item.getItems().isEmpty()) {
+                final SimpleElementBuilder childListBuilder = HtmlBuilders.element("ul").withClass("list-unstyled");
+                for (SitemapItem child : item.getItems()) {
+                    final HtmlElement childElement = siteMapListHelper(child);
+                    if (childElement != null) {
+                        childListBuilder.withNode(childElement);
+                    }
+                }
+                itemElementBuilder.withNode(childListBuilder.build());
+            }
+
+            return itemElementBuilder.build();
+        }
+
+        return null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public WebRequestContext getWebRequestContext() {
+        return webRequestContext;
+    }
+
+    /** {@inheritDoc} */
     @Override
     public String url(String path) {
         return webRequestContext.getContextPath() + path;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String versionedContent(String path) {
-        return webRequestContext.getContextPath() + webRequestContext.getLocalization().localizePath(
-                "/system/" + webRequestContext.getLocalization().getVersion() + path);
+        Localization localization = webRequestContext.getLocalization();
+        if (localization == null) {
+            throw new NotFoundException("Localization for " + path + " not found.");
+        }
+        return webRequestContext.getContextPath() + localization.localizePath("/system/" + localization.getVersion() + path);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String region(RegionModel region) {
         return Joiner.on(' ').join(Arrays.asList(
@@ -67,6 +115,7 @@ public class MarkupImpl implements Markup {
                 new HtmlAttribute("resource", region.getName()).toHtml()));
     }
 
+    /** {@inheritDoc} */
     @Override
     public String entity(EntityModel entity) {
         final List<String> vocabularies = new ArrayList<>();
@@ -77,7 +126,7 @@ public class MarkupImpl implements Markup {
                 final String prefix = entityInfo.getPrefix();
                 if (!Strings.isNullOrEmpty(prefix)) {
                     vocabularies.add(prefix + ": " + entityInfo.getVocabulary());
-                    entityTypes.add(prefix + ":" + entityInfo.getEntityName());
+                    entityTypes.add(prefix + ':' + entityInfo.getEntityName());
                 }
             }
         }
@@ -90,11 +139,13 @@ public class MarkupImpl implements Markup {
         return "";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String property(EntityModel entity, String fieldName) {
         return property(entity, fieldName, 0);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String property(EntityModel entity, String fieldName, int index) {
 
@@ -120,7 +171,7 @@ public class MarkupImpl implements Markup {
         for (SemanticPropertyInfo propertyInfo : semanticMappingRegistry.getPropertyInfo(field)) {
             final String prefix = propertyInfo.getPrefix();
             if (publicPrefixes.contains(prefix)) {
-                propertyTypes.add(prefix + ":" + propertyInfo.getPropertyName());
+                propertyTypes.add(prefix + ':' + propertyInfo.getPropertyName());
             }
         }
 
@@ -133,8 +184,8 @@ public class MarkupImpl implements Markup {
             if (propertyData != null) {
                 String xpath = propertyData.get(fieldName);
                 if (!Strings.isNullOrEmpty(xpath)) {
-                    xpath += xpath.endsWith("]") ? "" : ("[" + (index + 1) + "]");
-                    markup += " " + new HtmlAttribute("data-entity-property-xpath", xpath).toHtml();
+                    xpath += xpath.endsWith("]") ? "" : ("[" + (index + 1) + ']');
+                    markup += ' ' + new HtmlAttribute("data-entity-property-xpath", xpath).toHtml();
                 }
             }
         }
@@ -142,16 +193,19 @@ public class MarkupImpl implements Markup {
         return markup;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String resource(String key) {
         return webRequestContext.getLocalization().getResource(key);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String formatDate(DateTime dateTime) {
         return DateTimeFormat.fullDate().withLocale(webRequestContext.getLocalization().getLocale()).print(dateTime);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String formatDateDiff(DateTime dateTime) {
         final int dayDiff = Days.daysBetween(dateTime.toLocalDate(), LocalDate.now()).getDays();
@@ -167,42 +221,22 @@ public class MarkupImpl implements Markup {
                 .print(dateTime);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String formatMessage(String pattern, Object... args) {
         return MessageFormat.format(pattern, args);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String replaceLineEndsWithHtmlBreaks(String text) {
         return text.replaceAll("\\. ", "<br/>");
     }
 
+    /** {@inheritDoc} */
     @Override
     public String siteMapList(SitemapItem item) {
         final HtmlElement htmlElement = siteMapListHelper(item);
         return htmlElement != null ? htmlElement.toHtml() : "";
-    }
-
-    private HtmlElement siteMapListHelper(SitemapItem item) {
-        if (!item.getUrl().endsWith("/index")) {
-            final SimpleElementBuilder itemElementBuilder = HtmlBuilders.element("li")
-                    .withContent(HtmlBuilders.a(item.getUrl()).withTitle(item.getTitle()).withContent(item.getTitle())
-                            .build());
-
-            if (!item.getItems().isEmpty()) {
-                final SimpleElementBuilder childListBuilder = HtmlBuilders.element("ul").withClass("list-unstyled");
-                for (SitemapItem child : item.getItems()) {
-                    final HtmlElement childElement = siteMapListHelper(child);
-                    if (childElement != null) {
-                        childListBuilder.withContent(childElement);
-                    }
-                }
-                itemElementBuilder.withContent(childListBuilder.build());
-            }
-
-            return itemElementBuilder.build();
-        }
-
-        return null;
     }
 }

@@ -5,7 +5,6 @@ import com.sdl.webapp.common.api.formatters.AtomFormatter;
 import com.sdl.webapp.common.api.formatters.JsonFormatter;
 import com.sdl.webapp.common.api.formatters.RssFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -18,7 +17,6 @@ import java.util.Map;
  * Helper bean to handle the different formatters
  */
 @Component
-@ComponentScan(basePackages = {"com.sdl.webapp.main", "com.sdl.webapp.common.controller", "com.sdl.webapp.addon"})
 public class DefaultDataFormatter implements DataFormatter {
 
     @Autowired
@@ -29,16 +27,11 @@ public class DefaultDataFormatter implements DataFormatter {
 
     private Map<String, com.sdl.webapp.common.api.formatters.DataFormatter> formatters;
 
-    @PostConstruct
-    public void setFormatters() {
-        formatters = new HashMap<>();
-        formatters.put("json", new JsonFormatter(request, context));
-        formatters.put("atom", new AtomFormatter(request, context));
-        formatters.put("rss", new RssFormatter(request, context));
-    }
-
     /**
      * Gets the score from accept string.
+     *
+     * @param type a {@link java.lang.String} object.
+     * @return a double.
      */
     public static double getScoreFromAcceptString(String type) {
         double res = 1.0;
@@ -47,6 +40,17 @@ public class DefaultDataFormatter implements DataFormatter {
             return Double.parseDouble(type.substring(pos + 2));
         }
         return res;
+    }
+
+    /**
+     * <p>Setter for the field <code>formatters</code>.</p>
+     */
+    @PostConstruct
+    public void setFormatters() {
+        formatters = new HashMap<>();
+        formatters.put("json", new JsonFormatter(request, context));
+        formatters.put("atom", new AtomFormatter(request, context));
+        formatters.put("rss", new RssFormatter(request, context));
     }
 
     /**
@@ -63,6 +67,8 @@ public class DefaultDataFormatter implements DataFormatter {
     }
 
     /**
+     * {@inheritDoc}
+     *
      * Returns the  @see ModelAndView to render the different formats.
      */
     @Override
@@ -123,15 +129,18 @@ public class DefaultDataFormatter implements DataFormatter {
      */
     private double getHtmlAcceptScore() {
         double score = 0.0;
-        String[] acceptTypes = request.getHeader("Accept").split(",");
-        for (String type : acceptTypes) {
-            if (type.contains("html")) {
-                double thisScore = getScoreFromAcceptString(type);
-                if (thisScore > score) {
-                    score = thisScore;
-                }
-                if (score == 1) {
-                    break;
+        String requestHeader = request.getHeader("Accept");
+        if (requestHeader != null) {
+            String[] acceptTypes = requestHeader.split(",");
+            for (String type : acceptTypes) {
+                if (type.contains("html")) {
+                    double thisScore = getScoreFromAcceptString(type);
+                    if (thisScore > score) {
+                        score = thisScore;
+                    }
+                    if (score == 1) {
+                        break;
+                    }
                 }
             }
         }

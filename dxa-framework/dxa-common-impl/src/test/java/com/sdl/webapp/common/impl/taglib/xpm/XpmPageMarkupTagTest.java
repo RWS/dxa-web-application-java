@@ -23,7 +23,7 @@ public class XpmPageMarkupTagTest {
 
     @Test
     public void testGenerateXpmMarkup() {
-        final Map<String, String> pageData = new HashMap<>();
+        final Map<String, Object> pageData = new HashMap<>();
         pageData.put("PageID", "P123");
         pageData.put("PageModified", "2014-12-10T09:34:56+01:00");
         pageData.put("PageTemplateID", "T456");
@@ -48,7 +48,7 @@ public class XpmPageMarkupTagTest {
         //assertThat(setup(pageData).generateXpmMarkup(), is(expected));
     }
 
-    private XpmPageMarkupTag setup(Map<String, String> pageData) {
+    private XpmPageMarkupTag setup(Map<String, Object> pageData) {
         final PageModel page = mock(PageModel.class);
         when(page.getXpmMetadata()).thenReturn(pageData);
 

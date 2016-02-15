@@ -27,10 +27,37 @@ public class RegionXpmMarkup implements MarkupDecorator {
     private static final String MAX_OCCURS_PATTERN = ",maxOccurs:%d";
     private XpmRegionConfig xpmRegionConfig;
 
+    /**
+     * <p>Constructor for RegionXpmMarkup.</p>
+     *
+     * @param xpmRegionConfig a {@link com.sdl.webapp.common.api.xpm.XpmRegionConfig} object.
+     */
     public RegionXpmMarkup(XpmRegionConfig xpmRegionConfig) {
         this.xpmRegionConfig = xpmRegionConfig;
     }
 
+    private static boolean isFirstNodeXpmEntityXPMMarkup(Element html) {
+
+        for (Node child : html.childNodes()) {
+            if (child instanceof Element) {
+                return false;
+            } else if (child instanceof Comment) {
+                Comment comment = (Comment) child;
+                if (comment.getData().startsWith(" Start Component Presentation")) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static HtmlNode buildXpmMarkup(RegionModel region, Localization localization) {
+        return new HtmlCommentNode(region.getXpmMarkup(localization));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext) {
 
@@ -52,7 +79,7 @@ public class RegionXpmMarkup implements MarkupDecorator {
                     //
                     ParsableHtmlNode regionMarkup = (ParsableHtmlNode) markup;
                     Element html = regionMarkup.getHtmlElement();
-                    if (html != null && !this.isFirstNodeXpmEntityXPMMarkup(html)) {
+                    if (html != null && !RegionXpmMarkup.isFirstNodeXpmEntityXPMMarkup(html)) {
                         html.prepend(buildXpmMarkup(region, webRequestContext.getLocalization()).toHtml());
                         markupInjected = true;
                     }
@@ -63,35 +90,19 @@ public class RegionXpmMarkup implements MarkupDecorator {
                     // Surround the region with XPM markup
                     //
                     markup = HtmlBuilders.span()
-                            .withContent(buildXpmMarkup(region, webRequestContext.getLocalization()))
-                            .withContent(markup).build();
+                            .withNode(buildXpmMarkup(region, webRequestContext.getLocalization()))
+                            .withNode(markup).build();
                 }
             }
         }
         return markup;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getPriority() {
         return 1;
-    }
-
-    private boolean isFirstNodeXpmEntityXPMMarkup(Element html) {
-
-        for (Node child : html.childNodes()) {
-            if (child instanceof Element) {
-                return false;
-            } else if (child instanceof Comment) {
-                Comment comment = (Comment) child;
-                if (comment.getData().startsWith(" Start Component Presentation")) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    private HtmlNode buildXpmMarkup(RegionModel region, Localization localization) {
-        return new HtmlCommentNode(region.getXpmMarkup(localization));
     }
 }

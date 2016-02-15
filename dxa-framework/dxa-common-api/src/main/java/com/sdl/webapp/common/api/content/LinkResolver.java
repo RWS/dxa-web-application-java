@@ -13,8 +13,16 @@ public interface LinkResolver {
      * @param url            The URL to resolve.
      * @param localizationId The localization to use.
      * @return The translated URL.
+     * @param resolveToBinary a boolean.
      */
     String resolveLink(String url, String localizationId, boolean resolveToBinary);
 
+    /**
+     * <p>resolveLink.</p>
+     *
+     * @param url            a {@link java.lang.String} object.
+     * @param localizationId a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     String resolveLink(String url, String localizationId);
 }

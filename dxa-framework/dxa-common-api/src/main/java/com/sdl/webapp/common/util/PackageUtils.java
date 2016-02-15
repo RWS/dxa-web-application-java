@@ -27,7 +27,7 @@ public final class PackageUtils {
      *
      * @param basePackage The package in which to search for classes.
      * @param callback    The callback to be called for each class that is found.
-     * @throws IOException When an I/O error occurs.
+     * @throws java.io.IOException When an I/O error occurs.
      */
     public static void doWithClasses(String basePackage, ClassCallback callback) throws IOException {
         doWithClasses(basePackage, true, callback);
@@ -40,7 +40,7 @@ public final class PackageUtils {
      * @param basePackage        The package in which to search for classes.
      * @param includeSubPackages {@code true} if subpackages should be included, {@code false} otherwise.
      * @param callback           The callback to be called for each class that is found.
-     * @throws IOException When an I/O error occurs.
+     * @throws java.io.IOException When an I/O error occurs.
      */
     public static void doWithClasses(String basePackage, boolean includeSubPackages, ClassCallback callback)
             throws IOException {

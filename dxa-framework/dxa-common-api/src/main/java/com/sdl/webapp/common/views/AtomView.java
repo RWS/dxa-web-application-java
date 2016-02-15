@@ -9,6 +9,7 @@ import com.sun.syndication.feed.atom.Feed;
 import com.sun.syndication.feed.atom.Link;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.feed.AbstractAtomFeedView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -24,14 +25,13 @@ import java.util.UUID;
  */
 public class AtomView extends AbstractAtomFeedView {
     private static final Logger LOG = LoggerFactory.getLogger(AtomView.class);
-    WebRequestContext context;
+    @Autowired
+    private WebRequestContext context;
     private DataFormatter formatter;
 
-    public AtomView(WebRequestContext context) {
-        this.context = context;
-    }
-
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected void buildFeedMetadata(Map<String, Object> model, Feed feed, HttpServletRequest request) {
@@ -52,7 +52,7 @@ public class AtomView extends AbstractAtomFeedView {
         StringBuffer uri = request.getRequestURL();
         String queryString = request.getQueryString();
         if (queryString != null) {
-            uri.append("?").append(queryString);
+            uri.append('?').append(queryString);
         }
         List<Link> links = new ArrayList<>();
         Link l = new Link();
@@ -66,6 +66,9 @@ public class AtomView extends AbstractAtomFeedView {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected List<Entry> buildFeedEntries(Map<String, Object> model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
         this.formatter = (DataFormatter) model.get("formatter");

@@ -29,11 +29,26 @@ public class PluggableMarkupRegistryImpl implements PluggableMarkupRegistry {
     @Autowired
     private ThreadLocalManager threadLocalManager;
 
+    private static void registerPluggableMarkup(String label, HtmlNode markup, Map<String, List<HtmlNode>> markupDictionary) {
+        List<HtmlNode> markupList = markupDictionary.get(label);
+        if (markupList == null) {
+            markupList = new ArrayList<>();
+            markupDictionary.put(label, markupList);
+        }
+        markupList.add(markup);
+    }
+
+    /**
+     * <p>initialize.</p>
+     */
     @PostConstruct
     public void initialize() {
         this.threadLocalManager.registerThreadLocal(contextualMarkupDictionary);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<HtmlNode> getPluggableMarkup(String label) {
 
@@ -53,21 +68,27 @@ public class PluggableMarkupRegistryImpl implements PluggableMarkupRegistry {
         return markupList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void registerPluggableMarkup(MarkupType markupType, HtmlNode markup) {
         this.registerPluggableMarkup(markupType.name().toLowerCase().replace("_", "-"), markup);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void registerPluggableMarkup(String label, HtmlNode markup) {
         registerPluggableMarkup(label, markup, this.markupDictionary);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void registerContextualPluggableMarkup(MarkupType markupType, HtmlNode markup) {
         this.registerContextualPluggableMarkup(markupType.name().toLowerCase(), markup);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void registerContextualPluggableMarkup(String label, HtmlNode markup) {
         Map<String, List<HtmlNode>> markupDictionary = contextualMarkupDictionary.get();
@@ -76,14 +97,5 @@ public class PluggableMarkupRegistryImpl implements PluggableMarkupRegistry {
             contextualMarkupDictionary.set(markupDictionary);
         }
         registerPluggableMarkup(label, markup, markupDictionary);
-    }
-
-    private void registerPluggableMarkup(String label, HtmlNode markup, Map<String, List<HtmlNode>> markupDictionary) {
-        List<HtmlNode> markupList = markupDictionary.get(label);
-        if (markupList == null) {
-            markupList = new ArrayList<>();
-            markupDictionary.put(label, markupList);
-        }
-        markupList.add(markup);
     }
 }

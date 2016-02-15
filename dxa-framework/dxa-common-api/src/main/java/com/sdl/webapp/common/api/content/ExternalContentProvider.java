@@ -16,19 +16,19 @@ public interface ExternalContentProvider {
     /**
      * Get model based on an ECL URL
      *
-     * @param eclUrl
+     * @param eclUrl a {@link com.sdl.webapp.common.api.model.EclUrl} object.
      * @return model
-     * @throws ContentProviderException
+     * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
      */
     ViewModel getModel(EclUrl eclUrl) throws ContentProviderException;
 
     /**
      * Get model through a widget and input from the HTTP request
      *
-     * @param widget
-     * @param request
+     * @param widget a {@link com.sdl.webapp.common.api.model.entity.GenericWidget} object.
+     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
      * @return model
-     * @throws ContentProviderException
+     * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
      */
     ViewModel getModel(GenericWidget widget, HttpServletRequest request) throws ContentProviderException;
 }

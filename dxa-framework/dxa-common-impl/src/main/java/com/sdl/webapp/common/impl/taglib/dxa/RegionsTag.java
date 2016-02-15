@@ -17,20 +17,36 @@ import java.util.Set;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
+/**
+ * <p>RegionsTag class.</p>
+ */
 public class RegionsTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionsTag.class);
 
     private Set<String> excludes;
     private int containerSize;
 
+    /**
+     * <p>setExclude.</p>
+     *
+     * @param exclude a {@link java.lang.String} object.
+     */
     public void setExclude(String exclude) {
         this.excludes = commaDelimitedListToSet(exclude);
     }
 
+    /**
+     * <p>Setter for the field <code>containerSize</code>.</p>
+     *
+     * @param containerSize a int.
+     */
     public void setContainerSize(int containerSize) {
         this.containerSize = containerSize;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
@@ -59,12 +75,8 @@ public class RegionsTag extends AbstractMarkupTag {
                 webRequestContext.pushContainerSize(containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
             } catch (ServletException | IOException e) {
-                try {
-                    LOG.error("Error while processing region tag", e);
-                    this.decorateInclude(ControllerUtils.getIncludeErrorPath(), region);
-                } catch (IOException | ServletException e1) {
-                    throw new JspException("Error while processing regions tag, error view wasn't found", e1);
-                }
+                LOG.error("Error while processing regions tag", e);
+                decorateException(region);
             } finally {
                 webRequestContext.popParentRegion();
                 webRequestContext.popContainerSize();

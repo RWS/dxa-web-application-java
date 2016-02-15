@@ -6,19 +6,31 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+/**
+ * <p>XpmEntityMarkupTag class.</p>
+ */
 public class XpmEntityMarkupTag extends XpmMarkupTag {
 
     private EntityModel entity;
 
+    /**
+     * <p>Setter for the field <code>entity</code>.</p>
+     *
+     * @param entity a {@link com.sdl.webapp.common.api.model.EntityModel} object.
+     */
     public void setEntity(EntityModel entity) {
         this.entity = entity;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public HtmlNode generateXpmMarkup() {
+        //noinspection ReturnOfInnerClass
         return new HtmlNode() {
             @Override
-            protected String renderHtml() {
+            public String renderHtml() {
                 return entity.getXpmMarkup(getLocalization());
             }
         };

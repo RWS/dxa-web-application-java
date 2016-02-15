@@ -8,9 +8,7 @@ import java.net.URLConnection;
 import java.util.HashMap;
 
 /**
- * MimeUtils
- *
- * @author nic
+ * <p>MimeUtils class.</p>
  */
 public final class MimeUtils {
 
@@ -184,6 +182,13 @@ public final class MimeUtils {
     private MimeUtils() {
     }
 
+    /**
+     * <p>getMimeType.</p>
+     *
+     * @param url a {@link java.net.URL} object.
+     * @return a {@link java.lang.String} object.
+     * @throws java.io.IOException if any.
+     */
     static public String getMimeType(URL url) throws IOException {
 
         // First try to get MIME type by peeking the input stream
@@ -199,8 +204,14 @@ public final class MimeUtils {
         return mimeType;
     }
 
+    /**
+     * <p>getMimeType.</p>
+     *
+     * @param filename a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
     static public String getMimeType(String filename) {
-        int suffixIndex = filename.lastIndexOf(".");
+        int suffixIndex = filename.lastIndexOf('.');
         if (suffixIndex != -1) {
             String suffix = filename.substring(suffixIndex + 1);
             return MIME_TYPES.get(suffix);

@@ -2,34 +2,33 @@ package com.sdl.webapp.common.impl.model;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Maps;
-import com.sdl.webapp.common.api.mapping.SemanticMappingRegistry;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.MvcDataImpl;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Component
+/**
+ * <p>ViewModelRegistryImpl class.</p>
+ */
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewModelRegistryImpl.class);
 
-    // todo TSI-1063 should not be static
     private static final Map<MvcData, Class<? extends ViewModel>> viewEntityClassMap = new HashMap<>();
 
     private static Lock lock = new ReentrantLock();
@@ -37,13 +36,16 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Autowired
     private SemanticMappingRegistry semanticMappingRegistry;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void registerViewModel(MvcData viewData, Class<? extends ViewModel> entityClass) {
         try {
             if (lock.tryLock(10, TimeUnit.SECONDS)) {
                 if (viewData != null) {
                     if (viewEntityClassMap.containsKey(viewData)) {
-                        LOG.warn("View % registered multiple times.", viewData);
+                        LOG.warn("View {} registered multiple times.", viewData);
                         return;
                     }
                     viewEntityClassMap.put(viewData, entityClass);
@@ -57,8 +59,11 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Class<? extends ViewModel> getViewModelType(final MvcData viewData) throws DxaException {
+    public Class<? extends ViewModel> getViewModelType(final MvcData viewData) {
 
         Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>> keyNamePredicate =
                 new Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>>() {
@@ -85,24 +90,43 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             possibleValues = Maps.filterEntries(viewEntityClassMap, keyNamePredicateNoArea);
         }
         if (possibleValues.isEmpty()) {
-            throw new DxaException(String.format("Could not find a view model for the view data %s", viewData));
+            return null;
         } else {
             return possibleValues.entrySet().iterator().next().getValue();
         }
     }
 
+    /** {@inheritDoc} */
     @Override
-    public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) throws DxaException {
+    public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames) {
+        Class<? extends ViewModel> entityClass = null;
+        for (String fullyQualifiedName : semanticTypeNames) {
+            entityClass = getMappedModelTypes(fullyQualifiedName);
+            if (entityClass != null) {
+                break;
+            }
+        }
+        if (entityClass == null) {
+            LOG.error("Cannot determine entity type for semantic schema names: '" + semanticTypeNames + "'. " +
+                    "Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+        }
+        return entityClass;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) {
 
         Class<? extends ViewModel> retval = this.semanticMappingRegistry.getEntityClassByFullyQualifiedName(semanticTypeName);
         if (retval != null) {
             return retval;
         }
         //Fallback
-        MvcData mvcData = new MvcDataImpl(semanticTypeName);
+        MvcData mvcData = MvcDataCreator.creator().fromQualifiedName(semanticTypeName).create();
         return getViewModelType(mvcData);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ViewModel> getViewEntityClass(final String viewName) throws DxaException {
 

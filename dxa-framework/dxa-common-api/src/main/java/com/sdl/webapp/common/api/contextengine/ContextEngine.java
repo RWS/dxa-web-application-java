@@ -1,7 +1,22 @@
 package com.sdl.webapp.common.api.contextengine;
 
+/**
+ * <p>ContextEngine interface.</p>
+ */
 public interface ContextEngine {
-    public <T extends ContextClaims> T getClaims(Class<T> cls);
+    /**
+     * <p>getClaims.</p>
+     *
+     * @param cls a {@link java.lang.Class} object.
+     * @param <T> a T object.
+     * @return a T object.
+     */
+    <T extends ContextClaims> T getClaims(Class<T> cls);
 
-    public String getDeviceFamily();
+    /**
+     * <p>getDeviceFamily.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
+    String getDeviceFamily();
 }

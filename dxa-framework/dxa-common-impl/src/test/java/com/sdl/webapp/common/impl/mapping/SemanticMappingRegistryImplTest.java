@@ -1,19 +1,19 @@
 package com.sdl.webapp.common.impl.mapping;
 
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntities;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperties;
-import com.sdl.webapp.common.api.mapping.annotations.SemanticProperty;
-import com.sdl.webapp.common.api.mapping.config.FieldSemantics;
-import com.sdl.webapp.common.api.mapping.config.SemanticVocabulary;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntities;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperties;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;
 
 import java.util.Iterator;
 import java.util.Set;
 
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE;
-import static com.sdl.webapp.common.api.mapping.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
+import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
+import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

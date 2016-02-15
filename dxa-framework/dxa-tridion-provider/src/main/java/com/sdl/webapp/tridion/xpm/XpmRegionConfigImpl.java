@@ -23,6 +23,9 @@ import java.util.List;
 import java.util.Map;
 
 @Component
+/**
+ * <p>XpmRegionConfigImpl class.</p>
+ */
 public class XpmRegionConfigImpl implements XpmRegionConfig {
     private static final Logger LOG = LoggerFactory.getLogger(XpmRegionConfigImpl.class);
 
@@ -34,18 +37,30 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * <p>Constructor for XpmRegionConfigImpl.</p>
+     *
+     * @param contentProvider a {@link com.sdl.webapp.common.api.content.ContentProvider} object.
+     * @param objectMapper    a {@link com.fasterxml.jackson.databind.ObjectMapper} object.
+     */
     @Autowired
     public XpmRegionConfigImpl(ContentProvider contentProvider, ObjectMapper objectMapper) {
         this.contentProvider = contentProvider;
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public synchronized XpmRegion getXpmRegion(String regionName, Localization localization) {
         final String localizationId = localization.getId();
         if (!regionsByLocalization.containsKey(localizationId)) {
             final Map<String, XpmRegion> regionsByName = new HashMap<>();
-            for (XpmRegion region : loadXpmRegions(localization)) {
-                regionsByName.put(region.getRegionName(), region);
+            List<XpmRegion> xpmRegions = loadXpmRegions(localization);
+            if (xpmRegions != null) {
+                for (XpmRegion region : xpmRegions) {
+                    regionsByName.put(region.getRegionName(), region);
+                }
             }
             regionsByLocalization.put(localizationId, regionsByName);
         }

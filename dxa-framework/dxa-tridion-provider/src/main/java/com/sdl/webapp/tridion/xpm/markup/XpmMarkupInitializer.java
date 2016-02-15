@@ -21,6 +21,9 @@ public class XpmMarkupInitializer {
     @Autowired
     private XpmRegionConfig xpmRegionConfig;
 
+    /**
+     * <p>initializeMarkup.</p>
+     */
     @PostConstruct
     public void initializeMarkup() {
 

@@ -12,10 +12,16 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.UUID;
 
+/**
+ * <p>GoogleMapTag class.</p>
+ */
 public class GoogleMapTag extends AbstractGoogleMapTag {
 
     private static final HtmlAttribute CLASS_MAP_CANVAS_ATTR = new HtmlAttribute("class", "map-canvas");
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected HtmlNode generateNode() {
         final WebRequestContext webRequestContext = WebApplicationContextUtils.getRequiredWebApplicationContext(
@@ -38,7 +44,7 @@ public class GoogleMapTag extends AbstractGoogleMapTag {
                 .build();
 
         final HtmlElement script2 = HtmlBuilders.element("script")
-                .withLiteralContent("function initialize() {\n" +
+                .withPureHtmlContent("function initialize() {\n" +
                         "    var myLatlng = new google.maps.LatLng(" + getLatString() + ", " + getLonString() + ");\n" +
                         "    var mapOptions = { center: myLatlng, zoom: 15 };\n" +
                         "    var map = new google.maps.Map(document.getElementById(\"" + divId + "\"), mapOptions);\n" +

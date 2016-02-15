@@ -7,6 +7,7 @@ import com.sun.syndication.feed.rss.Channel;
 import com.sun.syndication.feed.rss.Item;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.feed.AbstractRssFeedView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,20 +20,22 @@ import java.util.Map;
  */
 public class RssView extends AbstractRssFeedView {
     private static final Logger LOG = LoggerFactory.getLogger(RssView.class);
-    WebRequestContext context;
-    private DataFormatter formatter;
+    @Autowired
+    private WebRequestContext context;
 
-    public RssView(WebRequestContext context) {
-        this.context = context;
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     protected List<Item> buildFeedItems(Map<String, Object> model, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) throws Exception {
-        this.formatter = (DataFormatter) model.get("formatter");
+        DataFormatter formatter = (DataFormatter) model.get("formatter");
         return (List<Item>) formatter.formatData(model.get("data"));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected void buildFeedMetadata(Map<String, Object> model, Channel feed, HttpServletRequest request) {
         PageModel page = (PageModel) model.get("data");
@@ -43,7 +46,7 @@ public class RssView extends AbstractRssFeedView {
         StringBuffer uri = request.getRequestURL();
         String queryString = request.getQueryString();
         if (queryString != null) {
-            uri.append("?").append(queryString);
+            uri.append('?').append(queryString);
         }
         feed.setLink(uri.toString().replaceAll("[&?]format.*?(?=&|\\?|$)", ""));
         super.buildFeedMetadata(model, feed, request);

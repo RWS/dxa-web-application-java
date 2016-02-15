@@ -6,11 +6,31 @@ package com.sdl.webapp.common.api.localization;
  */
 public interface SiteLocalization {
 
+    /**
+     * <p>getId.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     String getId();
 
+    /**
+     * <p>getPath.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     String getPath();
 
+    /**
+     * <p>getLanguage.</p>
+     *
+     * @return a {@link java.lang.String} object.
+     */
     String getLanguage();
 
+    /**
+     * <p>isMaster.</p>
+     *
+     * @return a boolean.
+     */
     boolean isMaster();
 }

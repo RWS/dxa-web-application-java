@@ -49,6 +49,10 @@
         </developer>
     </developers>
 
+    <organization>
+        <name>SDL Group</name>
+    </organization>
+
     <profiles>
         <profile>
             <id>webapp</id>

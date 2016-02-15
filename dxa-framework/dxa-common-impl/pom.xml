@@ -8,47 +8,13 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-common-impl</artifactId>
 
-    <name>${project.groupId}:${project.artifactId}</name>
+    <name>DXA - API implementation</name>
     <description>DXA Common API implementation project containing implementations of common-api</description>
-    <url>https://github.com/sdl/dxa-web-application-java</url>
-
-    <scm>
-        <url>https://github.com/sdl/dxa-web-application-java</url>
-        <connection>scm:git:https://github.com/sdl/dxa-web-application-java.git</connection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <developers>
-        <developer>
-            <id>rpannekoek</id>
-            <name>Rick Pannekoek</name>
-            <email>rpannekoek@sdl.com</email>
-            <timezone>UTC+1</timezone>
-        </developer>
-        <developer>
-            <id>azarakovskiy</id>
-            <name>Alexey Zarakovskiy</name>
-            <email>azarakovskiy@sdl.com</email>
-            <timezone>UTC+1</timezone>
-        </developer>
-    </developers>
-
-    <properties>
-        <super.basedir>${project.basedir}/../..</super.basedir>
-    </properties>
 
     <dependencies>
         <!-- SDL Digital Experience Accelerator -->

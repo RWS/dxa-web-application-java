@@ -7,50 +7,15 @@
     <parent>
         <groupId>com.sdl.dxa</groupId>
         <artifactId>dxa-framework</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-common-api</artifactId>
 
-    <name>${project.groupId}:${project.artifactId}</name>
+    <name>DXA - API</name>
     <description>DXA Common API project containing framework interfaces and API</description>
-    <url>https://github.com/sdl/dxa-web-application-java</url>
-
-    <scm>
-        <url>https://github.com/sdl/dxa-web-application-java</url>
-        <connection>scm:git:https://github.com/sdl/dxa-web-application-java.git</connection>
-      <tag>HEAD</tag>
-  </scm>
-
-    <developers>
-        <developer>
-            <id>rpannekoek</id>
-            <name>Rick Pannekoek</name>
-            <email>rpannekoek@sdl.com</email>
-            <timezone>UTC+1</timezone>
-        </developer>
-        <developer>
-            <id>azarakovskiy</id>
-            <name>Alexey Zarakovskiy</name>
-            <email>azarakovskiy@sdl.com</email>
-            <timezone>UTC+1</timezone>
-        </developer>
-    </developers>
-
-    <licenses>
-        <license>
-            <name>The Apache Software License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-
-    <properties>
-        <super.basedir>${project.basedir}/../..</super.basedir>
-    </properties>
 
     <dependencies>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>

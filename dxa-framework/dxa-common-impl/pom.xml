@@ -8,12 +8,12 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-common-impl</artifactId>
 
-    <name>${project.groupId}:${project.artifactId}</name>
+    <name>DXA - API implementation</name>
     <description>DXA Common API implementation project containing implementations of common-api</description>
 
     <dependencies>

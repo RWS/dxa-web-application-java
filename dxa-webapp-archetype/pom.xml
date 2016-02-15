@@ -7,13 +7,12 @@
     <parent>
         <artifactId>dxa-parent</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-webapp-archetype</artifactId>
     <packaging>jar</packaging>
 
-    <name>Archetype for DXA web application</name>
-    <description>Archetype for DXA web application</description>
-
+    <name>DXA - Archetype</name>
+    <description>Maven Archetype for DXA web application</description>
 </project>

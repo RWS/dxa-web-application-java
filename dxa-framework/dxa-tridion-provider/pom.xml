@@ -7,13 +7,13 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-tridion-provider</artifactId>
 
-    <name>${project.groupId}:${project.artifactId}</name>
-    <description>Contains common dependencies for Tridion Providers</description>
+    <name>DXA - Tridion provider</name>
+    <description>DXA Providers functionality common for both Tridion 2013SP1/Web 8</description>
 
     <dependencies>
         <!-- SDL Digital Experience Accelerator -->

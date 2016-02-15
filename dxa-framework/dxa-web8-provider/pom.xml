@@ -5,15 +5,15 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <relativePath>../../dxa-framework</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dxa-web8-provider</artifactId>
 
-    <name>${project.groupId}:${project.artifactId}</name>
-    <description>Tridion Provider for Web8</description>
+    <name>DXA - Web 8 Tridion provider</name>
+    <description>DXA Providers functionality specific for Tridion Web 8</description>
 
     <properties>
         <cd.version>8.1.0</cd.version>
@@ -27,7 +27,7 @@
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-bom-web8</artifactId>
-                <version>1.3-SNAPSHOT</version>
+                <version>1.3.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

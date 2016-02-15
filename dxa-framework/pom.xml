@@ -8,14 +8,14 @@
     <parent>
         <groupId>com.sdl.dxa</groupId>
         <artifactId>dxa-parent</artifactId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-framework</artifactId>
     <packaging>pom</packaging>
 
-    <name>Parent for DXA API framework</name>
-    <description>Parent for Digital Experince Accelerator API framework</description>
+    <name>DXA - API framework parent</name>
+    <description>Parent for Digital Experience Accelerator API framework</description>
 
     <modules>
         <module>dxa-common-api</module>

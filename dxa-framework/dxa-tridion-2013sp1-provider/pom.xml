@@ -5,17 +5,15 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
         <relativePath>../../dxa-framework</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dxa-tridion-2013sp1-provider</artifactId>
 
-    <name>${project.groupId}:${project.artifactId}</name>
-    <description>Contains part of providers functionality in order to resolve differences in Web7/Web8 CD versions for
-        Web7
-    </description>
+    <name>DXA - 2013SP1 Tridion provider</name>
+    <description>DXA Providers functionality specific for Tridion 2013SP1</description>
 
     <properties>
         <cd.version>7.1.0</cd.version>
@@ -28,7 +26,7 @@
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-bom-2013sp1</artifactId>
-                <version>1.3-SNAPSHOT</version>
+                <version>1.3.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

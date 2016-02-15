@@ -7,14 +7,14 @@
     <parent>
         <artifactId>dxa-parent</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>1.3-SNAPSHOT</version>
+        <version>1.3.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-bom-web8</artifactId>
     <packaging>pom</packaging>
 
-    <name>BOM for DXA.2 projects</name>
-    <description>Dependencies management for DXA projects</description>
+    <name>DXA - BOM for Web 8</name>
+    <description>Dependencies management for DXA projects for Tridion Web 8</description>
 
     <properties>
         <java.version>1.8</java.version>

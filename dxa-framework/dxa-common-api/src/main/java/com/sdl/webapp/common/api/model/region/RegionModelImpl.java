@@ -33,7 +33,7 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGIO
 /**
  * <p>RegionModelImpl class.</p>
  */
-@EqualsAndHashCode(of = {"name"})
+@EqualsAndHashCode(of = "name")
 public class RegionModelImpl implements RegionModel {
     /**
      * The XPM metadata key used for the ID of the (Include) Page from which the Region originates.

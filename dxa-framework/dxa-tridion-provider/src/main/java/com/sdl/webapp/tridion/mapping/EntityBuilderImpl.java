@@ -186,7 +186,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
                 continue;
             }
             Field field = entry.getValue();
-            if (field.getValues().size() > 0) {
+            if (!field.getValues().isEmpty()) {
                 metadata.put(fieldName, field.getValues().get(0).toString()); // Assume single-value text fields for template metadata
             }
         }
@@ -288,8 +288,8 @@ public final class EntityBuilderImpl implements EntityBuilder {
         }
 
         if (entityClass == null) {
-            LOG.error("Cannot determine entity type for view name: '" + viewName +
-                    "'. Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+            LOG.error("Cannot determine entity type for view name: '{}'. Please make sure " +
+                    "that an entry is registered for this view name in the ViewModelRegistry.", viewName);
             return ViewNotFoundEntityError.class;
         }
 

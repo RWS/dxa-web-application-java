@@ -3,7 +3,7 @@
     <!-- Properties -->
     <property name="log.pattern" value="%date %-5level %logger{0} - %message%n"/>
     <property name="log.history" value="1"/>
-    <property name="log.folder" value="/var/log/dd4t"/>
+    <property name="log.folder" value="/Users/rai/logs/dd4t"/>
     <property name="log.level" value="DEBUG"/>
 
     <!-- Appenders -->
@@ -67,6 +67,16 @@
         </encoder>
         <prudent>true</prudent>
     </appender>
+    <appender name="rollingJMSLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/jms.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+        <prudent>true</prudent>
+    </appender>
     <appender name="stdout" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>${log.pattern}</pattern>
@@ -96,6 +106,10 @@
     <logger name="org.dd4t" level="${log.level}" additivity="false">
         <appender-ref ref="rollingDd4tLog"/>
         <appender-ref ref="stdout"/>
+    </logger>
+    <logger name="org.apache.activemq" level="TRACE" additivity="false">
+        <appender-ref ref="stdout" />
+        <appender-ref ref="rollingJMSLog" />
     </logger>
     <root level="${log.level}">
         <appender-ref ref="rollingCoreLog"/>

@@ -172,7 +172,7 @@
         JMS Caching. Only turn this on if your deployer is configured to use JMS.
         This implementation also requires a dependency on org.apache.activemq:activemq-client:5.10.0+
 
-        Make sure to set the brokerURL, userName and password properties,
+        Make sure to set the brokerURL, userName and password properties in dd4t.properties,
         as well as the JMS topic in the listener config
     -->
 

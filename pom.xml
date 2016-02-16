@@ -70,7 +70,8 @@
         <jstl.version>1.2</jstl.version>
         <junit.version>4.11</junit.version>
 
-        <sdl.odata.client.version>2.0.4</sdl.odata.client.version>
+        <!-- TODO: odata client 2.0.4 breaks! -->
+        <sdl.odata.client.version>2.0.5-SNAPSHOT</sdl.odata.client.version>
 
         <resteasy.version>3.0.8.Final</resteasy.version>
         <selenium-java.version>2.42.2</selenium-java.version>
@@ -227,8 +228,6 @@
                 <module>dd4t-compatibility</module>
                 <module>dd4t-databind</module>
                 <module>dd4t-providers-common</module>
-                <module>dd4t-providers</module>
-                <module>dd4t-providers-web8</module>
                 <module>dd4t-caching</module>
                 <module>dd4t-mvc-support</module>
                 <module>dd4t-test-spring-web</module>
@@ -237,6 +236,9 @@
         </profile>
         <profile>
             <id>cd-7.1.0</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <tridion.build.version>7.1.0</tridion.build.version>
                 <java.version>1.7</java.version>
@@ -256,6 +258,10 @@
                 <sqljdbc4-version>4.0.0</sqljdbc4-version>
                 <xalan-version>2.7.1</xalan-version>
             </properties>
+
+            <modules>
+                <module>dd4t-providers</module>
+            </modules>
             <build>
                 <plugins>
                     <plugin>
@@ -331,7 +337,6 @@
             <properties>
                 <tridion.build.version>8.1.0</tridion.build.version>
                 <java.version>1.8</java.version>
-                <!-- TODO: prune -->
                 <antlr.version>2.7.7</antlr.version>
                 <aopalliance.version>1.0</aopalliance.version>
                 <commons-codec.version>1.9</commons-codec.version>
@@ -345,6 +350,9 @@
                 <slf4j.version>1.7.12</slf4j.version>
                 <spring.version>4.1.7.RELEASE</spring.version>
             </properties>
+            <modules>
+                <module>dd4t-providers-web8</module>
+            </modules>
             <build>
                 <plugins>
                     <plugin>
@@ -450,6 +458,9 @@
                 <sqljdbc4-version>4.0.0</sqljdbc4-version>
 
             </properties>
+            <modules>
+                <module>dd4t-providers</module>
+            </modules>
             <build>
                 <plugins>
                     <plugin>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ServiceConfig ConnectionTimeout="10000" CacheEnabled="true" CacheExpirationDuration="600"
+               ServiceAvailabilityCheck="true">
+    <DiscoveryService ServiceUri="http://vps50265.public.cloudvps.com:8080/discovery-service/discovery.svc"/>
+    <!--<TokenService ClientId="cduser" ClientSecret="CDUserP@ssw0rd"/>-->
+    <TokenService ClientId="cduser" ClientSecret="encrypted:o/cgCBwmULeOyUZghFaKJA=="/>
+</ServiceConfig>

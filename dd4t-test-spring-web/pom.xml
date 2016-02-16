@@ -27,7 +27,7 @@
                     <archiveClasses>true</archiveClasses>
                     <webResources>
                         <resource>
-                            <directory>src/main/resources/WEB-INF</directory>
+                            <directory>src/main/resources/${tridion.build.version}/WEB-INF</directory>
                             <targetPath>WEB-INF</targetPath>
                             <filtering>true</filtering>
                             <includes>
@@ -140,7 +140,10 @@
     <profiles>
         <profile>
             <id>cd-7.1.0</id>
-             <dependencies>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
 
                 <dependency>
                     <groupId>org.dd4t</groupId>
@@ -308,7 +311,6 @@
                     <groupId>com.microsoft.sqlserver</groupId>
                     <artifactId>sqljdbc4</artifactId>
                     <version>${sqljdbc4-version}</version>
-                    <scope>runtime</scope>
                 </dependency>
 
 
@@ -321,11 +323,11 @@
                     <artifactId>activemq-client</artifactId>
                 </dependency>
 
-                 <dependency>
-                     <groupId>net.sf.ehcache</groupId>
-                     <artifactId>ehcache</artifactId>
-                     <version>${ehcache.version}</version>
-                 </dependency>
+                <dependency>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
+                    <version>${ehcache.version}</version>
+                </dependency>
             </dependencies>
             <build>
                 <plugins>
@@ -358,6 +360,13 @@
                     <groupId>javax.cache</groupId>
                     <artifactId>cache-api</artifactId>
                     <version>${javax.cache-api.version}</version>
+                </dependency>
+
+                <!-- Unfortunately needed. TODO: see if we can hook in to dd4t-caching-rs -->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_cache</artifactId>
+                    <version>${tridion.web8.version}</version>
                 </dependency>
 
                 <dependency>
@@ -603,6 +612,13 @@
                     <groupId>com.sdl.web</groupId>
                     <artifactId>web-oauth-common</artifactId>
                     <version>${tridion.web8.oss.version}</version>
+                </dependency>
+
+
+                <!-- used for JMS listening. Remove if not used -->
+                <dependency>
+                    <groupId>org.apache.activemq</groupId>
+                    <artifactId>activemq-client</artifactId>
                 </dependency>
             </dependencies>
             <build>

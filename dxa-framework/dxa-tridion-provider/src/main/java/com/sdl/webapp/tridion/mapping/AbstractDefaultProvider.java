@@ -492,12 +492,13 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
      * @param path a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.
      */
+    @SneakyThrows(UnsupportedEncodingException.class)
     protected String prependFullUrlIfNeeded(String path) {
         String baseUrl = webRequestContext.getBaseUrl();
         if (path.contains(baseUrl)) {
             return path;
         }
-        return baseUrl + path;
+        return UriUtils.encodePath(baseUrl + path, "UTF-8");
     }
 
     private StaticContentFile getStaticContentFile(String path, String localizationId)

@@ -7,7 +7,7 @@
     <groupId>org.dd4t</groupId>
     <artifactId>dd4t-parent</artifactId>
     <packaging>pom</packaging>
-    <version>2.0.4-SNAPSHOT</version>
+    <version>2.0.4</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>Parent for all DD4T projects.</description>
     <url>https://github.com/dd4t</url>
@@ -421,6 +421,7 @@
                         <version>${spring.version}</version>
                     </dependency>
                 </dependencies>
+
             </dependencyManagement>
         </profile>
         <profile>

@@ -69,11 +69,12 @@
         <jsp-api.version>2.2</jsp-api.version>
         <jstl.version>1.2</jstl.version>
         <junit.version>4.11</junit.version>
+        <resteasy.version>3.0.8.Final</resteasy.version>
 
-        <!-- TODO: odata client 2.0.4 breaks! -->
+
         <sdl.odata.client.version>2.0.5-SNAPSHOT</sdl.odata.client.version>
 
-        <resteasy.version>3.0.8.Final</resteasy.version>
+
         <selenium-java.version>2.42.2</selenium-java.version>
         <selenium.version>1.0.1</selenium.version>
 

@@ -59,10 +59,6 @@ public class DefaultLinkResolver implements LinkResolver {
     private boolean encodeUrl = true;
     private String contextPath;
 
-    private DefaultLinkResolver () {
-        LOG.debug("Create new instance");
-    }
-
     @Override
     public String resolve (ComponentPresentation cp) throws ItemNotFoundException, SerializationException {
         return resolve(cp.getComponent(), null);
@@ -249,7 +245,6 @@ public class DefaultLinkResolver implements LinkResolver {
         return schemaToUrlMappings;
     }
 
-    // TODO: where is this set?
     public void setSchemaToUrlMappings (Map<String, String> schemaToUrlMappings) {
         this.schemaToUrlMappings = schemaToUrlMappings;
     }

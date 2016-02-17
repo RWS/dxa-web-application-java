@@ -1,6 +1,7 @@
 package org.dd4t.databind;
 
 import org.apache.commons.io.FileUtils;
+import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.exceptions.SerializationException;
@@ -27,5 +28,14 @@ public class DataBindFactoryTest {
         Page deserializedPage = DataBindFactory.buildPage(CompressionUtils.decompressGZip(CompressionUtils.decodeBase64(page)), PageImpl.class);
         Assert.notNull(deserializedPage, "page cannot be bound");
         Assert.hasLength(deserializedPage.getTitle(), "page has no valid title");
+    }
+
+    @Test
+    public void testDcpDeserialization() throws URISyntaxException, IOException, SerializationException {
+        String dcp = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("testdcpanimal.json").toURI()));
+        Assert.notNull(dcp);
+        ComponentPresentation componentPresentation = DataBindFactory.buildDynamicComponentPresentation(dcp, ComponentPresentation.class);
+        Assert.notNull(componentPresentation,"DCP cannot be bound");
+
     }
 }

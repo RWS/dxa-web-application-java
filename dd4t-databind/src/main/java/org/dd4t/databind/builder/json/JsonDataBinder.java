@@ -19,6 +19,7 @@ package org.dd4t.databind.builder.json;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -63,8 +64,10 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
     private static final ObjectMapper GENERIC_MAPPER = new ObjectMapper();
 
     static {
+        GENERIC_MAPPER.configure(MapperFeature.IGNORE_DUPLICATE_MODULE_REGISTRATIONS,true);
         GENERIC_MAPPER.registerModule(new JodaModule());
         GENERIC_MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
     }
 
     private JsonDataBinder () {
@@ -221,6 +224,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
         final ComponentPresentationDeserializer componentPresentationDeserializer = new ComponentPresentationDeserializer(this.concreteComponentPresentationImpl, this.concreteComponentTemplateImpl, this.concreteComponentImpl);
         final SimpleModule module = new SimpleModule("ComponentPresentationDeserializerModule", new Version(1, 0, 0, "RELEASE", "org.dd4t", "dd4t-databind"));
         module.addDeserializer(ComponentPresentation.class, componentPresentationDeserializer);
+
         GENERIC_MAPPER.registerModule(module);
         GENERIC_MAPPER.registerModule(new AfterburnerModule());
         GENERIC_MAPPER.addMixIn(Field.class, BaseFieldMixIn.class);

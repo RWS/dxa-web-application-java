@@ -1,0 +1,963 @@
+{
+  "Component": {
+    "LastPublishedDate": "0001-01-01T00:00:00",
+    "RevisionDate": "2014-04-15T22:06:43",
+    "Schema": {
+      "RootElementName": "animal",
+      "Id": "tcm:6-129-8",
+      "Title": "Animal"
+    },
+    "Fields": {
+      "species": {
+        "Name": "species",
+        "Value": "Nile crocodile",
+        "Values": [
+          "Nile crocodile"
+        ],
+        "NumericValues": [],
+        "DateTimeValues": [],
+        "LinkedComponentValues": [],
+        "FieldType": 0,
+        "XPath": "tcm:Content/custom:animal/custom:species",
+        "KeywordValues": []
+      },
+      "speciesLatin": {
+        "Name": "speciesLatin",
+        "Value": "Crocodylus niloticus",
+        "Values": [
+          "Crocodylus niloticus"
+        ],
+        "NumericValues": [],
+        "DateTimeValues": [],
+        "LinkedComponentValues": [],
+        "FieldType": 0,
+        "XPath": "tcm:Content/custom:animal/custom:speciesLatin",
+        "KeywordValues": []
+      },
+      "classification": {
+        "Name": "classification",
+        "Value": "",
+        "Values": [],
+        "NumericValues": [],
+        "DateTimeValues": [],
+        "LinkedComponentValues": [],
+        "FieldType": 3,
+        "CategoryName": "Taxonomy (animals)",
+        "CategoryId": "tcm:6-19-512",
+        "XPath": "tcm:Content/custom:animal/custom:classification",
+        "KeywordValues": [
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-19-512",
+            "Path": "\\Taxonomy (animals)\\Animals\\Vertebrates\\Reptiles\\Crocodiles, alligators and caimans\\Crocodiles\\Nile crocodile",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "Nile crocodiles are the much feared reptilian predators of Africa's rivers and lakes. Lurking almost totally submerged in the water, they lie in wait for passing prey. Once caught in those long powerful jaws, little escapes, not even large buffalo and wildebeest, which get dragged into the water and drowned. Their large bodies and long tails hide some pretty quick reflexes and quite fast bursts of speed. Nile crocodiles are extremely attentive and protective parents, with a surprisingly delicate touch. Strange as it may seem, their nests and young hatchlings are very vulnerable to predators.",
+                "Values": [
+                  "Nile crocodiles are the much feared reptilian predators of Africa's rivers and lakes. Lurking almost totally submerged in the water, they lie in wait for passing prey. Once caught in those long powerful jaws, little escapes, not even large buffalo and wildebeest, which get dragged into the water and drowned. Their large bodies and long tails hide some pretty quick reflexes and quite fast bursts of speed. Nile crocodiles are extremely attentive and protective parents, with a surprisingly delicate touch. Strange as it may seem, their nests and young hatchlings are very vulnerable to predators."
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T22:06:41.85",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/nile_crocodile_1_tcm6-1678.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "nile_crocodile_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 62528,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 1,
+                    "Id": "tcm:6-1678",
+                    "Title": "nile_crocodile_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/life/Nile_crocodile.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/life/Nile_crocodile.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-1679-1024",
+            "Title": "Nile crocodile"
+          }
+        ]
+      },
+      "description": {
+        "Name": "description",
+        "Value": "Nile crocodiles are the much feared reptilian predators of Africa's rivers and lakes. Lurking almost totally submerged in the water, they lie in wait for passing prey. Once caught in those long powerful jaws, little escapes, not even large buffalo and wildebeest, which get dragged into the water and drowned. Their large bodies and long tails hide some pretty quick reflexes and quite fast bursts of speed. Nile crocodiles are extremely attentive and protective parents, with a surprisingly delicate touch. Strange as it may seem, their nests and young hatchlings are very vulnerable to predators.",
+        "Values": [
+          "Nile crocodiles are the much feared reptilian predators of Africa's rivers and lakes. Lurking almost totally submerged in the water, they lie in wait for passing prey. Once caught in those long powerful jaws, little escapes, not even large buffalo and wildebeest, which get dragged into the water and drowned. Their large bodies and long tails hide some pretty quick reflexes and quite fast bursts of speed. Nile crocodiles are extremely attentive and protective parents, with a surprisingly delicate touch. Strange as it may seem, their nests and young hatchlings are very vulnerable to predators."
+        ],
+        "NumericValues": [],
+        "DateTimeValues": [],
+        "LinkedComponentValues": [],
+        "FieldType": 2,
+        "XPath": "tcm:Content/custom:animal/custom:description",
+        "KeywordValues": []
+      },
+      "image": {
+        "Name": "image",
+        "Value": "",
+        "Values": [],
+        "NumericValues": [],
+        "DateTimeValues": [],
+        "LinkedComponentValues": [
+          {
+            "LastPublishedDate": "0001-01-01T00:00:00",
+            "RevisionDate": "2014-04-15T22:06:41.85",
+            "Schema": {
+              "RootElementName": "undefined",
+              "Id": "tcm:6-93-8",
+              "Title": "Visual"
+            },
+            "Fields": {},
+            "MetadataFields": {},
+            "ComponentType": 0,
+            "Multimedia": {
+              "Url": "/Preview/media/nile_crocodile_1_tcm6-1678.jpg",
+              "MimeType": "image/jpeg",
+              "FileName": "nile_crocodile_1.jpg",
+              "FileExtension": "jpg",
+              "Size": 62528,
+              "Width": 640,
+              "Height": 360
+            },
+            "Categories": [],
+            "Version": 1,
+            "Id": "tcm:6-1678",
+            "Title": "nile_crocodile_1.jpg"
+          }
+        ],
+        "FieldType": 5,
+        "XPath": "tcm:Content/custom:animal/custom:image",
+        "KeywordValues": []
+      },
+      "habitat": {
+        "Name": "habitat",
+        "Value": "",
+        "Values": [],
+        "NumericValues": [],
+        "DateTimeValues": [],
+        "LinkedComponentValues": [],
+        "FieldType": 3,
+        "CategoryName": "Habitat",
+        "CategoryId": "tcm:6-20-512",
+        "XPath": "tcm:Content/custom:animal/custom:habitat",
+        "KeywordValues": [
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-20-512",
+            "Path": "\\Habitat\\Desert",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "Desert and dry scrubland describes any area that receives less than 250mm of rainfall a year. Not just the endless, baking sand dunes of popular conception, it includes arid areas in temperate regions. Plants in this habitat are well adapted to conserving water and often have to survive extremely hot days and cold nights when the temperature plummets. Deserts may appear to have very little life in them, but a closer inspection can reveal high biodiversity.",
+                "Values": [
+                  "Desert and dry scrubland describes any area that receives less than 250mm of rainfall a year. Not just the endless, baking sand dunes of popular conception, it includes arid areas in temperate regions. Plants in this habitat are well adapted to conserving water and often have to survive extremely hot days and cold nights when the temperature plummets. Deserts may appear to have very little life in them, but a closer inspection can reveal high biodiversity."
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T20:43:29.65",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/deserts_and_xeric_shrublands_1_tcm6-507.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "deserts_and_xeric_shrublands_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 66820,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 8,
+                    "Id": "tcm:6-507",
+                    "Title": "deserts_and_xeric_shrublands_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/habitats/Deserts_and_xeric_shrublands.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/habitats/Deserts_and_xeric_shrublands.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-508-1024",
+            "Title": "Desert"
+          },
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-20-512",
+            "Path": "\\Habitat\\Estuaries",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "An estuary is an inlet of the sea, into which flows a river or stream. Fresh and salt water mix here, so the inhabitants have to cope with both.  Some estuaries have extensive mudflats which are exposed at low tide, and teem with life.  Many estuaries were formed at the end of the Ice Age, when sea level rose and flooded the coast. If an estuary completely silts up, it will turn into a delta.",
+                "Values": [
+                  "An estuary is an inlet of the sea, into which flows a river or stream. Fresh and salt water mix here, so the inhabitants have to cope with both.  Some estuaries have extensive mudflats which are exposed at low tide, and teem with life.  Many estuaries were formed at the end of the Ice Age, when sea level rose and flooded the coast. If an estuary completely silts up, it will turn into a delta."
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T20:46:58.77",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/estuary_1_tcm6-559.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "estuary_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 65247,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 18,
+                    "Id": "tcm:6-559",
+                    "Title": "estuary_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/habitats/Estuary.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/habitats/Estuary.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-560-1024",
+            "Title": "Estuaries"
+          },
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-20-512",
+            "Path": "\\Habitat\\Flooded grassland",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "Flooded grasslands are the half grassland, half wetland typified by the Florida Everglades, the marshes of Southern Iraq and the Pantanal of Brazil. They may be permanently or seasonally flooded, which has an obvious effect on what kinds of plant and animal species found here. This type of wetland area is of particular value to bird life, so bird populations – both local species and migrants – are often high in numbers.",
+                "Values": [
+                  "Flooded grasslands are the half grassland, half wetland typified by the Florida Everglades, the marshes of Southern Iraq and the Pantanal of Brazil. They may be permanently or seasonally flooded, which has an obvious effect on what kinds of plant and animal species found here. This type of wetland area is of particular value to bird life, so bird populations – both local species and migrants – are often high in numbers."
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T20:45:34.23",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/flooded_grasslands_and_savannas_1_tcm6-547.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "flooded_grasslands_and_savannas_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 71447,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 12,
+                    "Id": "tcm:6-547",
+                    "Title": "flooded_grasslands_and_savannas_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/habitats/Flooded_grasslands_and_savannas.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/habitats/Flooded_grasslands_and_savannas.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-548-1024",
+            "Title": "Flooded grassland"
+          },
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-20-512",
+            "Path": "\\Habitat\\Lakes and ponds",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "From the smallest pond (1m square) to the largest lake, this biome provides many opportunities for life to thrive.  Because many of these bodies of water are closed environments, they often have self-contained ecologies, enabling some to become evolutionary microcosms.  One such example is the African Great Lakes, where over a thousand new species of cichlid fish have evolved during the last 12,400 to 100,000 years.  ",
+                "Values": [
+                  "From the smallest pond (1m square) to the largest lake, this biome provides many opportunities for life to thrive.  Because many of these bodies of water are closed environments, they often have self-contained ecologies, enabling some to become evolutionary microcosms.  One such example is the African Great Lakes, where over a thousand new species of cichlid fish have evolved during the last 12,400 to 100,000 years.  "
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T20:43:31.877",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/lake_1_tcm6-509.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "lake_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 56108,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 26,
+                    "Id": "tcm:6-509",
+                    "Title": "lake_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/habitats/Lake.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/habitats/Lake.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-510-1024",
+            "Title": "Lakes and ponds"
+          },
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-20-512",
+            "Path": "\\Habitat\\Mangroves",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "Mangrove forests grow on tropical coasts with soft soils and are flooded twice daily by the tide.  They are important nursery areas for many species of fish. Mangroves and coral reefs have a symbiotic relationship – the reef protects the coast where the mangroves grow from being eroded by the sea, and the forest traps sediment washed from the land that would otherwise smother the reef.",
+                "Values": [
+                  "Mangrove forests grow on tropical coasts with soft soils and are flooded twice daily by the tide.  They are important nursery areas for many species of fish. Mangroves and coral reefs have a symbiotic relationship – the reef protects the coast where the mangroves grow from being eroded by the sea, and the forest traps sediment washed from the land that would otherwise smother the reef."
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T20:49:43.74",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/mangrove_1_tcm6-571.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "mangrove_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 74017,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 4,
+                    "Id": "tcm:6-571",
+                    "Title": "mangrove_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/habitats/Mangrove.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/habitats/Mangrove.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-572-1024",
+            "Title": "Mangroves"
+          },
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-20-512",
+            "Path": "\\Habitat\\Rivers and streams",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "Rivers and streams, burns, brooks and springs – the names are varied but the flora and fauna all have to cope with the same thing: water that flows continuously in one direction. If you live here you need a way to avoid being washed downstream and ultimately into the sea. Plants and animals have to be able to cling on, hide  away from the flow or swim against the current.",
+                "Values": [
+                  "Rivers and streams, burns, brooks and springs – the names are varied but the flora and fauna all have to cope with the same thing: water that flows continuously in one direction. If you live here you need a way to avoid being washed downstream and ultimately into the sea. Plants and animals have to be able to cling on, hide  away from the flow or swim against the current."
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T20:45:04.967",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/river_1_tcm6-537.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "river_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 63847,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 23,
+                    "Id": "tcm:6-537",
+                    "Title": "river_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/habitats/River.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/habitats/River.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-538-1024",
+            "Title": "Rivers and streams"
+          },
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-20-512",
+            "Path": "\\Habitat\\Swamp",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "Swamps are wetland areas where water totally or partially submerges the vegetation, for part or most of the year. Swamp waters flow very slowly, and there are often reed beds or sedges growing at their margins. Any raised areas within a swamp, are likely to be drier and may therefore have trees growing on them. Swamps include the fens, the Florida Everglades and the Okavango Delta.",
+                "Values": [
+                  "Swamps are wetland areas where water totally or partially submerges the vegetation, for part or most of the year. Swamp waters flow very slowly, and there are often reed beds or sedges growing at their margins. Any raised areas within a swamp, are likely to be drier and may therefore have trees growing on them. Swamps include the fens, the Florida Everglades and the Okavango Delta."
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T20:43:41.633",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/swamp_1_tcm6-515.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "swamp_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 97738,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 13,
+                    "Id": "tcm:6-515",
+                    "Title": "swamp_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/habitats/Swamp.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/habitats/Swamp.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-516-1024",
+            "Title": "Swamp"
+          },
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-20-512",
+            "Path": "\\Habitat\\Tropical dry forest",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "Tropical dry forests, in contrast to rainforest, have to survive a long dry season each year, so the predominantly deciduous trees shed their leaves to cope with it. Sunlight can then reach the ground, so the season that's bad for the trees is good for the forest floor. Though there's generally less biodiversity here than in a rainforest, there's more scope for ground-dwellers in the resulting thick undergrowth.",
+                "Values": [
+                  "Tropical dry forests, in contrast to rainforest, have to survive a long dry season each year, so the predominantly deciduous trees shed their leaves to cope with it. Sunlight can then reach the ground, so the season that's bad for the trees is good for the forest floor. Though there's generally less biodiversity here than in a rainforest, there's more scope for ground-dwellers in the resulting thick undergrowth."
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T20:45:08.26",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/tropical_and_subtropical_dry_broadleaf_forests_1_tcm6-539.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "tropical_and_subtropical_dry_broadleaf_forests_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 79647,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 6,
+                    "Id": "tcm:6-539",
+                    "Title": "tropical_and_subtropical_dry_broadleaf_forests_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/habitats/Tropical_and_subtropical_dry_broadleaf_forests.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/habitats/Tropical_and_subtropical_dry_broadleaf_forests.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-540-1024",
+            "Title": "Tropical dry forest"
+          },
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-20-512",
+            "Path": "\\Habitat\\Tropical grassland",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "Tropical grasslands include the savanna usually associated with Africa, and savanna-type grasslands found in India, Australia, Nepal and the Americas. They are characterised by drought-resistant shrubs and grasses, dotted with trees such as acacias or baobabs. Seasons here are wet and dry, rather than summer and winter. The plentiful food that springs into life in the wet season draws and supports huge herds of grazing animals, such as the familiar mega-herds of African antelope.",
+                "Values": [
+                  "Tropical grasslands include the savanna usually associated with Africa, and savanna-type grasslands found in India, Australia, Nepal and the Americas. They are characterised by drought-resistant shrubs and grasses, dotted with trees such as acacias or baobabs. Seasons here are wet and dry, rather than summer and winter. The plentiful food that springs into life in the wet season draws and supports huge herds of grazing animals, such as the familiar mega-herds of African antelope."
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T20:47:02.557",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/tropical_and_subtropical_grasslands_savannas_and_shrublands_1_tcm6-561.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "tropical_and_subtropical_grasslands_savannas_and_shrublands_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 47822,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 10,
+                    "Id": "tcm:6-561",
+                    "Title": "tropical_and_subtropical_grasslands_savannas_and_shrublands_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/habitats/Tropical_and_subtropical_grasslands,_savannas,_and_shrublands.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/habitats/Tropical_and_subtropical_grasslands,_savannas,_and_shrublands.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-562-1024",
+            "Title": "Tropical grassland"
+          },
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-20-512",
+            "Path": "\\Habitat\\Rainforest",
+            "ParentKeywords": [],
+            "MetadataFields": {
+              "description": {
+                "Name": "description",
+                "Value": "Rainforests are the world's powerhouses, the most vital habitats on the planet. Characterised by high rainfall, they only cover 6% of the Earth across the tropical regions, but they contain more than half of its plant and animal species. Fast-growing trees form a dense canopy that prevents much sunlight reaching the forest floor and discourages undergrowth. The canopy is where it's at, and it hums with an incredible diversity of life. ",
+                "Values": [
+                  "Rainforests are the world's powerhouses, the most vital habitats on the planet. Characterised by high rainfall, they only cover 6% of the Earth across the tropical regions, but they contain more than half of its plant and animal species. Fast-growing trees form a dense canopy that prevents much sunlight reaching the forest floor and discourages undergrowth. The canopy is where it's at, and it hums with an incredible diversity of life. "
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 1,
+                "KeywordValues": []
+              },
+              "image": {
+                "Name": "image",
+                "Value": "",
+                "Values": [],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [
+                  {
+                    "LastPublishedDate": "0001-01-01T00:00:00",
+                    "RevisionDate": "2014-04-15T20:09:15.66",
+                    "Schema": {
+                      "RootElementName": "undefined",
+                      "Id": "tcm:6-93-8",
+                      "Title": "Visual"
+                    },
+                    "Fields": {},
+                    "MetadataFields": {},
+                    "ComponentType": 0,
+                    "Multimedia": {
+                      "Url": "/Preview/media/tropical_and_subtropical_moist_broadleaf_forests_1_tcm6-503.jpg",
+                      "MimeType": "image/jpeg",
+                      "FileName": "tropical_and_subtropical_moist_broadleaf_forests_1.jpg",
+                      "FileExtension": "jpg",
+                      "Size": 74472,
+                      "Width": 640,
+                      "Height": 360
+                    },
+                    "Categories": [],
+                    "Version": 11,
+                    "Id": "tcm:6-503",
+                    "Title": "tropical_and_subtropical_moist_broadleaf_forests_1.jpg"
+                  }
+                ],
+                "FieldType": 5,
+                "KeywordValues": []
+              },
+              "externalUrl": {
+                "Name": "externalUrl",
+                "Value": "http://www.bbc.co.uk/nature/habitats/Tropical_and_subtropical_moist_broadleaf_forests.rdf",
+                "Values": [
+                  "http://www.bbc.co.uk/nature/habitats/Tropical_and_subtropical_moist_broadleaf_forests.rdf"
+                ],
+                "NumericValues": [],
+                "DateTimeValues": [],
+                "LinkedComponentValues": [],
+                "FieldType": 0,
+                "KeywordValues": []
+              }
+            },
+            "Id": "tcm:6-504-1024",
+            "Title": "Rainforest"
+          }
+        ]
+      },
+      "eats": {
+        "Name": "eats",
+        "Value": "",
+        "Values": [],
+        "NumericValues": [],
+        "DateTimeValues": [],
+        "LinkedComponentValues": [],
+        "FieldType": 3,
+        "CategoryName": "FoodType",
+        "CategoryId": "tcm:6-22-512",
+        "XPath": "tcm:Content/custom:animal/custom:eats",
+        "KeywordValues": [
+          {
+            "Description": "",
+            "Key": "",
+            "TaxonomyId": "tcm:6-22-512",
+            "Path": "\\FoodType\\Carnivorous",
+            "ParentKeywords": [],
+            "MetadataFields": {},
+            "Id": "tcm:6-142-1024",
+            "Title": "Carnivorous"
+          }
+        ]
+      }
+    },
+    "MetadataFields": {},
+    "ComponentType": 1,
+    "Folder": {
+      "PublicationId": "tcm:0-6-1",
+      "Id": "tcm:6-24-2",
+      "Title": "Animals"
+    },
+    "Categories": [],
+    "Version": 1,
+    "Publication": {
+      "Id": "tcm:0-6-1",
+      "Title": "04 Website GreenZoo.com"
+    },
+    "OwningPublication": {
+      "Id": "tcm:0-4-1",
+      "Title": "02 Content Parent"
+    },
+    "Id": "tcm:6-1680",
+    "Title": "Nile crocodile"
+  },
+  "ComponentTemplate": {
+    "OutputFormat": "HTML Fragment",
+    "RevisionDate": "2016-02-16T20:05:56.433",
+    "MetadataFields": {
+      "view": {
+        "Name": "view",
+        "Value": "animaldetails",
+        "Values": [
+          "animaldetails"
+        ],
+        "NumericValues": [],
+        "DateTimeValues": [],
+        "LinkedComponentValues": [],
+        "FieldType": 0,
+        "KeywordValues": []
+      }
+    },
+    "Id": "tcm:6-1710-32",
+    "Title": "Animal Details Dynamic"
+  },
+  "IsDynamic": true,
+  "OrderOnPage": 0
+}

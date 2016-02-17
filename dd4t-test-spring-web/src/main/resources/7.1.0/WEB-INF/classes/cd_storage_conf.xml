@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               Version="6.1"
+               xsi:noNamespaceSchemaLocation="../../../../../../../spring-mvc-archetype/src/main/resources/archetype-resources/src/main/resources/schemas/cd_storage_conf.xsd">
+    <Global>
+        <ObjectCache Enabled="false">
+            <Policy Type="LRU" Class="com.tridion.cache.LRUPolicy">
+                <Param Name="MemSize" Value="32mb"/>
+            </Policy>
+
+            <Features>
+                <Feature Type="DependencyTracker" Class="com.tridion.cache.DependencyTracker"/>
+            </Features>
+        </ObjectCache>
+
+        <Storages>
+            <Storage Type="persistence" Id="defaultdb" dialect="MSSQL"
+                     Class="com.tridion.storage.persistence.JPADAOFactory">
+                <Pool Type="jdbc" Size="10" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120"/>
+                <DataSource Class="com.microsoft.sqlserver.jdbc.SQLServerDataSource">
+                    <!--<Property Name="serverName" Value="[SERVER]"/>
+                    <Property Name="portNumber" Value="[PORT]"/>
+                    <Property Name="databaseName" Value="[DB_NAME]"/>
+                    <Property Name="user" Value="[DB_USER_NAME]"/>
+                    <Property Name="password" Value="[DB_PASSWORD]"/>-->
+                    <Property Name="serverName" Value="vps50265.public.cloudvps.com"/>
+                    <Property Name="portNumber" Value="1433"/>
+                    <Property Name="databaseName" Value="Tridion_Broker_Live"/>
+                    <Property Name="user" Value="TridionBrokerUser"/>
+                    <Property Name="password" Value="!Japie100"/>
+                </DataSource>
+            </Storage>
+        </Storages>
+    </Global>
+
+    <ItemTypes defaultStorageId="defaultdb" cached="true"/>
+</Configuration>

@@ -22,8 +22,8 @@ import com.tridion.util.TCMURI;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.providers.BaseBrokerProvider;
 import org.dd4t.core.util.Constants;
+import org.dd4t.providers.BaseBrokerProvider;
 import org.dd4t.providers.LinkProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * Provider implementation to wrap around the ComponentLinker.
  * TODO: decompress!
  *
+ * TODO: for web-8 REST don't use content-compatible
  * @author rooudsho, Mihai Cadariu
  */
 public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvider {

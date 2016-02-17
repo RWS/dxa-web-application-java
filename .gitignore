@@ -5,10 +5,12 @@
 .settings
 .metadata
 .recommenders
-dd4t-test-spring-web/src/main/resources/WEB-INF/classes/cd_*.xml
+dd4t-test-spring-web/src/main/resources/7.1.0/WEB-INF/classes/cd_*.xml
+dd4t-test-spring-web/src/main/resources/8.1.0/WEB-INF/classes/cd_*.xml
 dd4t-example-site/src/main/webapp/lib
 target
 Servers
 changeemail.sh
 pom.xml.versionsBackup
 .versionsBackup
+test.txt

@@ -18,6 +18,8 @@ package org.dd4t.core.util;
 
 import org.joda.time.DateTime;
 
+import java.util.TimeZone;
+
 /**
  * dd4t-2
  *
@@ -34,18 +36,29 @@ public class Constants {
     public static final String REFERER = "Referer";
     public static final String DEFAULT_PAGE = "index.html";
     public static final String SMART_INCLUDE_URL = "smartIncludeUrl";
-    public static final String VIEW_NAME_FIELD = "viewName";
     public static final String COMPONENT_NAME = "component";
 
     public static final DateTime THE_YEAR_ZERO = new DateTime(0, 1, 1, 0, 0);
     public static final String TCM_ZERO_URI = "tcm:0-0-0";
-
-    // Properties file constants
+    public static final String HTTP_X_FORWARDED_FOR_HEADER = "HTTP_X_FORWARDED_FOR";
+    public static final int UNKNOWN_PUBLICATION_ID = -1;
 
     public static final String MONITOR_SERVICE_INTERVAL= "monitor.service.interval";
     public static final String CACHE_EXPIRED_TTL = "cache.expired.ttl";
     public static final String CACHE_DEPENDENCY_TTL = "cache.dependency.ttl";
     public static final String CACHE_TTL = "cache.ttl";
+
+
+    public static final String PROPERTY_STRIP_CONTEXT_PATH = "publication.resolving.strip.context.path";
+
+    public static final TimeZone TIMEZONE_GMT = TimeZone.getTimeZone("GMT");
+    public static final String LAST_MODIFIED = "Last-Modified";
+    public static final String HEADER_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
+
+    public static final String HEADER_IF_MODIFIED_SINCE = "If-Modified-Since";
+    public static final String HEADER_LAST_MODIFIED = "Last-Modified";
+    public static final String HEADER_CONTENT_LENGTH = "Content-Length";
+
 
     private Constants () {
 

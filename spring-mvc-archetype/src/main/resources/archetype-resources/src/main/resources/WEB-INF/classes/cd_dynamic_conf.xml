@@ -23,27 +23,4 @@
         </StaticMappings>
         <StorageMapping IdentifyPublicationByProperty="publicationUrl"/>
     </URLMappings>
-
-    <!-- This node configures the renderer used by the tcdl engine. You can define here custom renderer
-    of the tcdl tags.
-    -->
-    <TCDLEngine>
-        <Renderer Class="com.tridion.tcdl.TCDLRenderer">
-            <Properties>
-                <Property Name="prop1" Value="value1"/>
-                <Property Name="prop2" Value="value2"/>
-            </Properties>
-            <!--
-            Optional configuration needed in case of using the UGC TCDL renderers
-            -->
-            <!--
-            <TagBundle Resource="ugc_renderer_bundle.xml"/>
-            -->
-        </Renderer>
-
-        <!--<Transformer Class="com.tridion.tcdl.TCDLTransformer">
-            <Properties>
-            </Properties>
-        </Transformer> -->
-    </TCDLEngine>
 </Configuration>

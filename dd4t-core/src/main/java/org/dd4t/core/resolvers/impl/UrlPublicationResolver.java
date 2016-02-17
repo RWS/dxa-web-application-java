@@ -38,7 +38,7 @@ public class UrlPublicationResolver implements PublicationResolver {
     @Resource
     private PublicationProvider publicationProvider;
     private boolean useCdDynamic;
-
+    private boolean stripServletContextPath;
     /**
      * Gets the Publication TCMURI item id for the current request
      *
@@ -50,10 +50,10 @@ public class UrlPublicationResolver implements PublicationResolver {
 
         if (this.useCdDynamic) {
             LOG.debug("Using cd_dynamic_conf.xml to determine publication Id");
-            return publicationProvider.discoverPublicationByBaseUrl(HttpUtils.getOriginalFullUrl(request));
+            return publicationProvider.discoverPublicationByBaseUrl(HttpUtils.getOriginalFullUrl(request,this.stripServletContextPath));
         } else {
             LOG.debug("Determining Pub Id on page URL.");
-            return publicationProvider.discoverPublicationIdByPageUrlPath(HttpUtils.getOriginalFullUrl(request));
+            return publicationProvider.discoverPublicationIdByPageUrlPath(HttpUtils.getOriginalFullUrl(request,this.stripServletContextPath));
         }
     }
 
@@ -142,11 +142,11 @@ public class UrlPublicationResolver implements PublicationResolver {
         this.publicationProvider = publicationProvider;
     }
 
-    public Boolean useCdDynamic () {
-        return useCdDynamic;
-    }
-
     public void setUseCdDynamic (final String useCdDynamicValue) {
         this.useCdDynamic = Boolean.parseBoolean(useCdDynamicValue);
+    }
+
+    public void setStripServletContextPath (final boolean stripServletContextPath) {
+        this.stripServletContextPath = stripServletContextPath;
     }
 }

@@ -7,27 +7,26 @@
            http://www.springframework.org/schema/context
            http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:annotation-config/>
+    <context:annotation-config />
 
-    <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter"/>
+    <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
     <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
         <!-- Set this value to your own models package root -->
-        <property name="viewModelPackageRoot" value="org.dd4t.databind.viewmodel.test"/>
-        <property name="viewModelMetaKeyName" value="viewName"/>
+        <property name="viewModelPackageRoot" value="org.dd4t.test.models" />
+        <property name="viewModelMetaKeyName" value="view" />
         <!-- Set these to your need. If you only want regular Components set to true -->
-        <property name="renderDefaultComponentModelsOnly" value="false"/>
-        <property name="renderDefaultComponentsIfNoModelFound" value="true"/>
-        <property name="converter" ref="modelConverter"/>
+        <property name="renderDefaultComponentModelsOnly" value="false" />
+        <property name="renderDefaultComponentsIfNoModelFound" value="true" />
+        <property name="converter" ref="modelConverter" />
         <!-- override these if you want your own implementations -->
-        <property name="concreteComponentPresentationImpl"
-                  value="org.dd4t.contentmodel.impl.ComponentPresentationImpl"/>
-        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl"/>
-        <property name="concreteComponentImpl" value="org.dd4t.contentmodel.impl.ComponentImpl"/>
+        <property name="concreteComponentPresentationImpl" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
+        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
+        <property name="concreteComponentImpl" value="org.dd4t.contentmodel.impl.ComponentImpl" />
         <property name="concreteFieldImpl" value="org.dd4t.contentmodel.impl.BaseField"/>
     </bean>
 
     <!-- DD4T factories entry point  -->
     <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="getInstance">
-        <property name="dataBinder" ref="dataBinder"/>
+        <property name="dataBinder" ref="dataBinder" />
     </bean>
 </beans>

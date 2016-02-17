@@ -53,6 +53,10 @@ public class Generic extends TridionViewModelBase {
     @ViewModelProperty
     private Keyword keyword;
 
+    public Generic() {
+
+    }
+
     public String getHeading () {
         return heading;
     }
@@ -125,4 +129,5 @@ public class Generic extends TridionViewModelBase {
     public void setKeyword (final Keyword keyword) {
         this.keyword = keyword;
     }
+
 }

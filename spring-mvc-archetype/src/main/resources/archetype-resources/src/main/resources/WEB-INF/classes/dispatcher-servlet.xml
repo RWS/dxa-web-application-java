@@ -48,6 +48,8 @@
         <property name="publicationProvider" ref="publicationProvider" />
         <!-- Set to true to use cd_dynamic_conf.xml to figure out publication Ids -->
         <property name="useCdDynamic" value="${publication.resolving.use.cd.dynamic}" />
+        <!-- Set to true if you DON'T publish the context path as part of the Tridion Publication Url -->
+        <property name="stripServletContextPath" value="${publication.resolving.strip.context.path}" />
     </bean>
 
     <bean id="propertiesService" class="org.dd4t.mvc.utils.PropertiesServiceImpl">
@@ -74,8 +76,6 @@
 
     <bean id="componentPresentationProvider" class="org.dd4t.providers.impl.BrokerComponentPresentationProvider">
         <property name="contentIsCompressed" value="true"/>
-        <property name="concreteComponentPresentation" value="org.dd4t.contentmodel.impl.ComponentPresentationImpl" />
-        <property name="concreteComponentTemplateImpl" value="org.dd4t.contentmodel.impl.ComponentTemplateImpl" />
         <property name="cacheProvider" ref="cacheProvider" />
     </bean>
 
@@ -168,7 +168,7 @@
         JMS Caching. Only turn this on if your deployer is configured to use JMS.
         This implementation also requires a dependency on org.apache.activemq:activemq-client:5.10.0+
 
-        Make sure to set the brokerURL, userName and password properties,
+        Make sure to set the brokerURL, userName and password properties in dd4t.properties,
         as well as the JMS topic in the listener config
     -->
 

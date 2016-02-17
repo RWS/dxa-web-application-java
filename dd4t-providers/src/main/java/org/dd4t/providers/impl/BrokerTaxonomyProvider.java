@@ -27,8 +27,9 @@ import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.util.TCMURI;
 import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.NotImplementedException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.providers.BaseBrokerProvider;
+import org.dd4t.providers.BaseBrokerProvider;
 import org.dd4t.providers.TaxonomyProvider;
 
 import java.text.ParseException;
@@ -138,11 +139,11 @@ public class BrokerTaxonomyProvider extends BaseBrokerProvider implements Taxono
 
     @Override
     public String getTaxonomyByURI (final String taxonomyURI, final boolean resolveContent) throws ItemNotFoundException, SerializationException {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public String getTaxonomyFilterBySchema (final String taxonomyURI, final String schemaURI) throws ItemNotFoundException, SerializationException {
-        return null;
+        throw new NotImplementedException();
     }
 }

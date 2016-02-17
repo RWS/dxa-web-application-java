@@ -5,7 +5,7 @@
     <parent>
         <artifactId>dd4t-parent</artifactId>
         <groupId>org.dd4t</groupId>
-        <version>2.0.3</version>
+        <version>2.0.4</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>${project.groupId}:${project.artifactId}</name>
@@ -41,6 +41,8 @@
     </scm>
     <artifactId>dd4t-providers</artifactId>
     <packaging>jar</packaging>
+
+
     <dependencies>
         <dependency>
             <groupId>org.dd4t</groupId>
@@ -53,43 +55,89 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-providers-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_broker</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.build.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_cache</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.build.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_core</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.build.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_datalayer</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.build.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_linking</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.build.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_model</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.build.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_dynamic</artifactId>
-            <version>${tridion.version}</version>
+            <version>${tridion.build.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
     </dependencies>
+
+    <profiles>
+        <profile>
+            <id>cd-8.1.0</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_util</artifactId>
+                    <version>${tridion.web8.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>cd-8.1.0-inproc</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_util</artifactId>
+                    <version>${tridion.web8.version}</version>
+                    <scope>provided</scope>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
 </project>

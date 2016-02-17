@@ -65,6 +65,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
         Binary binary;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);
@@ -112,6 +113,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
         Binary binary;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);

@@ -233,6 +233,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
         Integer result = null;
 
         if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
                     cacheElement.setExpired(false);

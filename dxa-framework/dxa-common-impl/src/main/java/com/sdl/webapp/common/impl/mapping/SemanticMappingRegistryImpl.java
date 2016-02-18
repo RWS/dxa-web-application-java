@@ -288,7 +288,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
                 }
             }
         }
-        if (possibleValues.size() > 0) {
+        if (!possibleValues.isEmpty()) {
             for (Class<? extends EntityModel> cls : possibleValues) {
                 if (cls.getSimpleName().equals(entityNameSplit[entityNameSplit.length - 1])) {
                     return cls;

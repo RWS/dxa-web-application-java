@@ -64,10 +64,6 @@ public class RegionXpmMarkup implements MarkupDecorator {
         if (webRequestContext.isPreview()) {
             RegionModel region = (RegionModel) model;
 
-            // TODO determine min occurs and max occurs for the region
-            final int minOccurs = 0;
-            final int maxOccurs = 0;
-
             final XpmRegion xpmRegion = this.xpmRegionConfig.getXpmRegion(region.getName(), webRequestContext.getLocalization());
             if (xpmRegion != null) {
 

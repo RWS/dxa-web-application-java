@@ -47,7 +47,7 @@ public abstract class FeedFormatter extends BaseFormatter {
      * @return whether a field is a list
      */
     private static boolean isList(SemanticEntity annotation) {
-        return (annotation.vocabulary().equals(SemanticVocabulary.SCHEMA_ORG) && annotation.entityName().equals("ItemList"));
+        return annotation.vocabulary().equals(SemanticVocabulary.SCHEMA_ORG) && annotation.entityName().equals("ItemList");
 
     }
 

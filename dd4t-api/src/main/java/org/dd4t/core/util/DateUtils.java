@@ -59,7 +59,7 @@ public class DateUtils {
         if (date.length() > 19) {
             return DATE_TIME_FORMATTER.parseDateTime(date);
         } else {
-            return DATE_TIME_FORMATTER.parseDateTime((date + ".00"));
+            return DATE_TIME_FORMATTER.parseDateTime(date + ".00");
         }
     }
 }

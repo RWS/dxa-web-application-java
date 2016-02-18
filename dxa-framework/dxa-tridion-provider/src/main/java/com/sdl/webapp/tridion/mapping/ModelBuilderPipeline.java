@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
+import lombok.extern.slf4j.Slf4j;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,7 @@ import java.util.List;
 /**
  * <p>ModelBuilderPipeline class.</p>
  */
+@Slf4j
 public class ModelBuilderPipeline {
 
     private List<PageBuilder> pageBuilderHandlers;
@@ -66,6 +68,7 @@ public class ModelBuilderPipeline {
     public PageModel createPageModel(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider) throws ContentProviderException {
         PageModel pageModel = null;
         for (PageBuilder pageBuilder : pageBuilderHandlers) {
+            log.debug("Invoking {} on {}", pageBuilder.getClass(), genericPage.getFileName());
             pageModel = pageBuilder.createPage(genericPage, pageModel, localization, contentProvider);
         }
         return pageModel;
@@ -90,7 +93,7 @@ public class ModelBuilderPipeline {
     /**
      * <p>createEntityModel.</p>
      *
-     * @param component a {@link org.dd4t.contentmodel.Component} object.
+     * @param component    a {@link org.dd4t.contentmodel.Component} object.
      * @param localization a {@link com.sdl.webapp.common.api.localization.Localization} object.
      * @return a {@link com.sdl.webapp.common.api.model.EntityModel} object.
      * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
@@ -106,9 +109,9 @@ public class ModelBuilderPipeline {
     /**
      * <p>createEntityModel.</p>
      *
-     * @param component a {@link org.dd4t.contentmodel.Component} object.
+     * @param component    a {@link org.dd4t.contentmodel.Component} object.
      * @param localization a {@link com.sdl.webapp.common.api.localization.Localization} object.
-     * @param entityClass a {@link java.lang.Class} object.
+     * @param entityClass  a {@link java.lang.Class} object.
      * @return a {@link com.sdl.webapp.common.api.model.EntityModel} object.
      * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
      */

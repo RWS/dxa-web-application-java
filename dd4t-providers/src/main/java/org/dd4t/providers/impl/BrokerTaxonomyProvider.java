@@ -50,7 +50,7 @@ import java.util.Map;
  */
 public class BrokerTaxonomyProvider extends BaseBrokerProvider implements TaxonomyProvider {
 
-    public static final String SELECT_RELATED_KEYWORDS = "select distinct(rk) from RelatedKeyword rk, ItemMeta im" + " where rk.publicationId = :publicationId and rk.taxonomyId = :taxonomyId and im.itemType = :itemType and rk.itemId = im.itemId and rk.publicationId = im.publicationId";
+    private static final String SELECT_RELATED_KEYWORDS = "select distinct(rk) from RelatedKeyword rk, ItemMeta im" + " where rk.publicationId = :publicationId and rk.taxonomyId = :taxonomyId and im.itemType = :itemType and rk.itemId = im.itemId and rk.publicationId = im.publicationId";
     private static final String SELECT_RELATED_COMPONENTS_BY_SCHEMA = "select distinct(rk) from RelatedKeyword rk, ItemMeta im, ComponentMeta cm" +
             " where rk.publicationId = :publicationId and rk.taxonomyId = :taxonomyId and im.itemType = 16 and rk.itemId = im.itemId and rk.publicationId = im.publicationId and" +
             " cm.publicationId = im.publicationId and cm.itemId = im.itemId and cm.schemaId = :schemaId";

@@ -83,16 +83,21 @@
     <profiles>
         <profile>
             <id>cd-7.1.0</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <dependencies>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_model</artifactId>
                     <version>${tridion.web7.version}</version>
+                    <scope>provided</scope>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_core</artifactId>
                     <version>${tridion.web7.version}</version>
+                    <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -106,11 +111,13 @@
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_model</artifactId>
                     <version>${tridion.web8.version}</version>
+                    <scope>provided</scope>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_core</artifactId>
                     <version>${tridion.web8.version}</version>
+                    <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -121,11 +128,13 @@
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_model</artifactId>
                     <version>${tridion.web8.version}</version>
+                    <scope>provided</scope>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_core</artifactId>
                     <version>${tridion.web8.version}</version>
+                    <scope>provided</scope>
                 </dependency>
             </dependencies>
         </profile>

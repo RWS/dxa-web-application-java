@@ -58,7 +58,6 @@ public abstract class ContextClaims {
      * @return a T object.
      */
     public <T> T getClaimValue(String propertyName, Class<T> cls) {
-        Object claimValue;
         String claimName = getClaimName(propertyName);
         if (this.claims.containsKey(claimName)) {
             return castValue(this.claims.get(claimName), cls);

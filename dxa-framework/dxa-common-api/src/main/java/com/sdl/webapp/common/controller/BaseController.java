@@ -224,7 +224,6 @@ public abstract class BaseController {
 
         for (Map.Entry<RequestMappingInfo, HandlerMethod> item : handlerMethods.entrySet()) {
             RequestMappingInfo mapping = item.getKey();
-            HandlerMethod method = item.getValue();
 
             for (String urlPattern : mapping.getPatternsCondition().getPatterns()) {
                 if (urlPattern.contains('/' + controllerAreaName + '/' + controllerName)) {

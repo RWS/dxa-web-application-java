@@ -67,7 +67,7 @@ public class Image extends MediaItem {
         return img(getMediaHelper().getResponsiveImageUrl(getUrl(), widthFactor, aspect, containerSize))
                 .withAlt(this.alternateText)
                 .withClass(cssClass)
-                .withAttribute("data-aspect", String.valueOf((Math.round(aspect * 100) / 100)))
+                .withAttribute("data-aspect", String.valueOf(Math.round(aspect * 100) / 100))
                 .withAttribute("width", widthFactor)
                 .build();
     }

@@ -109,23 +109,13 @@
             </dependencies>
         </profile>
         <profile>
-            <id>smarttarget-2013sp1-module</id>
+            <id>smarttarget-module</id>
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
+                    <artifactId>dxa-module-smarttarget</artifactId>
                     <version>${dxa.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>smarttarget-web8-module</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-smarttarget-web8</artifactId>
-                    <version>${dxa.version}</version>
+                    <classifier>${build.classifier}</classifier>
                     <scope>runtime</scope>
                 </dependency>
             </dependencies>

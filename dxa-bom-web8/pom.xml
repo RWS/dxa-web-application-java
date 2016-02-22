@@ -326,12 +326,12 @@
             <dependency>
                 <groupId>com.tridion.smarttarget</groupId>
                 <artifactId>smarttarget_core</artifactId>
-                <version>web8-SNAPSHOT</version>
+                <version>web8</version>
             </dependency>
             <dependency>
                 <groupId>com.tridion.smarttarget</groupId>
                 <artifactId>smarttarget_entitymodel</artifactId>
-                <version>web8-SNAPSHOT</version>
+                <version>web8</version>
             </dependency>
 
             <dependency>

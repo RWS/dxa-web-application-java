@@ -140,8 +140,15 @@
                 <scope>runtime</scope>
             </dependency>
             <dependency>
-                <artifactId>dxa-module-smarttarget</artifactId>
                 <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-smarttarget-common</artifactId>
+                <version>${project.version}</version>
+                <classifier>7.1.0</classifier>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
                 <version>${project.version}</version>
                 <scope>runtime</scope>
             </dependency>
@@ -308,12 +315,14 @@
                 <groupId>com.tridion.smarttarget</groupId>
                 <artifactId>session_cartridge</artifactId>
                 <version>2014sp1</version>
+                <scope>runtime</scope>
             </dependency>
 
             <dependency>
                 <groupId>com.tridion.smarttarget</groupId>
                 <artifactId>smarttarget_cartridge</artifactId>
                 <version>2014sp1</version>
+                <scope>runtime</scope>
             </dependency>
 
             <dependency>

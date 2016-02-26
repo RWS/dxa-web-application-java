@@ -27,7 +27,7 @@ public interface ViewModelRegistry {
     Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames);
 
     /**
-     * Returns the entity type to use for a sepecific semantic type
+     * Returns the entity type to use for a specific semantic type
      *
      * @param semanticTypeName The name of the semantic type.
      * @return The type of the entity that this semantic type needs.

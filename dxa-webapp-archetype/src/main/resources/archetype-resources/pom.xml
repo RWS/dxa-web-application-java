@@ -99,6 +99,7 @@
                     <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
                     <version>${dxa.version}</version>
                     <scope>runtime</scope>
+                    <type>pom</type>
                 </dependency>
             </dependencies>
         </profile>
@@ -110,6 +111,7 @@
                     <artifactId>dxa-module-smarttarget-web8</artifactId>
                     <version>${dxa.version}</version>
                     <scope>runtime</scope>
+                    <type>pom</type>
                 </dependency>
             </dependencies>
         </profile>

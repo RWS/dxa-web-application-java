@@ -11,7 +11,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-bom-2013sp1</artifactId>
-    <version>1.3.1-SNAPSHOT</version>
+    <version>1.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>DXA - BOM for 2013SP1</name>

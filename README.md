@@ -39,25 +39,32 @@ The following repositories with source code are available:
  - https://github.com/sdl/dxa-content-management - Core Template Building Blocks
  - https://github.com/sdl/dxa-html-design - Whitelabel HTML Design
  - https://github.com/sdl/dxa-modules - Modules (.NET and Java)
- - https://github.com/sdl/dxa-web-application-dotnet - .NET MVC web application
- - https://github.com/sdl/dxa-web-application-java - Java Spring MVC web application
+ - https://github.com/sdl/dxa-web-application-dotnet - ASP.NET MVC web application (incl. framework)
+ - https://github.com/sdl/dxa-web-application-java - Java Spring MVC web application (incl. framework)
 
 
-Branching model
----------------
+Branches and Contributions
+--------------------------
 
-We intend to follow Gitflow (http://nvie.com/posts/a-successful-git-branching-model/) with the following main branches:
+We are using the following branching strategy:
 
- - master - Stable 
- - develop - Unstable
- - release/x.y - Release version x.y
+ - master - Represents the latest stable version. This may be an pre-release version (tagged as "DXA x.y Sprint z"). Updated each development Sprint (approx. bi-weekly).
+ - develop - Represents the latest development version. Updated very frequently (typically nightly).
+ - release/x.y - Represents the x.y Release. If hotfixes are applicable, they will be applied to the appropriate release branch, so that the release branch actually represent the initial release plus hotfixes.
 
-Please submit your pull requests on develop. In the near future we intend to push our changes to develop and master from our internal repositories, so you can follow our development process.
+All releases (including pre-releases) are Tagged. 
+ 
+If you wish to submit a Pull Request, it should normally be submitted on the develop branch, so it can be incorporated in the upcoming release.
+Fixes for really severe/urgent issues (which qualify as hotfixes) should be submitted as Pull Request on the appropriate release branch.
+Please always submit an Issue for the problem and indicate whether you think it qualifies as a hotfix; Pull Requests on release branches will only be accepted after agreement on the severity of the issue.
+Furthermore, Pull Requests on release branches are expected to be extensively tested.
+
+Of course, it's also possible to report an Issue without associated Pull Requests.
 
 
 License
 -------
-Copyright (c) 2014-2015 SDL Group.
+Copyright (c) 2014-2016 SDL Group.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

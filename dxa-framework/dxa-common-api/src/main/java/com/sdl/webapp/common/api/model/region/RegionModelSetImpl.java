@@ -6,15 +6,16 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.AbstractSet;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 /**
- * <p>RegionModelSetImpl class.</p>
+ * <p>RegionModelSet implementation.</p>
+ * <p>Keeps the insertion order.</p>
  */
 @EqualsAndHashCode(callSuper = false)
 @ToString
@@ -45,7 +46,7 @@ public class RegionModelSetImpl extends AbstractSet<RegionModel> implements Regi
         if (!Objects.equals(modelMapByName.put(regionModel.getName(), regionModel), regionModel)) {
             Set<RegionModel> modelSet = modelMapByClass.get(regionModel.getClass());
             if (modelSet == null) {
-                modelSet = new HashSet<>();
+                modelSet = new LinkedHashSet<>();
                 modelMapByClass.put(regionModel.getClass(), modelSet);
             }
             modelSet.add(regionModel);

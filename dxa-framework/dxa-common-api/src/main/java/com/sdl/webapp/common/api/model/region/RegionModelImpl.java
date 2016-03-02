@@ -21,11 +21,10 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
 
@@ -33,7 +32,7 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGIO
 /**
  * <p>RegionModelImpl class.</p>
  */
-@EqualsAndHashCode(of = {"name"})
+@EqualsAndHashCode(of = "name")
 public class RegionModelImpl implements RegionModel {
     /**
      * The XPM metadata key used for the ID of the (Include) Page from which the Region originates.
@@ -66,10 +65,8 @@ public class RegionModelImpl implements RegionModel {
     @Setter
     private String htmlClasses;
 
-    @JsonProperty("Entities")
-    @Getter
-    @Setter
-    private List<EntityModel> entities = new ArrayList<>();
+    @JsonIgnore
+    private Map<String, EntityModel> entitiesMap = new LinkedHashMap<>();
 
     @JsonProperty("XpmMetadata")
     @Getter
@@ -131,28 +128,30 @@ public class RegionModelImpl implements RegionModel {
         return ApplicationContextHolder.getContext().getBean(XpmRegionConfig.class);
     }
 
+    @JsonProperty("Entities")
+    public List<EntityModel> getEntities() {
+        return new ArrayList<>(entitiesMap.values());
+    }
+
+    @JsonProperty("Entities")
+    public void setEntities(List<EntityModel> entities) {
+        for (EntityModel entityModel : entities) {
+            entitiesMap.put(entityModel.getId(), entityModel);
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void addEntity(EntityModel entity) {
-        this.entities.add(entity);
+        this.entitiesMap.put(entity.getId(), entity);
     }
 
     /** {@inheritDoc} */
     @Override
     public EntityModel getEntity(String entityId) {
-        Collection<EntityModel> c = new ArrayList<>();
-        for (EntityModel entity : this.entities) {
-            if (Objects.equals(entity.getId(), entityId)) {
-                c.add(entity);
-            }
-        }
-
-        if (!c.isEmpty()) {
-            return c.iterator().next();
-        }
-        return null;
+        return entitiesMap.get(entityId);
     }
 
     /**

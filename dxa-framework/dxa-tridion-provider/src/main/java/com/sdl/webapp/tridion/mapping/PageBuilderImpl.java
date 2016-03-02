@@ -245,14 +245,15 @@ public final class PageBuilderImpl implements PageBuilder {
             throw new ContentProviderException(e);
         }
 
+        final RegionModelSet regions = mergeAllTopLevelRegions(this.createPredefinedRegions(genericPage.getPageTemplate()),
+                this.regionBuilder.buildRegions(page, genericPage.getComponentPresentations(),
+                        new DD4TRegionBuilderCallback(), localization));
+
+
         String localizationPath = localization.getPath();
         if (!localizationPath.endsWith("/")) {
             localizationPath = localizationPath + '/';
         }
-
-        final RegionModelSet regions = mergeAllTopLevelRegions(this.createPredefinedRegions(genericPage.getPageTemplate()),
-                this.regionBuilder.buildRegions(page, genericPage.getComponentPresentations(),
-                        new DD4TRegionBuilderCallback(), localization));
 
         // Get and add includes
         final String pageTypeId = genericPage.getPageTemplate().getId().split("-")[1];

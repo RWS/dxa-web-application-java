@@ -1,6 +1,6 @@
 package com.sdl.webapp.main;
 
-import com.sdl.webapp.common.impl.SpringConfiguration;
+import com.sdl.dxa.DxaSpringInitialization;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ClassUtils;
@@ -16,16 +16,16 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
 /**
- * Web application initializer which configures the web application by registering listeners, filters and servlets.
- * <p>
- * Initialization and configuration for this web application is done purely in code, and not with a {@code web.xml}
+ * <p>Web application initializer which configures the web application by registering listeners, filters and servlets.</p>
+ *
+ * <p>Initialization and configuration for this web application is done purely in code, and not with a {@code web.xml}
  * deployment descriptor. Doing it in code provides more flexibility; for example, this enables the web application
  * to automatically detect and register the Contextual Image Delivery {@code ImageTransformerServlet} if it is present
- * on the classpath.
+ * on the classpath.</p>
  */
 public class WebAppInitializer implements WebApplicationInitializer {
 
-    // TODO: Make this pluggable, so CID and other modules and attach servlet definitions?
+    // TODO: dxa2 Make this pluggable, so CID and other modules and attach servlet definitions?
     // Or just have CID as servlet fragment??
     // The problem is as soon you have stuff in web.xml etc those things are deployed first
 
@@ -110,7 +110,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
     private static void setupSpringContext(ServletContext servletContext) {
         LOG.debug("Initializing servlet application context");
         AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
-        servletAppContext.register(SpringConfiguration.class);
+        servletAppContext.register(DxaSpringInitialization.class);
 
         LOG.debug("Registering Spring ContextLoaderListener");
         servletContext.addListener(new ContextLoaderListener(servletAppContext));

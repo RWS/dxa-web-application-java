@@ -195,6 +195,24 @@ public class MvcDataCreatorTest {
         assertNotNull(mvcData.getRouteValues());
     }
 
+    @Test
+    public void shouldMergeMvcDataToCreator() {
+        //given
+        MvcDataCreator emptyCreator = MvcDataCreator.creator();
+
+        MvcDataImpl mvcData = new MvcDataImpl.MvcDataImplBuilder().build()
+                .setActionName("Test")
+                .setControllerAreaName("Test2")
+                .setControllerName("Test3")
+                .setAreaName("Test4");
+
+        //when
+        emptyCreator.mergeIn(mvcData);
+
+        //then
+        assertEquals(mvcData, emptyCreator.create());
+    }
+
     private static class Parts {
         String controllerAreaName;
         String controllerName;

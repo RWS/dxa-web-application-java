@@ -7,6 +7,8 @@ import lombok.ToString;
 /**
  * <p>PageModelImpl class.</p>
  */
+
+//todo dxa2 remove this class, make AbstractPageModelImpl not abstract
 public class PageModelImpl extends AbstractPageModelImpl implements PageModel {
     /**
      * <p>Constructor for PageModelImpl.</p>

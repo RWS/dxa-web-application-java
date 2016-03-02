@@ -2,7 +2,7 @@ package com.sdl.webapp.common.impl.taglib.dxa;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import org.slf4j.Logger;
@@ -13,6 +13,7 @@ import javax.servlet.jsp.JspException;
 import java.io.IOException;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 
 /**
  * <p>EntityTag class.</p>
@@ -47,9 +48,18 @@ public class EntityTag extends AbstractMarkupTag {
     /**
      * <p>Setter for the field <code>viewName</code>.</p>
      *
-     * @param viewName a {@link java.lang.String} object.
+     * @param viewName a name of a view to replace in {@link MvcData}
      */
     public void setViewName(String viewName) {
+        this.viewName = viewName;
+    }
+
+    /**
+     * <p>Setter for the field <code>viewName</code>.</p>
+     *
+     * @param viewName a {@link java.lang.String} object.
+     */
+    public void applyNewViewNameIfNeeded(String viewName) {
         this.viewName = viewName;
     }
 
@@ -60,11 +70,7 @@ public class EntityTag extends AbstractMarkupTag {
     public int doStartTag() throws JspException {
         WebRequestContext webRequestContext = this.getWebRequestContext();
 
-        if (!isNullOrEmpty(viewName)) {
-            MvcDataCreator.creator(entity.getMvcData())
-                    .mergeIn(
-                            MvcDataCreator.creator().fromQualifiedName(viewName).create());
-        }
+        applyNewViewNameIfNeeded();
 
         try {
             LOG.debug("Including entity into request: {}", entity.getId());
@@ -80,5 +86,13 @@ public class EntityTag extends AbstractMarkupTag {
         }
 
         return SKIP_BODY;
+    }
+
+    protected void applyNewViewNameIfNeeded() {
+        if (!isNullOrEmpty(viewName)) {
+            entity.setMvcData(creator(entity.getMvcData())
+                    .mergeIn(creator().fromQualifiedName(viewName).create())
+                    .create());
+        }
     }
 }

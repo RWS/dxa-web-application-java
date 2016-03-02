@@ -107,8 +107,8 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             }
         }
         if (entityClass == null) {
-            LOG.error("Cannot determine entity type for semantic schema names: '" + semanticTypeNames + "'. " +
-                    "Please make sure that an entry is registered for this view name in the ViewModelRegistry.");
+            LOG.error("Cannot determine entity type for semantic schema names: '{}'. Please make sure " +
+                    "that an entry is registered for this view name in the ViewModelRegistry.", semanticTypeNames);
         }
         return entityClass;
     }

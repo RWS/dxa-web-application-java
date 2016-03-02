@@ -17,6 +17,11 @@ public interface ViewModel {
     MvcData getMvcData();
 
     /**
+     * <p>setMvcData.</p>
+     */
+    void setMvcData(MvcData mvcData);
+
+    /**
      * <p>getXpmMetadata.</p>
      *
      * @return a {@link java.util.Map} object.

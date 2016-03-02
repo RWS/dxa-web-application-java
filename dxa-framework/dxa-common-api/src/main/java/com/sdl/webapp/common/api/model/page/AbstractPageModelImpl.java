@@ -96,10 +96,6 @@ public abstract class AbstractPageModelImpl implements PageModel {
     /** {@inheritDoc} */
     @Override
     public String getXpmMarkup(Localization localization) {
-        if (this.xpmMetadata == null) {
-            return "";
-        }
-
         String cmsUrl;
         if (!this.xpmMetadata.containsKey("CmsUrl")) {
             cmsUrl = localization.getConfiguration("core.cmsurl");

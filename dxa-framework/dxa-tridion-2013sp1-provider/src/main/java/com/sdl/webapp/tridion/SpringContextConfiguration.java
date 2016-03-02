@@ -4,20 +4,27 @@ import com.tridion.content.BinaryFactory;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
-import org.dd4t.core.providers.EHCacheProvider;
 import org.dd4t.providers.ComponentPresentationProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.impl.BrokerLinkProvider;
 import org.dd4t.providers.impl.BrokerPageProvider;
 import org.dd4t.providers.impl.BrokerTaxonomyProvider;
+import org.dd4t.providers.impl.NoCacheProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
+@ImportResource("classpath:com/sdl/context/engine/repository/beans-sdl-context-engine.xml")
+@ComponentScan("com.sdl.webapp.tridion")
+//todo dxa2 move to com.sdl.dxa
 public class SpringContextConfiguration {
 
     @Autowired
-    private EHCacheProvider ehCacheProvider;
+    private PayloadCacheProvider ehCacheProvider;
 
     @Bean
     public BrokerLinkProvider linkProvider() {
@@ -62,5 +69,14 @@ public class SpringContextConfiguration {
         componentPresentationProvider.setContentIsCompressed("false");
         componentPresentationProvider.setCacheProvider(ehCacheProvider);
         return componentPresentationProvider;
+    }
+
+    @Configuration
+    @Profile("dxa.no-cache")
+    public static class NoCacheConfiguration {
+        @Bean
+        public PayloadCacheProvider cacheProvider() {
+            return new NoCacheProvider();
+        }
     }
 }

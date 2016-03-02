@@ -8,31 +8,48 @@ import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 
 /**
- * <p>Abstract AbstractInitializer class.</p>
+ * <p>AbstractInitializer which initializes views registration in modules.</p>
  */
+@Slf4j
+//todo dxa2 rename accordingly to ViewsInitializer or ModuleInitializer
 public abstract class AbstractInitializer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractInitializer.class);
 
     @Autowired
     private ViewModelRegistry viewModelRegistry;
 
     @PostConstruct
     private void initialize() {
+        log.debug("Registration for views in {}", getClass().getCanonicalName());
+
+        //todo dxa2 make ModuleInfo mandatory
+        if (getClass().isAnnotationPresent(ModuleInfo.class)) {
+            ModuleInfo moduleInfo = getClass().getAnnotation(ModuleInfo.class);
+            log.trace("Found module moduleInfo annotation {} for module {}", moduleInfo, moduleInfo.name());
+            //todo dxa2 skip() should also skip Spring initialization
+            if (moduleInfo.skip()) {
+                log.info("Skipping module {} initialization because moduleInfo says skip=true", moduleInfo.name());
+                return;
+            }
+            log.debug("Initialization for module {} with moduleInfo: {}", moduleInfo.name(), moduleInfo.description());
+        }
+
+        registerViews();
+    }
+
+    private void registerViews() {
         if (getClass().isAnnotationPresent(RegisteredView.class)) {
-            LOG.debug("AutoRegistering (@RegisteredView present) view for module {}", getAreaName());
+            log.debug("AutoRegistering (@RegisteredView present) view for module {}", getAreaName());
             registerViewEntry(getClass().getAnnotation(RegisteredView.class));
         }
 
         if (getClass().isAnnotationPresent(RegisteredViews.class)) {
-            LOG.debug("AutoRegistering (@RegisteredViews present) views for module {}", getAreaName());
+            log.debug("AutoRegistering (@RegisteredViews present) views for module {}", getAreaName());
             final RegisteredViews views = getClass().getAnnotation(RegisteredViews.class);
             for (RegisteredView viewEntry : views.value()) {
                 registerViewEntry(viewEntry);
@@ -41,20 +58,21 @@ public abstract class AbstractInitializer {
     }
 
     /**
-     * <p>getAreaName.</p>
+     * <p>Returns the name of module/area.</p>
      *
-     * @return a {@link java.lang.String} object.
+     * @return a folder name where views are stored .
      */
+    //todo dxa2 remove in preference of @ModuleInfo
     protected abstract String getAreaName();
 
     private void registerViewEntry(RegisteredView viewEntry) {
-        LOG.debug("View {} for class {}", viewEntry.viewName(), viewEntry.clazz());
+        log.debug("View {} for class {}", viewEntry.viewName(), viewEntry.clazz());
         registerViewModel(viewEntry.viewName(), viewEntry.clazz(), viewEntry.controllerName());
     }
 
     private void registerViewModel(String viewName, Class<? extends ViewModel> entityClass, String controllerName) {
         if (Strings.isNullOrEmpty(controllerName)) {
-            LOG.debug("controllerName is empty, trying to register view {} with entity class {}", viewName, entityClass);
+            log.debug("controllerName is empty, trying to register view {} with entity class {}", viewName, entityClass);
             if (EntityModel.class.isAssignableFrom(entityClass)) {
                 controllerName = "Entity";
             } else if (RegionModel.class.isAssignableFrom(entityClass)) {
@@ -62,7 +80,7 @@ public abstract class AbstractInitializer {
             } else if (PageModel.class.isAssignableFrom(entityClass)) {
                 controllerName = "Page";
             } else {
-                LOG.error("Couldn't register view {} because entityClass {} is not of a known type.", viewName, entityClass);
+                log.error("Couldn't register view {} because entityClass {} is not of a known type.", viewName, entityClass);
                 return;
             }
         }
@@ -73,7 +91,7 @@ public abstract class AbstractInitializer {
                 .controllerName(controllerName)
                 .build();
 
-        LOG.debug("Registering MvcData {} for entity class {}", mvcData, entityClass);
+        log.debug("Registering MvcData {} for entity class {}", mvcData, entityClass);
 
         viewModelRegistry.registerViewModel(mvcData, entityClass);
     }

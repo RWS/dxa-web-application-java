@@ -14,6 +14,7 @@ import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
+import com.sdl.webapp.common.api.model.entity.ViewNotFoundEntityError;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.XMLUtils;
 import com.sdl.webapp.tridion.xpath.XPathResolver;
@@ -79,6 +80,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
         if (LOG.isTraceEnabled()) {
             LOG.trace("entityClass: {}", entityClass.getName());
         }
+
         try {
             return entityClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {
@@ -206,13 +208,21 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 
             final Class<? extends ViewModel> entityClass = viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
 
-            MediaItem mediaItem = (MediaItem) createInstance(entityClass);
-            mediaItem.readFromXhtmlElement(imgElement);
-            embeddedEntities.add(mediaItem);
+            EntityModel embedded;
+            if (entityClass == null) {
+                LOG.error("Cannot determine entity type for '{}'. Please make sure " +
+                        "that an entry is registered for this view name in the ViewModelRegistry.", semanticSchema.getFullyQualifiedNames());
+                //noinspection ObjectAllocationInLoop
+                embedded = new ViewNotFoundEntityError();
+            } else {
+                MediaItem mediaItem = (MediaItem) createInstance(entityClass);
+                mediaItem.readFromXhtmlElement(imgElement);
+                embedded = mediaItem;
 
-            imgElement.getParentNode().replaceChild(doc.createProcessingInstruction(EMBEDDED_ENTITY, EMPTY), imgElement);
-
-            removeUnusedAttributes((Element) imgElement);
+                imgElement.getParentNode().replaceChild(doc.createProcessingInstruction(EMBEDDED_ENTITY, EMPTY), imgElement);
+                removeUnusedAttributes((Element) imgElement);
+            }
+            embeddedEntities.add(embedded);
         }
         return embeddedEntities;
     }

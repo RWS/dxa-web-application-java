@@ -5,56 +5,95 @@ import org.dd4t.contentmodel.impl.BaseField;
 import org.dd4t.contentmodel.impl.ComponentImpl;
 import org.dd4t.contentmodel.impl.ComponentPresentationImpl;
 import org.dd4t.contentmodel.impl.ComponentTemplateImpl;
+import org.dd4t.core.factories.impl.PageFactoryImpl;
+import org.dd4t.core.factories.impl.TaxonomyFactoryImpl;
+import org.dd4t.core.processors.impl.RichTextWithLinksResolver;
+import org.dd4t.core.providers.EHCacheProvider;
+import org.dd4t.core.resolvers.impl.DefaultLinkResolver;
 import org.dd4t.core.serializers.impl.SerializerFactory;
 import org.dd4t.core.serializers.impl.json.JSONSerializer;
 import org.dd4t.databind.DataBindFactory;
 import org.dd4t.databind.builder.json.JsonDataBinder;
 import org.dd4t.databind.builder.json.JsonModelConverter;
+import org.dd4t.providers.LinkProvider;
+import org.dd4t.providers.PageProvider;
+import org.dd4t.providers.PayloadCacheProvider;
+import org.dd4t.providers.TaxonomyProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-/**
- * <p>TridionSpringConfig class.</p>
- */
+@ComponentScan("com.sdl.webapp.tridion")
+//todo dxa2 move to com.sdl.dxa
 public class TridionSpringConfig {
 
-    /**
-     * <p>serializer.</p>
-     *
-     * @return a {@link org.dd4t.core.serializers.impl.json.JSONSerializer} object.
-     */
+    @Autowired
+    public PayloadCacheProvider cacheProvider;
+
+    @Autowired
+    public TaxonomyProvider taxonomyProvider;
+
+    @Autowired
+    public PageProvider pageProvider;
+
+    @Autowired
+    public LinkProvider linkProvider;
+
+    @Bean
+    public PayloadCacheProvider cacheProvider() {
+        EHCacheProvider cacheProvider = new EHCacheProvider();
+        cacheProvider.setCheckForPreview(true);
+        return cacheProvider;
+    }
+
+    @Bean
+    public TaxonomyFactoryImpl taxonomyFactory() {
+        TaxonomyFactoryImpl taxonomyFactory = TaxonomyFactoryImpl.getInstance();
+        taxonomyFactory.setCacheProvider(cacheProvider);
+        taxonomyFactory.setTaxonomyProvider(taxonomyProvider);
+        return taxonomyFactory;
+    }
+
+    @Bean
+    public PageFactoryImpl pageFactory() {
+        PageFactoryImpl pageFactory = PageFactoryImpl.getInstance();
+        pageFactory.setCacheProvider(cacheProvider);
+        pageFactory.setPageProvider(pageProvider);
+        return pageFactory;
+    }
+
+    @Bean
+    public DefaultLinkResolver linkResolver() {
+        DefaultLinkResolver linkResolver = new DefaultLinkResolver();
+        linkResolver.setContextPath("");
+        linkResolver.setLinkProvider(linkProvider);
+        return linkResolver;
+    }
+
+    @Bean
+    public RichTextWithLinksResolver richTextWithLinksResolver() {
+        RichTextWithLinksResolver richTextWithLinksResolver = new RichTextWithLinksResolver();
+        richTextWithLinksResolver.setLinkResolver(linkResolver());
+        return richTextWithLinksResolver;
+    }
+
     @Bean
     public JSONSerializer serializer() {
         return new JSONSerializer();
     }
 
-    /**
-     * <p>serializerFactory.</p>
-     *
-     * @return a {@link org.dd4t.core.serializers.impl.SerializerFactory} object.
-     */
     @Bean
     public SerializerFactory serializerFactory() {
         return new SerializerFactory(serializer());
     }
 
-
-    /**
-     * <p>modelConverter.</p>
-     *
-     * @return a {@link org.dd4t.databind.builder.json.JsonModelConverter} object.
-     */
     @Bean
     public JsonModelConverter modelConverter() {
         return new JsonModelConverter();
     }
 
-    /**
-     * <p>dataBinder.</p>
-     *
-     * @return a {@link org.dd4t.databind.builder.json.JsonDataBinder} object.
-     */
     @Bean
     public JsonDataBinder dataBinder() {
         JsonDataBinder dataBinder = JsonDataBinder.getInstance();
@@ -68,11 +107,6 @@ public class TridionSpringConfig {
         return dataBinder;
     }
 
-    /**
-     * <p>dcpDataBinderWrapper.</p>
-     *
-     * @return a {@link com.sdl.webapp.tridion.DCPDataBinderWrapper} object.
-     */
     @Bean
     public DCPDataBinderWrapper dcpDataBinderWrapper() {
         DCPDataBinderWrapper binderWrapper = new DCPDataBinderWrapper();
@@ -80,11 +114,6 @@ public class TridionSpringConfig {
         return binderWrapper;
     }
 
-    /**
-     * <p>databindFactory.</p>
-     *
-     * @return a {@link org.dd4t.databind.DataBindFactory} object.
-     */
     @Bean
     public DataBindFactory databindFactory() {
         DataBindFactory bindFactory = DataBindFactory.getInstance();

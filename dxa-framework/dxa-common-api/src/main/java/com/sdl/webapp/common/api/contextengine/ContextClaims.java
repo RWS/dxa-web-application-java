@@ -19,7 +19,6 @@ public abstract class ContextClaims {
             return (T) value.toString();
         }
 
-
         return cls.cast(value);
     }
 
@@ -33,9 +32,9 @@ public abstract class ContextClaims {
     }
 
     /**
-     * <p>getAspectName.</p>
+     * <p>Gets a name of aspect.</p>
      *
-     * @return a {@link java.lang.String} object.
+     * @return a name of aspect
      */
     protected abstract String getAspectName();
 
@@ -45,20 +44,21 @@ public abstract class ContextClaims {
      * @param properyName a {@link java.lang.String} object.
      * @return a {@link java.lang.String} object.
      */
+    //todo dxa2 will probably be private
     protected String getClaimName(String properyName) {
         return String.format("%s.%s", getAspectName(), properyName);
     }
 
     /**
-     * <p>getClaimValue.</p>
+     * <p>Gets a single claim value.</p>
      *
-     * @param propertyName a {@link java.lang.String} object.
-     * @param cls          a {@link java.lang.Class} object.
-     * @param <T>          a T object.
-     * @return a T object.
+     * @param propertyName a name of property to retrieve from claims
+     * @param cls a class to cast to
+     * @param <T> a generic expected type
+     * @return a value of given type of null if not present
      */
+    //todo dxa2 merge with #getClaimValues()
     public <T> T getClaimValue(String propertyName, Class<T> cls) {
-        Object claimValue;
         String claimName = getClaimName(propertyName);
         if (this.claims.containsKey(claimName)) {
             return castValue(this.claims.get(claimName), cls);
@@ -68,18 +68,18 @@ public abstract class ContextClaims {
     }
 
     /**
-     * <p>getClaimValues.</p>
+     * <p>Gets a list of claim values. Expects to have a list in a map of claims.</p>
      *
-     * @param propertyName a {@link java.lang.String} object.
-     * @param cls          a {@link java.lang.Class} object.
-     * @param <T>          a T object.
-     * @return a {@link java.util.ArrayList} object.
+     * @param propertyName a name of property to retrieve from claims
+     * @param cls a class to cast each element to
+     * @param <T> a generic expected type
+     * @return a list of values of given type of null if not present
      */
+    //todo dxa2 return Collection
     public <T> ArrayList<T> getClaimValues(String propertyName, Class<T> cls) {
-        Object claimValue;
         String claimName = getClaimName(propertyName);
         if (this.claims.containsKey(claimName)) {
-            claimValue = this.claims.get(claimName);
+            Object claimValue = this.claims.get(claimName);
             if (claimValue == null) {
                 return null;
             } else {

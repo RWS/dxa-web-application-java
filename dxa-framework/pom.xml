@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.sdl.dxa</groupId>
-        <artifactId>dxa-parent</artifactId>
-        <version>1.3.0-SNAPSHOT</version>
+        <groupId>com.sdl.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>1.0.0</version>
     </parent>
 
+    <groupId>com.sdl.dxa</groupId>
+    <version>1.4.0-SNAPSHOT</version>
     <artifactId>dxa-framework</artifactId>
     <packaging>pom</packaging>
 
@@ -24,6 +25,32 @@
         <module>dxa-tridion-2013sp1-provider</module>
         <module>dxa-web8-provider</module>
     </modules>
+
+    <scm>
+        <url>https://github.com/sdl/dxa-web-application-java</url>
+        <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
+        <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>rpannekoek</id>
+            <name>Rick Pannekoek</name>
+            <email>rpannekoek@sdl.com</email>
+            <timezone>+1</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+        <developer>
+            <id>azarakovskiy</id>
+            <name>Alexey Zarakovskiy</name>
+            <email>azarakovskiy@sdl.com</email>
+            <timezone>+1</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+    </developers>
 
     <repositories>
         <repository>
@@ -39,7 +66,7 @@
 
         <java-version>1.7</java-version>
         <spring-version>3.1.4.RELEASE</spring-version>
-        <dd4t-version>2.0.2-DXA</dd4t-version>
+        <dd4t-version>2.0.2.1-DXA</dd4t-version>
 
         <!-- Hibernate -->
         <hibernate-version>4.2.12.Final</hibernate-version>

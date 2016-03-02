@@ -17,6 +17,7 @@ import java.util.Set;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -123,6 +124,48 @@ public class RegionModelSetImplTest {
 
         //then
         //exception
+    }
+
+    @Test
+    public void shouldGetRegionModelByName() throws DxaException {
+        //given
+        RegionModelSet set = new RegionModelSetImpl();
+        RegionModelImpl expected = new RegionModelImpl("test1");
+        set.add(new RegionModelImpl("test"));
+        set.add(expected);
+
+        //when
+        RegionModel result = set.get("test1");
+
+        //then
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldHaveWorkingEqualsHashCodeToStringMethods() {
+        //given
+        RegionModelSet set1 = new RegionModelSetImpl();
+        RegionModelSet set2 = new RegionModelSetImpl();
+
+        //when
+
+        //then
+        assertTrue(set1.equals(set2));
+        assertEquals(set1.hashCode(), set2.hashCode());
+        assertEquals(set1.toString(), set2.toString());
+    }
+
+    @Test
+    public void shouldImplementEqualsAndHashCodeAndToString() throws NoSuchMethodException {
+        //given
+        Class<RegionModelSetImpl> modelSetClass = RegionModelSetImpl.class;
+
+        //when
+
+        //then
+        assertNotNull(modelSetClass.getDeclaredMethod("equals", Object.class));
+        assertNotNull(modelSetClass.getDeclaredMethod("hashCode"));
+        assertNotNull(modelSetClass.getDeclaredMethod("toString"));
     }
 
     @Data

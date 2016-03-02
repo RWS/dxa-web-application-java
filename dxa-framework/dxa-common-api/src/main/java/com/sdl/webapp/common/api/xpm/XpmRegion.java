@@ -2,9 +2,6 @@ package com.sdl.webapp.common.api.xpm;
 
 import java.util.List;
 
-/**
- * Created by Administrator on 17/09/2015.
- */
 public interface XpmRegion {
     /**
      * <p>getRegionName.</p>

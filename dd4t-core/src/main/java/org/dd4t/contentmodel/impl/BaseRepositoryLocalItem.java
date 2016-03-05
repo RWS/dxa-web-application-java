@@ -124,7 +124,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
         if (revisionDateAsString == null || revisionDateAsString.isEmpty()) {
             return new DateTime();
         }
-        return DateUtils.convertStringToDate(revisionDateAsString);
+        return DateUtils.convertStringWithOffsetToDate(revisionDateAsString);
     }
 
     public void setRevisionDate (DateTime date) {

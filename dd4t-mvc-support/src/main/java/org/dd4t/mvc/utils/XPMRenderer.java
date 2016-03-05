@@ -22,6 +22,7 @@ public class XPMRenderer {
 
     private static final XPMRenderer INSTANCE = new XPMRenderer();
     private static final Logger LOG = LoggerFactory.getLogger(XPMRenderer.class);
+    public static final String XPM_BOOTSTRAP_PATH = "WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js";
 
     private boolean enabled;
     private String cmsURL;
@@ -143,7 +144,7 @@ public class XPMRenderer {
      * "PageModified": "2011-01-22T11:25:12",
      * "PageTemplateID": "tcm:2-374-128"
      * } -->
-     * <div id="xpm-bootstap" data-src="http://UIDOMAIN/WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js"/>
+     *
      */
     public String initPage (String pageId, DateTime revisionDate, String pageTemplateId) {
         if (isXPMEnabled()) {
@@ -157,8 +158,27 @@ public class XPMRenderer {
         return "";
     }
 
-    public String getTag () {
-        return "<div id=\"script-xpm\" data-src=\"" + cmsURL + "WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js\"></div>\n";
+    public String getTag() {
+        return "<script type=\"text/javascript\" id=\"tridion.siteedit\" language=\"javascript\" defer=\"defer\" src=\""+cmsURL+XPM_BOOTSTRAP_PATH+"\"></script>";
+    }
+
+    // TODO: enable option to lazy load
+    public String getTagLazyLoaded () {
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("<script>\n");
+        stringBuilder.append("(function(doc) {\n");
+        stringBuilder.append("setTimeout(function() {\n");
+        stringBuilder.append("var script = document.createElement('script');\n");
+        stringBuilder.append("script.id = 'tridion.siteedit';\n");
+        stringBuilder.append("script.src = '").append(cmsURL).append(XPM_BOOTSTRAP_PATH).append("';\n");
+        stringBuilder.append("script.async = 1;\n");
+        stringBuilder.append("var first = document.getElementsByTagName('script')[0];\n");
+        stringBuilder.append("first.parentNode.insertBefore(script, first);\n");
+        stringBuilder.append("}, 2000);\n");
+        stringBuilder.append("}(document));\n");
+        stringBuilder.append("</script>\n");
+        return stringBuilder.toString();
+
     }
 
     private String formatAllowedComponentTypes (Map<String, String> allowedComponentTypes) {

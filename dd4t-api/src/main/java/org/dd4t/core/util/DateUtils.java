@@ -26,6 +26,11 @@ public class DateUtils {
     private static final String DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_PATTERN);
 
+    private static final String DATE_PATTERN_WITH_OFFSET = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER_WITH_OFFSET = DateTimeFormat.forPattern(DATE_PATTERN_WITH_OFFSET);
+
+
     private DateUtils () {
     }
 
@@ -61,5 +66,9 @@ public class DateUtils {
         } else {
             return DATE_TIME_FORMATTER.parseDateTime(date + ".00");
         }
+    }
+
+    public static DateTime convertStringWithOffsetToDate (String date) {
+        return DATE_TIME_FORMATTER_WITH_OFFSET.parseDateTime(date);
     }
 }

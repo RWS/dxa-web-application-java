@@ -50,10 +50,10 @@ public class UrlPublicationResolver implements PublicationResolver {
 
         if (this.useCdDynamic) {
             LOG.debug("Using cd_dynamic_conf.xml to determine publication Id");
-            return publicationProvider.discoverPublicationByBaseUrl(HttpUtils.getOriginalFullUrl(request,this.stripServletContextPath));
+            return publicationProvider.discoverPublicationByBaseUrl(HttpUtils.appendDefaultPageIfRequired(HttpUtils.getOriginalFullUrl(request,this.stripServletContextPath)));
         } else {
             LOG.debug("Determining Pub Id on page URL.");
-            return publicationProvider.discoverPublicationIdByPageUrlPath(HttpUtils.getOriginalFullUrl(request,this.stripServletContextPath));
+            return publicationProvider.discoverPublicationIdByPageUrlPath(HttpUtils.appendDefaultPageIfRequired(HttpUtils.getOriginalFullUrl(request,this.stripServletContextPath)));
         }
     }
 

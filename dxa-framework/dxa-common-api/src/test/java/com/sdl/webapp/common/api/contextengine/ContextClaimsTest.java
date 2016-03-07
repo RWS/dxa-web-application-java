@@ -5,13 +5,14 @@ import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
+import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class ContextClaimsTest {
 
@@ -82,15 +83,11 @@ public class ContextClaimsTest {
         List<String> list = claims.getClaimValues("list", String.class);
 
         //then
-        Iterator<String> setIter = set.iterator();
-        assertEquals("str1", setIter.next());
-        assertEquals("str2", setIter.next());
-        assertFalse(setIter.hasNext());
+        assertThat(set, hasItems("str1", "str2"));
+        assertThat(set, hasSize(2));
 
-        Iterator<String> listIter = list.iterator();
-        assertEquals("str1", listIter.next());
-        assertEquals("str2", listIter.next());
-        assertFalse(listIter.hasNext());
+        assertThat(list, hasItems("str1", "str2"));
+        assertThat(list, hasSize(2));
     }
 
     private static class TestClaims extends ContextClaims {

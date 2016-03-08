@@ -5,7 +5,8 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 
 /**
- * <p>MarkupDecorator interface.</p>
+ * <p>MarkupDecorator interface.
+ * todo dxa2: extend {@link org.springframework.core.Ordered}</p>
  */
 public interface MarkupDecorator {
 
@@ -22,7 +23,9 @@ public interface MarkupDecorator {
     /**
      * <p>getPriority.</p>
      *
+     * @deprecated todo dxa2 remove
      * @return a int.
      */
+    @Deprecated
     int getPriority();
 }

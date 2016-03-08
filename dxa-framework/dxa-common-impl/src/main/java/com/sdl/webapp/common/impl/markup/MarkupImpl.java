@@ -36,9 +36,6 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-/**
- * <p>MarkupImpl class.</p>
- */
 public class MarkupImpl implements Markup {
     private static final Logger LOG = LoggerFactory.getLogger(MarkupImpl.class);
 

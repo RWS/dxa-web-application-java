@@ -338,6 +338,11 @@
                 <artifactId>smarttarget_entitymodel</artifactId>
                 <version>2014sp1</version>
             </dependency>
+            <dependency>
+                <groupId>com.tridion.smarttarget</groupId>
+                <artifactId>smarttarget_google-analytics</artifactId>
+                <version>2014sp1</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.tridion.smarttarget</groupId>

@@ -45,9 +45,11 @@ public class MvcDataImpl implements MvcData {
     private String regionName;
 
     @JsonIgnore
+    // todo dxa2 return a copy instead of real map
     private Map<String, String> routeValues = new HashMap<>();
 
     @JsonIgnore
+    // todo dxa2 return a copy instead of real map
     private Map<String, Object> metadata = new HashMap<>();
 
     /**
@@ -75,6 +77,14 @@ public class MvcDataImpl implements MvcData {
 
     public static MvcDataImplBuilder newBuilder() {
         return new MvcDataImplBuilder();
+    }
+
+    public void addMetadataValue(String key, Object obj) {
+        this.metadata.put(key, obj);
+    }
+
+    public Object getMetadataValue(String key) {
+        return this.metadata.get(key);
     }
 
     public MvcDataImplBuilder toBuilder() {

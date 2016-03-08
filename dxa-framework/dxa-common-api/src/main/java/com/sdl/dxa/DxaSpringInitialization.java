@@ -6,6 +6,7 @@ import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.webapp.common.views.AtomView;
 import com.sdl.webapp.common.views.JsonView;
 import com.sdl.webapp.common.views.RssView;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,11 +15,14 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
+
+import java.io.IOException;
 
 /**
  * <p>Entry point for Spring initialization for DXA Framework which also triggers initialization for default paths
@@ -38,9 +42,12 @@ public class DxaSpringInitialization {
     }
 
     @Bean
-    public PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+    @SneakyThrows(IOException.class)
+    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-        configurer.setLocation(new ClassPathResource("dxa.defaults.properties"));
+        PathMatchingResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
+        patternResolver.setPathMatcher(new AntPathMatcher());
+        configurer.setLocations(patternResolver.getResources("classpath*:/dxa.**.properties"));
         trace(configurer);
         return configurer;
     }

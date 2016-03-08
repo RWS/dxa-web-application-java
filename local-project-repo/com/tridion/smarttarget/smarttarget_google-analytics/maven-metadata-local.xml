@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata>
+    <groupId>com.tridion.smarttarget</groupId>
+    <artifactId>smarttarget_google-analytics</artifactId>
+    <versioning>
+        <release>2014sp1</release>
+        <versions>
+            <version>web8</version>
+            <version>2014sp1</version>
+        </versions>
+        <lastUpdated>20160302165314</lastUpdated>
+    </versioning>
+</metadata>

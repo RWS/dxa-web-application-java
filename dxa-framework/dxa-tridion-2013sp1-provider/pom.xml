@@ -15,17 +15,21 @@
     <description>DXA Providers functionality specific for Tridion 2013SP1</description>
 
     <properties>
-        <cd.version>7.1.0</cd.version>
-        <cwd.version>7.1.2</cwd.version>
         <java-version>1.7</java-version>
+        <dxa-bom-2013sp1.version>${project.version}</dxa-bom-2013sp1.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-bom</artifactId>
+                <version>${dxa-bom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-bom-2013sp1</artifactId>
-                <version>${project.version}</version>
+                <version>${dxa-bom-2013sp1.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -188,7 +192,7 @@
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-providers</artifactId>
-            <classifier>7.1.0</classifier>
+            <classifier>2013sp1</classifier>
         </dependency>
 
         <dependency>
@@ -248,5 +252,20 @@
             <artifactId>joda-time</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${java-version}</source>
+                        <target>${java-version}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>

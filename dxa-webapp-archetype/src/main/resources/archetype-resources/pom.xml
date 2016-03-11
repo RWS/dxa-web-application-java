@@ -135,9 +135,9 @@
         </profile>
 
         <profile>
-            <id>cd-7.1.0</id>
+            <id>2013sp1</id>
             <properties>
-                <build.classifier>7.1.0</build.classifier>
+                <build.classifier>2013sp1</build.classifier>
             </properties>
             <dependencyManagement>
                 <dependencies>
@@ -160,12 +160,12 @@
             </dependencies>
         </profile>
         <profile>
-            <id>cd-8.1.0</id>
+            <id>web8</id>
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <build.classifier>8.1.0</build.classifier>
+                <build.classifier>web8</build.classifier>
             </properties>
             <dependencyManagement>
                 <dependencies>

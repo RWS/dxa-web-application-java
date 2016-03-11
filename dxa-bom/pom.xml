@@ -1,0 +1,753 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.sdl.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <groupId>com.sdl.dxa</groupId>
+    <artifactId>dxa-bom</artifactId>
+    <version>1.4.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>DXA - Bill of Materials</name>
+    <description>Dependencies management for DXA projects</description>
+
+    <scm>
+        <url>https://github.com/sdl/dxa-web-application-java</url>
+        <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
+        <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>rpannekoek</id>
+            <name>Rick Pannekoek</name>
+            <email>rpannekoek@sdl.com</email>
+            <timezone>+1</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+        <developer>
+            <id>azarakovskiy</id>
+            <name>Alexey Zarakovskiy</name>
+            <email>azarakovskiy@sdl.com</email>
+            <timezone>+1</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+    </developers>
+
+    <properties>
+        <classifier.2013sp1>2013sp1</classifier.2013sp1>
+        <classifier.web8>web8</classifier.web8>
+
+        <dd4t.version>2.0.3-DXA</dd4t.version>
+
+        <!-- DXA versions -->
+        <dxa.version>${project.version}</dxa.version>
+        <dxa-module-cid.version>${dxa.version}</dxa-module-cid.version>
+        <dxa-module-googleanalytics.version>${dxa.version}</dxa-module-googleanalytics.version>
+        <dxa-module-mediamanager.version>${dxa.version}</dxa-module-mediamanager.version>
+        <dxa-module-search.version>${dxa.version}</dxa-module-search.version>
+        <dxa-module-smarttarget.version>${dxa.version}</dxa-module-smarttarget.version>
+
+        <!-- Caching -->
+        <cache-api.version>1.0.0</cache-api.version>
+        <ehcache.version>2.8.3</ehcache.version>
+        <!--2013SP1: <ehcache-version>2.8.2</ehcache-version>-->
+        <jcache.version>1.0.1</jcache.version>
+
+        <!-- Apache Commons -->
+        <commons-beanutils-version>1.8.3</commons-beanutils-version>
+        <commons-codec-version>1.8</commons-codec-version>
+        <commons-configuration-version>1.9</commons-configuration-version>
+        <commons-dbcp-version>1.4</commons-dbcp-version>
+        <commons-io-version>2.4</commons-io-version>
+        <commons-jexl-version>2.1.1</commons-jexl-version>
+        <commons-pool-version>1.6</commons-pool-version>
+        <!--2013SP1: <commons-pool-version>1.5.3</commons-pool-version>-->
+        <commons-lang.version>2.6</commons-lang.version>
+        <commons-lang3.version>3.0</commons-lang3.version>
+        <commons-discovery.version>0.5</commons-discovery.version>
+        <commons-httpclient.version>3.1</commons-httpclient.version>
+        <commons-collections.version>3.2.1</commons-collections.version>
+        <!--TODO dxa2: <commons-collections.version>3.2.2</commons-collections.version>-->
+
+        <!-- Apache HttpComponents -->
+        <httpcomponents-client-version>4.3.3</httpcomponents-client-version>
+        <httpcomponents-core-version>4.3.3</httpcomponents-core-version>
+
+        <!-- Google -->
+        <guava-version>18.0</guava-version>
+        <!--2013SP1: <guava-version>14.0.1</guava-version>-->
+        <google-apis.version>1.21.0</google-apis.version>
+        <google-api-services-analytics.version>v3-rev126-1.21.0</google-api-services-analytics.version>
+
+        <!-- Joda Time -->
+        <joda-time-version>2.5</joda-time-version>
+
+        <!--Web8: <jackson.version>2.6.0</jackson.version>-->
+        <jackson.version>2.4.3</jackson.version>
+
+        <woodstox-version>4.4.1</woodstox-version>
+
+        <patricia-trie-version>0.7</patricia-trie-version>
+
+        <snakeyaml-version>1.12</snakeyaml-version>
+
+        <ua-parser-version>1.2.2</ua-parser-version>
+
+        <lombok.version>1.16.8</lombok.version>
+
+        <!-- Logging -->
+        <logback.version>1.1.3</logback.version>
+        <slf4j-version>1.7.12</slf4j-version>
+        <!--2013SP1: <slf4j-version>1.6.4</slf4j-version>-->
+        <!--2013SP1: <logback-version>1.0.0</logback-version>-->
+
+        <!-- Servlet and JSP APIs -->
+        <servlet-api-version>3.1.0</servlet-api-version>
+        <jsp-api-version>2.3.1</jsp-api-version>
+        <jstl-version>1.2</jstl-version>
+
+        <jms-api-version>1.1-rev-1</jms-api-version>
+
+        <!-- JUnit and other test libraries -->
+        <junit-version>4.11</junit-version>
+        <hamcrest-version>1.3</hamcrest-version>
+        <mockito-version>1.10.8</mockito-version>
+        <reflections-version>0.9.9-RC2</reflections-version>
+
+        <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
+        <cglib.version>2.2.2</cglib.version>
+        <!--todo dxa2 consider upgrading for web8 -->
+        <spring.version>3.1.4.RELEASE</spring.version>
+
+        <jsoup.version>1.7.3</jsoup.version>
+        <rome.version>1.0.0</rome.version>
+        <oro.version>2.0.8</oro.version>
+        <jsr181-api.version>1.0-MR1</jsr181-api.version>
+        <jersey-client.version>1.12</jersey-client.version>
+        <jdom.version>1.0</jdom.version>
+        <xalan-version>2.7.2</xalan-version>
+        <!--2013SP1: <xalan-version>2.7.1</xalan-version>-->
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-common-api</artifactId>
+                <version>${dxa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-common-impl</artifactId>
+                <version>${dxa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-tridion-provider</artifactId>
+                <version>${dxa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-tridion-2013sp1-provider</artifactId>
+                <version>${dxa.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-web8-provider</artifactId>
+                <version>${dxa.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-core</artifactId>
+                <version>${dxa.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <artifactId>dxa-module-cid</artifactId>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <version>${dxa-module-cid.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <artifactId>dxa-module-googleanalytics</artifactId>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <version>${dxa-module-googleanalytics.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <artifactId>dxa-module-mediamanager</artifactId>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <version>${dxa-module-mediamanager.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <artifactId>dxa-module-search</artifactId>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <version>${dxa-module-search.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-smarttarget-common</artifactId>
+                <version>${dxa-module-smarttarget.version}</version>
+                <classifier>${classifier.web8}</classifier>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-smarttarget-common</artifactId>
+                <version>${dxa-module-smarttarget.version}</version>
+                <classifier>${classifier.2013sp1}</classifier>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
+                <version>${dxa-module-smarttarget.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-smarttarget-web8</artifactId>
+                <version>${dxa-module-smarttarget.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- DD4T -->
+            <dependency>
+                <groupId>org.dd4t</groupId>
+                <artifactId>dd4t-api</artifactId>
+                <version>${dd4t.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.tridion.contentdelivery</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl.web</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.dd4t</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.dd4t</groupId>
+                <artifactId>dd4t-core</artifactId>
+                <version>${dd4t.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.tridion.contentdelivery</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl.web</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.dd4t</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.dd4t</groupId>
+                <artifactId>dd4t-databind</artifactId>
+                <version>${dd4t.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.tridion.contentdelivery</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl.web</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.dd4t</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.dd4t</groupId>
+                <artifactId>dd4t-providers</artifactId>
+                <version>${dd4t.version}</version>
+                <classifier>${classifier.2013sp1}</classifier>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.tridion.contentdelivery</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl.web</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.dd4t</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.dd4t</groupId>
+                <artifactId>dd4t-providers</artifactId>
+                <version>${dd4t.version}</version>
+                <classifier>${classifier.web8}</classifier>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.tridion.contentdelivery</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl.web</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.dd4t</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.api-client</groupId>
+                <artifactId>google-api-client</artifactId>
+                <version>${google-apis.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.apis</groupId>
+                <artifactId>google-api-services-analytics</artifactId>
+                <version>${google-api-services-analytics.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.http-client</groupId>
+                <artifactId>google-http-client</artifactId>
+                <version>${google-apis.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.http-client</groupId>
+                <artifactId>google-http-client-jackson2</artifactId>
+                <version>${google-apis.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.oauth-client</groupId>
+                <artifactId>google-oauth-client</artifactId>
+                <version>${google-apis.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.oauth-client</groupId>
+                <artifactId>google-oauth-client-java6</artifactId>
+                <version>${google-apis.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>${ehcache.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.cache</groupId>
+                <artifactId>cache-api</artifactId>
+                <version>${cache-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ehcache</groupId>
+                <artifactId>jcache</artifactId>
+                <version>${jcache.version}</version>
+            </dependency>
+
+            <!-- SLF4J and Logback -->
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>${slf4j-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-simple</artifactId>
+                <version>${slf4j-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${slf4j-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+
+            <!-- Servlet and JSP APIs -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>${servlet-api-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet.jsp</groupId>
+                <artifactId>javax.servlet.jsp-api</artifactId>
+                <version>${jsp-api-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>jstl</artifactId>
+                <version>${jstl-version}</version>
+            </dependency>
+
+            <!-- JUnit and other test libraries -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-all</artifactId>
+                <version>${hamcrest-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
+                <version>${hamcrest-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>${hamcrest-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-all</artifactId>
+                <version>${mockito-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.reflections</groupId>
+                <artifactId>reflections</artifactId>
+                <version>${reflections-version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <!-- Spring Framework -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <version>${spring.version}</version>
+                <exclusions>
+                    <!-- Exclude Commons Logging because we use SLF4J and Logback instead -->
+                    <!-- See: http://docs.spring.io/spring/docs/current/spring-framework-reference/htmlsingle/#overview-logging -->
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-test</artifactId>
+                <version>${spring.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>cglib</groupId>
+                <artifactId>cglib</artifactId>
+                <version>${cglib.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <!-- Apache Commons -->
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-discovery</groupId>
+                <artifactId>commons-discovery</artifactId>
+                <version>${commons-discovery.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>${commons-httpclient.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-lang</groupId>
+                <artifactId>commons-lang</artifactId>
+                <version>${commons-lang.version}</version>
+            </dependency>
+            <!--<dependency>-->
+            <!--<groupId>commons-logging</groupId>-->
+            <!--<artifactId>commons-logging</artifactId>-->
+            <!--<version>1.1.1</version>-->
+            <!--</dependency>-->
+            <dependency>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <version>${commons-configuration-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-dbcp</groupId>
+                <artifactId>commons-dbcp</artifactId>
+                <version>${commons-dbcp-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <version>${commons-io-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-jexl</artifactId>
+                <version>${commons-jexl-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>commons-pool</groupId>
+                <artifactId>commons-pool</artifactId>
+                <version>${commons-pool-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${commons-collections.version}</version>
+            </dependency>
+            <!-- Apache HttpComponents -->
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${httpcomponents-client-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcomponents-core-version}</version>
+            </dependency>
+
+            <!-- Google -->
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava-version}</version>
+            </dependency>
+
+            <!-- Joda Time -->
+            <dependency>
+                <groupId>joda-time</groupId>
+                <artifactId>joda-time</artifactId>
+                <version>${joda-time-version}</version>
+            </dependency>
+
+            <!-- Jackson and related libraries -->
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-joda</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-xml</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.woodstox</groupId>
+                <artifactId>woodstox-core-asl</artifactId>
+                <version>${woodstox-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.jsoup</groupId>
+                <artifactId>jsoup</artifactId>
+                <version>${jsoup.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.java.dev.rome</groupId>
+                <artifactId>rome</artifactId>
+                <version>${rome.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>oro</groupId>
+                <artifactId>oro</artifactId>
+                <version>${oro.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.jws</groupId>
+                <artifactId>jsr181-api</artifactId>
+                <version>${jsr181-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.jersey</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>${jersey-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>jdom</groupId>
+                <artifactId>jdom</artifactId>
+                <version>${jdom.version}</version>
+            </dependency>
+
+            <!-- User agent string parser -->
+            <dependency>
+                <groupId>ua_parser</groupId>
+                <artifactId>ua-parser</artifactId>
+                <version>${ua-parser-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>xalan</groupId>
+                <artifactId>xalan</artifactId>
+                <version>${xalan-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+
+</project>

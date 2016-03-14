@@ -15,18 +15,23 @@
     <description>DXA Providers functionality specific for Tridion Web 8</description>
 
     <properties>
-        <cd.version>8.1.0</cd.version>
-        <odata.version>2.0.0</odata.version>
-        <!-- Java 8 is set for CDaaS, but Spring 3 we're using doesn't support Java 8 features!  -->
         <java-version>1.8</java-version>
+        <dxa-bom-web8.version>${project.version}</dxa-bom-web8.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-bom</artifactId>
+                <version>${dxa-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-bom-web8</artifactId>
-                <version>${project.version}</version>
+                <version>${dxa-bom-web8.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -52,10 +57,7 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_ambient</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_common_config_api</artifactId>
@@ -174,6 +176,10 @@
         </dependency>
         <dependency>
             <groupId>com.sdl.web</groupId>
+            <artifactId>web-ambient-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.web</groupId>
             <artifactId>web-oauth-common</artifactId>
         </dependency>
 
@@ -210,15 +216,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ehcache</groupId>
-            <artifactId>jcache</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.cache</groupId>
-            <artifactId>cache-api</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
         </dependency>
@@ -230,23 +227,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-        <dependency>
-            <groupId>net.sf.ehcache</groupId>
-            <artifactId>ehcache</artifactId>
-        </dependency>
 
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
@@ -267,7 +248,7 @@
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-providers</artifactId>
-            <classifier>8.1.0</classifier>
+            <classifier>web8</classifier>
         </dependency>
 
         <dependency>
@@ -302,5 +283,20 @@
             <artifactId>joda-time</artifactId>
         </dependency>
     </dependencies>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <configuration>
+                        <source>${java-version}</source>
+                        <target>${java-version}</target>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
 </project>

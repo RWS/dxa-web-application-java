@@ -24,6 +24,7 @@ public class BrokerComponentPresentationProvider extends AbstractBrokerComponent
      * {@inheritDoc}
      */
     @Override
+    @SuppressWarnings("Duplicates")
     protected ComponentPresentation getDynamicComponentPresentationInternal(int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
         ComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);
         if (factory == null) {

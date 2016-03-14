@@ -23,6 +23,7 @@ import java.util.Map;
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+//todo dxa2 why AbstractEntityModel is RichTextFragment?
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
 
     @JsonProperty("Id")

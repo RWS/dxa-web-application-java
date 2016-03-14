@@ -118,8 +118,8 @@ public class PageController extends BaseController {
      * @throws java.lang.Exception exception
      */
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {MediaType.TEXT_HTML_VALUE, MediaType.ALL_VALUE})
-    public String handleGetPage(HttpServletRequest request) throws Exception {
-        final String requestPath = /*webRequestContext.getBaseUrl() +*/ webRequestContext.getRequestPath();
+    public String handleGetPage(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        final String requestPath = webRequestContext.getRequestPath();
         LOG.trace("handleGetPage: requestPath={}", requestPath);
 
         final Localization localization = webRequestContext.getLocalization();
@@ -127,6 +127,12 @@ public class PageController extends BaseController {
         final PageModel originalPageModel = getPageModel(requestPath, localization);
         final ViewModel enrichedPageModel = enrichModel(originalPageModel, request);
         final PageModel page = enrichedPageModel instanceof PageModel ? (PageModel) enrichedPageModel : originalPageModel;
+
+        if (page instanceof PageModel.WithResponseData) {
+            if (((PageModel.WithResponseData) page).setResponseData(response)) {
+                LOG.debug("Page {} has modified the HttpServletResponse object", page);
+            }
+        }
 
         LOG.trace("handleGetPage: page={}", page);
 

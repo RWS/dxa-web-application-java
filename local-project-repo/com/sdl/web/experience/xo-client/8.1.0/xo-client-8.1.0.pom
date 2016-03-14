@@ -3,8 +3,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
          xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.tridion.smarttarget</groupId>
-    <artifactId>smarttarget_entitymodel</artifactId>
-    <version>web8-SNAPSHOT</version>
+    <groupId>com.sdl.web.experience</groupId>
+    <artifactId>xo-client</artifactId>
+    <version>8.1.0</version>
     <description>POM was created from install:install-file</description>
 </project>

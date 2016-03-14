@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -98,4 +99,19 @@ public interface PageModel extends ViewModel {
      * @param xpmMetaData a {@link java.util.Map} object.
      */
     void setXpmMetadata(Map<String, Object> xpmMetaData);
+
+    /**
+     * <p>Implementors of this interface may want to save some data in a servlet response.</p>
+     * <p>It is a workaround that might be removed in a future in case the better solution is found. So preferably
+     * the good idea if <i>not to use it.</i></p>
+     */
+    interface WithResponseData extends PageModel {
+        /**
+         * Passes the servlet response in order to allow page to modify it.
+         *
+         * @param servletResponse the current servlet response
+         * @return true if the response was modified, false otherwise
+         */
+        boolean setResponseData(HttpServletResponse servletResponse);
+    }
 }

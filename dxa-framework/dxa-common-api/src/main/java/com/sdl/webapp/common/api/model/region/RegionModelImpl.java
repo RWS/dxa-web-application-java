@@ -19,12 +19,13 @@ import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
 
@@ -33,6 +34,7 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGIO
  * <p>RegionModelImpl class.</p>
  */
 @EqualsAndHashCode(of = "name")
+@Slf4j
 public class RegionModelImpl implements RegionModel {
     /**
      * The XPM metadata key used for the ID of the (Include) Page from which the Region originates.
@@ -65,8 +67,13 @@ public class RegionModelImpl implements RegionModel {
     @Setter
     private String htmlClasses;
 
-    @JsonIgnore
-    private Map<String, EntityModel> entitiesMap = new LinkedHashMap<>();
+    @JsonProperty("Entities")
+    @Getter
+    @Setter
+    //todo dxa2 refactor: #getEntities() return inner collection to modify, probably that should be done through API,
+    //thus it's not possible to e.g. optimize ID search with a map because otherwise getEntities().clear() will set
+    //region model into inconsistent state when inner map is full but list is empty
+    private List<EntityModel> entities = new ArrayList<>();
 
     @JsonProperty("XpmMetadata")
     @Getter
@@ -128,30 +135,27 @@ public class RegionModelImpl implements RegionModel {
         return ApplicationContextHolder.getContext().getBean(XpmRegionConfig.class);
     }
 
-    @JsonProperty("Entities")
-    public List<EntityModel> getEntities() {
-        return new ArrayList<>(entitiesMap.values());
-    }
-
-    @JsonProperty("Entities")
-    public void setEntities(List<EntityModel> entities) {
-        for (EntityModel entityModel : entities) {
-            entitiesMap.put(entityModel.getId(), entityModel);
-        }
-    }
-
     /**
      * {@inheritDoc}
      */
     @Override
     public void addEntity(EntityModel entity) {
-        this.entitiesMap.put(entity.getId(), entity);
+        if (entity.getId() == null) {
+            log.warn("Add entity with id null, this might lead to errors! Entity: {}", entity);
+        }
+        this.entities.add(entity);
     }
 
     /** {@inheritDoc} */
     @Override
     public EntityModel getEntity(String entityId) {
-        return entitiesMap.get(entityId);
+        for (EntityModel entity : this.entities) {
+            if (Objects.equals(entity.getId(), entityId)) {
+                return entity;
+            }
+        }
+
+        return null;
     }
 
     /**

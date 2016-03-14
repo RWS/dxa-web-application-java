@@ -229,9 +229,10 @@ public interface WebRequestContext {
     void popParentRegion();
 
     /**
-     * <p>getServletRequest.</p>
+     * <p>Current servlet request.</p>
      *
      * @return a {@link javax.servlet.ServletRequest} object.
      */
+    //todo dxa2 remove in preference of setting separate fields for everything we really need
     ServletRequest getServletRequest();
 }

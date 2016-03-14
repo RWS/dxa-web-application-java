@@ -34,6 +34,10 @@ public final class TcmUtils {
         return String.format(TCM_S_S_S, 0, publicationId, PUBLICATION_ITEM_TYPE);
     }
 
+    static public String buildPublicationTcmUri(String publicationId) {
+        return String.format(TCM_S_S_S, 0, publicationId, PUBLICATION_ITEM_TYPE);
+    }
+
     /**
      * <p>buildTemplateTcmUri.</p>
      *

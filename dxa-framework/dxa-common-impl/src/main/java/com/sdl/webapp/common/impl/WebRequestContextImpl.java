@@ -42,6 +42,7 @@ public class WebRequestContextImpl implements WebRequestContext {
     private MediaHelper mediaHelper;
 
     @Autowired
+    //todo dxa2 to remove in preference of individual data fields
     private HttpServletRequest servletRequest;
 
     @Autowired

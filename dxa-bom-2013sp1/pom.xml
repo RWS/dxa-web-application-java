@@ -114,6 +114,8 @@
         <solr-solrj.version>5.3.1</solr-solrj.version>
 
         <lombok.version>1.16.6</lombok.version>
+        <google-apis.version>1.21.0</google-apis.version>
+        <google-api-services-analytics.version>v3-rev126-1.21.0</google-api-services-analytics.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -337,6 +339,47 @@
                 <groupId>com.tridion.smarttarget</groupId>
                 <artifactId>smarttarget_entitymodel</artifactId>
                 <version>2014sp1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion.smarttarget</groupId>
+                <artifactId>smarttarget_google-analytics</artifactId>
+                <version>2014sp1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.api-client</groupId>
+                <artifactId>google-api-client</artifactId>
+                <version>${google-apis.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.apis</groupId>
+                <artifactId>google-api-services-analytics</artifactId>
+                <version>${google-api-services-analytics.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.http-client</groupId>
+                <artifactId>google-http-client</artifactId>
+                <version>${google-apis.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.http-client</groupId>
+                <artifactId>google-http-client-jackson2</artifactId>
+                <version>${google-apis.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.oauth-client</groupId>
+                <artifactId>google-oauth-client</artifactId>
+                <version>${google-apis.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.oauth-client</groupId>
+                <artifactId>google-oauth-client-java6</artifactId>
+                <version>${google-apis.version}</version>
+                <scope>runtime</scope>
             </dependency>
 
             <dependency>

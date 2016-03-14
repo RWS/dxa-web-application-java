@@ -64,9 +64,17 @@ public interface MvcData {
     Map<String, String> getRouteValues();
 
     /**
-     * <p>getMetadata.</p>
-     *
-     * @return a {@link java.util.Map} object.
+     * <p>Returns a map of metadata for current MvcData.</p>
+     * todo dxa2 will return a copy
+     * @return a {@link java.util.Map} object with metadata
      */
     Map<String, Object> getMetadata();
+
+    /**
+     * Adds value to metadata of current MvcData object.
+     *
+     * @param key ket of metadata value
+     * @param obj value to add
+     */
+    void addMetadataValue(String key, Object obj);
 }

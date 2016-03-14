@@ -52,8 +52,10 @@
     <repositories>
         <repository>
             <id>local-project-repo</id>
-            <name>local-project-repo</name>
             <url>file:///${project.basedir}/../local-project-repo</url>
+            <releases>
+                <updatePolicy>always</updatePolicy>
+            </releases>
         </repository>
     </repositories>
 

@@ -169,6 +169,10 @@
             <groupId>com.tridion</groupId>
             <artifactId>cwd_odata_common</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cwd-image-proxy</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.sdl.web</groupId>

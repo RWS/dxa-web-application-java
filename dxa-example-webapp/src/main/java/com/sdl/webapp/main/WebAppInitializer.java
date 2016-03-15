@@ -1,9 +1,8 @@
 package com.sdl.webapp.main;
 
 import com.sdl.dxa.DxaSpringInitialization;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.ClassUtils;
+import com.sdl.webapp.common.util.InitializationUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -15,124 +14,63 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 
+import static com.sdl.webapp.common.util.InitializationUtils.registerListener;
+import static com.sdl.webapp.common.util.InitializationUtils.registerServlet;
+
 /**
  * <p>Web application initializer which configures the web application by registering listeners, filters and servlets.</p>
- *
+ * <p/>
  * <p>Initialization and configuration for this web application is done purely in code, and not with a {@code web.xml}
  * deployment descriptor. Doing it in code provides more flexibility; for example, this enables the web application
  * to automatically detect and register the Contextual Image Delivery {@code ImageTransformerServlet} if it is present
  * on the classpath.</p>
  */
+@Slf4j
 public class WebAppInitializer implements WebApplicationInitializer {
-
-    // TODO: dxa2 Make this pluggable, so CID and other modules and attach servlet definitions?
-    // Or just have CID as servlet fragment??
-    // The problem is as soon you have stuff in web.xml etc those things are deployed first
-
-    private static final Logger LOG = LoggerFactory.getLogger(WebAppInitializer.class);
-
-    private static final String AMBIENT_DATA_SERVLET_FILTER_NAME = "AmbientDataServletFilter";
-
-    private static final String IMAGE_TRANSFORMER_SERVLET_NAME = "ImageTransformerServlet";
-    private static final String IMAGE_TRANSFORMER_SERVLET_CLASS_NAME =
-            "com.sdl.context.image.servlet.ImageTransformerServlet";
-    private static final String IMAGE_TRANSFORMER_SERVLET_MAPPING = "/cid/*";
-
-    private static final String DISPATCHER_SERVLET_NAME = "DispatcherServlet";
-    private static final String DISPATCHER_SERVLET_MAPPING = "/";
-
-    private static final String HTTP_UPLOAD_SERVLET_NAME = "HttpUpload";
-    private static final String HTTP_UPLOAD_SERVLET_CLASS_NAME = "com.tridion.transport.HTTPSReceiverServlet";
-    private static final String HTTP_UPLOAD_SERVLET_MAPPING = "/cd_upload/httpupload";
-
-    private static final String WEB_SERVICE_SERVLET_NAME = "ContentDeliveryWebService";
-    private static final String WEB_SERVICE_SERVLET_CLASS_NAME = "com.sun.jersey.spi.container.servlet.ServletContainer";
-    private static final String WEB_SERVICE_SERVLET_MAPPING = "/cd_preview_webservice/ws/*";
-    private static final String WEB_SERVICE_RESOURCE_CONFIG_CLASS_INIT_PARAM_NAME = "com.sun.jersey.config.property.resourceConfigClass";
-    private static final String WEB_SERVICE_RESOURCE_CONFIG_CLASS_INIT_PARAM_VALUE = "com.sun.jersey.api.core.ClassNamesResourceConfig";
-    private static final String WEB_SERVICE_CLASSNAMES_PARAM_NAME = "com.sun.jersey.config.property.classnames";
-    private static final String WEB_SERVICE_CLASSNAMES_PARAM_VALUE = "com.tridion.webservices.odata.ODataWebservice;com.tridion.webservices.linking.LinkingService";
-
-    private static final String WEB_SERVICE_LISTENER_CLASS_NAME = "com.tridion.webservices.odata.ODataContextListener";
-
-    private static final String PREVIEW_SESSION_LISTENER_CLASS_NAME = "com.tridion.storage.persistence.session.SessionManagementContextListener";
-
     private static void registerCharacterEncodingFilter(ServletContext servletContext) {
-        FilterRegistration.Dynamic encodingFilter = servletContext.addFilter("encodingFilter", new CharacterEncodingFilter());
-        encodingFilter.setInitParameter("encoding", "UTF-8");
-        encodingFilter.setInitParameter("forceEncoding", "true");
-        encodingFilter.addMappingForUrlPatterns(null, false, "/*");
-    }
-
-    private static void registerImageTransformerServlet(ServletContext servletContext) {
-        if (ClassUtils.isPresent(IMAGE_TRANSFORMER_SERVLET_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
-            LOG.debug("Registering ImageTransformerServlet");
-            ServletRegistration.Dynamic registration = servletContext.addServlet(IMAGE_TRANSFORMER_SERVLET_NAME,
-                    IMAGE_TRANSFORMER_SERVLET_CLASS_NAME);
-            registration.addMapping(IMAGE_TRANSFORMER_SERVLET_MAPPING);
-        } else {
-            LOG.debug("ImageTransformerServlet is not available.");
-        }
-    }
-
-    private static void registerHttpUploadServlet(ServletContext servletContext) {
-        if (ClassUtils.isPresent(HTTP_UPLOAD_SERVLET_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
-            LOG.debug("Registering HttpUploadServlet");
-            ServletRegistration.Dynamic registration = servletContext.addServlet(HTTP_UPLOAD_SERVLET_NAME, HTTP_UPLOAD_SERVLET_CLASS_NAME);
-            registration.addMapping(HTTP_UPLOAD_SERVLET_MAPPING);
-        }
-    }
-
-    private static void registerPreviewSessionListener(ServletContext servletContext) {
-        if (ClassUtils.isPresent(PREVIEW_SESSION_LISTENER_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
-            LOG.debug("Registering Preview Session Listener");
-            servletContext.addListener(PREVIEW_SESSION_LISTENER_CLASS_NAME);
-        }
+        FilterRegistration.Dynamic registration = InitializationUtils.registerFilter(servletContext, new CharacterEncodingFilter(), "/*");
+        registration.setInitParameter("encoding", "UTF-8");
+        registration.setInitParameter("forceEncoding", "true");
     }
 
     private static void registerWebServiceServlet(ServletContext servletContext) {
-        if (ClassUtils.isPresent(WEB_SERVICE_SERVLET_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
-            LOG.debug("Registering Web Service Servlet");
-            ServletRegistration.Dynamic registration = servletContext.addServlet(WEB_SERVICE_SERVLET_NAME, WEB_SERVICE_SERVLET_CLASS_NAME);
-            registration.setInitParameter(WEB_SERVICE_RESOURCE_CONFIG_CLASS_INIT_PARAM_NAME, WEB_SERVICE_RESOURCE_CONFIG_CLASS_INIT_PARAM_VALUE);
-            registration.setInitParameter(WEB_SERVICE_CLASSNAMES_PARAM_NAME, WEB_SERVICE_CLASSNAMES_PARAM_VALUE);
-            registration.addMapping(WEB_SERVICE_SERVLET_MAPPING);
-        }
-    }
+        ServletRegistration.Dynamic registration = registerServlet(servletContext,
+                "com.sun.jersey.spi.container.servlet.ServletContainer", "/cd_preview_webservice/ws/*");
 
-    private static void registerWebServiceListener(ServletContext servletContext) {
-        if (ClassUtils.isPresent(WEB_SERVICE_LISTENER_CLASS_NAME, ClassUtils.getDefaultClassLoader())) {
-            LOG.debug("Registering Web Service Listener");
-            servletContext.addListener(WEB_SERVICE_LISTENER_CLASS_NAME);
+        if (registration == null) {
+            return;
         }
+
+        registration.setInitParameter("com.sun.jersey.config.property.resourceConfigClass",
+                "com.sun.jersey.api.core.ClassNamesResourceConfig");
+        registration.setInitParameter("com.sun.jersey.config.property.classnames",
+                "com.tridion.webservices.odata.ODataWebservice;com.tridion.webservices.linking.LinkingService");
     }
 
     private static void setupSpringContext(ServletContext servletContext) {
-        LOG.debug("Initializing servlet application context");
+        log.debug("Initializing servlet application context");
         AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
         servletAppContext.register(DxaSpringInitialization.class);
 
-        LOG.debug("Registering Spring ContextLoaderListener");
-        servletContext.addListener(new ContextLoaderListener(servletAppContext));
+        log.debug("Registering Spring ContextLoaderListener");
+        registerListener(servletContext, new ContextLoaderListener(servletAppContext));
 
-        LOG.debug("Registering Spring DispatcherServlet");
-        ServletRegistration.Dynamic registration = servletContext.addServlet(DISPATCHER_SERVLET_NAME,
-                new DispatcherServlet(servletAppContext));
-        registration.setLoadOnStartup(1);
-        registration.addMapping(DISPATCHER_SERVLET_MAPPING);
+        log.debug("Registering Spring DispatcherServlet");
+        registerServlet(servletContext, new DispatcherServlet(servletAppContext), "/").setLoadOnStartup(1);
     }
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
         setupSpringContext(servletContext);
-        registerCharacterEncodingFilter(servletContext);
-        registerHttpUploadServlet(servletContext);
-        registerImageTransformerServlet(servletContext);
-        registerPreviewSessionListener(servletContext);
-        registerWebServiceServlet(servletContext);
-        registerWebServiceListener(servletContext);
 
-        LOG.info("Web application initialization complete.");
+        registerWebServiceServlet(servletContext);
+        registerCharacterEncodingFilter(servletContext);
+
+        registerServlet(servletContext, "com.tridion.transport.HTTPSReceiverServlet", "/cd_upload/httpupload");
+        registerListener(servletContext, "com.tridion.storage.persistence.session.SessionManagementContextListener");
+        registerListener(servletContext, "com.tridion.webservices.odata.ODataContextListener");
+
+        log.info("Web application initialization complete.");
     }
 
 }

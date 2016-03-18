@@ -17,7 +17,10 @@ import java.util.EventListener;
 import java.util.Properties;
 
 @Slf4j
-public class InitializationUtils {
+public final class InitializationUtils {
+
+    private InitializationUtils() {
+    }
 
     //todo dxa2 replace with aspects
     public static void traceBeanInitialization(Object bean) {
@@ -159,7 +162,8 @@ public class InitializationUtils {
      * @param urlMappings    mappings for the filter
      * @return dynamic registration object
      */
-    public static FilterRegistration.Dynamic registerFilter(ServletContext servletContext, Filter filter, String... urlMappings) {
+    public static FilterRegistration.Dynamic registerFilter(@NonNull ServletContext servletContext,
+                                                            @NonNull Filter filter, @NonNull String... urlMappings) {
         FilterRegistration.Dynamic registration = servletContext.addFilter(filter.getClass().getName(), filter);
         registration.addMappingForUrlPatterns(null, false, urlMappings);
         log.debug("Registered {}", filter.getClass().getName());
@@ -172,7 +176,7 @@ public class InitializationUtils {
      * @param servletContext current servlet context
      * @param className      classname of a listener to register
      */
-    public static void registerListener(ServletContext servletContext, String className) {
+    public static void registerListener(@NonNull ServletContext servletContext, @NonNull String className) {
         if (isClassPresent(className)) {
             servletContext.addListener(className);
             log.debug("Registered {}", className);
@@ -187,7 +191,8 @@ public class InitializationUtils {
      * @param servletContext current servlet context
      * @param listenerClass  class of a listener to register
      */
-    public static void registerListener(ServletContext servletContext, Class<? extends EventListener> listenerClass) {
+    public static void registerListener(@NonNull ServletContext servletContext,
+                                        @NonNull Class<? extends EventListener> listenerClass) {
         servletContext.addListener(listenerClass);
         log.debug("Registered {}", listenerClass.getClass().getName());
     }
@@ -198,7 +203,7 @@ public class InitializationUtils {
      * @param servletContext current servlet context
      * @param listener       class of a listener to register
      */
-    public static void registerListener(ServletContext servletContext, EventListener listener) {
+    public static void registerListener(@NonNull ServletContext servletContext, @NonNull EventListener listener) {
         servletContext.addListener(listener);
         log.debug("Registered {}", listener.getClass().getName());
     }

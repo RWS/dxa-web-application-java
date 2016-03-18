@@ -7,10 +7,15 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.AntPathMatcher;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitialization;
 
@@ -31,10 +36,18 @@ public class DxaSpringInitialization {
     @SneakyThrows(IOException.class)
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
+
         PathMatchingResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
         patternResolver.setPathMatcher(new AntPathMatcher());
-        //todo dxa2 what is the order of loaded properties?
-        configurer.setLocations(patternResolver.getResources("classpath*:/dxa.**.properties"));
+
+        List<Resource> resources = new ArrayList<>();
+        //note that the order of properties is important because of overriding of properties
+        resources.add(new ClassPathResource("dxa.defaults.properties"));
+        resources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.modules.**.properties")));
+        resources.add(new ClassPathResource("dxa.properties"));
+
+        configurer.setLocations(resources.toArray(new Resource[resources.size()]));
+
         traceBeanInitialization(configurer);
         return configurer;
     }

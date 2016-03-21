@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation which wires view name and a class representing data for this view.
- * @deprecated since DXA 1.4, use {@link RegisteredModelView} instead
+ * @deprecated since DXA 1.4, use {@link RegisteredViewModel} instead
  */
 @SuppressWarnings("WeakerAccess")
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})

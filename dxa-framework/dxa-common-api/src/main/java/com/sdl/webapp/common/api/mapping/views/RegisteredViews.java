@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Set of views to be registered by {@link com.sdl.webapp.common.api.mapping.views.AbstractInitializer}.
- * @deprecated since DXA 1.4, use {@link RegisteredModelViews} instead
+ * @deprecated since DXA 1.4, use {@link RegisteredViewModels} instead
  */
 @SuppressWarnings("WeakerAccess")
 @Target(ElementType.TYPE)

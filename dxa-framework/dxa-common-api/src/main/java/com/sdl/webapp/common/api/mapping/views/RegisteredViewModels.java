@@ -12,6 +12,6 @@ import java.lang.annotation.Target;
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface RegisteredModelViews {
-    RegisteredModelView[] value();
+public @interface RegisteredViewModels {
+    RegisteredViewModel[] value();
 }

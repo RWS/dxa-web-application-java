@@ -59,15 +59,15 @@ public abstract class AbstractInitializer {
             }
         }
 
-        if (getClass().isAnnotationPresent(RegisteredModelView.class)) {
-            traceAutoRegistering(RegisteredModelView.class);
-            registerViewEntry(getClass().getAnnotation(RegisteredModelView.class));
+        if (getClass().isAnnotationPresent(RegisteredViewModel.class)) {
+            traceAutoRegistering(RegisteredViewModel.class);
+            registerViewEntry(getClass().getAnnotation(RegisteredViewModel.class));
         }
 
-        if (getClass().isAnnotationPresent(RegisteredModelViews.class)) {
-            traceAutoRegistering(RegisteredModelViews.class);
-            final RegisteredModelViews views = getClass().getAnnotation(RegisteredModelViews.class);
-            for (RegisteredModelView viewEntry : views.value()) {
+        if (getClass().isAnnotationPresent(RegisteredViewModels.class)) {
+            traceAutoRegistering(RegisteredViewModels.class);
+            final RegisteredViewModels views = getClass().getAnnotation(RegisteredViewModels.class);
+            for (RegisteredViewModel viewEntry : views.value()) {
                 registerViewEntry(viewEntry);
             }
         }
@@ -90,7 +90,7 @@ public abstract class AbstractInitializer {
         registerViewModel(viewEntry.viewName(), viewEntry.clazz(), viewEntry.controllerName());
     }
 
-    private void registerViewEntry(RegisteredModelView viewEntry) {
+    private void registerViewEntry(RegisteredViewModel viewEntry) {
         log.debug("View {} for class {}", viewEntry.viewName(), viewEntry.modelClass());
         registerViewModel(viewEntry.viewName(), viewEntry.modelClass(), viewEntry.controllerName());
     }

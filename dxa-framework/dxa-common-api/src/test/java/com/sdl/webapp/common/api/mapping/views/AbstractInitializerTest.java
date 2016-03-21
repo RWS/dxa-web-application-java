@@ -52,10 +52,10 @@ public class AbstractInitializerTest {
             @RegisteredView(viewName = "test2", clazz = Image.class),
             @RegisteredView(viewName = "test2.1", clazz = Place.class)
     })
-    @RegisteredModelView(viewName = "test3", modelClass = Location.class)
-    @RegisteredModelViews({
-            @RegisteredModelView(viewName = "test4", modelClass = Link.class),
-            @RegisteredModelView(viewName = "test4.1", modelClass = YouTubeVideo.class)
+    @RegisteredViewModel(viewName = "test3", modelClass = Location.class)
+    @RegisteredViewModels({
+            @RegisteredViewModel(viewName = "test4", modelClass = Link.class),
+            @RegisteredViewModel(viewName = "test4.1", modelClass = YouTubeVideo.class)
     })
     private static class TestClass extends AbstractInitializer {
         @Override

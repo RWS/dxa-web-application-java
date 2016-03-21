@@ -8,18 +8,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation which wires view name and a class representing data for this view.
- * @deprecated since DXA 1.4, use {@link RegisteredModelView} instead
+ * Annotation that wires view name and a model class representing data for this view with optional controller name.
+ *
+ * @since 1.4 as a replacement for {@link RegisteredView}
  */
-@SuppressWarnings("WeakerAccess")
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
-// todo dxa2 remove
-public @interface RegisteredView {
+public @interface RegisteredModelView {
     String viewName();
 
-    Class<? extends ViewModel> clazz();
+    Class<? extends ViewModel> modelClass();
 
     String controllerName() default "";
 }

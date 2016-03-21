@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
+import java.lang.annotation.Annotation;
 
 /**
  * <p>AbstractInitializer which initializes views registration in modules.</p>
@@ -44,17 +45,36 @@ public abstract class AbstractInitializer {
 
     private void registerViews() {
         if (getClass().isAnnotationPresent(RegisteredView.class)) {
-            log.debug("AutoRegistering (@RegisteredView present) view for module {}", getAreaName());
+            traceAutoRegistering(RegisteredView.class);
+            log.warn("You are using a deprecated API annotation: {}", RegisteredView.class);
             registerViewEntry(getClass().getAnnotation(RegisteredView.class));
         }
 
         if (getClass().isAnnotationPresent(RegisteredViews.class)) {
-            log.debug("AutoRegistering (@RegisteredViews present) views for module {}", getAreaName());
+            traceAutoRegistering(RegisteredViews.class);
+            log.warn("You are using a deprecated API annotation: {}", RegisteredViews.class);
             final RegisteredViews views = getClass().getAnnotation(RegisteredViews.class);
             for (RegisteredView viewEntry : views.value()) {
                 registerViewEntry(viewEntry);
             }
         }
+
+        if (getClass().isAnnotationPresent(RegisteredModelView.class)) {
+            traceAutoRegistering(RegisteredModelView.class);
+            registerViewEntry(getClass().getAnnotation(RegisteredModelView.class));
+        }
+
+        if (getClass().isAnnotationPresent(RegisteredModelViews.class)) {
+            traceAutoRegistering(RegisteredModelViews.class);
+            final RegisteredModelViews views = getClass().getAnnotation(RegisteredModelViews.class);
+            for (RegisteredModelView viewEntry : views.value()) {
+                registerViewEntry(viewEntry);
+            }
+        }
+    }
+
+    private void traceAutoRegistering(Class<? extends Annotation> annotation) {
+        log.debug("AutoRegistering ({} present) view for module {}", annotation, getAreaName());
     }
 
     /**
@@ -68,6 +88,11 @@ public abstract class AbstractInitializer {
     private void registerViewEntry(RegisteredView viewEntry) {
         log.debug("View {} for class {}", viewEntry.viewName(), viewEntry.clazz());
         registerViewModel(viewEntry.viewName(), viewEntry.clazz(), viewEntry.controllerName());
+    }
+
+    private void registerViewEntry(RegisteredModelView viewEntry) {
+        log.debug("View {} for class {}", viewEntry.viewName(), viewEntry.modelClass());
+        registerViewModel(viewEntry.viewName(), viewEntry.modelClass(), viewEntry.controllerName());
     }
 
     private void registerViewModel(String viewName, Class<? extends ViewModel> entityClass, String controllerName) {

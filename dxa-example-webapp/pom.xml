@@ -158,24 +158,6 @@
         </profile>
 
         <profile>
-            <id>staging-web8</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_content_client</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_content_common</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>content-ambient-client</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
             <id>2013sp1</id>
             <properties>
                 <build.classifier>2013sp1</build.classifier>

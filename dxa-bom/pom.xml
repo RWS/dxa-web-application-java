@@ -220,12 +220,14 @@
                 <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
                 <version>${dxa-module-smarttarget.version}</version>
+                <type>pom</type>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-smarttarget-web8</artifactId>
                 <version>${dxa-module-smarttarget.version}</version>
+                <type>pom</type>
                 <scope>runtime</scope>
             </dependency>
             <dependency>

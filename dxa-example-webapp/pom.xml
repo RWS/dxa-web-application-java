@@ -97,8 +97,6 @@
                 <dependency>
                     <artifactId>dxa-module-cid</artifactId>
                     <groupId>com.sdl.dxa.modules</groupId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -108,8 +106,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-search</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -119,8 +115,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-googleanalytics</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -130,8 +124,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-mediamanager</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -141,8 +133,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                     <type>pom</type>
                 </dependency>
             </dependencies>
@@ -153,8 +143,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-smarttarget-web8</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                     <type>pom</type>
                 </dependency>
             </dependencies>
@@ -165,8 +153,6 @@
                 <dependency>
                     <artifactId>dxa-module-51degrees</artifactId>
                     <groupId>com.sdl.dxa.modules</groupId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>

@@ -57,6 +57,7 @@
         <dxa-module-mediamanager.version>${dxa.version}</dxa-module-mediamanager.version>
         <dxa-module-search.version>${dxa.version}</dxa-module-search.version>
         <dxa-module-smarttarget.version>${dxa.version}</dxa-module-smarttarget.version>
+        <dxa-module-51degrees.version>${dxa.version}</dxa-module-51degrees.version>
 
         <!-- Caching -->
         <cache-api.version>1.0.0</cache-api.version>
@@ -225,6 +226,12 @@
                 <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-smarttarget-web8</artifactId>
                 <version>${dxa-module-smarttarget.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-51degrees</artifactId>
+                <version>${dxa-module-51degrees.version}</version>
                 <scope>runtime</scope>
             </dependency>
 

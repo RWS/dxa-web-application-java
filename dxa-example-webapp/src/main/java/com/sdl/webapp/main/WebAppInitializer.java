@@ -4,6 +4,7 @@ import com.sdl.dxa.DxaSpringInitialization;
 import com.sdl.webapp.common.util.InitializationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.ConfigurableWebEnvironment;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
@@ -13,6 +14,7 @@ import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
+import java.util.Properties;
 
 import static com.sdl.webapp.common.util.InitializationUtils.registerListener;
 import static com.sdl.webapp.common.util.InitializationUtils.registerServlet;
@@ -50,6 +52,7 @@ public class WebAppInitializer implements WebApplicationInitializer {
     private static void setupSpringContext(ServletContext servletContext) {
         log.debug("Initializing servlet application context");
         AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
+
         servletAppContext.register(DxaSpringInitialization.class);
 
         log.debug("Registering Spring ContextLoaderListener");
@@ -57,6 +60,26 @@ public class WebAppInitializer implements WebApplicationInitializer {
 
         log.debug("Registering Spring DispatcherServlet");
         registerServlet(servletContext, new DispatcherServlet(servletAppContext), "/").setLoadOnStartup(1);
+
+        if (servletContext.getInitParameter("spring.profiles.active") == null) {
+            setActiveProfiles(servletAppContext);
+        }
+    }
+
+    private static void setActiveProfiles(AnnotationConfigWebApplicationContext servletAppContext) {
+        Properties dxaProperties = InitializationUtils.loadDxaProperties();
+
+        addActiveProfiles(servletAppContext, dxaProperties.getProperty("spring.profiles.active"));
+        addActiveProfiles(servletAppContext, dxaProperties.getProperty("spring.profiles.include"));
+    }
+
+    private static void addActiveProfiles(AnnotationConfigWebApplicationContext servletAppContext, String activeProfiles) {
+        if (activeProfiles != null) {
+            ConfigurableWebEnvironment environment = servletAppContext.getEnvironment();
+            for (String profile : activeProfiles.split(",")) {
+                environment.addActiveProfile(profile.trim());
+            }
+        }
     }
 
     @Override

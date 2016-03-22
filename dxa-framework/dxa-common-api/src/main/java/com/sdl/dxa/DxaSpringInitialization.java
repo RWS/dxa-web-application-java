@@ -34,7 +34,7 @@ public class DxaSpringInitialization {
 
     @Bean
     @SneakyThrows(IOException.class)
-    public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+    public PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
 
         PathMatchingResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
@@ -49,6 +49,7 @@ public class DxaSpringInitialization {
         configurer.setLocations(resources.toArray(new Resource[resources.size()]));
 
         traceBeanInitialization(configurer);
+
         return configurer;
     }
 }

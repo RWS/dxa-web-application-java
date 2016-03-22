@@ -159,6 +159,17 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>51degrees-module</id>
+            <dependencies>
+                <dependency>
+                    <artifactId>dxa-module-51degrees</artifactId>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <version>${dxa.version}</version>
+                    <scope>runtime</scope>
+                </dependency>
+            </dependencies>
+        </profile>
 
         <profile>
             <id>staging-web8</id>

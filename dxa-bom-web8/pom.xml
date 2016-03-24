@@ -49,8 +49,8 @@
         <cd.version>8.1.1-SNAPSHOT</cd.version>
         <cwd.version>8.1.1-SNAPSHOT</cwd.version>
         <odata.version>2.0.5-SNAPSHOT</odata.version>
-        <xo.version>web8</xo.version>
-        <xo-client.version>8.1.0</xo-client.version>
+        <xo.version>8.1.1</xo.version>
+        <xo-client.version>8.1.1</xo-client.version>
 
         <!-- SDL products 3rd-party dependencies -->
         <gson.version>2.3.1</gson.version>
@@ -274,19 +274,19 @@
             </dependency>
 
             <dependency>
-                <groupId>com.sdl.web.experience</groupId>
+                <groupId>com.sdl.web</groupId>
                 <artifactId>xo-client</artifactId>
                 <version>${xo-client.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
-                <groupId>com.sdl.web.experience</groupId>
+                <groupId>com.sdl.web</groupId>
                 <artifactId>xo-client-compatible</artifactId>
                 <version>${xo-client.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>
-                <groupId>com.sdl.web.experience</groupId>
+                <groupId>com.sdl.web</groupId>
                 <artifactId>xo-model</artifactId>
                 <version>${xo-client.version}</version>
                 <scope>runtime</scope>

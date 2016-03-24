@@ -133,7 +133,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
-                    <type>pom</type>
                 </dependency>
             </dependencies>
         </profile>
@@ -143,7 +142,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-smarttarget-web8</artifactId>
-                    <type>pom</type>
                 </dependency>
             </dependencies>
         </profile>

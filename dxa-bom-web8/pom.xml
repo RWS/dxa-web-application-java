@@ -254,6 +254,12 @@
                 <groupId>com.tridion.smarttarget</groupId>
                 <artifactId>smarttarget_core</artifactId>
                 <version>${xo.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.tridion</groupId>
+                        <artifactId>cd_broker</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>com.tridion.smarttarget</groupId>

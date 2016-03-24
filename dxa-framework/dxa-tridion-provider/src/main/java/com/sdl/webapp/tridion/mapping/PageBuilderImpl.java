@@ -394,7 +394,6 @@ public final class PageBuilderImpl implements PageBuilder {
                 } catch (IllegalAccessException | InstantiationException | DxaException | InvocationTargetException | NoSuchMethodException e) {
                     LOG.error("Error creating region for view '{}'.", viewName, e);
                 }
-
             }
         }
         return regions;

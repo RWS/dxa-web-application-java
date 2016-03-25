@@ -57,157 +57,10 @@
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
 
-
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_common_config_api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_common_config_legacy</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_common_util</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_common_config</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_model</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>com.sdl.web</groupId>
-            <artifactId>content-ambient-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-ambient-model</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_preview_content_client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_preview_content_common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-broker</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-client-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-compatible</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-dynamic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-linking</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-model</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-tags</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>discovery-client-lightweight</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>discovery-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>odata_api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>odata_client_api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>odata_edm</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>odata_parser</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>odata_renderer</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>odata_client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd_odata_client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd_odata_common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd-image-proxy</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>web-ambient-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>web-ambient-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>web-oauth-common</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd_api</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
+            <artifactId>cil</artifactId>
+            <type>pom</type>
         </dependency>
 
         <dependency>
@@ -240,12 +93,6 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-api</artifactId>

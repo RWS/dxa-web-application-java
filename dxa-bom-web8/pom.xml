@@ -68,6 +68,17 @@
             </dependency>
 
             <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_preview_content_client</artifactId>
+                <version>${cd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cd_preview_content_common</artifactId>
+                <version>${cd.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.tridion.smarttarget</groupId>
                 <artifactId>smarttarget_google-analytics</artifactId>
                 <version>${xo.version}</version>

@@ -298,7 +298,7 @@ public final class PageBuilderImpl implements PageBuilder {
         if (pageModelType == PageModelImpl.class) {
             // Standard Page Model
             pageModel = new PageModelImpl();
-        } else if (pageMetadataSchema == null) {
+        } else if (pageModelType != null && pageMetadataSchema == null) {
             // Custom Page Model but no Page metadata that can be mapped; simply create a Page Model instance of the right type.
             try {
                 pageModel = (PageModel) pageModelType.newInstance();
@@ -307,7 +307,7 @@ public final class PageBuilderImpl implements PageBuilder {
             } catch (IllegalAccessException e) {
                 throw new DxaException(String.format("Illegal access exception when instantiating new page of type %s", pageModelType), e);
             }
-        } else {
+        } else if(pageMetadataSchema != null){
             // Custom Page Model and Page metadata is present; do full-blown model mapping.
             String[] schemaTcmUriParts = pageMetadataSchema.getId().split("-");
 
@@ -315,6 +315,8 @@ public final class PageBuilderImpl implements PageBuilder {
 
             final Class<? extends ViewModel> entityClass = viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
             pageModel = (PageModel) createViewModel(entityClass, semanticSchema, genericPage);
+        } else {
+            throw new DxaException(String.format("Cannot instantiate new page of template %s", genericPage.getPageTemplate().getTitle()));
         }
 
         pageModel.setId(genericPage.getId());

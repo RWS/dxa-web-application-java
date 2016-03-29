@@ -112,15 +112,20 @@ public final class PageBuilderImpl implements PageBuilder {
 
     private static RegionModel getRegionFromIncludePage(PageModel page, String includeFileName) {
         try {
+            String regionView = page.getName();
+
             String regionName = page.getName().replace(" ", "-");
+            //if a include page title contains an area name, remove it from the region name, as this name should not be qualified
+            if (regionName.contains(":")) {
+                regionName = regionName.substring(regionName.indexOf(':') + 1);
+            }
 
             MvcData regionMvcData = MvcDataCreator.creator()
-                    .fromQualifiedName(regionName)
+                    .fromQualifiedName(regionView)
                     .defaults(DefaultsMvcData.CORE_REGION)
                     .create();
 
             RegionModelImpl region = new RegionModelImpl(regionName);
-            region.setName(regionName);
             region.setMvcData(regionMvcData);
             ImmutableMap.Builder<String, Object> xpmMetaDataBuilder = ImmutableMap.builder();
 

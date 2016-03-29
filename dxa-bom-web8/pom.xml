@@ -46,8 +46,7 @@
     <properties>
         <!-- SDL products versions -->
         <dxa-bom.version>1.4.0-SNAPSHOT</dxa-bom.version>
-        <cd.version>8.1.1-1013</cd.version>
-        <cd-preview.version>8.1.1-1008</cd-preview.version>
+        <cd.version>8.1.1-1014</cd.version>
         <xo.version>8.1.1</xo.version>
     </properties>
 
@@ -66,17 +65,12 @@
                 <artifactId>cil</artifactId>
                 <version>${cd.version}</version>
                 <type>pom</type>
-            </dependency>
-
-            <dependency>
-                <groupId>com.tridion</groupId>
-                <artifactId>cd_preview_content_client</artifactId>
-                <version>${cd-preview.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.tridion</groupId>
-                <artifactId>cd_preview_content_common</artifactId>
-                <version>${cd-preview.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.vs.ezlicrun</groupId>
+                        <artifactId>easylicense</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>

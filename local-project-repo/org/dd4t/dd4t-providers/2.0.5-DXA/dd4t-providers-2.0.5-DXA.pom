@@ -5,7 +5,7 @@
     <parent>
         <artifactId>dd4t-parent</artifactId>
         <groupId>org.dd4t</groupId>
-        <version>2.0.4-DXA</version>
+        <version>2.0.5-DXA</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <name>${project.groupId}:${project.artifactId}</name>
@@ -98,58 +98,16 @@
         <profile>
             <id>web8</id>
             <properties>
-                <tridion.version>8.1.1-SNAPSHOT</tridion.version>
+                <tridion.version>8.1.1-1013</tridion.version>
                 <java.version>1.8</java.version>
                 <build.classifier>web8</build.classifier>
             </properties>
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.web</groupId>
-                    <artifactId>content-compatible</artifactId>
+                    <artifactId>cil</artifactId>
                     <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_model</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>content-broker</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>content-api</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_core</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>content-dynamic</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_common_util</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
-                </dependency>
-                <dependency>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>content-core</artifactId>
-                    <version>${tridion.version}</version>
-                    <scope>provided</scope>
+                    <type>pom</type>
                 </dependency>
             </dependencies>
         </profile>

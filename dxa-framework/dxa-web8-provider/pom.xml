@@ -16,7 +16,6 @@
 
     <properties>
         <java-version>1.8</java-version>
-        <dxa-bom-web8.version>${project.version}</dxa-bom-web8.version>
     </properties>
 
     <dependencyManagement>
@@ -25,13 +24,6 @@
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-bom</artifactId>
                 <version>${dxa-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-bom-web8</artifactId>
-                <version>${dxa-bom-web8.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

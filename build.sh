@@ -16,7 +16,6 @@ fi
 
 mvn -f dxa-bom/pom.xml ${command} || exit $?
 mvn -f dxa-bom-2013sp1/pom.xml ${command} || exit $?
-mvn -f dxa-bom-web8/pom.xml ${command} || exit $?
 mvn -f dxa-webapp-archetype/pom.xml ${command} || exit $?
 
 mvn -f dxa-framework/pom.xml ${command} || exit $?

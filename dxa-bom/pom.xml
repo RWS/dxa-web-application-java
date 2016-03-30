@@ -49,7 +49,7 @@
         <classifier.web8>web8</classifier.web8>
 
         <dd4t.version>2.0.5-DXA</dd4t.version>
-        <cd-cil.version>8.1.1-1015</cd-cil.version>
+        <cd-cil.version>8.1.1-1016</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>

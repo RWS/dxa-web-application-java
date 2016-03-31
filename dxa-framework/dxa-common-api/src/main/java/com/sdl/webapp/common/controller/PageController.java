@@ -114,7 +114,8 @@ public class PageController extends BaseController {
      * Gets a page requested by a client. This is the main handler method which gets called when a client sends a
      * request for a page.
      *
-     * @param request The request.
+     * @param request  The request.
+     * @param response the response
      * @return The view name of the page.
      * @throws java.lang.Exception exception
      */
@@ -238,7 +239,7 @@ public class PageController extends BaseController {
      *
      * @return a {@link java.lang.String} object.
      * @throws com.sdl.webapp.common.api.content.NavigationProviderException if any.
-     * @throws com.fasterxml.jackson.core.JsonProcessingException if any.
+     * @throws com.fasterxml.jackson.core.JsonProcessingException            if any.
      */
     @RequestMapping(method = RequestMethod.GET, value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public
@@ -305,7 +306,7 @@ public class PageController extends BaseController {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Handles non-specific exceptions.
      */
     @ExceptionHandler(Exception.class)

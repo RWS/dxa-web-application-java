@@ -66,9 +66,6 @@ public class DxaWebSpringInitialization {
         return jsonView;
     }
 
-    /**
-     * <p>Object mapper to be used across DXA.</p>
-     */
     @Bean
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();

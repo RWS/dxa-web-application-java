@@ -8,6 +8,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
@@ -20,8 +21,9 @@ import java.util.Map;
 @Setter(AccessLevel.PROTECTED)
 @Accessors(chain = true)
 @ToString
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"regionAreaName", "regionName"})
 @AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MvcDataImpl implements MvcData {
     @JsonProperty("ControllerAreaName")
     private String controllerAreaName;
@@ -38,10 +40,10 @@ public class MvcDataImpl implements MvcData {
     @JsonProperty("ViewName")
     private String viewName;
 
-    @JsonProperty("RegionAreaName")
+    @JsonIgnore
     private String regionAreaName;
 
-    @JsonProperty("RegionName")
+    @JsonIgnore
     private String regionName;
 
     @JsonIgnore
@@ -51,12 +53,6 @@ public class MvcDataImpl implements MvcData {
     @JsonIgnore
     // todo dxa2 return a copy instead of real map
     private Map<String, Object> metadata = new HashMap<>();
-
-    /**
-     * <p>Constructor for MvcDataImpl.</p>
-     */
-    protected MvcDataImpl() {
-    }
 
     /**
      * <p>Constructor for MvcDataImpl.</p>

@@ -2,8 +2,6 @@ package com.sdl.webapp.common.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -81,6 +79,9 @@ public class PageController extends BaseController {
     private boolean allowJsonResponse;
     @Autowired
     private NavigationProvider navigationProvider;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     /**
      * <p>Constructor for PageController.</p>
@@ -245,13 +246,9 @@ public class PageController extends BaseController {
     String handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
         LOG.trace("handleGetNavigationJson");
 
-
         SitemapItem model = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
 
-        return new ObjectMapper()
-                .registerModule(new JodaModule())
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .writeValueAsString(model);
+        return objectMapper.writeValueAsString(model);
     }
 
     /**

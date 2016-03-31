@@ -78,7 +78,7 @@ String findPath(List<String> parts) {
 }
 
 def runMaven(String command, String pomPath) {
-    String toRun = "${determineShell()} mvn ${command} -f ${pomPath}"
+    String toRun = "${determineShell()} mvn ${command} -f \"${pomPath}\""
 
     println """
     Running ${toRun}

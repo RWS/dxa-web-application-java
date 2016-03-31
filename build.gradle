@@ -1,7 +1,10 @@
+group 'com.sdl.dxa'
+
 defaultTasks 'build'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
 task help << {

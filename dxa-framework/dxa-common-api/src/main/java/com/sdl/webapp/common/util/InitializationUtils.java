@@ -4,7 +4,10 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ClassUtils;
 
 import javax.servlet.Filter;
@@ -13,11 +16,19 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.EventListener;
+import java.util.List;
 import java.util.Properties;
 
 @Slf4j
 public final class InitializationUtils {
+
+    // keep the order for internal usage
+    private static List<Resource> resources;
+    private static Properties properties;
 
     private InitializationUtils() {
     }
@@ -36,28 +47,51 @@ public final class InitializationUtils {
      *
      * @return merged properties for DXA
      */
+    @SneakyThrows(IOException.class)
     public static Properties loadDxaProperties() {
-        return loadDxaProperties(null);
+        if (properties == null) {
+            Properties dxaProperties = new Properties();
+            for (Resource resource : getAllResources()) {
+                // order is guaranteed by #getAllResources() and internal usage of List
+                PropertiesLoaderUtils.fillProperties(dxaProperties, resource);
+                log.debug("Properties from {} are loaded", resource);
+            }
+
+            properties = dxaProperties;
+        }
+
+        log.debug("Properties {} returned", properties);
+        return properties;
     }
 
     /**
-     * <p>Loads all properties from classpath from two files <code>dxa.defaults.properties</code>
-     * and <code>dxa.properties</code>. The latter has a priority is exists.</p>
-     * <p>If your module has its own properties, you should load them manually when using this method.
-     * Despite DXA loads all dxa.**.properties into a Spring context, this method does not.</p>
-     * <p>Once loaded properties are cached permanently.</p>
+     * Loads all available DXA properties files.
+     * <p>
+     * <p>Respects <code>dxa.defaults.properties</code>,
+     * <code>classpath*:/dxa.modules.*.properties</code>, <code>dxa.properties</code>,
+     * <code>classpath*:/dxa.addons.*.properties</code>.</p>
      *
-     * @param resourceName name of custom properties
-     * @return merged properties for DXA
+     * @return a collection of DXA properties files
      */
-    public static Properties loadDxaProperties(String resourceName) {
-        Properties properties = loadDefaultProperties();
+    @SneakyThrows(IOException.class)
+    public static Collection<Resource> getAllResources() {
+        if (resources == null) {
+            PathMatchingResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
+            patternResolver.setPathMatcher(new AntPathMatcher());
 
-        loadFromCustomResource(resourceName, properties);
+            List<Resource> availableResources = new ArrayList<>();
+            //note that the order of properties is important because of overriding of properties
+            availableResources.add(new ClassPathResource("dxa.defaults.properties"));
+            availableResources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.modules.*.properties")));
+            availableResources.add(new ClassPathResource("dxa.properties"));
+            availableResources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.addons.*.properties")));
 
-        overrideProperties(properties);
+            log.debug("Loaded resources {}", availableResources);
+            resources = availableResources;
+        }
 
-        return properties;
+        log.debug("Returned list of resources {}", resources);
+        return resources;
     }
 
     /**
@@ -206,33 +240,5 @@ public final class InitializationUtils {
     public static void registerListener(@NonNull ServletContext servletContext, @NonNull EventListener listener) {
         servletContext.addListener(listener);
         log.debug("Registered {}", listener.getClass().getName());
-    }
-
-    private static void loadFromCustomResource(String resourceName, Properties properties) {
-        if (resourceName != null) {
-            try {
-                PropertiesLoaderUtils.fillProperties(properties, new ClassPathResource(resourceName));
-                log.debug("Properties loaded from {}", resourceName);
-            } catch (IOException e) {
-                log.warn("Requested to load {} but file doesn't exist", resourceName);
-            }
-        }
-    }
-
-    private static void overrideProperties(Properties properties) {
-        String overriddenPropertiesFile = properties.getProperty("dxa.properties");
-        try {
-            PropertiesLoaderUtils.fillProperties(properties, new ClassPathResource(overriddenPropertiesFile));
-            log.debug("Properties from {} are loaded", overriddenPropertiesFile);
-        } catch (IOException e) {
-            log.debug("Properties from {} are not loaded because {}", overriddenPropertiesFile, e.getLocalizedMessage());
-        }
-    }
-
-    @SneakyThrows(IOException.class)
-    private static Properties loadDefaultProperties() {
-        Properties properties = PropertiesLoaderUtils.loadAllProperties("dxa.defaults.properties");
-        log.trace("DXA default properties are loaded");
-        return properties;
     }
 }

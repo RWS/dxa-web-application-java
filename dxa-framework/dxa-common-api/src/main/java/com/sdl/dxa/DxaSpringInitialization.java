@@ -1,21 +1,15 @@
 package com.sdl.dxa;
 
-import lombok.SneakyThrows;
+import com.sdl.webapp.common.util.InitializationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.util.AntPathMatcher;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitialization;
 
@@ -33,19 +27,10 @@ import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitializa
 public class DxaSpringInitialization {
 
     @Bean
-    @SneakyThrows(IOException.class)
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
 
-        PathMatchingResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
-        patternResolver.setPathMatcher(new AntPathMatcher());
-
-        List<Resource> resources = new ArrayList<>();
-        //note that the order of properties is important because of overriding of properties
-        resources.add(new ClassPathResource("dxa.defaults.properties"));
-        resources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.modules.**.properties")));
-        resources.add(new ClassPathResource("dxa.properties"));
-
+        Collection<Resource> resources = InitializationUtils.getAllResources();
         configurer.setLocations(resources.toArray(new Resource[resources.size()]));
 
         traceBeanInitialization(configurer);

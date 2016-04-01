@@ -2,6 +2,8 @@ group 'com.sdl.dxa'
 
 defaultTasks 'build'
 
+def getDefaultCommand() { "clean install" }
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
@@ -97,7 +99,7 @@ def runMaven(String command, String pomPath) {
 }
 
 String getCommandToExecute() {
-    project.hasProperty("command") ? "${command}" : "clean install"
+    project.hasProperty("command") ? "${command}" : defaultCommand
 }
 
 String determineShell() {

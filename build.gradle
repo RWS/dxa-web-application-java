@@ -12,25 +12,24 @@ task wrapper(type: Wrapper) {
 task help << {
     println """
     Usage:
-        build.cmd build -Pcommand="<command>"
+        gradlew(.bat) build -Pcommand="<command>"
 
     <command> is passed to Maven as it is. If <command> is missed then the default command is used which is: ${
         defaultCommand
     }
 
-
     Example 1:
-        build.cmd build -Pcommand="clean package -Pweb8"
+        gradlew(.bat) build -Pcommand="clean package -Pweb8"
     will run
         mvn -f project-name\\pom.xml clean package -Pweb8
 
     Example 2:
-        build.cmd build
+        gradlew(.bat) build
     will run
         mvn -f project-name\\pom.xml clean install
 
     Example 3:
-        build.cmd build -Pcommand="-Pweb8"
+        gradlew(.bat) build -Pcommand="-Pweb8"
     will run
         mvn -f project-name\\pom.xml -Pweb8
     which has actually no sense

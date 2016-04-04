@@ -106,7 +106,7 @@ public final class InitializationUtils {
                                                               @NonNull Servlet servlet, @NonNull String mapping) {
         ServletRegistration.Dynamic registration = servletContext.addServlet(servlet.getClass().getName(), servlet);
         registration.addMapping(mapping);
-        log.debug("Registered {}", servlet.getClass());
+        log.debug("Registered {} for mapping {}", servlet.getClass(), mapping);
         return registration;
     }
 
@@ -123,7 +123,7 @@ public final class InitializationUtils {
         if (isClassPresent(className)) {
             ServletRegistration.Dynamic registration = servletContext.addServlet(className, className);
             registration.addMapping(mapping);
-            log.debug("Registered {}", className);
+            log.debug("Registered {} for mapping {}", className, mapping);
             return registration;
         }
         log.debug("Failed to register {}", className);
@@ -164,7 +164,7 @@ public final class InitializationUtils {
 
         FilterRegistration.Dynamic registration = servletContext.addFilter(clazz.getName(), clazz);
         registration.addMappingForUrlPatterns(null, false, urlMappings);
-        log.debug("Registered {}", clazz.getName());
+        log.debug("Registered {} for mapping {}", clazz.getName(), urlMappings);
         return registration;
     }
 
@@ -181,7 +181,7 @@ public final class InitializationUtils {
         if (isClassPresent(className)) {
             FilterRegistration.Dynamic registration = servletContext.addFilter(className, className);
             registration.addMappingForUrlPatterns(null, false, urlMappings);
-            log.debug("Registered {}", className);
+            log.debug("Registered {} for mapping {}", className, urlMappings);
             return registration;
         }
         log.debug("Failed to register {}", className);
@@ -200,7 +200,7 @@ public final class InitializationUtils {
                                                             @NonNull Filter filter, @NonNull String... urlMappings) {
         FilterRegistration.Dynamic registration = servletContext.addFilter(filter.getClass().getName(), filter);
         registration.addMappingForUrlPatterns(null, false, urlMappings);
-        log.debug("Registered {}", filter.getClass().getName());
+        log.debug("Registered {} for mapping {}", filter.getClass().getName(), urlMappings);
         return registration;
     }
 

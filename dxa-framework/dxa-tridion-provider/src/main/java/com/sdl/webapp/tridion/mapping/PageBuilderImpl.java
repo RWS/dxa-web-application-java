@@ -112,6 +112,8 @@ public final class PageBuilderImpl implements PageBuilder {
 
     private static RegionModel getRegionFromIncludePage(PageModel page, String includeFileName) {
         try {
+            String regionView = page.getName();
+
             String regionName = page.getName().replace(" ", "-");
             //if a include page title contains an area name, remove it from the region name, as this name should not be qualified
             if (regionName.contains(":")) {
@@ -119,12 +121,11 @@ public final class PageBuilderImpl implements PageBuilder {
             }
 
             MvcData regionMvcData = MvcDataCreator.creator()
-                    .fromQualifiedName(regionName)
+                    .fromQualifiedName(regionView)
                     .defaults(DefaultsMvcData.CORE_REGION)
                     .create();
 
             RegionModelImpl region = new RegionModelImpl(regionName);
-            region.setName(regionName);
             region.setMvcData(regionMvcData);
             ImmutableMap.Builder<String, Object> xpmMetaDataBuilder = ImmutableMap.builder();
 
@@ -302,7 +303,7 @@ public final class PageBuilderImpl implements PageBuilder {
         if (pageModelType == PageModelImpl.class) {
             // Standard Page Model
             pageModel = new PageModelImpl();
-        } else if (pageMetadataSchema == null) {
+        } else if (pageModelType != null && pageMetadataSchema == null) {
             // Custom Page Model but no Page metadata that can be mapped; simply create a Page Model instance of the right type.
             try {
                 pageModel = (PageModel) pageModelType.newInstance();
@@ -311,7 +312,7 @@ public final class PageBuilderImpl implements PageBuilder {
             } catch (IllegalAccessException e) {
                 throw new DxaException(String.format("Illegal access exception when instantiating new page of type %s", pageModelType), e);
             }
-        } else {
+        } else if(pageMetadataSchema != null){
             // Custom Page Model and Page metadata is present; do full-blown model mapping.
             String[] schemaTcmUriParts = pageMetadataSchema.getId().split("-");
 
@@ -319,6 +320,8 @@ public final class PageBuilderImpl implements PageBuilder {
 
             final Class<? extends ViewModel> entityClass = viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
             pageModel = (PageModel) createViewModel(entityClass, semanticSchema, genericPage);
+        } else {
+            throw new DxaException(String.format("Cannot instantiate new page of template %s", genericPage.getPageTemplate().getTitle()));
         }
 
         pageModel.setId(genericPage.getId());

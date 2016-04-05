@@ -145,6 +145,15 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>51degrees-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-51degrees</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
 
         <profile>
             <id>2013sp1</id>

@@ -12,7 +12,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-bom</artifactId>
-    <version>1.4.0</version>
+    <version>1.5.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>DXA - Bill of Materials</name>
@@ -58,7 +58,7 @@
         <dxa-module-mediamanager.version>${dxa.version}</dxa-module-mediamanager.version>
         <dxa-module-search.version>${dxa.version}</dxa-module-search.version>
         <dxa-module-smarttarget.version>${dxa.version}</dxa-module-smarttarget.version>
-        <dxa-module-51degrees.version>${dxa.version}</dxa-module-51degrees.version>
+        <dxa-module-51degrees.version>1.4.0-SNAPSHOT</dxa-module-51degrees.version>
 
         <!-- Caching -->
         <cache-api.version>1.0.0</cache-api.version>

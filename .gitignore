@@ -8,3 +8,4 @@ target/
 cd_licenses.xml
 .metadata/
 temp/
+.gradle

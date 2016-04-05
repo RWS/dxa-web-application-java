@@ -2,8 +2,6 @@ package com.sdl.webapp.common.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -82,6 +80,9 @@ public class PageController extends BaseController {
     @Autowired
     private NavigationProvider navigationProvider;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     /**
      * <p>Constructor for PageController.</p>
      *
@@ -113,7 +114,8 @@ public class PageController extends BaseController {
      * Gets a page requested by a client. This is the main handler method which gets called when a client sends a
      * request for a page.
      *
-     * @param request The request.
+     * @param request  The request.
+     * @param response the response
      * @return The view name of the page.
      * @throws java.lang.Exception exception
      */
@@ -237,7 +239,7 @@ public class PageController extends BaseController {
      *
      * @return a {@link java.lang.String} object.
      * @throws com.sdl.webapp.common.api.content.NavigationProviderException if any.
-     * @throws com.fasterxml.jackson.core.JsonProcessingException if any.
+     * @throws com.fasterxml.jackson.core.JsonProcessingException            if any.
      */
     @RequestMapping(method = RequestMethod.GET, value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)
     public
@@ -245,13 +247,9 @@ public class PageController extends BaseController {
     String handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
         LOG.trace("handleGetNavigationJson");
 
-
         SitemapItem model = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
 
-        return new ObjectMapper()
-                .registerModule(new JodaModule())
-                .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
-                .writeValueAsString(model);
+        return objectMapper.writeValueAsString(model);
     }
 
     /**
@@ -308,7 +306,7 @@ public class PageController extends BaseController {
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Handles non-specific exceptions.
      */
     @ExceptionHandler(Exception.class)

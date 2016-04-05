@@ -131,7 +131,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
                     }
                 }
             } catch (IOException | ContentProviderException e) {
-                LOG.warn("Issues getting the static content " + requestPath, e);
+                LOG.warn("Issues getting the static content {}", requestPath, e);
                 throw new ServletException(e);
             }
 

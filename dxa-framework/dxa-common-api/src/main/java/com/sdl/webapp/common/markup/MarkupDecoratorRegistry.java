@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * <p>MarkupDecoratorRegistry interface.</p>
- * @deprecated todo dxa2 remove in preference of autowired bean list
+ * @deprecated since DXA 1.4, todo dxa2 remove in preference of autowired bean list
  */
 @Deprecated
 public interface MarkupDecoratorRegistry {

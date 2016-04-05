@@ -394,7 +394,6 @@ public final class PageBuilderImpl implements PageBuilder {
                 } catch (IllegalAccessException | InstantiationException | DxaException | InvocationTargetException | NoSuchMethodException e) {
                     LOG.error("Error creating region for view '{}'.", viewName, e);
                 }
-
             }
         }
         return regions;
@@ -403,6 +402,11 @@ public final class PageBuilderImpl implements PageBuilder {
     private RegionModel createRegionModel(MvcData regionMvcData)
             throws IllegalAccessException, InstantiationException, DxaException, NoSuchMethodException, InvocationTargetException {
         Class<? extends ViewModel> regionModelType = this.viewModelRegistry.getViewModelType(regionMvcData);
+
+        if (regionModelType == null) {
+            throw new DxaException("Have you configured your views/modules properly? Region model type not found for " + regionMvcData);
+        }
+
         Constructor<? extends ViewModel> constructor = regionModelType.getDeclaredConstructor(MvcData.class);
         return (RegionModel) constructor.newInstance(regionMvcData);
     }

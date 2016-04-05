@@ -1,0 +1,107 @@
+group 'com.sdl.dxa'
+
+defaultTasks 'build'
+
+def getDefaultCommand() { "clean install" }
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+task help << {
+    println """
+    Usage:
+        gradlew(.bat) build -Pcommand="<command>"
+
+    <command> is passed to Maven as it is. If <command> is missed then the default command is used which is: ${
+        defaultCommand
+    }
+
+    Example 1:
+        gradlew(.bat) build -Pcommand="clean package -Pweb8"
+    will run
+        mvn -f project-name\\pom.xml clean package -Pweb8
+
+    Example 2:
+        gradlew(.bat) build
+    will run
+        mvn -f project-name\\pom.xml clean install
+
+    Example 3:
+        gradlew(.bat) build -Pcommand="-Pweb8"
+    will run
+        mvn -f project-name\\pom.xml -Pweb8
+    which has actually no sense
+    """
+}
+
+task build << {
+    greet()
+
+    def commandToExecute = getCommandToExecute()
+
+    [
+            "dxa-bom",
+            "dxa-bom-2013sp1",
+            "dxa-webapp-archetype",
+            "dxa-framework"
+    ].each {
+        try {
+            runMaven(commandToExecute, findPath([it, "pom.xml"]))
+        } catch (ignored) {
+            println """
+            Well, there is an error. Press <Enter> to finish."""
+            System.in.read()
+            throw new RuntimeException(ignored)
+        }
+    }
+}
+
+def greet() {
+    println """
+    Building DXA Framework and related projects...
+    WebApp is not built!
+    """
+}
+
+@SuppressWarnings(["GrUnresolvedAccess", "GroovyAssignabilityCheck"])
+String findPath(List<String> parts) {
+
+    println "   findPath(): Invoked findPath() with parts = ${parts}"
+    String joined = new File('.').absolutePath + File.separator + parts.join(File.separator)
+
+    println "   findPath(): Check if ${joined} exists or the last path part left"
+    if (parts.size() == 1 || new File(joined).exists()) {
+        println "   findPath(): Returning ${joined}"
+        return joined
+    }
+    int len = parts.size() - 1
+    println "   findPath(): Size of path parts array ${len}"
+    findPath(parts.getAt(1..len))
+}
+
+def runMaven(String command, String pomPath) {
+    String toRun = "${determineShell()} mvn ${command} -f \"${pomPath}\""
+
+    println """
+    Running ${toRun}
+    """
+
+    def execute = toRun.execute()
+    execute.in.eachLine {
+        println it
+    }
+    if (execute.exitValue()) {
+        throw new RuntimeException("Execution of Maven run failed.")
+    }
+}
+
+String getCommandToExecute() {
+    project.hasProperty("command") ? "${command}" : defaultCommand
+}
+
+String determineShell() {
+    org.gradle.internal.os.OperatingSystem.current().windows ? "cmd /c " : "";
+}
+

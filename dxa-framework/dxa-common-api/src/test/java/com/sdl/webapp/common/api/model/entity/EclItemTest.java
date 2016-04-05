@@ -2,8 +2,7 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.sdl.dxa.DxaWebSpringInitialization;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
@@ -14,6 +13,8 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
+@ActiveProfiles("test")
 public class EclItemTest {
 
     @Autowired
@@ -145,6 +147,7 @@ public class EclItemTest {
     }
 
     @org.springframework.context.annotation.Configuration
+    @Profile("test")
     static class SpringContext {
         @Bean
         public ApplicationContextHolder applicationContextHolder() {
@@ -154,11 +157,7 @@ public class EclItemTest {
         @SuppressWarnings("Duplicates")
         @Bean
         public ObjectMapper objectMapper() {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.configure(SerializationFeature.INDENT_OUTPUT, false);
-            objectMapper.registerModule(new JodaModule());
-            objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-            return objectMapper;
+            return new DxaWebSpringInitialization().objectMapper();
         }
 
         @Bean

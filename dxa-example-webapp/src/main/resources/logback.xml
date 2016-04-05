@@ -152,6 +152,18 @@
             <pattern>${log.pattern}</pattern>
         </encoder>
     </appender>
+    <appender name="dxaStdout" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="com.sdl.webapp.common.impl.util.LogbackRepeatingToSingleFilter">
+            <loggerName>com.tridion.ambientdata.AmbientDataContext</loggerName>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.folder}/dxa.stdout.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>${log.history}</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${log.pattern}</pattern>
+        </encoder>
+    </appender>
 
     <!-- Loggers -->
     <logger name="com.tridion" level="${log.level}"/>
@@ -232,6 +244,7 @@
     </logger>
 
     <root level="${log.level}">
+        <appender-ref ref="dxaStdout"/>
         <appender-ref ref="STDOUT"/>
     </root>
 

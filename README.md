@@ -20,7 +20,7 @@ If you encounter problems, reach out to the community: http://tridion.stackexcha
 Sources
 -------
 
-The official release contains only the source code for the DXA example web site and the Core module.
+The official release contains only the source code for the DXA example web site, Maven archetype and the Core module.
 This repository contains the full source of the DXA framework to give you insight in how it is built and what is there available for you to extend.
 You are free to use these sources under the terms and conditions of the license mentioned below, however we suggest you only change the code provided in the distribution media and make use of the compiled DXA framework. 
 

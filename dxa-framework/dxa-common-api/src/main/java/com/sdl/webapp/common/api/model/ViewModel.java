@@ -18,6 +18,7 @@ public interface ViewModel {
 
     /**
      * <p>setMvcData.</p>
+     * @param mvcData mvcData
      */
     void setMvcData(MvcData mvcData);
 

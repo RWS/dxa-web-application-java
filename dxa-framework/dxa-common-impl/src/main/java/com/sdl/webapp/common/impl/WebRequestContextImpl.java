@@ -8,6 +8,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationNotFoundException;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.api.localization.LocalizationResolverException;
+import com.sdl.webapp.common.api.localization.UnknownLocalizationHandler;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.impl.contextengine.BrowserClaims;
 import com.sdl.webapp.common.impl.contextengine.DeviceClaims;
@@ -24,6 +25,7 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Stack;
 
 /**
@@ -44,6 +46,9 @@ public class WebRequestContextImpl implements WebRequestContext {
     @Autowired
     private HttpServletRequest servletRequest;
 
+    @Autowired
+    private HttpServletResponse servletResponse;
+
     @Getter
     @Autowired
     private ContextEngine contextEngine;
@@ -56,6 +61,9 @@ public class WebRequestContextImpl implements WebRequestContext {
 
     @Autowired
     private LocalizationResolver localizationResolver;
+
+    @Autowired(required = false)
+    private UnknownLocalizationHandler unknownLocalizationHandler;
 
     private SettableField<Boolean> include = new SettableField<>();
 
@@ -324,11 +332,16 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     private Localization localization() {
-        Localization localization;
+        Localization localization = null;
         try {
             localization = localizationResolver.getLocalization(getFullUrl());
         } catch (LocalizationResolverException e) {
-            throw new LocalizationNotFoundException("Localization not found", e);
+            if (unknownLocalizationHandler != null) {
+                localization = unknownLocalizationHandler.handleUnknown(e, servletRequest, servletResponse);
+            }
+            if (localization == null) {
+                throw new LocalizationNotFoundException("Localization not found", e);
+            }
         }
         if (log.isTraceEnabled()) {
             log.trace("Localization for {} is: [{}] {}", getFullUrl(), localization.getId(), localization.getPath());

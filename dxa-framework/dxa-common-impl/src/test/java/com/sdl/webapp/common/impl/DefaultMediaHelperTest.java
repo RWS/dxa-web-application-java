@@ -26,9 +26,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * Unit tests for {@link DefaultMediaHelper}.
- */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("test")
@@ -152,7 +149,7 @@ public class DefaultMediaHelperTest {
 
     @Configuration
     @Profile("test")
-    public static class AbstractMediaHelperTestConfig {
+    public static class MediaHelperTestConfig {
 
         @Bean
         public MediaHelper mediaHelper() {

@@ -23,7 +23,9 @@ public interface WebRequestContext {
      * Sets the base URL for the current request.
      *
      * @param baseUrl The base URL for the current request.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     void setBaseUrl(String baseUrl);
 
     /**
@@ -37,7 +39,9 @@ public interface WebRequestContext {
      * Sets the context path of the web application.
      *
      * @param contextPath The context path of the web application.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     void setContextPath(String contextPath);
 
     /**
@@ -52,7 +56,9 @@ public interface WebRequestContext {
      * Sets the request path of the current request.
      *
      * @param requestPath The request path of the current request.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     void setRequestPath(String requestPath);
 
     /**
@@ -62,18 +68,12 @@ public interface WebRequestContext {
      */
     String getFullUrl();
 
-    /**
-     * <p>isContextCookiePresent.</p>
-     *
-     * @return a boolean.
-     */
     boolean isContextCookiePresent();
 
     /**
-     * <p>setContextCookiePresent.</p>
-     *
-     * @param present a boolean.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     void setContextCookiePresent(boolean present);
 
     /**
@@ -84,10 +84,12 @@ public interface WebRequestContext {
     Localization getLocalization();
 
     /**
-     * Sets the localization of the current request. This is normally called by {@code LocalizationResolverInterceptor}.
+     * Sets the localization of the current request.
      *
      * @param localization a {@link com.sdl.webapp.common.api.localization.Localization} object.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     void setLocalization(Localization localization);
 
     /**
@@ -104,11 +106,6 @@ public interface WebRequestContext {
      */
     int getDisplayWidth();
 
-    /**
-     * <p>getScreenWidth.</p>
-     *
-     * @return a {@link com.sdl.webapp.common.api.ScreenWidth} object.
-     */
     ScreenWidth getScreenWidth();
 
     /**
@@ -148,91 +145,59 @@ public interface WebRequestContext {
      * Gets the contextengine of the current request.
      *
      * @return The contextengine of the current request.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     ContextEngine getContextEngine();
 
-    // TODO: Should we have setters in this interface??
-
     /**
-     * <p>isNoLocalization.</p>
-     *
-     * @return a boolean.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     boolean isNoLocalization();
 
     /**
-     * <p>setNoLocalization.</p>
-     *
-     * @param value a boolean.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     void setNoLocalization(boolean value);
 
-    /**
-     * <p>getPageId.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     String getPageId();
 
     /**
-     * <p>setPageId.</p>
-     *
-     * @param value a {@link java.lang.String} object.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     void setPageId(String value);
 
-    /**
-     * <p>isDeveloperMode.</p>
-     *
-     * @return a boolean.
-     */
     boolean isDeveloperMode();
 
     /**
-     * <p>setDeveloperMode.</p>
-     *
-     * @param value a boolean.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     void setDeveloperMode(boolean value);
 
-    /**
-     * <p>isInclude.</p>
-     *
-     * @return a boolean.
-     */
     boolean isInclude();
 
     /**
-     * <p>setInclude.</p>
-     *
-     * @param value a boolean.
+     * @deprecated since 1.5, will be removed in 2.0
      */
+    @Deprecated
     void setInclude(boolean value);
 
-    /**
-     * <p>getParentRegion.</p>
-     *
-     * @return a {@link com.sdl.webapp.common.api.model.RegionModel} object.
-     */
     RegionModel getParentRegion();
 
-    /**
-     * <p>pushParentRegion.</p>
-     *
-     * @param value a {@link com.sdl.webapp.common.api.model.RegionModel} object.
-     */
     void pushParentRegion(RegionModel value);
 
-    /**
-     * <p>popParentRegion.</p>
-     */
     void popParentRegion();
 
     /**
      * <p>Current servlet request.</p>
      *
      * @return a {@link javax.servlet.ServletRequest} object.
+     * @deprecated since 1.5, will be removed in 2.0
      */
-    //todo dxa2 remove in preference of setting separate fields for everything we really need
+    @Deprecated
     ServletRequest getServletRequest();
 }

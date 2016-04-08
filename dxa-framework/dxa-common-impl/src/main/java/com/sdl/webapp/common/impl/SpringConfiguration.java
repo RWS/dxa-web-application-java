@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.impl;
 
-import com.sdl.webapp.common.impl.interceptor.LocalizationResolverInterceptor;
 import com.sdl.webapp.common.impl.interceptor.StaticContentInterceptor;
 import com.sdl.webapp.common.impl.interceptor.ThreadLocalInterceptor;
 import org.springframework.context.annotation.Bean;
@@ -21,36 +20,15 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(localizationResolverInterceptor());
         registry.addInterceptor(staticContentInterceptor());
         registry.addInterceptor(threadLocalInterceptor());
     }
 
-    /**
-     * <p>localizationResolverInterceptor.</p>
-     *
-     * @return a {@link org.springframework.web.servlet.HandlerInterceptor} object.
-     */
-    @Bean
-    public HandlerInterceptor localizationResolverInterceptor() {
-        return new LocalizationResolverInterceptor();
-    }
-
-    /**
-     * <p>staticContentInterceptor.</p>
-     *
-     * @return a {@link org.springframework.web.servlet.HandlerInterceptor} object.
-     */
     @Bean
     public HandlerInterceptor staticContentInterceptor() {
         return new StaticContentInterceptor();
     }
 
-    /**
-     * <p>threadLocalInterceptor.</p>
-     *
-     * @return a {@link org.springframework.web.servlet.HandlerInterceptor} object.
-     */
     @Bean
     public HandlerInterceptor threadLocalInterceptor() {
         return new ThreadLocalInterceptor();

@@ -3,7 +3,8 @@ package com.sdl.webapp.common.impl.taglib.dxa;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
-import org.springframework.web.context.support.WebApplicationContextUtils;
+import com.sdl.webapp.common.controller.exception.NotFoundException;
+import lombok.Setter;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
@@ -11,52 +12,25 @@ import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.text.MessageFormat;
 
-/**
- * <p>ResourceTag class.</p>
- */
+import static com.sdl.webapp.common.util.ApplicationContextHolder.getContext;
+
+@Setter
 public class ResourceTag extends TagSupport {
 
     private String key;
+
     private String arg1;
+
     private String arg2;
-
-    /**
-     * <p>Setter for the field <code>key</code>.</p>
-     *
-     * @param key a {@link java.lang.String} object.
-     */
-    public void setKey(String key) {
-        this.key = key;
-    }
-
-    /**
-     * <p>Setter for the field <code>arg1</code>.</p>
-     *
-     * @param arg1 a {@link java.lang.String} object.
-     */
-    public void setArg1(String arg1) {
-        this.arg1 = arg1;
-    }
-
-    /**
-     * <p>Setter for the field <code>arg2</code>.</p>
-     *
-     * @param arg2 a {@link java.lang.String} object.
-     */
-    public void setArg2(String arg2) {
-        this.arg2 = arg2;
-    }
 
     /**
      * {@inheritDoc}
      */
     @Override
     public int doStartTag() throws JspException {
-        final Localization localization = WebApplicationContextUtils.getRequiredWebApplicationContext(
-                pageContext.getServletContext()).getBean(WebRequestContext.class).getLocalization();
+        final Localization localization = getContext().getBean(WebRequestContext.class).getLocalization();
         if (localization == null) {
-            throw new IllegalStateException("Localization is not available. Please make sure that the " +
-                    "LocalizationResolverInterceptor is registered.");
+            throw new NotFoundException("Localization is not available.");
         }
 
         String resource = localization.getResource(key);

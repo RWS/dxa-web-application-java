@@ -2,6 +2,7 @@ package com.sdl.webapp.common.impl;
 
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.ScreenWidth;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import org.junit.Test;
@@ -23,6 +24,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link DefaultMediaHelper}.
@@ -34,45 +36,46 @@ public class DefaultMediaHelperTest {
 
     @Autowired
     private MediaHelper mediaHelper;
+
     @Autowired
-    private WebRequestContextImpl webRequestContext;
+    private WebRequestContext webRequestContext;
 
     @Test
     public void testGetResponsiveWidthAbsoluteWidthFactor() {
-        webRequestContext.setPixelRatio(1.0);
+        when(webRequestContext.getPixelRatio()).thenReturn(1.0);
         assertThat(mediaHelper.getResponsiveWidth("50", 12), is(50));
 
-        webRequestContext.setPixelRatio(1.5);
+        when(webRequestContext.getPixelRatio()).thenReturn(1.5);
         assertThat(mediaHelper.getResponsiveWidth("50", 12), is(75));
     }
 
     @Test
     public void testGetResponsiveWidthExtraSmall() {
-        webRequestContext.setDisplayWidth(mediaHelper.getSmallScreenBreakpoint() - 1);
-        webRequestContext.setMaxMediaWidth(1024);
+        when(webRequestContext.getDisplayWidth()).thenReturn(mediaHelper.getSmallScreenBreakpoint() - 1);
+        when(webRequestContext.getMaxMediaWidth()).thenReturn(1024);
         assertThat(mediaHelper.getResponsiveWidth("100%", 3), is(1024));
     }
 
     @Test
     public void testGetResponsiveWidthSmall() {
-        webRequestContext.setDisplayWidth(mediaHelper.getMediumScreenBreakpoint() - 1);
-        webRequestContext.setMaxMediaWidth(1024);
+        when(webRequestContext.getDisplayWidth()).thenReturn(mediaHelper.getMediumScreenBreakpoint() - 1);
+        when(webRequestContext.getMaxMediaWidth()).thenReturn(1024);
         assertThat(mediaHelper.getResponsiveWidth("100%", 3), is(482));
     }
 
     @Test
     public void testGetResponsiveWidthMedium() {
-        webRequestContext.setDisplayWidth(mediaHelper.getLargeScreenBreakpoint() - 1);
-        webRequestContext.setMaxMediaWidth(1024);
+        when(webRequestContext.getDisplayWidth()).thenReturn(mediaHelper.getLargeScreenBreakpoint() - 1);
+        when(webRequestContext.getMaxMediaWidth()).thenReturn(1024);
         assertThat(mediaHelper.getResponsiveWidth("100%", 3), is(166));
     }
 
     @Test
     public void testGetResponsiveImageUrl() throws Exception {
         //given
-        webRequestContext.setDisplayWidth(1920);
-        webRequestContext.setPixelRatio(1.0);
-        webRequestContext.setMaxMediaWidth(2048);
+        when(webRequestContext.getDisplayWidth()).thenReturn(1920);
+        when(webRequestContext.getPixelRatio()).thenReturn(1.0);
+        when(webRequestContext.getMaxMediaWidth()).thenReturn(2048);
 
         //when
         //then
@@ -112,37 +115,37 @@ public class DefaultMediaHelperTest {
     @Test
     public void shouldReturnTheCorrectScreenSizeByBreakPoint() {
         //when
-        webRequestContext.setDisplayWidth(400);
+        when(webRequestContext.getDisplayWidth()).thenReturn(400);
         //then
         assertEquals(ScreenWidth.EXTRA_SMALL, mediaHelper.getScreenWidth());
 
         //when
-        webRequestContext.setDisplayWidth(480);
+        when(webRequestContext.getDisplayWidth()).thenReturn(480);
         //then
         assertEquals(ScreenWidth.SMALL, mediaHelper.getScreenWidth());
 
         //when
-        webRequestContext.setDisplayWidth(900);
+        when(webRequestContext.getDisplayWidth()).thenReturn(900);
         //then
         assertEquals(ScreenWidth.SMALL, mediaHelper.getScreenWidth());
 
         //when
-        webRequestContext.setDisplayWidth(940);
+        when(webRequestContext.getDisplayWidth()).thenReturn(940);
         //then
         assertEquals(ScreenWidth.MEDIUM, mediaHelper.getScreenWidth());
 
         //when
-        webRequestContext.setDisplayWidth(1100);
+        when(webRequestContext.getDisplayWidth()).thenReturn(1100);
         //then
         assertEquals(ScreenWidth.MEDIUM, mediaHelper.getScreenWidth());
 
         //when
-        webRequestContext.setDisplayWidth(1140);
+        when(webRequestContext.getDisplayWidth()).thenReturn(1140);
         //then
         assertEquals(ScreenWidth.LARGE, mediaHelper.getScreenWidth());
 
         //when
-        webRequestContext.setDisplayWidth(1280);
+        when(webRequestContext.getDisplayWidth()).thenReturn(1280);
         //then
         assertEquals(ScreenWidth.LARGE, mediaHelper.getScreenWidth());
     }
@@ -162,8 +165,8 @@ public class DefaultMediaHelperTest {
         }
 
         @Bean
-        public WebRequestContextImpl webRequestContext() {
-            return new WebRequestContextImpl();
+        public WebRequestContext webRequestContext() {
+            return mock(WebRequestContext.class);
         }
 
         @Bean

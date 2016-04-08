@@ -14,9 +14,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Component
-/**
- * <p>ContextEngineImpl class.</p>
- */
 @Scope(value = "request")
 public class ContextEngineImpl implements ContextEngine {
     private static final Logger LOG = LoggerFactory.getLogger(ContextEngineImpl.class);

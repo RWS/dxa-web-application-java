@@ -3,7 +3,7 @@ package com.sdl.webapp.common.impl.taglib.dxa;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.controller.exception.NotFoundException;
+import com.sdl.webapp.common.api.localization.LocalizationNotFoundException;
 import lombok.Setter;
 
 import javax.servlet.jsp.JspException;
@@ -30,7 +30,7 @@ public class ResourceTag extends TagSupport {
     public int doStartTag() throws JspException {
         final Localization localization = getContext().getBean(WebRequestContext.class).getLocalization();
         if (localization == null) {
-            throw new NotFoundException("Localization is not available.");
+            throw new LocalizationNotFoundException("Localization is not available.");
         }
 
         String resource = localization.getResource(key);

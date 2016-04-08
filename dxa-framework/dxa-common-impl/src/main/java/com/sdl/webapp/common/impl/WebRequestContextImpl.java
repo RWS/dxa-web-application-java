@@ -5,10 +5,10 @@ import com.sdl.webapp.common.api.ScreenWidth;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.localization.LocalizationNotFoundException;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.api.localization.LocalizationResolverException;
 import com.sdl.webapp.common.api.model.RegionModel;
-import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.impl.contextengine.BrowserClaims;
 import com.sdl.webapp.common.impl.contextengine.DeviceClaims;
 import lombok.Getter;
@@ -328,7 +328,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         try {
             localization = localizationResolver.getLocalization(getFullUrl());
         } catch (LocalizationResolverException e) {
-            throw new NotFoundException("Localization not found", e);
+            throw new LocalizationNotFoundException("Localization not found", e);
         }
         if (log.isTraceEnabled()) {
             log.trace("Localization for {} is: [{}] {}", getFullUrl(), localization.getId(), localization.getPath());

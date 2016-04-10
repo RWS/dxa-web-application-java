@@ -152,13 +152,10 @@ public final class PageBuilderImpl implements PageBuilder {
                 continue;
             }
 
-            if (!Objects.equals(predefined.getMvcData(), model.getMvcData())) {
-                LOG.warn("Region '{}' is defined with conflicting MVC data: [{}] and [{}]. Using the former.",
-                        model.getName(), predefined.getMvcData(), model.getMvcData());
-
-                for (EntityModel entityModel : model.getEntities()) {
-                    predefined.addEntity(entityModel);
-                }
+            // Merge regions
+            //
+            for (EntityModel entityModel : model.getEntities()) {
+                predefined.addEntity(entityModel);
             }
         }
 

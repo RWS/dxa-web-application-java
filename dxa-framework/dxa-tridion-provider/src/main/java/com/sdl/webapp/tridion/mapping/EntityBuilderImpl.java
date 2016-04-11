@@ -311,7 +311,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
                 String filename = (String) eclData.getContent().get("FileName").getValues().get(0);
                 String mime = (String) eclData.getContent().get("MimeType").getValues().get(0);
                 filename = filename.replace(".", "_" + component.getId().substring(4) + ".");
-                mediaItem.setUrl(localization.localizePath("/media/") + filename);
+                mediaItem.setUrl(localization.localizePath(localization.getMediaRoot()) + filename);
                 mediaItem.setFileName(filename);
                 mediaItem.setFileSize(multimedia.getSize());
                 mediaItem.setMimeType(mime);

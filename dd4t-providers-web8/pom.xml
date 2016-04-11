@@ -87,11 +87,17 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>com.sdl.web</groupId>
+            <artifactId>cd_preview_content_common</artifactId>
+<version>8.1.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_core</artifactId>
             <version>${tridion.web8.version}</version>
             <scope>provided</scope>
         </dependency>
+
 
         <!-- TODO: atm web 8 uses this for the old ConfigurationException, so we'll need this too-->
         <dependency>

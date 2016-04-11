@@ -19,12 +19,18 @@ package org.dd4t.databind;
  * Created by rai on 03/06/14.
  */
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.util.CompressionUtils;
+import org.dd4t.databind.serializers.json.BaseFieldMixIn;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -44,24 +50,26 @@ public class DD4TModelConverter {
 
 
 //		System.out.println(testXml + xml2 + xml3);
-//		String completeXml = FileUtils.readFileToString(new File("dd4t-test/target/classes/xml-without-java-xslt.xml"));
+		String completeXml = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("xml-without-java-xslt.xml").toURI()));
 //
-		String homepage = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("test.json").toURI()));
+//		String homepage = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("test.json").toURI()));
 		//System.out.println(completeXml);
-		//deserializeXmlJackson(completeXml);
-		deserializeJson(homepage);
+		deserializeXmlJackson(completeXml);
+//		deserializeJson(homepage);
 
 
 	}
 
-//	private static void deserializeXmlJackson (final String completeXml) throws IOException {
-//		JacksonXmlModule module = new JacksonXmlModule();
-//		ObjectMapper mapper = new XmlMapper(module);
+	private static void deserializeXmlJackson (final String completeXml) throws IOException {
+		JacksonXmlModule module = new JacksonXmlModule();
+		ObjectMapper mapper = new XmlMapper(module);
 //		mapper.registerModule(configureXmlMapper());
-//		PageImpl page = mapper.readValue(completeXml, PageImpl.class);
-//
-//		System.out.println(page.getTitle());
-//	}
+
+		mapper.registerModule(new AfterburnerModule());
+		mapper.addMixIn(Field.class, BaseFieldMixIn.class);
+		PageImpl page = mapper.readValue(completeXml, PageImpl.class);
+		System.out.println(page.getTitle());
+	}
 
 //	protected static SimpleModule configureXmlMapper () {
 //		// TODO: to concrete basefield and customizable CT impls and into DataBinder

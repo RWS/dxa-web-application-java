@@ -462,6 +462,7 @@
             </properties>
             <modules>
                 <module>dd4t-providers</module>
+                <module>dd4t-providers-web8</module>
             </modules>
             <build>
                 <plugins>

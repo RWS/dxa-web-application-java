@@ -111,6 +111,12 @@ public class DefaultLinkResolver implements LinkResolver {
         if (contextPath != null && contextPath.length() > 0) {
             resolvedUrl = contextPath + resolvedUrl;
         }
+
+
+
+        // TODO BUG
+
+
         return resolvedUrl;
     }
 

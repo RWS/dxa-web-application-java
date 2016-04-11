@@ -148,6 +148,8 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
                     try {
                         page = deserialize(pageSource, PageImpl.class);
+                        // TODO: replace DCPs here with the real DCPs?
+
                         page.setLastPublishedDate(resultItem.getLastPublishDate());
                         page.setRevisionDate(resultItem.getRevisionDate());
                         final TCMURI tcmUri = new TCMURI(page.getId());

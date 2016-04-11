@@ -31,7 +31,6 @@ import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Components presentation rendering tag.
@@ -106,7 +105,7 @@ public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
     }
 
     public void setSchema (final String schema) {
-        this.schema = schema.toLowerCase(Locale.getDefault());
+        this.schema = schema;
     }
 
     public String getRootElement () {
@@ -122,7 +121,7 @@ public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
     }
 
     public void setView (final String view) {
-        this.view = view.toLowerCase(Locale.getDefault());
+        this.view = view;
     }
 
     public Boolean isAddAnchor () {

@@ -1,4 +1,4 @@
-package org.dd4t.providers;
+package org.dd4t.providers.impl;
 
 import com.tridion.meta.PageMeta;
 import com.tridion.meta.PublicationMeta;
@@ -6,6 +6,8 @@ import org.dd4t.contentmodel.PublicationDescriptor;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.util.Constants;
+import org.dd4t.providers.BaseBrokerProvider;
+import org.dd4t.providers.PublicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

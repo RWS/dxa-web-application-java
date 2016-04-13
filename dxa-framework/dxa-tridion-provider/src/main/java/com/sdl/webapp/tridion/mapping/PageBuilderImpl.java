@@ -143,7 +143,8 @@ public final class PageBuilderImpl implements PageBuilder {
         }
     }
 
-    private static RegionModelSet mergeAllTopLevelRegions(@NonNull RegionModelSet predefinedRegions, @NonNull RegionModelSet regions) {
+    static RegionModelSet mergeAllTopLevelRegions(@NonNull RegionModelSet predefinedRegions, @NonNull RegionModelSet regions) {
+        //todo dxa2 do not change incoming parameter, create a copy instead
         for (RegionModel model : regions) {
             RegionModel predefined = predefinedRegions.get(model.getName());
 
@@ -152,13 +153,15 @@ public final class PageBuilderImpl implements PageBuilder {
                 continue;
             }
 
+            // Region already exists in page model, so MVC data should match
             if (!Objects.equals(predefined.getMvcData(), model.getMvcData())) {
                 LOG.warn("Region '{}' is defined with conflicting MVC data: [{}] and [{}]. Using the former.",
                         model.getName(), predefined.getMvcData(), model.getMvcData());
+            }
 
-                for (EntityModel entityModel : model.getEntities()) {
-                    predefined.addEntity(entityModel);
-                }
+            //merge entities in
+            for (EntityModel entityModel : model.getEntities()) {
+                predefined.addEntity(entityModel);
             }
         }
 

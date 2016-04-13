@@ -10,7 +10,7 @@
         <version>1.0.0</version>
     </parent>
 
-    <version>1.4.0</version>
+    <version>1.4.1-SNAPSHOT</version>
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-example-webapp</artifactId>
     <packaging>war</packaging>
@@ -46,7 +46,7 @@
 
     <properties>
         <dxa.version>${project.version}</dxa.version>
-        <dxa-bom.version>1.4.0</dxa-bom.version>
+        <dxa-bom.version>1.4.1-SNAPSHOT</dxa-bom.version>
     </properties>
 
     <repositories>

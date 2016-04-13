@@ -20,7 +20,6 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
-import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.model.page.PageModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
@@ -67,23 +66,33 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  * <p>PageBuilderImpl class.</p>
  */
 public final class PageBuilderImpl implements PageBuilder {
+
     private static final Logger LOG = LoggerFactory.getLogger(PageBuilderImpl.class);
 
     private static final String IMAGE_FIELD_NAME = "image";
+
     private static final String REGION_FOR_PAGE_TITLE_COMPONENT = "Main";
+
     private static final String STANDARD_METADATA_FIELD_NAME = "standardMeta";
+
     private static final String STANDARD_METADATA_TITLE_FIELD_NAME = "name";
+
     private static final String STANDARD_METADATA_DESCRIPTION_FIELD_NAME = "description";
+
     private static final String COMPONENT_PAGE_TITLE_FIELD_NAME = "headline";
-    private static final String REGIONS_METADATA_FIELD_NAME = "regions";
-    private static final String REGIONS_METADATA_FIELD_NAME_VIEW = "view";
-    private static final String REGIONS_METADATA_FIELD_NAME_NAME = "name";
+
     private static final String DEFAULT_AREA_NAME = "Core";
+
     private static final String PAGE_CONTROLLER_NAME = "Page";
+
     private static final String PAGE_ACTION_NAME = "Page";
+
     private static final String REGION_CONTROLLER_NAME = "Region";
+
     private static final String REGION_ACTION_NAME = "Region";
+
     private static final String DEFAULT_REGION_NAME = "Main";
+
     private static final Pattern REGION_VIEW_NAME_PATTERN = Pattern.compile(".*\\[(.*)\\]");
 
     @Autowired
@@ -359,46 +368,51 @@ public final class PageBuilderImpl implements PageBuilder {
         return entity;
     }
 
-    private RegionModelSet createPredefinedRegions(PageTemplate pageTemplate) {
+    RegionModelSet createPredefinedRegions(PageTemplate pageTemplate) {
 
         RegionModelSet regions = new RegionModelSetImpl();
 
         final Map<String, Field> pageTemplateMeta = pageTemplate.getMetadata();
 
         // TODO: "region" instead of "regions"
-        if (pageTemplateMeta == null || !pageTemplateMeta.containsKey(REGIONS_METADATA_FIELD_NAME)) {
+        if (pageTemplateMeta == null || !pageTemplateMeta.containsKey("regions")) {
             LOG.debug("No Region metadata defined for Page Template '{}'.", pageTemplate.getId());
             return regions;
         }
 
-        BaseField regionsMetaField = (BaseField) pageTemplateMeta.get(REGIONS_METADATA_FIELD_NAME);
-        if (regionsMetaField != null && !regionsMetaField.getEmbeddedValues().isEmpty()) {
-            for (FieldSet regionField : regionsMetaField.getEmbeddedValues()) {
-                Map<String, Field> region = regionField.getContent();
-                if (!region.containsKey(REGIONS_METADATA_FIELD_NAME_VIEW)) {
-                    LOG.warn("Region metadata without 'view' field encountered in metadata of Page Template '{}'.", pageTemplate.getId());
-                    continue;
-                }
+        BaseField regionsMetaField = (BaseField) pageTemplateMeta.get("regions");
+        if (regionsMetaField == null || regionsMetaField.getEmbeddedValues() == null) {
+            LOG.error("Regions meta {} exist in a page template {}, but it is null!", regionsMetaField, pageTemplate);
+            return regions;
+        }
 
-                String viewName = FieldUtils.getStringValue(region, REGIONS_METADATA_FIELD_NAME_VIEW);
-                String regionName = null;
-                if (region.containsKey(REGIONS_METADATA_FIELD_NAME_NAME)) {
-                    regionName = FieldUtils.getStringValue(region, REGIONS_METADATA_FIELD_NAME_NAME);
-                }
+        for (FieldSet regionField : regionsMetaField.getEmbeddedValues()) {
+            Map<String, Field> region = regionField.getContent();
+            if (!region.containsKey("view")) {
+                LOG.warn("Region metadata without 'view' field encountered in metadata of Page Template '{}'.", pageTemplate.getId());
+                continue;
+            }
+            String viewName = FieldUtils.getStringValue(region, "view");
 
-                MvcDataImpl.MvcDataImplBuilder mvcDataBuilder = MvcDataCreator.creator()
-                        .fromQualifiedName(viewName)
-                        .defaults(DefaultsMvcData.CORE_REGION)
-                        .builder()
-                        .regionName(isNullOrEmpty(regionName) ? viewName : regionName);
+            String regionName = FieldUtils.getStringValue(region, "name");
+            if (isNullOrEmpty(regionName)) {
+                regionName = viewName;
+            }
 
-                try {
-                    regions.add(createRegionModel(mvcDataBuilder.build()));
-                } catch (IllegalAccessException | InstantiationException | DxaException | InvocationTargetException | NoSuchMethodException e) {
-                    LOG.error("Error creating region for view '{}'.", viewName, e);
-                }
+            MvcData mvcData = MvcDataCreator.creator()
+                    .fromQualifiedName(viewName)
+                    .defaults(DefaultsMvcData.CORE_REGION)
+                    .builder()
+                    .regionName(regionName).build();
+
+            try {
+                RegionModel regionModel = createRegionModel(mvcData);
+                regions.add(regionModel);
+            } catch (IllegalAccessException | InstantiationException | DxaException | InvocationTargetException | NoSuchMethodException e) {
+                LOG.error("Error creating region for view '{}'.", viewName, e);
             }
         }
+
         return regions;
     }
 
@@ -592,6 +606,7 @@ public final class PageBuilderImpl implements PageBuilder {
     }
 
     protected class DD4TRegionBuilderCallback implements RegionBuilderCallback {
+
         @Override
         public EntityModel buildEntity(Object source, Localization localization) throws ContentProviderException {
 

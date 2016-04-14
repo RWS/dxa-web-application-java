@@ -11,11 +11,11 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,12 +23,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 @Component
-/**
- * <p>DefaultRegionBuilder class.</p>
- */
+@Slf4j
+//todo dxa2 move to appropriate place
 public class DefaultRegionBuilder implements RegionBuilder {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultRegionBuilder.class);
 
     @Autowired
     private ViewModelRegistry viewModelRegistry;
@@ -48,32 +45,53 @@ public class DefaultRegionBuilder implements RegionBuilder {
             final EntityModel entity = callback.buildEntity(source, localization);
 
             String regionName = callback.getRegionName(source);
-            if (!Strings.isNullOrEmpty(regionName)) {
-                RegionModel region = regions.get(regionName);
-                MvcData regionMvcData = callback.getRegionMvcData(source);
-                if (region == null) {
-                    LOG.debug("Creating region: {}", regionName);
-                    try {
-                        Class regionModelType = viewModelRegistry.getViewModelType(regionMvcData);
-                        try {
-                            region = (RegionModel) regionModelType.getDeclaredConstructor(String.class).newInstance(regionName);
-                        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                            throw new ContentProviderException(e);
-                        }
-                    } catch (DxaException e) {
-                        throw new ContentProviderException(e);
-                    }
+            if (Strings.isNullOrEmpty(regionName)) {
+                continue;
+            }
 
-                    region.setMvcData(regionMvcData);
+            RegionModel region = regions.containsName(regionName) ?
+                    regions.get(regionName) : createRegionModel(page, callback, source, regionName);
 
-                    regions.add(region);
-                }
-                if (conditionalEntityEvaluator == null || conditionalEntityEvaluator.includeEntity(entity)) {
-                    region.addEntity(entity);
-                }
+            if (region == null) {
+                continue;
+            }
 
+            if (regions.add(region)) {
+                log.debug("Added new region {} to a model set", region);
+            }
+
+            if (conditionalEntityEvaluator == null || conditionalEntityEvaluator.includeEntity(entity)) {
+                region.addEntity(entity);
             }
         }
         return regions;
+    }
+
+    private RegionModel createRegionModel(PageModel page, RegionBuilderCallback callback, Object source, String regionName) throws ContentProviderException {
+        log.debug("Creating region: {}", regionName);
+        try {
+            MvcData regionMvcData = callback.getRegionMvcData(source);
+            Class<? extends ViewModel> regionModelType = viewModelRegistry.getViewModelType(regionMvcData);
+
+            if (regionModelType == null) {
+                log.warn("Could not find a model type for region {} with MvcData {}", regionName, regionMvcData);
+                if (page.getRegions() != null && page.getRegions().containsName(regionName)) {
+                    RegionModel predefined = page.getRegions().get(regionName);
+                    log.debug("Try to use a predefined region {}", predefined);
+                    regionModelType = viewModelRegistry.getViewModelType(predefined.getMvcData());
+                }
+            }
+
+            if (regionModelType == null) {
+                log.error("Could not find a model type for region {} even using a predefined region", regionName);
+                return null;
+            }
+
+            RegionModel region = (RegionModel) regionModelType.getDeclaredConstructor(String.class).newInstance(regionName);
+            region.setMvcData(regionMvcData);
+            return region;
+        } catch (DxaException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new ContentProviderException(e);
+        }
     }
 }

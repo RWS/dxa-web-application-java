@@ -62,9 +62,6 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 @Component
-/**
- * <p>PageBuilderImpl class.</p>
- */
 public final class PageBuilderImpl implements PageBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageBuilderImpl.class);
@@ -257,10 +254,12 @@ public final class PageBuilderImpl implements PageBuilder {
             throw new ContentProviderException(e);
         }
 
-        final RegionModelSet regions = mergeAllTopLevelRegions(this.createPredefinedRegions(genericPage.getPageTemplate()),
-                this.regionBuilder.buildRegions(page, genericPage.getComponentPresentations(),
-                        new DD4TRegionBuilderCallback(), localization));
+        RegionModelSet predefinedRegions = createPredefinedRegions(genericPage.getPageTemplate());
+        page.setRegions(predefinedRegions);
 
+        RegionModelSet cpRegions = regionBuilder.buildRegions(page, genericPage.getComponentPresentations(), new DD4TRegionBuilderCallback(), localization);
+
+        final RegionModelSet regions = mergeAllTopLevelRegions(predefinedRegions, cpRegions);
 
         String localizationPath = localization.getPath();
         if (!localizationPath.endsWith("/")) {
@@ -605,17 +604,16 @@ public final class PageBuilderImpl implements PageBuilder {
         return metadata;
     }
 
-    protected class DD4TRegionBuilderCallback implements RegionBuilderCallback {
+    private class DD4TRegionBuilderCallback implements RegionBuilderCallback {
 
         @Override
         public EntityModel buildEntity(Object source, Localization localization) throws ContentProviderException {
-
             ComponentPresentation componentPresentation = (ComponentPresentation) source;
             if (componentPresentation.isDynamic()) {
                 try {
-
                     // Fetch the dynamic component presentation and replace the dummy static one
-                    componentPresentation = dd4tComponentPresentationFactory.getComponentPresentation(componentPresentation.getComponent().getId(), componentPresentation.getComponentTemplate().getId());
+                    componentPresentation = dd4tComponentPresentationFactory.getComponentPresentation(
+                            componentPresentation.getComponent().getId(), componentPresentation.getComponentTemplate().getId());
                 } catch (Exception e) {
                     throw new ContentProviderException("Could not fetch dynamic component presentation.", e);
                 }

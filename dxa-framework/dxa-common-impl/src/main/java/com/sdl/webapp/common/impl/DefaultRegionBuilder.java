@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @Slf4j
@@ -49,11 +50,16 @@ public class DefaultRegionBuilder implements RegionBuilder {
                 continue;
             }
 
-            RegionModel region = regions.containsName(regionName) ?
-                    regions.get(regionName) : createRegionModel(page, callback, source, regionName);
+            MvcData currentRegionMvcData = callback.getRegionMvcData(source);
+            RegionModel region = regions.containsName(regionName) ? regions.get(regionName) : createRegionModel(currentRegionMvcData, page, regionName);
 
             if (region == null) {
                 continue;
+            }
+
+            if (!Objects.equals(region.getMvcData(), currentRegionMvcData)) {
+                log.warn("Region '{}' is defined with conflicting MVC data: [{}] and [{}]. Using the former.",
+                        regionName, region.getMvcData(), currentRegionMvcData);
             }
 
             if (regions.add(region)) {
@@ -67,10 +73,10 @@ public class DefaultRegionBuilder implements RegionBuilder {
         return regions;
     }
 
-    private RegionModel createRegionModel(PageModel page, RegionBuilderCallback callback, Object source, String regionName) throws ContentProviderException {
+    private RegionModel createRegionModel(MvcData regionMvcData, PageModel page, String regionName) throws ContentProviderException {
         log.debug("Creating region: {}", regionName);
         try {
-            MvcData regionMvcData = callback.getRegionMvcData(source);
+
             Class<? extends ViewModel> regionModelType = viewModelRegistry.getViewModelType(regionMvcData);
 
             if (regionModelType == null) {

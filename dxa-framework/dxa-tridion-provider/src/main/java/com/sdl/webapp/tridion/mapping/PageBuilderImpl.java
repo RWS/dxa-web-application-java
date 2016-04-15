@@ -160,10 +160,7 @@ public final class PageBuilderImpl implements PageBuilder {
             }
 
             // Region already exists in page model, so MVC data should match
-            if (!Objects.equals(predefined.getMvcData(), model.getMvcData())) {
-                LOG.warn("Region '{}' is defined with conflicting MVC data: [{}] and [{}]. Using the former.",
-                        model.getName(), predefined.getMvcData(), model.getMvcData());
-            }
+            assertRegionWithNotConflictingMvcData(model.getName(), predefined.getMvcData(), model.getMvcData());
 
             //merge entities in
             for (EntityModel entityModel : model.getEntities()) {
@@ -172,6 +169,12 @@ public final class PageBuilderImpl implements PageBuilder {
         }
 
         return predefinedRegions;
+    }
+
+    private static void assertRegionWithNotConflictingMvcData(String name, MvcData first, MvcData second) {
+        if (!Objects.equals(first, second)) {
+            LOG.warn("Region '{}' is defined with conflicting MVC data: [{}] and [{}]. Using the former.", name, first, second);
+        }
     }
 
     private static String extract(Map<String, Field> metaMap, String key) {
@@ -406,7 +409,10 @@ public final class PageBuilderImpl implements PageBuilder {
 
             try {
                 RegionModel regionModel = createRegionModel(mvcData);
-                regions.add(regionModel);
+                if (!regions.add(regionModel)) {
+                    // Region already exists in page model, so MVC data should match
+                    assertRegionWithNotConflictingMvcData(regionName, regions.get(regionName).getMvcData(), mvcData);
+                }
             } catch (IllegalAccessException | InstantiationException | DxaException | InvocationTargetException | NoSuchMethodException e) {
                 LOG.error("Error creating region for view '{}'.", viewName, e);
             }

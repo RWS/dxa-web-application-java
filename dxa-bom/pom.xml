@@ -139,6 +139,8 @@
         <jdom.version>1.0</jdom.version>
         <xalan-version>2.7.2</xalan-version>
         <!--2013SP1: <xalan-version>2.7.1</xalan-version>-->
+
+        <dozer.version>5.5.1</dozer.version>
     </properties>
 
     <dependencyManagement>
@@ -372,6 +374,12 @@
                         <artifactId>*</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>net.sf.dozer</groupId>
+                <artifactId>dozer</artifactId>
+                <version>${dozer.version}</version>
             </dependency>
 
             <dependency>

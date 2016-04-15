@@ -11,7 +11,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-bom-2013sp1</artifactId>
-    <version>1.4.0</version>
+    <version>1.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>DXA - BOM for 2013SP1</name>
@@ -44,7 +44,7 @@
     </developers>
 
     <properties>
-        <dxa-bom.version>1.4.0</dxa-bom.version>
+        <dxa-bom.version>1.4.1-SNAPSHOT</dxa-bom.version>
         <cd.version>7.1.0</cd.version>
         <cwd.version>7.1.2</cwd.version>
         <smarttarget.version>2014sp1</smarttarget.version>

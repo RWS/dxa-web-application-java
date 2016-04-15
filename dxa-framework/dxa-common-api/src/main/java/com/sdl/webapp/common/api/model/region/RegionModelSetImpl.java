@@ -4,21 +4,23 @@ import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.AbstractSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 /**
  * <p>RegionModelSet implementation.</p>
  * <p>Keeps the insertion order.</p>
  */
+@SuppressWarnings("DefaultAnnotationParam")
 @EqualsAndHashCode(callSuper = false)
 @ToString
+@Slf4j
 public class RegionModelSetImpl extends AbstractSet<RegionModel> implements RegionModelSet {
 
     private Map<String, RegionModel> modelMapByName = new LinkedHashMap<>();
@@ -43,16 +45,19 @@ public class RegionModelSetImpl extends AbstractSet<RegionModel> implements Regi
     /** {@inheritDoc} */
     @Override
     public boolean add(RegionModel regionModel) {
-        if (!Objects.equals(modelMapByName.put(regionModel.getName(), regionModel), regionModel)) {
-            Set<RegionModel> modelSet = modelMapByClass.get(regionModel.getClass());
-            if (modelSet == null) {
-                modelSet = new LinkedHashSet<>();
-                modelMapByClass.put(regionModel.getClass(), modelSet);
-            }
-            modelSet.add(regionModel);
-            return true;
+        if (modelMapByName.containsKey(regionModel.getName())) {
+            log.trace("RegionModelSet already contains region with a key {}, skipping!", regionModel.getName());
+            return false;
         }
-        return false;
+
+        modelMapByName.put(regionModel.getName(), regionModel);
+        Set<RegionModel> modelSet = modelMapByClass.get(regionModel.getClass());
+        if (modelSet == null) {
+            modelSet = new LinkedHashSet<>();
+            modelMapByClass.put(regionModel.getClass(), modelSet);
+        }
+        modelSet.add(regionModel);
+        return true;
     }
 
     /** {@inheritDoc} */

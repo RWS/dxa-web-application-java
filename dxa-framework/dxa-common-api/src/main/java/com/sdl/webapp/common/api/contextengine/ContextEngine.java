@@ -1,9 +1,7 @@
 package com.sdl.webapp.common.api.contextengine;
 
-/**
- * <p>ContextEngine interface.</p>
- */
 public interface ContextEngine {
+
     /**
      * <p>getClaims.</p>
      *

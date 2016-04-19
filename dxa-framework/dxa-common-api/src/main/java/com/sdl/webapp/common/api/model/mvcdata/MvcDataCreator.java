@@ -73,7 +73,8 @@ public final class MvcDataCreator {
      * @return new instance of creator
      */
     public MvcDataCreator fromQualifiedName(String qualifiedViewName) {
-        String[] parts = qualifiedViewName == null || qualifiedViewName.isEmpty() ? null : qualifiedViewName.split(":");
+        String[] parts = qualifiedViewName == null || qualifiedViewName.isEmpty() ? null :
+                qualifiedViewName.replace(' ', '-').split(":");
 
         if (parts == null || parts.length < 1 || parts.length > 3) {
             throw new IllegalArgumentException(

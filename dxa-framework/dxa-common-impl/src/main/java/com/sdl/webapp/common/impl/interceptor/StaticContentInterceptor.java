@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.localization.LocalizationNotFoundException;
 import com.sdl.webapp.common.util.MimeUtils;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.Hours;
@@ -32,11 +33,8 @@ import java.net.URL;
  * Static content interceptor. This interceptor checks if the request is for static content, and if it is, it sends
  * an appropriate response to the client; in that case the request will not be processed further by Spring's
  * {@link org.springframework.web.servlet.DispatcherServlet} (it will not reach any of the controllers).
- * <p>
- * This should be configured to be called after the {@link com.sdl.webapp.common.impl.interceptor.LocalizationResolverInterceptor} for requests that are
- * being handled by the Spring {@link org.springframework.web.servlet.DispatcherServlet}.
- * </p>
  */
+//todo dxa2 remove in preference of simple controller
 public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);
     private static final String CACHE_CONTROL_WEEK = "public, max-age=" + Weeks.ONE.toStandardSeconds().getSeconds();
@@ -100,8 +98,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
         final Localization localization = webRequestContext.getLocalization();
         if (localization == null) {
-            throw new IllegalStateException("Localization is not available. Please make sure that the " +
-                    "LocalizationResolverInterceptor is registered and executed before the StaticContentInterceptor.");
+            throw new LocalizationNotFoundException("Localization is not available.");
         }
         if (localization.isStaticContent(requestPath)) {
             LOG.debug("Handling static content: {}", requestPath);

@@ -75,6 +75,8 @@
         <junit.version>4.11</junit.version>
         <resteasy.version>3.0.8.Final</resteasy.version>
 
+
+        <scala.library.version>2.10.5</scala.library.version>
         <sdl.odata.client.version>2.0.5</sdl.odata.client.version>
 
         <!-- Versions which do differ for each Tridion version -->

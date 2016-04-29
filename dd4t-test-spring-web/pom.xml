@@ -225,13 +225,13 @@
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_core</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
+                    <version>8.1.1-1005</version>
                 </dependency>
 
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_model</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
+                    <version>8.1.1-1005</version>
                 </dependency>
 
                 <dependency>
@@ -430,13 +430,13 @@
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>web-ambient-api</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
+                    <version>8.1.1-1005</version>
                 </dependency>
 
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>web-oauth-common</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
+                    <version>8.1.1-1005</version>
                 </dependency>
 
 

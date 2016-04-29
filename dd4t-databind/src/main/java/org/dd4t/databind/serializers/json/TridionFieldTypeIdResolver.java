@@ -41,7 +41,7 @@ import java.util.Map;
 public class TridionFieldTypeIdResolver implements TypeIdResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(TridionFieldTypeIdResolver.class);
-    private static final EnumMap<FieldType, String> FIELD_TYPES = new EnumMap<>(FieldType.class);
+    private static final Map<FieldType, String> FIELD_TYPES = new EnumMap<>(FieldType.class);
     private static final String NAMESPACE_PREFIX = "org.dd4t.contentmodel.impl.";
     private static final String TEXT_FIELD = "TextField";
     private static final String COMPONENT_LINK_FIELD = "ComponentLinkField";

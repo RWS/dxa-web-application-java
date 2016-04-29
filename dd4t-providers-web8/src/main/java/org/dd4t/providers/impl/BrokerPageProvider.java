@@ -154,7 +154,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 //            LOG.debug("Could not find page metas: {}", clientQuery);
 //            return new ArrayList();
 //        }
-        // TODO for web 8 REST. The oDataClient don't seem to be able to handle this yet.
+        // TODO for web 8 REST. The oDataClient doesn't seem to be able to handle this yet.
         throw new NotImplementedException();
 
 //        try {

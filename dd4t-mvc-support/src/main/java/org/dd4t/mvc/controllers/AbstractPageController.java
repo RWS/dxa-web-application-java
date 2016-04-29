@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.annotation.Resource;
 import javax.servlet.DispatcherType;
@@ -54,6 +56,15 @@ public abstract class AbstractPageController extends AbstractBaseController {
     protected PageFactoryImpl pageFactory;
 
     private String pageViewPath = "";
+
+    /**
+     * Required for XPM - this does not have to return any particular content, just a valid response
+     */
+    @RequestMapping (value = {"/se_blank.html"}, method = {RequestMethod.GET, RequestMethod.HEAD, RequestMethod.POST})
+    protected String seBlank(final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+        response.setStatus(200);
+        return null;
+    }
 
     /**
      * All page requests are handled by this method. The page meta XML is

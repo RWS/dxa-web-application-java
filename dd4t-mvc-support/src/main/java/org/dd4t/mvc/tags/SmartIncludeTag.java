@@ -89,7 +89,7 @@ public class SmartIncludeTag extends TagSupport {
                 testPath = testPath.substring(0, testPath.lastIndexOf("/"));
             }
 
-            if (testPath.equals("/") && !includeUrl.startsWith("/")) {
+            if ("/".equals(testPath) && !includeUrl.startsWith("/")) {
                 includeUrl = "/" + includeUrl;
             }
 

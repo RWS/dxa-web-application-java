@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Item;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ import java.util.Map;
  *
  * @author Quirijn Slings, Raimond Kempees
  */
-public abstract class BaseItem implements Item {
+public abstract class BaseItem implements Item, Serializable {
 
     @JsonProperty ("Id")
     private String id;

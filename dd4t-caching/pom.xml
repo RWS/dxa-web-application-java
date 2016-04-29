@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dd4t-caching</artifactId>
+    <name>${project.groupId}:${project.artifactId}</name>
     <!-- TODO: document this major change-->
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

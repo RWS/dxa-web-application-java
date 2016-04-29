@@ -56,6 +56,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
     protected int version;
 
     @JsonProperty ("MetadataFields")
+    // TODO: for XML add a separate MixIn
     @JsonDeserialize (contentAs = BaseField.class)
     protected Map<String, Field> metadata;
 

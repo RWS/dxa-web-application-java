@@ -12,7 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * dd4t-parent
+ * AbstractPublicationProvider
+ *
+ * This class duplicates quite a bit of code, but there's no way around it
+ * in terms of dependency differences between 2013 SP 1 and Web 8
  *
  * @author R. Kempees
  */

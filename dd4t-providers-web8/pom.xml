@@ -48,16 +48,19 @@
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-core</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-caching</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-providers-common</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- This is for the REST client api -->
@@ -117,21 +120,21 @@
             <version>${tridion.web8.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>com.sdl</groupId>
             <artifactId>odata_client</artifactId>
             <version>${sdl.odata.client.version}</version>
             <scope>provided</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

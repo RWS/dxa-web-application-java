@@ -88,7 +88,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 
             // TODO: binary.setMetadata(binaryMeta.getCustomMeta().getChildren());
             final BinaryDataImpl binaryDataBytes = new BinaryDataImpl();
-            binaryDataBytes.setBytes(getBinaryContentById(binaryUri.getPublicationId(), binaryUri.getItemId()));
+            binaryDataBytes.setBytes(getBinaryContentById(binaryUri.getItemId(),binaryUri.getPublicationId()));
             binary.setBinaryData(binaryDataBytes);
             return binary;
         }
@@ -108,7 +108,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 
         final BinaryData binaryData = BINARY_CONTENT_RETRIEVER.getBinary(publication,id);
 
-        if (binaryData == null || binaryData.getDataSize() > 0 ) {
+        if (binaryData == null || binaryData.getDataSize() == 0 ) {
             throw new ItemNotFoundException("Unable to find binary content by id: tcm:" + publication+"-"+id);
         }
 

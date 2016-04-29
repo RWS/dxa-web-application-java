@@ -393,7 +393,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         Double pixelRatio = contextEngine.getClaims(DeviceClaims.class).getPixelRatio();
         if (pixelRatio == null) {
             pixelRatio = 1.0;
-            log.debug("Pixel ratio ADF claim not available - using default value: {}", this.pixelRatio);
+            log.debug("Pixel ratio ADF claim not available - using default value: {}", pixelRatio);
         }
         return pixelRatio;
     }

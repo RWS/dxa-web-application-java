@@ -12,6 +12,7 @@ import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.formats.DataFormatter;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.localization.LocalizationNotFoundException;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -28,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -36,6 +38,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
@@ -61,6 +64,7 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  * Main controller. This handles requests that come from the client.
  */
 @Controller
+//todo dxa2 create error controller for error handling
 public class PageController extends BaseController {
 
     // TODO: Move this to common-impl or core-module
@@ -68,15 +72,24 @@ public class PageController extends BaseController {
     private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
+
     private final ContentProvider contentProvider;
+
     private final LinkResolver linkResolver;
+
     private final MediaHelper mediaHelper;
+
     private final WebRequestContext webRequestContext;
+
     private final Markup markup;
+
     private final ViewResolver viewResolver;
+
     private final DataFormatter dataFormatters;
+
     @Value("#{environment.getProperty('AllowJsonResponse', 'false')}")
     private boolean allowJsonResponse;
+
     @Autowired
     private NavigationProvider navigationProvider;
 
@@ -302,6 +315,14 @@ public class PageController extends BaseController {
 
         response.setStatus(SC_NOT_FOUND);
         return this.viewResolver.resolveView(pageModel.getMvcData(), "Page", request);
+    }
+
+
+    @ResponseBody
+    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Failed to retrieve localization for current request")
+    @ExceptionHandler(LocalizationNotFoundException.class)
+    public void handleLocalizationNotFoundException(HttpServletRequest request) {
+        LOG.error("Failed to retrieve localization for request url = {}, uri = {}", request.getRequestURL(), request.getRequestURI());
     }
 
     /**

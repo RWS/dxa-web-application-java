@@ -193,12 +193,12 @@
         <dependency>
             <groupId>com.sdl.web</groupId>
             <artifactId>discovery-client-lightweight</artifactId>
-            <version>${tridion.web8.oss.version}</version>
+            <version>8.1.1-1009</version>
         </dependency>
         <dependency>
             <groupId>com.sdl.web</groupId>
             <artifactId>discovery-common</artifactId>
-            <version>${tridion.web8.oss.version}</version>
+            <version>8.1.1-1009</version>
         </dependency>
 
         <dependency>

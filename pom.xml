@@ -86,7 +86,7 @@
 
         <tridion.web7.version>7.1.0</tridion.web7.version>
         <tridion.web8.version>8.1.0</tridion.web8.version>
-        <tridion.web8.oss.version>8.1.1-SNAPSHOT</tridion.web8.oss.version>
+        <tridion.web8.oss.version>8.1.1-1002</tridion.web8.oss.version>
 
         <urlrewritefilter.version>4.0.3</urlrewritefilter.version>
         <woodstox.version>4.4.1</woodstox.version>

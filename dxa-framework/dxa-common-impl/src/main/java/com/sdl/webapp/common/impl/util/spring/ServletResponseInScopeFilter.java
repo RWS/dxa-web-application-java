@@ -9,6 +9,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
+/**
+ * This filter creates a {@link HttpServletResponse} in a request scope which is not typically available outside controllers.
+ */
 public class ServletResponseInScopeFilter implements Filter {
 
     private ThreadLocal<HttpServletResponse> servletResponseThreadLocal = new ThreadLocal<>();

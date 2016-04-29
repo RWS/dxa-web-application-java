@@ -10,6 +10,9 @@ import javax.servlet.ServletException;
 
 import static com.sdl.webapp.common.util.InitializationUtils.registerFilter;
 
+/**
+ * Registration for workaround mechanism to get a {@link javax.servlet.http.HttpServletResponse} available for DI.
+ */
 @Configuration
 public class ServletResponseSpringConfig implements WebApplicationInitializer {
 

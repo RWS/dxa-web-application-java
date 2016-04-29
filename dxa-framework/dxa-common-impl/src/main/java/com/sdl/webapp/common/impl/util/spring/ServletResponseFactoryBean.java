@@ -4,6 +4,9 @@ import org.springframework.beans.factory.FactoryBean;
 
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * This {@link FactoryBean} is intended to provide {@link HttpServletResponse} instance when requested by DI.
+ */
 class ServletResponseFactoryBean implements FactoryBean<HttpServletResponse> {
 
     private ServletResponseInScopeFilter responseInScopeFilter;

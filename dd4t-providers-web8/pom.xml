@@ -43,6 +43,19 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.dd4t</groupId>
+                <artifactId>dd4t-bom-web8</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.dd4t</groupId>
@@ -62,86 +75,43 @@
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <!-- This is for the REST client api -->
-
         <dependency>
             <groupId>com.sdl.web</groupId>
-            <artifactId>content-linking</artifactId>
-            <version>${tridion.web8.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_model</artifactId>
-            <version>${tridion.web8.version}</version>
+            <artifactId>content-api</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sdl.web</groupId>
             <artifactId>content-broker</artifactId>
-            <version>${tridion.web8.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.sdl.web</groupId>
-            <artifactId>content-api</artifactId>
-            <version>${tridion.web8.version}</version>
+            <artifactId>content-dynamic</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_preview_content_common</artifactId>
-            <version>8.1.1-1008</version>
+            <groupId>com.sdl.web</groupId>
+            <artifactId>content-linking</artifactId>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
             <artifactId>cd_core</artifactId>
-            <version>${tridion.web8.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-
-        <!-- TODO: atm web 8 uses this for the old ConfigurationException, so we'll need this too-->
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_common_config_legacy</artifactId>
-            <version>${tridion.web8.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-dynamic</artifactId>
-            <version>${tridion.web8.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
-            <artifactId>cd_common_util</artifactId>
-            <version>${tridion.web8.version}</version>
+            <artifactId>cd_model</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-core</artifactId>
-            <version>${tridion.web8.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl</groupId>
-            <artifactId>odata_client</artifactId>
-            <version>${sdl.odata.client.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <scope>provided</scope>
-        </dependency>
+        <!--
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_preview_content_common</artifactId>
+
+                    <version>8.1.1-1008</version>
+                    <scope>provided</scope>
+                </dependency> -->
     </dependencies>
 </project>

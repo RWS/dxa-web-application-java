@@ -129,7 +129,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
     }
 
     public void setRevisionDate (DateTime date) {
-        this.revisionDateAsString = date.toString();
+        this.revisionDateAsString = DateUtils.convertDateToString(date);
     }
 
     @Override

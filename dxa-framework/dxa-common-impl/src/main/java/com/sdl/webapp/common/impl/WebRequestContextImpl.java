@@ -329,7 +329,7 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     private Localization localization() {
-        Localization localization;
+        Localization localization = null;
         try {
             localization = localizationResolver.getLocalization(getFullUrl());
         } catch (LocalizationResolverException e) {
@@ -346,7 +346,9 @@ public class WebRequestContextImpl implements WebRequestContext {
                     log.info("Fallback exception from Unknown Localization Handler is null, fallback to default handling");
                 }
             }
-            throw new LocalizationNotFoundException("Localization not found", e);
+            if (localization == null) {
+                throw new LocalizationNotFoundException("Localization not found", e);
+            }
         }
         if (log.isTraceEnabled()) {
             log.trace("Localization for {} is: [{}] {}", getFullUrl(), localization.getId(), localization.getPath());

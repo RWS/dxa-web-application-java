@@ -41,7 +41,7 @@ public class RichTextTag extends AbstractMarkupTag {
         StringBuilder builder = new StringBuilder(2048);
         try {
             for (RichTextFragment fragment : content.getFragments()) {
-                EntityModel entityModel = (fragment instanceof EntityModel ? (EntityModel) fragment : null);
+                EntityModel entityModel = fragment instanceof EntityModel ? (EntityModel) fragment : null;
                 String htmlFragment;
                 if (entityModel == null) {
                     htmlFragment = fragment.toHtmlElement().toHtml();

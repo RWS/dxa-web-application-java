@@ -84,7 +84,7 @@ public abstract class ContextClaims {
                 return null;
             } else {
                 if (Set.class.isInstance(claimValue)) {
-                    Set retval = ((Set) claimValue);
+                    Set retval = (Set) claimValue;
                     ArrayList<T> array = new ArrayList<>();
                     for (Object o : retval) {
                         array.add(castValue(o, cls));

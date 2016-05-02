@@ -12,7 +12,7 @@ import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.formats.DataFormatter;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.localization.LocalizationNotFoundException;
+import com.sdl.webapp.common.api.localization.LocalizationNotResolvedException;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -38,7 +37,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
@@ -46,6 +44,7 @@ import org.springframework.web.util.WebUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.http.HTTPException;
+import java.io.IOException;
 
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static com.sdl.webapp.common.controller.ControllerUtils.SECTION_ERROR_VIEW;
@@ -317,12 +316,30 @@ public class PageController extends BaseController {
         return this.viewResolver.resolveView(pageModel.getMvcData(), "Page", request);
     }
 
+    @ExceptionHandler({LocalizationNotResolvedException.class})
+    public void handleLocalizationNotResolvedException(HttpServletRequest request, HttpServletResponse response,
+                                                       LocalizationNotResolvedException exception) throws IOException {
+        LOG.error("Failed to retrieve localization for request url = {}, uri = {}",
+                request.getRequestURL(), request.getRequestURI(), exception);
+        if (exception instanceof LocalizationNotResolvedException.WithCustomResponse) {
+            LocalizationNotResolvedException.WithCustomResponse custom =
+                    (LocalizationNotResolvedException.WithCustomResponse) exception;
+            writeResponse(response, custom.getHttpStatus(), custom.getContent(), custom.getContentType());
+        } else {
+            if (exception.getHttpStatus() >= 400) {
+                response.sendError(exception.getHttpStatus(), exception.getMessage());
+            } else {
+                writeResponse(response, exception.getHttpStatus(), exception.getMessage(), "text/plain");
+            }
+        }
+    }
 
-    @ResponseBody
-    @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "Failed to retrieve localization for current request")
-    @ExceptionHandler(LocalizationNotFoundException.class)
-    public void handleLocalizationNotFoundException(HttpServletRequest request) {
-        LOG.error("Failed to retrieve localization for request url = {}, uri = {}", request.getRequestURL(), request.getRequestURI());
+    private void writeResponse(HttpServletResponse response, int httpStatus, String content, String contentType) throws IOException {
+        response.resetBuffer();
+        response.setStatus(httpStatus);
+        response.getWriter().write(content);
+        response.setContentType(contentType);
+        response.flushBuffer();
     }
 
     /**

@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationNotFoundException;
+import com.sdl.webapp.common.api.localization.LocalizationNotResolvedException;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.api.localization.LocalizationResolverException;
 import com.sdl.webapp.common.api.localization.UnknownLocalizationHandler;
@@ -25,7 +26,6 @@ import org.springframework.web.util.WebUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Stack;
 
 /**
@@ -45,9 +45,6 @@ public class WebRequestContextImpl implements WebRequestContext {
     @Getter
     @Autowired
     private HttpServletRequest servletRequest;
-
-    @Autowired
-    private HttpServletResponse servletResponse;
 
     @Getter
     @Autowired
@@ -332,16 +329,24 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     private Localization localization() {
-        Localization localization = null;
+        Localization localization;
         try {
             localization = localizationResolver.getLocalization(getFullUrl());
         } catch (LocalizationResolverException e) {
             if (unknownLocalizationHandler != null) {
-                localization = unknownLocalizationHandler.handleUnknown(e, servletRequest, servletResponse);
+                log.info("Localization is not resolved for {}, Localization handler is set, trying to resolve using it", getFullUrl());
+                localization = unknownLocalizationHandler.handleUnknown(e, servletRequest);
+                if (localization == null) {
+                    log.info("Unknown Localization handler is set but localization wasn't resolved with it, fallback");
+                    LocalizationNotResolvedException fallbackException =
+                            unknownLocalizationHandler.getFallbackException(e, servletRequest);
+                    if (fallbackException != null) {
+                        throw fallbackException;
+                    }
+                    log.info("Fallback exception from Unknown Localization Handler is null, fallback to default handling");
+                }
             }
-            if (localization == null) {
-                throw new LocalizationNotFoundException("Localization not found", e);
-            }
+            throw new LocalizationNotFoundException("Localization not found", e);
         }
         if (log.isTraceEnabled()) {
             log.trace("Localization for {} is: [{}] {}", getFullUrl(), localization.getId(), localization.getPath());

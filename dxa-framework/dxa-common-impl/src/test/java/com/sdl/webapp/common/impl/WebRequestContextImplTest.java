@@ -16,7 +16,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
@@ -46,7 +45,7 @@ public class WebRequestContextImplTest {
         when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
 
         UnknownLocalizationHandler unknownLocalizationHandler = mock(UnknownLocalizationHandler.class);
-        when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class), any(ServletResponse.class)))
+        when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class)))
                 .thenReturn(null);
         ReflectionTestUtils.setField(webRequestContext, "unknownLocalizationHandler", unknownLocalizationHandler);
 
@@ -64,7 +63,7 @@ public class WebRequestContextImplTest {
 
         UnknownLocalizationHandler unknownLocalizationHandler = mock(UnknownLocalizationHandler.class);
         LocalizationImpl localization = mock(LocalizationImpl.class);
-        when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class), any(ServletResponse.class))).thenReturn(localization);
+        when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class))).thenReturn(localization);
         ReflectionTestUtils.setField(webRequestContext, "unknownLocalizationHandler", unknownLocalizationHandler);
 
         //when

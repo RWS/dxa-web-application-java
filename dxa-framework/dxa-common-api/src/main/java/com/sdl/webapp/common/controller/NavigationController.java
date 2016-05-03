@@ -116,7 +116,7 @@ public class NavigationController extends BaseController {
 
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);
-        return resolveView(mvcData, "Entity", request);
+        return viewNameResolver.resolveView(mvcData, "Entity");
     }
 
     /**

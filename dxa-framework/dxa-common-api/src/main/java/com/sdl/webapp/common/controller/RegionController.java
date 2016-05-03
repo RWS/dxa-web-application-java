@@ -48,8 +48,6 @@ public class RegionController extends BaseController {
 
         final MvcData mvcData = region.getMvcData();
         LOG.trace("Region MvcData: {}", mvcData);
-        return resolveView(mvcData, "Region", request);
+        return viewNameResolver.resolveView(mvcData, "Region");
     }
-
-
 }

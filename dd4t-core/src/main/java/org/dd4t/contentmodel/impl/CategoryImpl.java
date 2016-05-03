@@ -17,6 +17,7 @@
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.dd4t.contentmodel.Category;
 import org.dd4t.contentmodel.Keyword;
@@ -32,25 +33,21 @@ public class CategoryImpl extends BaseItem implements Category {
 
     @Override
     public List<Keyword> getKeywords () {
-        List<Keyword> l = new LinkedList<>();
-
-        if (keywords != null) {
-            for (Keyword k : keywords) {
-                l.add(k);
-            }
+        if (this.keywords == null) {
+            return new LinkedList<>();
         }
-
-        return l;
+        return this.keywords;
     }
 
+    @JsonSetter ("Keywords")
     @Override
-    public void setKeywords (List<Keyword> keywords) {
-        List<Keyword> l = new LinkedList<>();
+    public void setKeywords (List<Keyword> keywordValues) {
+        this.keywords = keywordValues;
+    }
 
-        for (Keyword k : keywords) {
-            l.add(k);
-        }
-
-        this.keywords = l;
+    // DD4T 2.0.2 template support
+    @JsonSetter ("KeywordValues")
+    private void setKeywordValues (List<Keyword> keywordValues) {
+        this.keywords = keywordValues;
     }
 }

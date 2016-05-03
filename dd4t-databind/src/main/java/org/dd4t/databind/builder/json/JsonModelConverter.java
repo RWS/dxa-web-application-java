@@ -51,6 +51,7 @@ import java.util.Map;
  */
 public class JsonModelConverter extends AbstractModelConverter implements ModelConverter {
     private static final Logger LOG = LoggerFactory.getLogger(JsonModelConverter.class);
+
     private Class<? extends org.dd4t.contentmodel.Field> concreteFieldImpl;
 
     public JsonModelConverter () {
@@ -130,6 +131,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
                 // Since we are now now going from modelproperty > fetch data, the data might actually be null
                 if (currentNode != null) {
                     this.buildField(model, fieldName, currentNode, m);
+
                 }
             }
         } catch (IllegalAccessException | IOException e) {
@@ -215,7 +217,22 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
             return;
         }
 
+
+        setXPathForXpm(model, fieldName, currentField, modelField);
+
         deserializeAndBuildModels(model, fieldName, modelField, tridionDataFieldType, nodeList);
+    }
+
+    private <T extends BaseViewModel> void setXPathForXpm (final T model, final String fieldName, final JsonNode currentField, final Field modelField) {
+        if (model instanceof TridionViewModel && currentField != null && currentField.has(DataBindConstants.XPATH)) {
+            boolean isMultiValued = false;
+            if (modelField.getType().equals(List.class)) {
+                isMultiValued = true;
+            }
+            String xpath = currentField.get(DataBindConstants.XPATH).asText();
+
+            ((TridionViewModel) model).addXpmEntry(fieldName,xpath,isMultiValued);
+        }
     }
 
     private <T extends BaseViewModel> void deserializeAndBuildModels (final T model, final String fieldName, final Field modelField, final FieldType tridionDataFieldType, final List<JsonNode> nodeList) throws SerializationException, IllegalAccessException, IOException {

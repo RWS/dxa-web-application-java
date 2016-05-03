@@ -21,11 +21,18 @@ import org.dd4t.contentmodel.PublicationDescriptor;
 public interface PublicationResolver {
 
     /**
-     * Gets the Publication TCMURI item id for the current request
+     * Gets the Publication TCMURI item id for the current request for Pages
      *
      * @return int representing the SDL Tridion Publication item id
      */
     int getPublicationId ();
+
+    /**
+     * Tries to discover the Publication Id for an images URl
+     * @param imagesUrl the image URL path
+     * @return int representing the SDL Tridion Publication item id
+     */
+    int discoverPublicationIdByImagesUrl(String imagesUrl);
 
     /**
      * Gets the Publication Url property as defined in Tridion Publication metadata corresponding to the current request

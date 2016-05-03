@@ -25,8 +25,11 @@ import com.sdl.web.api.meta.WebPublicationMetaFactory;
 import com.sdl.web.api.meta.WebPublicationMetaFactoryImpl;
 import com.tridion.broker.StorageException;
 import com.tridion.configuration.ConfigurationException;
+import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.PageMeta;
 import com.tridion.meta.PublicationMeta;
+import org.dd4t.core.caching.CacheElement;
+import org.dd4t.core.caching.CacheType;
 import org.dd4t.core.util.Constants;
 import org.dd4t.providers.PublicationProvider;
 import org.slf4j.Logger;
@@ -70,6 +73,83 @@ public class BrokerPublicationProvider extends AbstractPublicationProvider imple
         return Constants.UNKNOWN_PUBLICATION_ID;
     }
 
+    //TODO: Document
+    @Override
+    public int discoverPublicationIdByPageUrlPath (final String url) {
+        LOG.debug("Discovering Publication id for url: {}", url);
+        final String key = getKey(CacheType.DISCOVER_PUBLICATION_URL, url);
+        final CacheElement<Integer> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
+        Integer result = Constants.UNKNOWN_PUBLICATION_ID;
+
+        if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            synchronized (cacheElement) {
+                if (cacheElement.isExpired()) {
+                    cacheElement.setExpired(false);
+
+                    final PageMeta pageMeta = loadPageMetaByConcreteFactory(url);
+                    if (pageMeta != null) {
+                        result = pageMeta.getPublicationId();
+                        LOG.debug("Publication Id for URL: {}, is {}", url, result);
+                    } else {
+                        LOG.warn("Could not resolve publication Id for URL: {}", url);
+                    }
+
+                    cacheElement.setPayload(result);
+                    cacheProvider.storeInItemCache(key, cacheElement);
+                    LOG.debug("Stored Publication Id with key: {} in cache", key);
+                } else {
+                    LOG.debug("Fetched a Publication Id with key: {} from cache", key);
+                    result = cacheElement.getPayload();
+                }
+            }
+        } else {
+            LOG.debug("Fetched Publication Id with key: {} from cache", key);
+            result = cacheElement.getPayload();
+        }
+
+        return result == null ? Constants.UNKNOWN_PUBLICATION_ID : result;
+    }
+
+
+    // TODO: try to merge with the web8 provider
+    @Override
+    public int discoverPublicationByImagesUrl (final String fullUrl) {
+        LOG.debug("Discovering Publication id for Binary url: {}", fullUrl);
+        final String key = getKey(CacheType.DISCOVER_IMAGES_URL, fullUrl);
+        final CacheElement<Integer> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
+        Integer result = Constants.UNKNOWN_PUBLICATION_ID;
+
+        if (cacheElement.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            synchronized (cacheElement) {
+                if (cacheElement.isExpired()) {
+                    cacheElement.setExpired(false);
+
+                    final BinaryMeta binaryMeta = loadBinaryMetaByConcreteFactory(fullUrl);
+                    if (binaryMeta != null) {
+                        result = binaryMeta.getPublicationId();
+                        LOG.debug("Publication Id for URL: {}, is {}", fullUrl, result);
+                    } else {
+                        LOG.warn("Could not resolve publication Id for Binary URL: {}", fullUrl);
+                    }
+
+                    cacheElement.setPayload(result);
+                    cacheProvider.storeInItemCache(key, cacheElement);
+                    LOG.debug("Stored Publication Id with key: {} in cache", key);
+                } else {
+                    LOG.debug("Fetched a Publication Id with key: {} from cache", key);
+                    result = cacheElement.getPayload();
+                }
+            }
+        } else {
+            LOG.debug("Fetched Publication Id for Binary with key: {} from cache", key);
+            result = cacheElement.getPayload();
+        }
+
+        return result == null ? Constants.UNKNOWN_PUBLICATION_ID : result;
+    }
+
     @Override
     protected PublicationMeta loadPublicationMetaByConcreteFactory (final int publicationId) {
         try {
@@ -83,5 +163,10 @@ public class BrokerPublicationProvider extends AbstractPublicationProvider imple
     @Override
     protected PageMeta loadPageMetaByConcreteFactory (final String url) {
         return DYNAMIC_META_RETRIEVER.getPageMetaByURL(url);
+    }
+
+    @Override
+    protected BinaryMeta loadBinaryMetaByConcreteFactory (final String url) {
+        return DYNAMIC_META_RETRIEVER.getBinaryMetaByURL(url);
     }
 }

@@ -101,7 +101,11 @@ public class AbstractBinaryController {
         }
 
         Binary binary;
-        int publicationId = publicationResolver.getPublicationId();
+
+        int publicationId = publicationResolver.discoverPublicationIdByImagesUrl(binaryPath);
+        if (publicationId == Constants.UNKNOWN_PUBLICATION_ID) {
+            throw new ItemNotFoundException("Could not resolve Publication Id for binary path");
+        }
         String path = String.format("%s/%d%s", binaryRootFolder, publicationId, binaryPath);
         if (resizeToWidth > -1) {
             path = insertIntoPath(path, request.getParameter("resizeToWidth"));

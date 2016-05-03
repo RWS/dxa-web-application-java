@@ -52,9 +52,21 @@ public class UrlPublicationResolver implements PublicationResolver {
             LOG.debug("Using cd_dynamic_conf.xml to determine publication Id");
             return publicationProvider.discoverPublicationByBaseUrl(HttpUtils.appendDefaultPageIfRequired(HttpUtils.getOriginalFullUrl(request,this.stripServletContextPath)));
         } else {
+            // TODO: add possibility to discover publication Id when a binary URL comes in?
             LOG.debug("Determining Pub Id on page URL.");
             return publicationProvider.discoverPublicationIdByPageUrlPath(HttpUtils.appendDefaultPageIfRequired(HttpUtils.getOriginalFullUrl(request,this.stripServletContextPath)));
         }
+    }
+
+    /**
+     * Tries to discover the Publication Id for an images URl
+     * @param imagesUrl the image URL path
+     * @return int representing the SDL Tridion Publication item id
+     */
+
+    @Override
+    public int discoverPublicationIdByImagesUrl (final String imagesUrl) {
+        return publicationProvider.discoverPublicationByImagesUrl(imagesUrl);
     }
 
     /**

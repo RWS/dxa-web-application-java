@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <devicefamily name="featurephone">
+        <condition context-claim="device.mobile" value="true"/>
+        <condition context-claim="device.tablet" value="false"/>
+        <condition context-claim="device.displayWidth" value="&lt;320"/>
+    </devicefamily>
+    <devicefamily name="smartphone">
+        <condition context-claim="device.mobile" value="true"/>
+        <condition context-claim="device.tablet" value="false"/>
+        <condition context-claim="device.displayWidth" value="&gt;319"/>
+    </devicefamily>
+    <devicefamily name="tablet">
+        <condition context-claim="device.tablet" value="true"/>
+    </devicefamily>
+    <devicefamily name="desktop">
+        <condition context-claim="device.mobile" value="false"/>
+        <condition context-claim="device.tablet" value="false"/>
+    </devicefamily>
+</configuration>

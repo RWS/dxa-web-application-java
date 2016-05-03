@@ -192,6 +192,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
         if (binaryTcmUri == null) {
             return Constants.THE_YEAR_ZERO;
         }
+
         WebComponentMetaFactory webComponentMetaFactory = FACTORY_CACHE.get(binaryTcmUri.getPublicationId());
 
         if (webComponentMetaFactory == null) {

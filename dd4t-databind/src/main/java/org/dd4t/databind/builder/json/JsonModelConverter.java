@@ -342,7 +342,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         }
     }
 
-    private <T extends BaseViewModel> void setTridionProperties (final TridionViewModel model, final JsonNode rawComponent) {
+    private void setTridionProperties (final TridionViewModel model, final JsonNode rawComponent) {
         model.setLastPublishDate(JsonUtils.getDateFromField(DataBindConstants.LAST_PUBLISHED_DATE, rawComponent));
         model.setLastModified(JsonUtils.getDateFromField(DataBindConstants.LAST_MODIFIED_DATE, rawComponent));
         model.setTcmUri(JsonUtils.getTcmUriFromField(DataBindConstants.ID, rawComponent));

@@ -17,7 +17,7 @@ public class DefaultViewResolver implements ViewNameResolver, ViewResolver {
      */
     @Override
     public String resolveView(MvcData mvcData, String viewType, HttpServletRequest request) {
-        return mvcData.getAreaName() + '/' + viewType + '/' + mvcData.getViewName();
+        return resolveView(mvcData, viewType);
     }
 
     /**

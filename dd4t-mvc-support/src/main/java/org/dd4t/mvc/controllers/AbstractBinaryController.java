@@ -212,15 +212,58 @@ public class AbstractBinaryController {
             float factor = (float) resizeToWidth / w;
             int newH = Math.round(factor * h);
 
-            BufferedImage after = new BufferedImage(resizeToWidth, newH, BufferedImage.TYPE_INT_ARGB);
-            Graphics g = after.createGraphics();
-            g.drawImage(before, 0, 0, resizeToWidth, newH, null);
-            g.dispose();
+            final BufferedImage after = getScaledInstance(before, resizeToWidth, newH, BufferedImage.TYPE_INT_ARGB,true);
 
             ImageIO.write(after, getImageType(path), binaryFile);
         } finally {
             Files.deleteIfExists(tempBinary.toPath());
         }
+    }
+
+    private static BufferedImage getScaledInstance(BufferedImage image, int targetWidth, int targetHeight, int type, boolean higherQuality) {
+        BufferedImage ret = image;
+        int w, h;
+        if (higherQuality) {
+            // Use multi-step technique: start with original size, then
+            // scale down in multiple passes with drawImage()
+            // until the target size is reached
+            w = image.getWidth();
+            h = image.getHeight();
+        } else {
+            // Use one-step technique: scale directly from original
+            // size to target size with a single drawImage() call
+            w = targetWidth;
+            h = targetHeight;
+        }
+        do {
+            if (higherQuality && w > targetWidth) {
+                w /= 2;
+                if (w < targetWidth) {
+                    w = targetWidth;
+                }
+            }
+            if (higherQuality && h > targetHeight) {
+                h /= 2;
+                if (h < targetHeight) {
+                    h = targetHeight;
+                }
+            }
+
+            BufferedImage tmp = new BufferedImage(w, h, type);
+            Graphics2D g2 = tmp.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2.setRenderingHint(RenderingHints.KEY_RENDERING,
+                    RenderingHints.VALUE_RENDER_QUALITY);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.drawImage(ret, 0, 0, w, h, null);
+            g2.dispose();
+
+            ret = tmp;
+        } while (w != targetWidth || h != targetHeight);
+
+        return ret;
     }
 
     private String getContentType (final Binary binary, final String path, final HttpServletRequest request) {

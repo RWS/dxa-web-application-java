@@ -114,7 +114,8 @@ public class DefaultLinkResolver implements LinkResolver {
 
 
 
-        // TODO BUG
+        // TODO: reinstated for the time being. It's quite an anti pattern
+        component.setResolvedUrl(resolvedUrl);
 
 
         return resolvedUrl;

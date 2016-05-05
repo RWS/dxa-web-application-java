@@ -202,7 +202,7 @@ public class AbstractBinaryController {
     }
 
     private static void writeResizedImage (final Binary binary, final String path, final int resizeToWidth, final File binaryFile) throws IOException {
-        File tempBinary = new File(path + ".tmp");
+        final File tempBinary = new File(path + ".tmp");
         saveBinary(binary, tempBinary);
 
         try (InputStream content = new FileInputStream(tempBinary)) {

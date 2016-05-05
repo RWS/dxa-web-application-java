@@ -50,8 +50,6 @@
         <hibernate.version>4.0.1.Final</hibernate.version>
         <hibernate.jpa.version>1.0.1.Final</hibernate.jpa.version>
         <json-smart-version>1.1.1</json-smart-version>
-        <logback.version>1.0.13</logback.version>
-        <slf4j.version>1.6.4</slf4j.version>
         <spring.version>3.2.0.RELEASE</spring.version>
         <sqljdbc4-version>4.0.0</sqljdbc4-version>
         <xalan-version>2.7.1</xalan-version>
@@ -128,8 +126,21 @@
             </dependency>
 
             <!-- Third-party libraries used by Tridion Content Delivery -->
-
-
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.slf4j</groupId>
+                <artifactId>jcl-over-slf4j</artifactId>
+                <version>${jcl-over-slf4j.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>

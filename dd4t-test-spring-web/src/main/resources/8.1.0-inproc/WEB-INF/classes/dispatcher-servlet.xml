@@ -38,7 +38,7 @@
     </bean>
 
     <bean id="binaryController" class="org.dd4t.test.web.controller.SpringBinaryController">
-        <property name="binaryRootFolder" value="~/media"/>
+        <property name="binaryRootFolder" value="/media"/>
     </bean>
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">

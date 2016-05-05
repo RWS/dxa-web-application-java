@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * dd4t-2
+ * This class is the CIL/CIS class, making use of the new API.
  *
  * @author R. Kempees
  */

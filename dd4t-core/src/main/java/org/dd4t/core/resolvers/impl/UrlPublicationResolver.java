@@ -66,7 +66,14 @@ public class UrlPublicationResolver implements PublicationResolver {
 
     @Override
     public int discoverPublicationIdByImagesUrl (final String imagesUrl) {
-        return publicationProvider.discoverPublicationByImagesUrl(imagesUrl);
+        final HttpServletRequest request = HttpUtils.getCurrentRequest();
+        if (this.useCdDynamic) {
+            LOG.debug("Using cd_dynamic_conf.xml to determine publication Id");
+            return publicationProvider.discoverPublicationByBaseUrl(HttpUtils.appendDefaultPageIfRequired(HttpUtils.getOriginalFullUrl(request,this.stripServletContextPath)));
+        } else {
+            LOG.debug("Determining Pub Id on Images URL: {}.",imagesUrl);
+            return publicationProvider.discoverPublicationByImagesUrl(HttpUtils.getOriginalFullUrl(request,this.stripServletContextPath));
+        }
     }
 
     /**

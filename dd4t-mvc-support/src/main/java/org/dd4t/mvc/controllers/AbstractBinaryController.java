@@ -17,6 +17,7 @@
 package org.dd4t.mvc.controllers;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.contentmodel.BinaryData;
@@ -43,6 +44,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -153,7 +155,7 @@ public class AbstractBinaryController {
         return path.substring(0, i + 1) + toInsert + path.substring(i);
     }
 
-    private String getImageType (String path) {
+    private static String getImageType (String path) {
         int i = path.lastIndexOf('.');
         if (i == 0) {
             LOG.warn("path to binary has no extension: " + path + "; assuming the type is png");
@@ -164,7 +166,6 @@ public class AbstractBinaryController {
 
     private void fillResponse (final HttpServletRequest request, final HttpServletResponse response, final Binary binary, final String path, int resizeToWidth) throws IOException {
         InputStream content = null;
-
         try {
             final long contentLength;
             if (isUseBinaryStorage()) {
@@ -174,21 +175,7 @@ public class AbstractBinaryController {
                     if (resizeToWidth == -1) {
                         saveBinary(binary, binaryFile);
                     } else {
-                        File tempBinary = new File(path + ".tmp");
-                        saveBinary(binary, tempBinary);
-                        content = new FileInputStream(tempBinary);
-                        BufferedImage before = ImageIO.read(content);
-                        int w = before.getWidth();
-                        int h = before.getHeight();
-                        float factor = (float) resizeToWidth / w;
-                        int newH = Math.round(factor * h);
-
-                        BufferedImage after = new BufferedImage(resizeToWidth, newH, BufferedImage.TYPE_INT_ARGB);
-                        Graphics g = after.createGraphics();
-                        g.drawImage(before, 0, 0, resizeToWidth, newH, null);
-                        g.dispose();
-
-                        ImageIO.write(after, getImageType(path), binaryFile);
+                        writeResizedImage(binary, path, resizeToWidth, binaryFile);
                     }
                 }
                 content = new FileInputStream(binaryFile);
@@ -210,13 +197,29 @@ public class AbstractBinaryController {
                 response.getOutputStream().write(buffer, 0, len);
             }
         } finally {
-            if (content != null) {
-                try {
-                    content.close();
-                } catch (IOException e) {
-                    LOG.error("Failed to close binary input stream", e);
-                }
-            }
+            IOUtils.closeQuietly(content);
+        }
+    }
+
+    private static void writeResizedImage (final Binary binary, final String path, final int resizeToWidth, final File binaryFile) throws IOException {
+        File tempBinary = new File(path + ".tmp");
+        saveBinary(binary, tempBinary);
+
+        try (InputStream content = new FileInputStream(tempBinary)) {
+            BufferedImage before = ImageIO.read(content);
+            int w = before.getWidth();
+            int h = before.getHeight();
+            float factor = (float) resizeToWidth / w;
+            int newH = Math.round(factor * h);
+
+            BufferedImage after = new BufferedImage(resizeToWidth, newH, BufferedImage.TYPE_INT_ARGB);
+            Graphics g = after.createGraphics();
+            g.drawImage(before, 0, 0, resizeToWidth, newH, null);
+            g.dispose();
+
+            ImageIO.write(after, getImageType(path), binaryFile);
+        } finally {
+            Files.deleteIfExists(tempBinary.toPath());
         }
     }
 
@@ -253,7 +256,7 @@ public class AbstractBinaryController {
         return requestURI;
     }
 
-    private void saveBinary (final Binary binary, final File binaryFile) throws IOException {
+    private static void saveBinary (final Binary binary, final File binaryFile) throws IOException {
         BufferedOutputStream bufferedOutput = null;
 
         try {

@@ -212,6 +212,7 @@ public class AbstractBinaryController {
 
             if (resizeToWidth > w) {
                 LOG.warn("Not resizing image. Resizing to larger formats is unsupported.");
+                saveBinary(binary, binaryFile);
                 return;
             }
 

@@ -42,7 +42,6 @@ task build << {
     def commandToExecute = getCommandToExecute()
 
     [
-            "dxa-dependencies-bom",
             "dxa-bom",
             "dxa-bom-2013sp1",
             "dxa-webapp-archetype",

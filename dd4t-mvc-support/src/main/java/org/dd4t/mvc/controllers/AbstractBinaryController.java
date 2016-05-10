@@ -203,12 +203,21 @@ public class AbstractBinaryController {
 
     private static void writeResizedImage (final Binary binary, final String path, final int resizeToWidth, final File binaryFile) throws IOException {
         final File tempBinary = new File(path + ".tmp");
-        saveBinary(binary, tempBinary);
+
 
         try (InputStream content = new FileInputStream(tempBinary)) {
             BufferedImage before = ImageIO.read(content);
             int w = before.getWidth();
             int h = before.getHeight();
+
+            if (resizeToWidth > w) {
+                LOG.warn("Not resizing image. Resizing to larger formats is unsupported.");
+                saveBinary(binary, binaryFile);
+                return;
+            }
+
+            saveBinary(binary, tempBinary);
+
             float factor = (float) resizeToWidth / w;
             int newH = Math.round(factor * h);
 

@@ -25,6 +25,7 @@ import com.tridion.storage.StorageTypeMapping;
 import com.tridion.storage.dao.BinaryContentDAO;
 import com.tridion.storage.dao.BinaryVariantDAO;
 import com.tridion.storage.dao.ItemDAO;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,11 +125,16 @@ public class ImageFilter implements Filter {
 		        	File parent = file.getParentFile();
 		        	
 		        	if(!parent.exists()){
-		        		parent.mkdir();		        		
+		        		if (!parent.mkdir()) {
+					        LOGGER.error("Could not create parent directory!");
+				        }
 		        	}
 		        	
 		        	// and create this file
-		        	file.createNewFile();
+		        	if (!file.createNewFile()){
+				        LOGGER.error("Could not create file.");
+			        }
+
 		        }
 		        		
 		        if(LOGGER.isDebugEnabled())
@@ -140,12 +146,15 @@ public class ImageFilter implements Filter {
 		    				200, StorageTypeMapping.BINARY_CONTENT);
 		    				    		
 		    		BinaryContent content = dao.findByPrimaryKey(meta.getPublicationId(), meta.getItemId(), variant.getBinaryVariantId().getVariantId());
-		    			    		
-		    		FileOutputStream fos = new FileOutputStream(file, true);
 
-		    		fos.write(content.getContent());
-		    		fos.close();
-		        }
+			        FileOutputStream fos = null;
+			        try {
+				        fos = new FileOutputStream(file, true);
+					    fos.write(content.getContent());
+				    } finally {
+				        IOUtils.closeQuietly(fos);
+			        }
+			    }
 			}
 		}
 		catch(Exception ex){

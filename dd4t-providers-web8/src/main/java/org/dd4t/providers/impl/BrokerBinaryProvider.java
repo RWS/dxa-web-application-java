@@ -70,29 +70,26 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
         if (binaryMeta == null) {
             throw new ItemNotFoundException("Unable to find binary content by URL '" + url + "' and publication '" + publication + "'.");
         }
-        TCMURI binaryUri = new TCMURI(binaryMeta.getPublicationId(), (int)binaryMeta.getId(), 16);
+        TCMURI binaryUri = new TCMURI(binaryMeta.getPublicationId(), (int) binaryMeta.getId(), 16);
         return getBinary(binaryUri, binaryMeta);
     }
 
-    // TODO: test
     private Binary getBinary (final TCMURI binaryUri, final BinaryMeta binaryMeta) throws ItemNotFoundException {
-        if (binaryMeta != null) {
-            final BinaryImpl binary = new BinaryImpl();
+
+        final BinaryImpl binary = new BinaryImpl();
 
 
-            binary.setId(binaryUri.toString());
-            binary.setUrlPath(binaryMeta.getURLPath());
-            binary.setMimeType(binaryMeta.getType());
+        binary.setId(binaryUri.toString());
+        binary.setUrlPath(binaryMeta.getURLPath());
+        binary.setMimeType(binaryMeta.getType());
 
-            binary.setLastPublishedDate(getLastPublishDate(binaryUri.toString()));
+        binary.setLastPublishedDate(getLastPublishDate(binaryUri.toString()));
 
-            // TODO: binary.setMetadata(binaryMeta.getCustomMeta().getChildren());
-            final BinaryDataImpl binaryDataBytes = new BinaryDataImpl();
-            binaryDataBytes.setBytes(getBinaryContentById(binaryUri.getItemId(),binaryUri.getPublicationId()));
-            binary.setBinaryData(binaryDataBytes);
-            return binary;
-        }
-        return null;
+        // TODO: binary.setMetadata(binaryMeta.getCustomMeta().getChildren());
+        final BinaryDataImpl binaryDataBytes = new BinaryDataImpl();
+        binaryDataBytes.setBytes(getBinaryContentById(binaryUri.getItemId(), binaryUri.getPublicationId()));
+        binary.setBinaryData(binaryDataBytes);
+        return binary;
     }
 
     /**
@@ -106,10 +103,10 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
     @Override
     public byte[] getBinaryContentById (int id, int publication) throws ItemNotFoundException {
 
-        final BinaryData binaryData = BINARY_CONTENT_RETRIEVER.getBinary(publication,id);
+        final BinaryData binaryData = BINARY_CONTENT_RETRIEVER.getBinary(publication, id);
 
-        if (binaryData == null || binaryData.getDataSize() == 0 ) {
-            throw new ItemNotFoundException("Unable to find binary content by id: tcm:" + publication+"-"+id);
+        if (binaryData == null || binaryData.getDataSize() == 0) {
+            throw new ItemNotFoundException("Unable to find binary content by id: tcm:" + publication + "-" + id);
         }
 
         try {
@@ -144,7 +141,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
      */
 
     public BinaryData getBinaryDataById (int id, int publication) throws ItemNotFoundException {
-        final BinaryData binaryData = BINARY_CONTENT_RETRIEVER.getBinary(publication,id);
+        final BinaryData binaryData = BINARY_CONTENT_RETRIEVER.getBinary(publication, id);
         if (binaryData == null) {
             throw new ItemNotFoundException("Unable to find binary by id '" + id + "' and publication '" + publication + "'.");
         }
@@ -159,19 +156,19 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
      */
 
     public BinaryMeta getBinaryMetaByURL (String url, int publication) throws ItemNotFoundException {
-        final BinaryMeta binaryMeta = WEB_BINARY_META_FACTORY.getMetaByURL(publication,url);
+        final BinaryMeta binaryMeta = WEB_BINARY_META_FACTORY.getMetaByURL(publication, url);
         if (binaryMeta == null) {
             throw new ItemNotFoundException("Unable to find binary by url '" + url + "' and publication '" + publication + "'.");
         }
         return binaryMeta;
     }
 
-    public BinaryMeta getBinaryMetaById(int publicationId, int itemId) throws ItemNotFoundException {
+    public BinaryMeta getBinaryMetaById (int publicationId, int itemId) throws ItemNotFoundException {
         TCMURI binaryUri = new TCMURI(publicationId, itemId, 16);
         return getBinaryMetaByTcmUri(binaryUri);
     }
 
-    public BinaryMeta getBinaryMetaByTcmUri(TCMURI binaryUri) throws ItemNotFoundException {
+    public BinaryMeta getBinaryMetaByTcmUri (TCMURI binaryUri) throws ItemNotFoundException {
         BinaryMeta binaryMeta = WEB_BINARY_META_FACTORY.getMeta(binaryUri.toString());
         if (binaryMeta == null) {
             throw new ItemNotFoundException("Unable to find binary by TCMURI '" + binaryUri.toString());
@@ -186,7 +183,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
         try {
             binaryTcmUri = new TCMURI(tcmUri);
         } catch (ParseException e) {
-            LOG.error(e.getLocalizedMessage(),e);
+            LOG.error(e.getLocalizedMessage(), e);
         }
 
         if (binaryTcmUri == null) {
@@ -197,7 +194,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
 
         if (webComponentMetaFactory == null) {
             webComponentMetaFactory = new WebComponentMetaFactoryImpl(binaryTcmUri.getPublicationId());
-            FACTORY_CACHE.put(binaryTcmUri.getPublicationId(),webComponentMetaFactory);
+            FACTORY_CACHE.put(binaryTcmUri.getPublicationId(), webComponentMetaFactory);
         }
 
         final ComponentMeta binaryMeta = webComponentMetaFactory.getMeta(tcmUri);

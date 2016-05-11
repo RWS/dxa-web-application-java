@@ -38,7 +38,7 @@ import java.util.List;
 public abstract class BaseComponentPresentationsTag extends SimpleTagSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseComponentPresentationsTag.class);
-    private static final String ANCHOR_FORMAT = "<a name=\"%d\"></a>\n";
+    private static final String ANCHOR_FORMAT = "<a name=\"%d\"></a>%n";
 
     private String schema;
     private String rootElement;

@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.Charset;
 
 /**
  * Little wrapper class wraps around a servletOutputStream to catch what's written to it to place it
@@ -61,7 +62,7 @@ public class ServletOutputStreamWrapper extends ServletOutputStream {
 	 */
 	@Override
 	public String toString(){
-		return new String(fBuffer.toByteArray());
+		return new String(fBuffer.toByteArray(), Charset.defaultCharset());
 	}
 	
 	/**

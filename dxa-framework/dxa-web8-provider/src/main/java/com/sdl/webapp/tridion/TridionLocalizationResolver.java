@@ -20,8 +20,7 @@ public class TridionLocalizationResolver extends AbstractTridionLocalizationReso
     @Override
     protected PublicationMappingData getPublicationMappingData(String url) throws PublicationMappingNotFoundException {
         try {
-            PublicationMapping publicationMapping = null;
-            dynamicMappingsRetriever.getPublicationMapping(url);
+            PublicationMapping publicationMapping = dynamicMappingsRetriever.getPublicationMapping(url);
 
             if (publicationMapping == null) {
                 throw new PublicationMappingNotFoundException("Publication mapping not found. " +

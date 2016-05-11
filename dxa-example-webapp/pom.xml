@@ -154,6 +154,15 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>example-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-example</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
 
         <profile>
             <id>2013sp1</id>

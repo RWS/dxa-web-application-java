@@ -60,6 +60,10 @@ public abstract class AbstractTridionLocalizationResolver implements Localizatio
         String path = UriUtils.encodePath(url, "UTF-8").split("%")[0];
         PublicationMappingData data = getPublicationMappingData(path);
 
+        if (data == null) {
+            throw new LocalizationResolverException("Publication mapping is not resolved!");
+        }
+
         if (!localizations.containsKey(data.id)) {
             localizations.put(data.id, createLocalization(data.id, data.path));
         }

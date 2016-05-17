@@ -145,6 +145,15 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>51degrees-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-51degrees</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
 
         <profile>
             <id>2013sp1</id>
@@ -199,6 +208,13 @@
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-bom</artifactId>
+                <version>${dxa-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-bom-modules</artifactId>
                 <version>${dxa-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

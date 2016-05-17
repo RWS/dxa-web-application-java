@@ -2,19 +2,19 @@ package com.sdl.webapp.common.api.contextengine;
 
 public interface ContextEngine {
 
+    //todo dxa2 return not-generic value? if not, refactor in another way
     /**
-     * <p>getClaims.</p>
-     *
-     * @param cls a {@link java.lang.Class} object.
-     * @param <T> a T object.
-     * @return a T object.
+     * Returns specific claims wrapper.
+     * @param cls wrapper class
+     * @param <T> type of these specific claims
+     * @return a wrapper
      */
     <T extends ContextClaims> T getClaims(Class<T> cls);
 
     /**
-     * <p>getDeviceFamily.</p>
+     * <p>Returns a predefined in a device family.</p>
      *
-     * @return a {@link java.lang.String} object.
+     * @return a device family name
      */
     String getDeviceFamily();
 }

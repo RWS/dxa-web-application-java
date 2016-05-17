@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.controller;
 
+import com.sdl.dxa.mvc.ViewNameResolver;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -33,13 +34,17 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODE
  */
 @Controller
 public abstract class BaseController {
+
     private static final Logger LOG = LoggerFactory.getLogger(BaseController.class);
+
+    @Autowired
+    protected ViewNameResolver viewNameResolver;
 
     @Autowired
     protected ViewResolver viewResolver;
 
     @Autowired
-    private WebRequestContext context;
+    protected WebRequestContext context;
 
     @Autowired
     private RequestMappingHandlerMapping requestMappingHandlerMapping;
@@ -127,7 +132,7 @@ public abstract class BaseController {
     /**
      * <p>handleException.</p>
      *
-     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param request   a {@link javax.servlet.http.HttpServletRequest} object.
      * @param exception a {@link java.lang.Exception} object.
      * @return a {@link java.lang.String} object.
      */
@@ -141,23 +146,29 @@ public abstract class BaseController {
      * <p>resolveView.</p>
      *
      * @param mvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     * @param type a {@link java.lang.String} object.
+     * @param type    a {@link java.lang.String} object.
      * @param request a {@link javax.servlet.http.HttpServletRequest} object.
      * @return a {@link java.lang.String} object.
+     * @deprecated since 1.5, use {@link ViewNameResolver#resolveView(MvcData, String)}
      */
+    //todo dxa2 remove
+    @Deprecated
     protected String resolveView(MvcData mvcData, String type, HttpServletRequest request) {
-        return this.viewResolver.resolveView(mvcData, type, request);
+        return this.viewNameResolver.resolveView(mvcData, type);
     }
 
     /**
      * <p>resolveView.</p>
      *
      * @param viewBaseDir a {@link java.lang.String} object.
-     * @param view a {@link java.lang.String} object.
-     * @param mvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
+     * @param view        a {@link java.lang.String} object.
+     * @param mvcData     a {@link com.sdl.webapp.common.api.model.MvcData} object.
+     * @param request     a {@link javax.servlet.http.HttpServletRequest} object.
      * @return a {@link java.lang.String} object.
+     * @deprecated since 1.5, use {@link ViewNameResolver#resolveView(MvcData, String)}
      */
+    //todo dxa2 remove
+    @Deprecated
     protected String resolveView(String viewBaseDir, String view, MvcData mvcData, HttpServletRequest request) {
         return this.viewResolver.resolveView(viewBaseDir, view, mvcData, request);
     }

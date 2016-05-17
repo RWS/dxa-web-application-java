@@ -4,29 +4,37 @@ import com.sdl.webapp.common.api.model.MvcData;
 
 import javax.servlet.http.HttpServletRequest;
 
+//todo dxa2 remove
 /**
- * <p>Resolves a view based model MVC data and it's view type. Can for example be used to route to contextual views.</p>
+ * Resolves a view name based on MVC data and view's type.
+ *
+ * @deprecated since 1.5, use {@link com.sdl.dxa.mvc.ViewNameResolver}
  */
+@Deprecated
 public interface ViewResolver {
 
     /**
-     * <p>resolveView.</p>
+     * Resolves a view name from {@link MvcData}, view type and a request.
      *
-     * @param mvcData  a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     * @param viewType a {@link java.lang.String} object.
-     * @param request  a {@link javax.servlet.http.HttpServletRequest} object.
-     * @return a {@link java.lang.String} object.
+     * @param mvcData  mvc data with information about the view needed
+     * @param viewType type of a view
+     * @param request  current request
+     * @return view name
+     * @deprecated since 1.5, use {@link com.sdl.dxa.mvc.ViewNameResolver#resolveView(MvcData, String)}
      */
+    @Deprecated
     String resolveView(MvcData mvcData, String viewType, HttpServletRequest request);
 
     /**
-     * <p>resolveView.</p>
+     * Resolves a view name from {@link MvcData}, view type and a request.
      *
-     * @param viewBaseDir a {@link java.lang.String} object.
-     * @param viewName    a {@link java.lang.String} object.
-     * @param mvcData     a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     * @param request     a {@link javax.servlet.http.HttpServletRequest} object.
-     * @return a {@link java.lang.String} object.
+     * @param viewBaseDir abse dir
+     * @param viewName    type of a view
+     * @param mvcData     mvc data with information about the view needed
+     * @param request     current request
+     * @return view name
+     * @deprecated since 1.5, use {@link com.sdl.dxa.mvc.ViewNameResolver#resolveView(MvcData, String)}
      */
+    @Deprecated
     String resolveView(String viewBaseDir, String viewName, MvcData mvcData, HttpServletRequest request);
 }

@@ -53,8 +53,6 @@
                 <dependency>
                     <artifactId>dxa-module-cid</artifactId>
                     <groupId>com.sdl.dxa.modules</groupId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -64,8 +62,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-search</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -75,8 +71,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-googleanalytics</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -86,8 +80,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-mediamanager</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
                 </dependency>
             </dependencies>
         </profile>
@@ -97,9 +89,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
-                    <type>pom</type>
                 </dependency>
             </dependencies>
         </profile>
@@ -109,27 +98,15 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-smarttarget-web8</artifactId>
-                    <version>${dxa.version}</version>
-                    <scope>runtime</scope>
-                    <type>pom</type>
                 </dependency>
             </dependencies>
         </profile>
-
         <profile>
-            <id>staging-8.1.0</id>
+            <id>51degrees-module</id>
             <dependencies>
                 <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_content_client</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_preview_content_common</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>content-ambient-client</artifactId>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-51degrees</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -138,6 +115,7 @@
             <id>2013sp1</id>
             <properties>
                 <build.classifier>2013sp1</build.classifier>
+                <java-version>1.7</java-version>
             </properties>
             <dependencyManagement>
                 <dependencies>
@@ -155,7 +133,10 @@
                 <dependency>
                     <groupId>com.sdl.dxa</groupId>
                     <artifactId>dxa-tridion-2013sp1-provider</artifactId>
-                    <version>${dxa.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>com.microsoft.sqlserver</groupId>
+                    <artifactId>sqljdbc4</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -166,13 +147,13 @@
             </activation>
             <properties>
                 <build.classifier>web8</build.classifier>
+                <java-version>1.8</java-version>
             </properties>
 
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa</groupId>
                     <artifactId>dxa-web8-provider</artifactId>
-                    <version>${dxa.version}</version>
                 </dependency>
             </dependencies>
         </profile>
@@ -183,6 +164,13 @@
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-bom</artifactId>
+                <version>${dxa-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-bom-modules</artifactId>
                 <version>${dxa-bom.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

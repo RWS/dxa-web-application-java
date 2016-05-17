@@ -2,6 +2,7 @@ package com.sdl.webapp.common.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdl.dxa.mvc.ViewNameResolver;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -12,6 +13,7 @@ import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.formats.DataFormatter;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.localization.LocalizationNotResolvedException;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -23,9 +25,8 @@ import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.Markup;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -43,6 +44,7 @@ import org.springframework.web.util.WebUtils;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.http.HTTPException;
+import java.io.IOException;
 
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static com.sdl.webapp.common.controller.ControllerUtils.SECTION_ERROR_VIEW;
@@ -61,50 +63,43 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  * Main controller. This handles requests that come from the client.
  */
 @Controller
+@Slf4j
+//todo dxa2 create error controller for error handling
 public class PageController extends BaseController {
 
     // TODO: Move this to common-impl or core-module
 
-    private static final Logger LOG = LoggerFactory.getLogger(PageController.class);
-
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
-    private final ContentProvider contentProvider;
-    private final LinkResolver linkResolver;
-    private final MediaHelper mediaHelper;
-    private final WebRequestContext webRequestContext;
-    private final Markup markup;
-    private final ViewResolver viewResolver;
-    private final DataFormatter dataFormatters;
+
+    @Autowired
+    private ContentProvider contentProvider;
+
+    @Autowired
+    private LinkResolver linkResolver;
+
+    @Autowired
+    private MediaHelper mediaHelper;
+
+    @Autowired
+    private WebRequestContext webRequestContext;
+
+    @Autowired
+    private Markup markup;
+
+    @Autowired
+    private ViewNameResolver viewResolver;
+
+    @Autowired
+    private DataFormatter dataFormatters;
+
     @Value("#{environment.getProperty('AllowJsonResponse', 'false')}")
     private boolean allowJsonResponse;
+
     @Autowired
     private NavigationProvider navigationProvider;
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    /**
-     * <p>Constructor for PageController.</p>
-     *
-     * @param contentProvider   a {@link com.sdl.webapp.common.api.content.ContentProvider} object.
-     * @param linkResolver      a {@link com.sdl.webapp.common.api.content.LinkResolver} object.
-     * @param mediaHelper       a {@link com.sdl.webapp.common.api.MediaHelper} object.
-     * @param webRequestContext a {@link com.sdl.webapp.common.api.WebRequestContext} object.
-     * @param markup            a {@link com.sdl.webapp.common.markup.Markup} object.
-     * @param viewResolver      a {@link com.sdl.webapp.common.controller.ViewResolver} object.
-     * @param dataFormatter     a {@link com.sdl.webapp.common.api.formats.DataFormatter} object.
-     */
-    @Autowired
-    public PageController(ContentProvider contentProvider, LinkResolver linkResolver, MediaHelper mediaHelper,
-                          WebRequestContext webRequestContext, Markup markup, ViewResolver viewResolver, DataFormatter dataFormatter) {
-        this.contentProvider = contentProvider;
-        this.linkResolver = linkResolver;
-        this.mediaHelper = mediaHelper;
-        this.webRequestContext = webRequestContext;
-        this.markup = markup;
-        this.viewResolver = viewResolver;
-        this.dataFormatters = dataFormatter;
-    }
 
     private static boolean isIncludeRequest(HttpServletRequest request) {
         return request.getAttribute(WebUtils.INCLUDE_REQUEST_URI_ATTRIBUTE) != null;
@@ -122,7 +117,7 @@ public class PageController extends BaseController {
     @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {MediaType.TEXT_HTML_VALUE, MediaType.ALL_VALUE})
     public String handleGetPage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final String requestPath = webRequestContext.getRequestPath();
-        LOG.trace("handleGetPage: requestPath={}", requestPath);
+        log.trace("handleGetPage: requestPath={}", requestPath);
 
         final Localization localization = webRequestContext.getLocalization();
 
@@ -132,11 +127,11 @@ public class PageController extends BaseController {
 
         if (page instanceof PageModel.WithResponseData) {
             if (((PageModel.WithResponseData) page).setResponseData(response)) {
-                LOG.debug("Page {} has modified the HttpServletResponse object", page);
+                log.debug("Page {} has modified the HttpServletResponse object", page);
             }
         }
 
-        LOG.trace("handleGetPage: page={}", page);
+        log.trace("handleGetPage: page={}", page);
 
         if (!isIncludeRequest(request)) {
             request.setAttribute(PAGE_ID, page.getId());
@@ -151,9 +146,9 @@ public class PageController extends BaseController {
         request.setAttribute(CONTEXTENGINE, webRequestContext.getContextEngine());
 
         final MvcData mvcData = page.getMvcData();
-        LOG.trace("Page MvcData: {}", mvcData);
+        log.trace("Page MvcData: {}", mvcData);
 
-        return this.viewResolver.resolveView(mvcData, "Page", request);
+        return this.viewResolver.resolveView(mvcData, "Page");
     }
 
     /**
@@ -167,12 +162,12 @@ public class PageController extends BaseController {
     public ModelAndView handleGetPageFormatted(final HttpServletRequest request) {
 
         final String requestPath = webRequestContext.getRequestPath();
-        LOG.trace("handleGetPageFormatted: requestPath={}", requestPath);
+        log.trace("handleGetPageFormatted: requestPath={}", requestPath);
 
         final Localization localization = webRequestContext.getLocalization();
         final PageModel page = getPageModel(requestPath, localization);
         enrichEmbeddedModels(page, request);
-        LOG.trace("handleGetPageFormatted: page={}", page);
+        log.trace("handleGetPageFormatted: page={}", page);
         return dataFormatters.view(page);
     }
 
@@ -245,7 +240,7 @@ public class PageController extends BaseController {
     public
     @ResponseBody
     String handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
-        LOG.trace("handleGetNavigationJson");
+        log.trace("handleGetNavigationJson");
 
         SitemapItem model = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
 
@@ -281,7 +276,7 @@ public class PageController extends BaseController {
         try {
             originalPageModel = contentProvider.getPageModel(notFoundPageUrl, webRequestContext.getLocalization());
         } catch (ContentProviderException e) {
-            LOG.error("Could not find error page", e);
+            log.error("Could not find error page", e);
             throw new HTTPException(SC_NOT_FOUND);
         }
 
@@ -301,7 +296,33 @@ public class PageController extends BaseController {
         request.setAttribute(CONTEXTENGINE, webRequestContext.getContextEngine());
 
         response.setStatus(SC_NOT_FOUND);
-        return this.viewResolver.resolveView(pageModel.getMvcData(), "Page", request);
+        return this.viewResolver.resolveView(pageModel.getMvcData(), "Page");
+    }
+
+    @ExceptionHandler({LocalizationNotResolvedException.class})
+    public void handleLocalizationNotResolvedException(HttpServletRequest request, HttpServletResponse response,
+                                                       LocalizationNotResolvedException exception) throws IOException {
+        log.error("Failed to retrieve localization for request url = {}, uri = {}",
+                request.getRequestURL(), request.getRequestURI(), exception);
+        if (exception instanceof LocalizationNotResolvedException.WithCustomResponse) {
+            LocalizationNotResolvedException.WithCustomResponse custom =
+                    (LocalizationNotResolvedException.WithCustomResponse) exception;
+            writeResponse(response, custom.getHttpStatus(), custom.getContent(), custom.getContentType());
+        } else {
+            if (exception.getHttpStatus() >= 400) {
+                response.sendError(exception.getHttpStatus(), exception.getMessage());
+            } else {
+                writeResponse(response, exception.getHttpStatus(), exception.getMessage(), "text/plain");
+            }
+        }
+    }
+
+    private void writeResponse(HttpServletResponse response, int httpStatus, String content, String contentType) throws IOException {
+        response.resetBuffer();
+        response.setStatus(httpStatus);
+        response.getWriter().write(content);
+        response.setContentType(contentType);
+        response.flushBuffer();
     }
 
     /**
@@ -311,7 +332,7 @@ public class PageController extends BaseController {
      */
     @ExceptionHandler(Exception.class)
     public String handleException(HttpServletRequest request, Exception exception) {
-        LOG.error("Exception while processing request for: {}", urlPathHelper.getRequestUri(request), exception);
+        log.error("Exception while processing request for: {}", urlPathHelper.getRequestUri(request), exception);
         request.setAttribute(MARKUP, markup);
         return isIncludeRequest(request) ? SECTION_ERROR_VIEW : SERVER_ERROR_VIEW;
     }
@@ -320,10 +341,10 @@ public class PageController extends BaseController {
         try {
             return contentProvider.getPageModel(path, localization);
         } catch (PageNotFoundException e) {
-            LOG.error("Page not found: {}", path, e);
+            log.error("Page not found: {}", path, e);
             throw new NotFoundException("Page not found: " + path, e);
         } catch (ContentProviderException e) {
-            LOG.error("An unexpected error occurred", e);
+            log.error("An unexpected error occurred", e);
             throw new InternalServerErrorException("An unexpected error occurred", e);
         }
     }

@@ -6,7 +6,6 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.localization.LocalizationNotFoundException;
 import com.sdl.webapp.common.util.MimeUtils;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.Hours;
@@ -97,9 +96,6 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
         LOG.trace("preHandle: {}", requestPath);
 
         final Localization localization = webRequestContext.getLocalization();
-        if (localization == null) {
-            throw new LocalizationNotFoundException("Localization is not available.");
-        }
         if (localization.isStaticContent(requestPath)) {
             LOG.debug("Handling static content: {}", requestPath);
 

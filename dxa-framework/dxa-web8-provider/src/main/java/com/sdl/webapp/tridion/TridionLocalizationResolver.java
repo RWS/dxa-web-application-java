@@ -1,8 +1,8 @@
 package com.sdl.webapp.tridion;
 
+import com.sdl.web.api.dynamic.DynamicMappingsRetriever;
+import com.sdl.web.api.dynamic.mapping.PublicationMapping;
 import com.tridion.configuration.ConfigurationException;
-import com.tridion.dynamiccontent.DynamicMappingsRetriever;
-import com.tridion.dynamiccontent.publication.PublicationMapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

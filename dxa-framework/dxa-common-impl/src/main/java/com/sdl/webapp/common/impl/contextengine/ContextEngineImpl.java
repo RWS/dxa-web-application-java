@@ -173,12 +173,7 @@ public class ContextEngineImpl implements ContextEngine {
                             String contextClaim = elCondition.getAttribute("context-claim");
                             String value = elCondition.getAttribute("value");
                             log.debug("Adding a condition {} <> {} for {}", contextClaim, value, deviceFamily);
-                            Evaluator evaluator = Evaluator.getByExpectedValue(value);
-                            if (evaluator == null) {
-                                log.warn("Can't parse a condition {} for {}", contextClaim, deviceFamily);
-                                continue;
-                            }
-                            conditions.put(contextClaim, evaluator);
+                            conditions.put(contextClaim, Evaluator.getByExpectedValue(value));
                         }
                     }
                 }
@@ -200,8 +195,8 @@ public class ContextEngineImpl implements ContextEngine {
             this.sign = sign;
         }
 
-        static Evaluator getByExpectedValue(String conditionValue) {
-            if ("true".equalsIgnoreCase(conditionValue) || "false".equalsIgnoreCase(conditionValue)) {
+        static Evaluator getByExpectedValue(final String conditionValue) {
+            if (tryBoolean(conditionValue)) {
                 return new Evaluator<Boolean>(Boolean.parseBoolean(conditionValue), Sign.EQUAL) {
                     @Override
                     boolean evaluate(Boolean value) {
@@ -221,7 +216,16 @@ public class ContextEngineImpl implements ContextEngine {
                 };
             }
 
-            return null;
+            return new Evaluator<String>(conditionValue, Sign.EQUAL) {
+                @Override
+                boolean evaluate(String value) {
+                    return Objects.equals(value, conditionValue);
+                }
+            };
+        }
+
+        private static boolean tryBoolean(String conditionValue) {
+            return "true".equalsIgnoreCase(conditionValue) || "false".equalsIgnoreCase(conditionValue);
         }
 
         abstract boolean evaluate(T value);

@@ -68,6 +68,19 @@ public class ContextEngineImplTest {
     }
 
     @Test
+    public void shouldDefineApple() throws DxaException {
+        //given
+        ContextClaimsProvider claimsProvider = mock(ContextClaimsProvider.class);
+        ContextEngineImpl contextEngine = contextEngineImpl(claimsProvider);
+
+        //when
+        when(claimsProvider.getContextClaims(isNull(String.class))).thenReturn(appleClaims());
+
+        //then
+        assertEquals("apple", contextEngine.getDeviceFamily());
+    }
+
+    @Test
     public void shouldDefineAlienDeviceThatProvesWeAreNotGettingFallback() throws DxaException {
         //given
         ContextClaimsProvider claimsProvider = mock(ContextClaimsProvider.class);
@@ -106,6 +119,12 @@ public class ContextEngineImplTest {
                 .put("device.mobile", false)
                 .put("device.tablet", false)
                 .put("device.displayWidth", 300)
+                .build();
+    }
+
+    private Map<String, Object> appleClaims() {
+        return ImmutableMap.<String, Object>builder()
+                .put("os.vendor", "Apple")
                 .build();
     }
 

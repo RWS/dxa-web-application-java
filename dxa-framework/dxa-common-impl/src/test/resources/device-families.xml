@@ -18,6 +18,9 @@
         <condition context-claim="device.tablet" value="false"/>
         <condition context-claim="device.displayWidth" value="&lt;320"/>
     </devicefamily>
+    <devicefamily name="apple">
+        <condition context-claim="os.vendor" value="Apple"/>
+    </devicefamily>
     <devicefamily name="desktop">
         <condition context-claim="device.mobile" value="false"/>
         <condition context-claim="device.tablet" value="false"/>

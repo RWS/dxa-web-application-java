@@ -9,6 +9,8 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ClassUtils;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
+import org.springframework.web.context.ConfigurableWebEnvironment;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
@@ -28,6 +30,7 @@ public final class InitializationUtils {
 
     // keep the order for internal usage
     private static List<Resource> resources;
+
     private static Properties properties;
 
     private InitializationUtils() {
@@ -137,7 +140,9 @@ public final class InitializationUtils {
      * @return true if class is in classpath, false otherwise
      */
     public static boolean isClassPresent(@NonNull String className) {
-        return ClassUtils.isPresent(className, ClassUtils.getDefaultClassLoader());
+        boolean present = ClassUtils.isPresent(className, ClassUtils.getDefaultClassLoader());
+        log.debug("{} isClassPresent: {}", present);
+        return present;
     }
 
     /**
@@ -149,6 +154,34 @@ public final class InitializationUtils {
     @SneakyThrows({ClassNotFoundException.class, LinkageError.class})
     public static Class<?> classForNameIfPresent(@NonNull String className) {
         return isClassPresent(className) ? ClassUtils.forName(className, ClassUtils.getDefaultClassLoader()) : null;
+    }
+
+    /**
+     * Loads <code>spring.profiles.active</code> and <code>spring.profiles.include</code> Spring profiles merging them.
+     * In case <code>spring.profiles.active</code> is found in current context (e.g. from web.xml),
+     * then this has a priority and properties are skipped.
+     *
+     * @param applicationContext current configurable application context
+     */
+    public static void loadActiveSpringProfiles(ServletContext servletContext, ConfigurableWebApplicationContext applicationContext) {
+        if (servletContext.getInitParameter("spring.profiles.active") != null) {
+            log.debug("spring.profiles.active property is found in current servlet context which has a priority on properties definition");
+            return;
+        }
+
+        Properties dxaProperties = loadDxaProperties();
+
+        addActiveProfiles(applicationContext, dxaProperties.getProperty("spring.profiles.active"));
+        addActiveProfiles(applicationContext, dxaProperties.getProperty("spring.profiles.include"));
+    }
+
+    private static void addActiveProfiles(ConfigurableWebApplicationContext servletAppContext, String activeProfiles) {
+        if (activeProfiles != null) {
+            ConfigurableWebEnvironment environment = servletAppContext.getEnvironment();
+            for (String profile : activeProfiles.split(",")) {
+                environment.addActiveProfile(profile.trim());
+            }
+        }
     }
 
     /**
@@ -184,7 +217,7 @@ public final class InitializationUtils {
             log.debug("Registered {} for mapping {}", className, urlMappings);
             return registration;
         }
-        log.debug("Failed to register {}", className);
+        log.debug("Failed to register {}, class is not in classpath", className);
         return null;
     }
 
@@ -215,7 +248,7 @@ public final class InitializationUtils {
             servletContext.addListener(className);
             log.debug("Registered {}", className);
         } else {
-            log.debug("Failed to register {}", className);
+            log.debug("Failed to register {}, class is not in classpath", className);
         }
     }
 

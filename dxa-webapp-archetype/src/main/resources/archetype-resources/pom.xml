@@ -13,8 +13,8 @@
     <url>http://www.example.org</url>
 
     <properties>
-        <dxa.version>${version}</dxa.version>
-        <java-version>1.8</java-version>
+        <dxa-bom.version>1.5.0-SNAPSHOT</dxa-bom.version>
+        <java-version>1.7</java-version>
     </properties>
 
     <build>
@@ -147,7 +147,7 @@
             </activation>
             <properties>
                 <build.classifier>web8</build.classifier>
-                <java-version>1.8</java-version>
+                <java-version>1.7</java-version>
             </properties>
 
             <dependencies>

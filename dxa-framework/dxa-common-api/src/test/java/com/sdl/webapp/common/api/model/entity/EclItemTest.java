@@ -2,7 +2,7 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdl.dxa.DxaWebSpringInitialization;
+import com.sdl.dxa.DxaSpringInitialization;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
@@ -157,7 +157,7 @@ public class EclItemTest {
         @SuppressWarnings("Duplicates")
         @Bean
         public ObjectMapper objectMapper() {
-            return new DxaWebSpringInitialization().objectMapper();
+            return new DxaSpringInitialization().objectMapper();
         }
 
         @Bean

@@ -124,17 +124,18 @@ public class ContextEngineImpl implements ContextEngine {
 
     private String fallbackDeviceFamily() {
         DeviceClaims claims = getClaims(DeviceClaims.class);
-        if (!claims.getIsMobile() && !claims.getIsTablet()) {
-            return "desktop";
-        }
-        if (claims.getIsTablet()) {
+
+        Boolean isTablet = claims.getIsTablet();
+        if (isTablet != null && isTablet) {
             return "tablet";
         }
-        if (claims.getIsMobile() && !claims.getIsTablet()) {
+
+        Boolean isMobile = claims.getIsMobile();
+        if (isMobile != null && isMobile) {
             return claims.getDisplayWidth() > 319 ? "smartphone" : "featurephone";
         }
 
-        return null;
+        return "desktop";
     }
 
     private void readDeviceFamiliesFile() {

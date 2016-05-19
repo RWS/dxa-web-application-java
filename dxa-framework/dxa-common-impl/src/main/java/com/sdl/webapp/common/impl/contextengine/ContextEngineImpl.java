@@ -132,7 +132,10 @@ public class ContextEngineImpl implements ContextEngine {
 
         Boolean isMobile = claims.getIsMobile();
         if (isMobile != null && isMobile) {
-            return claims.getDisplayWidth() > 319 ? "smartphone" : "featurephone";
+            Integer displayWidth = claims.getDisplayWidth();
+            if (displayWidth != null) {
+                return displayWidth > 319 ? "smartphone" : "featurephone";
+            }
         }
 
         return "desktop";

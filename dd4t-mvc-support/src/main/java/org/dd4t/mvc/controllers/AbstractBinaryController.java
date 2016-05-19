@@ -203,7 +203,7 @@ public class AbstractBinaryController {
 
     private static void writeResizedImage (final Binary binary, final String path, final int resizeToWidth, final File binaryFile) throws IOException {
         final File tempBinary = new File(path + ".tmp");
-
+        saveBinary(binary, tempBinary);
 
         try (InputStream content = new FileInputStream(tempBinary)) {
             BufferedImage before = ImageIO.read(content);
@@ -216,7 +216,6 @@ public class AbstractBinaryController {
                 return;
             }
 
-            saveBinary(binary, tempBinary);
 
             float factor = (float) resizeToWidth / w;
             int newH = Math.round(factor * h);
@@ -224,7 +223,10 @@ public class AbstractBinaryController {
             final BufferedImage after = getScaledInstance(before, resizeToWidth, newH, BufferedImage.TYPE_INT_ARGB,true);
 
             ImageIO.write(after, getImageType(path), binaryFile);
-        } finally {
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(),e);
+        }
+        finally {
             Files.deleteIfExists(tempBinary.toPath());
         }
     }

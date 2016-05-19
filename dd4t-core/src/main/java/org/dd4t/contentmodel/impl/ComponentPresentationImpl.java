@@ -146,7 +146,7 @@ public class ComponentPresentationImpl implements ComponentPresentation {
     @Override
     public List<Condition> getConditions () {
         if (conditions == null) {
-            return new LinkedList<Condition>();
+            return new LinkedList<>();
         }
         return this.conditions;
     }

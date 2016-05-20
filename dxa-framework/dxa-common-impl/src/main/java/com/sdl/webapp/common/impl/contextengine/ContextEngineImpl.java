@@ -36,7 +36,7 @@ import static com.sdl.webapp.common.util.CacheUtils.memorize;
 @Scope(value = "request")
 public class ContextEngineImpl implements ContextEngine {
 
-    private static Map<String, Map<String, Evaluator>> deviceFamiliesRules;
+    private Map<String, Map<String, Evaluator>> deviceFamiliesRules;
 
     private Map<Class, ContextClaims> stronglyTypedClaims = new HashMap<>();
 
@@ -53,7 +53,7 @@ public class ContextEngineImpl implements ContextEngine {
     private final String deviceFamily = deviceFamily();
 
     @PostConstruct
-    private void init() {
+    public void init() {
         readDeviceFamiliesFile();
     }
 
@@ -123,16 +123,16 @@ public class ContextEngineImpl implements ContextEngine {
     }
 
     private String fallbackDeviceFamily() {
-        DeviceClaims claims = getClaims(DeviceClaims.class);
+        DeviceClaims deviceClaims = getClaims(DeviceClaims.class);
 
-        Boolean isTablet = claims.getIsTablet();
+        Boolean isTablet = deviceClaims.getIsTablet();
         if (isTablet != null && isTablet) {
             return "tablet";
         }
 
-        Boolean isMobile = claims.getIsMobile();
+        Boolean isMobile = deviceClaims.getIsMobile();
         if (isMobile != null && isMobile) {
-            Integer displayWidth = claims.getDisplayWidth();
+            Integer displayWidth = deviceClaims.getDisplayWidth();
             if (displayWidth != null) {
                 return displayWidth > 319 ? "smartphone" : "featurephone";
             }
@@ -165,8 +165,8 @@ public class ContextEngineImpl implements ContextEngine {
                     Element elFamily = (Element) node;
 
                     HashMap<String, Evaluator> conditions = new HashMap<>();
-                    String deviceFamily = elFamily.getAttribute("name");
-                    deviceFamiliesRules.put(deviceFamily, conditions);
+                    String elDeviceFamily = elFamily.getAttribute("name");
+                    deviceFamiliesRules.put(elDeviceFamily, conditions);
 
                     NodeList elConditions = elFamily.getElementsByTagName("condition");
                     for (int j = 0; j < elConditions.getLength(); j++) {
@@ -176,19 +176,19 @@ public class ContextEngineImpl implements ContextEngine {
 
                             String contextClaim = elCondition.getAttribute("context-claim");
                             String value = elCondition.getAttribute("value");
-                            log.debug("Adding a condition {} <> {} for {}", contextClaim, value, deviceFamily);
+                            log.debug("Adding a condition {} <> {} for {}", contextClaim, value, elDeviceFamily);
                             conditions.put(contextClaim, Evaluator.getByExpectedValue(value));
                         }
                     }
                 }
             }
         } catch (SAXException | IOException | ParserConfigurationException e) {
-            e.printStackTrace();
+            log.error("Exception occurred while reading the device-families definition", e);
         }
     }
 
     @ToString
-    private static abstract class Evaluator<T> {
+    private abstract static class Evaluator<T> {
 
         T expected;
 

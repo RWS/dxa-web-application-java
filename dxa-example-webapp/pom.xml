@@ -47,9 +47,16 @@
     <properties>
         <dxa.version>${project.version}</dxa.version>
         <dxa-bom.version>1.5.0-SNAPSHOT</dxa-bom.version>
+        <dxa-release-branch>release/1.5</dxa-release-branch>
     </properties>
 
     <repositories>
+        <repository>
+            <id>github-project-repo</id>
+            <url>
+                https://raw.githubusercontent.com/sdl/dxa-web-application-java/${dxa-release-branch}/local-project-repo
+            </url>
+        </repository>
         <repository>
             <id>local-project-repo</id>
             <url>file:///${project.basedir}/../local-project-repo</url>

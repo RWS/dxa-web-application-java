@@ -86,7 +86,7 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
                 if (revisionDate != null) {
                     binary.setRevisionDate(new DateTime(revisionDate));
                 } else {
-                    binary.setLastPublishedDate(Constants.THE_YEAR_ZERO);
+                    binary.setRevisionDate(Constants.THE_YEAR_ZERO);
                 }
 
 

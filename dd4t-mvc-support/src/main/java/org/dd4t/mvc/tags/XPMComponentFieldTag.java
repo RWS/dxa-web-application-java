@@ -18,6 +18,8 @@ import java.io.IOException;
  */
 public class XPMComponentFieldTag extends BodyTagSupport {
 
+
+    private static final long serialVersionUID = -572209173487510785L;
     private transient TridionViewModel model;
     private String field;
     private int index;

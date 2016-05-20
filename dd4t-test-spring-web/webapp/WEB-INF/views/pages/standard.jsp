@@ -2,11 +2,14 @@
 <jsp:useBean id="pageModel" type="org.dd4t.contentmodel.Page" scope="request"/>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="dd4t" uri="http://www.dd4t.org/tags/2.0" %>
+<%@ taglib prefix="xpm" uri="http://www.dd4t.org/tags/2.0/xpm" %>
 <html>
 <head>
     <title>${pageModel.title}</title>
 </head>
+
 <body>
+<xpm:init page="${pageModel}" />
 <h1>Hello world!</h1>
 <h2>The Title of the page is: ${pageModel.title}</h2>
 

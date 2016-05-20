@@ -22,10 +22,13 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.contentmodel.Condition;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.core.databind.BaseViewModel;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -55,6 +58,10 @@ public class ComponentPresentationImpl implements ComponentPresentation {
 
     @JsonProperty ("OrderOnPage")
     private int orderOnPage;
+
+    @JsonProperty ("Conditions")
+    @JsonDeserialize (contentAs = ConditionImpl.class)
+    List<Condition> conditions;
 
     @JsonIgnore
     private Map<String, BaseViewModel> baseViewModels;
@@ -129,6 +136,19 @@ public class ComponentPresentationImpl implements ComponentPresentation {
     @Override
     public void setOrderOnPage (final int orderOnPage) {
         this.orderOnPage = orderOnPage;
+    }
+
+    @Override
+    public void setConditions (final List<Condition> conditions) {
+        this.conditions = conditions;
+    }
+
+    @Override
+    public List<Condition> getConditions () {
+        if (conditions == null) {
+            return new LinkedList<>();
+        }
+        return this.conditions;
     }
 
     @Override

@@ -111,6 +111,13 @@ public class DefaultLinkResolver implements LinkResolver {
         if (contextPath != null && contextPath.length() > 0) {
             resolvedUrl = contextPath + resolvedUrl;
         }
+
+
+
+        // TODO: reinstated for the time being. It's quite an anti pattern
+        component.setResolvedUrl(resolvedUrl);
+
+
         return resolvedUrl;
     }
 

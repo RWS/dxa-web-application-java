@@ -32,7 +32,7 @@ import java.io.PrintWriter;
  *
  */
 public class CharResponseWrapper extends HttpServletResponseWrapper {
-	protected static Logger logger = LoggerFactory.getLogger(CharResponseWrapper.class);
+	private static final Logger LOG = LoggerFactory.getLogger(CharResponseWrapper.class);
 	
     private CharArrayWriter output;
     private ServletOutputStreamWrapper stream;
@@ -44,13 +44,13 @@ public class CharResponseWrapper extends HttpServletResponseWrapper {
     	
     	// if the stream is used, empty it
     	if(stream.isWrittenTo()){
-    		logger.debug("Appending stream.");
+    		LOG.debug("Appending stream.");
     		buf.append( stream.toString());
     	}
     	
     	// if the writer is used, empty it
     	if(writerUsed){
-    		logger.debug("Appending printwriter.");
+    		LOG.debug("Appending printwriter.");
     		buf.append( output.toString());        
     	}
     	
@@ -63,19 +63,19 @@ public class CharResponseWrapper extends HttpServletResponseWrapper {
         stream = new ServletOutputStreamWrapper();
         writerUsed = false;
         
-        logger.debug("CharResponseWrapper initialized.");
+        LOG.debug("CharResponseWrapper initialized.");
     }
 
     @Override
     public PrintWriter getWriter() {
-    	logger.debug("Writer requested.");
+    	LOG.debug("Writer requested.");
     	writerUsed = true;
         return new PrintWriter(output);
     }
     
     @Override
     public ServletOutputStream getOutputStream(){
-    	logger.debug("Outputstream requested.");
+    	LOG.debug("Outputstream requested.");
 		return stream;    	
     }
 }

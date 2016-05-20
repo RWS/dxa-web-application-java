@@ -28,6 +28,8 @@ public interface PublicationProvider {
 
     int discoverPublicationByBaseUrl (String fullUrl);
 
+    int discoverPublicationByImagesUrl (String fullUrl);
+
     String discoverPublicationUrl (final int publicationId);
 
     String discoverPublicationPath (int publicationId);

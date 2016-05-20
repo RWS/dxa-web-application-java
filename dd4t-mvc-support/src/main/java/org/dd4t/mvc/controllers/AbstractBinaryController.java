@@ -17,6 +17,7 @@
 package org.dd4t.mvc.controllers;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.contentmodel.BinaryData;
@@ -43,6 +44,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -101,7 +103,11 @@ public class AbstractBinaryController {
         }
 
         Binary binary;
-        int publicationId = publicationResolver.getPublicationId();
+
+        int publicationId = publicationResolver.discoverPublicationIdByImagesUrl(binaryPath);
+        if (publicationId == Constants.UNKNOWN_PUBLICATION_ID) {
+            throw new ItemNotFoundException("Could not resolve Publication Id for binary path");
+        }
         String path = String.format("%s/%d%s", binaryRootFolder, publicationId, binaryPath);
         if (resizeToWidth > -1) {
             path = insertIntoPath(path, request.getParameter("resizeToWidth"));
@@ -149,7 +155,7 @@ public class AbstractBinaryController {
         return path.substring(0, i + 1) + toInsert + path.substring(i);
     }
 
-    private String getImageType (String path) {
+    private static String getImageType (String path) {
         int i = path.lastIndexOf('.');
         if (i == 0) {
             LOG.warn("path to binary has no extension: " + path + "; assuming the type is png");
@@ -160,7 +166,6 @@ public class AbstractBinaryController {
 
     private void fillResponse (final HttpServletRequest request, final HttpServletResponse response, final Binary binary, final String path, int resizeToWidth) throws IOException {
         InputStream content = null;
-
         try {
             final long contentLength;
             if (isUseBinaryStorage()) {
@@ -170,21 +175,7 @@ public class AbstractBinaryController {
                     if (resizeToWidth == -1) {
                         saveBinary(binary, binaryFile);
                     } else {
-                        File tempBinary = new File(path + ".tmp");
-                        saveBinary(binary, tempBinary);
-                        content = new FileInputStream(tempBinary);
-                        BufferedImage before = ImageIO.read(content);
-                        int w = before.getWidth();
-                        int h = before.getHeight();
-                        float factor = (float) resizeToWidth / w;
-                        int newH = Math.round(factor * h);
-
-                        BufferedImage after = new BufferedImage(resizeToWidth, newH, BufferedImage.TYPE_INT_ARGB);
-                        Graphics g = after.createGraphics();
-                        g.drawImage(before, 0, 0, resizeToWidth, newH, null);
-                        g.dispose();
-
-                        ImageIO.write(after, getImageType(path), binaryFile);
+                        writeResizedImage(binary, path, resizeToWidth, binaryFile);
                     }
                 }
                 content = new FileInputStream(binaryFile);
@@ -206,14 +197,84 @@ public class AbstractBinaryController {
                 response.getOutputStream().write(buffer, 0, len);
             }
         } finally {
-            if (content != null) {
-                try {
-                    content.close();
-                } catch (IOException e) {
-                    LOG.error("Failed to close binary input stream", e);
+            IOUtils.closeQuietly(content);
+        }
+    }
+
+    private static void writeResizedImage (final Binary binary, final String path, final int resizeToWidth, final File binaryFile) throws IOException {
+        final File tempBinary = new File(path + ".tmp");
+        saveBinary(binary, tempBinary);
+
+        try (InputStream content = new FileInputStream(tempBinary)) {
+            BufferedImage before = ImageIO.read(content);
+            int w = before.getWidth();
+            int h = before.getHeight();
+
+            if (resizeToWidth > w) {
+                LOG.warn("Not resizing image. Resizing to larger formats is unsupported.");
+                saveBinary(binary, binaryFile);
+                return;
+            }
+
+
+            float factor = (float) resizeToWidth / w;
+            int newH = Math.round(factor * h);
+
+            final BufferedImage after = getScaledInstance(before, resizeToWidth, newH, BufferedImage.TYPE_INT_ARGB,true);
+
+            ImageIO.write(after, getImageType(path), binaryFile);
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(),e);
+        }
+        finally {
+            Files.deleteIfExists(tempBinary.toPath());
+        }
+    }
+
+    private static BufferedImage getScaledInstance(BufferedImage image, int targetWidth, int targetHeight, int type, boolean higherQuality) {
+        BufferedImage ret = image;
+        int w, h;
+        if (higherQuality) {
+            // Use multi-step technique: start with original size, then
+            // scale down in multiple passes with drawImage()
+            // until the target size is reached
+            w = image.getWidth();
+            h = image.getHeight();
+        } else {
+            // Use one-step technique: scale directly from original
+            // size to target size with a single drawImage() call
+            w = targetWidth;
+            h = targetHeight;
+        }
+        do {
+            if (higherQuality && w > targetWidth) {
+                w /= 2;
+                if (w < targetWidth) {
+                    w = targetWidth;
                 }
             }
-        }
+            if (higherQuality && h > targetHeight) {
+                h /= 2;
+                if (h < targetHeight) {
+                    h = targetHeight;
+                }
+            }
+
+            BufferedImage tmp = new BufferedImage(w, h, type);
+            Graphics2D g2 = tmp.createGraphics();
+            g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                    RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+            g2.setRenderingHint(RenderingHints.KEY_RENDERING,
+                    RenderingHints.VALUE_RENDER_QUALITY);
+            g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g2.drawImage(ret, 0, 0, w, h, null);
+            g2.dispose();
+
+            ret = tmp;
+        } while (w != targetWidth || h != targetHeight);
+
+        return ret;
     }
 
     private String getContentType (final Binary binary, final String path, final HttpServletRequest request) {
@@ -249,7 +310,7 @@ public class AbstractBinaryController {
         return requestURI;
     }
 
-    private void saveBinary (final Binary binary, final File binaryFile) throws IOException {
+    private static void saveBinary (final Binary binary, final File binaryFile) throws IOException {
         BufferedOutputStream bufferedOutput = null;
 
         try {

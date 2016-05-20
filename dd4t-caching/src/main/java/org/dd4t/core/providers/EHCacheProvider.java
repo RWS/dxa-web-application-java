@@ -68,7 +68,7 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator, 
     @Resource
     private PropertiesService propertiesService;
 
-    EHCacheProvider () {
+    public EHCacheProvider () {
         LOG.debug("Starting cache provider");
     }
 

@@ -58,11 +58,6 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 
         final PageMeta pageMeta = getPageMetaById(id, publication);
         final ProviderResultItem<String> pageResult = new StringResultItemImpl();
-
-        if (pageMeta == null) {
-            throw new ItemNotFoundException("Unable to find page meta by id '" + id + "' and publication '" + publication + "'.");
-        }
-
         pageResult.setLastPublishDate(pageMeta.getLastPublicationDate());
         pageResult.setRevisionDate(pageMeta.getModificationDate());
         pageResult.setContentSource(getPageContentById(id, publication));
@@ -74,11 +69,6 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
     public ProviderResultItem<String> getPageByURL (final String url, final int publication) throws ItemNotFoundException, SerializationException {
         final PageMeta pageMeta = getPageMetaByURL(url, publication);
         final ProviderResultItem<String> pageResult = new StringResultItemImpl();
-
-        if (pageMeta == null) {
-            throw new ItemNotFoundException("Unable to find page meta by url '" + url + "' and publication '" + publication + "'.");
-        }
-
         pageResult.setLastPublishDate(pageMeta.getLastPublicationDate());
         pageResult.setRevisionDate(pageMeta.getModificationDate());
         pageResult.setContentSource(getPageContentById(pageMeta.getId(), pageMeta.getPublicationId()));
@@ -154,7 +144,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
 //            LOG.debug("Could not find page metas: {}", clientQuery);
 //            return new ArrayList();
 //        }
-        // TODO for web 8 REST. The oDataClient don't seem to be able to handle this yet.
+        // TODO for web 8 REST. The oDataClient doesn't seem to be able to handle this yet.
         throw new NotImplementedException();
 
 //        try {

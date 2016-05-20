@@ -1,17 +1,21 @@
-package org.dd4t.providers;
+package org.dd4t.providers.impl;
 
+import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.PageMeta;
 import com.tridion.meta.PublicationMeta;
 import org.dd4t.contentmodel.PublicationDescriptor;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.CacheType;
-import org.dd4t.core.util.Constants;
+import org.dd4t.providers.BaseBrokerProvider;
+import org.dd4t.providers.PublicationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * dd4t-parent
+ * AbstractPublicationProvider
  *
+ * This class duplicates quite a bit of code, but there's no way around it
+ * in terms of dependency differences between 2013 SP 1 and Web 8
  * @author R. Kempees
  */
 public abstract class AbstractPublicationProvider extends BaseBrokerProvider implements PublicationProvider {
@@ -71,44 +75,6 @@ public abstract class AbstractPublicationProvider extends BaseBrokerProvider imp
             return null;
         }
         return publicationMeta.getKey();
-    }
-
-    //TODO: Document
-    @Override
-    public int discoverPublicationIdByPageUrlPath (final String url) {
-        LOG.debug("Discovering Publication id for url: {}", url);
-        final String key = getKey(CacheType.DISCOVER_PUBLICATION_URL, url);
-        final CacheElement<Integer> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
-        Integer result = Constants.UNKNOWN_PUBLICATION_ID;
-
-        if (cacheElement.isExpired()) {
-            //noinspection SynchronizationOnLocalVariableOrMethodParameter
-            synchronized (cacheElement) {
-                if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
-
-                    final PageMeta pageMeta = loadPageMetaByConcreteFactory(url);
-                    if (pageMeta != null) {
-                        result = pageMeta.getPublicationId();
-                        LOG.debug("Publication Id for URL: {}, is {}", url, result);
-                    } else {
-                        LOG.warn("Could not resolve publication Id for URL: {}", url);
-                    }
-
-                    cacheElement.setPayload(result);
-                    cacheProvider.storeInItemCache(key, cacheElement);
-                    LOG.debug("Stored Publication Id with key: {} in cache", key);
-                } else {
-                    LOG.debug("Fetched a Publication Id with key: {} from cache", key);
-                    result = cacheElement.getPayload();
-                }
-            }
-        } else {
-            LOG.debug("Fetched Publication Id with key: {} from cache", key);
-            result = cacheElement.getPayload();
-        }
-
-        return result == null ? Constants.UNKNOWN_PUBLICATION_ID : result;
     }
 
     protected PublicationMeta getPublicationMeta (final int publicationId) {
@@ -192,4 +158,6 @@ public abstract class AbstractPublicationProvider extends BaseBrokerProvider imp
     protected abstract PageMeta loadPageMetaByConcreteFactory (final String url);
 
     protected abstract PublicationMeta loadPublicationMetaByConcreteFactory (final int publicationId);
+
+    protected abstract BinaryMeta loadBinaryMetaByConcreteFactory(final String url);
 }

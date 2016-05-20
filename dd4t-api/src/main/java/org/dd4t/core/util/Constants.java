@@ -34,6 +34,8 @@ public class Constants {
     public static final String CONTROLLER_MAPPING_PATTERN = "/%s/%s.dcp";
     public static final String PAGE_REQUEST_URI = "pageRequestURI";
     public static final String REFERER = "Referer";
+
+    //TODO: should be configurable
     public static final String DEFAULT_PAGE = "index.html";
     public static final String SMART_INCLUDE_URL = "smartIncludeUrl";
     public static final String COMPONENT_NAME = "component";

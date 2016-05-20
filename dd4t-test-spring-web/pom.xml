@@ -5,69 +5,21 @@
     <parent>
         <artifactId>dd4t-parent</artifactId>
         <groupId>org.dd4t</groupId>
-        <version>2.0.5-SNAPSHOT</version>
+        <version>2.0.6-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dd4t-test-spring-web</artifactId>
 
     <packaging>war</packaging>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <easylicense.version>2.5</easylicense.version>
     </properties>
 
     <build>
         <plugins>
-            <plugin>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <archiveClasses>true</archiveClasses>
-                    <webResources>
-                        <resource>
-                            <directory>src/main/resources/${tridion.build.version}/WEB-INF</directory>
-                            <targetPath>WEB-INF</targetPath>
-                            <filtering>true</filtering>
-                            <includes>
-                                <include>**/**</include>
-                            </includes>
-                        </resource>
-                        <resource>
-                            <filtering>true</filtering>
-                            <directory>webapp/</directory>
-                            <includes>
-                                <include>**/**</include>
-                            </includes>
-                        </resource>
-
-                    </webResources>
-                    <webXml>webapp/WEB-INF/web.xml</webXml>
-                    <failOnMissingWebXml>true</failOnMissingWebXml>
-                    <includeEmptyDirectories>true</includeEmptyDirectories>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>default-war</id>
-                        <phase>none</phase>
-                    </execution>
-                    <execution>
-                        <id>war-exploded</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>exploded</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>custom-war</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>war</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.7</version>
@@ -97,6 +49,17 @@
         </plugins>
     </build>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.dd4t</groupId>
+                <artifactId>dd4t-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
@@ -135,7 +98,12 @@
             <groupId>javax.servlet</groupId>
             <artifactId>jstl</artifactId>
         </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+        </dependency>
     </dependencies>
+
 
     <profiles>
         <profile>
@@ -143,127 +111,216 @@
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
-            <dependencies>
 
+            <properties>
+                <java-version>1.7</java-version>
+                <tridion.build.version>7.1.0</tridion.build.version>
+                <spring.version>3.2.8.RELEASE</spring.version>
+                <logback.version>1.0.3</logback.version>
+                <slf4j.version>1.6.4</slf4j.version>
+                <resources-directory>7.1.0</resources-directory>
+            </properties>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>2.5.1</version>
+                        <inherited>true</inherited>
+                        <configuration>
+                            <source>${java-version}</source>
+                            <target>${java-version}</target>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.4</version>
+                        <configuration>
+                            <archiveClasses>true</archiveClasses>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/resources/${resources-directory}/WEB-INF</directory>
+                                    <targetPath>WEB-INF</targetPath>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/**</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <filtering>true</filtering>
+                                    <directory>webapp/</directory>
+                                    <includes>
+                                        <include>**/**</include>
+                                    </includes>
+                                </resource>
+
+                            </webResources>
+                            <webXml>webapp/WEB-INF/web.xml</webXml>
+                            <failOnMissingWebXml>true</failOnMissingWebXml>
+                            <includeEmptyDirectories>true</includeEmptyDirectories>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default-war</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>war-exploded</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>exploded</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>custom-war</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>war</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+
+
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.dd4t</groupId>
+                        <artifactId>dd4t-bom-2013SP1</artifactId>
+                        <version>${project.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
+            <dependencies>
                 <dependency>
                     <groupId>org.dd4t</groupId>
                     <artifactId>dd4t-providers</artifactId>
                     <version>${project.version}</version>
                 </dependency>
 
-                <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-webmvc</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-core</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.springframework</groupId>
-                    <artifactId>spring-context</artifactId>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>jcl-over-slf4j</artifactId>
-                    <version>${slf4j.version}</version>
-                    <scope>runtime</scope>
-                </dependency>
-                <dependency>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                    <scope>runtime</scope>
-                </dependency>
-
-
-                <!--
-                    If you use the Tridion Stack inside the web app,
-                    include these dependencies. They are for 2013SP1
-                -->
-
-                <!-- In process Jars -->
-
-                <!-- TODO:, 7.1.0, 8.1.0, 8.1.0-inproc -->
-
                 <!-- Tridion Content Delivery (CD) -->
+
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_ambient</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_broker</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_cache</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_core</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_datalayer</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_dynamic</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_linking</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_model</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_preview_ambient</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_session</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_wrapper</artifactId>
-                    <version>${tridion.build.version}</version>
                 </dependency>
 
                 <!-- Third-party libraries used by Tridion Content Delivery -->
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <version>${slf4j.version}</version>
+                </dependency>
 
-
+                <!-- TODO: figure out why these need versions-->
+                <dependency>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                    <version>${logback.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                    <version>${logback.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                    <version>${jcl-over-slf4j.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jms</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
                 <dependency>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-orm</artifactId>
+                    <version>${spring.version}</version>
                 </dependency>
                 <!-- Hibernate -->
                 <dependency>
                     <groupId>org.hibernate.javax.persistence</groupId>
                     <artifactId>hibernate-jpa-2.0-api</artifactId>
-                    <version>${hibernate.jpa.version}</version>
                 </dependency>
                 <dependency>
                     <groupId>org.hibernate</groupId>
                     <artifactId>hibernate-entitymanager</artifactId>
-                    <version>${hibernate.version}</version>
                     <exclusions>
                         <exclusion>
                             <groupId>xml-apis</groupId>
@@ -275,30 +332,25 @@
                 <dependency>
                     <groupId>commons-dbcp</groupId>
                     <artifactId>commons-dbcp</artifactId>
-                    <version>${commons-dbcp-version}</version>
                     <scope>runtime</scope>
                 </dependency>
                 <dependency>
                     <groupId>commons-pool</groupId>
                     <artifactId>commons-pool</artifactId>
-                    <version>${commons-pool-version}</version>
                     <scope>runtime</scope>
                 </dependency>
                 <dependency>
                     <groupId>com.vs.ezlicrun</groupId>
                     <artifactId>easylicense</artifactId>
-                    <version>${easylicense.version}</version>
                     <scope>runtime</scope>
                 </dependency>
                 <dependency>
                     <groupId>net.minidev</groupId>
                     <artifactId>json-smart</artifactId>
-                    <version>${json-smart-version}</version>
                 </dependency>
                 <dependency>
                     <groupId>xalan</groupId>
                     <artifactId>xalan</artifactId>
-                    <version>${xalan-version}</version>
                     <exclusions>
                         <exclusion>
                             <groupId>xml-apis</groupId>
@@ -307,12 +359,12 @@
                     </exclusions>
                     <scope>runtime</scope>
                 </dependency>
+
+                <!-- Note: change this dependency for Oracle, if you use an Oracle broker DB -->
                 <dependency>
                     <groupId>com.microsoft.sqlserver</groupId>
                     <artifactId>sqljdbc4</artifactId>
-                    <version>${sqljdbc4-version}</version>
                 </dependency>
-
 
                 <!--
                     Caching configuration. For JMS,
@@ -323,12 +375,26 @@
                     <artifactId>activemq-client</artifactId>
                 </dependency>
 
+                <!-- Caching configuration. Using the default EHCache -->
                 <dependency>
                     <groupId>net.sf.ehcache</groupId>
                     <artifactId>ehcache</artifactId>
-                    <version>${ehcache.version}</version>
                 </dependency>
+
             </dependencies>
+        </profile>
+        <profile>
+            <!-- The CIL / CIS dependencies -->
+            <id>cd-8.1.0</id>
+            <properties>
+                <java-version>1.8</java-version>
+                <tridion.build.version>8.1.0</tridion.build.version>
+                <resources-directory>8.1.0</resources-directory>
+                <spring.version>4.1.7.RELEASE</spring.version>
+                <logback.version>1.1.3</logback.version>
+                <slf4j.version>1.7.12</slf4j.version>
+            </properties>
+
             <build>
                 <plugins>
                     <plugin>
@@ -337,15 +403,71 @@
                         <version>2.5.1</version>
                         <inherited>true</inherited>
                         <configuration>
-                            <source>${java.version}</source>
-                            <target>${java.version}</target>
+                            <source>${java-version}</source>
+                            <target>${java-version}</target>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.4</version>
+                        <configuration>
+                            <archiveClasses>true</archiveClasses>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/resources/${tridion.build.version}/WEB-INF</directory>
+                                    <targetPath>WEB-INF</targetPath>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/**</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <filtering>true</filtering>
+                                    <directory>webapp/</directory>
+                                    <includes>
+                                        <include>**/**</include>
+                                    </includes>
+                                </resource>
+
+                            </webResources>
+                            <webXml>webapp/WEB-INF/web.xml</webXml>
+                            <failOnMissingWebXml>true</failOnMissingWebXml>
+                            <includeEmptyDirectories>true</includeEmptyDirectories>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default-war</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>war-exploded</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>exploded</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>custom-war</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>war</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>cd-8.1.0</id>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.dd4t</groupId>
+                        <artifactId>dd4t-bom-web8</artifactId>
+                        <version>${project.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
             <dependencies>
                 <dependency>
                     <groupId>org.dd4t</groupId>
@@ -356,55 +478,60 @@
                 <dependency>
                     <groupId>javax.cache</groupId>
                     <artifactId>cache-api</artifactId>
-                    <version>${javax.cache-api.version}</version>
                 </dependency>
 
-                <!-- Unfortunately needed. TODO: see if we can hook in to dd4t-caching-rs -->
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_cache</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
+
+                <!--cd_ambient-8.1.0-1219.jar-->
 
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_ambient</artifactId>
-                    <version>${tridion.web8.version}</version>
                 </dependency>
+
+
+                <!-- Needed for cache invalidation, not for REST/CIL-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_cache</artifactId>
+                </dependency>
+
+                <!--cd_common_config_api-8.1.0-1212.jar-->
 
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_config_api</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
-
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_common_config_legacy</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
-                </dependency>
+                <!--cd_common_config-8.1.0-1213.jar-->
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_config</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
+
+                <!--cd_common_config_legacy-8.1.0-1213.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config_legacy</artifactId>
+                </dependency>
+                <!--cd_common_util-8.1.0-1213.jar-->
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_common_util</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
-
+                <!--cd_core-8.1.0-1217.jar-->
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_core</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
+
+                <!--cd_model-8.1.0-1219.jar-->
 
                 <dependency>
                     <groupId>com.tridion</groupId>
                     <artifactId>cd_model</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
+
+
+                <!--commons-codec-1.9.jar-->
 
                 <dependency>
                     <groupId>commons-codec</groupId>
@@ -412,205 +539,255 @@
                     <version>${commons-codec.version}</version>
                 </dependency>
 
+                <!--commons-io-2.4.jar-->
+
                 <dependency>
                     <groupId>commons-io</groupId>
                     <artifactId>commons-io</artifactId>
-                    <version>${commons-io.version}</version>
                 </dependency>
+                <!--commons-lang3-3.4.jar-->
                 <dependency>
                     <groupId>org.apache.commons</groupId>
                     <artifactId>commons-lang3</artifactId>
-                    <version>${commons-lang3.version}</version>
                 </dependency>
 
+
+                <!--content-ambient-client-8.1.0-1218.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-ambient-client</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
-
+                <!--content-ambient-model-8.1.0-1218.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-ambient-model</artifactId>
                     <version>${tridion.web8.oss.version}</version>
                 </dependency>
 
+                <!--content-api-8.1.0-1217.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-api</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
-
+                <!--content-broker-8.1.0-1218.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-broker</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
+                <!--content-client-api-8.1.0-1218.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-client-api</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
-
+                <!--content-compatible-8.1.0-1218.jar-->
                 <!-- TODO: content-compatible can be turned off when the new API is opened -->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-compatible</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
 
+                <!--content-core-8.1.0-1217.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-core</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
-
+                <!--content-dynamic-8.1.0-1218.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-dynamic</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
-
+                <!--content-linking-8.1.0-1218.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-linking</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
-
+                <!--content-model-8.1.0-1217.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-model</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
 
-                <!-- Not required for dd4t
+
+                <!-- content-tags-8.1.0-1218.jar: Not required for dd4t
 
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>content-tags</artifactId>
-                    <version>$${tridion.web8.oss.version}</version>
+                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
                 -->
 
+                <!--discovery-client-lightweight-8.1.0-1217.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>discovery-client-lightweight</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
-
+                <!--discovery-common-8.1.0-1217.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>discovery-common</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
+                <!--easylicense-2.5.jar-->
                 <dependency>
                     <groupId>com.vs.ezlicrun</groupId>
                     <artifactId>easylicense</artifactId>
-                    <version>${easylicense.version}</version>
                 </dependency>
+                <!--ehcache-2.8.3.jar-->
                 <dependency>
                     <groupId>net.sf.ehcache</groupId>
                     <artifactId>ehcache</artifactId>
-                    <version>${ehcache.version}</version>
                 </dependency>
+
+                <!--gson-2.3.1.jar-->
                 <dependency>
                     <groupId>com.google.code.gson</groupId>
                     <artifactId>gson</artifactId>
-                    <version>${gson.version}</version>
                 </dependency>
+                <!--guava-18.0.jar-->
                 <dependency>
                     <groupId>com.google.guava</groupId>
                     <artifactId>guava</artifactId>
                     <version>${guava.version}</version>
                 </dependency>
-
+                <!--jackson-annotations-2.4.0.jar-->
                 <dependency>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-annotations</artifactId>
                 </dependency>
+                <!--jackson-core-2.4.6.jar-->
                 <dependency>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-core</artifactId>
                 </dependency>
+                <!--jackson-databind-2.4.6.jar-->
                 <dependency>
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-databind</artifactId>
                 </dependency>
-
+                <!--jcache-1.0.1.jar-->
                 <dependency>
                     <groupId>org.ehcache</groupId>
                     <artifactId>jcache</artifactId>
-                    <version>${ehcache.jcache.version}</version>
                 </dependency>
 
-
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                    <version>${slf4j.version}</version>
+                </dependency>
+                <!--logback-classic-1.1.3.jar-->
                 <dependency>
                     <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-core</artifactId>
                     <version>${logback.version}</version>
                 </dependency>
+                <!--logback-core-1.1.3.jar-->
                 <dependency>
                     <groupId>ch.qos.logback</groupId>
                     <artifactId>logback-classic</artifactId>
                     <version>${logback.version}</version>
                 </dependency>
+                <!--slf4j-api-1.7.12.jar-->
 
                 <dependency>
                     <groupId>org.slf4j</groupId>
                     <artifactId>slf4j-api</artifactId>
+                    <version>${slf4j.version}</version>
                 </dependency>
-
+                <!--odata_api-2.0.0-1212.jar-->
                 <dependency>
                     <groupId>com.sdl</groupId>
                     <artifactId>odata_api</artifactId>
-                    <version>${sdl.odata.client.version}</version>
                 </dependency>
+                <!--odata_client_api-2.0.0-1212.jar-->
                 <dependency>
                     <groupId>com.sdl</groupId>
                     <artifactId>odata_client_api</artifactId>
-                    <version>${sdl.odata.client.version}</version>
                 </dependency>
-
+                <!--odata_client-2.0.0-1212.jar-->
                 <dependency>
                     <groupId>com.sdl</groupId>
                     <artifactId>odata_client</artifactId>
                     <version>${sdl.odata.client.version}</version>
                 </dependency>
+                <!--odata_edm-2.0.0-1212.jar-->
                 <dependency>
                     <groupId>com.sdl</groupId>
                     <artifactId>odata_edm</artifactId>
-                    <version>${sdl.odata.client.version}</version>
                 </dependency>
+                <!--odata_parser-2.0.0-1212.jar-->
                 <dependency>
                     <groupId>com.sdl</groupId>
                     <artifactId>odata_parser</artifactId>
                     <version>${sdl.odata.client.version}</version>
                 </dependency>
-
+                <!--odata_renderer-2.0.0-1212.jar-->
                 <dependency>
                     <groupId>com.sdl</groupId>
                     <artifactId>odata_renderer</artifactId>
-                    <version>${sdl.odata.client.version}</version>
                 </dependency>
-
+                <!--scala-library-2.10.5.jar-->
                 <dependency>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>scala-library</artifactId>
-                    <version>${scala.library.version}</version>
                 </dependency>
 
+                <!--web-ambient-api-8.1.0-1219.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>web-ambient-api</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
-
+                <!--web-oauth-common-8.1.0-1219.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>web-oauth-common</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
 
+
+                <!-- TODO: weird dependency on which everything else crashes if not present-->
+
+                <dependency>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                    <version>1.1</version>
+                </dependency>
+
+                <!-- Further required DD4T dependencies, differing versions for each Tridion version -->
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jms</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
 
                 <!-- used for JMS listening. Remove if not used -->
                 <dependency>
@@ -618,6 +795,17 @@
                     <artifactId>activemq-client</artifactId>
                 </dependency>
             </dependencies>
+        </profile>
+        <profile>
+            <id>cd-8.1.0-inproc</id>
+            <properties>
+                <java-version>1.8</java-version>
+                <tridion.build.version>8.1.0</tridion.build.version>
+                <resources-directory>8.1.0-inproc</resources-directory>
+                <spring.version>4.1.7.RELEASE</spring.version>
+                <logback.version>1.1.3</logback.version>
+                <slf4j.version>1.7.12</slf4j.version>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -626,289 +814,497 @@
                         <version>2.5.1</version>
                         <inherited>true</inherited>
                         <configuration>
-                            <source>${java.version}</source>
-                            <target>${java.version}</target>
+                            <source>${java-version}</source>
+                            <target>${java-version}</target>
                         </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-war-plugin</artifactId>
+                        <version>2.4</version>
+                        <configuration>
+                            <archiveClasses>true</archiveClasses>
+                            <webResources>
+                                <resource>
+                                    <directory>src/main/resources/${resources-directory}/WEB-INF</directory>
+                                    <targetPath>WEB-INF</targetPath>
+                                    <filtering>true</filtering>
+                                    <includes>
+                                        <include>**/**</include>
+                                    </includes>
+                                </resource>
+                                <resource>
+                                    <filtering>true</filtering>
+                                    <directory>webapp/</directory>
+                                    <includes>
+                                        <include>**/**</include>
+                                    </includes>
+                                </resource>
+
+                            </webResources>
+                            <webXml>webapp/WEB-INF/web.xml</webXml>
+                            <failOnMissingWebXml>true</failOnMissingWebXml>
+                            <includeEmptyDirectories>true</includeEmptyDirectories>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>default-war</id>
+                                <phase>none</phase>
+                            </execution>
+                            <execution>
+                                <id>war-exploded</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>exploded</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>custom-war</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>war</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>cd-8.1.0-inproc</id>
+            <dependencyManagement>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.dd4t</groupId>
+                        <artifactId>dd4t-bom-web8</artifactId>
+                        <version>${project.version}</version>
+                        <type>pom</type>
+                        <scope>import</scope>
+                    </dependency>
+                </dependencies>
+            </dependencyManagement>
             <dependencies>
+                <!-- NOTE! Watch this trick. The issue here is that the new REST classes
+                 like WebPublicationMetaFactory are NOT backward compatible afaik
+                 -->
+
                 <dependency>
                     <groupId>org.dd4t</groupId>
                     <artifactId>dd4t-providers</artifactId>
                     <version>${project.version}</version>
                 </dependency>
 
-                <!-- Web 8 in process dependencies as coming from the installation folder -->
-                <dependency>
-                    <groupId>javax.cache</groupId>
-                    <artifactId>cache-api</artifactId>
-                    <version>${javax.cache-api.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_ambient</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_broker</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_cache</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_common_config_api</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_common_config_legacy</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_common_config</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_common_util</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_core</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_datalayer</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_discovery</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_dynamic</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_linking</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>com.tridion</groupId>
-                    <artifactId>cd_model</artifactId>
-                    <version>${tridion.web8.version}</version>
-                </dependency>
-
-                <!-- Third party dependencies -->
+                <!--activation-1.1.jar-->
                 <dependency>
                     <groupId>javax.activation</groupId>
                     <artifactId>activation</artifactId>
-                    <version>${activation.version}</version>
                 </dependency>
+                <!--antlr-2.7.7.jar-->
+
                 <dependency>
                     <groupId>antlr</groupId>
                     <artifactId>antlr</artifactId>
-                    <version>${antlr.version}</version>
                 </dependency>
 
+                <!--aopalliance-1.0.jar-->
                 <dependency>
                     <groupId>aopalliance</groupId>
                     <artifactId>aopalliance</artifactId>
-                    <version>${aopalliance.version}</version>
+                </dependency>
+                <!--cache-api-1.0.0.jar-->
+                <dependency>
+                    <groupId>javax.cache</groupId>
+                    <artifactId>cache-api</artifactId>
+                </dependency>
+
+
+                <!--cd_ambient-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_ambient</artifactId>
+                </dependency>
+                <!--cd_broker-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_broker</artifactId>
+                </dependency>
+                <!--cd_cache-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_cache</artifactId>
+                </dependency>
+                <!--cd_common_config_api-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config_api</artifactId>
+                </dependency>
+                <!--cd_common_config_legacy-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config_legacy</artifactId>
+                </dependency>
+                <!--cd_common_config-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_config</artifactId>
+                </dependency>
+                <!--cd_common_util-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_common_util</artifactId>
+                </dependency>
+                <!--cd_core-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_core</artifactId>
+                </dependency>
+                <!--cd_datalayer-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_datalayer</artifactId>
+                </dependency>
+                <!--cd_discovery-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_discovery</artifactId>
+                </dependency>
+                <!--cd_dynamic-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_dynamic</artifactId>
+                </dependency>
+                <!--cd_linking-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_linking</artifactId>
+                </dependency>
+                <!--cd_model-8.1.0.jar-->
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_model</artifactId>
+                </dependency>
+                <!--cd_tcdl-8.1.0.jar-->
+                <!-- TCDL not needed ootb for DD4T
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_tcdl</artifactId>
+                </dependency>
+                -->
+
+                <!--cd_wai-8.1.0.jar-->
+                <!-- cd_wai not needed ootb for DD4T
+                <dependency>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_wai</artifactId>
+                </dependency>
+                -->
+
+                <!-- Making use of the new API baby -->
+                <!--content-api-8.1.0-1217.jar-->
+                <dependency>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>content-api</artifactId>
+                </dependency>
+                <!--content-broker-8.1.0-1218.jar-->
+                <dependency>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>content-broker</artifactId>
                 </dependency>
 
                 <dependency>
-                    <groupId>commons-codec</groupId>
-                    <artifactId>commons-codec</artifactId>
-                    <version>${commons-codec.version}</version>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>content-dynamic</artifactId>
                 </dependency>
 
-                <dependency>
-                    <groupId>commons-dbcp</groupId>
-                    <artifactId>commons-dbcp</artifactId>
-                    <version>${commons-dbcp-version}</version>
-                </dependency>
+                <!-- until here. -->
 
-                <dependency>
-                    <groupId>commons-pool</groupId>
-                    <artifactId>commons-pool</artifactId>
-                    <version>${commons-pool-version}</version>
-                </dependency>
 
-                <!-- NOT public -->
+                <!--discovery-client-8.1.0.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>discovery-client</artifactId>
-                    <version>${tridion.web8.version}</version>
                 </dependency>
-
-
+                <!--discovery-client-lightweight-8.1.0.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>discovery-client-lightweight</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
+                <!--discovery-common-8.1.0.jar-->
                 <dependency>
                     <groupId>com.sdl.web</groupId>
                     <artifactId>discovery-common</artifactId>
-                    <version>${tridion.web8.oss.version}</version>
                 </dependency>
 
+                <!--web-ambient-api-8.1.0.jar-->
                 <dependency>
-                    <groupId>dom4j</groupId>
-                    <artifactId>dom4j</artifactId>
-                    <version>${dom4j.version}</version>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>web-ambient-api</artifactId>
                 </dependency>
-
+                <!--web-oauth-common-8.1.0.jar-->
                 <dependency>
-                    <groupId>net.sf.ehcache</groupId>
-                    <artifactId>ehcache</artifactId>
-                    <version>${ehcache.version}</version>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>web-oauth-common</artifactId>
                 </dependency>
+                <!--commons-codec-1.9.jar-->
 
+                <!--odata_api-2.0.0-1212.jar-->
                 <dependency>
-                    <groupId>org.ehcache</groupId>
-                    <artifactId>jcache</artifactId>
-                    <version>${ehcache.jcache.version}</version>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_api</artifactId>
                 </dependency>
-
+                <!--odata_client_api-2.0.0-1212.jar-->
                 <dependency>
-                    <groupId>com.vs.ezlicrun</groupId>
-                    <artifactId>easylicense</artifactId>
-                    <version>${easylicense.version}</version>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_client_api</artifactId>
                 </dependency>
-                <dependency>
-                    <groupId>com.google.code.gson</groupId>
-                    <artifactId>gson</artifactId>
-                    <version>${gson.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>com.google.guava</groupId>
-                    <artifactId>guava</artifactId>
-                    <version>${guava.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.hibernate.common</groupId>
-                    <artifactId>hibernate-commons-annotations</artifactId>
-                    <version>${hibernate-annotations.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-core</artifactId>
-                    <version>${hibernate.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.hibernate</groupId>
-                    <artifactId>hibernate-entitymanager</artifactId>
-                    <version>${hibernate.version}</version>
-                </dependency>
-
-
-                <dependency>
-                    <groupId>org.jboss</groupId>
-                    <artifactId>jandex</artifactId>
-                    <version>${jandex.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>org.javassist</groupId>
-                    <artifactId>javassist</artifactId>
-                    <version>${javassist.version}</version>
-                </dependency>
-
-                <dependency>
-                    <groupId>javax.xml.bind</groupId>
-                    <artifactId>jaxb-api</artifactId>
-                    <version>${jaxb-api.version}</version>
-                </dependency>
-
-
-                <dependency>
-                    <groupId>joda-time</groupId>
-                    <artifactId>joda-time</artifactId>
-                    <version>${joda-time.version}</version>
-                </dependency>
-
-
+                <!--odata_client-2.0.0-1212.jar-->
                 <dependency>
                     <groupId>com.sdl</groupId>
                     <artifactId>odata_client</artifactId>
                     <version>${sdl.odata.client.version}</version>
                 </dependency>
+                <!--odata_edm-2.0.0-1212.jar-->
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_edm</artifactId>
+                </dependency>
+                <!--odata_parser-2.0.0-1212.jar-->
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_parser</artifactId>
+                    <version>${sdl.odata.client.version}</version>
+                </dependency>
+                <!--odata_renderer-2.0.0-1212.jar-->
+                <dependency>
+                    <groupId>com.sdl</groupId>
+                    <artifactId>odata_renderer</artifactId>
+                </dependency>
 
+                <dependency>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </dependency>
 
+                <!--commons-dbcp-1.4.jar-->
+                <dependency>
+                    <groupId>commons-dbcp</groupId>
+                    <artifactId>commons-dbcp</artifactId>
+                </dependency>
+
+                <!--commons-pool-1.6.jar-->
+                <dependency>
+                    <groupId>commons-pool</groupId>
+                    <artifactId>commons-pool</artifactId>
+                </dependency>
+                <!--dom4j-1.6.1.jar-->
+                <dependency>
+                    <groupId>dom4j</groupId>
+                    <artifactId>dom4j</artifactId>
+                </dependency>
+                <!--easylicense-2.5.jar-->
+                <dependency>
+                    <groupId>com.vs.ezlicrun</groupId>
+                    <artifactId>easylicense</artifactId>
+                </dependency>
+                <!--ehcache-2.8.3.jar-->
+                <dependency>
+                    <groupId>net.sf.ehcache</groupId>
+                    <artifactId>ehcache</artifactId>
+                </dependency>
+
+                <!--gson-2.3.1.jar-->
+                <dependency>
+                    <groupId>com.google.code.gson</groupId>
+                    <artifactId>gson</artifactId>
+                </dependency>
+                <!--guava-18.0.jar-->
+                <dependency>
+                    <groupId>com.google.guava</groupId>
+                    <artifactId>guava</artifactId>
+                </dependency>
+                <!--hibernate-commons-annotations-4.0.5.Final.jar-->
+                <dependency>
+                    <groupId>org.hibernate.common</groupId>
+                    <artifactId>hibernate-commons-annotations</artifactId>
+                </dependency>
+                <!--hibernate-core-4.3.9.Final.jar-->
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-core</artifactId>
+                </dependency>
+                <!--hibernate-entitymanager-4.3.9.Final.jar-->
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-entitymanager</artifactId>
+                </dependency>
+                <!--hibernate-jpa-2.1-api-1.0.0.Final.jar-->
+                <dependency>
+                    <groupId>org.hibernate.javax.persistence</groupId>
+                    <artifactId>hibernate-jpa-2.1-api</artifactId>
+                </dependency>
+                <!--jandex-1.1.0.Final.jar-->
+
+                <dependency>
+                    <groupId>org.jboss</groupId>
+                    <artifactId>jandex</artifactId>
+                </dependency>
+                <!--javassist-3.18.1-GA.jar-->
+                <dependency>
+                    <groupId>org.javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </dependency>
+                <!--jaxb-api-2.1.jar-->
+                <dependency>
+                    <groupId>javax.xml.bind</groupId>
+                    <artifactId>jaxb-api</artifactId>
+                </dependency>
+                <!--jaxb-impl-2.1.12.jar-->
                 <dependency>
                     <groupId>com.sun.xml.bind</groupId>
                     <artifactId>jaxb-impl</artifactId>
-                    <version>${jaxb-impl.version}</version>
                 </dependency>
+<!--
+TODO: don't think we need this
+                jboss-logging-3.1.3.GA.jar
+                jboss-logging-annotations-1.2.0.Beta1.jar
+                jboss-transaction-api_1.2_spec-1.0.0.Final.jar
+-->
+                <!--jcache-1.0.1.jar-->
                 <dependency>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-core</artifactId>
-                    <version>${logback.version}</version>
-                </dependency>
-                <dependency>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                    <version>${logback.version}</version>
+                    <groupId>org.ehcache</groupId>
+                    <artifactId>jcache</artifactId>
                 </dependency>
 
+                <!--scala-library-2.10.5.jar-->
                 <dependency>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
+                    <groupId>org.scala-lang</groupId>
+                    <artifactId>scala-library</artifactId>
                 </dependency>
 
+
+                <!--serializer-2.7.2.jar-->
+                <dependency>
+                    <groupId>xalan</groupId>
+                    <artifactId>serializer</artifactId>
+                </dependency>
+                <!--stax-api-1.0-2.jar-->
+
+                <dependency>
+                    <groupId>javax.xml.stream</groupId>
+                    <artifactId>stax-api</artifactId>
+                </dependency>
+                <!--xalan-2.7.2.jar-->
+                <dependency>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </dependency>
+                <!--xml-apis-1.3.04.jar-->
+                <dependency>
+                    <groupId>xml-apis</groupId>
+                    <artifactId>xml-apis</artifactId>
+                </dependency>
+
+                <!-- Further required DD4T dependencies, differing versions for each Tridion version -->
+
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-aop</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+
+
+
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-beans</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-core</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context-support</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-expression</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jdbc</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
                 <dependency>
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-orm</artifactId>
                     <version>${spring.version}</version>
                 </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-jms</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-tx</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-web</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
+                <dependency>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-webmvc</artifactId>
+                    <version>${spring.version}</version>
+                </dependency>
 
+                <!-- Log -->
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                    <version>${slf4j.version}</version>
+                </dependency>
+                <!--logback-classic-1.1.3.jar-->
+                <dependency>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-core</artifactId>
+                    <version>${logback.version}</version>
+                </dependency>
+                <!--logback-core-1.1.3.jar-->
+                <dependency>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                    <version>${logback.version}</version>
+                </dependency>
+                <!--slf4j-api-1.7.12.jar-->
+
+                <dependency>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                    <version>${slf4j.version}</version>
+                </dependency>
 
                 <!-- NOTE: for Oracle, change this -->
 
                 <dependency>
                     <groupId>com.microsoft.sqlserver</groupId>
                     <artifactId>sqljdbc4</artifactId>
-                    <version>${sqljdbc4-version}</version>
                 </dependency>
 
+                <!-- used for JMS listening. Remove if not used -->
                 <dependency>
                     <groupId>org.apache.activemq</groupId>
                     <artifactId>activemq-client</artifactId>
                 </dependency>
             </dependencies>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-compiler-plugin</artifactId>
-                        <version>2.5.1</version>
-                        <inherited>true</inherited>
-                        <configuration>
-                            <source>${java.version}</source>
-                            <target>${java.version}</target>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
         </profile>
     </profiles>
 </project>

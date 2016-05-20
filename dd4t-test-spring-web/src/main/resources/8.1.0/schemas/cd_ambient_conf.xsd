@@ -1,0 +1,422 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xsd:element name="Configuration" id="cd_ambient_confN10006">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element minOccurs="0" name="Security" id="cd_ambient_confN1000D">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Security configuration, specify which RequestValidator to use.</p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element minOccurs="0" name="RequestValidator" type="xsd:string"
+                                         id="cd_ambient_confN1001C">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>A Java class you implemented, which the Ambient Data Framework calls before
+                                            it
+                                            begins its claim processing. This Java class must implement the
+                                            com.sdl.web.ambient.api.web.RequestValidator interface.
+                                        </p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element minOccurs="0" name="SharedSecret" type="xsd:string" id="cd_ambient_confN10029">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>A secret (string) shared between the secure token service and the Web service
+                                            or Web site.
+                                        </p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element minOccurs="0" name="WhiteList" id="cd_ambient_confN10036">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>A whitelist of IP addresses and/or IP ranges from which incoming claims are
+                                            accepted. Incoming claims are also accepted if they originate from an
+                                            authenticated account. Incoming claims are not accepted if they are not in
+                                            the list of GloballyAcceptedClaims.
+                                        </p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element minOccurs="0" name="IPAddresses" id="cd_ambient_confN10045">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>The IP address and/or IP ranges from which incoming claims are
+                                                        accepted.
+                                                    </p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="Ip"
+                                                                 type="xsd:string" id="cd_ambient_confN10054">
+                                                        <xsd:annotation>
+                                                            <xsd:documentation>
+                                                                <p>An IP address or an IP ranges (two IP addresses with
+                                                                    a hyphen between them) from which incoming claims
+                                                                    are accepted.
+                                                                </p>
+                                                            </xsd:documentation>
+                                                        </xsd:annotation>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                    <xsd:attribute type="xsd:string" name="Type" use="optional"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element minOccurs="0" maxOccurs="1" name="GloballyAcceptedClaims"
+                                         id="cd_ambient_confN10068">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>Incoming Claims that are accepted. Any Claim whose URI is not listed here is
+                                            ignored.
+                                        </p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element minOccurs="0" maxOccurs="unbounded" name="Claim"
+                                                     id="cd_ambient_confN10078">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>An incoming Claim that the Ambient Data Framework accepts. For
+                                                        the Claim to be accepted, it must also originate either from an
+                                                        authenticated account or from an accepted IP address.
+                                                    </p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                                <xsd:attribute name="Uri" type="xsd:string" use="required">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>The URI of an accepted incoming Claim.</p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element minOccurs="0" maxOccurs="1" name="HeaderValidation" id="cd_ambient_confN10098">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>Options for validating header and cookie values.</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element minOccurs="0" maxOccurs="1" name="DigestKey" type="xsd:string"
+                                                     id="cd_ambient_confN100A8">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>The key that initializes the encryption algorithm for generating
+                                                        the digest of the cookie/header value. If this element is
+                                                        omitted, no validation occurs.
+                                                    </p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                        </xsd:element>
+                                        <xsd:element minOccurs="0" maxOccurs="1" name="GracePeriodEndDate"
+                                                     type="xsd:string" id="cd_ambient_confN100B6">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>The moment at which invalid header and cookie values are no
+                                                        longer accepted. Until this moment, values without the digest
+                                                        will be accepted and will have one appended.
+                                                    </p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="AuthenticationServer" maxOccurs="1" minOccurs="0"
+                                         id="cd_ambient_confN10039">
+                                <xsd:annotation>
+                                    <xsd:documentation>Built-in authentication server's configuration.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="TokenExpireTime" minOccurs="0" maxOccurs="1"
+                                                     id="cd_ambient_confN10048">
+                                            <xsd:complexType>
+                                                <xsd:attribute type="xsd:string" name="TimeInSeconds"/>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="SharedSecret" type="xsd:string" minOccurs="0" maxOccurs="1"
+                                                     id="cd_ambient_confN10055"/>
+                                    </xsd:sequence>
+                                    <xsd:attribute name="ForceSecure" type="xsd:boolean">
+                                        <xsd:annotation>
+                                            <xsd:documentation>Whether to force using a secure channel, default is
+                                                true.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="Accounts" maxOccurs="1" minOccurs="0" id="cd_ambient_confN10088">
+                                <xsd:annotation>
+                                    <xsd:documentation>Built-in authentication server's users.</xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="Account" maxOccurs="unbounded" minOccurs="0"
+                                                     id="cd_ambient_confN10077">
+                                            <xsd:annotation>
+                                                <xsd:documentation>Builtin account.</xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType mixed="true">
+                                                <xsd:sequence>
+                                                    <xsd:element name="Metadata" minOccurs="0"
+                                                                 id="cd_ambient_confN10087">
+                                                        <xsd:annotation>
+                                                            <xsd:documentation>Data for the builtin account.
+                                                            </xsd:documentation>
+                                                        </xsd:annotation>
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Param" maxOccurs="unbounded"
+                                                                             minOccurs="0" id="cd_ambient_confN10095">
+                                                                    <xsd:complexType>
+                                                                        <xsd:attribute name="Name" type="xsd:string"
+                                                                                       use="required">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>The name of this property.</p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:attribute>
+                                                                        <xsd:attribute name="Value" type="xsd:string"
+                                                                                       use="required">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>The value of this property.</p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:attribute>
+                                                                    </xsd:complexType>
+                                                                </xsd:element>
+                                                            </xsd:sequence>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                                <xsd:attribute type="xsd:string" name="Id" use="required">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>Id of the defined user account.
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute type="xsd:string" name="Password" use="required">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>Password of the defined user account.
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="Rules" minOccurs="0" maxOccurs="1" id="cd_ambient_confN1">
+                                <xsd:annotation>
+                                    <xsd:documentation>Rules definition for read/write shielding of services.
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="Enabled" type="xsd:boolean" use="required">
+                                        <xsd:annotation>
+                                            <xsd:documentation>Whether to enable read/write shielding.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                        <xsd:attribute name="OAuthEnabled" type="xsd:boolean" use="optional" default="true">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>The attribute enables using of OAuth.</p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="0" name="InstanceID" type="xsd:string" id="cd_ambient_confN100CA">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Identifier for this instance of the Ambient Framework. Will be used as a prefix for
+                                session and tracking identifiers.
+                            </p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+                <xsd:element minOccurs="0" name="ExcludedPaths" id="cd_ambient_confN100D7">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Specify paths which the Ambient Framework Filter shouldn't process.</p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element minOccurs="0" maxOccurs="unbounded" name="Path" type="xsd:string"
+                                         id="cd_ambient_confN100E6">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>Specify a path relative to the context path.</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="0" name="Cartridges" id="cd_ambient_confN100F7">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Specify which cartridges to use in the Ambient Framework.</p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element minOccurs="0" maxOccurs="unbounded" name="Cartridge"
+                                         id="cd_ambient_confN10106">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>Specify the cartridge file.</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="File" type="xsd:string" use="required"/>
+                                    <xsd:attribute name="Category" type="xsd:string" use="optional"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="0" name="Cookies" id="cd_ambient_confN1011E">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element minOccurs="0" maxOccurs="1" name="CookieClaim" id="cd_ambient_confN10126">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>Configure whether to generate Tracking cookies or not by default, and
+                                            optionally a Claim that overrides this default on a per-visitor basis.
+                                        </p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="DefaultValue" type="xsd:string" use="required">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>Specifies whether to generate Tracking cookies (value 'true') or not
+                                                    ('false') by default.
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="Name" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>The name of the Claim that overrides the default, and generates
+                                                    Tracking cookies or not for a specific visitor.
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element maxOccurs="unbounded" name="Cookie" id="cd_ambient_confN10150">
+                                <xsd:complexType>
+                                    <xsd:attribute name="Type">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>The type of this cookie: a Tracking cookie, Session cookie or Ambient
+                                                    Data Framework claim cookie.
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                        <xsd:simpleType>
+                                            <xsd:restriction base="xsd:string">
+                                                <xsd:enumeration value="Tracking">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>
+                                                                <p>The name of the cookie containing the Tracking ID</p>
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:enumeration>
+                                                <xsd:enumeration value="Session">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>
+                                                                <p>The name of the cookie containing the Session ID</p>
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:enumeration>
+                                                <xsd:enumeration value="ADF">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>
+                                                                <p>The name of the cookie containing the Ambient Data
+                                                                    Framework claims. If you do not specify a cookie of
+                                                                    this type, a cookie called TAFContext is assumed.
+                                                                </p>
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:enumeration>
+                                            </xsd:restriction>
+                                        </xsd:simpleType>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="Name" type="xsd:string">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>The name of the cookie.</p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="Path" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>A specific path on the site to which you can bind the cookie.</p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element minOccurs="0" maxOccurs="1" name="ClaimStoreProvider" type="xsd:string"
+                             id="cd_ambient_confN101AA">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>--INTERNAL USE ONLY--</p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="Version" type="xsd:decimal" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <p>The version of this configuration file. This must be set to your Content Delivery version
+                            (without specifying a service pack), e.g. "7.0".
+                        </p>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+</xsd:schema>

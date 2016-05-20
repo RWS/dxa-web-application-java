@@ -39,13 +39,13 @@
 
     <tag>
         <name>editable</name>
-        <tag-class>com.tomtom.anchorage.web.tags.XPMComponentFieldTag</tag-class>
+        <tag-class>org.dd4t.mvc.tags.XPMComponentFieldTag</tag-class>
         <body-content>scriptless</body-content>
         <attribute>
             <name>model</name>
             <required>true</required>
             <rtexprvalue>true</rtexprvalue>
-            <type>com.tomtom.anchorage.dd4t.model.api.BaseModel</type>
+            <type>org.dd4t.core.databind.TridionViewModel</type>
         </attribute>
         <attribute>
             <name>field</name>
@@ -64,6 +64,12 @@
             <required>false</required>
             <rtexprvalue>true</rtexprvalue>
             <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>useEnclosingTags</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Boolean</type>
         </attribute>
     </tag>
 

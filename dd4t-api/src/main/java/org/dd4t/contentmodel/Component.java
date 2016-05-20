@@ -121,6 +121,20 @@ public interface Component extends RepositoryLocalItem {
 
     void setRevisionDate (DateTime date);
 
+    /**
+     * Get the resolved url
+     *
+     * @return the resolved url
+     */
+    String getResolvedUrl();
+
+    /**
+     * Set the resolved url
+     *
+     * @param resolvedUrl
+     */
+    void setResolvedUrl(String resolvedUrl);
+
     String getEclId ();
 
     enum ComponentType {

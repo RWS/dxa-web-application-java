@@ -56,6 +56,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
     protected int version;
 
     @JsonProperty ("MetadataFields")
+    // TODO: for XML add a separate MixIn
     @JsonDeserialize (contentAs = BaseField.class)
     protected Map<String, Field> metadata;
 
@@ -124,11 +125,11 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
         if (revisionDateAsString == null || revisionDateAsString.isEmpty()) {
             return new DateTime();
         }
-        return DateUtils.convertStringToDate(revisionDateAsString);
+        return DateUtils.convertStringWithOffsetToDate(revisionDateAsString);
     }
 
     public void setRevisionDate (DateTime date) {
-        this.revisionDateAsString = date.toString();
+        this.revisionDateAsString = DateUtils.convertDateToString(date);
     }
 
     @Override

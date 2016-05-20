@@ -17,43 +17,43 @@ public class TCMURITest {
     private static final int DEFAULT_VERSION = -1;
     private static final int DEFAULT_ITEM_TYPE = 16;
 
-    private final TCMURI tcmUri = new TCMURI(PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
+    private final TCMURI testTcmUri = new TCMURI(PUBLICATION_ID, ITEM_ID, ITEM_TYPE, VERSION);
 
     @Test
-    public void convert_to_string_using_format () throws ParseException {
+    public void convertStringUsingFormat () throws ParseException {
         final String uri = String.format("tcm:%s-%s-%s", PUBLICATION_ID, ITEM_ID, ITEM_TYPE);
 
-        assertThat(tcmUri.toString(), is(uri));
+        assertThat(testTcmUri.toString(), is(uri));
         assertThat(new TCMURI(uri).toString(), is(uri));
     }
 
     @Test
-    public void return_item_type () {
-        assertEquals(ITEM_TYPE, tcmUri.getItemType());
+    public void returnItem_Type () {
+        assertEquals(ITEM_TYPE, testTcmUri.getItemType());
     }
 
     @Test
-    public void return_item_id () {
-        assertEquals(ITEM_ID, tcmUri.getItemId());
+    public void returnItemId () {
+        assertEquals(ITEM_ID, testTcmUri.getItemId());
     }
 
     @Test
-    public void return_publication_id () {
-        assertEquals(PUBLICATION_ID, tcmUri.getPublicationId());
+    public void returnPublicationId () {
+        assertEquals(PUBLICATION_ID, testTcmUri.getPublicationId());
     }
 
     @Test
-    public void return_version () {
-        assertEquals(VERSION, tcmUri.getVersion());
+    public void returnVersion () {
+        assertEquals(VERSION, testTcmUri.getVersion());
     }
 
     @Test
-    public void tcmUri_be_valid () {
-        assertThat(TCMURI.isValid(tcmUri.toString()), is(true));
+    public void tcmUriIsValid () {
+        assertThat(TCMURI.isValid(testTcmUri.toString()), is(true));
     }
 
     @Test
-    public void throws_exception_when_uri_is_null () {
+    public void throwExceptionWhenUriIsNull () {
         try {
             new TCMURI(null);
             fail("Exception expected");
@@ -64,7 +64,7 @@ public class TCMURITest {
     }
 
     @Test
-    public void throws_exception_when_uri_has_wrong_format () {
+    public void throwExceptionWhenUriHasWrongFormat () {
         final String uri = String.format("wrong:%s-%s-%s", PUBLICATION_ID, ITEM_ID, ITEM_TYPE);
 
         try {
@@ -76,7 +76,7 @@ public class TCMURITest {
     }
 
     @Test
-    public void throws_exception_when_uri_has_only_publication_id () {
+    public void throwsExceptionWhenUriHasOnlyPublicationId () {
         final String uri = String.format("tcm:%s#bad", PUBLICATION_ID);
 
         try {

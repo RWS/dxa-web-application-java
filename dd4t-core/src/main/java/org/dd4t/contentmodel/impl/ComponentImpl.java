@@ -16,6 +16,7 @@
 
 package org.dd4t.contentmodel.impl;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.dd4t.contentmodel.*;
@@ -40,6 +41,9 @@ public class ComponentImpl extends BaseComponent implements GenericComponent, Ha
     @JsonProperty ("EclId")
     @JsonDeserialize (as = String.class)
     private String eclId;
+
+    @JsonIgnore
+    private String resolvedUrl;
 
     /**
      * Get the content
@@ -107,5 +111,15 @@ public class ComponentImpl extends BaseComponent implements GenericComponent, Ha
 
     public void setEclId (String eclId) {
         this.eclId = eclId;
+    }
+
+    @Override
+    public String getResolvedUrl () {
+        return resolvedUrl;
+    }
+
+    @Override
+    public void setResolvedUrl (final String resolvedUrl) {
+        this.resolvedUrl = resolvedUrl;
     }
 }

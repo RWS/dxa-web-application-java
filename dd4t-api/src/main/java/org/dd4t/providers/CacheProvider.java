@@ -16,10 +16,11 @@
 
 package org.dd4t.providers;
 
-import java.util.Collection;
-
 import org.dd4t.core.caching.Cachable;
 
+import java.util.Collection;
+
+@Deprecated
 public interface CacheProvider {
     /**
      * Loads given object from the cache

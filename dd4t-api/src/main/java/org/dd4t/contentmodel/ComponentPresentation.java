@@ -18,6 +18,7 @@ package org.dd4t.contentmodel;
 
 import org.dd4t.core.databind.BaseViewModel;
 
+import java.util.List;
 import java.util.Map;
 
 public interface ComponentPresentation {
@@ -87,6 +88,10 @@ public interface ComponentPresentation {
     void setIsDynamic (boolean b);
 
     void setOrderOnPage (int i);
+
+    List<Condition> getConditions();
+
+    void setConditions(List<Condition> conditions);
 
     void setViewModel (Map<String, BaseViewModel> models);
 

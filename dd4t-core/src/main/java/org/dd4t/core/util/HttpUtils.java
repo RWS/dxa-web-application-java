@@ -68,7 +68,6 @@ public final class HttpUtils {
 
     public static String getCurrentURL (final HttpServletRequest request, final boolean stripContextPath) {
         String url;
-
         DispatcherType dispatcherType = request.getDispatcherType();
         if (dispatcherType == DispatcherType.ERROR) {
             url = request.getRequestURI();

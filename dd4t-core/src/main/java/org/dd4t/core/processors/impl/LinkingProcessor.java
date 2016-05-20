@@ -32,7 +32,6 @@ import org.dd4t.core.processors.LinkResolverProcessor;
 import org.dd4t.core.request.RequestContext;
 import org.dd4t.core.resolvers.LinkResolver;
 import org.dd4t.core.util.RichTextUtils;
-import org.dd4t.core.util.TridionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +41,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 
 /**
  * Filter to resolve component links.
@@ -52,7 +50,6 @@ import java.util.regex.Pattern;
 public class LinkingProcessor extends BaseProcessor implements LinkResolverProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(LinkingProcessor.class);
-    private final Pattern regExpPattern = Pattern.compile("href=\"" + TridionUtils.TCM_REGEX + "\"");
 
     @Resource
     private LinkResolver linkResolver;

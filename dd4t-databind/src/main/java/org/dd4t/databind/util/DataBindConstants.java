@@ -46,6 +46,7 @@ public class DataBindConstants {
     public static final String FIELD_TYPE_KEY = "FieldType";
     public static final String COMPONENT_TYPE = "ComponentType";
     public static final String MULTIMEDIA = "Multimedia";
+    public static final String XPATH = "XPath";
 
     private DataBindConstants () {
 

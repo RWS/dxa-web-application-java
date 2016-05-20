@@ -23,7 +23,6 @@ import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.Multimedia;
 import org.dd4t.core.databind.BaseViewModel;
-import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.databind.util.TypeUtils;
 import org.dd4t.databind.viewmodel.base.ModelFieldMapping;
 import org.slf4j.Logger;
@@ -134,22 +133,8 @@ public abstract class AbstractModelConverter {
             } else {
                 f.set(model, fieldValue.getValues().get(0));
             }
-
-            if (model instanceof TridionViewModel) {
-                setXpm((TridionViewModel) model, fieldValue, isMultiValued);
-            }
-
         } else {
             LOG.debug("No value(s) found!");
-            if (model instanceof TridionViewModel) {
-                setXpm((TridionViewModel) model, fieldValue, isMultiValued);
-            }
         }
-    }
-
-    // TODO: only do when XPM enabled
-    protected static void setXpm (final TridionViewModel model, final org.dd4t.contentmodel.Field renderedField, final boolean isMultiValued) {
-        String xPath = renderedField.getXPath();
-        model.addXpmEntry(renderedField.getName(), xPath, isMultiValued);
     }
 }

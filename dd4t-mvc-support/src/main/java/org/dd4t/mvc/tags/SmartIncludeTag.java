@@ -58,6 +58,8 @@ import java.net.URL;
 public class SmartIncludeTag extends TagSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(SmartIncludeTag.class);
+    private static final long serialVersionUID = 1572096134267964950L;
+
     private String page;
     private transient PublicationResolver publicationResolver = PublicationResolverFactory.getPublicationResolver();
 
@@ -89,7 +91,7 @@ public class SmartIncludeTag extends TagSupport {
                 testPath = testPath.substring(0, testPath.lastIndexOf("/"));
             }
 
-            if (testPath.equals("/") && !includeUrl.startsWith("/")) {
+            if ("/".equals(testPath) && !includeUrl.startsWith("/")) {
                 includeUrl = "/" + includeUrl;
             }
 

@@ -45,7 +45,6 @@
     </developers>
 
     <properties>
-        <dxa.version>${project.version}</dxa.version>
         <dxa-bom.version>1.5.0-SNAPSHOT</dxa-bom.version>
         <dxa-release-branch>release/1.5</dxa-release-branch>
     </properties>
@@ -173,7 +172,7 @@
                     <dependency>
                         <groupId>com.sdl.dxa</groupId>
                         <artifactId>dxa-bom-2013sp1</artifactId>
-                        <version>${dxa.version}</version>
+                        <version>${dxa-bom.version}</version>
                         <type>pom</type>
                         <scope>import</scope>
                     </dependency>

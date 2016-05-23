@@ -132,7 +132,7 @@
                     <dependency>
                         <groupId>com.sdl.dxa</groupId>
                         <artifactId>dxa-bom-2013sp1</artifactId>
-                        <version>${dxa.version}</version>
+                        <version>${dxa-bom.version}</version>
                         <type>pom</type>
                         <scope>import</scope>
                     </dependency>

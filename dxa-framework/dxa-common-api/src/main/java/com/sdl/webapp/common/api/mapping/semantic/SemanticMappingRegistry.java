@@ -9,10 +9,8 @@ import java.lang.reflect.Field;
 import java.util.Set;
 
 /**
- * Semantic mapping registry.
- * <p>
- * The semantic mapping registry contains information about the entity classes, gathered from the semantic mapping
- * annotations declared on the classes and the fields of the classes.
+ * <p>The semantic mapping registry contains information about the entity classes, gathered from the semantic mapping
+ * annotations declared on the classes and the fields of the classes.</p>
  */
 public interface SemanticMappingRegistry {
 
@@ -20,7 +18,7 @@ public interface SemanticMappingRegistry {
      * Gets the field semantics for the specified field.
      *
      * @param field The field.
-     * @return A list of {@code FieldSemantics} objects for the field. Never returns {@code null}; if there are no
+     * @return A list of {@link FieldSemantics} objects for the field. Never returns <code>null</code>; if there are no
      * field semantics for the field, an empty collection is returned.
      */
     Set<FieldSemantics> getFieldSemantics(Field field);
@@ -30,8 +28,8 @@ public interface SemanticMappingRegistry {
      * annotation(s) on the entity class and all of its superclasses.
      *
      * @param entityClass The entity class.
-     * @return A list of {@code SemanticEntityInfo} objects containing semantic entity information for the entity class.
-     * Never returns {@code null}; if there is no information for the class, an empty collection is returned.
+     * @return A list of {@link SemanticEntityInfo} objects containing semantic entity information for the entity class.
+     * Never returns <code>null</code>; if there is no information for the class, an empty collection is returned.
      */
     Set<SemanticEntityInfo> getEntityInfo(Class<? extends EntityModel> entityClass);
 
@@ -40,8 +38,8 @@ public interface SemanticMappingRegistry {
      * annotation(s) on the field.
      *
      * @param field The field.
-     * @return A list of {@code SemanticPropertyInfo} objects containing semantic property information for the field.
-     * Never returns {@code null}; if there is no information for the field, an empty collection is returned.
+     * @return A list of {@link SemanticPropertyInfo} objects containing semantic property information for the field.
+     * Never returns <code>null</code>; if there is no information for the field, an empty collection is returned.
      */
     Set<SemanticPropertyInfo> getPropertyInfo(Field field);
 
@@ -63,7 +61,7 @@ public interface SemanticMappingRegistry {
      * Get entity class.
      *
      * @return entity class
-     * @param entityName a {@link java.lang.String} object.
+     * @param entityName an entity name
      */
     Class<? extends EntityModel> getEntityClass(String entityName);
 
@@ -72,7 +70,7 @@ public interface SemanticMappingRegistry {
      * Get entity class.
      *
      * @return entity class
-     * @param entityName a {@link java.lang.String} object.
+     * @param entityName an entity name
      */
     Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName);
 

@@ -7,7 +7,7 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import java.util.Map;
 
 /**
- * <p>SemanticMapper interface.</p>
+ * SemanticMapper is intended to help getting a DXA entity filled up with data using semantic mappings of a model.
  */
 public interface SemanticMapper {
 
@@ -21,11 +21,9 @@ public interface SemanticMapper {
      * @param <T>               entity class
      * @return An entity of the specified type, in which the fields are filled with data provided by the field data
      * provider.
-     * @throws com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException When an error occurs.
+     * @throws SemanticMappingException When an error occurs.
      */
     <T extends ViewModel> T createEntity(Class<? extends T> entityClass,
                                          Map<FieldSemantics, SemanticField> semanticFields,
-                                         SemanticFieldDataProvider fieldDataProvider)
-            throws SemanticMappingException;
-
+                                         SemanticFieldDataProvider fieldDataProvider) throws SemanticMappingException;
 }

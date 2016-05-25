@@ -31,8 +31,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -276,27 +278,22 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     @Override
     public Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName) {
 
-        String[] entityNameSplit = entityName.split(":");
-        List<Class<? extends EntityModel>> possibleValues = new ArrayList<>();
-        for (Class<? extends EntityModel> entityClass : semanticEntityInfo.keys()) {
-            Set<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
-            for (SemanticEntityInfo entityInfo : entityInfoList) {
-                if (entityName.startsWith(entityInfo.getVocabulary()) && entityName.endsWith(entityInfo.getEntityName())) {
-                    if (!possibleValues.contains(entityClass)) {
-                        possibleValues.add(entityClass);
-                    }
-                }
-            }
-        }
-        if (possibleValues.size() > 0) {
-            for (Class<? extends EntityModel> cls : possibleValues) {
-                if (cls.getSimpleName().equals(entityNameSplit[entityNameSplit.length - 1])) {
-                    return cls;
-                }
-            }
-            return possibleValues.get(0);
+        String entitySimpleName = entityName.substring(entityName.lastIndexOf(":") + 1);
+        Set<Class<? extends EntityModel>> possibleValues = new LinkedHashSet<>();
 
+        for (Map.Entry<Class<? extends EntityModel>, SemanticEntityInfo> entry : semanticEntityInfo.entries()) {
+            SemanticEntityInfo entityInfo = entry.getValue();
+            if (entityName.startsWith(entityInfo.getVocabulary()) && entityName.endsWith(entityInfo.getEntityName())) {
+
+                Class<? extends EntityModel> aClass = entry.getKey();
+
+                if (Objects.equals(aClass.getSimpleName(), entitySimpleName)) {
+                    return aClass;
+                }
+                possibleValues.add(aClass);
+            }
         }
-        return null;
+
+        return possibleValues.isEmpty() ? null : possibleValues.iterator().next();
     }
 }

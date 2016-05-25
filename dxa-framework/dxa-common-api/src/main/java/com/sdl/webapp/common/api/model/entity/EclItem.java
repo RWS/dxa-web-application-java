@@ -7,6 +7,8 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import com.sdl.webapp.common.util.Dd4tUtils;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
@@ -22,6 +24,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * <p>Abstract EclItem class.</p>
  */
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
+@Data
+@EqualsAndHashCode(callSuper = true)
 public abstract class EclItem extends MediaItem {
 
     static final String COMPONENT_ID_KEY = "ComponentID";
@@ -167,15 +171,6 @@ public abstract class EclItem extends MediaItem {
 
     /** {@inheritDoc} */
     @Override
-    public String getXpmMarkup(Localization localization) {
-        if (getXpmMetadata() != null && !isEmpty(this.uri)) {
-            getXpmMetadata().put(COMPONENT_ID_KEY, this.uri);
-        }
-        return super.getXpmMarkup(localization);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public void readFromXhtmlElement(Node xhtmlElement) {
         super.readFromXhtmlElement(xhtmlElement);
         NamedNodeMap attributes = xhtmlElement.getAttributes();
@@ -209,6 +204,17 @@ public abstract class EclItem extends MediaItem {
                 ", displayTypeId='" + displayTypeId + '\'' +
                 ", templateFragment='" + templateFragment + '\'' +
                 '}';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getXpmMarkup(Localization localization) {
+        if (getXpmMetadata() != null && !isEmpty(this.uri)) {
+            getXpmMetadata().put(COMPONENT_ID_KEY, this.uri);
+        }
+        return super.getXpmMarkup(localization);
     }
 
 }

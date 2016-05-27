@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.sdl.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.3</version>
     </parent>
 
     <version>1.5.0-SNAPSHOT</version>

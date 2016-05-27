@@ -32,7 +32,7 @@ public class ViewNotFoundEntityError extends AbstractEntityModel {
      */
     @Override
     public HtmlElement toHtmlElement() throws DxaException {
-        return span().withTextualContent("No view found for " + getMvcData()).build();
+        return span().withTextualContent("No view found for this block").build();
     }
 
     /**

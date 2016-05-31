@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperties
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import org.junit.Test;
 
@@ -16,6 +17,8 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -52,6 +55,25 @@ public class SemanticMappingRegistryImplTest {
         assertThat("Default semantics should be last in the list", iterator2.next(),
                 is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity1.class.getSimpleName(),
                         "field2")));
+    }
+
+    @Test
+    public void shouldReturnEntityClassForFullName() {
+        //given
+        SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
+        registry.registerEntity(TestEntity1.class);
+
+        //when
+        Class<? extends EntityModel> sdlCore = registry.getEntityClassByFullyQualifiedName(SDL_CORE + ":TestEntity1");
+        Class<? extends EntityModel> sdlTest = registry.getEntityClassByFullyQualifiedName(SDL_TEST + ":TestOne");
+        Class<? extends EntityModel> sdlOne = registry.getEntityClassByFullyQualifiedName(SDL_CORE + ":CoreOne");
+        Class<? extends EntityModel> random = registry.getEntityClassByFullyQualifiedName(SDL_CORE + ":Random");
+
+        //then
+        assertEquals(sdlCore, TestEntity1.class);
+        assertEquals(sdlTest, TestEntity1.class);
+        assertEquals(sdlOne, TestEntity1.class);
+        assertNull(random);
     }
 
     @SemanticEntities({

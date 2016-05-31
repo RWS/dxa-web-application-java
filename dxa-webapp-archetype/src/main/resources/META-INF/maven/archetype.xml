@@ -1,19 +1,18 @@
-<archetype xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<archetype xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0"
            xsi:schemaLocation="http://maven.apache.org/plugins/maven-archetype-plugin/archetype/1.0.0 http://maven.apache.org/xsd/archetype-1.0.0.xsd">
     <id>dxa-webapp-archetype</id>
     <sources>
-        <source>src/main/java/org/example/controller/MainController.java</source>
-        <source>src/main/java/org/example/service/MainService.java</source>
-        <source>src/main/java/org/example/WebAppConfiguration.java</source>
+        <source>src/main/java/MainController.java</source>
+        <source>src/main/java/MainService.java</source>
+        <source>src/main/java/WebAppConfiguration.java</source>
     </sources>
     <resources>
         <resource>src/main/resources/ehcache.xml</resource>
-        <resource>src/main/resources/families.xml</resource>
+        <resource>src/main/resources/device-families.xml</resource>
         <resource>src/main/resources/logback.xml</resource>
-        <resource>src/main/resources/spring-context.xml</resource>
     </resources>
     <testSources>
-        <source>src/test/java/org/example/service/MainServiceTest.java</source>
-        <source>src/test/java/org/example/service/TestConfig.java</source>
+        <source>src/test/java/MainServiceTest.java</source>
     </testSources>
 </archetype>

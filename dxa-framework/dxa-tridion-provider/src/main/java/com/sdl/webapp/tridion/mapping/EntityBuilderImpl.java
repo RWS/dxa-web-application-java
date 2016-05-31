@@ -19,6 +19,7 @@ import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl.ComponentEntity;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
 import com.sdl.webapp.util.dd4t.FieldUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
@@ -26,9 +27,8 @@ import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Multimedia;
 import org.joda.time.format.ISODateTimeFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
@@ -37,17 +37,16 @@ import java.util.Objects;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-@org.springframework.stereotype.Component
-/**
- * <p>EntityBuilderImpl class.</p>
- */
+@Slf4j
+@Service
 public final class EntityBuilderImpl implements EntityBuilder {
 
-    private static final Logger LOG = LoggerFactory.getLogger(EntityBuilderImpl.class);
-
     private static final String DEFAULT_AREA_NAME = "Core";
+
     private static final String DEFAULT_CONTROLLER_NAME = "Entity";
+
     private static final String DEFAULT_ACTION_NAME = "Entity";
+
     private static final String DEFAULT_REGION_NAME = "Main";
 
     @Autowired
@@ -109,27 +108,33 @@ public final class EntityBuilderImpl implements EntityBuilder {
         return null;
     }
 
-    private static void createEntityData(AbstractEntityModel entity, ComponentPresentation componentPresentation) {
+    private static void fillEntityData(EntityModel entity, ComponentPresentation componentPresentation) {
+        if (entity instanceof AbstractEntityModel) {
+            AbstractEntityModel abstractEntityModel = (AbstractEntityModel) entity;
+
+            abstractEntityModel.setXpmMetadata(createXpmMetadata(entity, componentPresentation));
+        }
+
+        entity.setMvcData(createMvcData(componentPresentation));
+        entity.setHtmlClasses(getHtmlClasses(componentPresentation));
+    }
+
+    private static String getHtmlClasses(ComponentPresentation componentPresentation) {
+        String htmlClasses = FieldUtils.getStringValue(componentPresentation.getComponentTemplate().getMetadata(), "htmlClasses");
+        return !isEmpty(htmlClasses) ? htmlClasses.replaceAll("[^\\w\\- ]", "") : null;
+    }
+
+    private static Map<String, Object> createXpmMetadata(EntityModel entity, ComponentPresentation componentPresentation) {
         final Component component = componentPresentation.getComponent();
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
 
         Map<String, Object> xpmMetaData = new HashMap<>();
-
-        if (entity instanceof EclItem) {
-            xpmMetaData.put("ComponentID", ((EclItem) entity).getUri());
-        } else {
-            xpmMetaData.put("ComponentID", component.getId());
-        }
-        xpmMetaData.put("ComponentModified",
-                ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
+        xpmMetaData.put("ComponentID", entity instanceof EclItem ? ((EclItem) entity).getUri() : component.getId());
+        xpmMetaData.put("ComponentModified", ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
         xpmMetaData.put("ComponentTemplateID", componentTemplate.getId());
-        xpmMetaData.put("ComponentTemplateModified",
-                ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
-
+        xpmMetaData.put("ComponentTemplateModified", ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
         xpmMetaData.put("IsRepositoryPublished", componentPresentation.isDynamic());
-
-        entity.setXpmMetadata(xpmMetaData);
-
+        return xpmMetaData;
     }
 
     private static String[] getControllerNameParts(Map<String, Field> templateMeta) {
@@ -178,11 +183,8 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
         for (Map.Entry<String, Field> entry : metadataFields.entrySet()) {
             String fieldName = entry.getKey();
-            if (fieldName.equals("view") ||
-                    fieldName.equals("regionView") ||
-                    fieldName.equals("controller") ||
-                    fieldName.equals("action") ||
-                    fieldName.equals("routeValues")) {
+            if ("view".equals(fieldName) || "regionView".equals(fieldName) || "controller".equals(fieldName) ||
+                    "action".equals(fieldName) || "routeValues".equals(fieldName)) {
                 continue;
             }
             Field field = entry.getValue();
@@ -193,139 +195,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
         return metadata;
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel,
-                                    Localization localization) throws ContentProviderException {
-        final Component component = componentPresentation.getComponent();
-        final String componentId = component.getId();
-        LOG.debug("Creating entity for component: {}", componentId);
-
-        final Map<String, Field> templateMeta = componentPresentation.getComponentTemplate().getMetadata();
-        if (templateMeta == null) {
-            LOG.warn("ComponentPresentation without template metadata, skipping: {}", componentId);
-            return null;
-        }
-
-        final String viewName = FieldUtils.getStringValue(templateMeta, "view");
-        if (isEmpty(viewName)) {
-            LOG.warn("ComponentPresentation without a view, skipping: {}", componentId);
-            return null;
-        }
-
-
-        Class<? extends AbstractEntityModel> entityClass = getEntityClass(viewName, component.getSchema().getRootElement());
-
-        final SemanticSchema semanticSchema = getSemanticSchema(component, localization);
-        final AbstractEntityModel entity = (AbstractEntityModel) createEntity(component, localization, entityClass, semanticSchema);
-
-        createEntityData(entity, componentPresentation);
-        entity.setMvcData(createMvcData(componentPresentation));
-
-        String htmlClasses = FieldUtils.getStringValue(componentPresentation.getComponentTemplate().getMetadata(), "htmlClasses");
-        if (!isEmpty(htmlClasses)) {
-            entity.setHtmlClasses(htmlClasses.replaceAll("[^\\w\\- ]", ""));
-        }
-
-        return entity;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public EntityModel createEntity(final Component component, EntityModel originalEntityModel, final Localization localization)
-            throws ContentProviderException {
-
-        final SemanticSchema semanticSchema = getSemanticSchema(component, localization);
-
-        final Class<? extends AbstractEntityModel> entityClass =
-                (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
-
-        return createEntity(component, localization, entityClass, semanticSchema);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
-            throws ContentProviderException {
-        return createEntity(component, localization, entityClass, getSemanticSchema(component, localization));
-    }
-
-    private EntityModel createEntity(Component component,
-                                     Localization localization,
-                                     Class<? extends AbstractEntityModel> entityClass,
-                                     SemanticSchema semanticSchema) throws ContentProviderException {
-        final AbstractEntityModel entity;
-
-        LOG.debug("Creating entity for component: {}", component.getId());
-        try {
-            entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
-                    new SemanticFieldDataProviderImpl(new ComponentEntity(component), fieldConverterRegistry, this.builder));
-        } catch (SemanticMappingException e) {
-            throw new ContentProviderException(e);
-        }
-
-        entity.setId(component.getId().split("-")[1]);
-
-        processMediaItems(component, localization, entity);
-
-        return entity;
-    }
-
-    private Class<? extends AbstractEntityModel> getEntityClass(String viewName, String schemaRoot)
-            throws ContentProviderException {
-        Class<? extends AbstractEntityModel> entityClass;
-
-        try {
-            entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getViewEntityClass(viewName);
-        } catch (DxaException e) {
-            entityClass = (Class<? extends AbstractEntityModel>) semanticMappingRegistry.getEntityClass(schemaRoot);
-        }
-
-        if (entityClass == null) {
-            LOG.error("Cannot determine entity type for view name: '{}'. Please make sure " +
-                    "that an entry is registered for this view name in the ViewModelRegistry.", viewName);
-            return ViewNotFoundEntityError.class;
-        }
-
-        return entityClass;
-    }
-
-    private void processMediaItems(Component component, Localization localization, AbstractEntityModel entity) {
-        if (entity instanceof MediaItem && component.getMultimedia() != null && !isEmpty(component.getMultimedia().getUrl())) {
-            final Multimedia multimedia = component.getMultimedia();
-            final MediaItem mediaItem = (MediaItem) entity;
-            mediaItem.setUrl(multimedia.getUrl());
-            mediaItem.setFileName(multimedia.getFileName());
-            mediaItem.setFileSize(multimedia.getSize());
-            mediaItem.setMimeType(multimedia.getMimeType());
-
-            // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
-            processEclItems(component, localization, entity);
-        }
-    }
-
-    private void processEclItems(Component component, Localization localization, AbstractEntityModel entity) {
-        if (entity instanceof EclItem) {
-            final EclItem eclItem = (EclItem) entity;
-            //todo check if it's right; .NET does just eclItem.setUri(component.getEclId())
-            eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
-
-            Map<String, FieldSet> extensionData = component.getExtensionData();
-            if (extensionData != null) {
-                fillItemWithEclData(eclItem, extensionData);
-
-                fillItemWithExternalMetadata(eclItem, extensionData);
-            }
-        }
-    }
-
-    private MvcData createMvcData(ComponentPresentation componentPresentation) {
+    private static MvcData createMvcData(ComponentPresentation componentPresentation) {
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
         final Map<String, Field> templateMeta = componentTemplate.getMetadata();
 
@@ -360,5 +230,130 @@ public final class EntityBuilderImpl implements EntityBuilder {
                 .metadata(mvcMetadata)
                 .routeValues(routeValues)
                 .build();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public EntityModel createEntity(ComponentPresentation componentPresentation, EntityModel originalEntityModel,
+                                    Localization localization) throws ContentProviderException {
+        final Component component = componentPresentation.getComponent();
+        final String componentId = component.getId();
+        log.debug("Creating entity for component: {}", componentId);
+
+        final Map<String, Field> templateMeta = componentPresentation.getComponentTemplate().getMetadata();
+        if (templateMeta == null) {
+            log.warn("ComponentPresentation without template metadata, skipping: {}", componentId);
+            return null;
+        }
+
+        final String viewName = FieldUtils.getStringValue(templateMeta, "view");
+        if (isEmpty(viewName)) {
+            log.warn("ComponentPresentation without a view, skipping: {}", componentId);
+            return null;
+        }
+
+        Class<? extends AbstractEntityModel> entityClass = getEntityClass(viewName, component.getSchema().getRootElement());
+
+        final EntityModel entity = createEntity(component, localization, entityClass, getSemanticSchema(component, localization));
+
+        fillEntityData(entity, componentPresentation);
+
+        return entity;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public EntityModel createEntity(final Component component, EntityModel originalEntityModel, final Localization localization)
+            throws ContentProviderException {
+
+        final SemanticSchema semanticSchema = getSemanticSchema(component, localization);
+
+        final Class<? extends AbstractEntityModel> entityClass =
+                (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
+
+        return createEntity(component, localization, entityClass, semanticSchema);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
+            throws ContentProviderException {
+        return createEntity(component, localization, entityClass, getSemanticSchema(component, localization));
+    }
+
+    private EntityModel createEntity(Component component,
+                                     Localization localization,
+                                     Class<? extends AbstractEntityModel> entityClass,
+                                     SemanticSchema semanticSchema) throws ContentProviderException {
+        final AbstractEntityModel entity;
+
+        log.debug("Creating entity for component: {}", component.getId());
+        try {
+            entity = semanticMapper.createEntity(entityClass, semanticSchema.getSemanticFields(),
+                    new SemanticFieldDataProviderImpl(new ComponentEntity(component), fieldConverterRegistry, this.builder));
+        } catch (SemanticMappingException e) {
+            throw new ContentProviderException(e);
+        }
+
+        entity.setId(component.getId().split("-")[1]);
+
+        processMediaItems(component, localization, entity);
+
+        return entity;
+    }
+
+    private Class<? extends AbstractEntityModel> getEntityClass(String viewName, String schemaRoot)
+            throws ContentProviderException {
+        Class<? extends AbstractEntityModel> entityClass;
+
+        try {
+            entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getViewEntityClass(viewName);
+        } catch (DxaException e) {
+            log.warn("Exception on getting view entity class", e);
+            entityClass = (Class<? extends AbstractEntityModel>) semanticMappingRegistry.getEntityClass(schemaRoot);
+        }
+
+        if (entityClass == null) {
+            log.error("Cannot determine entity type for view name: '{}'. Please make sure " +
+                    "that an entry is registered for this view name in the ViewModelRegistry.", viewName);
+            return ViewNotFoundEntityError.class;
+        }
+
+        return entityClass;
+    }
+
+    private void processMediaItems(Component component, Localization localization, AbstractEntityModel entity) {
+        if (entity instanceof MediaItem && component.getMultimedia() != null && !isEmpty(component.getMultimedia().getUrl())) {
+            final Multimedia multimedia = component.getMultimedia();
+            final MediaItem mediaItem = (MediaItem) entity;
+            mediaItem.setUrl(multimedia.getUrl());
+            mediaItem.setFileName(multimedia.getFileName());
+            mediaItem.setFileSize(multimedia.getSize());
+            mediaItem.setMimeType(multimedia.getMimeType());
+
+            // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
+            processEclItems(component, localization, entity);
+        }
+    }
+
+    private void processEclItems(Component component, Localization localization, AbstractEntityModel entity) {
+        if (entity instanceof EclItem) {
+            final EclItem eclItem = (EclItem) entity;
+            //todo check if it's right; .NET does just eclItem.setUri(component.getEclId())
+            eclItem.setUri(component.getTitle().replace("ecl:0", "ecl:" + localization.getId()));
+
+            Map<String, FieldSet> extensionData = component.getExtensionData();
+            if (extensionData != null) {
+                fillItemWithEclData(eclItem, extensionData);
+
+                fillItemWithExternalMetadata(eclItem, extensionData);
+            }
+        }
     }
 }

@@ -6,7 +6,7 @@
     <parent>
         <groupId>com.sdl.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>1.0.0</version>
+        <version>1.0.3</version>
     </parent>
 
     <groupId>com.sdl.dxa</groupId>

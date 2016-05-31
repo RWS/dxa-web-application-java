@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdl.dxa.DxaWebSpringInitialization;
+import com.sdl.dxa.DxaSpringInitialization;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,7 +52,7 @@ public class AbstractEntityModelTest {
     static class SpringConfig {
         @Bean
         public ObjectMapper objectMapper() {
-            return new DxaWebSpringInitialization().objectMapper();
+            return new DxaSpringInitialization().objectMapper();
         }
 
         @Bean

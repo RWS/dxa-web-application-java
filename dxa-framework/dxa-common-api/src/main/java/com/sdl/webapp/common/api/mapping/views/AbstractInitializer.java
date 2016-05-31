@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.api.mapping.views;
 
-import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -13,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.lang.annotation.Annotation;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * <p>AbstractInitializer which initializes views registration in modules.</p>
@@ -96,28 +97,41 @@ public abstract class AbstractInitializer {
     }
 
     private void registerViewModel(String viewName, Class<? extends ViewModel> entityClass, String controllerName) {
-        if (Strings.isNullOrEmpty(controllerName)) {
-            log.debug("controllerName is empty, trying to register view {} with entity class {}", viewName, entityClass);
-            if (EntityModel.class.isAssignableFrom(entityClass)) {
-                controllerName = "Entity";
-            } else if (RegionModel.class.isAssignableFrom(entityClass)) {
-                controllerName = "Region";
-            } else if (PageModel.class.isAssignableFrom(entityClass)) {
-                controllerName = "Page";
-            } else {
-                log.error("Couldn't register view {} because entityClass {} is not of a known type.", viewName, entityClass);
-                return;
-            }
+        String actualControllerName = getControllerNameForEntityClass(controllerName, entityClass);
+        if (actualControllerName == null) {
+            log.error("Couldn't register view {} because entityClass {} is not of a known type.", viewName, entityClass);
+            return;
         }
+
+        log.debug("controllerName {} for view {} with entity class {}", actualControllerName, viewName, entityClass);
 
         MvcData mvcData = MvcDataImpl.newBuilder()
                 .areaName(getAreaName())
                 .viewName(viewName)
-                .controllerName(controllerName)
+                .controllerName(actualControllerName)
                 .build();
 
         log.debug("Registering MvcData {} for entity class {}", mvcData, entityClass);
 
         viewModelRegistry.registerViewModel(mvcData, entityClass);
+    }
+
+    private String getControllerNameForEntityClass(String controllerName, Class<? extends ViewModel> entityClass) {
+        if (!isNullOrEmpty(controllerName)) {
+            return controllerName;
+        }
+
+        log.debug("controllerName is empty, trying to get controller name for entity class {}", entityClass);
+
+        if (EntityModel.class.isAssignableFrom(entityClass)) {
+            return "Entity";
+        }
+        if (RegionModel.class.isAssignableFrom(entityClass)) {
+            return "Region";
+        }
+        if (PageModel.class.isAssignableFrom(entityClass)) {
+            return "Page";
+        }
+        return null;
     }
 }

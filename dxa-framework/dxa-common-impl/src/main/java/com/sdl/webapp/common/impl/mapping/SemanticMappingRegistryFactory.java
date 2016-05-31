@@ -8,9 +8,12 @@ import org.springframework.stereotype.Component;
 
 /**
  * Spring factory bean to create the {@code SemanticMappingRegistry} bean.
+ * @deprecated since 1.5
  */
 @Component
 @Primary
+@Deprecated
+//todo dxa2 remove useless factory in preference of @PostConstruct
 public class SemanticMappingRegistryFactory extends AbstractFactoryBean<SemanticMappingRegistry> {
 
     /**

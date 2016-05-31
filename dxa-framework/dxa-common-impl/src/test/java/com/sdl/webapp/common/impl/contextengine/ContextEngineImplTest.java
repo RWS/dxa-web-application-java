@@ -17,80 +17,77 @@ public class ContextEngineImplTest {
 
     @Test
     public void shouldDefineFeaturePhone() throws DxaException {
-        //given
-        ContextClaimsProvider claimsProvider = mock(ContextClaimsProvider.class);
-        ContextEngineImpl contextEngine = contextEngineImpl(claimsProvider);
-
-        //when
-        when(claimsProvider.getContextClaims(isNull(String.class))).thenReturn(featurePhoneClaims());
-
-        //then
-        assertEquals("featurephone", contextEngine.getDeviceFamily());
+        shouldResolveDeviceFamily("featurephone", featurePhoneClaims());
     }
 
     @Test
     public void shouldDefineSmartPhone() throws DxaException {
-        //given
-        ContextClaimsProvider claimsProvider = mock(ContextClaimsProvider.class);
-        ContextEngineImpl contextEngine = contextEngineImpl(claimsProvider);
-
-        //when
-        when(claimsProvider.getContextClaims(isNull(String.class))).thenReturn(smartPhoneClaims());
-
-        //then
-        assertEquals("smartphone", contextEngine.getDeviceFamily());
+        shouldResolveDeviceFamily("smartphone", smartPhoneClaims());
     }
 
     @Test
     public void shouldDefineTablet() throws DxaException {
-        //given
-        ContextClaimsProvider claimsProvider = mock(ContextClaimsProvider.class);
-        ContextEngineImpl contextEngine = contextEngineImpl(claimsProvider);
-
-        //when
-        when(claimsProvider.getContextClaims(isNull(String.class))).thenReturn(tabletClaims());
-
-        //then
-        assertEquals("tablet", contextEngine.getDeviceFamily());
+        shouldResolveDeviceFamily("tablet", tabletClaims());
     }
 
     @Test
     public void shouldDefineDesktop() throws DxaException {
-        //given
-        ContextClaimsProvider claimsProvider = mock(ContextClaimsProvider.class);
-        ContextEngineImpl contextEngine = contextEngineImpl(claimsProvider);
-
-        //when
-        when(claimsProvider.getContextClaims(isNull(String.class))).thenReturn(desktopClaims());
-
-        //then
-        assertEquals("desktop", contextEngine.getDeviceFamily());
+        shouldResolveDeviceFamily("desktop", desktopClaims());
     }
 
     @Test
     public void shouldDefineApple() throws DxaException {
-        //given
-        ContextClaimsProvider claimsProvider = mock(ContextClaimsProvider.class);
-        ContextEngineImpl contextEngine = contextEngineImpl(claimsProvider);
-
-        //when
-        when(claimsProvider.getContextClaims(isNull(String.class))).thenReturn(appleClaims());
-
-        //then
-        assertEquals("apple", contextEngine.getDeviceFamily());
+        shouldResolveDeviceFamily("apple", appleClaims());
     }
 
     @Test
     public void shouldDefineAlienDeviceThatProvesWeAreNotGettingFallback() throws DxaException {
+        shouldResolveDeviceFamily("aliendevice", alienDeviceClaims());
+    }
+
+    @Test
+    public void shouldFallbackToTabletDefault() throws DxaException {
+        shouldFallbackDeviceFamily("desktop", desktopClaims());
+    }
+
+    @Test
+    public void shouldFallbackToSmartPhoneDefault() throws DxaException {
+        shouldFallbackDeviceFamily("smartphone", smartPhoneClaims());
+    }
+
+    @Test
+    public void shouldFallbackToFeaturePhoneDefault() throws DxaException {
+        shouldFallbackDeviceFamily("featurephone", featurePhoneClaims());
+    }
+
+    @Test
+    public void shouldFallbackToDesktopDefault() throws DxaException {
+        shouldFallbackDeviceFamily("desktop", desktopClaims());
+    }
+
+    @Test
+    public void shouldFallbackToDesktopIfNoMatchDefault() throws DxaException {
+        shouldFallbackDeviceFamily("desktop", alienDeviceClaims());
+    }
+
+    private void shouldResolveDeviceFamily(String deviceFamily, Map<String, Object> claims) throws DxaException {
+        shouldResolveDeviceFamily(deviceFamily, claims, false);
+    }
+
+    private void shouldFallbackDeviceFamily(String deviceFamily, Map<String, Object> claims) throws DxaException {
+        shouldResolveDeviceFamily(deviceFamily, claims, true);
+    }
+
+    private void shouldResolveDeviceFamily(String deviceFamily, Map<String, Object> claims, boolean isFallbackScenario) throws DxaException {
         //given
         ContextClaimsProvider claimsProvider = mock(ContextClaimsProvider.class);
-        ContextEngineImpl contextEngine = contextEngineImpl(claimsProvider);
+        ContextEngineImpl contextEngine = contextEngineImpl(claimsProvider, !isFallbackScenario);
 
         //when
-        when(claimsProvider.getContextClaims(isNull(String.class))).thenReturn(alienDeviceClaims());
+        when(claimsProvider.getContextClaims(isNull(String.class))).thenReturn(claims);
 
         //then
-        assertEquals("aliendevice", contextEngine.getDeviceFamily());
+        assertEquals(deviceFamily, contextEngine.getDeviceFamily());
     }
 
     private Map<String, Object> desktopClaims() {
@@ -136,11 +133,13 @@ public class ContextEngineImplTest {
                 .build();
     }
 
-    private ContextEngineImpl contextEngineImpl(ContextClaimsProvider contextClaimsProvider) {
+    private ContextEngineImpl contextEngineImpl(ContextClaimsProvider contextClaimsProvider, boolean init) {
         ContextEngineImpl contextEngine = new ContextEngineImpl();
         ReflectionTestUtils.setField(contextEngine, "deviceFamiliesFile", "device-families.xml");
         ReflectionTestUtils.setField(contextEngine, "provider", contextClaimsProvider);
-        ReflectionTestUtils.invokeMethod(contextEngine, "init");
+        if (init) {
+            ReflectionTestUtils.invokeMethod(contextEngine, "init");
+        }
         return contextEngine;
     }
 }

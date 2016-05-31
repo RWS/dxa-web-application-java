@@ -13,9 +13,19 @@
     <url>http://www.example.org</url>
 
     <properties>
-        <dxa.version>${version}</dxa.version>
-        <java-version>1.8</java-version>
+        <dxa-bom.version>1.5.0-SNAPSHOT</dxa-bom.version>
+        <dxa-release-branch>release/1.5</dxa-release-branch>
+        <java-version>1.7</java-version>
     </properties>
+
+    <repositories>
+        <repository>
+            <id>github-project-repo</id>
+            <url>
+                https://raw.githubusercontent.com/sdl/dxa-web-application-java/${dxa-release-branch}/local-project-repo
+            </url>
+        </repository>
+    </repositories>
 
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -122,7 +132,7 @@
                     <dependency>
                         <groupId>com.sdl.dxa</groupId>
                         <artifactId>dxa-bom-2013sp1</artifactId>
-                        <version>${dxa.version}</version>
+                        <version>${dxa-bom.version}</version>
                         <type>pom</type>
                         <scope>import</scope>
                     </dependency>
@@ -147,7 +157,7 @@
             </activation>
             <properties>
                 <build.classifier>web8</build.classifier>
-                <java-version>1.8</java-version>
+                <java-version>1.7</java-version>
             </properties>
 
             <dependencies>

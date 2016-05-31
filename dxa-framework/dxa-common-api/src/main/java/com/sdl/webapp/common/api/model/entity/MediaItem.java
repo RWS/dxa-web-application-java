@@ -12,6 +12,8 @@ import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
+import org.springframework.util.Assert;
 import org.w3c.dom.Node;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG;
@@ -162,14 +164,24 @@ public abstract class MediaItem extends AbstractEntityModel {
      */
     public void readFromXhtmlElement(Node xhtmlElement) {
         // Return the Item (Reference) ID part of the TCM URI.
-        this.setId(xhtmlElement.getAttributes().getNamedItem("xlink:href").getNodeValue().split("-")[1]);
-        this.setUrl(xhtmlElement.getAttributes().getNamedItem("src").getNodeValue());
-        this.fileName = xhtmlElement.getAttributes().getNamedItem("data-multimediaFileName").getNodeValue();
-        String fileSize = xhtmlElement.getAttributes().getNamedItem("data-multimediaFileSize").getNodeValue();
+        String id = getNodeValueFor(xhtmlElement, "xlink:href");
+        Assert.hasText("-", "ID for Entity should have a '-' delimiter");
+        this.setId(id.split("-")[1]);
+        this.setUrl(getNodeValueFor(xhtmlElement, "src"));
+        this.setHtmlClasses(getNodeValueFor(xhtmlElement, "class"));
+        this.fileName = getNodeValueFor(xhtmlElement, "data-multimediaFileName");
+        String fileSize = getNodeValueFor(xhtmlElement, "data-multimediaFileSize");
         if (!Strings.isNullOrEmpty(fileSize)) {
             this.fileSize = Integer.parseInt(fileSize);
         }
-        this.mimeType = xhtmlElement.getAttributes().getNamedItem("data-multimediaMimeType").getNodeValue();
+        this.mimeType = getNodeValueFor(xhtmlElement, "data-multimediaMimeType");
         this.isEmbedded = true;
+    }
+
+    private
+    @NonNull
+    String getNodeValueFor(@NonNull Node xhtmlElement, @NonNull String key) {
+        Node node = xhtmlElement.getAttributes().getNamedItem(key);
+        return node != null ? node.getNodeValue() : "";
     }
 }

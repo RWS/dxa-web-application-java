@@ -13,7 +13,10 @@ import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.util.Assert;
+import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG;
@@ -23,6 +26,7 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
+@Slf4j
 @SemanticEntity(entityName = "MediaObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public abstract class MediaItem extends AbstractEntityModel {
 
@@ -49,18 +53,35 @@ public abstract class MediaItem extends AbstractEntityModel {
                     .build();
 
     private MediaHelper mediaHelper;
+
     @SemanticProperty("s:contentUrl")
     @JsonProperty("Url")
     private String url;
+
     @JsonProperty("IsEmbedded")
     private boolean isEmbedded;
+
     @JsonProperty("FileName")
     private String fileName;
+
     @SemanticProperty("s:contentSize")
     @JsonProperty("FileSize")
     private int fileSize;
+
     @JsonProperty("MimeType")
     private String mimeType;
+
+    @Nullable
+    protected static String getNodeAttribute(@NonNull Node xhtmlElement, @NonNull String key) {
+        NamedNodeMap attributes = xhtmlElement.getAttributes();
+        if (attributes == null) {
+            log.trace("XHTML Node {} attributes object is null", xhtmlElement);
+            return null;
+        }
+
+        Node node = attributes.getNamedItem(key);
+        return node != null ? node.getNodeValue() : null;
+    }
 
     /**
      * <p>Getter for the field <code>mediaHelper</code>.</p>
@@ -164,24 +185,23 @@ public abstract class MediaItem extends AbstractEntityModel {
      */
     public void readFromXhtmlElement(Node xhtmlElement) {
         // Return the Item (Reference) ID part of the TCM URI.
-        String id = getNodeValueFor(xhtmlElement, "xlink:href");
-        Assert.hasText("-", "ID for Entity should have a '-' delimiter");
-        this.setId(id.split("-")[1]);
-        this.setUrl(getNodeValueFor(xhtmlElement, "src"));
-        this.setHtmlClasses(getNodeValueFor(xhtmlElement, "class"));
-        this.fileName = getNodeValueFor(xhtmlElement, "data-multimediaFileName");
-        String fileSize = getNodeValueFor(xhtmlElement, "data-multimediaFileSize");
-        if (!Strings.isNullOrEmpty(fileSize)) {
-            this.fileSize = Integer.parseInt(fileSize);
-        }
-        this.mimeType = getNodeValueFor(xhtmlElement, "data-multimediaMimeType");
-        this.isEmbedded = true;
-    }
+        String id = getNodeAttribute(xhtmlElement, "xlink:href");
 
-    private
-    @NonNull
-    String getNodeValueFor(@NonNull Node xhtmlElement, @NonNull String key) {
-        Node node = xhtmlElement.getAttributes().getNamedItem(key);
-        return node != null ? node.getNodeValue() : "";
+        Assert.notNull(id);
+        Assert.isTrue(id.contains("-"));
+
+        setId(id.split("-")[1]);
+
+        setEmbedded(true);
+
+        setUrl(getNodeAttribute(xhtmlElement, "src"));
+        setHtmlClasses(getNodeAttribute(xhtmlElement, "class"));
+        setFileName(getNodeAttribute(xhtmlElement, "data-multimediaFileName"));
+        setMimeType(getNodeAttribute(xhtmlElement, "data-multimediaMimeType"));
+
+        String fileSize = getNodeAttribute(xhtmlElement, "data-multimediaFileSize");
+        if (!Strings.isNullOrEmpty(fileSize)) {
+            setFileSize(Integer.parseInt(fileSize));
+        }
     }
 }

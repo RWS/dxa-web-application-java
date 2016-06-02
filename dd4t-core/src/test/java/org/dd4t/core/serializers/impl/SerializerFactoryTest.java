@@ -22,9 +22,6 @@ public class SerializerFactoryTest {
     public void setUp () throws Exception {
         // Load Spring
         ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
-
-        Serializer serializer = new org.dd4t.core.serializers.impl.json.JSONSerializer();
-        SerializerFactory.setSerializer(serializer);
     }
 
     @Test

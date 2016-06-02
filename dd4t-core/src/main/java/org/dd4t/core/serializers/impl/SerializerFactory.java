@@ -41,7 +41,6 @@ public class SerializerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(SerializerFactory.class);
     private static final SerializerFactory INSTANCE = new SerializerFactory();
 
-    @Resource
     private Serializer serializer = null;
 
     private SerializerFactory () {
@@ -58,10 +57,8 @@ public class SerializerFactory {
      *
      * @param serializer
      */
-    public static void setSerializer (org.dd4t.core.serializers.Serializer serializer) {
-        if (INSTANCE != null) {
-            INSTANCE.serializer = serializer;
-        }
+    public void setSerializer (org.dd4t.core.serializers.Serializer serializer) {
+        this.serializer = serializer;
     }
 
 

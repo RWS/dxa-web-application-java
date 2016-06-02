@@ -129,8 +129,8 @@
     </bean>
 
     <bean id="serializer" class="org.dd4t.core.serializers.impl.json.JSONSerializer"/>
-    <bean id="serializerFactory" class="org.dd4t.core.serializers.impl.SerializerFactory">
-        <constructor-arg name="serializerInstance" ref="serializer"/>
+    <bean id="serializerFactory" class="org.dd4t.core.serializers.impl.SerializerFactory" factory-method="getInstance">
+        <property name="serializer" ref="serializer"/>
     </bean>
 
     <!-- Taxonomy Stuff -->

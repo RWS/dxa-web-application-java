@@ -3,8 +3,6 @@ package com.sdl.webapp.config;
 import com.sdl.webapp.tridion.DCPDataBinderWrapper;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.dd4t.contentmodel.impl.ComponentImpl;
-import org.dd4t.contentmodel.impl.ComponentPresentationImpl;
-import org.dd4t.contentmodel.impl.ComponentTemplateImpl;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
 import org.dd4t.core.factories.impl.TaxonomyFactoryImpl;
 import org.dd4t.core.processors.impl.RichTextWithLinksResolver;
@@ -100,8 +98,6 @@ public class TridionSpringConfig {
         dataBinder.setRenderDefaultComponentModelsOnly(true);
         dataBinder.setRenderDefaultComponentsIfNoModelFound(true);
         dataBinder.setConverter(modelConverter());
-        dataBinder.setConcreteComponentPresentationImpl(ComponentPresentationImpl.class);
-        dataBinder.setConcreteComponentTemplateImpl(ComponentTemplateImpl.class);
         dataBinder.setConcreteComponentImpl(ComponentImpl.class);
         dataBinder.setConcreteFieldImpl(BaseField.class);
         return dataBinder;

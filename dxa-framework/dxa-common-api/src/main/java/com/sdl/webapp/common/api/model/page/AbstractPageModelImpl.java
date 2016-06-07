@@ -78,19 +78,6 @@ public abstract class AbstractPageModelImpl implements PageModel {
     }
 
     /**
-     * Adds a key-value pair as an extension data.
-     *
-     * @param key   key for the value
-     * @param value value to add
-     */
-    public void addExtensionData(String key, Object value) {
-        if (extensionData == null) {
-            extensionData = new HashMap<>();
-        }
-        extensionData.put(key, value);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -128,5 +115,19 @@ public abstract class AbstractPageModelImpl implements PageModel {
                 this.xpmMetadata.get("PageTemplateID"),
                 this.xpmMetadata.get("PageTemplateModified")
         ) + String.format(XPM_PAGE_SCRIPT, cmsUrl);
+    }
+
+    /**
+     * Adds a key-value pair as an extension data.
+     *
+     * @param key   key for the value
+     * @param value value to add
+     */
+    @Override
+    public void addExtensionData(String key, Object value) {
+        if (extensionData == null) {
+            extensionData = new HashMap<>();
+        }
+        extensionData.put(key, value);
     }
 }

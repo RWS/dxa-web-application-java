@@ -144,19 +144,6 @@ public class RegionModelImpl implements RegionModel {
     }
 
     /**
-     * Adds a key-value pair as an extension data.
-     *
-     * @param key   key for the value
-     * @param value value to add
-     */
-    public void addExtensionData(String key, Object value) {
-        if (extensionData == null) {
-            extensionData = new HashMap<>();
-        }
-        extensionData.put(key, value);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -214,5 +201,19 @@ public class RegionModelImpl implements RegionModel {
                 this.name,
                 Joiner.on(", ").join(types),
                 0);
+    }
+
+    /**
+     * Adds a key-value pair as an extension data.
+     *
+     * @param key   key for the value
+     * @param value value to add
+     */
+    @Override
+    public void addExtensionData(String key, Object value) {
+        if (extensionData == null) {
+            extensionData = new HashMap<>();
+        }
+        extensionData.put(key, value);
     }
 }

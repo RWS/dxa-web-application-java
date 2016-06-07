@@ -12,6 +12,7 @@ import org.joda.time.Days;
 import org.junit.Test;
 
 import java.util.Date;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -149,5 +150,34 @@ public class AbstractPageModelImplTest {
         //then
         assertFalse(pageModel == pageModel2);
         assertEquals(pageModel, pageModel2);
+    }
+
+    @Test
+    public void shouldAddExtensionData() {
+        //given
+        AbstractPageModelImpl pageModel = new AbstractPageModelImpl() {
+        };
+
+        //when
+        pageModel.addExtensionData("key", "value");
+
+        //then
+        assertEquals("value", pageModel.getExtensionData().get("key"));
+    }
+
+    @Test
+    public void shouldSetExtensionData() {
+        //given
+        AbstractPageModelImpl pageModel = new AbstractPageModelImpl() {
+        };
+        HashMap<String, Object> extensionData = new HashMap<String, Object>() {{
+            put("key", "value");
+        }};
+
+        //when
+        pageModel.setExtensionData(extensionData);
+
+        //then
+        assertEquals("value", pageModel.getExtensionData().get("key"));
     }
 }

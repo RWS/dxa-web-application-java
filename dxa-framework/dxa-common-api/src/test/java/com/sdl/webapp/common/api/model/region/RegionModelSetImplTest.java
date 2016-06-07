@@ -204,6 +204,11 @@ public class RegionModelSetImplTest {
         }
 
         @Override
+        public void addEntity(EntityModel entity) {
+
+        }
+
+        @Override
         public Map<String, Object> getXpmMetadata() {
             return null;
         }
@@ -224,8 +229,8 @@ public class RegionModelSetImplTest {
         }
 
         @Override
-        public void addEntity(EntityModel entity) {
-
+        public Map<String, Object> getExtensionData() {
+            return null;
         }
     }
 

@@ -53,4 +53,10 @@ public interface ViewModel {
      */
     void setHtmlClasses(String s);
 
+    /**
+     * Returns the extension data (additional properties which can be used by custom Model Builders, Controllers and/or Views).
+     *
+     * @return the extension data
+     */
+    Map<String, Object> getExtensionData();
 }

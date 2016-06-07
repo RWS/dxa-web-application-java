@@ -14,6 +14,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.HashMap;
+import java.util.Map;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
@@ -43,13 +47,46 @@ public class AbstractEntityModelTest {
         String xpmMarkup = model.getXpmMarkup(null);
 
         //then
-        System.out.println(objectMapper.writeValueAsString(xpmMetadata));
+        assertTrue(xpmMarkup.startsWith("<!-- Start Component Presentation:"));
+        xpmMarkup = xpmMarkup.replace("<!-- Start Component Presentation:", "");
+        assertTrue(xpmMarkup.endsWith("-->"));
+        xpmMarkup = xpmMarkup.replace("-->", "");
+        assertEquals(xpmMetadata, objectMapper.readValue(xpmMarkup, Map.class));
+    }
 
+    @Test
+    public void shouldAddExtensionData() {
+        //given
+        AbstractEntityModel entityModel = new AbstractEntityModel() {
+        };
+
+        //when
+        entityModel.addExtensionData("key", "value");
+
+        //then
+        assertEquals("value", entityModel.getExtensionData().get("key"));
+    }
+
+    @Test
+    public void shouldSetExtensionData() {
+        //given
+        AbstractEntityModel entityModel = new AbstractEntityModel() {
+        };
+        HashMap<String, Object> extensionData = new HashMap<String, Object>() {{
+            put("key", "value");
+        }};
+
+        //when
+        entityModel.setExtensionData(extensionData);
+
+        //then
+        assertEquals("value", entityModel.getExtensionData().get("key"));
     }
 
     @org.springframework.context.annotation.Configuration
     @Profile("test")
     static class SpringConfig {
+
         @Bean
         public ObjectMapper objectMapper() {
             return new DxaSpringInitialization().objectMapper();

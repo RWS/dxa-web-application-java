@@ -15,13 +15,14 @@ import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.Data;
 import lombok.SneakyThrows;
 
+import java.util.HashMap;
 import java.util.Map;
 
-@SemanticMappingIgnore
 /**
- * <p>Abstract AbstractEntityModel class.</p>
+ * Abstract implementation of entity model. This is a basic extension point to create your models.
  */
 @Data
+@SemanticMappingIgnore
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
 
@@ -39,6 +40,22 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
 
     @JsonProperty("HtmlClasses")
     private String htmlClasses;
+
+    @JsonProperty("ExtensionData")
+    private Map<String, Object> extensionData;
+
+    /**
+     * Adds a key-value pair as an extension data.
+     *
+     * @param key   key for the value
+     * @param value value to add
+     */
+    public void addExtensionData(String key, Object value) {
+        if (extensionData == null) {
+            extensionData = new HashMap<>();
+        }
+        extensionData.put(key, value);
+    }
 
     /**
      * {@inheritDoc}

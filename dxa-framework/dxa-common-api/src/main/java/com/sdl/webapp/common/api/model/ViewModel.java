@@ -18,6 +18,7 @@ public interface ViewModel {
 
     /**
      * <p>setMvcData.</p>
+     *
      * @param mvcData mvcData
      */
     void setMvcData(MvcData mvcData);
@@ -59,4 +60,12 @@ public interface ViewModel {
      * @return the extension data
      */
     Map<String, Object> getExtensionData();
+
+    /**
+     * Adds an entry to an extension data.
+     *
+     * @param key   key of the entry
+     * @param value value of the entry
+     */
+    void addExtensionData(String key, Object value);
 }

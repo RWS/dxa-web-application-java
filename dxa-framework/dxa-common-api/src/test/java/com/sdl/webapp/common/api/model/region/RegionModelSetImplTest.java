@@ -232,6 +232,11 @@ public class RegionModelSetImplTest {
         public Map<String, Object> getExtensionData() {
             return null;
         }
+
+        @Override
+        public void addExtensionData(String key, Object value) {
+
+        }
     }
 
 }

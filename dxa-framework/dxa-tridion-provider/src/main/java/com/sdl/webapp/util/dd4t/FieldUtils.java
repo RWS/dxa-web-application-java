@@ -71,7 +71,7 @@ public final class FieldUtils {
         return fields != null ? getStringValue(fields.get(name)) : null;
     }
 
-    private static List<String> getStringValues(Field field) {
+    public static List<String> getStringValues(Field field) {
         if (field != null) {
             BaseField baseField = (BaseField) field;
 

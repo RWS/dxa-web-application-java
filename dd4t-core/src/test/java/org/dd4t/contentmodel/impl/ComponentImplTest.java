@@ -22,7 +22,7 @@ public class ComponentImplTest {
     @Before
     public void setUp () throws Exception {
         serializer = new org.dd4t.core.serializers.impl.json.JSONSerializer();
-        SerializerFactory.setSerializer(serializer);
+        SerializerFactory.getInstance().setSerializer(serializer);
     }
 
     @Test

@@ -10,6 +10,10 @@
     <context:annotation-config />
 
     <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
+    <bean id="serializer" class="org.dd4t.core.serializers.impl.json.JSONSerializer"/>
+    <bean id="serializerFactory" class="org.dd4t.core.serializers.impl.SerializerFactory" factory-method="getInstance">
+        <property name="serializer" ref="serializer"/>
+    </bean>
     <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
         <!-- Set this value to your own models package root -->
         <property name="viewModelPackageRoot" value="org.dd4t.test.models" />

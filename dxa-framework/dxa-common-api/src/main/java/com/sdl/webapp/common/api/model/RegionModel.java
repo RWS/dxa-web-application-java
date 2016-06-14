@@ -41,6 +41,7 @@ public interface RegionModel extends ViewModel {
      *
      * @param value a {@link com.sdl.webapp.common.api.model.MvcData} object.
      */
+    @Override
     void setMvcData(MvcData value);
 
     /**

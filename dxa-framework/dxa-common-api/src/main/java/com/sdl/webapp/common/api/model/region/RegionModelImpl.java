@@ -31,21 +31,24 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGIO
 
 
 /**
- * <p>RegionModelImpl class.</p>
+ * Basic implementation of region model. This is a basic extension point to create your region models.
  */
 @EqualsAndHashCode(of = "name")
 @Slf4j
 public class RegionModelImpl implements RegionModel {
+
     /**
      * The XPM metadata key used for the ID of the (Include) Page from which the Region originates.
      * Avoid using this in implementation code because it may change in a future release.
      */
     public static final String INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY = "IncludedFromPageID";
+
     /**
      * The XPM metadata key used for the title of the (Include) Page from which the Region originates.
      * Avoid using this in implementation code because it may change in a future release.
      */
     public static final String INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY = "IncludedFromPageTitle";
+
     /**
      * The XPM metadata key used for the file name of the (Include) Page from which the Region originates.
      * Avoid using this in implementation code because it may change in a future release.
@@ -89,6 +92,11 @@ public class RegionModelImpl implements RegionModel {
     @Getter
     @Setter
     private RegionModelSet regions;
+
+    @JsonProperty("ExtensionData")
+    @Getter
+    @Setter
+    private Map<String, Object> extensionData;
 
     /**
      * <p>Constructor for RegionModelImpl.</p>
@@ -139,15 +147,6 @@ public class RegionModelImpl implements RegionModel {
      * {@inheritDoc}
      */
     @Override
-    public void addEntity(EntityModel entity) {
-        if (entity.getId() == null) {
-            log.warn("Add entity with id null, this might lead to errors! Entity: {}", entity);
-        }
-        this.entities.add(entity);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public EntityModel getEntity(String entityId) {
         for (EntityModel entity : this.entities) {
             if (Objects.equals(entity.getId(), entityId)) {
@@ -159,6 +158,17 @@ public class RegionModelImpl implements RegionModel {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addEntity(EntityModel entity) {
+        if (entity.getId() == null) {
+            log.warn("Add entity with id null, this might lead to errors! Entity: {}", entity);
+        }
+        this.entities.add(entity);
+    }
+
+    /**
      * <p>Setter for the field <code>xpmMetadata</code>.</p>
      *
      * @param xpmMetadata a {@link java.util.Map} object.
@@ -167,7 +177,9 @@ public class RegionModelImpl implements RegionModel {
         this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getXpmMarkup(Localization localization) {
         XpmRegionConfig xpmRegionConfig = getXpmRegionConfig();
@@ -189,5 +201,19 @@ public class RegionModelImpl implements RegionModel {
                 this.name,
                 Joiner.on(", ").join(types),
                 0);
+    }
+
+    /**
+     * Adds a key-value pair as an extension data.
+     *
+     * @param key   key for the value
+     * @param value value to add
+     */
+    @Override
+    public void addExtensionData(String key, Object value) {
+        if (extensionData == null) {
+            extensionData = new HashMap<>();
+        }
+        extensionData.put(key, value);
     }
 }

@@ -22,6 +22,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -105,6 +106,33 @@ public class RegionModelImplTest {
         //then
         assertEquals("<!-- Start Region: {title: \"name\", " +
                 "allowedComponentTypes: [{schema: \"123\", template: \"234\"}], minOccurs: 0} -->", xpmMarkup);
+    }
+
+    @Test
+    public void shouldAddExtensionData() throws DxaException {
+        //given
+        RegionModelImpl regionModel = new RegionModelImpl("name");
+
+        //when
+        regionModel.addExtensionData("key", "value");
+
+        //then
+        assertEquals("value", regionModel.getExtensionData().get("key"));
+    }
+
+    @Test
+    public void shouldSetExtensionData() throws DxaException {
+        //given
+        RegionModelImpl regionModel = new RegionModelImpl("name");
+        HashMap<String, Object> extensionData = new HashMap<String, Object>() {{
+            put("key", "value");
+        }};
+
+        //when
+        regionModel.setExtensionData(extensionData);
+
+        //then
+        assertEquals("value", regionModel.getExtensionData().get("key"));
     }
 
     @Profile("test")

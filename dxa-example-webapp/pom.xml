@@ -111,6 +111,15 @@
             </dependencies>
         </profile>
         <profile>
+            <id>context-expressions-module</id>
+            <dependencies>
+                <dependency>
+                    <artifactId>dxa-module-context-expressions</artifactId>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>googleanalytics-module</id>
             <dependencies>
                 <dependency>
@@ -247,6 +256,41 @@
             <groupId>com.sdl.dxa.modules</groupId>
             <artifactId>dxa-module-core</artifactId>
         </dependency>
+
+        <!--<dependency>-->
+        <!--<groupId>com.sdl.dxa</groupId>-->
+        <!--<artifactId>dxa-tridion-provider</artifactId>-->
+        <!--<exclusions>-->
+        <!--<exclusion>-->
+        <!--<groupId>com.sdl.web</groupId>-->
+        <!--<artifactId>cil</artifactId>-->
+        <!--</exclusion>-->
+        <!--</exclusions>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>com.sdl.web</groupId>-->
+        <!--<artifactId>cil</artifactId>-->
+        <!--<exclusions>-->
+        <!--<exclusion>-->
+        <!--<groupId>com.sdl.web</groupId>-->
+        <!--<artifactId>content-core</artifactId>-->
+        <!--</exclusion>-->
+        <!--<exclusion>-->
+        <!--<groupId>com.sdl.web</groupId>-->
+        <!--<artifactId>content-api</artifactId>-->
+        <!--</exclusion>-->
+        <!--</exclusions>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>com.sdl.web</groupId>-->
+        <!--<artifactId>content-core</artifactId>-->
+        <!--<version>8.1.1-1015-NEW</version>-->
+        <!--</dependency>-->
+        <!--<dependency>-->
+        <!--<groupId>com.sdl.web</groupId>-->
+        <!--<artifactId>content-api</artifactId>-->
+        <!--<version>8.1.1-1015-NEW</version>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.springframework</groupId>

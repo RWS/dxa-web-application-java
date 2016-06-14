@@ -9,7 +9,6 @@ import com.sdl.webapp.common.util.ApplicationContextHolder;
 import com.sdl.webapp.common.util.Dd4tUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
 import java.util.Map;
@@ -20,9 +19,6 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.empty;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-/**
- * <p>Abstract EclItem class.</p>
- */
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -32,104 +28,42 @@ public abstract class EclItem extends MediaItem {
 
     @JsonProperty("EclUri")
     private String uri;
+
     @JsonProperty("EclDisplayTypeId")
     private String displayTypeId;
+
     @JsonProperty("EclTemplateFragment")
     private String templateFragment;
+
     @JsonProperty("EclExternalMetadata")
     private Map<String, Object> externalMetadata;
 
     /**
-     * <p>getFromExternalMetadataOrAlternative.</p>
+     * Gets data from external metadata, or returns a given alternative if nothing found.
      *
-     * @param externalMetadata a {@link java.util.Map} object.
-     * @param key              a {@link java.lang.String} object.
-     * @param alternative      a {@link java.lang.Object} object.
-     * @return a {@link java.lang.Object} object.
+     * @param externalMetadata map with external metadata
+     * @param key              key to search
+     * @param alternative      alternative to return if no value for key is found
+     * @return a value or alternative if there is no value
+     * @deprecated since 1.5, use {@link #getFromExternalMetadataOrAlternative(String, Object)} instead
      */
+    // todo dxa2 make private
+    @Deprecated
     public static Object getFromExternalMetadataOrAlternative(Map<String, Object> externalMetadata, String key, Object alternative) {
         Dd4tUtils dd4tUtils = ApplicationContextHolder.getContext().getBean(Dd4tUtils.class);
         return dd4tUtils.getFromNestedMultiLevelMapOrAlternative(externalMetadata, key, alternative);
-    }
 
-    private static String getNodeValue(NamedNodeMap attributes, String name) {
-        final Node namedItem = attributes.getNamedItem(name);
-        return namedItem != null ? namedItem.getNodeValue() : null;
     }
 
     /**
-     * <p>Getter for the field <code>uri</code>.</p>
+     * Gets data from external metadata, or returns a given alternative if nothing found.
      *
-     * @return a {@link java.lang.String} object.
+     * @param key         key to search
+     * @param alternative alternative to return if no value for key is found
+     * @return a value or alternative if there is no value
      */
-    public String getUri() {
-        return this.uri;
-    }
-
-    /**
-     * <p>Setter for the field <code>uri</code>.</p>
-     *
-     * @param uri a {@link java.lang.String} object.
-     */
-    public void setUri(String uri) {
-        this.uri = uri;
-    }
-
-    /**
-     * <p>Getter for the field <code>displayTypeId</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getDisplayTypeId() {
-        return displayTypeId;
-    }
-
-    /**
-     * <p>Setter for the field <code>displayTypeId</code>.</p>
-     *
-     * @param displayTypeId a {@link java.lang.String} object.
-     */
-    public void setDisplayTypeId(String displayTypeId) {
-        this.displayTypeId = displayTypeId;
-    }
-
-    /**
-     * <p>Getter for the field <code>templateFragment</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getTemplateFragment() {
-        return templateFragment;
-    }
-
-    /**
-     * <p>Setter for the field <code>templateFragment</code>.</p>
-     *
-     * @param templateFragment a {@link java.lang.String} object.
-     */
-    public void setTemplateFragment(String templateFragment) {
-        this.templateFragment = templateFragment;
-    }
-
-    /**
-     * External metadata map for {@link com.sdl.webapp.common.api.model.entity.EclItem}.
-     * <p>
-     * Keys are the field names. Values can be simple types (String, Double, DateTime), nested Maps.
-     * </p>
-     *
-     * @return external metadata
-     */
-    public Map<String, Object> getExternalMetadata() {
-        return externalMetadata;
-    }
-
-    /**
-     * <p>Setter for the field <code>externalMetadata</code>.</p>
-     *
-     * @param externalMetadata a {@link java.util.Map} object.
-     */
-    public void setExternalMetadata(Map<String, Object> externalMetadata) {
-        this.externalMetadata = externalMetadata;
+    protected Object getFromExternalMetadataOrAlternative(String key, Object alternative) {
+        return getFromExternalMetadataOrAlternative(getExternalMetadata(), key, alternative);
     }
 
     /**
@@ -142,8 +76,6 @@ public abstract class EclItem extends MediaItem {
 
     /**
      * {@inheritDoc}
-     *
-     * Returns an HTML representation.
      */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException {
@@ -152,8 +84,6 @@ public abstract class EclItem extends MediaItem {
 
     /**
      * {@inheritDoc}
-     *
-     * Returns an HTML representation.
      */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException {
@@ -169,41 +99,28 @@ public abstract class EclItem extends MediaItem {
         return div().withClass(cssClass).withPureHtmlContent(templateFragment).build();
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void readFromXhtmlElement(Node xhtmlElement) {
         super.readFromXhtmlElement(xhtmlElement);
-        NamedNodeMap attributes = xhtmlElement.getAttributes();
 
-        if (attributes == null) {
-            return;
-        }
-
-        this.uri = getNodeValue(attributes, "data-eclId");
-        this.displayTypeId = getNodeValue(attributes, "data-eclDisplayTypeId");
-        this.templateFragment = getNodeValue(attributes, "data-eclTemplateFragment");
+        setUri(getNodeAttribute(xhtmlElement, "data-eclId"));
+        setDisplayTypeId(getNodeAttribute(xhtmlElement, "data-eclDisplayTypeId"));
+        setTemplateFragment(getNodeAttribute(xhtmlElement, "data-eclTemplateFragment"));
 
         // Note that FileName and MimeType are already set in MediaItem.ReadFromXhtmlElement.
         // We overwrite those with the values provided by ECL (if any).
-        String eclFileName = getNodeValue(attributes, "data-eclFileName");
+        String eclFileName = getNodeAttribute(xhtmlElement, "data-eclFileName");
         if (!isEmpty(eclFileName)) {
-            this.setFileName(eclFileName);
+            setFileName(eclFileName);
         }
 
-        String eclMimeType = getNodeValue(attributes, "data-eclMimeType");
+        String eclMimeType = getNodeAttribute(xhtmlElement, "data-eclMimeType");
         if (!isEmpty(eclMimeType)) {
-            this.setMimeType(eclMimeType);
+            setMimeType(eclMimeType);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "EclItem{" +
-                "uri='" + uri + '\'' +
-                ", displayTypeId='" + displayTypeId + '\'' +
-                ", templateFragment='" + templateFragment + '\'' +
-                '}';
     }
 
     /**

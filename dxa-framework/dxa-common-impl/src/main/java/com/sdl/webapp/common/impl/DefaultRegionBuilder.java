@@ -32,7 +32,7 @@ public class DefaultRegionBuilder implements RegionBuilder {
     private ViewModelRegistry viewModelRegistry;
 
     @Autowired
-    private ConditionalEntityEvaluator conditionalEntityEvaluator;
+    private List<ConditionalEntityEvaluator> conditionalEntityEvaluators;
 
     /**
      * {@inheritDoc}
@@ -66,11 +66,22 @@ public class DefaultRegionBuilder implements RegionBuilder {
                 log.debug("Added new region {} to a model set", region);
             }
 
-            if (conditionalEntityEvaluator == null || conditionalEntityEvaluator.includeEntity(entity)) {
+            if (entityShouldBeIncluded(entity)) {
                 region.addEntity(entity);
             }
         }
         return regions;
+    }
+
+    private boolean entityShouldBeIncluded(EntityModel entityModel) {
+        if (conditionalEntityEvaluators != null && !conditionalEntityEvaluators.isEmpty()) {
+            for (ConditionalEntityEvaluator evaluator : conditionalEntityEvaluators) {
+                if (!evaluator.includeEntity(entityModel)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private RegionModel createRegionModel(MvcData regionMvcData, PageModel page, String regionName) throws ContentProviderException {

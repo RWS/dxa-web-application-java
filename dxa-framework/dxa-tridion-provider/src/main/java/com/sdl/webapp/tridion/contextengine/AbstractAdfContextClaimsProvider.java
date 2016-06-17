@@ -5,6 +5,7 @@ import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -30,7 +31,9 @@ import java.util.regex.Pattern;
 public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsProvider {
 
     private static final String TAF_CLAIM_CONTEXT = "taf:claim:context:";
+
     private static final Pattern GT_PATTERN = Pattern.compile(">", Pattern.LITERAL);
+
     private static final Pattern LT_PATTERN = Pattern.compile("<", Pattern.LITERAL);
 
     private static boolean isInFamily(String expectedValue, String claimValueForUri) {
@@ -136,18 +139,17 @@ public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsP
         return result;
     }
 
-    /**
-     * <p>getCurrentClaims.</p>
-     *
-     * @return a {@link java.util.Map} object.
-     */
     protected abstract Map<URI, Object> getCurrentClaims();
 
-    /**
-     * <p>getClaimValueForURI.</p>
-     *
-     * @param uri a {@link java.net.URI} object.
-     * @return a {@link java.lang.String} object.
-     */
     protected abstract String getClaimValueForURI(URI uri);
+
+    void logAllClaims(@NotNull Map<URI, Object> claims) {
+        if (!log.isDebugEnabled()) {
+            return;
+        }
+
+        for (Map.Entry<URI, Object> entry : claims.entrySet()) {
+            log.debug("Claim Store: {} <> {}", entry.getKey(), entry.getValue());
+        }
+    }
 }

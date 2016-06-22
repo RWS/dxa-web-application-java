@@ -50,18 +50,15 @@ public class BrowserClaims extends ContextClaims {
     }
 
     public String[] getImageFormatSupport() {
-        List<String> imageFormatSupport = getClaimsList("imageFormatSupport", String.class);
-        return imageFormatSupport == null ? new String[]{} : imageFormatSupport.toArray(new String[imageFormatSupport.size()]);
+        return getStringsClaims("imageFormatSupport");
     }
 
     public String[] getInputDevices() {
-        List<String> inputDevices = getClaimsList("inputDevices", String.class);
-        return inputDevices == null ? new String[]{} : inputDevices.toArray(new String[inputDevices.size()]);
+        return getStringsClaims("inputDevices");
     }
 
     public String[] getInputModeSupport() {
-        List<String> inputModeSupport = getClaimsList("inputModeSupport", String.class);
-        return inputModeSupport == null ? new String[]{} : inputModeSupport.toArray(new String[inputModeSupport.size()]);
+        return getStringsClaims("inputModeSupport");
     }
 
     public String getJsVersion() {
@@ -69,9 +66,9 @@ public class BrowserClaims extends ContextClaims {
     }
 
     public String[] getMarkupSupport() {
-        List<String> markupSupport = getClaimsList("markupSupport", String.class);
-        return markupSupport == null ? new String[]{} : markupSupport.toArray(new String[markupSupport.size()]);
+        return getStringsClaims("markupSupport");
     }
+
 
     public String getModel() {
         return getSingleClaim("model", String.class);
@@ -82,13 +79,11 @@ public class BrowserClaims extends ContextClaims {
     }
 
     public String[] getScriptSupport() {
-        List<String> scriptSupport = getClaimsList("scriptSupport", String.class);
-        return scriptSupport == null ? new String[]{} : scriptSupport.toArray(new String[scriptSupport.size()]);
+        return getStringsClaims("scriptSupport");
     }
 
     public String[] getStylesheetSupport() {
-        List<String> stylesheetSupport = getClaimsList("stylesheetSupport", String.class);
-        return stylesheetSupport == null ? new String[]{} : stylesheetSupport.toArray(new String[stylesheetSupport.size()]);
+        return getStringsClaims("stylesheetSupport");
     }
 
     public String getVariant() {
@@ -101,5 +96,10 @@ public class BrowserClaims extends ContextClaims {
 
     public String getVersion() {
         return getSingleClaim("version", String.class);
+    }
+
+    private String[] getStringsClaims(String name) {
+        List<String> list = getClaimsList(name, String.class);
+        return list.toArray(new String[list.size()]);
     }
 }

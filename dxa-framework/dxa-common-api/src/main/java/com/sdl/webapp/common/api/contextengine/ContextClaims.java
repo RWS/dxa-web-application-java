@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api.contextengine;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import lombok.Getter;
 import lombok.NonNull;
@@ -13,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +26,19 @@ import static org.springframework.util.NumberUtils.convertNumberToTargetClass;
  */
 @Slf4j
 public abstract class ContextClaims {
+
+    /**
+     * Mapping of Number classes to themselves to resolve <code>? extends Number</code> from <code>?</code> generics.
+     */
+    private static final ImmutableMap<Class<?>, Class<? extends Number>> RAW_NUMBER_CLASSES =
+            ImmutableMap.<Class<?>, Class<? extends Number>>builder()
+                    .put(Integer.class, Integer.class)
+                    .put(Double.class, Double.class)
+                    .put(Short.class, Short.class)
+                    .put(Byte.class, Byte.class)
+                    .put(Float.class, Float.class)
+                    .put(Long.class, Long.class)
+                    .build();
 
     @Setter
     @Getter(PROTECTED)
@@ -51,35 +66,11 @@ public abstract class ContextClaims {
         if (Number.class.isInstance(value) && Number.class.isAssignableFrom(cls)) {
             log.debug("Claim value {} is a number of {}, but number conversion to {} is requested", value, value.getClass(), cls);
             return cls.getConstructor(String.class).newInstance(
-                    convertNumberToTargetClass(((Number) value), getRawNumberClass(cls)).toString());
+                    convertNumberToTargetClass((Number) value, RAW_NUMBER_CLASSES.get(cls)).toString());
         }
 
         log.warn("Cannot cast {} to {}", value, cls);
         return null;
-    }
-
-    private static <T> Class<? extends Number> getRawNumberClass(@NonNull Class<T> cls) {
-        if (Integer.class.isAssignableFrom(cls)) {
-            return Integer.class;
-        }
-
-        if (Double.class.isAssignableFrom(cls)) {
-            return Double.class;
-        }
-
-        if (Short.class.isAssignableFrom(cls)) {
-            return Short.class;
-        }
-
-        if (Byte.class.isAssignableFrom(cls)) {
-            return Byte.class;
-        }
-
-        if (Float.class.isAssignableFrom(cls)) {
-            return Float.class;
-        }
-
-        return Long.class;
     }
 
     /**
@@ -109,8 +100,7 @@ public abstract class ContextClaims {
     @Nullable
     @Deprecated
     public <T> ArrayList<T> getClaimValues(@NonNull String propertyName, @NonNull Class<T> cls) {
-        List<T> list = getClaimsList(propertyName, cls);
-        return list != null ? new ArrayList<>(list) : null;
+        return new ArrayList<>(getClaimsList(propertyName, cls));
     }
 
     /**
@@ -137,11 +127,11 @@ public abstract class ContextClaims {
         return castValue(getClaimValue(propertyName), cls);
     }
 
-    @Nullable
+    @NonNull
     protected <T> List<T> getClaimsList(@NonNull String propertyName, @NonNull final Class<T> cls) {
         Object claimValue = getClaimValue(propertyName);
         if (claimValue == null) {
-            return null;
+            return Collections.emptyList();
         }
 
         if (Collection.class.isInstance(claimValue)) {
@@ -154,7 +144,7 @@ public abstract class ContextClaims {
             }));
         }
 
-        return null;
+        return Collections.emptyList();
     }
 
     @Nullable
@@ -162,13 +152,13 @@ public abstract class ContextClaims {
         String claimName = getClaimName(propertyName);
         log.trace("Claim name to retrieve {}", claimName);
 
-        Map<String, Object> claims = getClaims();
+        Map<String, Object> claimsMap = getClaims();
 
-        if (!claims.containsKey(claimName)) {
-            log.debug("Requested claim {} is not in claims {}", claimName, claims);
+        if (!claimsMap.containsKey(claimName)) {
+            log.debug("Requested claim {} is not in claims {}", claimName, claimsMap);
             return null;
         }
 
-        return claims.get(claimName);
+        return claimsMap.get(claimName);
     }
 }

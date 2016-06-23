@@ -23,19 +23,6 @@ public class AdfContextClaimsProvider extends AbstractAdfContextClaimsProvider {
     @Override
     protected Map<URI, Object> getCurrentClaims() {
         ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
-        Map<URI, Object> result = currentClaimStore == null ? Collections.emptyMap() : currentClaimStore.getAll();
-
-        logAllClaims(result);
-
-        return result;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected String getClaimValueForURI(URI uri) {
-        ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
-        return currentClaimStore == null ? null : currentClaimStore.get(uri, String.class);
+        return currentClaimStore == null ? Collections.emptyMap() : currentClaimStore.getAll();
     }
 }

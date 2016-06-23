@@ -13,19 +13,12 @@ import java.util.Map;
 @Slf4j
 public class AdfContextClaimsProvider extends AbstractAdfContextClaimsProvider {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     protected Map<URI, Object> getCurrentClaims() {
         ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
-        Map<URI, Object> result = currentClaimStore == null ? Collections.<URI, Object>emptyMap() : currentClaimStore.getAll();
-
-        logAllClaims(result);
-
-        return result;
-    }
-
-    @Override
-    protected String getClaimValueForURI(URI uri) {
-        ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
-        return currentClaimStore == null ? null : currentClaimStore.get(uri, String.class);
+        return currentClaimStore == null ? Collections.<URI, Object>emptyMap() : currentClaimStore.getAll();
     }
 }

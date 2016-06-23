@@ -7,6 +7,7 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
@@ -99,6 +100,7 @@ public class ContextEngineImpl implements ContextEngine {
         return fallbackDeviceFamily();
     }
 
+    @Nullable
     private String defineDeviceFamily() {
         if (deviceFamiliesRules != null) {
             for (Map.Entry<String, Map<String, Evaluator>> family : deviceFamiliesRules.entrySet()) {

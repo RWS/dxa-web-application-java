@@ -20,6 +20,7 @@ public interface ContextClaimsProvider {
      * @return context claims collection
      * @throws com.sdl.webapp.common.exceptions.DxaException is error occurred during resolving claims
      */
+    //todo dxa2 change return type to a Map wrapper which wouldn't allow to request Object but only generic-type?
     Map<String, Object> getContextClaims(String aspectName) throws DxaException;
 
     /**

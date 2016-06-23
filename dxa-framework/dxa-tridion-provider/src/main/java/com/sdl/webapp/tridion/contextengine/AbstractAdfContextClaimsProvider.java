@@ -66,6 +66,8 @@ public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsP
             return;
         }
 
+        log.debug("Total number of claims: {}", claims.size());
+
         for (Map.Entry<String, Object> entry : claims.entrySet()) {
             log.debug("ADF Context Claim: {} <> {}", entry.getKey(), entry.getValue());
         }

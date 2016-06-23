@@ -32,7 +32,7 @@ public class XpmButtonTag extends XpmMarkupTag {
      * @param cssClass a {@link string} object.
      */
     public void setCssClass(String cssClass) {
-        if (cssClass.length() > 0) {
+        if (!Strings.isNullOrEmpty(cssClass)) {
             this.cssClass = " " + cssClass;
         } else {
             this.cssClass = "";

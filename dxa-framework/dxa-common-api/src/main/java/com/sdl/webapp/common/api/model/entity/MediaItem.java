@@ -164,18 +164,11 @@ public abstract class MediaItem extends AbstractEntityModel {
         // Return the Item (Reference) ID part of the TCM URI.
         this.setId(xhtmlElement.getAttributes().getNamedItem("xlink:href").getNodeValue().split("-")[1]);
         this.setUrl(xhtmlElement.getAttributes().getNamedItem("src").getNodeValue());
+        this.setHtmlClasses(xhtmlElement.getAttributes().getNamedItem("classes").getNodeValue());
         this.fileName = xhtmlElement.getAttributes().getNamedItem("data-multimediaFileName").getNodeValue();
         String fileSize = xhtmlElement.getAttributes().getNamedItem("data-multimediaFileSize").getNodeValue();
         if (!Strings.isNullOrEmpty(fileSize)) {
             this.fileSize = Integer.parseInt(fileSize);
-        }
-
-        Node styleClass = xhtmlElement.getAttributes().getNamedItem("class");
-        if (styleClass != null) {
-            String style = styleClass.getNodeValue();
-            if (!Strings.isNullOrEmpty(style)) {
-                this.setHtmlClasses(style);
-            }
         }
 
         this.mimeType = xhtmlElement.getAttributes().getNamedItem("data-multimediaMimeType").getNodeValue();

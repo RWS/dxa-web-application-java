@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
@@ -44,10 +45,19 @@ public abstract class ContextClaims {
     @Getter(PROTECTED)
     private Map<String, Object> claims;
 
+    /**
+     * Casts given claim value to a given type if possible, trying also to convert {@link Number} to another child-class.
+     *
+     * @param value claim value to cast
+     * @param cls   class to cast value to
+     * @param <T>   generic type of expected result
+     * @return casted value, or null if value is null or impossible to cast
+     */
     @Nullable
+    @Contract(value = "null, _ -> null", pure = true)
     @SneakyThrows({NoSuchMethodException.class, IllegalAccessException.class,
             InvocationTargetException.class, InstantiationException.class})
-    private static <T> T castValue(@Nullable Object value, @NonNull Class<T> cls) {
+    public static <T> T castClaim(@Nullable Object value, @NonNull Class<T> cls) {
         if (value == null) {
             log.debug("Claim value is null");
             return null;
@@ -124,7 +134,7 @@ public abstract class ContextClaims {
 
     @Nullable
     protected <T> T getSingleClaim(@NonNull String propertyName, @NonNull Class<T> cls) {
-        return castValue(getClaimValue(propertyName), cls);
+        return castClaim(getClaimValue(propertyName), cls);
     }
 
     @NonNull
@@ -139,7 +149,7 @@ public abstract class ContextClaims {
             return Lists.newArrayList(Collections2.transform((Collection<Object>) claimValue, new Function<Object, T>() {
                 @Override
                 public T apply(Object input) {
-                    return castValue(input, cls);
+                    return castClaim(input, cls);
                 }
             }));
         }

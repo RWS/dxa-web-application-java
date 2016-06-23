@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.impl.contextengine;
 
-import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.junit.Test;
@@ -8,6 +7,12 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Map;
 
+import static com.sdl.webapp.common.impl.contextengine.Claims.alienDeviceClaims;
+import static com.sdl.webapp.common.impl.contextengine.Claims.appleClaims;
+import static com.sdl.webapp.common.impl.contextengine.Claims.desktopClaims;
+import static com.sdl.webapp.common.impl.contextengine.Claims.featurePhoneClaims;
+import static com.sdl.webapp.common.impl.contextengine.Claims.smartPhoneClaims;
+import static com.sdl.webapp.common.impl.contextengine.Claims.tabletClaims;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.mock;
@@ -78,6 +83,20 @@ public class ContextEngineImplTest {
         shouldResolveDeviceFamily(deviceFamily, claims, true);
     }
 
+    @Test
+    public void shouldPreferDeviceFamilyFromClaimsProvider() throws DxaException {
+        //given
+        ContextClaimsProvider claimsProvider = mock(ContextClaimsProvider.class);
+        ContextEngineImpl contextEngine = contextEngineImpl(claimsProvider, false);
+        String expected = "FromProvider";
+
+        //when
+        when(claimsProvider.getDeviceFamily()).thenReturn(expected);
+
+        //then
+        assertEquals(expected, contextEngine.getDeviceFamily());
+    }
+
     private void shouldResolveDeviceFamily(String deviceFamily, Map<String, Object> claims, boolean isFallbackScenario) throws DxaException {
         //given
         ContextClaimsProvider claimsProvider = mock(ContextClaimsProvider.class);
@@ -90,56 +109,16 @@ public class ContextEngineImplTest {
         assertEquals(deviceFamily, contextEngine.getDeviceFamily());
     }
 
-    private Map<String, Object> desktopClaims() {
-        return ImmutableMap.<String, Object>builder()
-                .put("device.mobile", false)
-                .put("device.tablet", false)
-                .build();
-    }
-
-    private Map<String, Object> tabletClaims() {
-        return ImmutableMap.<String, Object>builder()
-                .put("device.tablet", true)
-                .build();
-    }
-
-    private Map<String, Object> smartPhoneClaims() {
-        return ImmutableMap.<String, Object>builder()
-                .put("device.mobile", true)
-                .put("device.tablet", false)
-                .put("device.displayWidth", 330)
-                .build();
-    }
-
-    private Map<String, Object> alienDeviceClaims() {
-        return ImmutableMap.<String, Object>builder()
-                .put("device.mobile", false)
-                .put("device.tablet", false)
-                .put("device.displayWidth", 300)
-                .build();
-    }
-
-    private Map<String, Object> appleClaims() {
-        return ImmutableMap.<String, Object>builder()
-                .put("os.vendor", "Apple")
-                .build();
-    }
-
-    private ImmutableMap<String, Object> featurePhoneClaims() {
-        return ImmutableMap.<String, Object>builder()
-                .put("device.mobile", true)
-                .put("device.tablet", false)
-                .put("device.displayWidth", 300)
-                .build();
-    }
-
     private ContextEngineImpl contextEngineImpl(ContextClaimsProvider contextClaimsProvider, boolean init) {
-        ContextEngineImpl contextEngine = new ContextEngineImpl();
-        ReflectionTestUtils.setField(contextEngine, "deviceFamiliesFile", "device-families.xml");
-        ReflectionTestUtils.setField(contextEngine, "provider", contextClaimsProvider);
+        DeviceFamiliesEvaluator evaluator = new DeviceFamiliesEvaluator();
+        ReflectionTestUtils.setField(evaluator, "deviceFamiliesFile", "device-families.xml");
         if (init) {
-            ReflectionTestUtils.invokeMethod(contextEngine, "init");
+            ReflectionTestUtils.invokeMethod(evaluator, "init");
         }
+
+        ContextEngineImpl contextEngine = new ContextEngineImpl();
+        ReflectionTestUtils.setField(contextEngine, "provider", contextClaimsProvider);
+        ReflectionTestUtils.setField(contextEngine, "deviceFamiliesEvaluator", evaluator);
         return contextEngine;
     }
 }

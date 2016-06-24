@@ -129,7 +129,7 @@ class BuildTask implements Callable<Output> {
     }
 
     Output runMaven(String command, String pomPath) {
-        String toRun = "${determineShell()} mvn -T 1C ${command} -f \"${pomPath}\""
+        String toRun = "${determineShell()} mvn ${command} -f \"${pomPath}\""
 
         def output = new Output(command: toRun, lines: [], code: 0)
 

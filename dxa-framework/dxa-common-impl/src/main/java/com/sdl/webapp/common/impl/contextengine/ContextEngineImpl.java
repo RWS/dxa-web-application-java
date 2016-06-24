@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -46,7 +47,9 @@ public class ContextEngineImpl implements ContextEngine {
 
     private Map<String, Object> claims() {
         try {
-            return provider.getContextClaims(null);
+            Map<String, Object> contextClaims = provider.getContextClaims(null);
+            logAllClaims(contextClaims);
+            return contextClaims;
         } catch (DxaException e) {
             log.error("Exception getting claims from provider {}", provider, e);
             return null;
@@ -67,5 +70,15 @@ public class ContextEngineImpl implements ContextEngine {
         return deviceFamiliesEvaluator.fallbackDeviceFamily(getClaims(DeviceClaims.class));
     }
 
+    private void logAllClaims(@NotNull Map<String, Object> claims) {
+        if (!log.isDebugEnabled()) {
+            return;
+        }
 
+        log.debug("Total number of claims: {}", claims.size());
+
+        for (Map.Entry<String, Object> entry : claims.entrySet()) {
+            log.debug("{} Context Claim: {} <> {}", provider.getClass().getSimpleName(), entry.getKey(), entry.getValue());
+        }
+    }
 }

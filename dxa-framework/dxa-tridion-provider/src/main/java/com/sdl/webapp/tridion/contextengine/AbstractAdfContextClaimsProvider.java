@@ -3,7 +3,6 @@ package com.sdl.webapp.tridion.contextengine;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -46,8 +45,6 @@ public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsP
             result.put(propertyName, claim.getValue());
         }
 
-        logAllClaims(result);
-
         return result;
     }
 
@@ -60,16 +57,4 @@ public abstract class AbstractAdfContextClaimsProvider implements ContextClaimsP
     }
 
     protected abstract Map<URI, Object> getCurrentClaims();
-
-    private void logAllClaims(@NotNull Map<String, Object> claims) {
-        if (!log.isDebugEnabled()) {
-            return;
-        }
-
-        log.debug("Total number of claims: {}", claims.size());
-
-        for (Map.Entry<String, Object> entry : claims.entrySet()) {
-            log.debug("ADF Context Claim: {} <> {}", entry.getKey(), entry.getValue());
-        }
-    }
 }

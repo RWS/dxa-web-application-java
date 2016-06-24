@@ -52,7 +52,7 @@ task build << {
 
     def commandToExecute = getCommandToExecute()
 
-    def pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1)
+    def pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
 
     def failed = []
     def tasks = []

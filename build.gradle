@@ -43,12 +43,11 @@ task help << {
 task build << {
     greet()
 
+    def beforeAll = ["dxa-bom", "dxa-bom-2013sp1"]
     def parallel = [
-            "dxa-bom",
-            "dxa-bom-2013sp1",
+            "dxa-framework",
             "dxa-webapp-archetype"
     ]
-    def oneByOne = ["dxa-framework"]
 
     def commandToExecute = getCommandToExecute()
 
@@ -66,16 +65,15 @@ task build << {
         }
     }
 
+    beforeAll.each {
+        processOutput(pool.submit(new BuildTask(name: it, commandToExecute: commandToExecute)).get())
+    }
     parallel.each {
         tasks << new BuildTask(name: it, commandToExecute: commandToExecute)
     }
     List<Future<Output>> futures = pool.invokeAll(tasks)
     for (Future<Output> buildResult : futures) {
         processOutput(buildResult.get())
-    }
-
-    oneByOne.each {
-        processOutput(pool.submit(new BuildTask(name: it, commandToExecute: commandToExecute)).get())
     }
 
     if (failed.size() > 0) {

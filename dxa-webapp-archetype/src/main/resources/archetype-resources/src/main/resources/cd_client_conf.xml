@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ServiceConfig ConnectionTimeout="10000" CacheEnabled="true" CacheExpirationDuration="1"
+               ServiceAvailabilityCheck="false">
+    <DiscoveryService ServiceUri="***DISCOVERY_SERVICE***"/>
+    <!-- Remove TokenService element if OAuth is disabled on your environment -->
+    <TokenService ClientId="cduser" ClientSecret="encrypted:o/cgCBwmULeOyUZghFaKJA=="/>
+
+    <!-- <PreviewService MachineName="MachineName1" FileLocation="C:/temp" DefaultFileSystem="true"/>-->
+</ServiceConfig>

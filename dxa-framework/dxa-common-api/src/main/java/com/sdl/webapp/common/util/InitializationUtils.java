@@ -141,7 +141,7 @@ public final class InitializationUtils {
      */
     public static boolean isClassPresent(@NonNull String className) {
         boolean present = ClassUtils.isPresent(className, ClassUtils.getDefaultClassLoader());
-        log.debug("{} isClassPresent: {}", present);
+        log.debug("{} isClassPresent: {}", className, present);
         return present;
     }
 

@@ -54,20 +54,16 @@ public class SpringContextConfiguration {
     }
 
     private void loadCwdRepository() {
-        if (System.getProperty("repository.location") == null) {
-            log.debug("CWD repository URL is not in System properties, set {}", contextRepositoryLocation);
-            System.setProperty("repository.location", contextRepositoryLocation);
+        String repositoryLocation = System.getProperty("repository.location", contextRepositoryLocation);
+        if (!new File(repositoryLocation).isAbsolute()) {
+            repositoryLocation = new File(repositoryLocation).getAbsolutePath();
+            log.debug("CWD repository URL is not in System properties (which is=[{}]) is null or relative, set {}",
+                    System.getProperty("repository.location"), repositoryLocation);
+            System.setProperty("repository.location", repositoryLocation);
         }
 
-        String repositoryLocation = System.getProperty("repository.location");
-        if (repositoryLocation.matches("^\\.\\.[/\\\\].*")) {
-            repositoryLocation = "./WEB-INF" + repositoryLocation.substring(2);
-        } else if (repositoryLocation.matches("^\\.[/\\\\].*") || repositoryLocation.matches("^[^\\./\\\\].*")) {
-            repositoryLocation = "./WEB-INF/lib" + repositoryLocation.substring(1);
-        }
-        if (!new File(repositoryLocation).isAbsolute()) {
-            repositoryLocation = servletContext.getRealPath("/" + repositoryLocation);
-        }
+        log.debug("Using {} CWD repository location", repositoryLocation);
+
         if (!new File(repositoryLocation).exists()) {
             log.info("Initialization of ContextRepositoryManager#main({}), FileCheck.repository.location: {}, System.repository.location: {}",
                     contextRepositoryUrl, repositoryLocation, System.getProperty("repository.location"));

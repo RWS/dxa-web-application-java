@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ServiceConfig ConnectionTimeout="10000" CacheEnabled="true" CacheExpirationDuration="1"
-               ServiceAvailabilityCheck="false">
-    <DiscoveryService ServiceUri="***DISCOVERY_SERVICE***"/>
-    <!-- Remove TokenService element if OAuth is disabled on your environment -->
+<ServiceConfig ConnectionTimeout="10000" CacheEnabled="true" CacheExpirationDuration="5" ServiceAvailabilityCheck="false">
+    <!-- NOTE: cache expiration is set to only 5 seconds to prevent caching issues with XPM Session Preview. It should be set higher on a Live site -->
+    
+    <!-- Specify your CIS Environment's Discovery Service URL below -->
+    <DiscoveryService ServiceUri="***DISCOVERY_SERVICE_URL***"/>
+    
+    <!-- Remove the TokenService element if OAuth is disabled on your CIS Environment -->
     <TokenService ClientId="cduser" ClientSecret="encrypted:o/cgCBwmULeOyUZghFaKJA=="/>
-
-    <!-- <PreviewService MachineName="MachineName1" FileLocation="C:/temp" DefaultFileSystem="true"/>-->
 </ServiceConfig>

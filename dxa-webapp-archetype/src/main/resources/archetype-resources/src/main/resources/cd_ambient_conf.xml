@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               Version="8.1"
+               xsi:noNamespaceSchemaLocation="../schemas/cd_ambient_conf.xsd">
+
+    <ForwardedClaims CookieName="TAFContext">
+        <Claim Uri="taf:session:preview:preview_session"/>
+        <!--<Claim Uri="taf:claim:ambientdata:sessioncartridge:useragent:browser"/>
+            <Claim Uri="taf:claim:ambientdata:footprintcartridge:acceptlanguage"/>
+            <Claim Uri="taf:claim:ambientdata:footprintcartridge:recurringvisitor"/>
+            <Claim Uri="taf:claim:ambientdata:sessioncartridge:useragent:os"/>
+            <Claim Uri="taf:claim:ambientdata:footprintcartridge:searchquery"/>
+            <Claim Uri="taf:claim:ambientdata:sessioncartridge:session:lifetime"/>
+            <Claim Uri="taf:claim:ambientdata:sessioncartridge:refererdomain"/>-->
+
+        <!--<Claim Uri="taf:request:headers"/>-->
+        <!--<Claim Uri="taf:request:full_url" />-->
+    </ForwardedClaims>
+
+    <!-- Cookies settings -->
+    <!--
+      <Cookies>
+          <CookieClaim DefaultValue="true" Name="CookieClaim"/>
+          <Cookie Type="Tracking" Name="myTrackingCookie" Path="/"/>
+          <Cookie Type="Session" Name="mySessionCookie" Path="/"/>
+          <Cookie Type="ADF" Name="TAFContext" />
+      </Cookies>
+      -->
+
+    <!-- The claim store provider that will be used. -->
+    <!-- For Java -->
+    <ClaimStoreProvider>com.tridion.ambientdata.claimstore.providers.JavaClaimStoreProvider</ClaimStoreProvider>
+    <!-- For .NET -->
+    <!--<ClaimStoreProvider>com.tridion.ambientdata.claimstore.providers.DotNetClaimStoreProvider</ClaimStoreProvider>-->
+</Configuration>

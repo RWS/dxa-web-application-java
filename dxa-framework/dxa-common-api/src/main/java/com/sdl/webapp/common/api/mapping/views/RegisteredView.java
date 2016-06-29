@@ -17,7 +17,8 @@ import java.lang.annotation.Target;
 @Deprecated
 // todo dxa2 remove
 public @interface RegisteredView {
-    String viewName();
+
+    String viewName() default "";
 
     Class<? extends ViewModel> clazz();
 

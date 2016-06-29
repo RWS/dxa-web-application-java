@@ -6,13 +6,18 @@ import com.sdl.webapp.common.api.model.entity.Article;
 import com.sdl.webapp.common.api.model.entity.Image;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.Location;
+import com.sdl.webapp.common.api.model.entity.Notification;
 import com.sdl.webapp.common.api.model.entity.Place;
+import com.sdl.webapp.common.api.model.entity.Teaser;
 import com.sdl.webapp.common.api.model.entity.YouTubeVideo;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Matchers;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Objects;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -23,7 +28,8 @@ public class AbstractInitializerTest {
         return new ArgumentMatcher<MvcData>() {
             @Override
             public boolean matches(Object argument) {
-                return ((MvcData) argument).getViewName().equals(viewName);
+                return argument == null ? isNullOrEmpty(viewName) :
+                        Objects.equals(((MvcData) argument).getViewName(), viewName);
             }
         };
     }
@@ -50,14 +56,17 @@ public class AbstractInitializerTest {
     @RegisteredView(viewName = "test1", clazz = Article.class)
     @RegisteredViews({
             @RegisteredView(viewName = "test2", clazz = Image.class),
-            @RegisteredView(viewName = "test2.1", clazz = Place.class)
+            @RegisteredView(viewName = "test2.1", clazz = Place.class),
+            @RegisteredView(clazz = Notification.class)
     })
     @RegisteredViewModel(viewName = "test3", modelClass = Location.class)
     @RegisteredViewModels({
             @RegisteredViewModel(viewName = "test4", modelClass = Link.class),
-            @RegisteredViewModel(viewName = "test4.1", modelClass = YouTubeVideo.class)
+            @RegisteredViewModel(viewName = "test4.1", modelClass = YouTubeVideo.class),
+            @RegisteredViewModel(modelClass = Teaser.class)
     })
     private static class TestClass extends AbstractInitializer {
+
         @Override
         protected String getAreaName() {
             return "area";

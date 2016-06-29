@@ -105,7 +105,7 @@ public abstract class AbstractInitializer {
 
         log.debug("controllerName {} for view {} with entity class {}", actualControllerName, viewName, entityClass);
 
-        MvcData mvcData = MvcDataImpl.newBuilder()
+        MvcData mvcData = isNullOrEmpty(viewName) ? null : MvcDataImpl.newBuilder()
                 .areaName(getAreaName())
                 .viewName(viewName)
                 .controllerName(actualControllerName)

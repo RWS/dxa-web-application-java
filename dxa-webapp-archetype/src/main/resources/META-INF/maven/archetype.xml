@@ -8,12 +8,13 @@
         <source>src/main/java/WebAppConfiguration.java</source>
     </sources>
     <resources>
-        <resource>src/main/resources/ehcache.xml</resource>
-        <resource>src/main/resources/device-families.xml</resource>
-        <resource>src/main/resources/logback.xml</resource>
+        <resource>src/main/resources/cd_ambient_conf.xml</resource>
         <resource>src/main/resources/cd_client_conf.xml</resource>
         <resource>src/main/resources/cwd_client_conf.xml</resource>
+        <resource>src/main/resources/device-families.xml</resource>
         <resource>src/main/resources/dxa.properties</resource>
+        <resource>src/main/resources/ehcache.xml</resource>
+        <resource>src/main/resources/logback.xml</resource>
     </resources>
     <testSources>
         <source>src/test/java/MainServiceTest.java</source>

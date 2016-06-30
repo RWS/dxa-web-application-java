@@ -1,6 +1,5 @@
-package com.sdl.webapp.main;
+package org.example;
 
-import com.sdl.dxa.DxaSpringInitialization;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
@@ -14,6 +13,9 @@ import static com.sdl.webapp.common.util.InitializationUtils.loadActiveSpringPro
 import static com.sdl.webapp.common.util.InitializationUtils.registerListener;
 import static com.sdl.webapp.common.util.InitializationUtils.registerServlet;
 
+/**
+ * Initializes the web application instead of <code>web.xml</code>.
+ */
 @Slf4j
 public class WebAppInitializer implements WebApplicationInitializer {
 
@@ -22,7 +24,8 @@ public class WebAppInitializer implements WebApplicationInitializer {
         log.debug("Initializing servlet application context");
         AnnotationConfigWebApplicationContext servletAppContext = new AnnotationConfigWebApplicationContext();
 
-        servletAppContext.register(DxaSpringInitialization.class);
+        // register webapp spring configuration
+        servletAppContext.register(SpringInitializer.class);
 
         log.debug("Registering Spring ContextLoaderListener");
         registerListener(servletContext, new ContextLoaderListener(servletAppContext));

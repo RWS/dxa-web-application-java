@@ -14,7 +14,7 @@
 
     <properties>
         <dxa-bom.version>1.6.0-SNAPSHOT</dxa-bom.version>
-        <dxa-release-branch>release/1.5</dxa-release-branch>
+        <dxa-release-branch>release/1.6</dxa-release-branch>
     </properties>
 
     <repositories>

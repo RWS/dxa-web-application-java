@@ -6,10 +6,10 @@
 
     <version>1.5.0-SNAPSHOT</version>
     <groupId>com.sdl.dxa</groupId>
-    <artifactId>dxa-example-webapp</artifactId>
+    <artifactId>dxa-webapp</artifactId>
     <packaging>war</packaging>
 
-    <name>DXA - Example Webapp</name>
+    <name>DXA - Webapp</name>
     <description>Example web application for DXA</description>
 
     <properties>

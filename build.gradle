@@ -44,10 +44,7 @@ task build << {
     greet()
 
     def beforeAll = ["dxa-bom", "dxa-bom-2013sp1"]
-    def parallel = [
-            "dxa-framework",
-            "dxa-webapp-archetype"
-    ]
+    def parallel = [ "dxa-framework" ]
 
     def commandToExecute = getCommandToExecute()
 

@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.impl.contextengine;
 
 import com.sdl.webapp.common.api.contextengine.ContextClaims;
+import lombok.Getter;
 
 
 /**
@@ -16,47 +17,146 @@ public class DeviceClaims extends ContextClaims {
         return "device";
     }
 
-    public Integer getDisplayHeight() {
-        return getSingleClaim("displayHeight", Integer.class);
-    }
+    /**
+     * Returns if device is mobile.
+     *
+     * @return true if device is mobile
+     */
+    @Getter(lazy = true)
+    private final Boolean isMobile = isMobile();
 
-    public Integer getDisplayWidth() {
-        return getSingleClaim("displayWidth", Integer.class);
-    }
+    /**
+     * Returns if device is robot.
+     *
+     * @return true if device is robot
+     */
+    @Getter(lazy = true)
+    private final Boolean isRobot = isRobot();
 
-    public Boolean getIsMobile() {
+    /**
+     * Returns if device is tablet.
+     *
+     * @return true if device is tablet
+     */
+    @Getter(lazy = true)
+    private final Boolean isTablet = isTablet();
+
+    /**
+     * Returns the height of display of device.
+     *
+     * @return a device display height
+     */
+    @Getter(lazy = true)
+    private final Integer displayHeight = displayHeight();
+
+    /**
+     * Returns the width of display of device.
+     *
+     * @return a device display width
+     */
+    @Getter(lazy = true)
+    private final Integer displayWidth = displayWidth();
+
+    /**
+     * Returns the pixelDensity of display of device.
+     *
+     * @return a device display pixelDensity
+     */
+    @Getter(lazy = true)
+    private final Integer pixelDensity = pixelDensity();
+
+    /**
+     * Returns the pixelRatio of display of device.
+     *
+     * @return a device display pixelRatio
+     */
+    @Getter(lazy = true)
+    private final Double pixelRatio = pixelRatio();
+
+    /**
+     * Returns the operating system model of device.
+     *
+     * @return an operating system model of device
+     */
+    @Getter(lazy = true)
+    private final String model = model();
+
+    /**
+     * Returns the operating system variant of device.
+     *
+     * @return an operating system variant of device
+     */
+    @Getter(lazy = true)
+    private final String variant = variant();
+
+    /**
+     * Returns the operating system vendor of device.
+     *
+     * @return an operating system vendor of device
+     */
+    @Getter(lazy = true)
+    private final String vendor = vendor();
+
+    /**
+     * Returns the operating system version of device.
+     *
+     * @return an operating system version of device
+     */
+    @Getter(lazy = true)
+    private final String version = version();
+
+    private Boolean isMobile() {
+
         return getSingleClaim("mobile", Boolean.class);
     }
 
-    public String getModel() {
-        return getSingleClaim("model", String.class);
-    }
+    private Boolean isRobot() {
 
-    public Integer getPixelDensity() {
-        return getSingleClaim("pixelDensity", Integer.class);
-    }
-
-    public Double getPixelRatio() {
-        return getSingleClaim("pixelRatio", Double.class);
-    }
-
-    public Boolean getIsRobot() {
         return getSingleClaim("robot", Boolean.class);
     }
 
-    public Boolean getIsTablet() {
+    private Boolean isTablet() {
+
         return getSingleClaim("tablet", Boolean.class);
     }
 
-    public String getVariant() {
+    private Integer displayHeight() {
+
+        return getSingleClaim("displayHeight", Integer.class);
+    }
+
+    private Integer displayWidth() {
+
+        return getSingleClaim("displayWidth", Integer.class);
+    }
+
+    private Integer pixelDensity() {
+
+        return getSingleClaim("pixelDensity", Integer.class);
+    }
+
+    private Double pixelRatio() {
+
+        return getSingleClaim("pixelRatio", Double.class);
+    }
+
+    private String model() {
+
+        return getSingleClaim("model", String.class);
+    }
+
+    private String variant() {
+
         return getSingleClaim("variant", String.class);
     }
 
-    public String getVendor() {
+    private String vendor() {
+
         return getSingleClaim("vendor", String.class);
     }
 
-    public String getVersion() {
+    private String version() {
+
         return getSingleClaim("version", String.class);
     }
 

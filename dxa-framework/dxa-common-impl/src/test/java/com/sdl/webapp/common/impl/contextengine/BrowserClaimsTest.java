@@ -6,7 +6,9 @@ import org.junit.Test;
 import java.util.List;
 
 import static com.sdl.webapp.common.impl.contextengine.Claims.getClaims;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BrowserClaimsTest {
 
@@ -25,131 +27,141 @@ public class BrowserClaimsTest {
     @Test
     public void shouldReturnCssVersion() {
         //given
+        String expected = "3.0";
         BrowserClaims browserClaims = new BrowserClaims();
-        browserClaims.setClaims(getClaims("browser.cssVersion", "3.0"));
+        browserClaims.setClaims(getClaims("browser.cssVersion", expected));
 
         //when
         String cssVersion = browserClaims.getCssVersion();
 
         //then
-        assertEquals("3.0", cssVersion);
+        assertEquals(expected, cssVersion);
     }
 
     @Test
     public void shouldReturnDisplayColorDepth() {
         //given
         BrowserClaims browserClaims = new BrowserClaims();
-        browserClaims.setClaims(getClaims("browser.displayColorDepth", 65536));
+        int expected = 65536;
+        browserClaims.setClaims(getClaims("browser.displayColorDepth", expected));
 
         //when
         int displayColorDepth = browserClaims.getDisplayColorDepth();
 
         //then
-        assertEquals(65536, displayColorDepth);
+        assertEquals(expected, displayColorDepth);
     }
 
     @Test
     public void shouldReturnDisplayHeight() {
         //given
         BrowserClaims browserClaims = new BrowserClaims();
-        browserClaims.setClaims(getClaims("browser.displayHeight", 728));
+        int expected = 728;
+        browserClaims.setClaims(getClaims("browser.displayHeight", expected));
 
         //when
         int displayHeight = browserClaims.getDisplayHeight();
 
         //then
-        assertEquals(728, displayHeight);
+        assertEquals(expected, displayHeight);
     }
 
     @Test
     public void shouldReturnDisplayWidth() {
         //given
         BrowserClaims browserClaims = new BrowserClaims();
-        browserClaims.setClaims(getClaims("browser.displayWidth", 1024));
+        int expected = 1024;
+        browserClaims.setClaims(getClaims("browser.displayWidth", expected));
 
         //when
         int displayWidth = browserClaims.getDisplayWidth();
 
         //then
-        assertEquals(1024, displayWidth);
+        assertEquals(expected, displayWidth);
     }
 
     @Test
     public void shouldReturnJsVersion() {
         //given
         BrowserClaims browserClaims = new BrowserClaims();
-        browserClaims.setClaims(getClaims("browser.jsVersion", "1.8"));
+        String expected = "1.8";
+        browserClaims.setClaims(getClaims("browser.jsVersion", expected));
 
         //when
         String jsVersion = browserClaims.getJsVersion();
 
         //then
-        assertEquals("1.8", jsVersion);
+        assertEquals(expected, jsVersion);
     }
 
     @Test
     public void shouldReturnModel() {
         //given
         BrowserClaims browserClaims = new BrowserClaims();
-        browserClaims.setClaims(getClaims("browser.model", "modelClaim"));
+        String expected = "modelClaim";
+        browserClaims.setClaims(getClaims("browser.model", expected));
 
         //when
         String model = browserClaims.getModel();
 
         //then
-        assertEquals("modelClaim", model);
+        assertEquals(expected, model);
     }
 
     @Test
     public void shouldReturnVariant() {
         //given
         BrowserClaims browserClaims = new BrowserClaims();
-        browserClaims.setClaims(getClaims("browser.variant", "variantClaim"));
+        String expected = "variantClaim";
+        browserClaims.setClaims(getClaims("browser.variant", expected));
 
         //when
         String variant = browserClaims.getVariant();
 
         //then
-        assertEquals("variantClaim", variant);
+        assertEquals(expected, variant);
     }
 
     @Test
     public void shouldReturnVendor() {
         //given
         BrowserClaims browserClaims = new BrowserClaims();
-        browserClaims.setClaims(getClaims("browser.vendor", "vendorClaim"));
+        String expected = "vendorClaim";
+        browserClaims.setClaims(getClaims("browser.vendor", expected));
 
         //when
         String vendor = browserClaims.getVendor();
 
         //then
-        assertEquals("vendorClaim", vendor);
+        assertEquals(expected, vendor);
     }
 
     @Test
     public void shouldReturnVersion() {
         //given
         BrowserClaims browserClaims = new BrowserClaims();
-        browserClaims.setClaims(getClaims("browser.version", "versionClaim"));
+        String expected = "versionClaim";
+        browserClaims.setClaims(getClaims("browser.version", expected));
 
         //when
         String version = browserClaims.getVersion();
 
         //then
-        assertEquals("versionClaim", version);
+        assertEquals(expected, version);
     }
 
     @Test
     public void shouldReturnPreferredHtmlContentType() {
         //given
         BrowserClaims browserClaims = new BrowserClaims();
-        browserClaims.setClaims(getClaims("browser.preferredHtmlContentType", "preferredHtmlContentTypeClaim"));
+        String expected = "preferredHtmlContentTypeClaim";
+        browserClaims.setClaims(getClaims("browser.preferredHtmlContentType", expected));
 
         //when
         String preferredHtmlContentType = browserClaims.getPreferredHtmlContentType();
 
         //then
-        assertEquals("preferredHtmlContentTypeClaim", preferredHtmlContentType);
+        assertEquals(expected, preferredHtmlContentType);
     }
 
     @Test

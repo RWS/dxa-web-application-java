@@ -3,7 +3,7 @@ package com.sdl.webapp.common.impl.contextengine;
 import org.junit.Test;
 
 import static com.sdl.webapp.common.impl.contextengine.Claims.getClaims;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class OperatingSystemClaimsTest {
 
@@ -23,52 +23,56 @@ public class OperatingSystemClaimsTest {
     public void shouldReturnModel() {
         //given
         OperatingSystemClaims operatingSystemClaims = new OperatingSystemClaims();
-        operatingSystemClaims.setClaims(getClaims("os.model", "Linux"));
+        String expected = "Linux";
+        operatingSystemClaims.setClaims(getClaims("os.model", expected));
 
         //when
         String model = operatingSystemClaims.getModel();
 
         //then
-        assertEquals("Linux", model);
+        assertEquals(expected, model);
     }
 
     @Test
     public void shouldReturnVendor() {
         //given
         OperatingSystemClaims operatingSystemClaims = new OperatingSystemClaims();
-        operatingSystemClaims.setClaims(getClaims("os.vendor", "The Open Group"));
+        String expected = "The Open Group";
+        operatingSystemClaims.setClaims(getClaims("os.vendor", expected));
 
         //when
         String vendor = operatingSystemClaims.getVendor();
 
         //then
-        assertEquals("The Open Group", vendor);
+        assertEquals(expected, vendor);
     }
 
     @Test
     public void shouldReturnVariant() {
         //given
         OperatingSystemClaims operatingSystemClaims = new OperatingSystemClaims();
-        operatingSystemClaims.setClaims(getClaims("os.variant", "FreeBSD"));
+        String expected = "FreeBSD";
+        operatingSystemClaims.setClaims(getClaims("os.variant", expected));
 
         //when
         String variant = operatingSystemClaims.getVariant();
 
         //then
-        assertEquals("FreeBSD", variant);
+        assertEquals(expected, variant);
     }
 
     @Test
     public void shouldReturnVersion() {
         //given
         OperatingSystemClaims operatingSystemClaims = new OperatingSystemClaims();
-        operatingSystemClaims.setClaims(getClaims("os.version", "4.1.1"));
+        String expected = "4.1.1";
+        operatingSystemClaims.setClaims(getClaims("os.version", expected));
 
         //when
         String version = operatingSystemClaims.getVersion();
 
         //then
-        assertEquals("4.1.1", version);
+        assertEquals(expected, version);
     }
 
 }

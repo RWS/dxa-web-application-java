@@ -3,7 +3,8 @@ package com.sdl.webapp.common.impl.contextengine;
 import org.junit.Test;
 
 import static com.sdl.webapp.common.impl.contextengine.Claims.getClaims;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DeviceClaimsTest {
 
@@ -62,104 +63,112 @@ public class DeviceClaimsTest {
     public void shouldReturnDisplayHeight() {
         //given
         DeviceClaims deviceClaims = new DeviceClaims();
-        deviceClaims.setClaims(getClaims("device.displayHeight", 728));
+        int expected = 728;
+        deviceClaims.setClaims(getClaims("device.displayHeight", expected));
 
         //when
         int displayHeight = deviceClaims.getDisplayHeight();
 
         //then
-        assertEquals(728, displayHeight);
+        assertEquals(expected, displayHeight);
     }
 
     @Test
     public void shouldReturnDisplayWidth() {
         //given
         DeviceClaims deviceClaims = new DeviceClaims();
-        deviceClaims.setClaims(getClaims("device.displayWidth", 1024));
+        int expected = 1024;
+        deviceClaims.setClaims(getClaims("device.displayWidth", expected));
 
         //when
         int displayWidth = deviceClaims.getDisplayWidth();
 
         //then
-        assertEquals(1024, displayWidth);
+        assertEquals(expected, displayWidth);
     }
 
     @Test
     public void shouldReturnPixelDensity() {
         //given
         DeviceClaims deviceClaims = new DeviceClaims();
-        deviceClaims.setClaims(getClaims("device.pixelDensity", 65536));
+        int expected = 65536;
+        deviceClaims.setClaims(getClaims("device.pixelDensity", expected));
 
         //when
         int pixelDensity = deviceClaims.getPixelDensity();
 
         //then
-        assertEquals(65536, pixelDensity);
+        assertEquals(expected, pixelDensity);
     }
 
     @Test
     public void shouldReturnPixelRatio() {
         //given
         DeviceClaims deviceClaims = new DeviceClaims();
-        deviceClaims.setClaims(getClaims("device.pixelRatio", 2.0));
+        double expected = 2.0;
+        deviceClaims.setClaims(getClaims("device.pixelRatio", expected));
 
         //when
         double pixelRatio = deviceClaims.getPixelRatio();
 
         //then
-        assertEquals(2.0, pixelRatio, 0.1);
+        assertEquals(expected, pixelRatio, 0.1);
     }
 
     @Test
     public void shouldReturnModel() {
         //given
         DeviceClaims deviceClaims = new DeviceClaims();
-        deviceClaims.setClaims(getClaims("device.model", "Linux"));
+        String expected = "Linux";
+        deviceClaims.setClaims(getClaims("device.model", expected));
 
         //when
         String model = deviceClaims.getModel();
 
         //then
-        assertEquals("Linux", model);
+        assertEquals(expected, model);
     }
 
     @Test
     public void shouldReturnVendor() {
         //given
         DeviceClaims deviceClaims = new DeviceClaims();
-        deviceClaims.setClaims(getClaims("device.vendor", "The Open Group"));
+        String expected = "The Open Group";
+        deviceClaims.setClaims(getClaims("device.vendor", expected));
 
         //when
         String vendor = deviceClaims.getVendor();
 
         //then
-        assertEquals("The Open Group", vendor);
+        assertEquals(expected, vendor);
     }
 
     @Test
     public void shouldReturnVariant() {
         //given
         DeviceClaims deviceClaims = new DeviceClaims();
-        deviceClaims.setClaims(getClaims("device.variant", "FreeBSD"));
+        String expected = "FreeBSD";
+        deviceClaims.setClaims(getClaims("device.variant", expected));
 
         //when
         String variant = deviceClaims.getVariant();
 
         //then
-        assertEquals("FreeBSD", variant);
+        assertEquals(expected, variant);
     }
 
     @Test
     public void shouldReturnVersion() {
         //given
         DeviceClaims deviceClaims = new DeviceClaims();
-        deviceClaims.setClaims(getClaims("device.version", "4.1.1"));
+        String expected = "4.1.1";
+        deviceClaims.setClaims(getClaims("device.version", expected));
 
         //when
         String version = deviceClaims.getVersion();
 
         //then
-        assertEquals("4.1.1", version);
+        assertEquals(expected, version);
     }
 
 }

@@ -5,49 +5,31 @@ import lombok.Getter;
 
 
 /**
- * ContextClaims with a 'os' aspect
+ * ContextClaims with a 'os' aspect.
  */
 public class OperatingSystemClaims extends ContextClaims {
+
+    private static final String ASPECT_NAME = "os";
+
+    @Getter(lazy = true)
+    private final String model = model();
+
+    @Getter(lazy = true)
+    private final String variant = variant();
+
+    @Getter(lazy = true)
+    private final String vendor = vendor();
+
+    @Getter(lazy = true)
+    private final String version = version();
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected String getAspectName() {
-        return "os";
+        return ASPECT_NAME;
     }
-
-    /**
-     * Returns the operating system model.
-     *
-     * @return an operating system model
-     */
-    @Getter(lazy = true)
-    private final String model = model();
-
-    /**
-     * Returns the operating system variant.
-     *
-     * @return an operating system variant
-     */
-    @Getter(lazy = true)
-    private final String variant = variant();
-
-    /**
-     * Returns the operating system vendor.
-     *
-     * @return an operating system vendor
-     */
-    @Getter(lazy = true)
-    private final String vendor = vendor();
-
-    /**
-     * Returns the operating system version.
-     *
-     * @return an operating system version
-     */
-    @Getter(lazy = true)
-    private final String version = version();
 
     private String model() {
 

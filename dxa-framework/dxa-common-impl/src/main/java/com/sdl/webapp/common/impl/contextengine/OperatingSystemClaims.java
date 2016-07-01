@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.impl.contextengine;
 
 import com.sdl.webapp.common.api.contextengine.ContextClaims;
+import lombok.Getter;
 
 
 /**
@@ -16,19 +17,55 @@ public class OperatingSystemClaims extends ContextClaims {
         return "os";
     }
 
-    public String getModel() {
+    /**
+     * Returns the operating system model.
+     *
+     * @return an operating system model
+     */
+    @Getter(lazy = true)
+    private final String model = model();
+
+    /**
+     * Returns the operating system variant.
+     *
+     * @return an operating system variant
+     */
+    @Getter(lazy = true)
+    private final String variant = variant();
+
+    /**
+     * Returns the operating system vendor.
+     *
+     * @return an operating system vendor
+     */
+    @Getter(lazy = true)
+    private final String vendor = vendor();
+
+    /**
+     * Returns the operating system version.
+     *
+     * @return an operating system version
+     */
+    @Getter(lazy = true)
+    private final String version = version();
+
+    private String model() {
+
         return getSingleClaim("model", String.class);
     }
 
-    public String getVariant() {
+    private String variant() {
+
         return getSingleClaim("variant", String.class);
     }
 
-    public String getVendor() {
+    private String vendor() {
+
         return getSingleClaim("vendor", String.class);
     }
 
-    public String getVersion() {
+    private String version() {
+
         return getSingleClaim("version", String.class);
     }
 }

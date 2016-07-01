@@ -223,6 +223,13 @@
         <appender-ref ref="rollingCoreLog"/>
     </logger>
 
+    <logger name="org.apache.http.wire" level="WARN">
+        <appender-ref ref="dxaLog"/>
+    </logger>
+    <logger name="org.hibernate" level="WARN">
+        <appender-ref ref="dxaLog"/>
+    </logger>
+
     <!-- Loggers -->
     <logger name="org.springframework" level="INFO">
         <appender-ref ref="dxaLog"/>

@@ -1,34 +1,53 @@
 package com.sdl.webapp.common.impl.contextengine;
 
 import com.sdl.webapp.common.api.contextengine.ContextClaims;
+import lombok.Getter;
 
 
 /**
- * ContextClaims with a 'os' aspect
+ * ContextClaims with a 'os' aspect.
  */
 public class OperatingSystemClaims extends ContextClaims {
+
+    private static final String ASPECT_NAME = "os";
+
+    @Getter(lazy = true)
+    private final String model = model();
+
+    @Getter(lazy = true)
+    private final String variant = variant();
+
+    @Getter(lazy = true)
+    private final String vendor = vendor();
+
+    @Getter(lazy = true)
+    private final String version = version();
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected String getAspectName() {
-        return "os";
+        return ASPECT_NAME;
     }
 
-    public String getModel() {
+    private String model() {
+
         return getSingleClaim("model", String.class);
     }
 
-    public String getVariant() {
+    private String variant() {
+
         return getSingleClaim("variant", String.class);
     }
 
-    public String getVendor() {
+    private String vendor() {
+
         return getSingleClaim("vendor", String.class);
     }
 
-    public String getVersion() {
+    private String version() {
+
         return getSingleClaim("version", String.class);
     }
 }

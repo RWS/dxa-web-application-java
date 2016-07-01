@@ -1,62 +1,109 @@
 package com.sdl.webapp.common.impl.contextengine;
 
 import com.sdl.webapp.common.api.contextengine.ContextClaims;
+import lombok.Getter;
 
 
 /**
- * ContextClaims with a 'device' aspect
+ * ContextClaims with a 'device' aspect.
  */
 public class DeviceClaims extends ContextClaims {
+
+    private static final String ASPECT_NAME = "device";
+
+    @Getter(lazy = true)
+    private final Boolean isMobile = isMobile();
+
+    @Getter(lazy = true)
+    private final Boolean isRobot = isRobot();
+
+    @Getter(lazy = true)
+    private final Boolean isTablet = isTablet();
+
+    @Getter(lazy = true)
+    private final Integer displayHeight = displayHeight();
+
+    @Getter(lazy = true)
+    private final Integer displayWidth = displayWidth();
+
+    @Getter(lazy = true)
+    private final Integer pixelDensity = pixelDensity();
+
+    @Getter(lazy = true)
+    private final Double pixelRatio = pixelRatio();
+
+    @Getter(lazy = true)
+    private final String model = model();
+
+    @Getter(lazy = true)
+    private final String variant = variant();
+
+    @Getter(lazy = true)
+    private final String vendor = vendor();
+
+    @Getter(lazy = true)
+    private final String version = version();
 
     /**
      * {@inheritDoc}
      */
     @Override
     protected String getAspectName() {
-        return "device";
+        return ASPECT_NAME;
     }
 
-    public Integer getDisplayHeight() {
-        return getSingleClaim("displayHeight", Integer.class);
-    }
+    private Boolean isMobile() {
 
-    public Integer getDisplayWidth() {
-        return getSingleClaim("displayWidth", Integer.class);
-    }
-
-    public Boolean getIsMobile() {
         return getSingleClaim("mobile", Boolean.class);
     }
 
-    public String getModel() {
-        return getSingleClaim("model", String.class);
-    }
+    private Boolean isRobot() {
 
-    public Integer getPixelDensity() {
-        return getSingleClaim("pixelDensity", Integer.class);
-    }
-
-    public Double getPixelRatio() {
-        return getSingleClaim("pixelRatio", Double.class);
-    }
-
-    public Boolean getIsRobot() {
         return getSingleClaim("robot", Boolean.class);
     }
 
-    public Boolean getIsTablet() {
+    private Boolean isTablet() {
+
         return getSingleClaim("tablet", Boolean.class);
     }
 
-    public String getVariant() {
+    private Integer displayHeight() {
+
+        return getSingleClaim("displayHeight", Integer.class);
+    }
+
+    private Integer displayWidth() {
+
+        return getSingleClaim("displayWidth", Integer.class);
+    }
+
+    private Integer pixelDensity() {
+
+        return getSingleClaim("pixelDensity", Integer.class);
+    }
+
+    private Double pixelRatio() {
+
+        return getSingleClaim("pixelRatio", Double.class);
+    }
+
+    private String model() {
+
+        return getSingleClaim("model", String.class);
+    }
+
+    private String variant() {
+
         return getSingleClaim("variant", String.class);
     }
 
-    public String getVendor() {
+    private String vendor() {
+
         return getSingleClaim("vendor", String.class);
     }
 
-    public String getVersion() {
+    private String version() {
+
         return getSingleClaim("version", String.class);
     }
 

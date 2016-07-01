@@ -48,4 +48,8 @@ abstract class Claims {
                 .put("device.displayWidth", 300)
                 .build();
     }
+
+    static Map<String, Object> getClaims(String key, Object value) {
+        return ImmutableMap.of(key,value);
+    }
 }

@@ -25,15 +25,13 @@ task buildDxa(dependsOn: 'maven.run') << {
     println "Build for DXA Framework and related projects. WebApp is not built!"
 }
 
+task build(dependsOn: 'buildDxa')
+
 if (project.hasProperty('command')) {
     maven.command = project.command
 }
 maven.projects = [
-        [
-                "dxa-bom",
-                "dxa-bom-2013sp1"
-        ],
-        [
-                "dxa-framework"
-        ]
+        ["dxa-bom"],
+        ["dxa-bom-2013sp1"],
+        ["dxa-framework"]
 ]

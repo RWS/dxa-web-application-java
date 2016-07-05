@@ -5,6 +5,8 @@ apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
+def isRelease = !version.endsWith("-SNAPSHOT")
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
@@ -69,11 +71,11 @@ publishing {
     }
     repositories {
         maven {
-            if (version.endsWith("-SNAPSHOT")) {
+            if (!isRelease) {
                 name "sonatype-nexus-snapshots"
                 url "https://oss.sonatype.org/content/repositories/snapshots"
             } else {
-                if (project.hasProperty("release")) {
+                if (project.hasProperty('release')) {
                     name "sonatype-nexus-staging"
                     url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
                 }
@@ -89,9 +91,10 @@ publishing {
     }
 }
 
-signing {
-    required { !version.endsWith("-SNAPSHOT") }
-    sign configurations.archives
+if (isRelease) {
+    signing {
+        sign configurations.archives
+    }
 }
 
 dependencies {

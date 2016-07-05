@@ -3,37 +3,109 @@ version '1.6.0-SNAPSHOT'
 
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
+apply plugin: 'signing'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
-sourceCompatibility = 1.5
-
 repositories {
     mavenCentral()
+    mavenLocal()
+    maven {
+        url "https://oss.sonatype.org/content/repositories/snapshots"
+    }
+}
+
+task sourceJar(type: Jar) {
+    classifier "sources"
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar) {
+    classifier "javadoc"
+    from javadoc
 }
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            groupId project.group
-            artifactId project.name
-            version project.version
-
             from components.java
 
+            artifacts {
+                artifact sourceJar
+                artifact javadocJar
+            }
+
             pom.withXml {
-                asNode().appendNode('description', 'Builder plugin for DXA projects used internally to organize build process')
-                asNode().appendNode('name', 'DXA Builder')
+                def root = asNode()
+                root.appendNode('name', 'DXA Builder')
+                root.appendNode('description', 'Builder plugin for DXA projects used internally to organize build process')
+                root.appendNode('packaging', 'jar')
+
+                def license = root.appendNode('licenses').appendNode('license')
+                license.appendNode('name', 'The Apache License, Version 2.0')
+                license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
+
+                def developers = root.appendNode('developers')
+                def addDeveloper = { developer, id, name, email ->
+                    developer.appendNode('id', id)
+                    developer.appendNode('name', name)
+                    developer.appendNode('email', email)
+                    developer.appendNode('timezone', '+1')
+                    developer.appendNode('organization', 'SDL Group')
+                    developer.appendNode('organizationUrl', 'http://www.sdl.com')
+                }
+                addDeveloper(developers.appendNode('developer'), 'rpannekoek', 'Rick Pannekoek', 'rpannekoek@sdl.com')
+                addDeveloper(developers.appendNode('developer'), 'azarakovskiy', 'Alexey Zarakovskiy', 'azarakovskiy@sdl.com')
+
+                def scm = root.appendNode('scm')
+                scm.appendNode('url', 'https://github.com/sdl/dxa-web-application-java')
+                scm.appendNode('connection', 'scm:git:git@github.com:sdl/dxa-web-application-java.git')
+                scm.appendNode('developerConnection', 'scm:git:git@github.com:sdl/dxa-web-application-java.git')
             }
         }
     }
+    repositories {
+        maven {
+            if (version.endsWith("-SNAPSHOT")) {
+                name "sonatype-nexus-snapshots"
+                url "https://oss.sonatype.org/content/repositories/snapshots"
+            } else {
+                if (project.hasProperty("release")) {
+                    name "sonatype-nexus-staging"
+                    url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+                }
+            }
+
+            if (project.hasProperty("publishUsername") && project.hasProperty("publishPassword")) {
+                credentials {
+                    username project.publishUsername
+                    password project.publishPassword
+                }
+            }
+        }
+    }
+}
+
+signing {
+    required { !version.endsWith("-SNAPSHOT") }
+    sign configurations.archives
 }
 
 dependencies {
     compile gradleApi()
     compile localGroovy()
     testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task publishLocal() {
+    dependsOn build
+    dependsOn publishToMavenLocal
+}
+
+task publishRemote() {
+    dependsOn publishLocal
+    dependsOn publish
 }

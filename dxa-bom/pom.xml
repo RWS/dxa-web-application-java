@@ -12,7 +12,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-bom</artifactId>
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0</version>
     <packaging>pom</packaging>
 
     <name>DXA - Bill of Materials</name>
@@ -48,8 +48,8 @@
         <classifier.2013sp1>2013sp1</classifier.2013sp1>
         <classifier.web8>web8</classifier.web8>
 
-        <dd4t.version>2.0.7-DXA</dd4t.version>
-        <cd-cil.version>8.1.1-1021</cd-cil.version>
+        <dd4t.version>2.0.9-DXA</dd4t.version>
+        <cd-cil.version>8.2.0-1011</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
@@ -62,6 +62,7 @@
 
         <!-- Apache Commons -->
         <commons-beanutils-version>1.8.3</commons-beanutils-version>
+        <commons-digester-version>1.8</commons-digester-version>
         <commons-codec-version>1.8</commons-codec-version>
         <commons-configuration-version>1.9</commons-configuration-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
@@ -92,8 +93,6 @@
         <jackson.version>2.4.3</jackson.version>
 
         <woodstox-version>4.4.1</woodstox-version>
-
-        <patricia-trie-version>0.7</patricia-trie-version>
 
         <snakeyaml-version>1.12</snakeyaml-version>
 
@@ -135,6 +134,10 @@
         <!--2013SP1: <xalan-version>2.7.1</xalan-version>-->
 
         <dozer.version>5.5.1</dozer.version>
+
+        <hibernate-entitymanager.version>4.0.1.Final</hibernate-entitymanager.version>
+
+        <aspectj.version>1.6.12</aspectj.version>
     </properties>
 
     <dependencyManagement>
@@ -320,6 +323,17 @@
             </dependency>
 
             <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjweaver</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>com.google.api-client</groupId>
                 <artifactId>google-api-client</artifactId>
                 <version>${google-apis.version}</version>
@@ -376,6 +390,19 @@
                 <groupId>org.ehcache</groupId>
                 <artifactId>jcache</artifactId>
                 <version>${jcache.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-entitymanager</artifactId>
+                <version>${hibernate-entitymanager.version}</version>
+                <scope>runtime</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>xml-apis</groupId>
+                        <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- SLF4J and Logback -->
@@ -478,7 +505,17 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-asm</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
@@ -493,12 +530,32 @@
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-webmvc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
@@ -519,6 +576,11 @@
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>${commons-beanutils-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-digester</groupId>
+                <artifactId>commons-digester</artifactId>
+                <version>${commons-digester-version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>

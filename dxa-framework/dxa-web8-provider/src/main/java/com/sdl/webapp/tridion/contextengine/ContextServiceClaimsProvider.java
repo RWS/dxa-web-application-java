@@ -99,7 +99,6 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
      */
     @Override
     public String getDeviceFamily() {
-        // TODO TSI-789: this functionality overlaps with "Context Expressions"
         return null;
     }
 }

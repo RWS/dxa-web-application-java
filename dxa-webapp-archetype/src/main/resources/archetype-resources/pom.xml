@@ -13,7 +13,7 @@
     <url>http://www.example.org</url>
 
     <properties>
-        <dxa-bom.version>1.5.0-SNAPSHOT</dxa-bom.version>
+        <dxa-bom.version>1.5.0</dxa-bom.version>
         <dxa-release-branch>release/1.5</dxa-release-branch>
         <java-version>1.7</java-version>
     </properties>

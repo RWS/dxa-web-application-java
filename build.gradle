@@ -1,8 +1,12 @@
+import java.util.concurrent.Callable
+import java.util.concurrent.Executors
+import java.util.concurrent.Future
+
 group 'com.sdl.dxa'
 
 defaultTasks 'build'
 
-def getDefaultCommand() { "clean install" }
+def getDefaultCommand() { "install" }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
@@ -39,23 +43,51 @@ task help << {
 task build << {
     greet()
 
+    def beforeAll = ["dxa-bom", "dxa-bom-2013sp1"]
+    def parallel = [
+            "dxa-framework",
+            "dxa-webapp-archetype"
+    ]
+
     def commandToExecute = getCommandToExecute()
 
-    [
-            "dxa-bom",
-            "dxa-bom-2013sp1",
-            "dxa-webapp-archetype",
-            "dxa-framework"
-    ].each {
-        try {
-            runMaven(commandToExecute, findPath([it, "pom.xml"]))
-        } catch (ignored) {
-            println """
-            Well, there is an error. Press <Enter> to finish."""
-            System.in.read()
-            throw new RuntimeException(ignored)
+    def pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
+
+    def failed = []
+    def tasks = []
+
+    //noinspection GroovyAssignabilityCheck
+    def processOutput = { Output output ->
+        if (output.code != 0) {
+            failed << output
+        } else {
+            println "SUCCESS: ${output.command}"
         }
     }
+
+    beforeAll.each {
+        processOutput(pool.submit(new BuildTask(name: it, commandToExecute: commandToExecute)).get())
+    }
+    parallel.each {
+        tasks << new BuildTask(name: it, commandToExecute: commandToExecute)
+    }
+    List<Future<Output>> futures = pool.invokeAll(tasks)
+    for (Future<Output> buildResult : futures) {
+        processOutput(buildResult.get())
+    }
+
+    if (failed.size() > 0) {
+        println """
+        === FAILED JOBS: ===
+        """
+        failed.each {
+            it.lines.each { println it }
+        }
+        println """
+            Well, there is an error. Press <Enter> to finish."""
+        System.in.read()
+    }
+
 }
 
 def greet() {
@@ -65,43 +97,51 @@ def greet() {
     """
 }
 
-@SuppressWarnings(["GrUnresolvedAccess", "GroovyAssignabilityCheck"])
-String findPath(List<String> parts) {
-
-    println "   findPath(): Invoked findPath() with parts = ${parts}"
-    String joined = new File('.').absolutePath + File.separator + parts.join(File.separator)
-
-    println "   findPath(): Check if ${joined} exists or the last path part left"
-    if (parts.size() == 1 || new File(joined).exists()) {
-        println "   findPath(): Returning ${joined}"
-        return joined
-    }
-    int len = parts.size() - 1
-    println "   findPath(): Size of path parts array ${len}"
-    findPath(parts.getAt(1..len))
-}
-
-def runMaven(String command, String pomPath) {
-    String toRun = "${determineShell()} mvn ${command} -f \"${pomPath}\""
-
-    println """
-    Running ${toRun}
-    """
-
-    def execute = toRun.execute()
-    execute.in.eachLine {
-        println it
-    }
-    if (execute.exitValue()) {
-        throw new RuntimeException("Execution of Maven run failed.")
-    }
-}
-
 String getCommandToExecute() {
     project.hasProperty("command") ? "${command}" : defaultCommand
 }
 
-String determineShell() {
-    org.gradle.internal.os.OperatingSystem.current().windows ? "cmd /c " : "";
+class Output {
+    List<String> lines
+    int code
+    String command
 }
 
+class BuildTask implements Callable<Output> {
+    String name, commandToExecute
+
+    @Override
+    Output call() throws Exception {
+        runMaven(commandToExecute, findPath([name, "pom.xml"]))
+    }
+
+    @SuppressWarnings(["GrUnresolvedAccess", "GroovyAssignabilityCheck"])
+    String findPath(List<String> parts) {
+        String joined = new File('.').absolutePath + File.separator + parts.join(File.separator)
+
+        if (parts.size() == 1 || new File(joined).exists()) {
+            return joined
+        }
+        int len = parts.size() - 1
+        findPath(parts.getAt(1..len))
+    }
+
+    Output runMaven(String command, String pomPath) {
+        String toRun = "${determineShell()} mvn ${command} -f \"${pomPath}\""
+
+        def output = new Output(command: toRun, lines: [], code: 0)
+
+        println "Running in background ${toRun}"
+
+        def execute = toRun.execute()
+        execute.in.eachLine {
+            output.lines << it
+        }
+        output.code = execute.exitValue()
+        output
+    }
+
+    static String determineShell() {
+        org.gradle.internal.os.OperatingSystem.current().windows ? "cmd /c " : "";
+    }
+}

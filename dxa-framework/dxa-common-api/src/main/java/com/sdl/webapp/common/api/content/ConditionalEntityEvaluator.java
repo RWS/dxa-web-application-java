@@ -3,15 +3,15 @@ package com.sdl.webapp.common.api.content;
 import com.sdl.webapp.common.api.model.EntityModel;
 
 /**
- * <p>ConditionalEntityEvaluator interface.</p>
+ * Conditional Entity Evaluator evaluates whether the entity should be included in a page.
  */
 public interface ConditionalEntityEvaluator {
 
     /**
-     * <p>includeEntity.</p>
+     * Evaluates if the entity should be included.
      *
-     * @param entity a {@link com.sdl.webapp.common.api.model.EntityModel} object.
-     * @return a boolean.
+     * @param entity entity to evaluate
+     * @return true if should be included, false otherwise
      */
     boolean includeEntity(EntityModel entity);
 }

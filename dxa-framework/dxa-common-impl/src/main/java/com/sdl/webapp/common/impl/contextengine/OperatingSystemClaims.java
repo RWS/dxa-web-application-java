@@ -4,7 +4,7 @@ import com.sdl.webapp.common.api.contextengine.ContextClaims;
 
 
 /**
- * <p>OperatingSystemClaims class.</p>
+ * ContextClaims with a 'os' aspect
  */
 public class OperatingSystemClaims extends ContextClaims {
 
@@ -16,39 +16,19 @@ public class OperatingSystemClaims extends ContextClaims {
         return "os";
     }
 
-    /**
-     * <p>getModel.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getModel() {
-        return getClaimValue("model", String.class);
+        return getSingleClaim("model", String.class);
     }
 
-    /**
-     * <p>getVariant.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getVariant() {
-        return getClaimValue("variant", String.class);
+        return getSingleClaim("variant", String.class);
     }
 
-    /**
-     * <p>getVendor.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getVendor() {
-        return getClaimValue("vendor", String.class);
+        return getSingleClaim("vendor", String.class);
     }
 
-    /**
-     * <p>getVersion.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getVersion() {
-        return getClaimValue("version", String.class);
+        return getSingleClaim("version", String.class);
     }
 }

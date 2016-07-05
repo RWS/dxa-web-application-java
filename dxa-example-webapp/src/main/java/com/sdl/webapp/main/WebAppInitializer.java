@@ -2,9 +2,6 @@ package com.sdl.webapp.main;
 
 import com.sdl.dxa.DxaSpringInitialization;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
@@ -18,9 +15,6 @@ import static com.sdl.webapp.common.util.InitializationUtils.registerListener;
 import static com.sdl.webapp.common.util.InitializationUtils.registerServlet;
 
 @Slf4j
-@Configuration
-@ComponentScan(basePackages = "com.sdl.webapp")
-@Import(DxaSpringInitialization.class)
 public class WebAppInitializer implements WebApplicationInitializer {
 
     @Override

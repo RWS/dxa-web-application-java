@@ -12,6 +12,8 @@ import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class ContextClaimsTest {
@@ -88,6 +90,135 @@ public class ContextClaimsTest {
 
         assertThat(list, hasItems("str1", "str2"));
         assertThat(list, hasSize(2));
+    }
+
+    @Test
+    public void shouldConvertFromDoubleToInteger() {
+        //given
+        int expected = 123;
+        TestClaims claims = new TestClaims();
+        claims.setClaims(CLAIMS);
+
+        //when
+        Integer result = claims.getSingleClaim("double", Integer.class);
+
+        //then
+        assertNotNull(result);
+        assertTrue(expected == result);
+    }
+
+    @Test
+    public void shouldConvertFromIntegerToDouble() {
+        //given
+        double expected = 12345.0;
+        TestClaims claims = new TestClaims();
+        claims.setClaims(CLAIMS);
+
+        //when
+        Double result = claims.getSingleClaim("integer", Double.class);
+
+        //then
+        assertNotNull(result);
+        assertTrue(expected == result);
+    }
+
+    @Test
+    public void shouldConvertFromIntegerToShort() {
+        //given
+        short expected = 12345;
+        TestClaims claims = new TestClaims();
+        claims.setClaims(CLAIMS);
+
+        //when
+        Short result = claims.getSingleClaim("integer", Short.class);
+
+        //then
+        assertNotNull(result);
+        assertTrue(expected == result);
+    }
+
+    @Test
+    public void shouldConvertFromDoubleToByte() {
+        //given
+        byte expected = 123;
+        TestClaims claims = new TestClaims();
+        claims.setClaims(CLAIMS);
+
+        //when
+        Byte result = claims.getSingleClaim("double", Byte.class);
+
+        //then
+        assertNotNull(result);
+        assertTrue(expected == result);
+    }
+
+    @Test
+    public void shouldConvertFromDoubleToLong() {
+        //given
+        long expected = 123;
+        TestClaims claims = new TestClaims();
+        claims.setClaims(CLAIMS);
+
+        //when
+        Long result = claims.getSingleClaim("double", Long.class);
+
+        //then
+        assertNotNull(result);
+        assertTrue(expected == result);
+    }
+
+    @Test
+    public void shouldConvertFromDoubleToFloat() {
+        //given
+        Float expected = 123.45f;
+        TestClaims claims = new TestClaims();
+        claims.setClaims(CLAIMS);
+
+        //when
+        Float result = claims.getSingleClaim("double", Float.class);
+
+        //then
+        assertNotNull(result);
+        assertTrue(expected.equals(result));
+    }
+
+    @Test
+    public void shouldReturnNullIfValueIsNotInClaims() {
+        //given
+        TestClaims claims = new TestClaims();
+        claims.setClaims(CLAIMS);
+
+        //when
+        Integer na = claims.getSingleClaim("na", Integer.class);
+
+        //then
+        assertNull(na);
+    }
+
+    @Test
+    public void shouldReturnNullIfValueIsNotConvertible() {
+        //given
+        TestClaims claims = new TestClaims();
+        claims.setClaims(CLAIMS);
+
+        //when
+        Boolean na = claims.getSingleClaim("double", Boolean.class);
+
+        //then
+        assertNull(na);
+    }
+
+    @Test
+    public void shouldConvertAndCallToString() {
+        //given
+        TestClaims claims = new TestClaims();
+        claims.setClaims(CLAIMS);
+
+        //when
+        String result = claims.getSingleClaim("double", String.class);
+
+        //then
+        assertEquals("123.45", result);
     }
 
     private static class TestClaims extends ContextClaims {

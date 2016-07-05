@@ -6,7 +6,7 @@ import java.util.List;
 
 
 /**
- * <p>BrowserClaims class.</p>
+ * ContextClaims with a 'browser' aspect
  */
 public class BrowserClaims extends ContextClaims {
 
@@ -19,162 +19,87 @@ public class BrowserClaims extends ContextClaims {
     }
 
     /**
-     * <p>getCookieSupport.</p>
+     * Returns if cookies are supported.
      *
-     * @return a {@link java.lang.Boolean} object.
+     * @return true is cookies are supported
      */
     public Boolean getCookieSupport() {
         // BUG: Returns false on desktop FF, IE, Safari
-        return getClaimValue("cookieSupport", Boolean.class);
+        return getSingleClaim("cookieSupport", Boolean.class);
     }
 
     /**
-     * <p>getCssVersion.</p>
+     * Returns the version of CSS supported.
      *
-     * @return a {@link java.lang.String} object.
+     * @return a CSS version
      */
     public String getCssVersion() {
-        return getClaimValue("cssVersion", String.class);
+        return getSingleClaim("cssVersion", String.class);
     }
 
-    /**
-     * <p>getDisplayColorDepth.</p>
-     *
-     * @return a {@link java.lang.Integer} object.
-     */
     public Integer getDisplayColorDepth() {
-        return getClaimValue("displayColorDepth", Integer.class);
+        return getSingleClaim("displayColorDepth", Integer.class);
     }
 
-    /**
-     * <p>getDisplayHeight.</p>
-     *
-     * @return a {@link java.lang.Integer} object.
-     */
     public Integer getDisplayHeight() {
-        return getClaimValue("displayHeight", Integer.class);
+        return getSingleClaim("displayHeight", Integer.class);
     }
 
-    /**
-     * <p>getDisplayWidth.</p>
-     *
-     * @return a {@link java.lang.Integer} object.
-     */
     public Integer getDisplayWidth() {
-        return getClaimValue("displayWidth", Integer.class);
+        return getSingleClaim("displayWidth", Integer.class);
     }
 
-    /**
-     * <p>getImageFormatSupport.</p>
-     *
-     * @return an array of {@link java.lang.String} objects.
-     */
     public String[] getImageFormatSupport() {
-        List<String> imageFormatSupport = getClaimValues("imageFormatSupport", String.class);
-        return imageFormatSupport.toArray(new String[imageFormatSupport.size()]);
+        return getStringsClaims("imageFormatSupport");
     }
 
-    /**
-     * <p>getInputDevices.</p>
-     *
-     * @return an array of {@link java.lang.String} objects.
-     */
     public String[] getInputDevices() {
-        List<String> inputDevices = getClaimValues("inputDevices", String.class);
-        return inputDevices.toArray(new String[inputDevices.size()]);
+        return getStringsClaims("inputDevices");
     }
 
-    /**
-     * <p>getInputModeSupport.</p>
-     *
-     * @return an array of {@link java.lang.String} objects.
-     */
     public String[] getInputModeSupport() {
-        List<String> inputModeSupport = getClaimValues("inputModeSupport", String.class);
-        return inputModeSupport.toArray(new String[inputModeSupport.size()]);
+        return getStringsClaims("inputModeSupport");
     }
 
-    /**
-     * <p>getJsVersion.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getJsVersion() {
-        return getClaimValue("jsVersion", String.class);
+        return getSingleClaim("jsVersion", String.class);
     }
 
-    /**
-     * <p>getMarkupSupport.</p>
-     *
-     * @return an array of {@link java.lang.String} objects.
-     */
     public String[] getMarkupSupport() {
-        List<String> markupSupport = getClaimValues("markupSupport", String.class);
-        return markupSupport.toArray(new String[markupSupport.size()]);
+        return getStringsClaims("markupSupport");
     }
 
-    /**
-     * <p>getModel.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
+
     public String getModel() {
-        return getClaimValue("model", String.class);
+        return getSingleClaim("model", String.class);
     }
 
-    /**
-     * <p>getPreferredHtmlContentType.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getPreferredHtmlContentType() {
-        return getClaimValue("preferredHtmlContentType", String.class);
+        return getSingleClaim("preferredHtmlContentType", String.class);
     }
 
-    /**
-     * <p>getScriptSupport.</p>
-     *
-     * @return an array of {@link java.lang.String} objects.
-     */
     public String[] getScriptSupport() {
-        List<String> scriptSupport = getClaimValues("scriptSupport", String.class);
-        return scriptSupport.toArray(new String[scriptSupport.size()]);
+        return getStringsClaims("scriptSupport");
     }
 
-    /**
-     * <p>getStylesheetSupport.</p>
-     *
-     * @return an array of {@link java.lang.String} objects.
-     */
     public String[] getStylesheetSupport() {
-        List<String> stylesheetSupport = getClaimValues("stylesheetSupport", String.class);
-        return stylesheetSupport.toArray(new String[stylesheetSupport.size()]);
+        return getStringsClaims("stylesheetSupport");
     }
 
-    /**
-     * <p>getVariant.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getVariant() {
-        return getClaimValue("variant", String.class);
+        return getSingleClaim("variant", String.class);
     }
 
-    /**
-     * <p>getVendor.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getVendor() {
-        return getClaimValue("vendor", String.class);
+        return getSingleClaim("vendor", String.class);
     }
 
-    /**
-     * <p>getVersion.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     public String getVersion() {
-        return getClaimValue("version", String.class);
+        return getSingleClaim("version", String.class);
+    }
+
+    private String[] getStringsClaims(String name) {
+        List<String> list = getClaimsList(name, String.class);
+        return list.toArray(new String[list.size()]);
     }
 }

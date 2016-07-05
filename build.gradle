@@ -1,144 +1,39 @@
-import java.util.concurrent.Callable
-import java.util.concurrent.Executors
-import java.util.concurrent.Future
+buildscript {
+    repositories {
+        mavenLocal()
+    }
+    //noinspection GroovyAssignabilityCheck
+    dependencies {
+        classpath group: 'com.sdl.dxa', name: 'dxa-builder', version: '1.6.0-SNAPSHOT'
+    }
+}
 
-group 'com.sdl.dxa'
+apply plugin: 'com.sdl.dxa.builder'
 
 defaultTasks 'build'
-
-def getDefaultCommand() { "install" }
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
-task help << {
-    println """
-    Usage:
-        gradlew(.bat) build -Pcommand="<command>"
-
-    <command> is passed to Maven as it is. If <command> is missed then the default command is used which is: ${
-        defaultCommand
-    }
-
-    Example 1:
-        gradlew(.bat) build -Pcommand="clean package -Pweb8"
-    will run
-        mvn -f project-name\\pom.xml clean package -Pweb8
-
-    Example 2:
-        gradlew(.bat) build
-    will run
-        mvn -f project-name\\pom.xml clean install
-
-    Example 3:
-        gradlew(.bat) build -Pcommand="-Pweb8"
-    will run
-        mvn -f project-name\\pom.xml -Pweb8
-    which has actually no sense
-    """
+task help(dependsOn: 'maven.help') << {
+    println "Builds ${maven.projects}"
 }
 
-task build << {
-    greet()
-
-    def beforeAll = ["dxa-bom", "dxa-bom-2013sp1"]
-    def parallel = [ "dxa-framework" ]
-
-    def commandToExecute = getCommandToExecute()
-
-    def pool = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors())
-
-    def failed = []
-    def tasks = []
-
-    //noinspection GroovyAssignabilityCheck
-    def processOutput = { Output output ->
-        if (output.code != 0) {
-            failed << output
-        } else {
-            println "SUCCESS: ${output.command}"
-        }
-    }
-
-    beforeAll.each {
-        processOutput(pool.submit(new BuildTask(name: it, commandToExecute: commandToExecute)).get())
-    }
-    parallel.each {
-        tasks << new BuildTask(name: it, commandToExecute: commandToExecute)
-    }
-    List<Future<Output>> futures = pool.invokeAll(tasks)
-    for (Future<Output> buildResult : futures) {
-        processOutput(buildResult.get())
-    }
-
-    if (failed.size() > 0) {
-        println """
-        === FAILED JOBS: ===
-        """
-        failed.each {
-            it.lines.each { println it }
-        }
-        println """
-            Well, there is an error. Press <Enter> to finish."""
-        System.in.read()
-    }
-
+task build(dependsOn: 'maven.run') << {
+    println "Build for DXA Framework and related projects. WebApp is not built!"
 }
 
-def greet() {
-    println """
-    Building DXA Framework and related projects...
-    WebApp is not built!
-    """
+if (project.hasProperty('command')) {
+    maven.command = project.command
 }
-
-String getCommandToExecute() {
-    project.hasProperty("command") ? "${command}" : defaultCommand
-}
-
-class Output {
-    List<String> lines
-    int code
-    String command
-}
-
-class BuildTask implements Callable<Output> {
-    String name, commandToExecute
-
-    @Override
-    Output call() throws Exception {
-        runMaven(commandToExecute, findPath([name, "pom.xml"]))
-    }
-
-    @SuppressWarnings(["GrUnresolvedAccess", "GroovyAssignabilityCheck"])
-    String findPath(List<String> parts) {
-        String joined = new File('.').absolutePath + File.separator + parts.join(File.separator)
-
-        if (parts.size() == 1 || new File(joined).exists()) {
-            return joined
-        }
-        int len = parts.size() - 1
-        findPath(parts.getAt(1..len))
-    }
-
-    Output runMaven(String command, String pomPath) {
-        String toRun = "${determineShell()} mvn ${command} -f \"${pomPath}\""
-
-        def output = new Output(command: toRun, lines: [], code: 0)
-
-        println "Running in background ${toRun}"
-
-        def execute = toRun.execute()
-        execute.in.eachLine {
-            output.lines << it
-        }
-        output.code = execute.exitValue()
-        output
-    }
-
-    static String determineShell() {
-        org.gradle.internal.os.OperatingSystem.current().windows ? "cmd /c " : "";
-    }
-}
+maven.projects = [
+        [
+                "dxa-bom",
+                "dxa-bom-2013sp1"
+        ],
+        [
+                "dxa-framework"
+        ]
+]

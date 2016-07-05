@@ -10,7 +10,7 @@
         <version>1.0.3</version>
     </parent>
 
-    <version>1.5.0-SNAPSHOT</version>
+    <version>1.5.0</version>
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-example-webapp</artifactId>
     <packaging>war</packaging>
@@ -45,7 +45,7 @@
     </developers>
 
     <properties>
-        <dxa-bom.version>1.5.0-SNAPSHOT</dxa-bom.version>
+        <dxa-bom.version>1.5.0</dxa-bom.version>
         <dxa-release-branch>release/1.5</dxa-release-branch>
     </properties>
 

@@ -10,7 +10,7 @@ buildscript {
 
 apply plugin: 'com.sdl.dxa.builder'
 
-defaultTasks 'build'
+defaultTasks 'buildDxa'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
@@ -21,7 +21,7 @@ task help(dependsOn: 'maven.help') << {
     println "Builds ${maven.projects}"
 }
 
-task build(dependsOn: 'maven.run') << {
+task buildDxa(dependsOn: 'maven.run') << {
     println "Build for DXA Framework and related projects. WebApp is not built!"
 }
 

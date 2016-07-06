@@ -1,10 +1,12 @@
 package com.sdl.webapp.common.impl.localization;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.localization.SiteLocalization;
-import com.sdl.webapp.common.api.mapping.semantic.config.*;
+import com.sdl.webapp.common.api.mapping.semantic.config.EntitySemantics;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import com.sdl.webapp.common.impl.localization.LocalizationImpl.Builder;
 import org.junit.Test;
 
@@ -12,12 +14,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
-
 
 public class LocalizationImplTest {
 
@@ -236,7 +237,8 @@ public class LocalizationImplTest {
         Builder builder = getBuilder();
 
         //when
-        builder.addSiteLocalizations(Lists.newArrayList(new SiteLocalizationImpl() {}));
+        builder.addSiteLocalizations(Lists.newArrayList(new SiteLocalizationImpl() {
+        }));
         Localization local = builder.build();
 
         //then

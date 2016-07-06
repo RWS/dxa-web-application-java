@@ -87,6 +87,13 @@ publishing {
                     password project.publishPassword
                 }
             }
+            if (project.hasProperty("publishCredentials") && project.publishCredentials.contains(":")) {
+                def creds = project.publishCredentials.split(':')
+                credentials {
+                    username creds[0]
+                    password creds[1]
+                }
+            }
         }
     }
 }

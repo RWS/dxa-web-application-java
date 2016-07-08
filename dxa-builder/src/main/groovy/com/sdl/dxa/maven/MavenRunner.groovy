@@ -28,7 +28,6 @@ class MavenRunner {
 
             extension.projects.each { arr ->
                 def tasks = []
-                def failed = []
                 def CountDownLatch latch
 
                 arr.each { task ->
@@ -47,7 +46,7 @@ class MavenRunner {
 
                             println "= FAILED (in ${output.timeSeconds}s): "
                             output.lines.each { println it }
-                            println "Well, there is an error in ${failed.size()} projects. Press <Enter> to finish."
+                            println "Well, there is an error. Press <Enter> to finish."
                             System.in.read()
                             System.exit(-1)
                         } else {

@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.api;
 
-/**
- * <p>ScreenWidth class.</p>
- */
+import lombok.Getter;
+
+@Getter
 public enum ScreenWidth {
     EXTRA_SMALL(480), SMALL(940), MEDIUM(1140), LARGE(Integer.MAX_VALUE);
 
@@ -13,10 +13,6 @@ public enum ScreenWidth {
 
     ScreenWidth(int breakpoint) {
         this.breakpoint = breakpoint;
-    }
-
-    public int getBreakpoint() {
-        return breakpoint;
     }
 
     public boolean isThisScreenWidth(int width) {

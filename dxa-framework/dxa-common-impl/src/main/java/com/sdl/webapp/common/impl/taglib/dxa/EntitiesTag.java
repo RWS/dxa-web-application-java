@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,22 +16,11 @@ import java.io.IOException;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 
-/**
- * <p>EntitiesTag class.</p>
- */
+@Setter
 public class EntitiesTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(EntitiesTag.class);
 
     private int containerSize;
-
-    /**
-     * <p>Setter for the field <code>containerSize</code>.</p>
-     *
-     * @param containerSize a int.
-     */
-    public void setContainerSize(int containerSize) {
-        this.containerSize = containerSize;
-    }
 
     /**
      * {@inheritDoc}

@@ -1,14 +1,14 @@
 package com.sdl.webapp.common.markup.html;
 
 import com.google.common.collect.ImmutableList;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
-import java.util.Objects;
 
-/**
- * <p>HtmlStartTag class.</p>
- */
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public final class HtmlStartTag extends HtmlRenderable {
 
     private final String tagName;
@@ -27,24 +27,6 @@ public final class HtmlStartTag extends HtmlRenderable {
     }
 
     /**
-     * <p>Getter for the field <code>tagName</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getTagName() {
-        return tagName;
-    }
-
-    /**
-     * <p>Getter for the field <code>attributes</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    public List<HtmlAttribute> getAttributes() {
-        return attributes;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -58,21 +40,5 @@ public final class HtmlStartTag extends HtmlRenderable {
             sb.append(' ').append(attribute.toHtml());
         }
         return sb.append('>').toString();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        HtmlStartTag that = (HtmlStartTag) o;
-        return Objects.equals(tagName, that.tagName) &&
-                Objects.equals(attributes, that.attributes);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(tagName, attributes);
     }
 }

@@ -1,10 +1,12 @@
 package com.sdl.webapp.common.api.mapping.semantic.config;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
-/**
- * <p>FieldPath class.</p>
- */
+@Getter
+@ToString
+@EqualsAndHashCode
 public final class FieldPath {
 
     private final String head;
@@ -30,61 +32,7 @@ public final class FieldPath {
         }
     }
 
-    /**
-     * <p>Getter for the field <code>head</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getHead() {
-        return head;
-    }
-
-    /**
-     * <p>Getter for the field <code>tail</code>.</p>
-     *
-     * @return a {@link com.sdl.webapp.common.api.mapping.semantic.config.FieldPath} object.
-     */
-    public FieldPath getTail() {
-        return tail;
-    }
-
-    /**
-     * <p>hasTail.</p>
-     *
-     * @return a boolean.
-     */
     public boolean hasTail() {
         return tail != null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FieldPath fieldPath = (FieldPath) o;
-        return Objects.equals(head, fieldPath.head) &&
-                Objects.equals(tail, fieldPath.tail);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int hashCode() {
-        return Objects.hash(head, tail);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder(32);
-        sb.append('/').append(head);
-        if (tail != null) {
-            sb.append(tail.toString());
-        }
-        return sb.toString();
     }
 }

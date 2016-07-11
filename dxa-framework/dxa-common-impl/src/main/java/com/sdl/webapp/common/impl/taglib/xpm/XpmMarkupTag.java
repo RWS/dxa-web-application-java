@@ -6,9 +6,6 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 
-/**
- * <p>Abstract XpmMarkupTag class.</p>
- */
 public abstract class XpmMarkupTag extends XpmIfEnabledTag {
 
     /**

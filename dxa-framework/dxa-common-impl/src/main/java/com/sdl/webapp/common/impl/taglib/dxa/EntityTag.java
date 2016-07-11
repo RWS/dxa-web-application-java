@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +16,7 @@ import java.io.IOException;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 
-/**
- * <p>EntityTag class.</p>
- */
+@Setter
 public class EntityTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(EntityTag.class);
 
@@ -26,33 +25,6 @@ public class EntityTag extends AbstractMarkupTag {
     private int containerSize;
 
     private String viewName;
-
-    /**
-     * <p>Setter for the field <code>containerSize</code>.</p>
-     *
-     * @param containerSize a int.
-     */
-    public void setContainerSize(int containerSize) {
-        this.containerSize = containerSize;
-    }
-
-    /**
-     * <p>Setter for the field <code>entity</code>.</p>
-     *
-     * @param entity a {@link com.sdl.webapp.common.api.model.EntityModel} object.
-     */
-    public void setEntity(EntityModel entity) {
-        this.entity = entity;
-    }
-
-    /**
-     * <p>Setter for the field <code>viewName</code>.</p>
-     *
-     * @param viewName a name of a view to replace in {@link MvcData}
-     */
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
-    }
 
     /**
      * <p>Setter for the field <code>viewName</code>.</p>

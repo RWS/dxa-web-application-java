@@ -12,9 +12,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.UUID;
 
-/**
- * <p>GoogleMapTag class.</p>
- */
 public class GoogleMapTag extends AbstractGoogleMapTag {
 
     private static final HtmlAttribute CLASS_MAP_CANVAS_ATTR = new HtmlAttribute("class", "map-canvas");

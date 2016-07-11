@@ -3,17 +3,14 @@ package com.sdl.webapp.common.impl.taglib.dxa;
 import com.sdl.webapp.common.markup.PluggableMarkupRegistry;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.ParsableHtmlNode;
+import lombok.Setter;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.BodyContent;
 import javax.servlet.jsp.tagext.BodyTagSupport;
 
-/**
- * Define Pluggable Markup Tag
- *
- * @author nic
- */
+@Setter
 public class DefinePluggableMarkupTag extends BodyTagSupport {
 
     // TODO: Define a common abstract base class for all tags dealing with pluggable markup
@@ -21,15 +18,6 @@ public class DefinePluggableMarkupTag extends BodyTagSupport {
     private PluggableMarkupRegistry registry;
 
     private String label;
-
-    /**
-     * <p>Setter for the field <code>label</code>.</p>
-     *
-     * @param label a {@link java.lang.String} object.
-     */
-    public void setLabel(String label) {
-        this.label = label;
-    }
 
     /**
      * {@inheritDoc}

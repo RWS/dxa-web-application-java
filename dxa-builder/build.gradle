@@ -5,6 +5,9 @@ apply plugin: 'groovy'
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
 def isRelease = !version.endsWith("-SNAPSHOT")
 
 task wrapper(type: Wrapper) {

@@ -8,9 +8,6 @@ import org.jsoup.select.Elements;
 
 import java.util.List;
 
-/**
- * <p>ParsableHtmlNode class.</p>
- */
 public class ParsableHtmlNode extends HtmlNode {
 
     private String htmlText;

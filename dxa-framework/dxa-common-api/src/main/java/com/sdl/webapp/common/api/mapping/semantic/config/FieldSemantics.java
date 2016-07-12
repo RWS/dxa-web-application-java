@@ -1,10 +1,14 @@
 package com.sdl.webapp.common.api.mapping.semantic.config;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.util.Objects;
 
-/**
- * <p>FieldSemantics class.</p>
- */
+@Getter
+@ToString
+@EqualsAndHashCode
 public final class FieldSemantics {
 
     private final SemanticVocabulary vocabulary;
@@ -26,68 +30,7 @@ public final class FieldSemantics {
         this.propertyName = propertyName;
     }
 
-    /**
-     * <p>Getter for the field <code>vocabulary</code>.</p>
-     *
-     * @return a {@link com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary} object.
-     */
-    public SemanticVocabulary getVocabulary() {
-        return vocabulary;
-    }
-
-    /**
-     * <p>Getter for the field <code>entityName</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getEntityName() {
-        return entityName;
-    }
-
-    /**
-     * <p>Getter for the field <code>propertyName</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    /**
-     * <p>isStandardMetadataField.</p>
-     *
-     * @return a boolean.
-     */
     public boolean isStandardMetadataField() {
         return Objects.equals(this.entityName, "StandardMetadata");
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FieldSemantics that = (FieldSemantics) o;
-        return Objects.equals(vocabulary, that.vocabulary) &&
-                Objects.equals(entityName, that.entityName) &&
-                Objects.equals(propertyName, that.propertyName);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(vocabulary, entityName, propertyName);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "FieldSemantics{" +
-                "vocabulary=" + vocabulary +
-                ", entityName='" + entityName + '\'' +
-                ", propertyName='" + propertyName + '\'' +
-                '}';
     }
 }

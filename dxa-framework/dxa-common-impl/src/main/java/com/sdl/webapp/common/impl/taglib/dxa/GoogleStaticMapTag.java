@@ -10,9 +10,6 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import java.util.UUID;
 
-/**
- * <p>GoogleStaticMapTag class.</p>
- */
 public class GoogleStaticMapTag extends AbstractGoogleMapTag {
 
     private static final HtmlAttribute CLASS_STATIC_MAP_ATTR = new HtmlAttribute("class", "static-map");

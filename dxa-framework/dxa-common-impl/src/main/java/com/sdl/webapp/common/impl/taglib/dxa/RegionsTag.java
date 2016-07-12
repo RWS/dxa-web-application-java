@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,32 +18,12 @@ import java.util.Set;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
-/**
- * <p>RegionsTag class.</p>
- */
+@Setter
 public class RegionsTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionsTag.class);
 
     private Set<String> excludes;
     private int containerSize;
-
-    /**
-     * <p>setExclude.</p>
-     *
-     * @param exclude a {@link java.lang.String} object.
-     */
-    public void setExclude(String exclude) {
-        this.excludes = commaDelimitedListToSet(exclude);
-    }
-
-    /**
-     * <p>Setter for the field <code>containerSize</code>.</p>
-     *
-     * @param containerSize a int.
-     */
-    public void setContainerSize(int containerSize) {
-        this.containerSize = containerSize;
-    }
 
     /**
      * {@inheritDoc}

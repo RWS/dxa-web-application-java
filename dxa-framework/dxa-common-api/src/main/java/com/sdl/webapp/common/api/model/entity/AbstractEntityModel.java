@@ -50,16 +50,11 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     @Override
     @SneakyThrows(JsonProcessingException.class)
     public String getXpmMarkup(Localization localization) {
-        return this.xpmMetadata == null ? "" : String.format("<!-- Start Component Presentation: %s -->",
+        if (this.xpmMetadata == null) return "";
+        else return String.format("<!-- Start Component Presentation: %s -->",
                 ApplicationContextHolder.getContext().getBean(ObjectMapper.class).writeValueAsString(this.xpmMetadata));
     }
 
-    /**
-     * Adds a key-value pair as an extension data.
-     *
-     * @param key   key for the value
-     * @param value value to add
-     */
     @Override
     public void addExtensionData(String key, Object value) {
         if (extensionData == null) {

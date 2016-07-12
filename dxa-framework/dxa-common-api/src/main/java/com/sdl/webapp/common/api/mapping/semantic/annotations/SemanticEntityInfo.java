@@ -3,12 +3,18 @@ package com.sdl.webapp.common.api.mapping.semantic.annotations;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.EntityModel;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.util.Objects;
 
 /**
  * <p>SemanticEntityInfo class.</p>
  */
+@Getter
+@ToString
+@EqualsAndHashCode
 public final class SemanticEntityInfo {
 
     /**
@@ -72,68 +78,7 @@ public final class SemanticEntityInfo {
         this.public_ = false;
     }
 
-    /**
-     * <p>Getter for the field <code>vocabulary</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getVocabulary() {
-        return vocabulary;
-    }
-
-    /**
-     * <p>Getter for the field <code>entityName</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getEntityName() {
-        return entityName;
-    }
-
-    /**
-     * <p>Getter for the field <code>prefix</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getPrefix() {
-        return prefix;
-    }
-
-    /**
-     * <p>isPublic.</p>
-     *
-     * @return a boolean.
-     */
     public boolean isPublic() {
         return public_;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SemanticEntityInfo that = (SemanticEntityInfo) o;
-        return Objects.equals(public_, that.public_) &&
-                Objects.equals(vocabulary, that.vocabulary) &&
-                Objects.equals(entityName, that.entityName) &&
-                Objects.equals(prefix, that.prefix);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(vocabulary, entityName, prefix, public_);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "SemanticEntityInfo{" +
-                "vocabulary='" + vocabulary + '\'' +
-                ", entityName='" + entityName + '\'' +
-                ", prefix='" + prefix + '\'' +
-                ", public_=" + public_ +
-                '}';
     }
 }

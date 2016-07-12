@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.WebUtils;
@@ -21,9 +22,7 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGIO
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-/**
- * <p>RegionTag class.</p>
- */
+@Setter
 public class RegionTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RegionTag.class);
 
@@ -31,42 +30,6 @@ public class RegionTag extends AbstractMarkupTag {
     private boolean placeholder;
     private String emptyViewName;
     private int containerSize;
-
-    /**
-     * <p>Setter for the field <code>name</code>.</p>
-     *
-     * @param name a {@link java.lang.String} object.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * <p>Setter for the field <code>placeholder</code>.</p>
-     *
-     * @param placeholder a boolean.
-     */
-    public void setPlaceholder(boolean placeholder) {
-        this.placeholder = placeholder;
-    }
-
-    /**
-     * <p>Setter for the field <code>emptyViewName</code>.</p>
-     *
-     * @param emptyViewName a {@link java.lang.String} object.
-     */
-    public void setEmptyViewName(String emptyViewName) {
-        this.emptyViewName = emptyViewName;
-    }
-
-    /**
-     * <p>Setter for the field <code>containerSize</code>.</p>
-     *
-     * @param containerSize a int.
-     */
-    public void setContainerSize(int containerSize) {
-        this.containerSize = containerSize;
-    }
 
     /**
      * {@inheritDoc}

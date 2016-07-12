@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.exceptions.DxaException;
+import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
@@ -13,6 +14,7 @@ import java.util.Objects;
 /**
  * <p>RichText class.</p>
  */
+@Data
 public class RichText {
 
     @JsonProperty("Fragments")
@@ -51,32 +53,7 @@ public class RichText {
         return (richText == null) || richText.isEmpty();
     }
 
-    /**
-     * <p>Getter for the field <code>fragments</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    public List<RichTextFragment> getFragments() {
-        return this.fragments;
-    }
-
-    private void setFragments(List<RichTextFragment> fragments) {
-        this.fragments = fragments;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        StringBuilder result = new StringBuilder();
-        for (RichTextFragment frag : fragments) {
-            result.append(frag);
-        }
-        return result.toString();
-    }
-
-    /**
+        /**
      * <p>isEmpty.</p>
      *
      * @return a {@link java.lang.Boolean} object.
@@ -86,22 +63,5 @@ public class RichText {
     public Boolean isEmpty() throws DxaException {
         return CollectionUtils.isEmpty(fragments) ||
                 fragments.get(0) == null || StringUtils.isEmpty(fragments.get(0).toHtmlElement().toHtml());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RichText richText = (RichText) o;
-        return Objects.equals(fragments, richText.fragments);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(fragments);
     }
 }

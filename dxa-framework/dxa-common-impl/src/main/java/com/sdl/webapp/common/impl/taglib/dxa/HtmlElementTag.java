@@ -10,9 +10,6 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
-/**
- * <p>Abstract HtmlElementTag class.</p>
- */
 public abstract class HtmlElementTag extends TagSupport {
 
     private HtmlElement element;

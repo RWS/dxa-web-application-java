@@ -4,23 +4,13 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.markup.html.HtmlNode;
+import lombok.Setter;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-/**
- * <p>XpmEntityMarkupTag class.</p>
- */
+@Setter
 public class XpmEntityMarkupTag extends XpmMarkupTag {
 
     private EntityModel entity;
-
-    /**
-     * <p>Setter for the field <code>entity</code>.</p>
-     *
-     * @param entity a {@link com.sdl.webapp.common.api.model.EntityModel} object.
-     */
-    public void setEntity(EntityModel entity) {
-        this.entity = entity;
-    }
 
     /**
      * {@inheritDoc}

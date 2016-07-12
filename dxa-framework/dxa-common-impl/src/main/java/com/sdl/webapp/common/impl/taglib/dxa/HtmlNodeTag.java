@@ -7,9 +7,6 @@ import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 
-/**
- * <p>Abstract HtmlNodeTag class.</p>
- */
 public abstract class HtmlNodeTag extends TagSupport {
 
     /**

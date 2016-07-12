@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.controller.ControllerUtils;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,33 +15,13 @@ import java.io.IOException;
 
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 
-/**
- * <p>PageTag class.</p>
- */
+@Setter
 public class PageTag extends TagSupport {
     private static final Logger LOG = LoggerFactory.getLogger(PageTag.class);
 
     private String name;
 
     private String viewName;
-
-    /**
-     * <p>Setter for the field <code>name</code>.</p>
-     *
-     * @param name a {@link java.lang.String} object.
-     */
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    /**
-     * <p>Setter for the field <code>viewName</code>.</p>
-     *
-     * @param viewName a {@link java.lang.String} object.
-     */
-    public void setViewName(String viewName) {
-        this.viewName = viewName;
-    }
 
     /**
      * {@inheritDoc}

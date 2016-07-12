@@ -4,11 +4,10 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.markup.html.HtmlNode;
+import lombok.Setter;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-/**
- * <p>XpmRegionMarkupTag class.</p>
- */
+@Setter
 public class XpmRegionMarkupTag extends XpmMarkupTag {
 
     private static final String REGION_PATTERN = "Start Region: {title:\"%s\",allowedComponentTypes:[%s]," +
@@ -19,15 +18,6 @@ public class XpmRegionMarkupTag extends XpmMarkupTag {
     private static final String COMPONENT_TYPE_PATTERN = "%s{schema:\"%s\",template:\"%s\"}";
 
     private RegionModel region;
-
-    /**
-     * <p>Setter for the field <code>region</code>.</p>
-     *
-     * @param region a {@link com.sdl.webapp.common.api.model.RegionModel} object.
-     */
-    public void setRegion(RegionModel region) {
-        this.region = region;
-    }
 
     /**
      * {@inheritDoc}

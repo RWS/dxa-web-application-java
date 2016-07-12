@@ -39,14 +39,37 @@ public class InitializationUtilsTest {
         Collection<Resource> resources = InitializationUtils.getAllResources();
 
         //then
-        assertEquals(5, resources.size());
+        assertEquals(6, resources.size());
         assertThat(resources, contains(
                 // contains() also check the order of items
                 hasProperty("path", containsString("dxa.defaults.properties")),
                 hasProperty("path", containsString("dxa.modules.cid.properties")),
                 hasProperty("path", containsString("dxa.modules.xo.properties")),
                 hasProperty("path", containsString("dxa.properties")),
-                hasProperty("path", containsString("dxa.addons.staging.properties"))));
+                hasProperty("path", containsString("dxa.addons.staging.properties")),
+                hasProperty("path", containsString("dxa.addons.utf8-bom"))));
+    }
+
+    @Test
+    public void shouldOverridePropertyInTheConsequentFile() {
+        //when
+        Properties properties = InitializationUtils.loadDxaProperties();
+
+        //then
+        assertEquals("utf8-bom", properties.getProperty("dxa.override.utf8bom"));
+        assertEquals("defaults", properties.getProperty("dxa.override.defaults"));
+        assertEquals("modules", properties.getProperty("dxa.override.modules"));
+        assertEquals("user", properties.getProperty("dxa.override.user"));
+        assertEquals("addons", properties.getProperty("dxa.override.addons"));
+    }
+
+    @Test
+    public void shouldNotLoadNotDxaProperties() {
+        //when
+        Properties properties = InitializationUtils.loadDxaProperties();
+
+        //then
+        assertNull(properties.getProperty("not.dxa.property"));
     }
 
     @Test

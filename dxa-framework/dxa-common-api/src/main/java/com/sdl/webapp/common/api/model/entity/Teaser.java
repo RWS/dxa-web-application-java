@@ -11,8 +11,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.joda.time.DateTime;
 
-import java.util.Objects;
-
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 
 @SemanticEntities({
@@ -78,4 +76,8 @@ public class Teaser extends AbstractEntityModel {
     })
     @JsonProperty("Location")
     private Location location;
+
+    public RichText getText() {
+        return text != null ? text : new RichText("");
+    }
 }

@@ -36,31 +36,19 @@ public abstract class AbstractGoogleMapTag extends HtmlNodeTag {
     @Getter
     private int mapHeight = DEFAULT_MAP_HEIGHT;
 
-    /**
-     * <p>getMapsApiKey.</p>
-     *
-     * @param localization a {@link com.sdl.webapp.common.api.localization.Localization} object.
-     * @return a {@link java.lang.String} object.
-     */
     protected static String getMapsApiKey(Localization localization) {
         final String mapsApiKey = localization.getConfiguration(CONFIG_MAPS_API_KEY);
         return mapsApiKey.equals(DUMMY_API_KEY) ? "" : mapsApiKey;
     }
 
-    /**
-     * <p>getLatString.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
+    public String getMarkerName() {
+        return Strings.nullToEmpty(markerName);
+    }
+
     protected String getLatString() {
         return String.format(Locale.US, "%f", latitude);
     }
 
-    /**
-     * <p>getLonString.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     protected String getLonString() {
         return String.format(Locale.US, "%f", longitude);
     }

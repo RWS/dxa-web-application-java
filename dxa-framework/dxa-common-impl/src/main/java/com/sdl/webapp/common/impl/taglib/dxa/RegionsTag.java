@@ -7,8 +7,7 @@ import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
@@ -18,12 +17,17 @@ import java.util.Set;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
-@Setter
+@Slf4j
 public class RegionsTag extends AbstractMarkupTag {
-    private static final Logger LOG = LoggerFactory.getLogger(RegionsTag.class);
 
     private Set<String> excludes;
+
+    @Setter
     private int containerSize;
+
+    public void setExclude(String exclude) {
+        this.excludes = commaDelimitedListToSet(exclude);
+    }
 
     /**
      * {@inheritDoc}
@@ -32,7 +36,7 @@ public class RegionsTag extends AbstractMarkupTag {
     public int doStartTag() throws JspException {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
         if (page == null) {
-            LOG.error("Page not found in request attributes");
+            log.error("Page not found in request attributes");
             return SKIP_BODY;
         }
 
@@ -44,11 +48,11 @@ public class RegionsTag extends AbstractMarkupTag {
         for (RegionModel region : regions) {
             String name = region.getName();
             if (this.excludes != null && this.excludes.contains(name)) {
-                LOG.debug("Excluding region: {}", name);
+                log.debug("Excluding region: {}", name);
                 continue;
             }
 
-            LOG.debug("Including region: {}", name);
+            log.debug("Including region: {}", name);
 
             try {
                 pageContext.getRequest().setAttribute("_region_", region);
@@ -56,7 +60,7 @@ public class RegionsTag extends AbstractMarkupTag {
                 webRequestContext.pushContainerSize(containerSize);
                 this.decorateInclude(ControllerUtils.getIncludePath(region), region);
             } catch (ServletException | IOException e) {
-                LOG.error("Error while processing regions tag", e);
+                log.error("Error while processing regions tag", e);
                 decorateException(region);
             } finally {
                 webRequestContext.popParentRegion();

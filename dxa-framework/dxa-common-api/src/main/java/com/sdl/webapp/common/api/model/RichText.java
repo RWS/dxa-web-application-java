@@ -9,7 +9,6 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * <p>RichText class.</p>
@@ -63,5 +62,14 @@ public class RichText {
     public Boolean isEmpty() throws DxaException {
         return CollectionUtils.isEmpty(fragments) ||
                 fragments.get(0) == null || StringUtils.isEmpty(fragments.get(0).toHtmlElement().toHtml());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder result = new StringBuilder();
+        for (RichTextFragment frag : fragments) {
+            result.append(frag);
+        }
+        return result.toString();
     }
 }

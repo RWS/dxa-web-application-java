@@ -4,18 +4,50 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>com.sdl.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>1.0.3</version>
+    </parent>
+
     <version>1.6.0-SNAPSHOT</version>
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-webapp</artifactId>
     <packaging>war</packaging>
-
     <name>DXA - Webapp</name>
     <description>Example web application for DXA</description>
+    <url>http://www.sdl.com/cxc/digital-experience/web-experience-management/digital-experience-accelerator.html</url>
 
     <properties>
         <dxa-bom.version>1.6.0-SNAPSHOT</dxa-bom.version>
         <dxa-release-branch>release/1.6</dxa-release-branch>
     </properties>
+
+    <scm>
+        <url>https://github.com/sdl/dxa-web-application-java</url>
+        <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
+        <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>rpannekoek</id>
+            <name>Rick Pannekoek</name>
+            <email>rpannekoek@sdl.com</email>
+            <timezone>+1</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+        <developer>
+            <id>azarakovskiy</id>
+            <name>Alexey Zarakovskiy</name>
+            <email>azarakovskiy@sdl.com</email>
+            <timezone>+1</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+    </developers>
 
     <repositories>
         <repository>

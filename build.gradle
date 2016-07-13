@@ -25,12 +25,21 @@ task buildDxa(dependsOn: 'maven.run') << {
     println "Build for DXA Framework and related projects. WebApp is not built!"
 }
 
-if (project.hasProperty('command')) {
-    maven.command = project.command
-}
 maven.projects = [
         ["dxa-bom"],
         ["dxa-bom-2013sp1"],
-        ["dxa-framework", "> dxa-webapp > clean archetype:create-from-project -Darchetype.properties=archetype.properties"],
-        ["dxa-webapp/target/generated-sources/archetype"]
+        ["dxa-framework", "> dxa-webapp > clean archetype:create-from-project -Darchetype.properties=archetype.properties"]
 ]
+if (project.hasProperty('command')) {
+    maven.command = project.command
+
+    // special hook for archetypes as id does not inherit <profiles/> nor <build/> sections, but we still need to sign artifact in case of release
+    if (project.command =~ /.*-P(.*\b)?release\b.*/) {
+        maven.projects << ["> dxa-webapp/target/generated-sources/archetype > ${project.command} " +
+                                   "org.apache.maven.plugins:maven-gpg-plugin:sign " +
+                                   "org.apache.maven.plugins:maven-source-plugin:jar-no-fork " +
+                                   "org.apache.maven.plugins:maven-javadoc-plugin:jar"]
+    } else {
+        maven.projects << ["dxa-webapp/target/generated-sources/archetype"]
+    }
+}

@@ -10,7 +10,7 @@ class MavenRunner {
         def String command
         def List<String[]> projects
         def numberThreads = Runtime.getRuntime().availableProcessors()
-        def mavenProperties = "-T 1C"
+        def mavenProperties = "-T 1C -e"
     }
 
     private MavenRunner() {

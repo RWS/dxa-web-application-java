@@ -31,8 +31,8 @@ maven.projects = [
         ["dxa-framework"],
         ["> dxa-webapp > clean archetype:create-from-project -Darchetype.properties=archetype.properties"]
 ]
-if (project.hasProperty('removeMavenProperties')) {
-    maven.mavenProperties = ''
+if (project.hasProperty('mavenProperties')) {
+    maven.mavenProperties = project.mavenProperties
 }
 if (project.hasProperty('command')) {
     maven.command = project.command

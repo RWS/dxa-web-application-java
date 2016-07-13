@@ -27,7 +27,7 @@ task buildDxa(dependsOn: 'maven.run') << {
 
 maven.projects = [
         ["dxa-bom"],
-        ["dxa-bom-2013sp1"],
+        ["dxa-bom-2013sp1", "dxa-bom-modules"],
         ["dxa-framework"],
         ["> dxa-webapp > clean archetype:create-from-project -Darchetype.properties=archetype.properties"]
 ]

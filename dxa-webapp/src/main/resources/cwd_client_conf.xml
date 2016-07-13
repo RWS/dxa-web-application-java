@@ -5,6 +5,5 @@
     <!-- Specify your CIS Environment's Discovery Service URL below -->
     <DiscoveryService ServiceUri="***DISCOVERY_SERVICE_URL***"/>
 
-    <!-- Remove the TokenService element if OAuth is disabled on your CIS Environment -->
     <TokenService ClientId="cduser" ClientSecret="encrypted:o/cgCBwmULeOyUZghFaKJA=="/>
 </ServiceConfig>

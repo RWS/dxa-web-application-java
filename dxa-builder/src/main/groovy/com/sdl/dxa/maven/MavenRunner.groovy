@@ -10,6 +10,7 @@ class MavenRunner {
         def String command
         def List<String[]> projects
         def numberThreads = Runtime.getRuntime().availableProcessors()
+        def mavenProperties = "-T 1C"
     }
 
     private MavenRunner() {
@@ -120,6 +121,6 @@ class MavenRunner {
     }
 
     static String getCommandToExecute(MavenExtension extension) {
-        return extension.command ?: extension.defaultCommand
+        return (extension.command ?: extension.defaultCommand) + " ${extension.mavenProperties}"
     }
 }

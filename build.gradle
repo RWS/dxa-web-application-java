@@ -8,8 +8,6 @@ buildscript {
     }
 }
 
-apply plugin: 'com.sdl.dxa.builder'
-
 defaultTasks 'buildDxa'
 
 task wrapper(type: Wrapper) {
@@ -17,33 +15,32 @@ task wrapper(type: Wrapper) {
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
-task help(dependsOn: 'maven.help') << {
-    println "Builds ${maven.projects}"
-}
+task help(type: com.sdl.dxa.maven.MavenHelpTask)
 
-task buildDxa(dependsOn: 'maven.run') << {
-    println "Build for DXA Framework and related projects. WebApp is not built!"
-}
+task buildDxa(type: com.sdl.dxa.maven.MavenBuildTask) {
+    configurations = [
+            ["dxa-bom"],
+            ["dxa-bom-2013sp1", "dxa-bom-modules"],
+            ["dxa-framework"],
+            ["> dxa-webapp > clean archetype:create-from-project -Darchetype.properties=archetype.properties"]
+    ]
 
-maven.projects = [
-        ["dxa-bom"],
-        ["dxa-bom-2013sp1", "dxa-bom-modules"],
-        ["dxa-framework"],
-        ["> dxa-webapp > clean archetype:create-from-project -Darchetype.properties=archetype.properties"]
-]
-if (project.hasProperty('mavenProperties')) {
-    maven.mavenProperties = project.mavenProperties
-}
-if (project.hasProperty('command')) {
-    maven.command = project.command
+    if (project.hasProperty('mavenProperties')) {
+        mavenProperties = project.mavenProperties
+    }
 
-    // special hook for archetypes as id does not inherit <profiles/> nor <build/> sections, but we still need to sign artifact in case of release
-    if (project.command =~ /.*-P(.*\b)?release\b.*/) {
-        maven.projects << ["> dxa-webapp/target/generated-sources/archetype > ${project.command} " +
-                                   "org.apache.maven.plugins:maven-gpg-plugin:sign " +
-                                   "org.apache.maven.plugins:maven-source-plugin:jar-no-fork " +
-                                   "org.apache.maven.plugins:maven-javadoc-plugin:jar"]
-    } else {
-        maven.projects << ["dxa-webapp/target/generated-sources/archetype"]
+    if (project.hasProperty('command')) {
+        command = project.command
+
+        // special hook for archetypes as id does not inherit <profiles/> nor <build/> sections,
+        // but we still need to sign artifact in case of release
+        if (project.command =~ /.*-P(.*\b)?release\b.*/) {
+            configurations << ["> dxa-webapp/target/generated-sources/archetype > ${project.command} " +
+                                       "org.apache.maven.plugins:maven-gpg-plugin:sign " +
+                                       "org.apache.maven.plugins:maven-source-plugin:jar-no-fork " +
+                                       "org.apache.maven.plugins:maven-javadoc-plugin:jar"]
+        } else {
+            configurations << ["dxa-webapp/target/generated-sources/archetype"]
+        }
     }
 }

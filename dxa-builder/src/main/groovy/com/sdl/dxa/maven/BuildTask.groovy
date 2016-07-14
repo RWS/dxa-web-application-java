@@ -8,6 +8,11 @@ class BuildTask implements Callable<Output> {
     String name, commandToExecute
     Closure callback
 
+    BuildTask(String commandToExecute, Closure callback) {
+        this.commandToExecute = commandToExecute
+        this.callback = callback
+    }
+
     BuildTask(String name, String commandToExecute, Closure callback) {
         this.name = name
         this.commandToExecute = commandToExecute
@@ -16,7 +21,7 @@ class BuildTask implements Callable<Output> {
 
     @Override
     Output call() throws Exception {
-        runMaven(commandToExecute, findPath([name, "pom.xml"]))
+        runMaven(commandToExecute, name == null || name.empty ? null : findPath([name, "pom.xml"]))
     }
 
     @SuppressWarnings(["GroovyAssignabilityCheck"])
@@ -32,7 +37,10 @@ class BuildTask implements Callable<Output> {
 
     Output runMaven(String command, String pomPath) {
         def start = System.currentTimeSeconds()
-        String toRun = "${determineShell()} mvn ${command} -f \"${pomPath}\""
+        def toRun = "${determineShell()} mvn ${command}"
+        if (pomPath != null) {
+            toRun += " -f \"${pomPath}\""
+        }
 
         def output = new Output(command: toRun, lines: [], code: 0)
 

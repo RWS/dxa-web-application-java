@@ -16,7 +16,7 @@ class MavenBuildTask extends DefaultTask {
     private static boolean isVersionShown = false
 
     String command
-    List<String[]> configurations
+    List<List<String>> configurations
     String defaultCommand = Defaults.DEFAULT_COMMAND
     int numberThreads = Defaults.NUMBER_THREADS
     String mavenProperties = Defaults.MAVEN_PROPERTIES

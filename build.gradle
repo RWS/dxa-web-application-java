@@ -1,3 +1,6 @@
+import com.sdl.dxa.maven.MavenBuildTask
+import com.sdl.dxa.maven.MavenHelpTask
+
 buildscript {
     repositories {
         mavenLocal()
@@ -15,9 +18,9 @@ task wrapper(type: Wrapper) {
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
 }
 
-task help(type: com.sdl.dxa.maven.MavenHelpTask)
+task help(type: MavenHelpTask)
 
-task buildDxa(type: com.sdl.dxa.maven.MavenBuildTask) {
+task buildDxa(type: MavenBuildTask) {
     configurations = [
             ["dxa-bom"],
             ["dxa-bom-2013sp1", "dxa-bom-modules"],

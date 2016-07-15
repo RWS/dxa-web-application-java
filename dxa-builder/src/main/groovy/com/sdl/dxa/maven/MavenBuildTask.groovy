@@ -23,15 +23,10 @@ class MavenBuildTask extends DefaultTask {
 
     def customCommandDelimiter = /\s*>\s*/
 
-    static {
-        if (!isVersionShown) {
-            printMvnVersion()
-            isVersionShown = true
-        }
-    }
-
     @TaskAction
     def run() {
+        printMvnVersion()
+
         def pool = Executors.newFixedThreadPool(numberThreads)
 
         println "Building ${configurations}"
@@ -98,9 +93,13 @@ class MavenBuildTask extends DefaultTask {
     }
 
     private static void printMvnVersion() {
-        def mvnVersion = BuildTask.determineShell() + "mvn --version"
-        println mvnVersion
-        mvnVersion.execute().in.eachLine { println it }
-        println ""
+        if (!isVersionShown) {
+            isVersionShown = true
+
+            def mvnVersion = BuildTask.determineShell() + "mvn --version"
+            println mvnVersion
+            mvnVersion.execute().in.eachLine { println it }
+            println ""
+        }
     }
 }

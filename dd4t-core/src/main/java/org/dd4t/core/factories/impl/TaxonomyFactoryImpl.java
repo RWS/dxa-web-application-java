@@ -79,6 +79,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
                         if (taxonomySource == null || taxonomySource.length() == 0) {
                             cacheElement.setPayload(null);
                             cacheProvider.storeInItemCache(taxonomyURI, cacheElement);
+                            cacheElement.setExpired(true);
                             throw new ItemNotFoundException(String.format("Taxonomy with uri: %s not found.", taxonomyURI));
                         }
 
@@ -142,6 +143,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
                         if (taxonomySource == null || taxonomySource.length() == 0) {
                             cacheElement.setPayload(null);
                             cacheProvider.storeInItemCache(taxonomyURI, cacheElement);
+                            cacheElement.setExpired(true);
                             throw new ItemNotFoundException("Taxonomy with uri: " + taxonomyURI + " not found.");
                         }
 
@@ -155,6 +157,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
                     } catch (ItemNotFoundException e) {
                         cacheElement.setPayload(null);
                         cacheProvider.storeInItemCache(taxonomyURI, cacheElement);
+                        cacheElement.setExpired(true);
                         LOG.error(e.getLocalizedMessage(), e);
                         throw new IOException("Taxonomy with uri: " + taxonomyURI + " not found.");
                     } catch (ParseException | SerializationException e) {

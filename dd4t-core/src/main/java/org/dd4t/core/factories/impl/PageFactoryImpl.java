@@ -86,6 +86,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
                     if (StringUtils.isEmpty(pageSource)) {
                         cacheElement.setPayload(null);
                         cacheProvider.storeInItemCache(uri, cacheElement);
+                        cacheElement.setExpired(true);
                         throw new ItemNotFoundException("Unable to find page by id " + uri);
                     }
 

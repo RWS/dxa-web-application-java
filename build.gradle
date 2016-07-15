@@ -25,22 +25,22 @@ task buildDxa(type: com.sdl.dxa.maven.MavenBuildTask) {
             ["> dxa-webapp > clean archetype:create-from-project -Darchetype.properties=archetype.properties"]
     ]
 
-    if (project.hasProperty('mavenProperties')) {
-        mavenProperties = project.mavenProperties
+    // special hook for archetypes as id does not inherit <profiles/> nor <build/> sections,
+    // but we still need to sign artifact in case of release
+    if (project.hasProperty('command') && project.command =~ /.*-P(.*\b)?release\b.*/) {
+        configurations << ["> dxa-webapp/target/generated-sources/archetype > ${project.command} " +
+                                   "org.apache.maven.plugins:maven-gpg-plugin:sign " +
+                                   "org.apache.maven.plugins:maven-source-plugin:jar-no-fork " +
+                                   "org.apache.maven.plugins:maven-javadoc-plugin:jar"]
+    } else {
+        configurations << ["dxa-webapp/target/generated-sources/archetype"]
     }
 
     if (project.hasProperty('command')) {
         command = project.command
+    }
 
-        // special hook for archetypes as id does not inherit <profiles/> nor <build/> sections,
-        // but we still need to sign artifact in case of release
-        if (project.command =~ /.*-P(.*\b)?release\b.*/) {
-            configurations << ["> dxa-webapp/target/generated-sources/archetype > ${project.command} " +
-                                       "org.apache.maven.plugins:maven-gpg-plugin:sign " +
-                                       "org.apache.maven.plugins:maven-source-plugin:jar-no-fork " +
-                                       "org.apache.maven.plugins:maven-javadoc-plugin:jar"]
-        } else {
-            configurations << ["dxa-webapp/target/generated-sources/archetype"]
-        }
+    if (project.hasProperty('mavenProperties')) {
+        mavenProperties = project.mavenProperties
     }
 }

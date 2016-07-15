@@ -68,17 +68,17 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
                     try {
                         binary = binaryProvider.getBinaryByURI(tcmUri);
                         cacheElement.setPayload(binary);
                         TCMURI binaryURI = new TCMURI(tcmUri);
                         cacheProvider.storeInItemCache(tcmUri, cacheElement, binaryURI.getPublicationId(), binaryURI.getItemId());
+                        cacheElement.setExpired(false);
                         LOG.debug("Added binary with uri: {} to cache", tcmUri);
                     } catch (ParseException e) {
                         cacheElement.setPayload(null);
-                        cacheElement.setExpired(true);
                         cacheProvider.storeInItemCache(tcmUri, cacheElement);
+                        cacheElement.setExpired(true);
                         throw new ItemNotFoundException(e);
                     }
                 } else {
@@ -116,13 +116,13 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
                     try {
                         binary = binaryProvider.getBinaryByURL(url, publicationId);
                         cacheElement.setPayload(binary);
 
                         TCMURI tcmUri = new TCMURI(binary.getId());
                         cacheProvider.storeInItemCache(key, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
+                        cacheElement.setExpired(false);
                         LOG.debug("Added binary with url: {} to cache", url);
                     } catch (ParseException e) {
                         throw new ItemNotFoundException(e);

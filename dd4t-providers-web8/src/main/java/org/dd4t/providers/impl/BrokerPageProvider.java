@@ -234,11 +234,8 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
-
 
                     TCMURI tcmuri = null;
-
                     try {
                         final PageMeta pageMeta = getPageMetaByURL(url,publicationId);
                         if (pageMeta != null) {
@@ -252,10 +249,12 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
                     if (result == 1) {
                         cacheElement.setPayload(result);
                         cacheProvider.storeInItemCache(key, cacheElement, tcmuri.getPublicationId(), tcmuri.getItemId());
+                        cacheElement.setExpired(false);
                     } else {
                         result = 0;
                         cacheElement.setPayload(result);
                         cacheProvider.storeInItemCache(key, cacheElement);
+                        cacheElement.setExpired(false);
                     }
                     LOG.debug("Stored Page exist check with key: {} in cache", key);
                 } else {

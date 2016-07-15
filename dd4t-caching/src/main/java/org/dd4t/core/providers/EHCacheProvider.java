@@ -170,7 +170,6 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator, 
             LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
             return;
         }
-        cacheElement.setExpired(false);
         Element element = new Element(key, cacheElement);
         element.setTimeToLive(cacheTTL);
         if (cache.isKeyInCache(key)) {
@@ -196,7 +195,6 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator, 
             LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
             return;
         }
-        cacheElement.setExpired(false);
         Element element = cache.get(key);
         if (element == null) {
             element = new Element(key, cacheElement);

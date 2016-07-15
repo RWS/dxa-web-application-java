@@ -74,7 +74,6 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
                     try {
                         String taxonomySource = taxonomyProvider.getTaxonomyByURI(taxonomyURI, true);
                         if (taxonomySource == null || taxonomySource.length() == 0) {
@@ -88,6 +87,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
 
                         TCMURI tcmUri = new TCMURI(taxonomyURI);
                         cacheProvider.storeInItemCache(taxonomyURI, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
+                        cacheElement.setExpired(false);
                         LOG.debug("Added taxonomy with uri: {} to cache", taxonomyURI);
                     } catch (ItemNotFoundException | ParseException | SerializationException e) {
                         LOG.error(NOT_FOUND_ERROR_MESSAGE, taxonomyURI, e);
@@ -137,7 +137,6 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
                     try {
                         String taxonomySource = taxonomyProvider.getTaxonomyFilterBySchema(taxonomyURI, schemaURI);
                         if (taxonomySource == null || taxonomySource.length() == 0) {
@@ -151,6 +150,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
 
                         TCMURI tcmUri = new TCMURI(taxonomyURI);
                         cacheProvider.storeInItemCache(key, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
+                        cacheElement.setExpired(false);
                         LOG.debug("Added taxonomy with uri: {} and schema: {} to cache", taxonomyURI, schemaURI);
                     } catch (ItemNotFoundException e) {
                         cacheElement.setPayload(null);

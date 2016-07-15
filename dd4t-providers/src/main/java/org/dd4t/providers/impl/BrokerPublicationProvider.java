@@ -71,7 +71,6 @@ public class BrokerPublicationProvider extends AbstractPublicationProvider imple
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
 
                     final PageMeta pageMeta = loadPageMetaByConcreteFactory(url);
                     if (pageMeta != null) {
@@ -83,6 +82,7 @@ public class BrokerPublicationProvider extends AbstractPublicationProvider imple
 
                     cacheElement.setPayload(result);
                     cacheProvider.storeInItemCache(key, cacheElement);
+                    cacheElement.setExpired(false);
                     LOG.debug("Stored Publication Id with key: {} in cache", key);
                 } else {
                     LOG.debug("Fetched a Publication Id with key: {} from cache", key);
@@ -108,7 +108,6 @@ public class BrokerPublicationProvider extends AbstractPublicationProvider imple
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
 
                     final BinaryMeta binaryMeta = loadBinaryMetaByConcreteFactory(fullUrl);
                     if (binaryMeta != null) {
@@ -120,6 +119,7 @@ public class BrokerPublicationProvider extends AbstractPublicationProvider imple
 
                     cacheElement.setPayload(result);
                     cacheProvider.storeInItemCache(key, cacheElement);
+                    cacheElement.setExpired(false);
                     LOG.debug("Stored Publication Id with key: {} in cache", key);
                 } else {
                     LOG.debug("Fetched a Publication Id with key: {} from cache", key);

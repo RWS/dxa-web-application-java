@@ -9,3 +9,5 @@ cd_licenses.xml
 .metadata/
 temp/
 .gradle
+build/
+logs/

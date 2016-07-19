@@ -1,13 +1,13 @@
 package com.sdl.webapp.common.markup.html;
 
 import com.google.common.collect.ImmutableList;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
 import java.util.List;
-import java.util.Objects;
 
-/**
- * <p>HtmlElement class.</p>
- */
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public final class HtmlElement extends HtmlNode {
 
     private final HtmlStartTag startTag;
@@ -31,33 +31,6 @@ public final class HtmlElement extends HtmlNode {
     }
 
     /**
-     * <p>Getter for the field <code>startTag</code>.</p>
-     *
-     * @return a {@link com.sdl.webapp.common.markup.html.HtmlStartTag} object.
-     */
-    public HtmlStartTag getStartTag() {
-        return startTag;
-    }
-
-    /**
-     * <p>Getter for the field <code>endTag</code>.</p>
-     *
-     * @return a {@link com.sdl.webapp.common.markup.html.HtmlEndTag} object.
-     */
-    public HtmlEndTag getEndTag() {
-        return endTag;
-    }
-
-    /**
-     * <p>Getter for the field <code>content</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    public List<HtmlNode> getContent() {
-        return content;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -70,22 +43,5 @@ public final class HtmlElement extends HtmlNode {
             sb.append(endTag.toHtml());
         }
         return sb.toString();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        HtmlElement that = (HtmlElement) o;
-        return Objects.equals(startTag, that.startTag) &&
-                Objects.equals(content, that.content) &&
-                Objects.equals(endTag, that.endTag);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(startTag, content, endTag);
     }
 }

@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,22 +15,11 @@ import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 import java.io.IOException;
 
-/**
- * <p>RichTextTag class.</p>
- */
+@Setter
 public class RichTextTag extends AbstractMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(RichTextTag.class);
 
     private RichText content;
-
-    /**
-     * <p>Setter for the field <code>content</code>.</p>
-     *
-     * @param content a {@link com.sdl.webapp.common.api.model.RichText} object.
-     */
-    public void setContent(RichText content) {
-        this.content = content;
-    }
 
     /**
      * {@inheritDoc}

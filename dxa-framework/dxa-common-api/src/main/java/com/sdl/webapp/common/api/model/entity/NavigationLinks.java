@@ -1,12 +1,13 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
-/**
- * <p>NavigationLinks class.</p>
- */
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class NavigationLinks extends AbstractEntityModel {
 
     @JsonProperty("Items")
@@ -25,33 +26,5 @@ public class NavigationLinks extends AbstractEntityModel {
      */
     public NavigationLinks(List<Link> items) {
         this.items = items;
-    }
-
-    /**
-     * <p>Getter for the field <code>items</code>.</p>
-     *
-     * @return a {@link java.util.List} object.
-     */
-    public List<Link> getItems() {
-        return items;
-    }
-
-    /**
-     * <p>Setter for the field <code>items</code>.</p>
-     *
-     * @param items a {@link java.util.List} object.
-     */
-    public void setItems(List<Link> items) {
-        this.items = items;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return "NavigationLinks{" +
-                "items=" + items +
-                '}';
     }
 }

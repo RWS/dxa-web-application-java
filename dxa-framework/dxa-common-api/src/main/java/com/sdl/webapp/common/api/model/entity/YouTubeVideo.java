@@ -22,9 +22,6 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.img;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.span;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-/**
- * <p>YouTubeVideo class.</p>
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @SemanticEntity(entityName = "VideoObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)

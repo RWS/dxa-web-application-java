@@ -6,34 +6,15 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
+import lombok.Setter;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-/**
- * <p>LinkTag class.</p>
- */
+@Setter
 public class LinkTag extends HtmlElementTag {
 
     private Link link;
 
     private String cssClass;
-
-    /**
-     * <p>Setter for the field <code>link</code>.</p>
-     *
-     * @param link a {@link com.sdl.webapp.common.api.model.entity.Link} object.
-     */
-    public void setLink(Link link) {
-        this.link = link;
-    }
-
-    /**
-     * <p>Setter for the field <code>cssClass</code>.</p>
-     *
-     * @param cssClass a {@link java.lang.String} object.
-     */
-    public void setCssClass(String cssClass) {
-        this.cssClass = cssClass;
-    }
 
     /**
      * {@inheritDoc}

@@ -1,14 +1,17 @@
 package com.sdl.webapp.common.api.mapping.semantic.annotations;
 
 import com.google.common.base.Strings;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * <p>SemanticPropertyInfo class.</p>
- */
+@Getter
+@ToString
+@EqualsAndHashCode
 public final class SemanticPropertyInfo {
 
     private final String prefix;
@@ -61,50 +64,5 @@ public final class SemanticPropertyInfo {
         }
 
         return propertyName;
-    }
-
-    /**
-     * <p>Getter for the field <code>prefix</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getPrefix() {
-        return prefix;
-    }
-
-    /**
-     * <p>Getter for the field <code>propertyName</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getPropertyName() {
-        return propertyName;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        SemanticPropertyInfo that = (SemanticPropertyInfo) o;
-        return Objects.equals(prefix, that.prefix) &&
-                Objects.equals(propertyName, that.propertyName);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(prefix, propertyName);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "SemanticPropertyInfo{" +
-                "prefix='" + prefix + '\'' +
-                ", propertyName='" + propertyName + '\'' +
-                '}';
     }
 }

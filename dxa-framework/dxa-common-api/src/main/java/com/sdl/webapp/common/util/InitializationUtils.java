@@ -3,10 +3,10 @@ package com.sdl.webapp.common.util;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.input.BOMInputStream;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
@@ -56,7 +56,7 @@ public final class InitializationUtils {
             Properties dxaProperties = new Properties();
             for (Resource resource : getAllResources()) {
                 // order is guaranteed by #getAllResources() and internal usage of List
-                PropertiesLoaderUtils.fillProperties(dxaProperties, resource);
+                dxaProperties.load(new BOMInputStream(resource.getInputStream()));
                 log.debug("Properties from {} are loaded", resource);
             }
 

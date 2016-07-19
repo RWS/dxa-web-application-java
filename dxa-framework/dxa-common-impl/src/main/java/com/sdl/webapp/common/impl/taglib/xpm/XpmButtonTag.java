@@ -5,25 +5,15 @@ import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.markup.html.HtmlMultiNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
+import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * <p>XpmButtonTag class.</p>
- */
+@Setter
 public class XpmButtonTag extends XpmMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(XpmButtonTag.class);
 
     private RegionModel region;
-
-    /**
-     * <p>Setter for the field <code>region</code>.</p>
-     *
-     * @param region a {@link com.sdl.webapp.common.api.model.RegionModel} object.
-     */
-    public void setRegion(RegionModel region) {
-        this.region = region;
-    }
 
     private boolean isInclude() {
         return this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY) == null;

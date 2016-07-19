@@ -1,12 +1,12 @@
 package com.sdl.webapp.common.markup.html;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.springframework.web.util.HtmlUtils;
 
 import java.util.Objects;
 
-/**
- * <p>HtmlTextNode class.</p>
- */
+@EqualsAndHashCode(callSuper = false)
 public final class HtmlTextNode extends HtmlNode {
 
     private final String text;
@@ -41,19 +41,4 @@ public final class HtmlTextNode extends HtmlNode {
         return escape ? HtmlUtils.htmlEscape(text) : text;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        HtmlTextNode that = (HtmlTextNode) o;
-        return Objects.equals(escape, that.escape) &&
-                Objects.equals(text, that.text);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(text, escape);
-    }
 }

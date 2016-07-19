@@ -10,9 +10,6 @@ import lombok.EqualsAndHashCode;
 
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.span;
 
-/**
- * <p>ViewNotFoundEntityError class.</p>
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class ViewNotFoundEntityError extends AbstractEntityModel {

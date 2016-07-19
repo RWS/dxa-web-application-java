@@ -9,9 +9,7 @@ import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Node;
 
@@ -19,18 +17,14 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.img;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-/**
- * <p>Image class.</p>
- */
 @SemanticEntity(entityName = "ImageObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
-@ToString
 @Slf4j
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class Image extends MediaItem {
 
     @SemanticProperty("s:name")
     @JsonProperty("AlternateText")
-    @Getter
-    @Setter
     private String alternateText;
 
     /**

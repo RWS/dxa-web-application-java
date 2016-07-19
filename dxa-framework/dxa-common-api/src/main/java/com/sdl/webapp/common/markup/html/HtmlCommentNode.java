@@ -1,10 +1,10 @@
 package com.sdl.webapp.common.markup.html;
 
-import java.util.Objects;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
-/**
- * <p>HtmlCommentNode class.</p>
- */
+@Getter
+@EqualsAndHashCode(callSuper = false)
 public final class HtmlCommentNode extends HtmlNode {
 
     private final String text;
@@ -19,15 +19,6 @@ public final class HtmlCommentNode extends HtmlNode {
     }
 
     /**
-     * <p>Getter for the field <code>text</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getText() {
-        return text;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -35,20 +26,4 @@ public final class HtmlCommentNode extends HtmlNode {
         return "<!-- " + text.replaceAll("<!--", "").replaceAll("-->", "") + " -->";
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        HtmlCommentNode that = (HtmlCommentNode) o;
-        return Objects.equals(text, that.text);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return Objects.hash(text);
-    }
 }

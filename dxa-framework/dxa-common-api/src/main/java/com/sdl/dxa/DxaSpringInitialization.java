@@ -18,7 +18,6 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
@@ -26,7 +25,6 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
-import java.util.Collection;
 import java.util.Locale;
 
 import static com.sdl.webapp.common.util.InitializationUtils.loadDxaProperties;
@@ -55,12 +53,8 @@ public class DxaSpringInitialization {
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-
-        Collection<Resource> resources = InitializationUtils.getAllResources();
-        configurer.setLocations(resources.toArray(new Resource[resources.size()]));
-
+        configurer.setProperties(InitializationUtils.loadDxaProperties());
         traceBeanInitialization(configurer);
-
         return configurer;
     }
 

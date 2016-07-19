@@ -9,6 +9,8 @@ import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -22,10 +24,9 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.small;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-/**
- * <p>Download class.</p>
- */
 @SemanticEntity(entityName = "DataDownload", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
+@Data
+@EqualsAndHashCode(callSuper = true)
 public class Download extends MediaItem {
 
     private static final Logger LOG = LoggerFactory.getLogger(Download.class);
@@ -36,24 +37,6 @@ public class Download extends MediaItem {
     })
     @JsonProperty("Description")
     private String description;
-
-    /**
-     * <p>Getter for the field <code>description</code>.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    public String getDescription() {
-        return description;
-    }
-
-    /**
-     * <p>Setter for the field <code>description</code>.</p>
-     *
-     * @param description a {@link java.lang.String} object.
-     */
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     /**
      * {@inheritDoc}

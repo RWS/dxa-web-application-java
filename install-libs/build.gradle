@@ -1,0 +1,102 @@
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+defaultTasks 'help'
+
+def isWindows = org.gradle.internal.os.OperatingSystem.current().windows
+def thisScript = "gradlew${isWindows ? '.bat' : ''}" as Object
+
+//noinspection GroovyAssignabilityCheck
+def path = { rest -> "${isWindows ? 'C:' : ''}${File.separator}${rest}" }
+
+def artifacts = [
+        [groupId: 'com.tridion', artifactId: 'cd_ambient', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_ambient.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_broker', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_broker.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_cache', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_cache.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_core', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_core.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_datalayer', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_datalayer.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_deployer', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/deployer/java/lib/cd_deployer.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_dynamic', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_dynamic.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_linking', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_linking.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_model', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_model.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_odata', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_odata.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_odata_types', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_odata_types.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_preview_ambient', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_preview_ambient.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_preview_web', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_preview_web.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_preview_webservice', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/webservice/java/lib/cd_preview_webservice.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_session', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_session.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_tcdl', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_tcdl.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_upload', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_upload.jar'],
+        [groupId: 'com.tridion', artifactId: 'cd_wrapper', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_wrapper.jar'],
+        [groupId: 'com.tridion', artifactId: 'cwd_cartridge', version: '7.1.2', relativePath: '%cd%/Context Engine Cartridge/java/lib/cwd_cartridge.jar'],
+        [groupId: 'com.tridion', artifactId: 'cwd_engine', version: '7.1.2', relativePath: '%cd%/Context Engine Cartridge/java/lib/cwd_engine.jar'],
+
+        [groupId: 'com.tridion', artifactId: 'cwd_image', version: '7.1.2', relativePath: '%cwd%/cwd_image_distribution/target/cwd_image_distribution/java/lib/cwd_image.jar'],
+        [groupId: 'com.tridion', artifactId: 'cwd_resource', version: '7.1.2', relativePath: '%cwd%/cwd_image_distribution/target/cwd_image_distribution/java/lib/cwd_resource.jar'],
+
+        [groupId: 'com.tridion.smarttarget', artifactId: 'session_cartridge', version: '2014sp1', relativePath: '%st%/target/cd-layout/Ambient Data Framework/cartridges/session_cartridge.jar'],
+        [groupId: 'com.tridion.smarttarget', artifactId: 'smarttarget_cartridge', version: '2014sp1', relativePath: '%st%/target/cd-layout/Ambient Data Framework/cartridges/smarttarget_cartridge.jar'],
+        [groupId: 'com.tridion.smarttarget', artifactId: 'smarttarget_core', version: '2014sp1', relativePath: '%st%/target/cd-layout/Content Delivery/java/lib/smarttarget_core.jar'],
+        [groupId: 'com.tridion.smarttarget', artifactId: 'smarttarget_entitymodel', version: '2014sp1', relativePath: '%st%/target/cd-layout/Content Delivery/java/lib/smarttarget_entitymodel.jar'],
+        [groupId: 'com.tridion.smarttarget', artifactId: 'smarttarget_google-analytics', version: '2014sp1', relativePath: '%st%/target/cd-layout/Google Analytics provider/lib/smarttarget_google-analytics.jar']
+]
+
+task help << {
+    println """
+    Install Tridion Content Delivery 2013SP1 libraries into the local Maven repository.
+
+    Usage: run the script with with a task 'install' and provide a parameter with a folder with optional CD, CWD, SmartTarget layouts.
+    All are optional.
+    Examples:
+        ${thisScript} install -Pcd="${path('Tridion')}"
+        ${thisScript} install -Pcwd="${path('CWD')}" -Pst="${path('SmartTarget')}"
+        ${thisScript} install -Pcd="${path('Tridion')}" -Pcwd="${path('CWD')}" -Pst="${path('SmartTarget')}"
+    """
+}
+
+task install << {
+    artifacts.each {
+        println '-------------------------'
+        println "Processing ${it.groupId}:${it.artifactId}:${it.version}, ${it.relativePath}"
+
+        def matcher = it.relativePath =~ /^%(.+)%(.*)/
+        if (!it.relativePath.contains(it.artifactId) || !matcher.matches()) {
+            throw new IllegalStateException("Seems that configuration is wrong. ${it.artifactId} expected to be contained in a path ${it.relativePath}")
+        }
+
+        if (!project.hasProperty(matcher.group(1))) {
+            println "Layout for this artifact is not set. Parameter name: ${matcher.group(1)}, command: ${thisScript} install -P${matcher.group(1)}=\"${path('PATH')}\""
+            return
+        }
+        //noinspection GroovyAssignabilityCheck
+        it.path = project[matcher.group(1)].replaceAll(/[\\\/]?$/, '') + matcher.group(2)
+
+        def file = new File(it.path)
+        println "Check if file exists: ${file.absolutePath}"
+        if (!file.exists()) {
+            println "= INFO: Artifact is expected: ${it.groupId}:${it.artifactId}:${it.version} at ${it.relativePath}. " +
+                    "Ignore this if you are sure you don't need this artifact"
+            return
+        }
+
+        def command = "${isWindows ? 'cmd /c' : ''} mvn -q install:install-file " +
+                "-DgroupId=${it.groupId} -DartifactId=${it.artifactId} -Dversion=${it.version} -Dpackaging=jar " +
+                "-Dfile=\"${file.absolutePath}\""
+        def execute = command.execute()
+        execute.in.eachLine { println it }
+        if (execute.exitValue()) {
+            throw new RuntimeException("= FAILED: ${command}")
+        }
+        println "= SUCCESS: ${command}}"
+    }
+}
+
+task list << {
+    println "List of artifacts"
+    println "-----------------"
+    artifacts.each {
+        println " - `${it.groupId} : ${it.artifactId} : ${it.version}`"
+    }
+}

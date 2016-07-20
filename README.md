@@ -66,6 +66,41 @@ Furthermore, Pull Requests on release branches are expected to be extensively te
 Of course, it's also possible (and appreciated) to report an Issue without associated Pull Requests.
 
 
+Prerequisites
+-------------
+For SDL Tridion 2013 SP1, you need these artifacts (`groudId : artifactId : version`) to be installed into your Maven repository:
+ - `com.tridion : cd_ambient : 7.1.0`
+ - `com.tridion : cd_broker : 7.1.0`
+ - `com.tridion : cd_cache : 7.1.0`
+ - `com.tridion : cd_core : 7.1.0`
+ - `com.tridion : cd_datalayer : 7.1.0`
+ - `com.tridion : cd_deployer : 7.1.0`
+ - `com.tridion : cd_dynamic : 7.1.0`
+ - `com.tridion : cd_linking : 7.1.0`
+ - `com.tridion : cd_model : 7.1.0`
+ - `com.tridion : cd_odata : 7.1.0`
+ - `com.tridion : cd_odata_types : 7.1.0`
+ - `com.tridion : cd_preview_ambient : 7.1.0`
+ - `com.tridion : cd_preview_web : 7.1.0`
+ - `com.tridion : cd_preview_webservice : 7.1.0`
+ - `com.tridion : cd_session : 7.1.0`
+ - `com.tridion : cd_tcdl : 7.1.0`
+ - `com.tridion : cd_upload : 7.1.0`
+ - `com.tridion : cd_wrapper : 7.1.0`
+ - `com.tridion : cwd_cartridge : 7.1.2`
+ - `com.tridion : cwd_engine : 7.1.2`
+ - `com.tridion : cwd_image : 7.1.2`
+ - `com.tridion : cwd_resource : 7.1.2`
+
+To use SmartTarget module you also need
+ - `com.tridion.smarttarget : session_cartridge : 2014sp1`
+ - `com.tridion.smarttarget : smarttarget_cartridge : 2014sp1`
+ - `com.tridion.smarttarget : smarttarget_core : 2014sp1`
+ - `com.tridion.smarttarget : smarttarget_entitymodel : 2014sp1`
+ - `com.tridion.smarttarget : smarttarget_google-analytics : 2014sp1`
+
+To ease the installation you can use the latest [`/install-libs/`](https://github.com/sdl/dxa-web-application-java/install-libs/). For help, run `install`.
+
 License
 -------
 Copyright (c) 2014-2016 SDL Group.

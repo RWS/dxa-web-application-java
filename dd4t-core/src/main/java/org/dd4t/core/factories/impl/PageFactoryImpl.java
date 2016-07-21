@@ -70,7 +70,6 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
                     String pageSource;
                     ProviderResultItem<String> resultItem;
                     TCMURI tcmUri;
@@ -87,6 +86,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
                     if (StringUtils.isEmpty(pageSource)) {
                         cacheElement.setPayload(null);
                         cacheProvider.storeInItemCache(uri, cacheElement);
+                        cacheElement.setExpired(true);
                         throw new ItemNotFoundException("Unable to find page by id " + uri);
                     }
 
@@ -100,6 +100,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
                     cacheElement.setPayload(page);
 
                     cacheProvider.storeInItemCache(uri, cacheElement, tcmUri.getPublicationId(), tcmUri.getItemId());
+                    cacheElement.setExpired(false);
                     LOG.debug("Added page with uri: {} to cache", uri);
 
                 } else {
@@ -133,7 +134,6 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired() || cacheElement.getPayload() == null) {
-                    cacheElement.setExpired(false);
                     String pageSource;
                     ProviderResultItem<String> resultItem;
                     resultItem = pageProvider.getPageByURL(url, publicationId);
@@ -141,8 +141,8 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
                     if (StringUtils.isEmpty(pageSource)) {
                         cacheElement.setPayload(null);
-                        cacheElement.setExpired(true);
                         cacheProvider.storeInItemCache(cacheKey, cacheElement);
+                        cacheElement.setExpired(true);
                         throw new ItemNotFoundException("Page with url: " + url + " not found.");
                     }
 
@@ -158,6 +158,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
                         this.executeProcessors(page, RunPhase.BEFORE_CACHING, getRequestContext());
                         cacheElement.setPayload(page);
                         cacheProvider.storeInItemCache(cacheKey, cacheElement, publicationId, tcmUri.getItemId());
+                        cacheElement.setExpired(false);
 
                         LOG.debug("Added page with uri: {} and publicationId: {} to cache", url, publicationId);
                     } catch (ParseException e) {
@@ -212,18 +213,18 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
                     page = pageProvider.getPageContentByURL(url, publicationId);
 
                     if (page == null || page.length() == 0) {
                         cacheElement.setPayload(null);
-                        cacheElement.setExpired(true);
                         cacheProvider.storeInItemCache(cacheKey, cacheElement);
+                        cacheElement.setExpired(true);
                         throw new ItemNotFoundException("XML Page with url: " + url + " not found.");
                     }
 
                     cacheElement.setPayload(page);
                     cacheProvider.storeInItemCache(cacheKey, cacheElement);
+                    cacheElement.setExpired(false);
 
                     LOG.debug("Added XML page with uri: {} and publicationId: {} to cache", url, publicationId);
                 } else {
@@ -263,7 +264,6 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
 
                     try {
                         pageSource = pageProvider.getPageContentById(tcmId);
@@ -274,13 +274,14 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
                     if (StringUtils.isEmpty(pageSource)) {
                         cacheElement.setPayload(null);
-                        cacheElement.setExpired(true);
                         cacheProvider.storeInItemCache(cacheKey, cacheElement);
+                        cacheElement.setExpired(true);
                         throw new ItemNotFoundException("Unable to find page by id " + tcmId);
                     }
 
                     cacheElement.setPayload(pageSource);
                     cacheProvider.storeInItemCache(cacheKey, cacheElement);
+                    cacheElement.setExpired(false);
                 } else {
                     LOG.debug("Return a page with uri: {} from cache", tcmId);
                     pageSource = cacheElement.getPayload();

@@ -91,9 +91,9 @@ public abstract class AbstractPublicationProvider extends BaseBrokerProvider imp
 
                     publicationMeta = loadPublicationMetaByConcreteFactory(publicationId);
                     if (publicationMeta != null) {
-                        cacheElement.setExpired(false);
                         cacheElement.setPayload(publicationMeta);
                         cacheProvider.storeInItemCache(key, cacheElement);
+                        cacheElement.setExpired(false);
                         LOG.debug("Stored Publication Meta with key: {} in cache", key);
                     } else {
                         LOG.warn("No Publication Meta found for publication Id: {}", publicationId);

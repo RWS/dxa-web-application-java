@@ -94,15 +94,14 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
 
-                    cacheElement.setExpired(false);
                     String rawComponentPresentation;
                     rawComponentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
 
                     if (rawComponentPresentation == null) {
 
                         cacheElement.setPayload(null);
-                        cacheElement.setExpired(true);
                         cacheProvider.storeInItemCache(key, cacheElement);
+                        cacheElement.setExpired(true);
                         throw new ItemNotFoundException(String.format("Could not find DCP with componentURI: %s and templateURI: %s", componentURI, templateURI));
                     }
 
@@ -114,6 +113,7 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
                     this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING, getRequestContext());
                     cacheElement.setPayload(componentPresentation);
                     cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);
+                    cacheElement.setExpired(false);
                     LOG.debug("Added component with uri: {} and template: {} to cache", componentURI, templateURI);
 
                 } else {

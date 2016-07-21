@@ -236,7 +236,6 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
-                    cacheElement.setExpired(false);
                     final PublicationCriteria publicationCriteria = new PublicationCriteria(publicationId);
                     final PageURLCriteria pageURLCriteria = new PageURLCriteria(url);
 
@@ -251,10 +250,12 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
                             TCMURI tcmuri = new TCMURI(results[0]);
                             cacheElement.setPayload(result);
                             cacheProvider.storeInItemCache(key, cacheElement, tcmuri.getPublicationId(), tcmuri.getItemId());
+                            cacheElement.setExpired(false);
                         } else {
                             result = 0;
                             cacheElement.setPayload(result);
                             cacheProvider.storeInItemCache(key, cacheElement);
+                            cacheElement.setExpired(false);
                         }
                     } catch (StorageException | ParseException e) {
                         LOG.error(e.getLocalizedMessage(), e);

@@ -96,7 +96,7 @@ To use SmartTarget module you also need
  - `com.tridion.smarttarget : smarttarget_entitymodel : 2014sp1`
  - `com.tridion.smarttarget : smarttarget_google-analytics : 2014sp1`
 
-To ease the installation you can use the latest [`/install-libs/`](https://github.com/sdl/dxa-web-application-java/install-libs/). For help, run `install`.
+To ease the installation you can use the latest [`/install-libs/`](https://github.com/sdl/dxa-web-application-java/tree/develop/install-libs). For help, run `install`.
 
 License
 -------

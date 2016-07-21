@@ -27,9 +27,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @SemanticEntity(entityName = "VideoObject", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 public class YouTubeVideo extends MediaItem {
 
-    private static final int DEFAULT_WIDTH = 640;
-    private static final int DEFAULT_HEIGHT = 390;
-
     @JsonProperty("Headline")
     private String headline;
 
@@ -37,26 +34,11 @@ public class YouTubeVideo extends MediaItem {
     private String youTubeId;
 
     @JsonProperty("Width")
-    private int width = DEFAULT_WIDTH;
+    private int width = 640;
 
     @JsonProperty("Height")
-    private int height = DEFAULT_HEIGHT;
+    private int height = 390;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void readFromXhtmlElement(Node xhtmlElement) {
-        super.readFromXhtmlElement(xhtmlElement);
-        this.setYouTubeId(xhtmlElement.getAttributes().getNamedItem("data-youTubeId").getNodeValue());
-        this.setHeadline(xhtmlElement.getAttributes().getNamedItem("data-headline").getNodeValue());
-
-        this.setMvcData(getMvcData());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public MvcData getMvcData() {
         return MvcDataCreator.creator()
@@ -65,24 +47,30 @@ public class YouTubeVideo extends MediaItem {
                 .create();
     }
 
-    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor) throws DxaException {
         return toHtmlElement(widthFactor, 0, "", 0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) {
         return toHtmlElement(widthFactor, aspect, cssClass, containerSize, "");
     }
 
-    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
         return isEmpty(getUrl()) ?
                 getYouTubeEmbed(cssClass) :
                 getYouTubePlaceholder(widthFactor, aspect, cssClass, containerSize, contextPath);
+    }
+
+    @Override
+    public void readFromXhtmlElement(Node xhtmlElement) {
+        super.readFromXhtmlElement(xhtmlElement);
+        this.setYouTubeId(xhtmlElement.getAttributes().getNamedItem("data-youTubeId").getNodeValue());
+        this.setHeadline(xhtmlElement.getAttributes().getNamedItem("data-headline").getNodeValue());
+
+        this.setMvcData(getMvcData());
     }
 
     private HtmlElement getYouTubePlaceholder(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) {
@@ -115,6 +103,4 @@ public class YouTubeVideo extends MediaItem {
                 .withClass(cssClass)
                 .build();
     }
-
-
 }

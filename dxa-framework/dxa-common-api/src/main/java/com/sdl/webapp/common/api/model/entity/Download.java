@@ -11,8 +11,7 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Node;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG;
@@ -27,9 +26,8 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @SemanticEntity(entityName = "DataDownload", vocabulary = SCHEMA_ORG, prefix = "s", public_ = true)
 @Data
 @EqualsAndHashCode(callSuper = true)
+@Slf4j
 public class Download extends MediaItem {
-
-    private static final Logger LOG = LoggerFactory.getLogger(Download.class);
 
     @SemanticProperties({
             @SemanticProperty("s:name"),
@@ -38,27 +36,20 @@ public class Download extends MediaItem {
     @JsonProperty("Description")
     private String description;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HtmlElement toHtmlElement(String widthFactor) throws DxaException {
         return toHtmlElement(widthFactor, 0, "", 0);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException {
         return toHtmlElement(widthFactor, aspect, cssClass, containerSize, "");
     }
 
-    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException {
         if (isEmpty(getUrl())) {
-            LOG.warn("Skipping download with empty URL: {}", this);
+            log.warn("Skipping download with empty URL: {}", this);
             throw new DxaException("URL is null for download component: " + this);
         }
 
@@ -77,14 +68,12 @@ public class Download extends MediaItem {
                 ).build();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void readFromXhtmlElement(Node xhtmlElement) {
         super.readFromXhtmlElement(xhtmlElement);
         this.setMvcData(getMvcData());
     }
 
-    /** {@inheritDoc} */
     @Override
     public MvcData getMvcData() {
         return MvcDataCreator.creator()

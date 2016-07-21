@@ -9,7 +9,8 @@ import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Node;
 
@@ -27,30 +28,22 @@ public class Image extends MediaItem {
     @JsonProperty("AlternateText")
     private String alternateText;
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     @JsonIgnore
     public boolean isImage() {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public HtmlElement toHtmlElement(String widthFactor) throws DxaException {
         return this.toHtmlElement(widthFactor, 0, "", 0);
     }
 
-    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize) throws DxaException {
         return toHtmlElement(widthFactor, aspect, cssClass, containerSize, "");
     }
 
-    /** {@inheritDoc} */
     @Override
     public HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException {
         if (isEmpty(getUrl())) {
@@ -66,7 +59,6 @@ public class Image extends MediaItem {
                 .build();
     }
 
-    /** {@inheritDoc} */
     @Override
     public void readFromXhtmlElement(Node xhtmlElement) {
         super.readFromXhtmlElement(xhtmlElement);
@@ -75,7 +67,6 @@ public class Image extends MediaItem {
         this.setMvcData(getMvcData());
     }
 
-    /** {@inheritDoc} */
     @Override
     public MvcData getMvcData() {
         return MvcDataCreator.creator()

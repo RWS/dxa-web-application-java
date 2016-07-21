@@ -21,9 +21,6 @@ import org.w3c.dom.Node;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG;
 
-/**
- * <p>Abstract MediaItem class.</p>
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j
@@ -83,11 +80,6 @@ public abstract class MediaItem extends AbstractEntityModel {
         return node != null ? node.getNodeValue() : null;
     }
 
-    /**
-     * <p>Getter for the field <code>mediaHelper</code>.</p>
-     *
-     * @return a {@link com.sdl.webapp.common.api.MediaHelper} object.
-     */
     protected MediaHelper getMediaHelper() {
         if (this.mediaHelper == null) {
             this.mediaHelper = ApplicationContextHolder.getContext().getBean(MediaHelper.MediaHelperFactory.class)
@@ -97,32 +89,17 @@ public abstract class MediaItem extends AbstractEntityModel {
         return this.mediaHelper;
     }
 
-    /**
-     * <p>isImage.</p>
-     *
-     * @return a boolean.
-     */
     @JsonIgnore
     public boolean isImage() {
         return false;
     }
 
-    /**
-     * <p>getIconClass.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     @JsonIgnore
     public String getIconClass() {
         String fileType = MIME_TYPE_TO_ICON_CLASS_MAPPING.get(this.getMimeType());
         return fileType != null ? String.format("fa-file-%s-o", fileType) : "fa-file";
     }
 
-    /**
-     * <p>getFriendlyFileSize.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     @JsonIgnore
     public String getFriendlyFileSize() {
         String[] sizes = {"B", "KB", "MB", "GB", "TB", "PB", "EB"};
@@ -178,11 +155,6 @@ public abstract class MediaItem extends AbstractEntityModel {
      */
     public abstract HtmlElement toHtmlElement(String widthFactor, double aspect, String cssClass, int containerSize, String contextPath) throws DxaException;
 
-    /**
-     * Read properties from XHTML element.
-     *
-     * @param xhtmlElement a {@link org.w3c.dom.Node} object.
-     */
     public void readFromXhtmlElement(Node xhtmlElement) {
         // Return the Item (Reference) ID part of the TCM URI.
         String id = getNodeAttribute(xhtmlElement, "xlink:href");

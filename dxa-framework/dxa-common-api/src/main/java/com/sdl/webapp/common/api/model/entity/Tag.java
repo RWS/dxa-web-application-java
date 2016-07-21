@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * Used for mapping Keyword fields.
+ */
 @Data
-@EqualsAndHashCode()
+@EqualsAndHashCode
 public class Tag {
 
     @JsonProperty("DisplayText")

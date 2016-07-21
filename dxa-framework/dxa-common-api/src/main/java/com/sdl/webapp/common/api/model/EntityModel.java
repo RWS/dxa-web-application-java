@@ -5,13 +5,13 @@ import java.util.Map;
 /**
  * EntityModel interface represents an entity.
  * <p>It is important to know about single/plural ending convention for fields mapping.
- * <a href="http://schema.org/">Schema.org</a> & CM say that a single element even if we have a list of those,
+ * <a href="http://schema.org/">Schema.org</a> &amp; CM say that a single element even if we have a list of those,
  * because CM operates with the whole collection as with single entities.
  * So if we actually have multiple elements it was decided to call the field in plural in DXA.</p>
- * <code>
- *     // is mapped to 'element' in singular form<br/>
+ * <pre><code>
+ *     // is mapped to 'element' in singular form
  *     private List&lt;String&gt; elements;
- * </code>
+ * </code></pre>
  */
 public interface EntityModel extends ViewModel {
 

@@ -5,6 +5,7 @@ import lombok.Getter;
 import java.util.StringTokenizer;
 
 @Getter
+@Deprecated
 public class EclUrl {
 
     private int publicationId;

@@ -1,5 +1,7 @@
 package com.sdl.webapp.common.api.formatters;
 
+import com.sdl.dxa.modules.core.model.entity.ContentList;
+import com.sdl.dxa.modules.core.model.entity.Teaser;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
@@ -8,9 +10,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RichText;
-import com.sdl.webapp.common.api.model.entity.ContentList;
 import com.sdl.webapp.common.api.model.entity.Link;
-import com.sdl.webapp.common.api.model.entity.Teaser;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

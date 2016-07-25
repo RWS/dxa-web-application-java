@@ -8,9 +8,13 @@ import lombok.EqualsAndHashCode;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 
+/**
+ * @deprecated since 1.6
+ */
 @SemanticEntity(entityName = "NameValuePair", vocabulary = SDL_CORE, prefix = "nv")
 @Data
-@EqualsAndHashCode()
+@EqualsAndHashCode
+@Deprecated
 public class NameValuePair {
 
     @SemanticProperty("nv:name")

@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.formatters;
 
+import com.sdl.dxa.modules.core.model.entity.Teaser;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.model.entity.Teaser;
 
 import javax.servlet.http.HttpServletRequest;
 

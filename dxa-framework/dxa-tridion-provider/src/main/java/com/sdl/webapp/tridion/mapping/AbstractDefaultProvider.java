@@ -2,6 +2,8 @@ package com.sdl.webapp.tridion.mapping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Files;
+import com.sdl.dxa.modules.core.model.entity.ContentList;
+import com.sdl.dxa.modules.core.model.entity.Teaser;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -13,11 +15,9 @@ import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
-import com.sdl.webapp.common.api.model.entity.ContentList;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
-import com.sdl.webapp.common.api.model.entity.Teaser;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.ImageUtils;
@@ -319,29 +319,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         }
     }
 
-    private InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
-        return findPage(path, localization, new TryFindPage<InputStream>() {
-            @Override
-            public InputStream tryFindPage(String path, int publicationId) throws ContentProviderException {
-                final String pageContent;
-                try {
-                    synchronized (LOCK) {
-                        pageContent = dd4tPageFactory.findSourcePageByUrl(path, publicationId);
-                    }
-                } catch (ItemNotFoundException e) {
-                    LOG.debug("Page not found: [{}] {}", publicationId, path);
-                    return null;
-                } catch (FactoryException e) {
-                    throw new ContentProviderException("Exception while getting page content for: [" + publicationId +
-                            "] " + path, e);
-                }
-
-                // NOTE: This assumes page content is always in UTF-8 encoding
-                return new ByteArrayInputStream(pageContent.getBytes(StandardCharsets.UTF_8));
-            }
-        });
-    }
-
     /** {@inheritDoc} */
     @Override
     public void populateDynamicList(ContentList contentList, Localization localization) throws ContentProviderException {
@@ -424,6 +401,29 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         };
     }
 
+    private InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
+        return findPage(path, localization, new TryFindPage<InputStream>() {
+            @Override
+            public InputStream tryFindPage(String path, int publicationId) throws ContentProviderException {
+                final String pageContent;
+                try {
+                    synchronized (LOCK) {
+                        pageContent = dd4tPageFactory.findSourcePageByUrl(path, publicationId);
+                    }
+                } catch (ItemNotFoundException e) {
+                    LOG.debug("Page not found: [{}] {}", publicationId, path);
+                    return null;
+                } catch (FactoryException e) {
+                    throw new ContentProviderException("Exception while getting page content for: [" + publicationId +
+                            "] " + path, e);
+                }
+
+                // NOTE: This assumes page content is always in UTF-8 encoding
+                return new ByteArrayInputStream(pageContent.getBytes(StandardCharsets.UTF_8));
+            }
+        });
+    }
+
     /** {@inheritDoc} */
     @Override
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
@@ -434,16 +434,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         } catch (ContentProviderException | IOException e) {
             throw new NavigationProviderException("Exception while loading navigation model", e);
         }
-    }
-
-    private SitemapItem resolveLinks(SitemapItem sitemapItem, Localization localization) {
-        sitemapItem.setUrl(linkResolver.resolveLink(sitemapItem.getUrl(), localization.getId()));
-
-        for (SitemapItem subItem : sitemapItem.getItems()) {
-            resolveLinks(subItem, localization);
-        }
-
-        return sitemapItem;
     }
 
     /** {@inheritDoc} */
@@ -477,6 +467,16 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         createBreadcrumbLinks(navigationModel, requestPath, links);
 
         return new NavigationLinks(links);
+    }
+
+    private SitemapItem resolveLinks(SitemapItem sitemapItem, Localization localization) {
+        sitemapItem.setUrl(linkResolver.resolveLink(sitemapItem.getUrl(), localization.getId()));
+
+        for (SitemapItem subItem : sitemapItem.getItems()) {
+            resolveLinks(subItem, localization);
+        }
+
+        return sitemapItem;
     }
 
     /**

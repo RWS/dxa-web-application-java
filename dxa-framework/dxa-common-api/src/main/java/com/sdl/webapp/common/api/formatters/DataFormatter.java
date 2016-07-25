@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.formatters;
 
-import com.sdl.webapp.common.api.model.entity.Teaser;
+import com.sdl.dxa.modules.core.model.entity.Teaser;
 
 import java.util.List;
 
@@ -48,7 +48,7 @@ public interface DataFormatter {
     /**
      * <p>getSyndicationItemFromTeaser.</p>
      *
-     * @param item a {@link com.sdl.webapp.common.api.model.entity.Teaser} object.
+     * @param item a {@link Teaser} object.
      * @return a {@link java.lang.Object} object.
      * @throws java.lang.Exception if any.
      */

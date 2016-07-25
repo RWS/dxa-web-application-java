@@ -2,7 +2,7 @@ package com.sdl.webapp.common.api.model.region;
 
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.entity.Article;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.xpm.ComponentType;
 import com.sdl.webapp.common.api.xpm.XpmRegion;
@@ -40,7 +40,7 @@ public class RegionModelImplTest {
     public void shouldAddEntity() throws Exception {
         //given
         RegionModelImpl model = new RegionModelImpl("name");
-        Article entity = new Article();
+        TestEntity entity = new TestEntity();
 
         //when
         model.addEntity(entity);
@@ -53,10 +53,10 @@ public class RegionModelImplTest {
     public void shouldGetEntity() throws Exception {
         //given
         RegionModelImpl model = new RegionModelImpl("name");
-        final Article article = new Article();
-        article.setId("123");
+        final TestEntity testEntity = new TestEntity();
+        testEntity.setId("123");
         model.setEntities(new ArrayList<EntityModel>() {{
-            add(article);
+            add(testEntity);
         }});
 
         //when
@@ -64,7 +64,7 @@ public class RegionModelImplTest {
         EntityModel result2 = model.getEntity("not exists");
 
         //then
-        assertEquals(article, result);
+        assertEquals(testEntity, result);
         assertNull(result2);
     }
 
@@ -135,9 +135,14 @@ public class RegionModelImplTest {
         assertEquals("value", regionModel.getExtensionData().get("key"));
     }
 
+    private static class TestEntity extends AbstractEntityModel {
+
+    }
+
     @Profile("test")
     @Configuration
     public static class SpringContext {
+
         @Bean
         public ApplicationContextHolder applicationContextHolder() {
             return new ApplicationContextHolder();

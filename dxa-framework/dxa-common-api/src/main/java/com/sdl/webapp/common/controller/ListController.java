@@ -1,12 +1,12 @@
 package com.sdl.webapp.common.controller;
 
 import com.google.common.base.Strings;
+import com.sdl.dxa.modules.core.model.entity.ContentList;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.ViewModel;
-import com.sdl.webapp.common.api.model.entity.ContentList;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import org.slf4j.Logger;

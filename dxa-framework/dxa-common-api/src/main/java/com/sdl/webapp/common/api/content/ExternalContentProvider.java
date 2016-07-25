@@ -10,7 +10,9 @@ import javax.servlet.http.HttpServletRequest;
  * Provider for external content provided through an ECL connector
  *
  * @author nic
+ * @deprecated since 1.6
  */
+@Deprecated
 public interface ExternalContentProvider {
 
     /**

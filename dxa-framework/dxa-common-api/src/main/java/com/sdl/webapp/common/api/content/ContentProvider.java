@@ -1,9 +1,9 @@
 package com.sdl.webapp.common.api.content;
 
+import com.sdl.dxa.modules.core.model.entity.ContentList;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
-import com.sdl.webapp.common.api.model.entity.ContentList;
 import com.sdl.webapp.common.exceptions.DxaException;
 
 /**

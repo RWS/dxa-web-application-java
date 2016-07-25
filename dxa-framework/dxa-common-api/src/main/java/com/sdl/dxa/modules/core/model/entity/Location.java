@@ -1,10 +1,11 @@
-package com.sdl.webapp.common.api.model.entity;
+package com.sdl.dxa.modules.core.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

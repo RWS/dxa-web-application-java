@@ -9,9 +9,13 @@ import java.util.Map;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 
+/**
+ * @deprecated since 1.6
+ */
 @SemanticEntity(entityName = "GenericWidget", vocabulary = SDL_CORE, prefix = "gw", public_ = true)
 @Data
 @EqualsAndHashCode(callSuper = true)
+@Deprecated
 public class GenericWidget extends AbstractEntityModel {
 
     @SemanticProperty("gw:parameters")

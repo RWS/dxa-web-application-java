@@ -79,6 +79,7 @@ public class DxaSpringInitialization {
                 if (!"desktop".equals(deviceFamily)) {
                     viewName = viewName + "." + deviceFamily;
                 }
+                log.debug("ViewName is changed to {} and current device family is {}", viewName, deviceFamily);
                 return super.resolveViewName(viewName, locale);
             }
         };

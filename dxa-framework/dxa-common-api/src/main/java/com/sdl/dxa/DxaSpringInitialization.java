@@ -50,6 +50,9 @@ public class DxaSpringInitialization {
     @Value("${dxa.web.views.suffix}")
     private String viewResolverSuffix;
 
+    @Value("${dxa.web.views.override.folder}")
+    private String viewResolverOverride;
+
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
@@ -59,7 +62,7 @@ public class DxaSpringInitialization {
     }
 
     @Bean
-    public ViewResolver viewResolver() {
+    public ViewResolver fallbackViewResolver() {
         InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
         viewResolver.setViewClass(JstlView.class);
         viewResolver.setPrefix(viewResolverPrefix);
@@ -69,18 +72,30 @@ public class DxaSpringInitialization {
     }
 
     @Bean
-    public ViewResolver deviceSpecificViewResolver() {
+    public ViewResolver dxaViewResolver() {
         UrlBasedViewResolver viewResolver = new UrlBasedViewResolver() {
 
             @Override
             public View resolveViewName(String viewName, Locale locale) throws Exception {
+                viewName = processDeviceFamily(viewName);
+
+                View overriddenView = super.resolveViewName(viewResolverOverride + "/" + viewName, locale);
+                if (null != overriddenView) {
+                    log.debug("Found overridden view for {}, using it", viewName);
+                    return overriddenView;
+                }
+
+                return super.resolveViewName(viewName, locale);
+            }
+
+            private String processDeviceFamily(String viewName) {
                 ContextEngine contextEngine = ApplicationContextHolder.getContext().getBean(ContextEngine.class);
                 String deviceFamily = contextEngine.getDeviceFamily();
                 if (!"desktop".equals(deviceFamily)) {
                     viewName = viewName + "." + deviceFamily;
+                    log.debug("ViewName is changed to {} and current device family is {}", viewName, deviceFamily);
                 }
-                log.debug("ViewName is changed to {} and current device family is {}", viewName, deviceFamily);
-                return super.resolveViewName(viewName, locale);
+                return viewName;
             }
         };
         viewResolver.setViewClass(OptionalJstlView.class);
@@ -134,7 +149,8 @@ public class DxaSpringInitialization {
 
         @Override
         public boolean checkResource(Locale locale) throws Exception {
-            return new ClassPathResource(loadDxaProperties().getProperty("dxa.web.views.folder") + this.getUrl()).exists();
+            return new ClassPathResource(loadDxaProperties().getProperty("dxa.web.views.folder") + this.getUrl()).exists()
+                    || new ClassPathResource(this.getUrl()).exists();
         }
     }
 }

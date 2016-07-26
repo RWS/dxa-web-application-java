@@ -3,6 +3,7 @@ package com.sdl.webapp.common.impl.mapping;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntities;
@@ -17,16 +18,21 @@ import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.util.PackageUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.ClassMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
+import org.springframework.core.type.filter.AssignableTypeFilter;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,14 +43,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-/**
- * <p>SemanticMappingRegistryImpl class.</p>
- */
+@Slf4j
+@Component
 public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
-    private static final Logger LOG = LoggerFactory.getLogger(SemanticMappingRegistryImpl.class);
 
     private final SetMultimap<Field, FieldSemantics> fieldSemanticsMap = LinkedHashMultimap.create();
+
     private final SetMultimap<Class<? extends EntityModel>, SemanticEntityInfo> semanticEntityInfo = LinkedHashMultimap.create();
+
     private final SetMultimap<Field, SemanticPropertyInfo> semanticPropertyInfo = LinkedHashMultimap.create();
 
     /**
@@ -52,18 +58,18 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
      *
      * @return list of class fields
      */
-    private static List<Field> getDeclaredFields(Class entityClass) {
+    private static List<Field> getDeclaredFields(Class<?> entityClass) {
 
-        boolean followInheritanceStructure = true;
-        if (entityClass.getAnnotation(SemanticEntity.class) == null) {
-            followInheritanceStructure = false;
-        }
+        boolean followInheritanceStructure = entityClass.getAnnotation(SemanticEntity.class) != null;
+
         List<Field> declaredFields = new ArrayList<>();
-        Class clazz = entityClass;
-        while (!clazz.equals(AbstractEntityModel.class) && !clazz.equals(Object.class)) {
-            Collections.addAll(declaredFields, clazz.getDeclaredFields());
-            if (!followInheritanceStructure) break;
-            clazz = clazz.getSuperclass();
+
+        while (!entityClass.equals(AbstractEntityModel.class) && !entityClass.equals(Object.class)) {
+            Collections.addAll(declaredFields, entityClass.getDeclaredFields());
+            if (!followInheritanceStructure) {
+                break;
+            }
+            entityClass = entityClass.getSuperclass();
         }
         return declaredFields;
     }
@@ -72,7 +78,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
      * Creates semantic entity information for an entity class from the semantic annotations on the class.
      *
      * @param entityClass The entity class.
-     * @return A map with {@code SemanticEntityInfo} objects by vocabulary prefix.
+     * @return A map with {@link SemanticEntityInfo} objects by vocabulary prefix.
      */
     private static Map<String, SemanticEntityInfo> createSemanticEntityInfo(Class<? extends EntityModel> entityClass) {
         // NOTE: LinkedHashMap because order of entries is important
@@ -81,21 +87,10 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         final SemanticEntities wrapper = entityClass.getAnnotation(SemanticEntities.class);
         if (wrapper != null) {
             for (SemanticEntity annotation : wrapper.value()) {
-                final SemanticEntityInfo entityInfo = new SemanticEntityInfo(annotation, entityClass);
-                final String prefix = entityInfo.getPrefix();
-                if (result.containsKey(prefix)) {
-                    throw new SemanticAnnotationException("The entity class " + entityClass.getName() +
-                            " has multiple @SemanticEntity annotations with the same prefix '" + prefix + "'.");
-                }
-
-                result.put(prefix, entityInfo);
+                addEntityInfo(annotation, result, entityClass);
             }
         } else {
-            final SemanticEntity annotation = entityClass.getAnnotation(SemanticEntity.class);
-            if (annotation != null) {
-                final SemanticEntityInfo entityInfo = new SemanticEntityInfo(annotation, entityClass);
-                result.put(entityInfo.getPrefix(), entityInfo);
-            }
+            addEntityInfo(entityClass.getAnnotation(SemanticEntity.class), result, entityClass);
         }
 
         // Add information for the default prefix if it was not specified explicitly
@@ -103,8 +98,20 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
             result.put(SemanticEntityInfo.DEFAULT_PREFIX, new SemanticEntityInfo(entityClass));
         }
 
-        LOG.trace("SemanticEntityInfo: {} -> {}", entityClass.getSimpleName(), result);
+        log.trace("SemanticEntityInfo: {} -> {}", entityClass.getSimpleName(), result);
         return result;
+    }
+
+    private static void addEntityInfo(SemanticEntity annotation, Map<String, SemanticEntityInfo> result, Class<? extends EntityModel> entityClass) {
+        if (annotation != null) {
+            final SemanticEntityInfo entityInfo = new SemanticEntityInfo(annotation, entityClass);
+            final String prefix = entityInfo.getPrefix();
+            if (result.containsKey(prefix)) {
+                throw new SemanticAnnotationException("The entity class " + entityClass.getName() +
+                        " has multiple @SemanticEntity annotations with the same prefix '" + prefix + "'.");
+            }
+            result.put(prefix, entityInfo);
+        }
     }
 
     /**
@@ -116,7 +123,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     private static ListMultimap<String, SemanticPropertyInfo> createSemanticPropertyInfo(Field field) {
         // Ignore fields that have a @SemanticMappingIgnore annotation and static fields
         if (field.getAnnotation(SemanticMappingIgnore.class) != null || Modifier.isStatic(field.getModifiers())) {
-            LOG.debug("Ignoring field: {}", field);
+            log.debug("Ignoring field: {}", field);
             return LinkedListMultimap.create();
         }
 
@@ -126,15 +133,10 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         final SemanticProperties wrapper = field.getAnnotation(SemanticProperties.class);
         if (wrapper != null) {
             for (SemanticProperty annotation : wrapper.value()) {
-                final SemanticPropertyInfo propertyInfo = new SemanticPropertyInfo(annotation, field);
-                result.put(propertyInfo.getPrefix(), propertyInfo);
+                addPropertyInfo(annotation, result, field);
             }
         } else {
-            final SemanticProperty annotation = field.getAnnotation(SemanticProperty.class);
-            if (annotation != null) {
-                final SemanticPropertyInfo propertyInfo = new SemanticPropertyInfo(annotation, field);
-                result.put(propertyInfo.getPrefix(), propertyInfo);
-            }
+            addPropertyInfo(field.getAnnotation(SemanticProperty.class), result, field);
         }
 
         // Add information for the default prefix if it was not specified explicitly
@@ -142,8 +144,40 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
             result.put(SemanticEntityInfo.DEFAULT_PREFIX, new SemanticPropertyInfo(field));
         }
 
-        LOG.trace("SemanticPropertyInfo: {} -> {}", field, result);
+        log.trace("SemanticPropertyInfo: {} -> {}", field, result);
         return result;
+    }
+
+    private static void addPropertyInfo(SemanticProperty annotation, Multimap<String, SemanticPropertyInfo> result, Field field) {
+        if (annotation != null) {
+            final SemanticPropertyInfo propertyInfo = new SemanticPropertyInfo(annotation, field);
+            result.put(propertyInfo.getPrefix(), propertyInfo);
+        }
+    }
+
+    @PostConstruct
+    public void init() {
+        log.debug("Auto registration of all static or top-level implementors of EntityModel class in packages");
+
+        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AssignableTypeFilter(EntityModel.class));
+
+        Set<String> packages = new HashSet<>();
+
+        for (String basePackage : Arrays.asList("com.sdl.dxa", "com.sdl.webapp")) {
+            log.debug("Scanning {} for EntityModels", basePackage);
+            for (BeanDefinition bd : scanner.findCandidateComponents(basePackage)) {
+                String packageName = bd.getBeanClassName().substring(0, bd.getBeanClassName().lastIndexOf('.'));
+
+                if (packages.add(packageName)) {
+                    log.debug("Added package {} while scanning base package {}", packageName, basePackage);
+                }
+            }
+        }
+
+        for (String packageName : packages) {
+            registerEntities(packageName);
+        }
     }
 
     /**
@@ -151,8 +185,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
      */
     @Override
     public Set<FieldSemantics> getFieldSemantics(Field field) {
-        final Set<FieldSemantics> fieldSemanticsList = fieldSemanticsMap.get(field);
-        return fieldSemanticsList != null ? fieldSemanticsList : Collections.<FieldSemantics>emptySet();
+        return fieldSemanticsMap.containsKey(field) ? fieldSemanticsMap.get(field) : Collections.<FieldSemantics>emptySet();
     }
 
     /**
@@ -173,16 +206,20 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         return result;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<SemanticPropertyInfo> getPropertyInfo(Field field) {
         return semanticPropertyInfo.get(field);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void registerEntities(String basePackage) {
-        LOG.debug("Registering entity classes in package: {}", basePackage);
+        log.debug("Registering entity classes in package: {}", basePackage);
 
         try {
             PackageUtils.doWithClasses(basePackage, new PackageUtils.ClassCallback() {
@@ -204,22 +241,24 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void registerEntity(Class<? extends EntityModel> entityClass) {
         // Ignore classes that have a @SemanticMappingIgnore annotation
         if (entityClass.getAnnotation(SemanticMappingIgnore.class) != null) {
-            LOG.debug("Ignoring entity class: {}", entityClass);
+            log.debug("Ignoring entity class: {}", entityClass);
             return;
         }
 
         if (semanticEntityInfo.containsKey(entityClass)) {
-            LOG.debug("Entity class {} is already registered, ignoring", entityClass.getName());
+            log.debug("Entity class {} is already registered, ignoring", entityClass.getName());
             return;
         }
 
 
-        LOG.debug("Registering entity class: {}", entityClass.getName());
+        log.debug("Registering entity class: {}", entityClass.getName());
 
         final Map<String, SemanticEntityInfo> entityInfoMap = createSemanticEntityInfo(entityClass);
 
@@ -250,7 +289,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
                 // Create the field semantics and store it
                 final FieldSemantics fieldSemantics = new FieldSemantics(vocabularies.get(vocabularyId),
                         entityInfo.getEntityName(), entry.getValue().getPropertyName());
-                LOG.trace("FieldSemantics: {} -> {}", field, fieldSemantics);
+                log.trace("FieldSemantics: {} -> {}", field, fieldSemantics);
                 fieldSemanticsMap.put(field, fieldSemantics);
             }
         }

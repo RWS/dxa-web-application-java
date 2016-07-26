@@ -86,7 +86,10 @@ public final class InitializationUtils {
             //note that the order of properties is important because of overriding of properties
             availableResources.add(new ClassPathResource("dxa.defaults.properties"));
             availableResources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.modules.*.properties")));
-            availableResources.add(new ClassPathResource("dxa.properties"));
+            ClassPathResource dxaProperties = new ClassPathResource("dxa.properties");
+            if (dxaProperties.exists()) {
+                availableResources.add(dxaProperties);
+            }
             availableResources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.addons.*.properties")));
 
             log.debug("Loaded resources {}", availableResources);

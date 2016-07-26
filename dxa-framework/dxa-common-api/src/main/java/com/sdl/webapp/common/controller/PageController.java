@@ -2,7 +2,6 @@ package com.sdl.webapp.common.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdl.dxa.mvc.ViewNameResolver;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -87,9 +86,6 @@ public class PageController extends BaseController {
     private Markup markup;
 
     @Autowired
-    private ViewNameResolver viewResolver;
-
-    @Autowired
     private DataFormatter dataFormatters;
 
     @Value("#{environment.getProperty('AllowJsonResponse', 'false')}")
@@ -148,7 +144,7 @@ public class PageController extends BaseController {
         final MvcData mvcData = page.getMvcData();
         log.trace("Page MvcData: {}", mvcData);
 
-        return this.viewResolver.resolveView(mvcData, "Page");
+        return this.viewNameResolver.resolveView(mvcData, "Page");
     }
 
     /**
@@ -296,7 +292,7 @@ public class PageController extends BaseController {
         request.setAttribute(CONTEXTENGINE, webRequestContext.getContextEngine());
 
         response.setStatus(SC_NOT_FOUND);
-        return this.viewResolver.resolveView(pageModel.getMvcData(), "Page");
+        return this.viewNameResolver.resolveView(pageModel.getMvcData(), "Page");
     }
 
     @ExceptionHandler({LocalizationNotResolvedException.class})

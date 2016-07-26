@@ -11,9 +11,10 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.EclItem;
+import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
-import com.sdl.webapp.common.api.model.entity.ViewNotFoundEntityError;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
+import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl.ComponentEntity;
@@ -256,8 +257,12 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
         Class<? extends AbstractEntityModel> entityClass = getEntityClass(viewName, component.getSchema().getRootElement());
 
-        final EntityModel entity = createEntity(component, localization, entityClass, getSemanticSchema(component, localization));
-
+        final EntityModel entity;
+        if (entityClass == null) {
+            entity = new ExceptionEntity(new NotFoundException("View/Entity class is not found"));
+        } else {
+            entity = createEntity(component, localization, entityClass, getSemanticSchema(component, localization));
+        }
         fillEntityData(entity, componentPresentation);
 
         return entity;
@@ -322,7 +327,6 @@ public final class EntityBuilderImpl implements EntityBuilder {
         if (entityClass == null) {
             log.error("Cannot determine entity type for view name: '{}'. Please make sure " +
                     "that an entry is registered for this view name in the ViewModelRegistry.", viewName);
-            return ViewNotFoundEntityError.class;
         }
 
         return entityClass;

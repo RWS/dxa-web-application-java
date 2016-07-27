@@ -19,19 +19,20 @@ import java.util.Map;
 @Component
 public class DefaultDataFormatter implements DataFormatter {
 
-    @Autowired
-    private HttpServletRequest request;
+    private final HttpServletRequest request;
 
-    @Autowired
-    private WebRequestContext context;
+    private final WebRequestContext context;
 
     private Map<String, com.sdl.webapp.common.api.formatters.DataFormatter> formatters;
 
+    @Autowired
+    public DefaultDataFormatter(HttpServletRequest request, WebRequestContext context) {
+        this.request = request;
+        this.context = context;
+    }
+
     /**
      * Gets the score from accept string.
-     *
-     * @param type a {@link java.lang.String} object.
-     * @return a double.
      */
     public static double getScoreFromAcceptString(String type) {
         double res = 1.0;
@@ -42,9 +43,6 @@ public class DefaultDataFormatter implements DataFormatter {
         return res;
     }
 
-    /**
-     * <p>Setter for the field <code>formatters</code>.</p>
-     */
     @PostConstruct
     public void setFormatters() {
         formatters = new HashMap<>();
@@ -66,11 +64,6 @@ public class DefaultDataFormatter implements DataFormatter {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Returns the  @see ModelAndView to render the different formats.
-     */
     @Override
     public ModelAndView view(Object model) {
         String format = getFormat();

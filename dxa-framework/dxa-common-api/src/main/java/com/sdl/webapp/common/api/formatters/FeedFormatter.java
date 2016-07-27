@@ -11,9 +11,8 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.Link;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
@@ -24,41 +23,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base class to generate Syndication Lists
+ * Base class to generate Syndication Lists.
  */
+@Slf4j
 public abstract class FeedFormatter extends BaseFormatter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FeedFormatter.class);
-
-    /**
-     * <p>Constructor for FeedFormatter.</p>
-     *
-     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
-     * @param context a {@link com.sdl.webapp.common.api.WebRequestContext} object.
-     */
-    public FeedFormatter(HttpServletRequest request, WebRequestContext context) {
+    FeedFormatter(HttpServletRequest request, WebRequestContext context) {
         super(request, context);
     }
 
-    /**
-     * Checks whether a field is a list
-     *
-     * @param annotation senantic entity annotation
-     * @return whether a field is a list
-     */
     private static boolean isList(SemanticEntity annotation) {
         return (annotation.vocabulary().equals(SemanticVocabulary.SCHEMA_ORG) && annotation.entityName().equals("ItemList"));
-
     }
 
-    /**
-     * Gets a list of teasers from its semantics
-     *
-     * @param entity EntityModel
-     * @return List<Teaser>
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     */
     private static List<Teaser> getTeaserListFromSemantics(EntityModel entity) throws InvocationTargetException, IllegalAccessException {
 
         boolean isList = false;
@@ -99,51 +76,35 @@ public abstract class FeedFormatter extends BaseFormatter {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Returns the formatted data. Additional model processing can be implemented in extending classes
-     */
     @Override
     public Object formatData(Object model) {
         return getData(model);
     }
 
     /**
-     * Gets the feed from the an object, checks if it is a @see PageModel
-     *
-     * @param model a {@link java.lang.Object} object.
-     * @return a {@link java.util.List} object.
+     * Gets the feed from the an object.
      */
     protected List<Object> getData(Object model) {
-        PageModel page = (PageModel) model;
-        if (page != null) {
-            return getFeedItemsFromPage(page);
-        }
-        return null;
+        return model == null ? null : getFeedItemsFromPage((PageModel) model);
     }
 
     /**
-     * Gets the list of syndicated items from a page. @see PageModel
-     *
-     * @param page page model
-     * @return list of feed items
+     * Gets the list of syndicated items from a page.
      */
     private List<Object> getFeedItemsFromPage(PageModel page) {
         List<Object> items = new ArrayList<>();
+
         for (RegionModel region : page.getRegions()) {
             for (EntityModel entity : region.getEntities()) {
                 items.addAll(getFeedItemsFromEntity(entity));
             }
         }
+
         return items;
     }
 
     /**
      * Gets a list of syndicated items from an Entity.
-     *
-     * @param entity a {@link com.sdl.webapp.common.api.model.EntityModel} object.
-     * @return a {@link java.util.List} object.
      */
     protected List<Object> getFeedItemsFromEntity(EntityModel entity) {
         List<Object> items = new ArrayList<>();
@@ -152,17 +113,14 @@ public abstract class FeedFormatter extends BaseFormatter {
             try {
                 items.add(getSyndicationItemFromTeaser(item));
             } catch (Exception e) {
-                LOG.error("Error getting syndication items from Teaser: {}", e.getMessage());
+                log.error("Error getting syndication items from Teaser: {}", e.getMessage());
             }
         }
         return items;
     }
 
     /**
-     * Gets the items forn an entity checking its type and depending on it, executes different attempts to produce an Entry
-     *
-     * @param entity entity model
-     * @return list of teasers
+     * Gets the items from an entity checking its type and depending on it, executes different attempts to produce an Entry.
      */
     private List<Teaser> getEntityItems(EntityModel entity) {
         List<Teaser> res = new ArrayList<>();
@@ -176,11 +134,11 @@ public abstract class FeedFormatter extends BaseFormatter {
                 items = getTeaserListFromSemantics(entity);
 
             } catch (IllegalAccessException e) {
-                LOG.error("Illegal Field Access");
-                LOG.error("Error while getting syndication list: {}", e.getMessage());
+                log.error("Illegal Field Access");
+                log.error("Error while getting syndication list: {}", e.getMessage());
             } catch (InvocationTargetException e) {
-                LOG.error("Wrong Invocation of Method");
-                LOG.error("Error while getting syndication list: {}", e.getMessage());
+                log.error("Wrong Invocation of Method");
+                log.error("Error while getting syndication list: {}", e.getMessage());
             }
             if (items != null) {
                 res = items;
@@ -226,7 +184,7 @@ public abstract class FeedFormatter extends BaseFormatter {
                                 break;
                         }
                     } catch (InvocationTargetException | IllegalAccessException e) {
-                        LOG.error("Error while instantiating a teaser using reflection for feed: {}", e.getMessage());
+                        log.error("Error while instantiating a teaser using reflection for feed: {}", e.getMessage());
                     }
                 }
 

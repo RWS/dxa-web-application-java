@@ -9,53 +9,33 @@ import javax.servlet.http.HttpServletRequest;
 import java.net.URISyntaxException;
 
 /**
- * Produces the feed in rss format
+ * Produces the feed in RSS format.
  */
 public class RssFormatter extends FeedFormatter {
 
-
-    /**
-     * <p>Constructor for RssFormatter.</p>
-     *
-     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
-     * @param context a {@link com.sdl.webapp.common.api.WebRequestContext} object.
-     */
     public RssFormatter(HttpServletRequest request, WebRequestContext context) {
         super(request, context);
         this.addMediaType("application/rss+xml");
-
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Returns the formatted data. Additional model processing can be implemented in extending classes
-     */
     @Override
-    public Object formatData(Object model) {
+    public Object getSyndicationItemFromTeaser(Teaser teaser) throws URISyntaxException {
+        Item item = new Item();
 
-        return getData(model);
-    }
+        if (teaser.getHeadline() != null) {
+            item.setTitle(teaser.getHeadline());
+        }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Gets a syndication Entry from a teaser
-     */
-    public Object getSyndicationItemFromTeaser(Teaser item) throws URISyntaxException {
-        Item si = new Item();
-        if (item.getHeadline() != null) {
-            si.setTitle(item.getHeadline());
+        if (teaser.getText() != null) {
+            Description description = new Description();
+            description.setValue(teaser.getText().toString());
+            item.setDescription(description);
         }
-        if (item.getText() != null) {
-            Description d = new Description();
-            d.setValue(item.getText().toString());
-            si.setDescription(d);
-        }
-        if (item.getDate() != null) {
 
-            si.setPubDate(item.getDate().toDate());
+        if (teaser.getDate() != null) {
+            item.setPubDate(teaser.getDate().toDate());
         }
-        return si;
+
+        return item;
     }
 }

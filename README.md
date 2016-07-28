@@ -87,6 +87,7 @@ For SDL Tridion 2013 SP1, you need these artifacts (`groudId : artifactId : vers
  - `com.tridion : cwd_engine : 7.1.2`
  - `com.tridion : cwd_image : 7.1.2`
  - `com.tridion : cwd_resource : 7.1.2`
+ - `com.vs.ezlicrun : easylicense : 2.5`
 
 To use SmartTarget module you also need
  - `com.tridion.smarttarget : session_cartridge : 2014sp1`

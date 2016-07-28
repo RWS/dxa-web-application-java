@@ -32,6 +32,7 @@ def artifacts = [
         [groupId: 'com.tridion', artifactId: 'cd_wrapper', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_wrapper.jar'],
         [groupId: 'com.tridion', artifactId: 'cwd_cartridge', version: '7.1.2', relativePath: '%cd%/Context Engine Cartridge/java/lib/cwd_cartridge.jar'],
         [groupId: 'com.tridion', artifactId: 'cwd_engine', version: '7.1.2', relativePath: '%cd%/Context Engine Cartridge/java/lib/cwd_engine.jar'],
+        [groupId: 'com.vs.ezlicrun', artifactId: 'easylicense', version: '2.5', relativePath: '%cd%/Content Delivery/roles/api/java/third-party-libs/easylicense.jar'],
 
         [groupId: 'com.tridion', artifactId: 'cwd_image', version: '7.1.2', relativePath: '%cwd%/cwd_image_distribution/target/cwd_image_distribution/java/lib/cwd_image.jar'],
         [groupId: 'com.tridion', artifactId: 'cwd_resource', version: '7.1.2', relativePath: '%cwd%/cwd_image_distribution/target/cwd_image_distribution/java/lib/cwd_resource.jar'],

@@ -286,6 +286,12 @@
                 <scope>runtime</scope>
             </dependency>
             <dependency>
+                <groupId>com.vs</groupId>
+                <artifactId>easylicense</artifactId>
+                <version>${easylicense-version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
                 <groupId>net.sourceforge.htmlcleaner</groupId>
                 <artifactId>htmlcleaner</artifactId>
                 <version>${htmlcleaner.version}</version>

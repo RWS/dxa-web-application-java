@@ -22,9 +22,17 @@
         <module>dxa-common-api</module>
         <module>dxa-common-impl</module>
         <module>dxa-tridion-provider</module>
-        <module>dxa-tridion-2013sp1-provider</module>
         <module>dxa-web8-provider</module>
     </modules>
+
+    <profiles>
+        <profile>
+            <id>2013sp1</id>
+            <modules>
+                <module>dxa-tridion-2013sp1-provider</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <scm>
         <url>https://github.com/sdl/dxa-web-application-java</url>

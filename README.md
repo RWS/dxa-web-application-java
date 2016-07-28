@@ -102,6 +102,8 @@ To use SmartTarget module you also need
 
 To ease the installation you can use the latest [`/install-libs/`](https://github.com/sdl/dxa-web-application-java/tree/develop/install-libs). For help, run `install`.
 
+**'dxa-framework' project has a Maven profile '2013sp1' which should be enabled to build tridion-provider for that version: `mvn install -P 2013sp1`**
+
 License
 -------
 Copyright (c) 2014-2016 SDL Group.

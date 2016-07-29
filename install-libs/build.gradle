@@ -51,7 +51,7 @@ def artifacts = [
 ],
 [
         groupId     : 'com.vs.ezlicrun', artifactId: 'easylicense', version: '2.5',
-        relativePath: '%cd%/Content Delivery/roles/api/java/third-party-libs/easylicense.jar'
+        relativePath: '%cd%/Content Delivery/roles/api/java/third-party-lib/easylicense.jar'
 ],
 
 //      From /roles/deployer

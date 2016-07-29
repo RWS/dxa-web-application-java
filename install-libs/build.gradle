@@ -6,7 +6,7 @@ task wrapper(type: Wrapper) {
 defaultTasks 'help'
 
 def isWindows = org.gradle.internal.os.OperatingSystem.current().windows
-def thisScript = "gradlew${isWindows ? '.bat' : ''}" as Object
+def thisScript = "install${isWindows ? '.bat' : ''}" as Object
 
 //noinspection GroovyAssignabilityCheck
 def path = { rest -> "${isWindows ? 'C:' : ''}${File.separator}${rest}" }

@@ -38,7 +38,7 @@ public class JsonFormatterTest {
     @Test(expected = UnsupportedOperationException.class)
     public void shouldGetSyndicationItemFromTeaser() throws Exception {
         //when
-        new JsonFormatter(null, null).getSyndicationItemFromTeaser(null);
+        new JsonFormatter(null, null).getSyndicationItem(null);
     }
 
 }

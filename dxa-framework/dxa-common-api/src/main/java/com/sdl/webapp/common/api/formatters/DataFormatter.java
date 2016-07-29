@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.formatters;
 
-import com.sdl.dxa.modules.core.model.entity.Teaser;
+import com.sdl.webapp.common.api.formatters.dto.FeedItem;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -17,6 +18,7 @@ public interface DataFormatter {
     /**
      * Returns the formatted data with possible additional model processing.
      */
+    @Nullable
     Object formatData(Object model);
 
     /**
@@ -38,7 +40,9 @@ public interface DataFormatter {
     List<String> getValidTypes(List<String> allowedTypes);
 
     /**
-     * Gets a syndication Entry from a teaser.
+     * Gets a syndication item from a {@link FeedItem}. The class differs per type of formatter.
+     *
+     * @param item POJO containing data for creating a syndication entry
      */
-    Object getSyndicationItemFromTeaser(Teaser item) throws Exception;
+    Object getSyndicationItem(FeedItem item) throws Exception;
 }

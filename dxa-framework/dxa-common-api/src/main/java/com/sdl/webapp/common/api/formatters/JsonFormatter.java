@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.formatters;
 
-import com.sdl.dxa.modules.core.model.entity.Teaser;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.formatters.dto.FeedItem;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,7 +29,7 @@ public class JsonFormatter extends BaseFormatter {
      * @throws Exception always throws {@link UnsupportedOperationException}
      */
     @Override
-    public Object getSyndicationItemFromTeaser(Teaser item) throws Exception {
+    public Object getSyndicationItem(FeedItem item) throws Exception {
         throw new UnsupportedOperationException("This method shall not be called!");
     }
 }

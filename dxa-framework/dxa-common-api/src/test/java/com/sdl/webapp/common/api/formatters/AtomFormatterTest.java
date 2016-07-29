@@ -1,15 +1,15 @@
 package com.sdl.webapp.common.api.formatters;
 
-import com.sdl.dxa.modules.core.model.entity.Teaser;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.formatters.dto.FeedItem;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sun.syndication.feed.atom.Entry;
-import org.joda.time.DateTime;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.net.URISyntaxException;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -40,17 +40,17 @@ public class AtomFormatterTest {
         when(webRequestContext.getBaseUrl()).thenReturn("base_url/");
 
         AtomFormatter atomFormatter = new AtomFormatter(null, webRequestContext);
-        Teaser teaser = new Teaser();
+        FeedItem teaser = new FeedItem();
         teaser.setHeadline("headline");
-        teaser.setText(new RichText("text!"));
-        DateTime now = DateTime.now();
+        teaser.setSummary(new RichText("text!"));
+        Date now = new Date();
         teaser.setDate(now);
         Link link = new Link();
         teaser.setLink(link);
         link.setUrl("http://url");
 
         //when
-        Entry entryLinkHttp = (Entry) atomFormatter.getSyndicationItemFromTeaser(teaser);
+        Entry entryLinkHttp = (Entry) atomFormatter.getSyndicationItem(teaser);
 
         //then
         assertEquals("headline", entryLinkHttp.getTitle());
@@ -59,14 +59,14 @@ public class AtomFormatterTest {
         assertNotNull(entryLinkHttp.getId());
         assertTrue(entryLinkHttp.getId().startsWith("uuid:"));
         assertNotNull(entryLinkHttp.getUpdated());
-        assertEquals(now.toDate(), entryLinkHttp.getPublished());
+        assertEquals(now, entryLinkHttp.getPublished());
 
         com.sun.syndication.feed.atom.Link linkHttp = (com.sun.syndication.feed.atom.Link) entryLinkHttp.getOtherLinks().get(0);
         assertEquals("http://url", linkHttp.getHref());
 
         //when
         link.setUrl("url2");
-        Entry entryLinkNoHttp = (Entry) atomFormatter.getSyndicationItemFromTeaser(teaser);
+        Entry entryLinkNoHttp = (Entry) atomFormatter.getSyndicationItem(teaser);
 
         //then
         com.sun.syndication.feed.atom.Link linkNoHttp = (com.sun.syndication.feed.atom.Link) entryLinkNoHttp.getOtherLinks().get(0);

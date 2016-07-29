@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.formatters;
 
-import com.sdl.dxa.modules.core.model.entity.Teaser;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.formatters.dto.FeedItem;
 import com.sun.syndication.feed.rss.Description;
 import com.sun.syndication.feed.rss.Item;
 
@@ -19,21 +19,21 @@ public class RssFormatter extends FeedFormatter {
     }
 
     @Override
-    public Object getSyndicationItemFromTeaser(Teaser teaser) throws URISyntaxException {
+    public Object getSyndicationItem(FeedItem teaser) throws URISyntaxException {
         Item item = new Item();
 
         if (teaser.getHeadline() != null) {
             item.setTitle(teaser.getHeadline());
         }
 
-        if (teaser.getText() != null) {
+        if (teaser.getSummary() != null) {
             Description description = new Description();
-            description.setValue(teaser.getText().toString());
+            description.setValue(teaser.getSummary().toString());
             item.setDescription(description);
         }
 
         if (teaser.getDate() != null) {
-            item.setPubDate(teaser.getDate().toDate());
+            item.setPubDate(teaser.getDate());
         }
 
         return item;

@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.formatters;
 
-import com.sdl.dxa.modules.core.model.entity.Teaser;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.formatters.dto.FeedItem;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -153,7 +153,7 @@ public class BaseFormatterTest {
         }
 
         @Override
-        public Object getSyndicationItemFromTeaser(Teaser item) throws Exception {
+        public Object getSyndicationItem(FeedItem item) throws Exception {
             return null;
         }
     }

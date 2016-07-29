@@ -12,48 +12,136 @@ def thisScript = "gradlew${isWindows ? '.bat' : ''}" as Object
 def path = { rest -> "${isWindows ? 'C:' : ''}${File.separator}${rest}" }
 
 def artifacts = [
-        [groupId: 'com.tridion', artifactId: 'cd_ambient', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_ambient.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_broker', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_broker.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_cache', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_cache.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_core', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_core.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_datalayer', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_datalayer.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_deployer', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/deployer/java/lib/cd_deployer.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_dynamic', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_dynamic.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_linking', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_linking.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_model', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_model.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_odata', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_odata.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_odata_types', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_odata_types.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_preview_ambient', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_preview_ambient.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_preview_web', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_preview_web.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_preview_webservice', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/webservice/java/lib/cd_preview_webservice.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_session', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_session.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_tcdl', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_tcdl.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_upload', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_upload.jar'],
-        [groupId: 'com.tridion', artifactId: 'cd_wrapper', version: '7.1.0', relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_wrapper.jar'],
-        [groupId: 'com.tridion', artifactId: 'cwd_cartridge', version: '7.1.2', relativePath: '%cd%/Context Engine Cartridge/java/lib/cwd_cartridge.jar'],
-        [groupId: 'com.tridion', artifactId: 'cwd_engine', version: '7.1.2', relativePath: '%cd%/Context Engine Cartridge/java/lib/cwd_engine.jar'],
-        [groupId: 'com.vs.ezlicrun', artifactId: 'easylicense', version: '2.5', relativePath: '%cd%/Content Delivery/roles/api/java/third-party-libs/easylicense.jar'],
+//        From /roles/api/
+[
+        groupId     : 'com.tridion', artifactId: 'cd_ambient', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_ambient.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_broker', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_broker.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_cache', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_cache.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_core', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_core.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_datalayer', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_datalayer.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_dynamic', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_dynamic.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_linking', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_linking.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_model', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_model.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_tcdl', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_tcdl.jar'
+],
+[
+        groupId     : 'com.vs.ezlicrun', artifactId: 'easylicense', version: '2.5',
+        relativePath: '%cd%/Content Delivery/roles/api/java/third-party-libs/easylicense.jar'
+],
 
-        [groupId: 'com.tridion', artifactId: 'cwd_image', version: '7.1.2', relativePath: '%cwd%/cwd_image_distribution/target/cwd_image_distribution/java/lib/cwd_image.jar'],
-        [groupId: 'com.tridion', artifactId: 'cwd_resource', version: '7.1.2', relativePath: '%cwd%/cwd_image_distribution/target/cwd_image_distribution/java/lib/cwd_resource.jar'],
+//      From /roles/deployer
+[
+        groupId     : 'com.tridion', artifactId: 'cd_deployer', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/deployer/java/lib/cd_deployer.jar'
+],
 
-        [groupId: 'com.tridion.smarttarget', artifactId: 'session_cartridge', version: '2014sp1', relativePath: '%st%/target/cd-layout/Ambient Data Framework/cartridges/session_cartridge.jar'],
-        [groupId: 'com.tridion.smarttarget', artifactId: 'smarttarget_cartridge', version: '2014sp1', relativePath: '%st%/target/cd-layout/Ambient Data Framework/cartridges/smarttarget_cartridge.jar'],
-        [groupId: 'com.tridion.smarttarget', artifactId: 'smarttarget_core', version: '2014sp1', relativePath: '%st%/target/cd-layout/Content Delivery/java/lib/smarttarget_core.jar'],
-        [groupId: 'com.tridion.smarttarget', artifactId: 'smarttarget_entitymodel', version: '2014sp1', relativePath: '%st%/target/cd-layout/Content Delivery/java/lib/smarttarget_entitymodel.jar'],
-        [groupId: 'com.tridion.smarttarget', artifactId: 'smarttarget_google-analytics', version: '2014sp1', relativePath: '%st%/target/cd-layout/Google Analytics provider/lib/smarttarget_google-analytics.jar']
+//      From /roles/preview
+[
+        groupId     : 'com.tridion', artifactId: 'cd_odata', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_odata.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_odata_types', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_odata_types.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_preview_ambient', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_preview_ambient.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_preview_web', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_preview_web.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_preview_webservice', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/preview/webservice/java/lib/cd_preview_webservice.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_session', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_session.jar'
+],
+
+//      From /roles/upload
+[
+        groupId     : 'com.tridion', artifactId: 'cd_upload', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_upload.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_wrapper', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_wrapper.jar'
+],
+
+//      From Context Engine Cartridge/java
+[
+        groupId     : 'com.tridion', artifactId: 'cwd_cartridge', version: '7.1.2',
+        relativePath: '%cd%/Context Engine Cartridge/java/lib/cwd_cartridge.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cwd_engine', version: '7.1.2',
+        relativePath: '%cd%/Context Engine Cartridge/java/lib/cwd_engine.jar'
+],
+
+//      From Ambient Data Framework/cartridges
+[
+        groupId     : 'com.tridion.smarttarget', artifactId: 'session_cartridge', version: '2014sp1',
+        relativePath: '%st%/Ambient Data Framework/cartridges/session_cartridge.jar'
+],
+[
+        groupId     : 'com.tridion.smarttarget', artifactId: 'smarttarget_cartridge', version: '2014sp1',
+        relativePath: '%st%/Ambient Data Framework/cartridges/smarttarget_cartridge.jar'
+],
+
+//      From ST/Content Delivery
+[
+        groupId     : 'com.tridion.smarttarget', artifactId: 'smarttarget_core', version: '2014sp1',
+        relativePath: '%st%/Content Delivery/java/lib/smarttarget_core.jar'
+],
+[
+        groupId     : 'com.tridion.smarttarget', artifactId: 'smarttarget_entitymodel', version: '2014sp1',
+        relativePath: '%st%/Content Delivery/java/lib/smarttarget_entitymodel.jar'
+],
+//      From ST/Google Analytics provider
+[
+        groupId     : 'com.tridion.smarttarget', artifactId: 'smarttarget_google-analytics', version: '2014sp1',
+        relativePath: '%st%/Google Analytics provider/lib/smarttarget_google-analytics.jar'
+]
 ]
 
 task help << {
     println """
     Install Tridion Content Delivery 2013SP1 libraries into the local Maven repository.
 
-    Usage: run the script with with a task 'install' and provide a parameter with a folder with optional CD, CWD, SmartTarget layouts.
+    Usage: run the script with with a task 'install' and provide a parameter with a folder with optional CD and SmartTarget layouts.
     All are optional.
     Examples:
         ${thisScript} install -Pcd="${path('Tridion')}"
-        ${thisScript} install -Pcwd="${path('CWD')}" -Pst="${path('SmartTarget')}"
-        ${thisScript} install -Pcd="${path('Tridion')}" -Pcwd="${path('CWD')}" -Pst="${path('SmartTarget')}"
+        ${thisScript} install -Pst="${path('SmartTarget')}"
+        ${thisScript} install -Pcd="${path('Tridion')}"-Pst="${path('SmartTarget')}"
     """
 }
 

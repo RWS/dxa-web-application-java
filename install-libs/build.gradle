@@ -146,6 +146,9 @@ task help << {
 }
 
 task install << {
+    def fullListExpected = project.hasProperty('fullList')
+    println "= INFO: Expecting all artifacts: ${fullListExpected}"
+
     artifacts.each {
         println '-------------------------'
         println "Processing ${it.groupId}:${it.artifactId}:${it.version}, ${it.relativePath}"
@@ -157,6 +160,10 @@ task install << {
 
         if (!project.hasProperty(matcher.group(1))) {
             println "Layout for this artifact is not set. Parameter name: ${matcher.group(1)}, command: ${thisScript} install -P${matcher.group(1)}=\"${path('PATH')}\""
+            if (fullListExpected) {
+                println "Script is run in Full-list-expected mode, layout wasn't found, failing execution"
+                throw new RuntimeException("Expected the whole list of artifacts, failed on because layout is not set")
+            }
             return
         }
         //noinspection GroovyAssignabilityCheck
@@ -167,6 +174,11 @@ task install << {
         if (!file.exists()) {
             println "= INFO: Artifact is expected: ${it.groupId}:${it.artifactId}:${it.version} at ${it.relativePath}. " +
                     "Ignore this if you are sure you don't need this artifact"
+
+            if (fullListExpected) {
+                println "Script is run in Full-list-expected mode, artifact wasn't found, failing execution"
+                throw new RuntimeException("Expected the whole list of artifacts, failed on ${file}")
+            }
             return
         }
 

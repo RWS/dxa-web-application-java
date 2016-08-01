@@ -43,6 +43,8 @@ task buildDxa(type: MavenBuildTask) {
         command = project.command
     }
 
+    verbose = project.hasProperty('verbose')
+
     if (project.hasProperty('mavenProperties')) {
         mavenProperties = project.mavenProperties
     }

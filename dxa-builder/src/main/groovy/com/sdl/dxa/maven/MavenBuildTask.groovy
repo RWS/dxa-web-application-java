@@ -20,6 +20,7 @@ class MavenBuildTask extends DefaultTask {
     String defaultCommand = Defaults.DEFAULT_COMMAND
     int numberThreads = Defaults.NUMBER_THREADS
     String mavenProperties = Defaults.MAVEN_PROPERTIES
+    boolean verbose = Defaults.IS_VERBOSE
 
     def customCommandDelimiter = /\s*>\s*/
 
@@ -28,6 +29,7 @@ class MavenBuildTask extends DefaultTask {
         printMvnVersion()
 
         def pool = Executors.newFixedThreadPool(numberThreads)
+        def outputPool = Executors.newSingleThreadExecutor()
 
         println "Building ${configurations}"
 
@@ -37,13 +39,22 @@ class MavenBuildTask extends DefaultTask {
             if (output.code != 0) {
                 pool.shutdown()
 
-                println "= FAILED (in ${output.timeSeconds}s): "
-                output.lines.each { println it }
+                outputPool.submit {
+                    println "= FAILED (in ${output.timeSeconds}s): "
+                    output.lines.each { println it }
+                    println ""
+                }
                 println "Well, there is an error. Press <Enter> to finish."
                 System.in.read()
                 System.exit(-1)
             } else {
-                println "= SUCCESS (in ${output.timeSeconds}s): ${output.command}"
+                outputPool.submit {
+                    println "= SUCCESS (in ${output.timeSeconds}s): ${output.command}"
+                    if (verbose) {
+                        output.lines.each { println it }
+                    }
+                    println ""
+                }
             }
             latch.countDown()
         }

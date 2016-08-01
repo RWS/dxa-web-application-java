@@ -54,11 +54,6 @@ def artifacts = [
         relativePath: '%cd%/Content Delivery/roles/api/java/third-party-lib/easylicense.jar'
 ],
 
-//      From /roles/deployer
-[
-        groupId     : 'com.tridion', artifactId: 'cd_deployer', version: '7.1.0',
-        relativePath: '%cd%/Content Delivery/roles/deployer/java/lib/cd_deployer.jar'
-],
 
 //      From /roles/preview
 [
@@ -72,14 +67,6 @@ def artifacts = [
 [
         groupId     : 'com.tridion', artifactId: 'cd_preview_ambient', version: '7.1.0',
         relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_preview_ambient.jar'
-],
-[
-        groupId     : 'com.tridion', artifactId: 'cd_preview_web', version: '7.1.0',
-        relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_preview_web.jar'
-],
-[
-        groupId     : 'com.tridion', artifactId: 'cd_preview_webservice', version: '7.1.0',
-        relativePath: '%cd%/Content Delivery/roles/preview/webservice/java/lib/cd_preview_webservice.jar'
 ],
 [
         groupId     : 'com.tridion', artifactId: 'cd_session', version: '7.1.0',
@@ -96,14 +83,26 @@ def artifacts = [
         relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_wrapper.jar'
 ],
 
-//      From Context Engine Cartridge/java
+//      From Hot fix rollup
+[
+        groupId     : 'com.tridion', artifactId: 'cd_deployer', version: '7.1.0',
+        relativePath: '%cd_hotfix%/Content Delivery/lib/cd_deployer.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_preview_web', version: '7.1.0',
+        relativePath: '%cd_hotfix%/Content Delivery/lib/cd_preview_web.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_preview_webservice', version: '7.1.0',
+        relativePath: '%cd_hotfix%/Content Delivery/lib/cd_preview_webservice.jar'
+],
 [
         groupId     : 'com.tridion', artifactId: 'cwd_cartridge', version: '7.1.2',
-        relativePath: '%cd%/Context Engine Cartridge/java/lib/cwd_cartridge.jar'
+        relativePath: '%cd_hotfix%/Contextual Web Delivery/CEC_2013.1.1.87801/cwd_cartridge.jar'
 ],
 [
         groupId     : 'com.tridion', artifactId: 'cwd_engine', version: '7.1.2',
-        relativePath: '%cd%/Context Engine Cartridge/java/lib/cwd_engine.jar'
+        relativePath: '%cd_hotfix%/Contextual Web Delivery/CEC_2013.1.1.87801/cwd_engine.jar'
 ],
 
 //      From Ambient Data Framework/cartridges
@@ -134,18 +133,51 @@ def artifacts = [
 
 task help << {
     println """
-    Installs Tridion Content Delivery 2013SP1 libraries into the local Maven repository.
+    Prerequisites:
+        Normally you should have minimal two, maximal three CD Layouts with for CD and SmartTarget.
+        1. CD consists of release version 2013SP1 and mandatory Hotfix Rollup #1 as a separate distribution.
+            You should provide the script with two parameters: cd and cd_hotfix. These are root folders of related distributions.
+            Example: ${thisScript} install -Pcd="${path('Tridion')}" -Pcd_hotfix="${path('Tridion_Hotfix')}"
 
-    Usage: run the script with a task 'install' and provide a parameter with a folder with optional CD and SmartTarget layouts.
+        2. SmartTarget is one folder. If you want to install SmartTarget artifacts, provide script with its layout.
+            Example: ${thisScript} install -Pst="${path('SmartTarget')}"
+
+        3. If youy have both #1 and #2, you can do it in one run:
+            ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
+        path('Tridion_Hotfix')
+    }"
+
+        4. To also check that you have now all the artifacts installed, add -PfullList property.
+            Example: ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
+        path('Tridion_Hotfix')
+    }" -PfullList
+
+    =====
+
+    Installs Tridion Content Delivery 2013SP1 libraries into the local Maven repository from provided CD layouts.
+
+    Usage: run the script with a task 'install' and provide a parameter with a folder with optional CD, CD Hotfix #1 and SmartTarget layouts.
     All are optional.
     Examples:
-        ${thisScript} install -Pcd="${path('Tridion')}"
+        ${thisScript} install -Pcd="${path('Tridion')}" -Pcd_hotfix="${path('Tridion_Hotfix')}"
         ${thisScript} install -Pst="${path('SmartTarget')}"
-        ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}"
+        ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
+        path('Tridion_Hotfix')
+    }"
     """
 }
 
-task install(dependsOn: 'help') << {
+task unzip(type: Copy) {
+    if (project.hasProperty('cd_hotfix')) {
+        def zipPath = project.cd_hotfix.replaceAll(/[\\\/]?$/, '') + "/Contextual Web Delivery/CEC_2013.1.1.87801.zip"
+
+        from zipTree(file(zipPath))
+        into file(zipPath.replaceAll(/\.zip$/, ''))
+    }
+}
+unzip << { println "Found a ZIP archive in a CD hotfix, unpacking" }
+
+task install(dependsOn: ['help', 'unzip']) << {
     def fullListExpected = project.hasProperty('fullList')
     println "= INFO: Expecting all artifacts: ${fullListExpected}"
 

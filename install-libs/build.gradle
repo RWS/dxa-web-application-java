@@ -134,7 +134,7 @@ def artifacts = [
 task help << {
     println """
     Prerequisites:
-        Normally you should have minimal two, maximal three CD Layouts with for CD and SmartTarget.
+        Normally you should have minimal two, maximal three CD Layouts for CD and SmartTarget.
         1. CD consists of release version 2013SP1 and mandatory Hotfix Rollup #1 as a separate distribution.
             You should provide the script with two parameters: cd and cd_hotfix. These are root folders of related distributions.
             Example: ${thisScript} install -Pcd="${path('Tridion')}" -Pcd_hotfix="${path('Tridion_Hotfix')}"

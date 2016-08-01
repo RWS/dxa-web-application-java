@@ -134,47 +134,48 @@ def artifacts = [
 
 task help << {
     println """
-    Install Tridion Content Delivery 2013SP1 libraries into the local Maven repository.
+    Installs Tridion Content Delivery 2013SP1 libraries into the local Maven repository.
 
-    Usage: run the script with with a task 'install' and provide a parameter with a folder with optional CD and SmartTarget layouts.
+    Usage: run the script with a task 'install' and provide a parameter with a folder with optional CD and SmartTarget layouts.
     All are optional.
     Examples:
         ${thisScript} install -Pcd="${path('Tridion')}"
         ${thisScript} install -Pst="${path('SmartTarget')}"
-        ${thisScript} install -Pcd="${path('Tridion')}"-Pst="${path('SmartTarget')}"
+        ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}"
     """
 }
 
-task install << {
+task install(dependsOn: 'help') << {
     def fullListExpected = project.hasProperty('fullList')
     println "= INFO: Expecting all artifacts: ${fullListExpected}"
 
+    def notFound = []
     artifacts.each {
-        println '-------------------------'
-        println "Processing ${it.groupId}:${it.artifactId}:${it.version}, ${it.relativePath}"
-
         def matcher = it.relativePath =~ /^%(.+)%(.*)/
         if (!it.relativePath.contains(it.artifactId) || !matcher.matches()) {
             throw new IllegalStateException("Seems that configuration is wrong. ${it.artifactId} expected to be contained in a path ${it.relativePath}")
         }
 
         if (!project.hasProperty(matcher.group(1))) {
-            println "Layout for this artifact is not set. Parameter name: ${matcher.group(1)}, command: ${thisScript} install -P${matcher.group(1)}=\"${path('PATH')}\""
             if (fullListExpected) {
                 println "Script is run in Full-list-expected mode, layout wasn't found, failing execution"
                 throw new RuntimeException("Expected the whole list of artifacts, failed on because layout is not set")
             }
             return
         }
+
+        println '-------------------------'
+        println "Trying to install ${it.groupId}:${it.artifactId}:${it.version}, ${it.relativePath}"
+
         //noinspection GroovyAssignabilityCheck
         it.path = project[matcher.group(1)].replaceAll(/[\\\/]?$/, '') + matcher.group(2)
 
         def file = new File(it.path)
-        println "Check if file exists: ${file.absolutePath}"
+        println "Checking whether file exists: ${file.absolutePath}"
         if (!file.exists()) {
             println "= INFO: Artifact is expected: ${it.groupId}:${it.artifactId}:${it.version} at ${it.relativePath}. " +
                     "Ignore this if you are sure you don't need this artifact"
-
+            notFound << file.name
             if (fullListExpected) {
                 println "Script is run in Full-list-expected mode, artifact wasn't found, failing execution"
                 throw new RuntimeException("Expected the whole list of artifacts, failed on ${file}")
@@ -191,6 +192,11 @@ task install << {
             throw new RuntimeException("= FAILED: ${command}")
         }
         println "= SUCCESS: ${command}}"
+    }
+
+    println '-----------------'
+    notFound.each {
+        println "= INFO: Not found/not installed: ${it}"
     }
 }
 

@@ -5,7 +5,6 @@ import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Getter;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,14 +21,16 @@ public class ContextEngineImpl implements ContextEngine {
     @Autowired
     private ContextClaimsProvider provider;
 
-    @Getter(lazy = true)
-    private final Map<String, Object> claims = claims();
-
     @Autowired
     private DeviceFamiliesEvaluator deviceFamiliesEvaluator;
 
     @Getter(lazy = true)
     private final String deviceFamily = deviceFamily();
+
+    private boolean alreadyLogged = false;
+
+    @Getter(lazy = true)
+    private final Map<String, Object> claims = claims();
 
     /**
      * {@inheritDoc}
@@ -46,7 +47,6 @@ public class ContextEngineImpl implements ContextEngine {
         }
     }
 
-    @Synchronized
     private Map<String, Object> claims() {
         try {
             Map<String, Object> contextClaims = provider.getContextClaims(null);
@@ -73,9 +73,11 @@ public class ContextEngineImpl implements ContextEngine {
     }
 
     private void logAllClaims(@NotNull Map<String, Object> claims) {
-        if (!log.isDebugEnabled()) {
+        if (!log.isDebugEnabled() && !alreadyLogged) {
             return;
         }
+
+        alreadyLogged = true;
 
         log.debug("Total number of claims: {}", claims.size());
 

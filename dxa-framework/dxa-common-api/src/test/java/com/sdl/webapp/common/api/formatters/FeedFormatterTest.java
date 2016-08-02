@@ -182,6 +182,38 @@ public class FeedFormatterTest {
         assertThat(data, contains(new Entry(null, null, new RichText("2"), null)));
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldSupportTestEntity5FieldNames() throws DxaException {
+        //given
+        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
+        RegionModelSetImpl regionModels = new RegionModelSetImpl();
+        regionModels.add(getRegionModel("reg1", new TestEntity5("2")));
+
+        Object formatData = formatter.formatData(getPageModel(regionModels));
+
+        //then
+        assertTrue(formatData instanceof List);
+        List<Entry> data = (List<Entry>) formatData;
+        assertThat(data, contains(new Entry(null, null, new RichText("2"), null)));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldSupportTestEntity6FieldNames() throws DxaException {
+        //given
+        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
+        RegionModelSetImpl regionModels = new RegionModelSetImpl();
+        regionModels.add(getRegionModel("reg1", new TestEntity6(new RichText("2"))));
+
+        Object formatData = formatter.formatData(getPageModel(regionModels));
+
+        //then
+        assertTrue(formatData instanceof List);
+        List<Entry> data = (List<Entry>) formatData;
+        assertThat(data, contains(new Entry(null, null, new RichText("2"), null)));
+    }
+
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowAnExceptionIfModelIsNotPage() {
         //given
@@ -322,6 +354,22 @@ public class FeedFormatterTest {
     private static class TestEntity4 extends AbstractEntityModel {
 
         private String teaser;
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    @Data
+    @AllArgsConstructor
+    private static class TestEntity5 extends AbstractEntityModel {
+
+        private String text;
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    @Data
+    @AllArgsConstructor
+    private static class TestEntity6 extends AbstractEntityModel {
+
+        private RichText text;
     }
 
     @EqualsAndHashCode(callSuper = true)

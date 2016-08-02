@@ -43,7 +43,7 @@
     <div class="container-fluid page-border">
         <h1>Internal Server Error</h1>
 
-        <p>An error has occurred. We apologize for any convenience.</p>
+        <p>An error has occurred. We apologize for any inconvenience.</p>
     </div>
 </main>
 <script src="${markup.versionedContent('/assets/scripts/main.js')}"></script>

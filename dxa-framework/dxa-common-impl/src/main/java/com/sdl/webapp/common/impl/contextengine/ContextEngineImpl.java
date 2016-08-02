@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Getter;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,7 @@ public class ContextEngineImpl implements ContextEngine {
         }
     }
 
+    @Synchronized
     private Map<String, Object> claims() {
         try {
             Map<String, Object> contextClaims = provider.getContextClaims(null);

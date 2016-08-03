@@ -66,9 +66,9 @@ Furthermore, Pull Requests on release branches are expected to be extensively te
 Of course, it's also possible (and appreciated) to report an Issue without associated Pull Requests.
 
 
-Prerequisites
--------------
-For SDL Tridion 2013 SP1, you need these artifacts (`groudId : artifactId : version`) to be installed into your Maven repository:
+Prerequisites for building
+--------------------------
+In order to build the DXA sources against SDL Tridion 2013 SP1, you need these artifacts (`groudId : artifactId : version`) to be installed into your Maven repository:
  - `com.tridion : cd_ambient : 7.1.0`
  - `com.tridion : cd_broker : 7.1.0`
  - `com.tridion : cd_cache : 7.1.0`

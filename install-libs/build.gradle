@@ -154,7 +154,7 @@ task help << {
         3. CWD layout is a separate distribution that contains libs for CWD image support.
             Example: ${thisScript} install -Pcwd="${path('CWD')}"
 
-        4. If you have all #1, #2 and #2, you can do it in one run:
+        4. If you have all #1, #2 and #3, you can do it in one run:
             ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
         path('Tridion_Hotfix')
     } -Pcwd="${path('CWD')}""

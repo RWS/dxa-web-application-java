@@ -157,7 +157,7 @@ task help << {
         4. If you have all #1, #2 and #3, you can do it in one run:
             ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
         path('Tridion_Hotfix')
-    } -Pcwd="${path('CWD')}""
+    }" -Pcwd="${path('CWD')}"
 
         5. To also check that you have now all the artifacts installed, add -PfullList property.
             Example: ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
@@ -185,7 +185,7 @@ task help << {
         ${thisScript} install -Pst="${path('SmartTarget')}"
         ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
         path('Tridion_Hotfix')
-    }"
+    }" -Pcwd="${path('CWD')}"
     """
 }
 

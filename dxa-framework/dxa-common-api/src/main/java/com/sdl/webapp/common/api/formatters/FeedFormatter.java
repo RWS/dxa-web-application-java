@@ -1,240 +1,258 @@
 package com.sdl.webapp.common.api.formatters;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntities;
-import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
+import com.sdl.webapp.common.api.formatters.dto.FeedItem;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RichText;
-import com.sdl.webapp.common.api.model.entity.ContentList;
 import com.sdl.webapp.common.api.model.entity.Link;
-import com.sdl.webapp.common.api.model.entity.Teaser;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+import org.springframework.util.ReflectionUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static com.sdl.webapp.common.util.InitializationUtils.loadDxaProperties;
 
 /**
- * Base class to generate Syndication Lists
+ * Base class to generate Syndication Lists.
  */
+@Slf4j
 public abstract class FeedFormatter extends BaseFormatter {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FeedFormatter.class);
+    private final Map<String, Set<String>> mappings;
 
-    /**
-     * <p>Constructor for FeedFormatter.</p>
-     *
-     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
-     * @param context a {@link com.sdl.webapp.common.api.WebRequestContext} object.
-     */
-    public FeedFormatter(HttpServletRequest request, WebRequestContext context) {
+    FeedFormatter(HttpServletRequest request, WebRequestContext context) {
         super(request, context);
-    }
 
-    /**
-     * Checks whether a field is a list
-     *
-     * @param annotation senantic entity annotation
-     * @return whether a field is a list
-     */
-    private static boolean isList(SemanticEntity annotation) {
-        return (annotation.vocabulary().equals(SemanticVocabulary.SCHEMA_ORG) && annotation.entityName().equals("ItemList"));
+        this.mappings = new HashMap<>(4);
 
-    }
-
-    /**
-     * Gets a list of teasers from its semantics
-     *
-     * @param entity EntityModel
-     * @return List<Teaser>
-     * @throws InvocationTargetException
-     * @throws IllegalAccessException
-     */
-    private static List<Teaser> getTeaserListFromSemantics(EntityModel entity) throws InvocationTargetException, IllegalAccessException {
-
-        boolean isList = false;
-        if (entity.getClass().isAnnotationPresent(SemanticEntity.class)) {
-            isList = isList(entity.getClass().getAnnotation(SemanticEntity.class));
-
-        } else if (entity.getClass().isAnnotationPresent(SemanticEntities.class)) {
-            if (entity instanceof ContentList && ((ContentList) entity).getLink() != null) {
-                //don't treat contentlist if it's on an overview page such as homepage
-                isList = false;
-            } else {
-                SemanticEntities annotations = entity.getClass().getAnnotation(SemanticEntities.class);
-                for (SemanticEntity prop : annotations.value()) {
-                    isList = isList(prop);
-                    if (isList) {
-                        break;
+        for (String propertyName : Arrays.asList(
+                "dxa.api.formatters.mapping.Headline",
+                "dxa.api.formatters.mapping.Summary",
+                "dxa.api.formatters.mapping.Date",
+                "dxa.api.formatters.mapping.Link")) {
+            String property = loadDxaProperties().getProperty(propertyName);
+            if (property != null) {
+                String mappingName = propertyName.substring(propertyName.lastIndexOf(".") + 1);
+                for (String mapping : property.split(",")) {
+                    if (!this.mappings.containsKey(mappingName)) {
+                        this.mappings.put(mappingName, new HashSet<String>());
                     }
+                    String trimmed = mapping.trim();
+                    this.mappings.get(mappingName).add(trimmed);
+                    log.trace("Added mapping {} <> {}", mappingName, trimmed);
                 }
             }
         }
-
-        if (isList) {
-            for (Method method : entity.getClass().getDeclaredMethods()) {
-                Type genericFieldType = method.getGenericReturnType();
-                if (genericFieldType instanceof ParameterizedType) {
-                    ParameterizedType pType = (ParameterizedType) genericFieldType;
-                    Type[] fieldArgTypes = pType.getActualTypeArguments();
-                    for (Type fieldArgType : fieldArgTypes) {
-                        Class fieldArgClass = (Class) fieldArgType;
-                        if (fieldArgClass.getName().equals(Teaser.class.getName())) {
-                            return (List<Teaser>) method.invoke(entity);
-                        }
-
-                    }
-                }
-            }
-        }
-        return null;
     }
 
     /**
-     * {@inheritDoc}
+     * Gets the items from an entity checking its type and depending on it, executes different attempts to produce an Entry.
+     */
+    private void fillWithFeedItemsFromProperties(final EntityModel entity, final LinkedList<FeedItem> list) {
+
+        FeedItem feedItem = new FeedItem();
+        list.add(feedItem);
+
+        log.debug("Trying to get feed items from {}", entity);
+
+        ReflectionUtils.doWithMethods(entity.getClass(), new ReflectionUtils.MethodCallback() {
+            @Override
+            @SneakyThrows(InvocationTargetException.class)
+            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+                log.debug("Method {} is a collection, trying to iterate over it and get entities", method);
+                for (Object field : ((Collection) method.invoke(entity))) {
+                    if (EntityModel.class.isAssignableFrom(field.getClass())) {
+                        fillWithFeedItemsFromProperties((EntityModel) field, list);
+                    }
+                }
+            }
+        }, new ReflectionUtils.MethodFilter() {
+            @Override
+            public boolean matches(Method method) {
+                return method.getName().startsWith("get") && Collection.class.isAssignableFrom(method.getReturnType());
+            }
+        });
+
+        if (!fillFeedItemFromProperties(entity, feedItem)) {
+            log.trace("Failed filling FeedItem {}, removing", feedItem);
+            list.remove(feedItem);
+        }
+    }
+
+    private boolean fillFeedItemFromProperties(final EntityModel entity, final FeedItem feedItem) {
+        final Set<String> headlineMappings = mappings.get("Headline");
+        final Set<String> summaryMappings = mappings.get("Summary");
+        final Set<String> dateMappings = mappings.get("Date");
+        final Set<String> linkMappings = mappings.get("Link");
+
+        ReflectionUtils.doWithMethods(entity.getClass(), new ReflectionUtils.MethodCallback() {
+            private String setLink(Method method, String logMessage) throws IllegalAccessException, InvocationTargetException {
+                Object methodInvocation = method.invoke(entity);
+                if (methodInvocation != null) {
+                    logMessage = "Found {}#{}(), using it for FeedItem#link";
+                    Link link;
+                    if (Link.class.isAssignableFrom(method.getReturnType())) {
+                        link = (Link) methodInvocation;
+                    } else {
+                        link = new Link();
+                        link.setUrl((String) methodInvocation);
+                    }
+                    feedItem.setLink(link);
+                }
+                return logMessage;
+            }
+
+            private String setDate(Method method, String logMessage) throws IllegalAccessException, InvocationTargetException {
+                Object date = method.invoke(entity);
+                if (date != null) {
+                    logMessage = "Found {}#{}(), using it for FeedItem#date";
+                    if (date instanceof DateTime) {
+                        feedItem.setDate(((DateTime) date).toDate());
+                    } else if (date instanceof Date) {
+                        feedItem.setDate((Date) date);
+                    } else {
+                        log.warn("Class {} is not supported for dates", date.getClass());
+                    }
+                }
+                return logMessage;
+            }
+
+            private String setSummary(Method method, String logMessage) throws IllegalAccessException, InvocationTargetException {
+                Object summary = method.invoke(entity);
+                if (summary != null) {
+                    if (summary instanceof RichText) {
+                        feedItem.setSummary(((RichText) summary));
+                    } else {
+                        feedItem.setSummary(new RichText(summary.toString()));
+                    }
+                    logMessage = "Found {}#{}(), using it for FeedItem#summary";
+                }
+                return logMessage;
+            }
+
+            private String setHeadline(Method method, String logMessage) throws IllegalAccessException, InvocationTargetException {
+                Object headline = method.invoke(entity);
+                if (headline != null) {
+                    logMessage = "Found {}#{}(), using it for FeedItem#headline";
+                    feedItem.setHeadline((String) headline);
+                }
+                return logMessage;
+            }
+
+            @Override
+            @SneakyThrows(InvocationTargetException.class)
+            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
+                String methodName = method.getName();
+                String logMessage = "Method {}#{}() found, but its invocation returned null [default message]";
+
+                String mappingName = methodName.replaceFirst("get(.)", "$1");
+
+                if (headlineMappings.contains(mappingName)) {
+                    logMessage = setHeadline(method, logMessage);
+                } else if (summaryMappings.contains(mappingName)) {
+                    logMessage = setSummary(method, logMessage);
+                } else if (dateMappings.contains(mappingName)) {
+                    logMessage = setDate(method, logMessage);
+                } else if (linkMappings.contains(mappingName)) {
+                    logMessage = setLink(method, logMessage);
+                } else {
+                    logMessage = "Skipping method {}#{}(), no data for FeedItem here";
+                }
+
+                log.trace(logMessage, entity.getClass(), methodName);
+            }
+
+
+        }, new ReflectionUtils.MethodFilter() {
+            @Override
+            public boolean matches(Method method) {
+                return method.getName().startsWith("get");
+            }
+        });
+
+        return feedItem.getHeadline() != null || feedItem.getSummary() != null;
+    }
+
+    /**
+     * Accepts {@link PageModel} as a model, and processes it to a feed.
      *
-     * Returns the formatted data. Additional model processing can be implemented in extending classes
+     * @param model object, expected to be assignable from {@link PageModel}
+     * @return formatted data
+     * @throws IllegalArgumentException if the object is not an instance of {@link PageModel}
      */
     @Override
+    @Contract("null -> null; !null -> !null")
     public Object formatData(Object model) {
-        return getData(model);
-    }
-
-    /**
-     * Gets the feed from the an object, checks if it is a @see PageModel
-     *
-     * @param model a {@link java.lang.Object} object.
-     * @return a {@link java.util.List} object.
-     */
-    protected List<Object> getData(Object model) {
-        PageModel page = (PageModel) model;
-        if (page != null) {
-            return getFeedItemsFromPage(page);
+        if (model == null) {
+            return null;
         }
-        return null;
+        Assert.isInstanceOf(PageModel.class, model, "Model for this formatter expected to be assignable from PageModel");
+        return getData(((PageModel) model));
     }
 
     /**
-     * Gets the list of syndicated items from a page. @see PageModel
-     *
-     * @param page page model
-     * @return list of feed items
+     * Gets the feed from the a page.
      */
-    private List<Object> getFeedItemsFromPage(PageModel page) {
+    @Contract("null -> null; !null -> !null")
+    protected List<Object> getData(PageModel page) {
+        return page == null ? null : getFeedItemsFromPage(page);
+    }
+
+    /**
+     * Gets the list of syndicated items from a page.
+     */
+    private List<Object> getFeedItemsFromPage(@NotNull PageModel page) {
+        Assert.notNull(page.getRegions());
+
         List<Object> items = new ArrayList<>();
+
         for (RegionModel region : page.getRegions()) {
+            Assert.notNull(region.getEntities());
+
             for (EntityModel entity : region.getEntities()) {
                 items.addAll(getFeedItemsFromEntity(entity));
             }
         }
+
         return items;
     }
 
     /**
      * Gets a list of syndicated items from an Entity.
-     *
-     * @param entity a {@link com.sdl.webapp.common.api.model.EntityModel} object.
-     * @return a {@link java.util.List} object.
      */
-    protected List<Object> getFeedItemsFromEntity(EntityModel entity) {
-        List<Object> items = new ArrayList<>();
-        List<Teaser> entityItems = getEntityItems(entity);
-        for (Teaser item : entityItems) {
+    private List<Object> getFeedItemsFromEntity(EntityModel entity) {
+        LinkedList<FeedItem> entityItems = new LinkedList<>();
+        fillWithFeedItemsFromProperties(entity, entityItems);
+
+        List<Object> items = new ArrayList<>(entityItems.size());
+
+        for (FeedItem item : entityItems) {
             try {
-                items.add(getSyndicationItemFromTeaser(item));
+                items.add(getSyndicationItem(item));
             } catch (Exception e) {
-                LOG.error("Error getting syndication items from Teaser: {}", e.getMessage());
+                log.error("Error getting syndication items from {}", item, e);
             }
         }
+
         return items;
-    }
-
-    /**
-     * Gets the items forn an entity checking its type and depending on it, executes different attempts to produce an Entry
-     *
-     * @param entity entity model
-     * @return list of teasers
-     */
-    private List<Teaser> getEntityItems(EntityModel entity) {
-        List<Teaser> res = new ArrayList<>();
-        //1. Check if entity is a teaser, if add it
-        if (entity instanceof Teaser) {
-            res.add((Teaser) entity);
-        } else {
-            //2. Second check if entity type is (semantically) a list, and if so, get its list items
-            List<Teaser> items = null;
-            try {
-                items = getTeaserListFromSemantics(entity);
-
-            } catch (IllegalAccessException e) {
-                LOG.error("Illegal Field Access");
-                LOG.error("Error while getting syndication list: {}", e.getMessage());
-            } catch (InvocationTargetException e) {
-                LOG.error("Wrong Invocation of Method");
-                LOG.error("Error while getting syndication list: {}", e.getMessage());
-            }
-            if (items != null) {
-                res = items;
-            } else {
-
-//                3. Last resort, try to find some suitable properties using reflection
-                Teaser teaser = new Teaser();
-
-                for (Method m : entity.getClass().getDeclaredMethods()) {
-                    if (!m.getName().startsWith("get")) {
-                        continue;
-                    }
-                    try {
-                        switch (m.getName().toLowerCase()) {
-                            case "getheadline":
-                            case "getname":
-                                teaser.setHeadline((String) m.invoke(entity));
-                                break;
-                            case "getdate":
-                                DateTime d = (DateTime) m.invoke(entity);
-                                teaser.setDate(d);
-                                break;
-                            case "getdescription":
-                                Object desc = m.invoke(entity);
-                                if (RichText.class.isInstance(desc)) {
-                                    teaser.setText((RichText) desc);
-                                } else {
-                                    teaser.setText(new RichText(desc.toString()));
-                                }
-                                break;
-                            case "getlink":
-                                teaser.setLink((Link) m.invoke(entity));
-                                break;
-                            case "geturl":
-                                String url = (String) m.invoke(entity);
-                                if (url != null) {
-                                    Link l = new Link();
-                                    l.setUrl(url);
-                                    teaser.setLink(l);
-                                }
-                                break;
-                            default:
-                                break;
-                        }
-                    } catch (InvocationTargetException | IllegalAccessException e) {
-                        LOG.error("Error while instantiating a teaser using reflection for feed: {}", e.getMessage());
-                    }
-                }
-
-                if (teaser.getHeadline() != null || teaser.getText() != null) {
-                    res.add(teaser);
-                }
-            }
-        }
-        return res;
     }
 }

@@ -7,11 +7,13 @@ import lombok.EqualsAndHashCode;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Very generic Entity Model which maps all CM fields to a Settings dictionary (effectively bypassing semantic mapping).
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Configuration extends AbstractEntityModel {
 
     @SemanticProperty("_all")
     private Map<String, String> settings = new HashMap<>();
-
 }

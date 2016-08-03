@@ -5,32 +5,20 @@ import com.sdl.webapp.common.api.localization.Localization;
 import java.util.Map;
 
 /**
- * Superinterface for view model interfaces and classes.
+ * Basic DXA View Model. Everything that is a part of entity/region/page models in DXA is a ViewModel.
  */
 public interface ViewModel {
 
     /**
-     * <p>getMvcData.</p>
+     * Returns the MVC information for this ViewModel, containing data of view name, view area, and other.
      *
-     * @return a {@link com.sdl.webapp.common.api.model.MvcData} object.
+     * @return a {@link MvcData} object
      */
     MvcData getMvcData();
 
-    /**
-     * <p>setMvcData.</p>
-     *
-     * @param mvcData mvcData
-     */
     void setMvcData(MvcData mvcData);
 
-    /**
-     * <p>getXpmMetadata.</p>
-     *
-     * @return a {@link java.util.Map} object.
-     */
     Map<String, Object> getXpmMetadata();
-
-    // TODO: Is this the right way forward? Is it not better to use markup decorators for this?
 
     /**
      * Gets the XPM markup to be output by the Html.DxaRegionMarkup() method.
@@ -41,18 +29,18 @@ public interface ViewModel {
     String getXpmMarkup(Localization localization);
 
     /**
-     * <p>getHtmlClasses.</p>
+     * Returns a string with all CSS classes for this view model.
      *
-     * @return a {@link java.lang.String} object.
+     * @return CSS classes
      */
     String getHtmlClasses();
 
     /**
-     * <p>setHtmlClasses.</p>
+     * Sets a string with all CSS classes for this view model.
      *
-     * @param s a {@link java.lang.String} object.
+     * @param classes a string with all CSS classes
      */
-    void setHtmlClasses(String s);
+    void setHtmlClasses(String classes);
 
     /**
      * Returns the extension data (additional properties which can be used by custom Model Builders, Controllers and/or Views).
@@ -62,7 +50,7 @@ public interface ViewModel {
     Map<String, Object> getExtensionData();
 
     /**
-     * Adds an entry to an extension data.
+     * Adds an entry to an extension data. Extension data is used to provide some extra functionality (extensions) with some additional data.
      *
      * @param key   key of the entry
      * @param value value of the entry

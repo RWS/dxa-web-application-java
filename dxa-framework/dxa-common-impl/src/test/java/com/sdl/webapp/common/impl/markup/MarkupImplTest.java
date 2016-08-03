@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.impl.markup;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.model.entity.Article;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -13,7 +13,6 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Test;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,15 +22,15 @@ import static org.junit.Assert.assertEquals;
 
 public class MarkupImplTest {
 
+    private Markup markup = (MarkupImpl) new MarkupTest.MarkupTestConfig().markup();
+
     public MarkupImplTest() throws NoSuchFieldException {
     }
-
-    private Markup markup = (MarkupImpl) new MarkupTest.MarkupTestConfig().markup();
 
     @Test
     public void shouldReturnWebRequestContext() {
         //given
-        WebRequestContextImpl webRequestContext =  new WebRequestContextImpl();
+        WebRequestContextImpl webRequestContext = new WebRequestContextImpl();
         MarkupImpl markup = new MarkupImpl(new SemanticMappingRegistryImpl(), webRequestContext);
 
         //when
@@ -137,13 +136,13 @@ public class MarkupImplTest {
 
     @Test
     public void shouldReturnResource() {
-            //given
+        //given
 
-            //when
-            String resource = markup.resource("core.todayText");
+        //when
+        String resource = markup.resource("core.todayText");
 
-            //then
-            assertEquals("TODAY", resource);
+        //then
+        assertEquals("TODAY", resource);
     }
 
     @Test
@@ -176,7 +175,8 @@ public class MarkupImplTest {
 
         //when
         String entityReturn = markup.entity(entity);
-        String entityReturn2 = markup.entity(new Article());
+        String entityReturn2 = markup.entity(new AbstractEntityModel() {
+        });
 
         //then
         assertEquals("prefix=\"s: http://schema.org/\" typeof=\"s:SchemaEnt\"", entityReturn);
@@ -187,7 +187,9 @@ public class MarkupImplTest {
     public void shouldReturnProperty() {
         //given
         TestEntity entity = new TestEntity();
-        HashMap<String, String> map = new HashMap<String, String>() {{put("testField","xmp");}};
+        HashMap<String, String> map = new HashMap<String, String>() {{
+            put("testField", "xmp");
+        }};
         entity.setXpmPropertyMetadata(map);
 
         //when

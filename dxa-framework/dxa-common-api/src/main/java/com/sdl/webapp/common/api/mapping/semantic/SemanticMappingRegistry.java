@@ -48,6 +48,7 @@ public interface SemanticMappingRegistry {
      *
      * @param basePackage The base package - this package and its subpackages are scanned for entity classes.
      */
+    //todo dxa2 deprecate and remove?
     void registerEntities(String basePackage);
 
     /**

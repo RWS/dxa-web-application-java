@@ -10,7 +10,7 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
-import com.sdl.webapp.common.api.model.entity.Article;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.impl.model.ViewModelRegistryImpl;
@@ -75,7 +75,8 @@ public class DefaultRegionBuilderTest {
     }
 
     private EntityModel getEntity(String id) {
-        EntityModel entityModel = new Article();
+        EntityModel entityModel = new AbstractEntityModel() {
+        };
         ReflectionTestUtils.setField(entityModel, "id", id);
         return entityModel;
     }

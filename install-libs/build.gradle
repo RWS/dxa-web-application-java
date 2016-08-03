@@ -1,0 +1,241 @@
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.9'
+    distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"
+}
+
+defaultTasks 'help'
+
+def isWindows = org.gradle.internal.os.OperatingSystem.current().windows
+def thisScript = "install${isWindows ? '.bat' : ''}" as Object
+
+//noinspection GroovyAssignabilityCheck
+def path = { rest -> "${isWindows ? 'C:' : ''}${File.separator}${rest}" }
+
+def artifacts = [
+//        From /roles/api/
+[
+        groupId     : 'com.tridion', artifactId: 'cd_ambient', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_ambient.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_broker', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_broker.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_cache', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_cache.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_core', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_core.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_datalayer', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_datalayer.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_dynamic', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_dynamic.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_linking', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_linking.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_model', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_model.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_tcdl', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/api/java/lib/cd_tcdl.jar'
+],
+[
+        groupId     : 'com.vs.ezlicrun', artifactId: 'easylicense', version: '2.5',
+        relativePath: '%cd%/Content Delivery/roles/api/java/third-party-lib/easylicense.jar'
+],
+
+
+//      From /roles/preview
+[
+        groupId     : 'com.tridion', artifactId: 'cd_odata', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_odata.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_odata_types', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_odata_types.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_preview_ambient', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_preview_ambient.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_session', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/preview/web/java/lib/cd_session.jar'
+],
+
+//      From /roles/upload
+[
+        groupId     : 'com.tridion', artifactId: 'cd_upload', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_upload.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_wrapper', version: '7.1.0',
+        relativePath: '%cd%/Content Delivery/roles/upload/java/lib/cd_wrapper.jar'
+],
+
+//      From Hot fix rollup
+[
+        groupId     : 'com.tridion', artifactId: 'cd_deployer', version: '7.1.0',
+        relativePath: '%cd_hotfix%/Content Delivery/lib/cd_deployer.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_preview_web', version: '7.1.0',
+        relativePath: '%cd_hotfix%/Content Delivery/lib/cd_preview_web.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cd_preview_webservice', version: '7.1.0',
+        relativePath: '%cd_hotfix%/Content Delivery/lib/cd_preview_webservice.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cwd_cartridge', version: '7.1.2',
+        relativePath: '%cd_hotfix%/Contextual Web Delivery/CEC_2013.1.1.87801/cwd_cartridge.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cwd_engine', version: '7.1.2',
+        relativePath: '%cd_hotfix%/Contextual Web Delivery/CEC_2013.1.1.87801/cwd_engine.jar'
+],
+
+//      From Ambient Data Framework/cartridges
+[
+        groupId     : 'com.tridion.smarttarget', artifactId: 'session_cartridge', version: '2014sp1',
+        relativePath: '%st%/Ambient Data Framework/cartridges/session_cartridge.jar'
+],
+[
+        groupId     : 'com.tridion.smarttarget', artifactId: 'smarttarget_cartridge', version: '2014sp1',
+        relativePath: '%st%/Ambient Data Framework/cartridges/smarttarget_cartridge.jar'
+],
+
+//      From ST/Content Delivery
+[
+        groupId     : 'com.tridion.smarttarget', artifactId: 'smarttarget_core', version: '2014sp1',
+        relativePath: '%st%/Content Delivery/java/lib/smarttarget_core.jar'
+],
+[
+        groupId     : 'com.tridion.smarttarget', artifactId: 'smarttarget_entitymodel', version: '2014sp1',
+        relativePath: '%st%/Content Delivery/java/lib/smarttarget_entitymodel.jar'
+],
+//      From ST/Google Analytics provider
+[
+        groupId     : 'com.tridion.smarttarget', artifactId: 'smarttarget_google-analytics', version: '2014sp1',
+        relativePath: '%st%/Google Analytics provider/lib/smarttarget_google-analytics.jar'
+]
+]
+
+task help << {
+    println """
+    Prerequisites:
+        Normally you should have minimal two, maximal three CD Layouts for CD and SmartTarget.
+        1. CD consists of release version 2013SP1 and mandatory Hotfix Rollup #1 as a separate distribution.
+            You should provide the script with two parameters: cd and cd_hotfix. These are root folders of related distributions.
+            Example: ${thisScript} install -Pcd="${path('Tridion')}" -Pcd_hotfix="${path('Tridion_Hotfix')}"
+
+        2. SmartTarget is one folder. If you want to install SmartTarget artifacts, provide script with its layout.
+            Example: ${thisScript} install -Pst="${path('SmartTarget')}"
+
+        3. If youy have both #1 and #2, you can do it in one run:
+            ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
+        path('Tridion_Hotfix')
+    }"
+
+        4. To also check that you have now all the artifacts installed, add -PfullList property.
+            Example: ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
+        path('Tridion_Hotfix')
+    }" -PfullList
+
+    =====
+
+    Installs Tridion Content Delivery 2013SP1 libraries into the local Maven repository from provided CD layouts.
+
+    Usage: run the script with a task 'install' and provide a parameter with a folder with optional CD, CD Hotfix #1 and SmartTarget layouts.
+    All are optional.
+    Examples:
+        ${thisScript} install -Pcd="${path('Tridion')}" -Pcd_hotfix="${path('Tridion_Hotfix')}"
+        ${thisScript} install -Pst="${path('SmartTarget')}"
+        ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
+        path('Tridion_Hotfix')
+    }"
+    """
+}
+
+task unzip(type: Copy) {
+    if (project.hasProperty('cd_hotfix')) {
+        def zipPath = project.cd_hotfix.replaceAll(/[\\\/]?$/, '') + "/Contextual Web Delivery/CEC_2013.1.1.87801.zip"
+
+        from zipTree(file(zipPath))
+        into file(zipPath.replaceAll(/\.zip$/, ''))
+    }
+}
+unzip << { println "Found a ZIP archive in a CD hotfix, unpacking" }
+
+task install(dependsOn: ['help', 'unzip']) << {
+    def fullListExpected = project.hasProperty('fullList')
+    println "= INFO: Expecting all artifacts: ${fullListExpected}"
+
+    def notFound = []
+    artifacts.each {
+        def matcher = it.relativePath =~ /^%(.+)%(.*)/
+        if (!it.relativePath.contains(it.artifactId) || !matcher.matches()) {
+            throw new IllegalStateException("Seems that configuration is wrong. ${it.artifactId} expected to be contained in a path ${it.relativePath}")
+        }
+
+        if (!project.hasProperty(matcher.group(1))) {
+            if (fullListExpected) {
+                println "Script is run in Full-list-expected mode, layout wasn't found, failing execution"
+                throw new RuntimeException("Expected the whole list of artifacts, failed on because layout is not set")
+            }
+            return
+        }
+
+        println '-------------------------'
+        println "Trying to install ${it.groupId}:${it.artifactId}:${it.version}, ${it.relativePath}"
+
+        //noinspection GroovyAssignabilityCheck
+        it.path = project[matcher.group(1)].replaceAll(/[\\\/]?$/, '') + matcher.group(2)
+
+        def file = new File(it.path)
+        println "Checking whether file exists: ${file.absolutePath}"
+        if (!file.exists()) {
+            println "= INFO: Artifact is expected: ${it.groupId}:${it.artifactId}:${it.version} at ${it.relativePath}. " +
+                    "Ignore this if you are sure you don't need this artifact"
+            notFound << file.name
+            if (fullListExpected) {
+                println "Script is run in Full-list-expected mode, artifact wasn't found, failing execution"
+                throw new RuntimeException("Expected the whole list of artifacts, failed on ${file}")
+            }
+            return
+        }
+
+        def command = "${isWindows ? 'cmd /c' : ''} mvn -q install:install-file " +
+                "-DgroupId=${it.groupId} -DartifactId=${it.artifactId} -Dversion=${it.version} -Dpackaging=jar " +
+                "-Dfile=\"${file.absolutePath}\""
+        def execute = command.execute()
+        execute.in.eachLine { println it }
+        if (execute.exitValue()) {
+            throw new RuntimeException("= FAILED: ${command}")
+        }
+        println "= SUCCESS: ${command}}"
+    }
+
+    println '-----------------'
+    notFound.each {
+        println "= INFO: Not found/not installed: ${it}"
+    }
+}
+
+task list << {
+    println "List of artifacts"
+    println "-----------------"
+    artifacts.each {
+        println " - `${it.groupId} : ${it.artifactId} : ${it.version}`"
+    }
+}

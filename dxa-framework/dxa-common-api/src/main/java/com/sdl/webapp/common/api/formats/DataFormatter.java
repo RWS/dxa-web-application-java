@@ -3,14 +3,12 @@ package com.sdl.webapp.common.api.formats;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
- * DataFormatter, to be implemented by the class wiring the different format responses
+ * DataFormatter is to be implemented by the class wiring the different format responses.
  */
 public interface DataFormatter {
+
     /**
-     * <p>view.</p>
-     *
-     * @param model a {@link java.lang.Object} object.
-     * @return a {@link org.springframework.web.servlet.ModelAndView} object.
+     * Returns the {@link ModelAndView} to render the different formats.
      */
     ModelAndView view(Object model);
 }

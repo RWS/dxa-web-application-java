@@ -7,3 +7,4 @@
 # Unix
 *.sh text eol=lf
 gradlew text eol=lf
+install text eol=lf

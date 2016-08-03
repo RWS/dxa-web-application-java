@@ -105,14 +105,6 @@
         </dependency>
         <dependency>
             <groupId>com.tridion</groupId>
-            <artifactId>cwd_resource</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cwd_image</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
             <artifactId>cd_cache</artifactId>
         </dependency>
 

@@ -1,56 +1,48 @@
 package com.sdl.webapp.common.api.formatters;
 
-import com.sdl.webapp.common.api.model.entity.Teaser;
+import com.sdl.webapp.common.api.formatters.dto.FeedItem;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 /**
- * DataFormatter Interface for that defines the behavior of the formatters
+ * DataFormatter Interface for that defines the behavior of the formatters.
  */
 public interface DataFormatter {
+
     /**
-     * <p>score.</p>
-     *
-     * @return a double.
+     * Gets the score depending on the media type.
      */
     double score();
 
     /**
-     * <p>formatData.</p>
-     *
-     * @param model a {@link java.lang.Object} object.
-     * @return a {@link java.lang.Object} object.
+     * Returns the formatted data with possible additional model processing.
      */
+    @Nullable
     Object formatData(Object model);
 
     /**
-     * <p>isProcessModel.</p>
-     *
-     * @return a boolean.
+     * Says whether model processing is required.
      */
     boolean isProcessModel();
 
     /**
-     * <p>isAddIncludes.</p>
-     *
-     * @return a boolean.
+     * Says whether to to add includes.
      */
     boolean isAddIncludes();
 
     /**
-     * <p>getValidTypes.</p>
+     * Gets the valid media types depending on the allowed types by the formatter.
      *
-     * @param allowedTypes a {@link java.util.List} object.
-     * @return a {@link java.util.List} object.
+     * @param allowedTypes list of allowed types, nothing but from this list will be in result
+     * @return list of valid types which are also in allowed list
      */
     List<String> getValidTypes(List<String> allowedTypes);
 
     /**
-     * <p>getSyndicationItemFromTeaser.</p>
+     * Gets a syndication item from a {@link FeedItem}. The class differs per type of formatter.
      *
-     * @param item a {@link com.sdl.webapp.common.api.model.entity.Teaser} object.
-     * @return a {@link java.lang.Object} object.
-     * @throws java.lang.Exception if any.
+     * @param item POJO containing data for creating a syndication entry
      */
-    Object getSyndicationItemFromTeaser(Teaser item) throws Exception;
+    Object getSyndicationItem(FeedItem item) throws Exception;
 }

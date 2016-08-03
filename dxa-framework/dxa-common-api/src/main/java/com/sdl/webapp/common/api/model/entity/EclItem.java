@@ -19,9 +19,6 @@ import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.empty;
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-/**
- * <p>Abstract EclItem class.</p>
- */
 @SemanticEntity(entityName = "ExternalContentItem", vocabulary = SDL_CORE, prefix = "s")
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -21,14 +21,16 @@ public class ContextEngineImpl implements ContextEngine {
     @Autowired
     private ContextClaimsProvider provider;
 
-    @Getter(lazy = true)
-    private final Map<String, Object> claims = claims();
-
     @Autowired
     private DeviceFamiliesEvaluator deviceFamiliesEvaluator;
 
     @Getter(lazy = true)
     private final String deviceFamily = deviceFamily();
+
+    private boolean alreadyLogged = false;
+
+    @Getter(lazy = true)
+    private final Map<String, Object> claims = claims();
 
     /**
      * {@inheritDoc}
@@ -71,9 +73,11 @@ public class ContextEngineImpl implements ContextEngine {
     }
 
     private void logAllClaims(@NotNull Map<String, Object> claims) {
-        if (!log.isDebugEnabled()) {
+        if (!log.isDebugEnabled() && !alreadyLogged) {
             return;
         }
+
+        alreadyLogged = true;
 
         log.debug("Total number of claims: {}", claims.size());
 

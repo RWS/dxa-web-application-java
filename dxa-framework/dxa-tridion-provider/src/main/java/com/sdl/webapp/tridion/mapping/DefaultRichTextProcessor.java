@@ -13,8 +13,9 @@ import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
+import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
-import com.sdl.webapp.common.api.model.entity.ViewNotFoundEntityError;
+import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.XMLUtils;
 import com.sdl.webapp.tridion.xpath.XPathResolver;
@@ -212,8 +213,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
             if (entityClass == null) {
                 LOG.error("Cannot determine entity type for '{}'. Please make sure " +
                         "that an entry is registered for this view name in the ViewModelRegistry.", semanticSchema.getFullyQualifiedNames());
-                //noinspection ObjectAllocationInLoop
-                embedded = new ViewNotFoundEntityError();
+                embedded = new ExceptionEntity(new NotFoundException("Cannot determine entity type for " + semanticSchema.getFullyQualifiedNames()));
             } else {
                 MediaItem mediaItem = (MediaItem) createInstance(entityClass);
                 mediaItem.readFromXhtmlElement(imgElement);

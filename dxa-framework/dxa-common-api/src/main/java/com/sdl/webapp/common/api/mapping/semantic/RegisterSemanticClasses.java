@@ -33,7 +33,10 @@ import java.util.List;
  *  </pre>
  *
  * @author nic
+ * @deprecated since 1.6
  */
+@Deprecated
+//todo dxa2 remove, not used
 public class RegisterSemanticClasses {
 
     @Autowired

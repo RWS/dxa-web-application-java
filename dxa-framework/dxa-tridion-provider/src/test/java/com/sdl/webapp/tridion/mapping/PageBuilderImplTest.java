@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
-import com.sdl.webapp.common.api.model.entity.Article;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
@@ -45,15 +45,15 @@ public class PageBuilderImplTest {
         RegionModelSetImpl cpRegions = new RegionModelSetImpl();
         RegionModelImpl cpRegion = new RegionModelImpl("MyRegion");
         cpRegion.setMvcData(mvcData);
-        Article article = new Article();
-        cpRegion.addEntity(article);
+        TestEntity testEntity = new TestEntity();
+        cpRegion.addEntity(testEntity);
         cpRegions.add(cpRegion);
 
         //when
         RegionModelSet result = PageBuilderImpl.mergeAllTopLevelRegions(predefinedRegions, cpRegions);
 
         //then
-        assertSame(article, result.get("MyRegion").getEntities().get(0));
+        assertSame(testEntity, result.get("MyRegion").getEntities().get(0));
     }
 
     @SuppressWarnings("unchecked")
@@ -97,5 +97,9 @@ public class PageBuilderImplTest {
         TextField tf1 = new TextField();
         tf1.setTextValues(Collections.singletonList(textValue));
         return tf1;
+    }
+
+    private static class TestEntity extends AbstractEntityModel {
+
     }
 }

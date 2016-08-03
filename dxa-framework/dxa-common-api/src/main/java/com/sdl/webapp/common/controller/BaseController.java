@@ -9,12 +9,11 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
@@ -24,18 +23,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.ERROR_ACTION_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.ERROR_CONTROLLER_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.SHARED_AREA_NAME;
-import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
-
 /**
  * Abstract superclass for controllers with utility methods and exception handling.
  */
 @Controller
+@Slf4j
 public abstract class BaseController {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BaseController.class);
 
     @Autowired
     protected ViewNameResolver viewNameResolver;
@@ -44,6 +37,7 @@ public abstract class BaseController {
     protected ViewResolver viewResolver;
 
     @Autowired
+    @Getter
     protected WebRequestContext context;
 
     @Autowired
@@ -55,100 +49,39 @@ public abstract class BaseController {
                 || !Objects.equals(mvcData.getControllerAreaName(), "Core");
     }
 
-    /**
-     * <p>Getter for the field <code>context</code>.</p>
-     *
-     * @return a {@link com.sdl.webapp.common.api.WebRequestContext} object.
-     */
-    protected WebRequestContext getContext() {
-        return context;
-    }
-
-    /**
-     * <p>getRegionFromRequest.</p>
-     *
-     * @param request    a {@link javax.servlet.http.HttpServletRequest} object.
-     * @param regionName a {@link java.lang.String} object.
-     * @return a {@link com.sdl.webapp.common.api.model.RegionModel} object.
-     */
-    protected RegionModel getRegionFromRequest(HttpServletRequest request, String regionName) {
+    RegionModel getRegionFromRequest(HttpServletRequest request, String regionName) {
         RegionModel region = (RegionModel) request.getAttribute("_region_");
         if (region == null) {
-            LOG.error("Region not found on page: {}", regionName);
+            log.error("Region not found on page: {}", regionName);
             throw new NotFoundException("Region not found on page: " + regionName);
         }
         return region;
     }
 
-    /**
-     * <p>getEntityFromRequest.</p>
-     *
-     * @param request  a {@link javax.servlet.http.HttpServletRequest} object.
-     * @param entityId a {@link java.lang.String} object.
-     * @return a {@link com.sdl.webapp.common.api.model.EntityModel} object.
-     */
-    protected EntityModel getEntityFromRequest(HttpServletRequest request, String entityId) {
+    EntityModel getEntityFromRequest(HttpServletRequest request, String entityId) {
         final EntityModel entity = (EntityModel) request.getAttribute("_entity_");
         if (entity == null) {
-            LOG.error("Entity not found in request: {}", entityId);
+            log.error("Entity not found in request: {}", entityId);
             throw new NotFoundException("Entity not found in request: " + entityId);
         }
         return entity;
     }
 
-    /**
-     * <p>handleViewNotFoundErrors.</p>
-     *
-     * @param request  a {@link javax.servlet.http.HttpServletRequest} object.
-     * @param entityId a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
-     * @throws java.lang.Exception if any.
-     */
-    @RequestMapping(ControllerUtils.INCLUDE_PATH_PREFIX + SHARED_AREA_NAME + '/' + ERROR_CONTROLLER_NAME + '/' + ERROR_ACTION_NAME + "/{entityId}")
-    public String handleViewNotFoundErrors(HttpServletRequest request, @PathVariable String entityId) throws Exception {
-        LOG.warn("View for entity {} was not found, but the case is handled", entityId);
-
-        if (context.isDeveloperMode()) {
-            final EntityModel entity = getEntityFromRequest(request, entityId);
-            request.setAttribute(ENTITY_MODEL, entity);
-            return ControllerUtils.VIEW_NOT_FOUND_ERROR_VIEW;
-        }
-
-        return ControllerUtils.SECTION_ERROR_VIEW;
-    }
-
-    /**
-     * <p>handleJspIncludesErrors.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     @RequestMapping(value = ControllerUtils.INCLUDE_PATH_PREFIX + ControllerUtils.SECTION_ERROR_VIEW)
     public String handleJspIncludesErrors() {
-        LOG.error("Unhandled exception from JSP include action");
+        log.error("Unhandled exception from JSP include action");
+
         return ControllerUtils.SECTION_ERROR_VIEW;
     }
 
-
-    /**
-     * <p>handleException.</p>
-     *
-     * @param request   a {@link javax.servlet.http.HttpServletRequest} object.
-     * @param exception a {@link java.lang.Exception} object.
-     * @return a {@link java.lang.String} object.
-     */
     @ExceptionHandler(Exception.class)
     public String handleException(HttpServletRequest request, Exception exception) {
-        LOG.error("Exception while processing request for: {}", request.getRequestURL(), exception);
+        log.error("Exception while processing request for: {}", request.getRequestURL(), exception);
+
         return ControllerUtils.SECTION_ERROR_VIEW;
     }
 
     /**
-     * <p>resolveView.</p>
-     *
-     * @param mvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     * @param type    a {@link java.lang.String} object.
-     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
-     * @return a {@link java.lang.String} object.
      * @deprecated since 1.5, use {@link ViewNameResolver#resolveView(MvcData, String)}
      */
     //todo dxa2 remove
@@ -158,13 +91,6 @@ public abstract class BaseController {
     }
 
     /**
-     * <p>resolveView.</p>
-     *
-     * @param viewBaseDir a {@link java.lang.String} object.
-     * @param view        a {@link java.lang.String} object.
-     * @param mvcData     a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     * @param request     a {@link javax.servlet.http.HttpServletRequest} object.
-     * @return a {@link java.lang.String} object.
      * @deprecated since 1.5, use {@link ViewNameResolver#resolveView(MvcData, String)}
      */
     //todo dxa2 remove
@@ -187,7 +113,8 @@ public abstract class BaseController {
         // TODO: shouldn't we just render the ExceptionEntity using an Exception View?
         if (model.getClass().isAssignableFrom(ExceptionEntity.class)) {
             ExceptionEntity exceptionEntity = (ExceptionEntity) model;
-            throw exceptionEntity.getException();
+            throw exceptionEntity.getException() != null ?
+                    exceptionEntity.getException() : new RuntimeException("Unknown exception while rendering");
         }
 
         return (ViewModel) processModel(model, model.getClass());
@@ -229,13 +156,11 @@ public abstract class BaseController {
         String controllerName = mvcData.getControllerName() != null ? mvcData.getControllerName() : "Entity";
         String controllerAreaName = mvcData.getControllerAreaName() != null ? mvcData.getControllerAreaName() : "Core";
 
-
         Map<RequestMappingInfo, HandlerMethod> handlerMethods =
                 this.requestMappingHandlerMapping.getHandlerMethods();
 
         for (Map.Entry<RequestMappingInfo, HandlerMethod> item : handlerMethods.entrySet()) {
             RequestMappingInfo mapping = item.getKey();
-            HandlerMethod method = item.getValue();
 
             for (String urlPattern : mapping.getPatternsCondition().getPatterns()) {
                 if (urlPattern.contains('/' + controllerAreaName + '/' + controllerName)) {
@@ -245,7 +170,7 @@ public abstract class BaseController {
                         controller.enrichModel(entity, request);
                         return entity;
                     } catch (Exception e) {
-                        LOG.error("Error in EnrichModel", e);
+                        log.error("Error in EnrichModel", e);
                         return new ExceptionEntity(e); // TODO: What about MvcData?
                     }
                 }

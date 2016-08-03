@@ -3,51 +3,38 @@ package com.sdl.webapp.common.api.model;
 import java.util.List;
 
 /**
- * <p>RegionModel interface.</p>
+ * Region model is an interface representing one region on a page. Should be implemented by different types of regions.
  */
 public interface RegionModel extends ViewModel {
 
-    /**
-     * <p>getName.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     */
     String getName();
 
     /**
-     * <p>getEntities.</p>
+     * Returns a list of {@link EntityModel} objects that are inside this region.
      *
-     * @return a {@link java.util.List} object.
+     * @return a list of {@link EntityModel}
      */
     List<EntityModel> getEntities();
 
     /**
-     * <p>getEntity.</p>
+     * Gets an {@link EntityModel} by the given id from the whole list {@link #getEntities()}.
      *
-     * @param entityId a {@link java.lang.String} object.
-     * @return a {@link com.sdl.webapp.common.api.model.EntityModel} object.
+     * @param entityId id of {@link EntityModel}
+     * @return an {@link EntityModel}, may return null if there is no entity with the given id
      */
     EntityModel getEntity(String entityId);
 
     /**
-     * <p>getRegions.</p>
+     * Return a set of sub-regions of this region.
      *
-     * @return a {@link com.sdl.webapp.common.api.model.RegionModelSet} object.
+     * @return a set of sub regions
      */
     RegionModelSet getRegions();
 
     /**
-     * <p>setMvcData.</p>
+     * Adds an entity to a list of known entities of this region.
      *
-     * @param value a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     */
-    @Override
-    void setMvcData(MvcData value);
-
-    /**
-     * <p>addEntity.</p>
-     *
-     * @param entity a {@link com.sdl.webapp.common.api.model.EntityModel} object.
+     * @param entity an entity to add
      */
     void addEntity(EntityModel entity);
 }

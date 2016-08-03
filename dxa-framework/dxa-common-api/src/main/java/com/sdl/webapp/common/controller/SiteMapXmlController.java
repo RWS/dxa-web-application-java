@@ -35,13 +35,6 @@ public class SiteMapXmlController {
 
     private final Markup markup;
 
-    /**
-     * <p>Constructor for SiteMapXmlController.</p>
-     *
-     * @param webRequestContext  a {@link com.sdl.webapp.common.api.WebRequestContext} object.
-     * @param navigationProvider a {@link com.sdl.webapp.common.api.content.NavigationProvider} object.
-     * @param markup             a {@link com.sdl.webapp.common.markup.Markup} object.
-     */
     @Autowired
     public SiteMapXmlController(WebRequestContext webRequestContext, NavigationProvider navigationProvider,
                                 Markup markup) {
@@ -89,13 +82,6 @@ public class SiteMapXmlController {
         return sw.toString();
     }
 
-    /**
-     * <p>handleException.</p>
-     *
-     * @param request   a {@link javax.servlet.http.HttpServletRequest} object.
-     * @param exception a {@link java.lang.Exception} object.
-     * @return a {@link java.lang.String} object.
-     */
     @ExceptionHandler(Exception.class)
     public String handleException(HttpServletRequest request, Exception exception) {
         request.setAttribute(MARKUP, markup);

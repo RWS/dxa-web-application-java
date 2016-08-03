@@ -33,33 +33,39 @@ class MavenHelpTask extends DefaultTask {
 
     ======
     Syntax of task definition (extension):
-    maven {
+    task myTask(type: MavenBuildTask) {
         String defaultCommand = "install",
-        String command,
-        List<String[]> projects,
+        List<List<String>> configurations,
         int numberThreads = <number of processors>
+        String mavenProperties
+        boolean verbose
     }
     Example:
-    maven.projects = [
-        //syntax: name of project = runs command on projects in parallel
-        //first run: set of self-independent project
-        ["dxa-project1", "dxa-project2", "dxa-project3"],
+    task myTask(type: MavenBuildTask) {
+        configurations = [
+            //syntax: name of project = runs command on projects in parallel
+            //first run: set of self-independent project
+            ["dxa-project1", "dxa-project2", "dxa-project3"],
 
-        //syntax: "> NAME > COMMAND" = runs COMMAND on NAME
-        //second run: runs 'mvn dependencies:tree -Pweb8' goal on 'dxa-project1'
-        ["> dxa-project1 > dependencies:tree -Pweb8"],
+            //syntax: "> NAME > COMMAND" = runs COMMAND on NAME
+            //second run: runs 'mvn dependencies:tree -Pweb8' goal on 'dxa-project1'
+            ["> dxa-project1 > dependencies:tree -Pweb8"],
 
-        //syntax: "> > COMMAND" = runs COMMAND, NAME is empty
-        //third run: runs 'mvn -version'
-        ["> > -version"],
+            //syntax: "> > COMMAND" = runs COMMAND, NAME is empty
+            //third run: runs 'mvn -version'
+            ["> > -version"],
 
-        //syntax: mixed
-        //fourth run: runs command on dxa-project1 AND 'mvn dependencies:tree -Pweb8' goal on 'dxa-project2' in parallel
-        ["dxa-project1", "> dxa-project2 > dependencies:tree -Pweb8"],
-    ]
-    maven.defaultCommand = "clean install" //optional
-    maven.command = "clean package" //optional, passes custom command to Maven
-    maven.numberThreads = 1 //optional
+            //syntax: mixed
+            //fourth run: runs command on dxa-project1 AND 'mvn dependencies:tree -Pweb8' goal on 'dxa-project2' in parallel
+            ["dxa-project1", "> dxa-project2 > dependencies:tree -Pweb8"]
+        ]
+
+        defaultCommand = "clean install" //optional
+        numberThreads = 1 //optional
+        verbose = true
+        mavenProperties = "--debug"
+    }
+
 
     """
     }

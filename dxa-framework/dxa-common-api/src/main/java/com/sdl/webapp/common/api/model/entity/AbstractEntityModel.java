@@ -41,6 +41,7 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     @JsonProperty("HtmlClasses")
     private String htmlClasses;
 
+    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     @JsonProperty("ExtensionData")
     private Map<String, Object> extensionData;
 

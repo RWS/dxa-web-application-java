@@ -54,7 +54,6 @@ def artifacts = [
         relativePath: '%cd%/Content Delivery/roles/api/java/third-party-lib/easylicense.jar'
 ],
 
-
 //      From /roles/preview
 [
         groupId     : 'com.tridion', artifactId: 'cd_odata', version: '7.1.0',
@@ -105,6 +104,16 @@ def artifacts = [
         relativePath: '%cd_hotfix%/Contextual Web Delivery/CEC_2013.1.1.87801/cwd_engine.jar'
 ],
 
+//      From CWD
+[
+        groupId     : 'com.tridion', artifactId: 'cwd_image', version: '7.1.2',
+        relativePath: '%cwd%/java/lib/cwd_image.jar'
+],
+[
+        groupId     : 'com.tridion', artifactId: 'cwd_resource', version: '7.1.2',
+        relativePath: '%cwd%/java/lib/cwd_resource.jar'
+],
+
 //      From Ambient Data Framework/cartridges
 [
         groupId     : 'com.tridion.smarttarget', artifactId: 'session_cartridge', version: '2014sp1',
@@ -134,7 +143,7 @@ def artifacts = [
 task help << {
     println """
     Prerequisites:
-        Normally you should have minimal two, maximal three CD Layouts for CD and SmartTarget.
+        Normally you should have minimal two, maximal four CD Layouts for CD/CWD and SmartTarget.
         1. CD consists of release version 2013SP1 and mandatory Hotfix Rollup #1 as a separate distribution.
             You should provide the script with two parameters: cd and cd_hotfix. These are root folders of related distributions.
             Example: ${thisScript} install -Pcd="${path('Tridion')}" -Pcd_hotfix="${path('Tridion_Hotfix')}"
@@ -142,15 +151,28 @@ task help << {
         2. SmartTarget is one folder. If you want to install SmartTarget artifacts, provide script with its layout.
             Example: ${thisScript} install -Pst="${path('SmartTarget')}"
 
-        3. If youy have both #1 and #2, you can do it in one run:
+        3. CWD layout is a separate distribution that contains libs for CWD image support.
+            Example: ${thisScript} install -Pcwd="${path('CWD')}"
+
+        4. If you have all #1, #2 and #2, you can do it in one run:
             ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
         path('Tridion_Hotfix')
-    }"
+    } -Pcwd="${path('CWD')}""
 
-        4. To also check that you have now all the artifacts installed, add -PfullList property.
+        5. To also check that you have now all the artifacts installed, add -PfullList property.
             Example: ${thisScript} install -Pcd="${path('Tridion')}" -Pst="${path('SmartTarget')}" -Pcd_hotfix="${
         path('Tridion_Hotfix')
     }" -PfullList
+
+    =====
+
+    List of parameters:
+        -Pcd="..."          => path to CD layout
+        -Pcd_hotfix="..."   => path to CD hotfix #1
+        -Pcwd="..."         => path to CWD distribution
+        -Pst="..."          => path to SmartTarget distribution
+
+        -PfullList          => fails the job if the whole list of expected artifacts is not found
 
     =====
 

@@ -38,15 +38,14 @@ class MavenBuildTask extends DefaultTask {
         def callback = { output ->
             if (output.code != 0) {
                 pool.shutdown()
+                outputPool.shutdown()
 
-                outputPool.submit {
-                    println "= FAILED (in ${output.timeSeconds}s): "
-                    output.lines.each { println it }
-                    println ""
-                }
+                output.lines.each { println it }
+
+                println "= FAILED (in ${output.timeSeconds}s): "
                 println "Well, there is an error. Press <Enter> to finish."
                 System.in.read()
-                System.exit(-1)
+                throw new RuntimeException("Error building ${output.command}")
             } else {
                 outputPool.submit {
                     println "= SUCCESS (in ${output.timeSeconds}s): ${output.command}"

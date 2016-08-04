@@ -13,6 +13,7 @@ import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.impl.localization.semantics.JsonSchema;
 import com.sdl.webapp.common.impl.localization.semantics.JsonVocabulary;
+import com.sdl.webapp.common.util.InitializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +24,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.sdl.webapp.common.impl.localization.semantics.SemanticsConverter.convertSemantics;
 
@@ -47,6 +45,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private static final String VERSION_PATH = "/version.json";
     private static final String DEFAULT_VERSION_PATH = "/system/assets/version.json";
+    private static final String VERSION_PROPERTY_SETTING = "dxa.assets.version";
 
     private static final String SEMANTIC_SCHEMAS_PATH = "/system/mappings/schemas.json";
     private static final String SEMANTIC_VOCABULARIES_PATH = "/system/mappings/vocabularies.json";
@@ -120,13 +119,23 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 });
     }
 
-    private void loadVersion(String id, String path, LocalizationImpl.Builder builder)
-            throws LocalizationFactoryException {
+    private Boolean loadVersionFromProperties(String id, String path, LocalizationImpl.Builder builder)
+    {
+        Properties properties = InitializationUtils.loadDxaProperties();
+        String version = properties.getProperty(VERSION_PROPERTY_SETTING);
+        if(!Strings.isNullOrEmpty(version))
+        {
+            builder.setVersion(version);
+            return true;
+        }
+        return false;
+    }
+    private Boolean loadVersionFromBroker(String id, String path, LocalizationImpl.Builder builder) throws LocalizationFactoryException {
         try {
             StaticContentItem item = contentProvider.getStaticContent(VERSION_PATH, id, path);
             try (final InputStream in = item.getContent()) {
                 builder.setVersion(objectMapper.readTree(in).get("version").asText());
-                return;
+                return true;
             }
         } catch (StaticContentNotFoundException e) {
             LOG.debug("No published version.json found for localization [{}] {}", id, path);
@@ -134,7 +143,10 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
             throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + id +
                     "] " + path, e);
         }
+        return false;
+    }
 
+    private Boolean loadVersionFromWebapp(String id, String path, LocalizationImpl.Builder builder) throws LocalizationFactoryException {
         final File file = new File(new File(webApplicationContext.getServletContext().getRealPath("/")),
                 DEFAULT_VERSION_PATH);
         if (!file.exists()) {
@@ -143,10 +155,18 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
         try (final InputStream in = new FileInputStream(file)) {
             builder.setVersion(objectMapper.readTree(in).get("version").asText());
+            return true;
         } catch (IOException e) {
             throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + id +
                     "] " + path, e);
         }
+    }
+    private void loadVersion(String id, String path, LocalizationImpl.Builder builder)
+            throws LocalizationFactoryException {
+
+        // first, try to load the current asset version from the dxa.properties file.
+        // if that is not found, try to load from the broker version.json file, or finally from the web app version.json file
+        Boolean versionLoaded = loadVersionFromProperties(id,path,builder) || loadVersionFromBroker(id,path, builder) || loadVersionFromWebapp(id,path, builder) ;
     }
 
     private void loadResources(String id, String path, LocalizationImpl.Builder builder)

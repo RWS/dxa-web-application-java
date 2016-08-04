@@ -70,7 +70,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Value("dxa.assets.version")
+    @Value("${dxa.assets.version}")
     private String assetsVersion;
 
     /**

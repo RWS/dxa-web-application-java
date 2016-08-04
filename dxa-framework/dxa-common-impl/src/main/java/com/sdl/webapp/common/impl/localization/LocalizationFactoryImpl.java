@@ -17,6 +17,7 @@ import com.sdl.webapp.common.util.InitializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -45,7 +46,6 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     private static final String VERSION_PATH = "/version.json";
     private static final String DEFAULT_VERSION_PATH = "/system/assets/version.json";
-    private static final String VERSION_PROPERTY_SETTING = "dxa.assets.version";
 
     private static final String SEMANTIC_SCHEMAS_PATH = "/system/mappings/schemas.json";
     private static final String SEMANTIC_VOCABULARIES_PATH = "/system/mappings/vocabularies.json";
@@ -69,6 +69,9 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Value("dxa.assets.version")
+    private String assetsVersion;
 
     /**
      * {@inheritDoc}
@@ -119,18 +122,17 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 });
     }
 
-    private Boolean loadVersionFromProperties(String id, String path, LocalizationImpl.Builder builder)
+    private boolean loadVersionFromProperties(String id, String path, LocalizationImpl.Builder builder)
     {
-        Properties properties = InitializationUtils.loadDxaProperties();
-        String version = properties.getProperty(VERSION_PROPERTY_SETTING);
-        if(!Strings.isNullOrEmpty(version))
+        if(!Strings.isNullOrEmpty(assetsVersion))
         {
-            builder.setVersion(version);
+            builder.setVersion(assetsVersion);
             return true;
         }
         return false;
     }
-    private Boolean loadVersionFromBroker(String id, String path, LocalizationImpl.Builder builder) throws LocalizationFactoryException {
+
+    private boolean loadVersionFromBroker(String id, String path, LocalizationImpl.Builder builder) throws LocalizationFactoryException {
         try {
             StaticContentItem item = contentProvider.getStaticContent(VERSION_PATH, id, path);
             try (final InputStream in = item.getContent()) {
@@ -146,7 +148,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         return false;
     }
 
-    private Boolean loadVersionFromWebapp(String id, String path, LocalizationImpl.Builder builder) throws LocalizationFactoryException {
+    private boolean loadVersionFromWebapp(String id, String path, LocalizationImpl.Builder builder) throws LocalizationFactoryException {
         final File file = new File(new File(webApplicationContext.getServletContext().getRealPath("/")),
                 DEFAULT_VERSION_PATH);
         if (!file.exists()) {
@@ -166,7 +168,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
         // first, try to load the current asset version from the dxa.properties file.
         // if that is not found, try to load from the broker version.json file, or finally from the web app version.json file
-        Boolean versionLoaded = loadVersionFromProperties(id,path,builder) || loadVersionFromBroker(id,path, builder) || loadVersionFromWebapp(id,path, builder) ;
+        if(loadVersionFromProperties(id,path,builder) || loadVersionFromBroker(id,path, builder) || loadVersionFromWebapp(id,path, builder));
     }
 
     private void loadResources(String id, String path, LocalizationImpl.Builder builder)

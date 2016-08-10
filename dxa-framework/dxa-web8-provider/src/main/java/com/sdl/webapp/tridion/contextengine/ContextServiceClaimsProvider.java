@@ -63,9 +63,6 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
         return result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Map<String, Object> getContextClaims(String aspectName) throws DxaException {
         HttpServletRequest request = HttpUtils.getCurrentRequest();
@@ -94,9 +91,6 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
         return getClaimsMap(contextMap, aspectName);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getDeviceFamily() {
         return null;

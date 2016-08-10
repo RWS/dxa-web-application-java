@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.util;
 
+import com.sdl.webapp.common.api.localization.Localization;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.springframework.core.io.Resource;
@@ -276,4 +277,66 @@ public class InitializationUtilsTest {
     }
 
 
+    @Test
+    public void shouldRetrieveSchemaIdFromLocalization() {
+        //given
+        Localization localization = mock(Localization.class);
+        when(localization.getConfiguration(eq("core.schemas.json"))).thenReturn("42");
+
+        //when
+        int key = InitializationUtils.ContentManagerUtils.schemaIdFromSchemaKey("json", localization);
+
+        //then
+        assertEquals(42, key);
+    }
+
+    @Test
+    public void shouldRetrieveSchemaIdFromLocalizationForCustomKey() {
+        //given
+        Localization localization = mock(Localization.class);
+        when(localization.getConfiguration(eq("custom.schemas.json"))).thenReturn("42");
+
+        //when
+        int key = InitializationUtils.ContentManagerUtils.schemaIdFromSchemaKey("custom.json", localization);
+
+        //then
+        assertEquals(42, key);
+    }
+
+    @Test
+    public void shouldReturnZeroIfFailedToParse() {
+        //given
+        Localization localization = mock(Localization.class);
+        when(localization.getConfiguration(eq("core.schemas.json"))).thenReturn("asd");
+
+        //when
+        int key = InitializationUtils.ContentManagerUtils.schemaIdFromSchemaKey("json", localization);
+
+        //then
+        assertEquals(0, key);
+    }
+
+    @Test
+    public void shouldReturnZeroIfKeyIsNull() {
+        //given
+        Localization localization = mock(Localization.class);
+
+        //when
+        int key = InitializationUtils.ContentManagerUtils.schemaIdFromSchemaKey("json", localization);
+
+        //then
+        assertEquals(0, key);
+    }
+
+    @Test
+    public void shouldReturnZeroIfKeyIsInUnsupportedFormat() {
+        //given
+        Localization localization = mock(Localization.class);
+
+        //when
+        int key = InitializationUtils.ContentManagerUtils.schemaIdFromSchemaKey("my.dev.json", localization);
+
+        //then
+        assertEquals(0, key);
+    }
 }

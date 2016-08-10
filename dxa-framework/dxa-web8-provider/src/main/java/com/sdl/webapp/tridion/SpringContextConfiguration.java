@@ -1,10 +1,12 @@
 package com.sdl.webapp.tridion;
 
 import com.sdl.context.odata.client.api.ODataContextEngine;
+import com.sdl.web.api.content.BinaryContentRetriever;
+import com.sdl.web.api.dynamic.BinaryContentRetrieverImpl;
 import com.sdl.web.api.dynamic.DynamicMappingsRetriever;
 import com.sdl.web.api.dynamic.DynamicMappingsRetrieverImpl;
-import com.tridion.content.BinaryFactory;
-import com.tridion.dynamiccontent.DynamicMetaRetriever;
+import com.sdl.web.api.dynamic.DynamicMetaRetriever;
+import com.sdl.web.api.dynamic.DynamicMetaRetrieverImpl;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.providers.ComponentPresentationProvider;
@@ -86,31 +88,16 @@ public class SpringContextConfiguration {
         return componentPresentationProvider;
     }
 
-    /**
-     * <p>dynamicMetaRetriever.</p>
-     *
-     * @return a {@link com.tridion.dynamiccontent.DynamicMetaRetriever} object.
-     */
     @Bean
     public DynamicMetaRetriever dynamicMetaRetriever() {
-        return new DynamicMetaRetriever();
+        return new DynamicMetaRetrieverImpl();
     }
 
-    /**
-     * <p>binaryFactory.</p>
-     *
-     * @return a {@link com.tridion.content.BinaryFactory} object.
-     */
     @Bean
-    public BinaryFactory binaryFactory() {
-        return new BinaryFactory();
+    public BinaryContentRetriever binaryContentRetriever() {
+        return new BinaryContentRetrieverImpl();
     }
 
-    /**
-     * <p>dynamicMappingsRetriever.</p>
-     *
-     * @return a {@link com.tridion.dynamiccontent.DynamicMappingsRetriever} object.
-     */
     @Bean
     public DynamicMappingsRetriever dynamicMappingsRetriever() {
         return new DynamicMappingsRetrieverImpl();

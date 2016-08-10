@@ -1,34 +1,32 @@
 package com.sdl.webapp.tridion;
 
-import com.tridion.dcp.ComponentPresentationFactory;
+
+import com.sdl.web.api.broker.WebComponentPresentationFactoryImpl;
+import com.sdl.web.api.dynamic.WebComponentPresentationFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Component
-/**
- * <p>BrokerComponentPresentationProvider class.</p>
- */
+@Slf4j
 public class BrokerComponentPresentationProvider extends AbstractBrokerComponentPresentationProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentPresentationProvider.class);
-    private static final Map<Integer, ComponentPresentationFactory> FACTORY_CACHE = new ConcurrentHashMap<>();
+
+    private static final Map<Integer, WebComponentPresentationFactory> FACTORY_CACHE = new ConcurrentHashMap<>();
     private static final String ERROR_MESSAGE = "Component Presentation not found for componentId: %d, templateId: %d and publicationId: %d";
 
     /**
      * {@inheritDoc}
      */
     @Override
-    @SuppressWarnings("Duplicates")
     protected ComponentPresentation getDynamicComponentPresentationInternal(int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
-        ComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);
+        WebComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);
         if (factory == null) {
-            factory = new ComponentPresentationFactory(publicationId);
+            factory = new WebComponentPresentationFactoryImpl(publicationId);
             FACTORY_CACHE.put(publicationId, factory);
         }
 
@@ -37,7 +35,7 @@ public class BrokerComponentPresentationProvider extends AbstractBrokerComponent
                 factory.getComponentPresentationWithHighestPriority(componentId);
 
         if (result == null) {
-            LOG.info(String.format(ERROR_MESSAGE, componentId, templateId, publicationId));
+            log.info(String.format(ERROR_MESSAGE, componentId, templateId, publicationId));
             throw new ItemNotFoundException(String.format(ERROR_MESSAGE, componentId, templateId, publicationId));
         }
 

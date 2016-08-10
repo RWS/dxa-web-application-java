@@ -1,9 +1,9 @@
 package com.sdl.webapp.common.util;
 
 import com.google.common.base.Strings;
+import com.google.common.io.Files;
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -11,28 +11,17 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * <p>ImageUtils class.</p>
- */
+@Slf4j
 public final class ImageUtils {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ImageUtils.class);
 
     private ImageUtils() {
     }
 
-    /**
-     * <p>resizeImage.</p>
-     *
-     * @param original an array of byte.
-     * @param pathInfo a {@link com.sdl.webapp.common.util.ImageUtils.StaticContentPathInfo} object.
-     * @return an array of byte.
-     * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
-     */
     public static byte[] resizeImage(byte[] original, StaticContentPathInfo pathInfo) throws ContentProviderException {
         try {
             final BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(original));
@@ -78,8 +67,8 @@ public final class ImageUtils {
                 targetW = (int) (sourceW * ((float) targetH / (float) sourceH));
             }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Image: {}, cropX = {}, cropY = {}, sourceW = {}, sourceH = {}, targetW = {}, targetH = {}",
+            if (log.isDebugEnabled()) {
+                log.debug("Image: {}, cropX = {}, cropY = {}, sourceW = {}, sourceH = {}, targetW = {}, targetH = {}",
                         pathInfo.getFileName(), cropX, cropY, sourceW, sourceH, targetW, targetH);
             }
 
@@ -111,16 +100,28 @@ public final class ImageUtils {
         }
     }
 
+    public static void writeToFile(File file, ImageUtils.StaticContentPathInfo pathInfo, byte[] content) throws ContentProviderException, IOException {
+        if (pathInfo.isImage() && pathInfo.isResized()) {
+            content = ImageUtils.resizeImage(content, pathInfo);
+        }
+
+        Files.write(content, file);
+    }
+
     public static final class StaticContentPathInfo {
 
         private static final Pattern IMAGE_FILENAME_PATTERN = Pattern.compile("(.*)_w([\\d]+)(?:_h([\\d]+))?(_n)?(\\.[^\\.]+)?");
 
         private final String fileName;
+
         private final String imageFormatName;
 
         private final boolean isImage;
+
         private final int width;
+
         private final int height;
+
         private final boolean noStretch;
 
         public StaticContentPathInfo(String path) {

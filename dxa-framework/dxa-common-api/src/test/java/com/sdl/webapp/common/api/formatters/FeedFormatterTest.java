@@ -242,6 +242,24 @@ public class FeedFormatterTest {
         assertThat((List<Object>) list, empty());
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldHandleWhenCollectionIsNull() throws DxaException {
+        //given
+        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
+        RegionModelSetImpl regionModels = new RegionModelSetImpl();
+        regionModels.add(getRegionModel("reg1", new TestEntity("1", null, null, null, null)));
+
+        //when
+        Object formatData = formatter.formatData(getPageModel(regionModels));
+
+        //then
+        assertTrue(formatData instanceof List);
+        List<Entry> data = (List<Entry>) formatData;
+        //also checks order of items
+        assertThat(data, contains(new Entry("1")));
+    }
+
     @NotNull
     private RegionModelImpl getRegionModel(String name, EntityModel... entityModels) throws DxaException {
         RegionModelImpl region = new RegionModelImpl(name);

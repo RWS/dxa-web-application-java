@@ -13,14 +13,27 @@ import java.util.Map;
 @Component
 public class TridionLinkResolver extends AbstractTridionLinkResolver {
 
-    private static final LinkStrategy BINARY_LINK_STRATEGY = (publicationId, itemId, uri)
-            -> new BinaryLinkImpl(publicationId).getLink(uri.startsWith("tcm:") ? uri : ("tcm:" + uri), null, null, null, false);
+    private static final LinkStrategy BINARY_LINK_STRATEGY = new LinkStrategy() {
+        @Override
+        public Link getLink(int publicationId, int itemId, String uri) {
+            return new BinaryLinkImpl(publicationId)
+                    .getLink(uri.startsWith("tcm:") ? uri : ("tcm:" + uri), null, null, null, false);
+        }
+    };
 
-    private static final LinkStrategy COMPONENT_LINK_STRATEGY = (publicationId, itemId, uri)
-            -> new ComponentLinkImpl(publicationId).getLink(itemId);
+    private static final LinkStrategy COMPONENT_LINK_STRATEGY = new LinkStrategy() {
+        @Override
+        public Link getLink(int publicationId, int itemId, String uri) {
+            return new ComponentLinkImpl(publicationId).getLink(itemId);
+        }
+    };
 
-    private static final LinkStrategy PAGE_LINK_STRATEGY = (publicationId, itemId, uri)
-            -> new PageLinkImpl(publicationId).getLink(itemId);
+    private static final LinkStrategy PAGE_LINK_STRATEGY = new LinkStrategy() {
+        @Override
+        public Link getLink(int publicationId, int itemId, String uri) {
+            return new PageLinkImpl(publicationId).getLink(itemId);
+        }
+    };
 
     private static Map<BasicLinkStrategy, LinkStrategy> strategiesMapping;
 

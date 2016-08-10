@@ -1,6 +1,7 @@
 package com.sdl.webapp.tridion.mapping;
 
 import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
@@ -59,6 +60,9 @@ public class DefaultProvider extends AbstractDefaultProvider {
 
     @Autowired
     private BinaryFactory binaryFactory;
+
+    @Autowired
+    private LinkResolver linkResolver;
 
     @Override
     protected DefaultProvider.StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException {
@@ -145,6 +149,7 @@ public class DefaultProvider extends AbstractDefaultProvider {
 
         return ComponentMetadata.builder()
                 .id(String.valueOf(compMeta.getId()))
+                .componentUrl(linkResolver.resolveLink("tcm:" + compMeta.getPublicationId() + '-' + compMeta.getId(), null))
                 .publicationId(String.valueOf(compMeta.getPublicationId()))
                 .owningPublicationId(String.valueOf(compMeta.getOwningPublicationId()))
                 .schemaId(String.valueOf(compMeta.getSchemaId()))

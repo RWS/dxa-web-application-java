@@ -16,6 +16,8 @@ public class ComponentMetadata {
 
     private String id;
 
+    private String componentUrl;
+
     private String publicationId;
 
     private String owningPublicationId;

@@ -18,6 +18,7 @@ import com.sdl.web.api.dynamic.DynamicMetaRetriever;
 import com.sdl.web.api.meta.WebComponentMetaFactory;
 import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
@@ -43,7 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.webapp.common.util.ImageUtils.writeToFile;
@@ -57,18 +57,16 @@ public class DefaultProvider extends AbstractDefaultProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultProvider.class);
 
-    private final DynamicMetaRetriever dynamicMetaRetriever;
-
-    private final BinaryContentRetriever binaryContentRetriever;
+    @Autowired
+    private DynamicMetaRetriever dynamicMetaRetriever;
 
     @Autowired
-    public DefaultProvider(DynamicMetaRetriever dynamicMetaRetriever, BinaryContentRetriever binaryContentRetriever) {
-        this.dynamicMetaRetriever = dynamicMetaRetriever;
-        this.binaryContentRetriever = binaryContentRetriever;
-    }
+    private BinaryContentRetriever binaryContentRetriever;
+
+    @Autowired
+    private LinkResolver linkResolver;
 
     @Override
-
     protected DefaultProvider.StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException {
         BinaryMeta binaryMeta;
         WebComponentMetaFactory factory = new WebComponentMetaFactoryImpl(publicationId);
@@ -156,9 +154,9 @@ public class DefaultProvider extends AbstractDefaultProvider {
             children.add(new PublicationCriteria(query.getPublicationId()));
         }
 
-        children.addAll(query.getKeywordFilters().entries().stream()
-                .map(entry -> new TaxonomyKeywordCriteria(entry.getKey(), entry.getValue(), true))
-                .collect(Collectors.toList()));
+        for (Map.Entry<String, String> entry : query.getKeywordFilters().entries()) {
+            children.add(new TaxonomyKeywordCriteria(entry.getKey(), entry.getValue(), true));
+        }
 
         return new AndCriteria(children);
     }
@@ -194,6 +192,7 @@ public class DefaultProvider extends AbstractDefaultProvider {
 
         return ComponentMetadata.builder()
                 .id(String.valueOf(compMeta.getId()))
+                .componentUrl(linkResolver.resolveLink("tcm:" + compMeta.getPublicationId() + '-' + compMeta.getId(), null))
                 .publicationId(String.valueOf(compMeta.getPublicationId()))
                 .owningPublicationId(String.valueOf(compMeta.getOwningPublicationId()))
                 .schemaId(String.valueOf(compMeta.getSchemaId()))

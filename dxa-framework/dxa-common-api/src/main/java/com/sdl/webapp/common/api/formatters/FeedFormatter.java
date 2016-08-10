@@ -79,11 +79,17 @@ public abstract class FeedFormatter extends BaseFormatter {
             @SneakyThrows(InvocationTargetException.class)
             public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
                 log.debug("Method {} is a collection, trying to iterate over it and get entities", method);
-                for (Object field : ((Collection) method.invoke(entity))) {
+                Object invocationResult = method.invoke(entity);
+                if (invocationResult == null) {
+                    log.debug("Method {} invocation on entity {} returned null instead of a collection", method, entity);
+                    return;
+                }
+                for (Object field : ((Collection) invocationResult)) {
                     if (EntityModel.class.isAssignableFrom(field.getClass())) {
                         fillWithFeedItemsFromProperties((EntityModel) field, list);
                     }
                 }
+
             }
         }, new ReflectionUtils.MethodFilter() {
             @Override

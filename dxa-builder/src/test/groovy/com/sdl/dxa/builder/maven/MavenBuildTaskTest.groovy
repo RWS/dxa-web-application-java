@@ -26,22 +26,23 @@ class MavenBuildTaskTest {
 
     @Test
     public void shouldBuildTaskForCustomCommand() {
-        'assert'('hello', '')(task.buildTask('>> hello', {}))
-        'assert'('hello', '')(task.buildTask('    >    >     hello    ', {}))
-        'assert'('hello', '')(task.buildTask('>>hello', {}))
+        'assert'('hello', '')(task.buildTask('>> hello', {}, true))
+        'assert'('hello', '')(task.buildTask('    >    >     hello    ', {}, true))
+        'assert'('hello', '')(task.buildTask('>>hello', {}, true))
     }
 
     @Test
     public void shouldBuildTaskForCustomCommandForProject() {
-        'assert'('hello', 'project')(task.buildTask('> project > hello', {}))
-        'assert'('hello', 'project')(task.buildTask('       >         project           >         hello        ', {}))
-        'assert'('hello', 'project')(task.buildTask('>project>hello', {}))
+        'assert'('hello', 'project')(task.buildTask('> project > hello', {}, true))
+        'assert'('hello', 'project')(task.buildTask('       >         project           >         hello        ', {
+        }, true))
+        'assert'('hello', 'project')(task.buildTask('>project>hello', {}, true))
     }
 
     @Test
     public void shouldBuildTaskForProject() {
-        'assert'("install ${task.mavenProperties}", 'project')(task.buildTask('project', {}))
-        'assert'("install ${task.mavenProperties}", 'project')(task.buildTask('  project  ', {}))
+        'assert'("install ${task.mavenProperties}", 'project')(task.buildTask('project', {}, true))
+        'assert'("install ${task.mavenProperties}", 'project')(task.buildTask('  project  ', {}, true))
     }
 
     private static Closure 'assert'(String command, name) {

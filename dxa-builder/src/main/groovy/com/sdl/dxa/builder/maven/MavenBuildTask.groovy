@@ -1,4 +1,4 @@
-package com.sdl.dxa.maven
+package com.sdl.dxa.builder.maven
 
 import groovy.util.logging.Slf4j
 import org.gradle.api.DefaultTask

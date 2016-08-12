@@ -1,4 +1,4 @@
-package com.sdl.dxa.maven
+package com.sdl.dxa.builder.maven
 
 interface Defaults {
     static final String DEFAULT_COMMAND = 'install'

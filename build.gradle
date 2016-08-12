@@ -1,5 +1,5 @@
-import com.sdl.dxa.maven.MavenBuildTask
-import com.sdl.dxa.maven.MavenHelpTask
+import com.sdl.dxa.builder.maven.MavenBuildTask
+import com.sdl.dxa.builder.maven.MavenHelpTask
 
 buildscript {
     repositories {

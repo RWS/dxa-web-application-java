@@ -1,4 +1,4 @@
-package com.sdl.dxa.maven
+package com.sdl.dxa.builder.maven
 
 import org.gradle.internal.os.OperatingSystem
 

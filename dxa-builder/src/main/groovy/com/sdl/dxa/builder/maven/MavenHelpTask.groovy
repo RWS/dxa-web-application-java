@@ -1,4 +1,4 @@
-package com.sdl.dxa.maven
+package com.sdl.dxa.builder.maven
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction

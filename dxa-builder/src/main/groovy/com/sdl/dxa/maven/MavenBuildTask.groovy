@@ -62,7 +62,7 @@ class MavenBuildTask extends DefaultTask {
             def parallelTasks = []
 
             tasks.each { task ->
-                parallelTasks << buildTask(task, callback)
+                parallelTasks << buildTask(task, callback, tasks.size() == 1 && verbose)
             }
 
             latch = new CountDownLatch(tasks.size())
@@ -73,7 +73,7 @@ class MavenBuildTask extends DefaultTask {
 
     }
 
-    def BuildTask buildTask(String task, Closure callback) {
+    def BuildTask buildTask(String task, Closure callback, boolean verbose) {
         task = task.trim()
 
         if (task =~ customCommandDelimiter) {
@@ -85,17 +85,17 @@ class MavenBuildTask extends DefaultTask {
                 def command = parts[1].trim()
                 def taskName = parts[0].trim()
                 log.debug('The custom command {} is to be executed on {}', command, taskName)
-                return new BuildTask(taskName, command, callback)
+                return new BuildTask(taskName, command, callback, verbose)
             } else if (parts.size() == 1) {
                 def command = parts[1].trim()
                 log.debug('The custom command {} is to be executed on current path', command)
-                return new BuildTask(command, callback)
+                return new BuildTask(command, callback, verbose)
             } else {
                 throw new IllegalArgumentException("Unsupported configuration")
             }
         }
 
-        new BuildTask(task, getCommandToExecute(), callback)
+        new BuildTask(task, getCommandToExecute(), callback, verbose)
     }
 
     private String getCommandToExecute() {

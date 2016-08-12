@@ -7,16 +7,19 @@ import java.util.concurrent.Callable
 class BuildTask implements Callable<Output> {
     String name, commandToExecute
     Closure callback
+    boolean verbose
 
-    BuildTask(String commandToExecute, Closure callback) {
+    BuildTask(String commandToExecute, Closure callback, boolean verbose) {
         this.commandToExecute = commandToExecute
         this.callback = callback
+        this.verbose = verbose
     }
 
-    BuildTask(String name, String commandToExecute, Closure callback) {
+    BuildTask(String name, String commandToExecute, Closure callback, boolean verbose) {
         this.name = name
         this.commandToExecute = commandToExecute
         this.callback = callback
+        this.verbose = verbose
     }
 
     @Override
@@ -48,7 +51,11 @@ class BuildTask implements Callable<Output> {
 
         def execute = toRun.execute()
         execute.in.eachLine {
-            output.lines << it
+            if (verbose) {
+                println it
+            } else {
+                output.lines << it
+            }
         }
         output.code = execute.exitValue()
         output.timeSeconds = System.currentTimeSeconds() - start

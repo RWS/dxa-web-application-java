@@ -43,8 +43,11 @@ public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery
 
     /**
      * Sets query results, populating all data fields according to implementation logic.
+     *
+     * @param queryResults results of query
+     * @param hasMore      if there are more results but they are not in a list
      */
-    public abstract void setQueryResults(List<T> queryResults);
+    public abstract void setQueryResults(List<T> queryResults, boolean hasMore);
 
     /**
      * Constructs a {@link EntityModel} from {@link ComponentMetadata}.

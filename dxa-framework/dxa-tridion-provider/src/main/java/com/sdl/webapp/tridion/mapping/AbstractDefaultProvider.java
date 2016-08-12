@@ -276,7 +276,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
             result.add(dynamicList.getEntity(metadata));
         }
 
-        dynamicList.setQueryResults(result);
+        dynamicList.setQueryResults(result, query.isHasMore());
     }
 
     /**

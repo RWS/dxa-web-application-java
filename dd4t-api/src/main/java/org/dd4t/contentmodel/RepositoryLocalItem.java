@@ -74,7 +74,9 @@ public interface RepositoryLocalItem extends Item {
     /**
      * Get the Schema
      *
-     * @return
+     * @return the Schema
      */
     Schema getSchema ();
+
+    void setSchema(Schema schema);
 }

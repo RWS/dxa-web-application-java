@@ -90,6 +90,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
             }
         } else if (componentType == Component.ComponentType.MULTIMEDIA && rawJsonData.has(DataBindConstants.MULTIMEDIA)) {
             contentFields = rawJsonData.get(DataBindConstants.MULTIMEDIA);
+
         }
 
         if (rawJsonData.has(DataBindConstants.METADATA_FIELDS)) {
@@ -100,13 +101,13 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
             isRootComponent = false;
         }
 
-        buildModelProperties(model, rawJsonData, isRootComponent, contentFields, metadataFields);
+        buildModelProperties(model, rawJsonData, isRootComponent, contentFields, metadataFields,componentType);
 
 
         return model;
     }
 
-    private <T extends BaseViewModel> void buildModelProperties (final T model, final JsonNode rawJsonData, final boolean isRootComponent, final JsonNode contentFields, final JsonNode metadataFields) throws SerializationException {
+    private <T extends BaseViewModel> void buildModelProperties (final T model, final JsonNode rawJsonData, final boolean isRootComponent, final JsonNode contentFields, final JsonNode metadataFields, final Component.ComponentType componentType) throws SerializationException {
         // TODO: mandatory but missing fields need their XPath set as well..
         final Map<String, Object> modelProperties = model.getModelProperties();
 
@@ -127,11 +128,19 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
                     isEmbedabble = true;
                 }
 
-                final JsonNode currentNode = getJsonNodeToParse(fieldKey, rawJsonData, isRootComponent, isEmbedabble, contentFields, metadataFields, m);
-                // Since we are now now going from modelproperty > fetch data, the data might actually be null
-                if (currentNode != null) {
-                    this.buildField(model, fieldName, currentNode, m);
+                if (componentType == Component.ComponentType.NORMAL ||
+                        componentType == Component.ComponentType.UNKNOWN ||
+                        m.getViewModelProperty().isMetadata() ) {
+                    final JsonNode currentNode = getJsonNodeToParse(fieldKey, rawJsonData, isRootComponent, isEmbedabble, contentFields, metadataFields, m);
+                    // Since we are now now going from modelproperty > fetch data, the data might actually be null
+                    if (currentNode != null) {
+                        this.buildField(model, fieldName, currentNode, m);
 
+                    }
+                } else if(componentType == Component.ComponentType.MULTIMEDIA) {
+                    if (contentFields.has(fieldName)) {
+                        this.buildMultimediaField(model,fieldName,contentFields.get(fieldName),m);
+                    }
                 }
             }
         } catch (IllegalAccessException | IOException e) {
@@ -173,6 +182,23 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
             return currentNode;
         }
         return null;
+    }
+
+    // TODO: we shouldnt need to have a separate method for this. The Json should be
+    // constructed in such a way that it's 1:1 mappable, meaning a FieldType has to be there
+    private <T extends BaseViewModel> void buildMultimediaField(final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping modelFieldMapping) throws IllegalAccessException {
+        final Field modelField = modelFieldMapping.getField();
+        modelField.setAccessible(true);
+        setXPathForXpm(model, fieldName, currentField, modelField);
+
+        Class<?> fieldTypeOfFieldToSet = TypeUtils.determineTypeOfField(modelField);
+
+        // no multivalued fields here, Sir
+        if (fieldTypeOfFieldToSet == String.class) {
+            modelField.set(model, currentField.textValue());
+        } else if (fieldTypeOfFieldToSet == int.class || fieldTypeOfFieldToSet == Integer.class) {
+            modelField.set(model,currentField.intValue());
+        }
     }
 
     private <T extends BaseViewModel> void buildField (final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping modelFieldMapping) throws IllegalAccessException, SerializationException, IOException {

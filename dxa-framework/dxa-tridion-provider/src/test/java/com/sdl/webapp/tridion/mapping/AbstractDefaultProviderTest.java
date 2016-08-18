@@ -1,6 +1,7 @@
 package com.sdl.webapp.tridion.mapping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -9,12 +10,24 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
+import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ImageUtils;
+import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.FieldType;
+import org.dd4t.contentmodel.impl.DateField;
+import org.dd4t.contentmodel.impl.EmbeddedField;
+import org.dd4t.contentmodel.impl.NumericField;
+import org.dd4t.contentmodel.impl.SchemaImpl;
+import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.PageFactory;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -23,6 +36,8 @@ import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
@@ -30,17 +45,22 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static com.sdl.webapp.util.dd4t.TcmUtils.buildTcmUri;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
@@ -54,6 +74,7 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
+@ActiveProfiles("test")
 public class AbstractDefaultProviderTest {
 
     @Autowired
@@ -185,18 +206,77 @@ public class AbstractDefaultProviderTest {
         //given
         SimpleBrokerQuery query = new SimpleBrokerQuery();
         AbstractDefaultProvider spy = spy(abstractDefaultProvider);
+
+        final Date dateCreated_m = new Date();
+        final ComponentMetadata componentMetadata = ComponentMetadata.builder()
+                .id("1")
+                .publicationId("2")
+                .lastPublicationDate(new Date())
+                .modificationDate(new Date())
+                .title("3")
+                .schemaId("4")
+                .custom(ImmutableMap.<String, MetaEntry>builder()
+                        .put("dateCreated_m", MetaEntry.builder()
+                                .value(new Timestamp(dateCreated_m.getTime())).metaType(ComponentMetadata.MetaType.DATE).build())
+                        .put("name_m", MetaEntry.builder()
+                                .value("name_m").metaType(ComponentMetadata.MetaType.STRING).build())
+                        .put("float_m", MetaEntry.builder()
+                                .value(12.0).metaType(ComponentMetadata.MetaType.FLOAT).build())
+                        .build())
+                .build();
+
         when(spy.executeQuery(eq(query))).thenReturn(new ArrayList<ComponentMetadata>() {{
-            add(ComponentMetadata.builder().build());
-            add(ComponentMetadata.builder().build());
+            add(componentMetadata);
+            add(componentMetadata);
         }});
         DynamicList dynamicList = mock(DynamicList.class);
         when(dynamicList.getQuery(any(Localization.class))).thenReturn(query);
-        when(dynamicList.getEntity(any(ComponentMetadata.class))).thenReturn(new Link());
+        when(dynamicList.getEntityType()).thenReturn(Link.class);
+        when(modelBuilderPipeline.createEntityModel(argThat(new BaseMatcher<Component>() {
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Component should match metadata");
+            }
+
+            @Override
+            public boolean matches(Object item) {
+                Component component = (Component) item;
+                String dateTimeStringFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+                Map<String, Field> standardMeta = ((EmbeddedField) component.getMetadata().get("standardMeta")).getEmbeddedValues().get(0).getContent();
+                assertEquals(component.getId(), buildTcmUri(componentMetadata.getPublicationId(), componentMetadata.getId()));
+                assertEquals(component.getPublication().getId(), componentMetadata.getPublicationId());
+                assertEquals(component.getLastPublishedDate(), new DateTime(componentMetadata.getLastPublicationDate()));
+                assertEquals(component.getRevisionDate(), new DateTime(componentMetadata.getModificationDate()));
+                assertEquals(component.getTitle(), componentMetadata.getTitle());
+                assertEquals(component.getSchema().getId(), buildTcmUri(componentMetadata.getPublicationId(), componentMetadata.getSchemaId()));
+                assertEquals(((SchemaImpl) component.getSchema()).getPublication().getId(), componentMetadata.getPublicationId());
+
+                assertEquals(standardMeta.get("dateCreated").getFieldType(), FieldType.DATE);
+                assertEquals(((DateField) standardMeta.get("dateCreated")).getDateTimeValues().get(0),
+                        new DateTime(componentMetadata.getLastPublicationDate()).toString(dateTimeStringFormat));
+
+                assertEquals(standardMeta.get("name").getFieldType(), FieldType.TEXT);
+                assertEquals(((TextField) standardMeta.get("name")).getTextValues().get(0), componentMetadata.getTitle());
+
+                assertEquals(standardMeta.get("name_m").getFieldType(), FieldType.TEXT);
+                assertEquals(((TextField) standardMeta.get("name_m")).getTextValues().get(0), "name_m");
+
+                assertEquals(standardMeta.get("dateCreated_m").getFieldType(), FieldType.DATE);
+                assertEquals(((DateField) standardMeta.get("dateCreated_m")).getDateTimeValues().get(0), new DateTime(dateCreated_m).toString(dateTimeStringFormat));
+
+                assertEquals(standardMeta.get("float_m").getFieldType(), FieldType.NUMBER);
+                assertEquals(((NumericField) standardMeta.get("float_m")).getNumericValues().get(0), 12.0, 0.0);
+
+                return true;
+            }
+        }), any(Localization.class), eq(Link.class))).thenReturn(new Link());
         doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                List list = invocation.getArgumentAt(0, List.class);
+                List<Component> list = invocation.getArgumentAt(0, List.class);
                 assertTrue(list.size() == 2);
+
+                assertEquals(list.get(0), list.get(1));
                 return true;
             }
         }).when(dynamicList).setQueryResults(anyList(), anyBoolean());
@@ -208,11 +288,12 @@ public class AbstractDefaultProviderTest {
         //then
         verify(dynamicList).getQuery(any(Localization.class));
         verify(spy).executeQuery(eq(query));
-        verify(dynamicList, times(2)).getEntity(any(ComponentMetadata.class));
+        verify(dynamicList, times(2)).getEntityType();
         verify(dynamicList).setQueryResults(anyList(), anyBoolean());
     }
 
     @Configuration
+    @Profile("test")
     static class SpringContext {
 
         @Bean

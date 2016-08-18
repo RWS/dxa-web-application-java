@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.query.AbstractQuery;
-import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Contract;
@@ -50,11 +49,9 @@ public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery
     public abstract void setQueryResults(List<T> queryResults, boolean hasMore);
 
     /**
-     * Constructs a {@link EntityModel} from {@link ComponentMetadata}.
+     * Returns a class of {@link EntityModel} that the current implementation of {@link DynamicList} works with.
      *
-     * @param componentMetadata component metadata to be used for entity construction
-     * @return entity of type {@link T} from metadata, or <code>null</code> for <code>null</code> input
+     * @return a class object of T, should never return null
      */
-    @Contract("null -> null; !null -> !null")
-    public abstract T getEntity(ComponentMetadata componentMetadata);
+    public abstract Class<T> getEntityType();
 }

@@ -5,71 +5,55 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
-import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
-import lombok.extern.slf4j.Slf4j;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import org.dd4t.contentmodel.Page;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.PostConstruct;
-import java.util.Collections;
-import java.util.List;
+/**
+ * Model builder pipeline is responsible for constructing DXA models from DD4T representations.
+ */
+public interface ModelBuilderPipeline {
 
-@org.springframework.stereotype.Component
-@Slf4j
-public class ModelBuilderPipeline {
+    /**
+     * Constructs a DXA {@link PageModel} out of DD4T's {@link Page} using the given {@link ContentProvider}.
+     *
+     * @param genericPage     DD4T generic page
+     * @param localization    current localization
+     * @param contentProvider content provider to be used for content resolving
+     * @return a DXA PageModel, or null if no page builders are set
+     * @throws ContentProviderException in case of problems with content provider
+     */
+    @Nullable <T extends PageModel> T createPageModel(Page genericPage, Localization localization, ContentProvider contentProvider) throws ContentProviderException;
 
-    private List<PageBuilder> pageBuilderHandlers;
+    /**
+     * Constructs a DXA {@link EntityModel} out of DD4T's {@link ComponentPresentation}.
+     *
+     * @param componentPresentation DD4T component presentation
+     * @param localization          current localization
+     * @return a DXA EntityModel, or null if no entity builders are set
+     * @throws ContentProviderException in case of problems with content provider
+     */
+    @Nullable <T extends EntityModel> T createEntityModel(ComponentPresentation componentPresentation, Localization localization) throws ContentProviderException;
 
-    private List<EntityBuilder> entityBuilderHandlers;
+    /**
+     * Constructs a DXA {@link EntityModel} out of DD4T's {@link Component}.
+     *
+     * @param component    DD4T component instance
+     * @param localization current localization
+     * @return a DXA EntityModel, or null if no entity builders are set
+     * @throws ContentProviderException in case of problems with content provider
+     */
+    @Nullable <T extends EntityModel> T createEntityModel(Component component, Localization localization) throws ContentProviderException;
 
-    @Autowired
-    public void setPageBuilderHandlers(List<PageBuilder> handlers) {
-        this.pageBuilderHandlers = handlers;
-    }
-
-    @Autowired
-    public void setEntityBuilderHandlers(List<EntityBuilder> handlers) {
-        this.entityBuilderHandlers = handlers;
-    }
-
-    @PostConstruct
-    public void init() {
-        Collections.sort(pageBuilderHandlers, AnnotationAwareOrderComparator.INSTANCE);
-        Collections.sort(entityBuilderHandlers, AnnotationAwareOrderComparator.INSTANCE);
-    }
-
-    public PageModel createPageModel(org.dd4t.contentmodel.Page genericPage, Localization localization, ContentProvider contentProvider) throws ContentProviderException {
-        PageModel pageModel = null;
-        for (PageBuilder pageBuilder : pageBuilderHandlers) {
-            log.debug("Invoking {} on {}", pageBuilder.getClass(), genericPage.getFileName());
-            pageModel = pageBuilder.createPage(genericPage, pageModel, localization, contentProvider);
-        }
-        return pageModel;
-    }
-
-    public EntityModel createEntityModel(ComponentPresentation cp, Localization localization) throws ContentProviderException {
-        EntityModel entityModel = null;
-        for (EntityBuilder entityBuilder : entityBuilderHandlers) {
-            entityModel = entityBuilder.createEntity(cp, entityModel, localization);
-        }
-        return entityModel;
-    }
-
-    public EntityModel createEntityModel(Component component, Localization localization) throws ContentProviderException {
-        EntityModel entityModel = null;
-        for (EntityBuilder entityBuilder : entityBuilderHandlers) {
-            entityModel = entityBuilder.createEntity(component, entityModel, localization);
-        }
-        return entityModel;
-    }
-
-    public EntityModel createEntityModel(Component component, Localization localization, Class<AbstractEntityModel> entityClass) throws ContentProviderException {
-        EntityModel entityModel = null;
-        for (EntityBuilder entityBuilder : entityBuilderHandlers) {
-            entityModel = entityBuilder.createEntity(component, entityModel, localization, entityClass);
-        }
-        return entityModel;
-    }
+    /**
+     * Constructs a DXA {@link EntityModel} out of DD4T's {@link Component}.
+     *
+     * @param component    DD4T component instance
+     * @param localization current localization
+     * @param entityClass  class of a DXA entity
+     * @return a DXA EntityModel, or null if no entity builders are set
+     * @throws ContentProviderException in case of problems with content provider
+     */
+    @Nullable <T extends EntityModel> T createEntityModel(Component component, Localization localization, Class<T> entityClass) throws ContentProviderException;
 }

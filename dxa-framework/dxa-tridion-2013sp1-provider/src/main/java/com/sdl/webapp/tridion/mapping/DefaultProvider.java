@@ -142,9 +142,23 @@ public class DefaultProvider extends AbstractDefaultProvider {
     }
 
     private ComponentMetadata convert(ComponentMeta compMeta) {
-        Map<String, Object> custom = new HashMap<>(compMeta.getCustomMeta().getNameValues().size());
+        Map<String, ComponentMetadata.MetaEntry> custom = new HashMap<>(compMeta.getCustomMeta().getNameValues().size());
         for (Map.Entry<String, NameValuePair> entry : compMeta.getCustomMeta().getNameValues().entrySet()) {
-            custom.put(entry.getKey(), entry.getValue().getFirstValue());
+            ComponentMetadata.MetaType metaType;
+            switch (entry.getValue().getMetadataType()) {
+                case DATE:
+                    metaType = ComponentMetadata.MetaType.DATE;
+                    break;
+                case FLOAT:
+                    metaType = ComponentMetadata.MetaType.FLOAT;
+                    break;
+                default:
+                    metaType = ComponentMetadata.MetaType.STRING;
+            }
+            custom.put(entry.getKey(), ComponentMetadata.MetaEntry.builder()
+                    .metaType(metaType)
+                    .value(entry.getValue().getFirstValue())
+                    .build());
         }
 
         return ComponentMetadata.builder()

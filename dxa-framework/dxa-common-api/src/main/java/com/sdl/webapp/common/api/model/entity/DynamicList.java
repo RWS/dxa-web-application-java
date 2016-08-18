@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -37,7 +38,7 @@ public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery
      *
      * @return a list of {@link T} as a query result
      */
-    @JsonProperty("QueryResults")
+    @JsonIgnore
     public abstract List<T> getQueryResults();
 
     /**

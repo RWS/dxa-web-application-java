@@ -7,7 +7,7 @@ buildscript {
     }
     //noinspection GroovyAssignabilityCheck
     dependencies {
-        classpath group: 'com.sdl.dxa', name: 'dxa-builder', version: '1.6.0-SNAPSHOT'
+        classpath group: 'com.sdl.dxa', name: 'dxa-builder', version: version
     }
 }
 
@@ -48,4 +48,39 @@ task buildDxa(type: MavenBuildTask) {
     if (project.hasProperty('mavenProperties')) {
         mavenProperties = project.mavenProperties
     }
+}
+
+task localRepoDxa(dependsOn: buildDxa, type: MavenBuildTask) {
+    def commonPart = "install:install-file -DgroupId=com.sdl.dxa -Dversion=${version} -DlocalRepositoryPath=${projectDir}/local-project-repo"
+    def pathFor = { String filePath, String artifact, String packaging ->
+        "-Dfile=${filePath} -DartifactId=${artifact} -Dpackaging=${packaging}"
+    }
+    def jar = { String path, String artifact ->
+        pathFor("${path}/${artifact}-${version}.jar", artifact, 'jar')
+    }
+    def pom = { String path, String artifact ->
+        pathFor("${path}/pom.xml", artifact, 'pom')
+    }
+
+    configurations = [
+            [
+                    ">> ${commonPart} ${pom('dxa-bom', 'dxa-bom')}",
+                    ">> ${commonPart} ${pom('dxa-bom-2013sp1', 'dxa-bom-2013sp1')}",
+                    ">> ${commonPart} ${pom('dxa-bom-modules', 'dxa-bom-modules')}",
+
+                    ">> ${commonPart} ${jar('dxa-builder/build/libs', 'dxa-builder')}",
+                    ">> ${commonPart} ${jar('dxa-builder/build/libs', 'dxa-builder')} -Dclassifier=javadoc",
+                    ">> ${commonPart} ${jar('dxa-builder/build/libs', 'dxa-builder')} -Dclassifier=sources",
+
+                    ">> ${commonPart} ${pom('dxa-framework', 'dxa-framework')}",
+                    ">> ${commonPart} ${jar('dxa-framework/dxa-common-api/target', 'dxa-common-api')}",
+                    ">> ${commonPart} ${jar('dxa-framework/dxa-common-impl/target', 'dxa-common-impl')}",
+                    ">> ${commonPart} ${jar('dxa-framework/dxa-tridion-provider/target', 'dxa-tridion-provider')}",
+                    ">> ${commonPart} ${jar('dxa-framework/dxa-tridion-2013sp1-provider/target', 'dxa-tridion-2013sp1-provider')}",
+                    ">> ${commonPart} ${jar('dxa-framework/dxa-web8-provider/target', 'dxa-web8-provider')}",
+
+                    ">> ${commonPart} ${jar('dxa-webapp/target/generated-sources/archetype/target', 'dxa-webapp-archetype')}",
+            ]
+    ]
+    verbose = project.hasProperty('verbose')
 }

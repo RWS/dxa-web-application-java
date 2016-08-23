@@ -17,9 +17,6 @@ import java.util.Map;
 @Slf4j
 public class AdfContextClaimsProvider extends AbstractAdfContextClaimsProvider {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     protected Map<URI, Object> getCurrentClaims() {
         ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();

@@ -29,6 +29,7 @@ import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Multimedia;
 import org.joda.time.format.ISODateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -287,16 +288,13 @@ public final class EntityBuilderImpl implements EntityBuilder {
      * {@inheritDoc}
      */
     @Override
-    public EntityModel createEntity(Component component, EntityModel originalEntityModel, Localization localization, Class<AbstractEntityModel> entityClass)
+    public <T extends EntityModel> T createEntity(Component component, T originalEntityModel, Localization localization, Class<T> entityClass)
             throws ContentProviderException {
         return createEntity(component, localization, entityClass, getSemanticSchema(component, localization));
     }
 
-    private EntityModel createEntity(Component component,
-                                     Localization localization,
-                                     Class<? extends AbstractEntityModel> entityClass,
-                                     SemanticSchema semanticSchema) throws ContentProviderException {
-        final AbstractEntityModel entity;
+    private <T extends EntityModel> T createEntity(Component component, Localization localization, Class<T> entityClass, SemanticSchema semanticSchema) throws ContentProviderException {
+        final T entity;
 
         log.debug("Creating entity for component: {}", component.getId());
         try {
@@ -306,7 +304,9 @@ public final class EntityBuilderImpl implements EntityBuilder {
             throw new ContentProviderException(e);
         }
 
-        entity.setId(component.getId().split("-")[1]);
+        if (AbstractEntityModel.class.isAssignableFrom(entity.getClass())) {
+            ((AbstractEntityModel) entity).setId(component.getId().split("-")[1]);
+        }
 
         processMediaItems(component, localization, entity);
 
@@ -332,7 +332,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
         return entityClass;
     }
 
-    private void processMediaItems(Component component, Localization localization, AbstractEntityModel entity) {
+    private <T extends EntityModel> void processMediaItems(Component component, Localization localization, T entity) {
         if (entity instanceof MediaItem && component.getMultimedia() != null && !isEmpty(component.getMultimedia().getUrl())) {
             final Multimedia multimedia = component.getMultimedia();
             final MediaItem mediaItem = (MediaItem) entity;
@@ -346,7 +346,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
         }
     }
 
-    private void processEclItems(Component component, Localization localization, AbstractEntityModel entity) {
+    private <T extends EntityModel> void processEclItems(Component component, Localization localization, T entity) {
         if (entity instanceof EclItem) {
             final EclItem eclItem = (EclItem) entity;
             //todo check if it's right; .NET does just eclItem.setUri(component.getEclId())
@@ -359,5 +359,10 @@ public final class EntityBuilderImpl implements EntityBuilder {
                 fillItemWithExternalMetadata(eclItem, extensionData);
             }
         }
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 }

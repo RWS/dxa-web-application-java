@@ -1,9 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Files;
-import com.sdl.dxa.modules.core.model.entity.ContentList;
-import com.sdl.dxa.modules.core.model.entity.Teaser;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -15,24 +12,41 @@ import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.api.model.query.ComponentMetadata;
+import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
+import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.ImageUtils;
-import com.sdl.webapp.tridion.query.BrokerQuery;
-import com.sdl.webapp.tridion.query.BrokerQueryException;
 import lombok.NonNull;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.FieldSet;
+import org.dd4t.contentmodel.Schema;
+import org.dd4t.contentmodel.impl.BaseField;
+import org.dd4t.contentmodel.impl.ComponentImpl;
+import org.dd4t.contentmodel.impl.DateField;
+import org.dd4t.contentmodel.impl.EmbeddedField;
+import org.dd4t.contentmodel.impl.FieldSetImpl;
+import org.dd4t.contentmodel.impl.NumericField;
+import org.dd4t.contentmodel.impl.PublicationImpl;
+import org.dd4t.contentmodel.impl.SchemaImpl;
+import org.dd4t.contentmodel.impl.TextField;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.PageFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
@@ -46,22 +60,30 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
+import static com.sdl.webapp.common.util.FileUtils.hasExtension;
+import static com.sdl.webapp.common.util.FileUtils.isFileOlderThan;
+import static com.sdl.webapp.common.util.FileUtils.parentFolderExists;
 import static com.sdl.webapp.util.dd4t.TcmUtils.buildTcmUri;
 import static com.sdl.webapp.util.dd4t.TcmUtils.buildTemplateTcmUri;
+import static java.util.Collections.singletonList;
 
 
 /**
- * Implementation of {@link com.sdl.webapp.common.api.content.ContentProvider} that uses DD4T to provide content.
+ * Implementation of {@link ContentProvider} that uses DD4T to provide content.
  */
+@Slf4j
 public abstract class AbstractDefaultProvider implements ContentProvider, NavigationProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractDefaultProvider.class);
 
     private static final Object LOCK = new Object();
 
     private static final String DEFAULT_PAGE_NAME = "index";
+
     private static final String DEFAULT_PAGE_EXTENSION = ".html";
 
     private static final String STATIC_FILES_DIR = "BinaryData";
@@ -69,7 +91,9 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
     private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
+
     private static final String NAVIGATION_MODEL_URL = "/navigation.json";
+
     private static final String TYPE_STRUCTURE_GROUP = "StructureGroup";
 
     @Autowired
@@ -98,11 +122,11 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         String processedPath = processPath(path);
         final int publicationId = Integer.parseInt(localization.getId());
 
-        LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
+        log.debug("Try to find page: [{}] {}", publicationId, processedPath);
         T page = callback.tryFindPage(processedPath, publicationId);
         if (page == null && !path.endsWith("/") && !hasExtension(path)) {
             processedPath = processPath(path + '/');
-            LOG.debug("Try to find page: [{}] {}", publicationId, processedPath);
+            log.debug("Try to find page: [{}] {}", publicationId, processedPath);
             page = callback.tryFindPage(processedPath, publicationId);
         }
 
@@ -127,60 +151,14 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return path;
     }
 
-    private static boolean hasExtension(String path) {
-        return path.lastIndexOf('.') > path.lastIndexOf('/');
-    }
-
-    /**
-     * <p>isToBeRefreshed.</p>
-     *
-     * @param file a {@link java.io.File} object.
-     * @param time a long.
-     * @return a boolean.
-     * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
-     */
     protected static boolean isToBeRefreshed(File file, long time) throws ContentProviderException {
-        boolean refresh;
-        if (file.exists()) {
-            refresh = file.lastModified() < time;
-        } else {
-            refresh = true;
-            if (!file.getParentFile().exists()) {
-                if (!file.getParentFile().mkdirs()) {
-                    throw new ContentProviderException("Failed to create parent directory for file: " + file);
-                }
+        if (isFileOlderThan(file, time)) {
+            if (!parentFolderExists(file, true)) {
+                throw new ContentProviderException("Failed to create parent directory for file: " + file);
             }
+            return true;
         }
-        return refresh;
-    }
-
-    /**
-     * <p>writeToFile.</p>
-     *
-     * @param file     a {@link java.io.File} object.
-     * @param pathInfo a {@link com.sdl.webapp.common.util.ImageUtils.StaticContentPathInfo} object.
-     * @param content  an array of byte.
-     * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
-     * @throws java.io.IOException                                        if any.
-     */
-    protected static void writeToFile(File file, ImageUtils.StaticContentPathInfo pathInfo, byte[] content) throws ContentProviderException, IOException {
-        if (pathInfo.isImage() && pathInfo.isResized()) {
-            content = ImageUtils.resizeImage(content, pathInfo);
-        }
-
-        Files.write(content, file);
-    }
-
-    private static int mapSchema(String schemaKey, Localization localization) {
-        final String[] parts = schemaKey.split("\\.");
-        final String configKey = parts.length > 1 ? (parts[0] + ".schemas." + parts[1]) : ("core.schemas." + parts[0]);
-        final String schemaId = localization.getConfiguration(configKey);
-        try {
-            return Integer.parseInt(schemaId);
-        } catch (NumberFormatException e) {
-            LOG.warn("Error while parsing schema id: {}", schemaId, e);
-            return 0;
-        }
+        return false;
     }
 
     private static String removeVersionNumber(String path) {
@@ -247,19 +225,102 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return null;
     }
 
-    /**
-     * <p>getStaticContentFile.</p>
-     *
-     * @param file          a {@link java.io.File} object.
-     * @param pathInfo      a {@link com.sdl.webapp.common.util.ImageUtils.StaticContentPathInfo} object.
-     * @param publicationId a int.
-     * @return a {@link com.sdl.webapp.tridion.mapping.AbstractDefaultProvider.StaticContentFile} object.
-     * @throws com.sdl.webapp.common.api.content.ContentProviderException if any.
-     * @throws java.io.IOException                                        if any.
-     */
+    @NotNull
+    private static Component constructComponentFromMetadata(ComponentMetadata metadata) {
+        ComponentImpl component = new ComponentImpl();
+        component.setId(buildTcmUri(metadata.getPublicationId(), metadata.getId()));
+        component.setLastPublishedDate(new DateTime(metadata.getLastPublicationDate()));
+        component.setRevisionDate(new DateTime(metadata.getModificationDate()));
+        component.setTitle(metadata.getTitle());
+
+        component.setPublication(getPublicationFromMetadata(metadata));
+
+        component.setSchema(getSchemaFromMetadata(metadata));
+
+        Map<String, Field> metaFields = new HashMap<>();
+        metaFields.put("standardMeta", getStandardMeta(metadata));
+        component.setMetadata(metaFields);
+
+        return component;
+    }
+
+    private static Schema getSchemaFromMetadata(ComponentMetadata metadata) {
+        SchemaImpl schema = new SchemaImpl();
+        schema.setId(buildTcmUri(metadata.getPublicationId(), metadata.getSchemaId()));
+        PublicationImpl publication = getPublicationFromMetadata(metadata);
+        schema.setPublication(publication);
+        return schema;
+    }
+
+    @NotNull
+    private static PublicationImpl getPublicationFromMetadata(ComponentMetadata metadata) {
+        PublicationImpl publication = new PublicationImpl();
+        publication.setId(metadata.getPublicationId());
+        return publication;
+    }
+
+    private static EmbeddedField getStandardMeta(ComponentMetadata metadata) {
+        Map<String, Field> standardMetaContents = new HashMap<>();
+
+        String dateTimeStringFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+
+        for (Entry<String, MetaEntry> customEntry : metadata.getCustom().entrySet()) {
+            MetaEntry data = customEntry.getValue();
+
+            if (data != null && data.getValue() != null) {
+                Object value = data.getValue();
+
+                BaseField field;
+                switch (data.getMetaType()) {
+                    case DATE:
+                        field = new DateField();
+                        DateTime dateTime = new DateTime(value);
+
+                        field.setDateTimeValues(singletonList(dateTime.toString(dateTimeStringFormat)));
+                        break;
+                    case FLOAT:
+                        field = new NumericField();
+                        field.setNumericValues(singletonList(new Double(value.toString())));
+                        break;
+                    default:
+                        field = new TextField();
+                        field.setTextValues(singletonList(value.toString()));
+                }
+
+                field.setName(customEntry.getKey());
+                standardMetaContents.put(customEntry.getKey(), field);
+            }
+        }
+
+        // The semantic mapping requires that some metadata fields exist.
+        // This may not be the case so we map some component meta properties onto them if they don't exist.
+        if (!standardMetaContents.containsKey("dateCreated")) {
+            DateField dateField = new DateField();
+            dateField.setName("dateCreated");
+            dateField.setDateTimeValues(singletonList(new DateTime(metadata.getLastPublicationDate()).toString(dateTimeStringFormat)));
+            standardMetaContents.put("dateCreated", dateField);
+        }
+
+        if (!standardMetaContents.containsKey("name")) {
+            TextField textField = new TextField();
+            textField.setName("name");
+            textField.setTextValues(singletonList(metadata.getTitle()));
+            standardMetaContents.put("name", textField);
+        }
+
+        EmbeddedField embeddedField = new EmbeddedField();
+        List<FieldSet> embeddedValues = new ArrayList<>();
+        FieldSetImpl fieldSet = new FieldSetImpl();
+
+        fieldSet.setContent(standardMetaContents);
+        embeddedValues.add(fieldSet);
+        embeddedField.setEmbeddedValues(embeddedValues);
+
+        return embeddedField;
+    }
+
     protected abstract StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException;
 
-    /** {@inheritDoc} */
     @Override
     @SneakyThrows(UnsupportedEncodingException.class)
     public PageModel getPageModel(String path, final Localization localization) throws ContentProviderException {
@@ -277,7 +338,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
                         }
                     }
                 } catch (ItemNotFoundException e) {
-                    LOG.debug("Page not found: [{}] {}", publicationId, path);
+                    log.debug("Page not found: [{}] {}", publicationId, path);
                     return null;
                 } catch (FactoryException e) {
                     throw new ContentProviderException("Exception while getting page model for: [" + publicationId +
@@ -289,13 +350,12 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         });
     }
 
-    /** {@inheritDoc} */
     @Override
-    public EntityModel getEntityModel(@NonNull String id, final Localization localization) throws DxaException {
+    public EntityModel getEntityModel(@NonNull String tcmUri, final Localization localization) throws DxaException {
 
-        String[] idParts = id.split("-");
+        String[] idParts = tcmUri.split("-");
         if (idParts.length != 2) {
-            throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", id));
+            throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", tcmUri));
         }
 
         String componentUri = buildTcmUri(localization.getId(), idParts[0]);
@@ -313,48 +373,30 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
             return entityModel;
 
         } catch (FactoryException e) {
-            throw new DxaItemNotFoundException(id);
+            throw new DxaItemNotFoundException(tcmUri);
         } catch (ContentProviderException e) {
             throw new DxaException("Problem building entity model", e);
         }
     }
 
-    /** {@inheritDoc} */
     @Override
-    public void populateDynamicList(ContentList contentList, Localization localization) throws ContentProviderException {
-        final BrokerQuery brokerQuery = instantiateBrokerQuery();
-        brokerQuery.setStart(contentList.getStart());
-        brokerQuery.setPublicationId(Integer.parseInt(localization.getId()));
-        brokerQuery.setPageSize(contentList.getPageSize());
-        if (contentList.getContentType() != null) {
-            brokerQuery.setSchemaId(mapSchema(contentList.getContentType().getKey(), localization));
-        } else {
-            LOG.error("ContentList {} - ContentType is null", contentList.getId());
-        }
-        if (contentList.getSort() != null) {
-            brokerQuery.setSort(contentList.getSort().getKey());
-        } else {
-            LOG.error("ContentList {} - Sort is null", contentList.getId());
+    public <T extends EntityModel> void populateDynamicList(DynamicList<T, SimpleBrokerQuery> dynamicList, Localization localization) throws ContentProviderException {
+        SimpleBrokerQuery query = dynamicList.getQuery(localization);
+
+        List<T> result = new ArrayList<>();
+
+        List<ComponentMetadata> components = executeQuery(query);
+        for (ComponentMetadata metadata : components) {
+            @NotNull Component component = constructComponentFromMetadata(metadata);
+            result.add(modelBuilderPipeline.createEntityModel(component, localization, dynamicList.getEntityType()));
         }
 
-        // Execute query
-        try {
-            contentList.setItemListElements(brokerQuery.executeQuery());
-        } catch (BrokerQueryException e) {
-            throw new ContentProviderException(e);
-        }
-
-        // Resolve links
-        for (Teaser item : contentList.getItemListElements()) {
-            item.getLink().setUrl(linkResolver.resolveLink(item.getLink().getUrl(), null));
-        }
-
-        contentList.setHasMore(brokerQuery.isHasMore());
+        dynamicList.setQueryResults(result, query.isHasMore());
     }
 
     /**
      * {@inheritDoc}
-     *
+     * <p>
      * Implementation of {@code StaticContentProvider} that uses DD4T to provide static content.
      * <p>
      * TODO: Should use DD4T BinaryFactory instead of calling the Tridion broker API directly.
@@ -363,8 +405,8 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("getStaticContent: {} [{}] {}", path, localizationId, localizationPath);
+        if (log.isTraceEnabled()) {
+            log.trace("getStaticContent: {} [{}] {}", path, localizationId, localizationPath);
         }
 
         final String contentPath;
@@ -401,6 +443,15 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         };
     }
 
+    /**
+     * Executes the given query on a specific version of Tridion and returns a list of metadata.
+     *
+     * @param query query to execute
+     * @return a list of metadata, never returns <code>null</code>
+     */
+    @Contract("_ -> !null")
+    protected abstract List<ComponentMetadata> executeQuery(SimpleBrokerQuery query);
+
     private InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
         return findPage(path, localization, new TryFindPage<InputStream>() {
             @Override
@@ -411,7 +462,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
                         pageContent = dd4tPageFactory.findSourcePageByUrl(path, publicationId);
                     }
                 } catch (ItemNotFoundException e) {
-                    LOG.debug("Page not found: [{}] {}", publicationId, path);
+                    log.debug("Page not found: [{}] {}", publicationId, path);
                     return null;
                 } catch (FactoryException e) {
                     throw new ContentProviderException("Exception while getting page content for: [" + publicationId +
@@ -424,7 +475,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         });
     }
 
-    /** {@inheritDoc} */
     @Override
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
         try {
@@ -436,7 +486,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         }
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigationLinks getTopNavigationLinks(String requestPath, Localization localization)
             throws NavigationProviderException {
@@ -444,7 +493,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return new NavigationLinks(createLinksForVisibleItems(navigationModel.getItems()));
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigationLinks getContextNavigationLinks(String requestPath, Localization localization)
             throws NavigationProviderException {
@@ -457,7 +505,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return new NavigationLinks(links);
     }
 
-    /** {@inheritDoc} */
     @Override
     public NavigationLinks getBreadcrumbNavigationLinks(String requestPath, Localization localization)
             throws NavigationProviderException {
@@ -479,19 +526,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         return sitemapItem;
     }
 
-    /**
-     * <p>instantiateBrokerQuery.</p>
-     *
-     * @return a {@link com.sdl.webapp.tridion.query.BrokerQuery} object.
-     */
-    protected abstract BrokerQuery instantiateBrokerQuery();
-
-    /**
-     * <p>prependFullUrlIfNeeded.</p>
-     *
-     * @param path a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
-     */
     @SneakyThrows(UnsupportedEncodingException.class)
     protected String prependFullUrlIfNeeded(String path) {
         String baseUrl = webRequestContext.getBaseUrl();
@@ -508,7 +542,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         }, File.separator);
 
         final File file = new File(parentPath, path);
-        LOG.trace("getStaticContentFile: {}", file);
+        log.trace("getStaticContentFile: {}", file);
 
         final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
 
@@ -522,11 +556,14 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
     }
 
     private interface TryFindPage<T> {
+
         T tryFindPage(String path, int publicationId) throws ContentProviderException;
     }
 
     protected static final class StaticContentFile {
+
         private final File file;
+
         private final String contentType;
 
         protected StaticContentFile(File file, String contentType) {

@@ -11,18 +11,24 @@ import com.sdl.webapp.common.api.model.page.PageModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.util.InitializationUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
@@ -32,6 +38,7 @@ import static org.junit.Assert.assertTrue;
 
 public class FeedFormatterTest {
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void shouldReturnNullForNullModel() {
         //given
@@ -45,173 +52,103 @@ public class FeedFormatterTest {
     }
 
     @Test
-    public void shouldReturnEmptyListForEmptyRegions() {
-        //given
-        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
-        PageModelImpl pageModel = getPageModel(new RegionModelSetImpl());
-
-        //when
-        Object formatData = formatter.formatData(pageModel);
-
-        //then
-        assertTrue(formatData instanceof List);
-        List data = (List) formatData;
-        assertTrue(data.isEmpty());
+    public void shouldReturnEmptyListForEmptyRegions() throws DxaException {
+        shouldGetGivenEntriesFromRegionModel(getRegionModel("reg1"));
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldReturnListOfItemsForFilledPageModel() throws DxaException {
-        //given
-        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
-        RegionModelSetImpl regionModels = new RegionModelSetImpl();
-        regionModels.add(getRegionModel("reg1", getTestEntity("1"), getTestEntity("2")));
-        regionModels.add(getRegionModel("reg2", getTestEntity("3"), getTestEntity("4")));
-
-        //when
-        Object formatData = formatter.formatData(getPageModel(regionModels));
-
-        //then
-        assertTrue(formatData instanceof List);
-        List<Entry> data = (List<Entry>) formatData;
-        assertThat(data, contains(new Entry("1"), new Entry("2"), new Entry("3"), new Entry("4")));
+        shouldGetGivenEntriesFromRegionModel(
+                new RegionModelImpl[]{
+                        getRegionModel("reg1", getTestEntity("1"), getTestEntity("2")),
+                        getRegionModel("reg2", getTestEntity("3"), getTestEntity("4"))
+                },
+                new Entry("1"), new Entry("2"), new Entry("3"), new Entry("4")
+        );
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldReturnListOfItemsIfEntitiesContainsListsOfEntitiesInside() throws DxaException {
-        //given
-        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
-        RegionModelSetImpl regionModels = new RegionModelSetImpl();
-        regionModels.add(getRegionModel("reg1", getTestEntity("1", getTestEntity("2"), getTestEntity("3"))));
-
-        //when
-        Object formatData = formatter.formatData(getPageModel(regionModels));
-
-        //then
-        assertTrue(formatData instanceof List);
-        List<Entry> data = (List<Entry>) formatData;
-        //also checks order of items
-        assertThat(data, contains(new Entry("1"), new Entry("2"), new Entry("3")));
+        shouldGetGivenEntriesFromRegionModel(
+                getRegionModel("reg1", getTestEntity("1", getTestEntity("2"), getTestEntity("3"))),
+                new Entry("1"), new Entry("2"), new Entry("3")
+        );
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldNotAddEmptyEntities() throws DxaException {
-        //given
-        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
-        RegionModelSetImpl regionModels = new RegionModelSetImpl();
-        regionModels.add(getRegionModel("reg1", new EmptyTestEntity()));
-
-        //when
-        Object formatData = formatter.formatData(getPageModel(regionModels));
-
-        //then
-        assertTrue(formatData instanceof List);
-        assertThat((List<Entry>) formatData, empty());
+        shouldGetGivenEntriesFromRegionModel(getRegionModel("reg1", new EmptyTestEntity()));
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSupportTestEntity1FieldNames() throws DxaException {
-        //given
-        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
-        RegionModelSetImpl regionModels = new RegionModelSetImpl();
         Link link = new Link();
         link.setUrl("url");
         Date date = new Date();
-        regionModels.add(getRegionModel("reg1", new TestEntity("1", "2", link.getUrl(), date, Collections.<TestEntity>emptyList())));
-
-
-        Object formatData = formatter.formatData(getPageModel(regionModels));
-
-        //then
-        assertTrue(formatData instanceof List);
-        List<Entry> data = (List<Entry>) formatData;
-        assertThat(data, contains(new Entry("1", link, new RichText("2"), date)));
+        shouldGetGivenEntriesFromRegionModel(
+                getRegionModel("reg1", new TestEntity("1", "2", link.getUrl(), date, Collections.<TestEntity>emptyList())),
+                new Entry("1", link, new RichText("2"), date)
+        );
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSupportTestEntity2FieldNames() throws DxaException {
-        //given
-        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
-        RegionModelSetImpl regionModels = new RegionModelSetImpl();
         Link link = new Link();
         link.setUrl("url");
         DateTime dateTime = DateTime.now();
-        regionModels.add(getRegionModel("reg1", new TestEntity2("1", "2", link, dateTime)));
-
-        Object formatData = formatter.formatData(getPageModel(regionModels));
-
-        //then
-        assertTrue(formatData instanceof List);
-        List<Entry> data = (List<Entry>) formatData;
-        assertThat(data, contains(new Entry("1", link, new RichText("2"), dateTime.toDate())));
+        shouldGetGivenEntriesFromRegionModel(
+                getRegionModel("reg1", new TestEntity2("1", "2", link, dateTime)),
+                new Entry("1", link, new RichText("2"), dateTime.toDate())
+        );
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSupportTestEntity3FieldNames() throws DxaException {
-        //given
-        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
-        RegionModelSetImpl regionModels = new RegionModelSetImpl();
-        regionModels.add(getRegionModel("reg1", new TestEntity3("1", "2", "date")));
-
-        Object formatData = formatter.formatData(getPageModel(regionModels));
-
-        //then
-        assertTrue(formatData instanceof List);
-        List<Entry> data = (List<Entry>) formatData;
-        assertThat(data, contains(new Entry("1", null, new RichText("2"), null)));
+        shouldGetGivenEntriesFromRegionModel(
+                getRegionModel("reg1", new TestEntity3("1", "2", "date")),
+                new Entry("1", null, new RichText("2"), null)
+        );
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSupportTestEntity4FieldNames() throws DxaException {
-        //given
-        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
-        RegionModelSetImpl regionModels = new RegionModelSetImpl();
-        regionModels.add(getRegionModel("reg1", new TestEntity4("2")));
-
-        Object formatData = formatter.formatData(getPageModel(regionModels));
-
-        //then
-        assertTrue(formatData instanceof List);
-        List<Entry> data = (List<Entry>) formatData;
-        assertThat(data, contains(new Entry(null, null, new RichText("2"), null)));
+        shouldGetGivenEntriesFromRegionModel(
+                getRegionModel("reg1", new TestEntity4("1", "2")),
+                new Entry("1", null, new RichText("2"), null)
+        );
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSupportTestEntity5FieldNames() throws DxaException {
-        //given
-        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
-        RegionModelSetImpl regionModels = new RegionModelSetImpl();
-        regionModels.add(getRegionModel("reg1", new TestEntity5("2")));
-
-        Object formatData = formatter.formatData(getPageModel(regionModels));
-
-        //then
-        assertTrue(formatData instanceof List);
-        List<Entry> data = (List<Entry>) formatData;
-        assertThat(data, contains(new Entry(null, null, new RichText("2"), null)));
+        shouldGetGivenEntriesFromRegionModel(
+                getRegionModel("reg1", new TestEntity5("2")),
+                new Entry(null, null, new RichText("2"), null)
+        );
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldSupportTestEntity6FieldNames() throws DxaException {
-        //given
-        TestFeedFormatter formatter = new TestFeedFormatter(null, null);
-        RegionModelSetImpl regionModels = new RegionModelSetImpl();
-        regionModels.add(getRegionModel("reg1", new TestEntity6(new RichText("2"))));
+        shouldGetGivenEntriesFromRegionModel(
+                getRegionModel("reg1", new TestEntity6(new RichText("2"))),
+                new Entry(null, null, new RichText("2"), null)
+        );
+    }
 
-        Object formatData = formatter.formatData(getPageModel(regionModels));
-
-        //then
-        assertTrue(formatData instanceof List);
-        List<Entry> data = (List<Entry>) formatData;
-        assertThat(data, contains(new Entry(null, null, new RichText("2"), null)));
+    @Test
+    public void shouldSupportTestEntity7FieldNames() throws DxaException {
+        shouldGetGivenEntriesFromRegionModel(
+                getRegionModel("reg1", new TestEntity7("2")),
+                new Entry(null, null, new RichText("2"), null)
+        );
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -229,17 +166,82 @@ public class FeedFormatterTest {
     @SuppressWarnings("unchecked")
     @Test
     public void shouldReturnEmptyListInCaseOfInnerException() throws DxaException {
-        //given
-        FeedFormatter feedFormatter = new ExceptionTestFeedFormatter(null, null);
-        RegionModelSetImpl regionModels = new RegionModelSetImpl();
-        regionModels.add(getRegionModel("reg1", new TestEntity4("2")));
+        shouldGetGivenEntriesFromRegionModel(
+                new ExceptionTestFeedFormatter(null, null),
+                new RegionModelImpl[]{getRegionModel("reg1", new TestEntity4("1", "2"))}
+        );
+    }
 
-        //when
-        Object list = feedFormatter.formatData(getPageModel(regionModels));
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldHandleWhenCollectionIsNull() throws DxaException {
+        shouldGetGivenEntriesFromRegionModel(
+                getRegionModel("reg1", new TestEntity("1", null, null, null, null)),
+                new Entry("1")
+        );
+    }
+
+    @Test
+    public void shouldContainFullMappingForFieldsInRealCode() throws IOException {
+        //given
+        Properties mainProps = new Properties();
+        mainProps.load(FileUtils.openInputStream(new File("./src/main/resources/dxa.defaults.properties")));
+
+        Properties testProps = InitializationUtils.loadDxaProperties();
 
         //then
-        assertTrue(list instanceof List);
-        assertThat((List<Object>) list, empty());
+        sameValuesForKeys(mainProps, testProps,
+                "dxa.api.formatters.mapping.Headline",
+                "dxa.api.formatters.mapping.Summary",
+                "dxa.api.formatters.mapping.Date",
+                "dxa.api.formatters.mapping.Link");
+    }
+
+    private void sameValuesForKeys(Properties checked, Properties expectedOk, String... keys) {
+        assertTrue(keys.length > 0);
+        for (String key : keys) {
+            assertTrue(
+                    extractProperties(key, checked).containsAll(
+                            extractProperties(key, expectedOk)
+                    ));
+        }
+    }
+
+    private List<String> extractProperties(String key, Properties expected) {
+        List<String> list = new ArrayList<>();
+        for (String s : expected.get(key).toString().split(",")) {
+            list.add(s.trim());
+        }
+        return list;
+    }
+
+    @SuppressWarnings("unchecked")
+    private void shouldGetGivenEntriesFromRegionModel(FeedFormatter formatter, RegionModelImpl[] regionModel, Entry... contains) throws DxaException {
+        //given
+        RegionModelSetImpl regionModels = new RegionModelSetImpl();
+        Collections.addAll(regionModels, regionModel);
+
+        //when
+        Object formatData = formatter.formatData(getPageModel(regionModels));
+
+        //then
+        assertTrue(formatData instanceof List);
+        List<Entry> data = (List<Entry>) formatData;
+
+        if (contains.length == 0) {
+            assertThat(data, empty());
+        } else {
+            assertThat(data, contains(contains));
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void shouldGetGivenEntriesFromRegionModel(RegionModelImpl[] regionModel, Entry... contains) throws DxaException {
+        shouldGetGivenEntriesFromRegionModel(new TestFeedFormatter(null, null), regionModel, contains);
+    }
+
+    private void shouldGetGivenEntriesFromRegionModel(RegionModelImpl regionModel, Entry... contains) throws DxaException {
+        shouldGetGivenEntriesFromRegionModel(Collections.singletonList(regionModel).toArray(new RegionModelImpl[1]), contains);
     }
 
     @NotNull
@@ -353,6 +355,8 @@ public class FeedFormatterTest {
     @AllArgsConstructor
     private static class TestEntity4 extends AbstractEntityModel {
 
+        private String linkText;
+
         private String teaser;
     }
 
@@ -370,6 +374,14 @@ public class FeedFormatterTest {
     private static class TestEntity6 extends AbstractEntityModel {
 
         private RichText text;
+    }
+
+    @EqualsAndHashCode(callSuper = true)
+    @Data
+    @AllArgsConstructor
+    private static class TestEntity7 extends AbstractEntityModel {
+
+        private String alternateText;
     }
 
     @EqualsAndHashCode(callSuper = true)

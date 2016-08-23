@@ -163,6 +163,16 @@
             </dependency>
             <dependency>
                 <groupId>com.tridion</groupId>
+                <artifactId>cwd_image</artifactId>
+                <version>${cwd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
+                <artifactId>cwd_resource</artifactId>
+                <version>${cwd.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tridion</groupId>
                 <artifactId>cd_odata</artifactId>
                 <version>${cd.version}</version>
             </dependency>

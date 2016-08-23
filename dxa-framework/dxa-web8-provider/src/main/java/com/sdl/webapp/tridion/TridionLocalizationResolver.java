@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-/**
- * <p>TridionLocalizationResolver class.</p>
- */
 public class TridionLocalizationResolver extends AbstractTridionLocalizationResolver {
     @Autowired
     private DynamicMappingsRetriever dynamicMappingsRetriever;

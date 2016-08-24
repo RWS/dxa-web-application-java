@@ -82,12 +82,12 @@ class MavenBuildTask extends DefaultTask {
             parts.remove(0)
 
             if (parts.size() == 2) {
-                def command = parts[1].trim()
+                def command = wrapCommand(parts[1].trim())
                 def taskName = parts[0].trim()
                 log.debug('The custom command {} is to be executed on {}', command, taskName)
                 return new BuildTask(taskName, command, callback, verbose)
             } else if (parts.size() == 1) {
-                def command = parts[1].trim()
+                def command = wrapCommand(parts[1].trim())
                 log.debug('The custom command {} is to be executed on current path', command)
                 return new BuildTask(command, callback, verbose)
             } else {
@@ -99,7 +99,11 @@ class MavenBuildTask extends DefaultTask {
     }
 
     private String getCommandToExecute() {
-        return (command ?: defaultCommand) + " ${mavenProperties}"
+        return wrapCommand(command ?: defaultCommand)
+    }
+
+    private String wrapCommand(String command) {
+        return "${command} ${mavenProperties}"
     }
 
     private static void printMvnVersion() {

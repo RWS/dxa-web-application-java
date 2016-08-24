@@ -26,17 +26,17 @@ class MavenBuildTaskTest {
 
     @Test
     public void shouldBuildTaskForCustomCommand() {
-        'assert'('hello', '')(task.buildTask('>> hello', {}, true))
-        'assert'('hello', '')(task.buildTask('    >    >     hello    ', {}, true))
-        'assert'('hello', '')(task.buildTask('>>hello', {}, true))
+        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", '')(task.buildTask('>> hello', {}, true))
+        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", '')(task.buildTask('    >    >     hello    ', {}, true))
+        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", '')(task.buildTask('>>hello', {}, true))
     }
 
     @Test
     public void shouldBuildTaskForCustomCommandForProject() {
-        'assert'('hello', 'project')(task.buildTask('> project > hello', {}, true))
-        'assert'('hello', 'project')(task.buildTask('       >         project           >         hello        ', {
+        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", 'project')(task.buildTask('> project > hello', {}, true))
+        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", 'project')(task.buildTask('       >         project           >         hello        ', {
         }, true))
-        'assert'('hello', 'project')(task.buildTask('>project>hello', {}, true))
+        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", 'project')(task.buildTask('>project>hello', {}, true))
     }
 
     @Test

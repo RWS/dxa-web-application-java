@@ -21,6 +21,7 @@ class MavenBuildTask extends DefaultTask {
     int numberThreads = Defaults.NUMBER_THREADS
     String mavenProperties = Defaults.MAVEN_PROPERTIES
     boolean verbose = Defaults.IS_VERBOSE
+    boolean batch = Defaults.IS_BATCH
 
     def customCommandDelimiter = /\s*>\s*/
 
@@ -43,8 +44,10 @@ class MavenBuildTask extends DefaultTask {
                 output.lines.each { println it }
 
                 println "= FAILED (in ${output.timeSeconds}s): "
-                println "Well, there is an error. Press <Enter> to finish."
-                System.in.read()
+                if (!batch) {
+                    println "Well, there is an error. Press <Enter> to finish."
+                    System.in.read()
+                }
                 throw new RuntimeException("Error building ${output.command}")
             } else {
                 outputPool.submit {

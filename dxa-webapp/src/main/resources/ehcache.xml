@@ -12,15 +12,15 @@
     <defaultCache
             eternal="false"
             maxEntriesLocalHeap="10000"
-            timeToLiveSeconds="5"
-            timeToIdleSeconds="5"
+            timeToLiveSeconds="*CD_CACHE_DURATION*"
+            timeToIdleSeconds="*CD_CACHE_DURATION*"
             memoryStoreEvictionPolicy="LRU">
     </defaultCache>
     <cache name="DD4T-Objects"
            eternal="false"
            maxEntriesLocalHeap="10000"
-           timeToLiveSeconds="5"
-           timeToIdleSeconds="5"
+           timeToLiveSeconds="*CD_CACHE_DURATION*"
+           timeToIdleSeconds="*CD_CACHE_DURATION*"
            memoryStoreEvictionPolicy="LRU">
     </cache>
     <cache name="DD4T-Dependencies"

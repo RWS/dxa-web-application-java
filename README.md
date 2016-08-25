@@ -104,6 +104,11 @@ To ease the installation you can use the latest [`/install-libs/`](https://githu
 
 **'dxa-framework' project has a Maven profile '2013sp1' which should be enabled to build tridion-provider for that version: `mvn install -P 2013sp1`**
 
+DXA-Builder
+-----------
+If you don't have DXA-Builder installed locally already, you should install it by going into to the dxa-builder directory.
+Run the wrapper script: gradlew to build this project.
+
 License
 -------
 Copyright (c) 2014-2016 SDL Group.

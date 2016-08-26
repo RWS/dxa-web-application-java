@@ -13,6 +13,7 @@ import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.impl.localization.semantics.JsonSchema;
 import com.sdl.webapp.common.impl.localization.semantics.JsonVocabulary;
+import com.sdl.webapp.common.util.InitializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,9 +70,6 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @Value("${dxa.assets.version}")
-    private String assetsVersion;
-
     /**
      * {@inheritDoc}
      */
@@ -122,6 +120,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     }
 
     private boolean loadVersionFromProperties(String id, String path, LocalizationImpl.Builder builder) {
+        String assetsVersion = InitializationUtils.loadDxaProperties().getProperty("dxa.assets.version");
         if (Strings.isNullOrEmpty(assetsVersion)) {
             return false;
         }

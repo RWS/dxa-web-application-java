@@ -1,17 +1,18 @@
 package com.sdl.webapp.common.api.model.region;
 
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.AbstractViewModel;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
@@ -169,7 +170,8 @@ public class RegionModelSetImplTest {
     }
 
     @Data
-    private static class RegionModelImplTest implements RegionModel {
+    @EqualsAndHashCode(callSuper = true)
+    private static class RegionModelImplTest extends AbstractViewModel implements RegionModel {
 
         private String name;
 
@@ -194,23 +196,8 @@ public class RegionModelSetImplTest {
         }
 
         @Override
-        public MvcData getMvcData() {
-            return null;
-        }
-
-        @Override
-        public void setMvcData(MvcData value) {
-
-        }
-
-        @Override
         public void addEntity(EntityModel entity) {
 
-        }
-
-        @Override
-        public Map<String, Object> getXpmMetadata() {
-            return null;
         }
 
         @Override
@@ -219,23 +206,8 @@ public class RegionModelSetImplTest {
         }
 
         @Override
-        public String getHtmlClasses() {
+        public List<FeedItem> extractFeedItems() {
             return null;
-        }
-
-        @Override
-        public void setHtmlClasses(String s) {
-
-        }
-
-        @Override
-        public Map<String, Object> getExtensionData() {
-            return null;
-        }
-
-        @Override
-        public void addExtensionData(String key, Object value) {
-
         }
     }
 

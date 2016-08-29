@@ -2,13 +2,12 @@ package com.sdl.webapp.common.api.formatters;
 
 import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.formatters.dto.FeedItem;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sun.syndication.feed.atom.Content;
 import com.sun.syndication.feed.atom.Entry;
 import com.sun.syndication.feed.atom.Link;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.UUID;
 
@@ -23,7 +22,7 @@ public class AtomFormatter extends FeedFormatter {
     }
 
     @Override
-    public Object getSyndicationItem(FeedItem feedItem) throws URISyntaxException {
+    public Object getSyndicationItem(FeedItem feedItem) {
         Entry entry = new Entry();
 
         if (feedItem.getHeadline() != null) {

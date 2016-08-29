@@ -1,9 +1,11 @@
 package com.sdl.webapp.common.api.model;
 
+import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
+
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-public interface PageModel extends ViewModel {
+public interface PageModel extends ViewModel, FeedItemsProvider {
 
     String getId();
 
@@ -26,8 +28,6 @@ public interface PageModel extends ViewModel {
     void setRegions(RegionModelSet regions);
 
     boolean containsRegion(String regionName);
-
-    void setMvcData(MvcData pageMvcData);
 
     void setXpmMetadata(Map<String, Object> xpmMetaData);
 

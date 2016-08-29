@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.formatters;
 
-import com.sdl.webapp.common.api.formatters.dto.FeedItem;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -44,5 +44,5 @@ public interface DataFormatter {
      *
      * @param item POJO containing data for creating a syndication entry
      */
-    Object getSyndicationItem(FeedItem item) throws Exception;
+    Object getSyndicationItem(FeedItem item);
 }

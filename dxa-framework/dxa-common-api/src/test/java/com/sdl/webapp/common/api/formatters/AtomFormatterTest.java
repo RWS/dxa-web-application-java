@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.formatters;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.formatters.dto.FeedItem;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sun.syndication.feed.atom.Entry;

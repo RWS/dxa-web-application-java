@@ -1,11 +1,13 @@
 package com.sdl.webapp.common.api.model;
 
+import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
+
 import java.util.List;
 
 /**
  * Region model is an interface representing one region on a page. Should be implemented by different types of regions.
  */
-public interface RegionModel extends ViewModel {
+public interface RegionModel extends ViewModel, FeedItemsProvider {
 
     String getName();
 

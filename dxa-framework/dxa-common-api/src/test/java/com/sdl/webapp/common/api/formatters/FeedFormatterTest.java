@@ -1,34 +1,28 @@
 package com.sdl.webapp.common.api.formatters;
 
+import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.formatters.dto.FeedItem;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
+import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.Link;
-import com.sdl.webapp.common.api.model.page.PageModelImpl;
+import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.util.InitializationUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.empty;
@@ -68,89 +62,6 @@ public class FeedFormatterTest {
         );
     }
 
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldReturnListOfItemsIfEntitiesContainsListsOfEntitiesInside() throws DxaException {
-        shouldGetGivenEntriesFromRegionModel(
-                getRegionModel("reg1", getTestEntity("1", getTestEntity("2"), getTestEntity("3"))),
-                new Entry("1"), new Entry("2"), new Entry("3")
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldNotAddEmptyEntities() throws DxaException {
-        shouldGetGivenEntriesFromRegionModel(getRegionModel("reg1", new EmptyTestEntity()));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldSupportTestEntity1FieldNames() throws DxaException {
-        Link link = new Link();
-        link.setUrl("url");
-        Date date = new Date();
-        shouldGetGivenEntriesFromRegionModel(
-                getRegionModel("reg1", new TestEntity("1", "2", link.getUrl(), date, Collections.<TestEntity>emptyList())),
-                new Entry("1", link, new RichText("2"), date)
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldSupportTestEntity2FieldNames() throws DxaException {
-        Link link = new Link();
-        link.setUrl("url");
-        DateTime dateTime = DateTime.now();
-        shouldGetGivenEntriesFromRegionModel(
-                getRegionModel("reg1", new TestEntity2("1", "2", link, dateTime)),
-                new Entry("1", link, new RichText("2"), dateTime.toDate())
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldSupportTestEntity3FieldNames() throws DxaException {
-        shouldGetGivenEntriesFromRegionModel(
-                getRegionModel("reg1", new TestEntity3("1", "2", "date")),
-                new Entry("1", null, new RichText("2"), null)
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldSupportTestEntity4FieldNames() throws DxaException {
-        shouldGetGivenEntriesFromRegionModel(
-                getRegionModel("reg1", new TestEntity4("1", "2")),
-                new Entry("1", null, new RichText("2"), null)
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldSupportTestEntity5FieldNames() throws DxaException {
-        shouldGetGivenEntriesFromRegionModel(
-                getRegionModel("reg1", new TestEntity5("2")),
-                new Entry(null, null, new RichText("2"), null)
-        );
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldSupportTestEntity6FieldNames() throws DxaException {
-        shouldGetGivenEntriesFromRegionModel(
-                getRegionModel("reg1", new TestEntity6(new RichText("2"))),
-                new Entry(null, null, new RichText("2"), null)
-        );
-    }
-
-    @Test
-    public void shouldSupportTestEntity7FieldNames() throws DxaException {
-        shouldGetGivenEntriesFromRegionModel(
-                getRegionModel("reg1", new TestEntity7("2")),
-                new Entry(null, null, new RichText("2"), null)
-        );
-    }
-
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowAnExceptionIfModelIsNotPage() {
         //given
@@ -168,51 +79,14 @@ public class FeedFormatterTest {
     public void shouldReturnEmptyListInCaseOfInnerException() throws DxaException {
         shouldGetGivenEntriesFromRegionModel(
                 new ExceptionTestFeedFormatter(null, null),
-                new RegionModelImpl[]{getRegionModel("reg1", new TestEntity4("1", "2"))}
+                new RegionModelImpl[]{getRegionModel("reg1", new TestEntity("1"))}
         );
     }
 
     @SuppressWarnings("unchecked")
     @Test
     public void shouldHandleWhenCollectionIsNull() throws DxaException {
-        shouldGetGivenEntriesFromRegionModel(
-                getRegionModel("reg1", new TestEntity("1", null, null, null, null)),
-                new Entry("1")
-        );
-    }
-
-    @Test
-    public void shouldContainFullMappingForFieldsInRealCode() throws IOException {
-        //given
-        Properties mainProps = new Properties();
-        mainProps.load(FileUtils.openInputStream(new File("./src/main/resources/dxa.defaults.properties")));
-
-        Properties testProps = InitializationUtils.loadDxaProperties();
-
-        //then
-        sameValuesForKeys(mainProps, testProps,
-                "dxa.api.formatters.mapping.Headline",
-                "dxa.api.formatters.mapping.Summary",
-                "dxa.api.formatters.mapping.Date",
-                "dxa.api.formatters.mapping.Link");
-    }
-
-    private void sameValuesForKeys(Properties checked, Properties expectedOk, String... keys) {
-        assertTrue(keys.length > 0);
-        for (String key : keys) {
-            assertTrue(
-                    extractProperties(key, checked).containsAll(
-                            extractProperties(key, expectedOk)
-                    ));
-        }
-    }
-
-    private List<String> extractProperties(String key, Properties expected) {
-        List<String> list = new ArrayList<>();
-        for (String s : expected.get(key).toString().split(",")) {
-            list.add(s.trim());
-        }
-        return list;
+        shouldGetGivenEntriesFromRegionModel(getRegionModel("reg1", new TestEntity("1")), new Entry("1"));
     }
 
     @SuppressWarnings("unchecked")
@@ -254,12 +128,12 @@ public class FeedFormatterTest {
     }
 
     private @NotNull TestEntity getTestEntity(String id, TestEntity... testEntities) {
-        return new TestEntity(id, null, null, null, Arrays.asList(testEntities));
+        return new TestEntity(id);
     }
 
     @NotNull
-    private PageModelImpl getPageModel(RegionModelSet regionModels) {
-        PageModelImpl pageModel = new PageModelImpl();
+    private DefaultPageModel getPageModel(RegionModelSet regionModels) {
+        DefaultPageModel pageModel = new DefaultPageModel();
         pageModel.setRegions(regionModels);
         return pageModel;
     }
@@ -271,7 +145,7 @@ public class FeedFormatterTest {
         }
 
         @Override
-        public Object getSyndicationItem(FeedItem item) throws Exception {
+        public Object getSyndicationItem(FeedItem item) {
             return new Entry(item.getHeadline(), item.getLink(), item.getSummary(), item.getDate());
         }
     }
@@ -283,7 +157,7 @@ public class FeedFormatterTest {
         }
 
         @Override
-        public Object getSyndicationItem(FeedItem item) throws Exception {
+        public Object getSyndicationItem(FeedItem item) {
             throw new RuntimeException();
         }
     }
@@ -307,8 +181,7 @@ public class FeedFormatterTest {
 
     @EqualsAndHashCode(callSuper = true)
     @Data
-    @AllArgsConstructor
-    private static class TestEntity extends AbstractEntityModel {
+    private static class TestEntity extends AbstractEntityModel implements FeedItemsProvider {
 
         private String headline;
 
@@ -318,76 +191,15 @@ public class FeedFormatterTest {
 
         private Date updated;
 
-        private List<TestEntity> testEntities;
+        TestEntity(String headline) {
+            this.headline = headline;
+        }
+
+        @Override
+        public List<FeedItem> extractFeedItems() {
+            FeedItem feedItem = new FeedItem();
+            feedItem.setHeadline(headline);
+            return Lists.newArrayList(feedItem);
+        }
     }
-
-    @EqualsAndHashCode(callSuper = true)
-    @Data
-    @AllArgsConstructor
-    private static class TestEntity2 extends AbstractEntityModel {
-
-        private String title;
-
-        private String description;
-
-        private Link link;
-
-        private DateTime date;
-    }
-
-    @EqualsAndHashCode(callSuper = true)
-    @Data
-    @AllArgsConstructor
-    private static class TestEntity3 extends AbstractEntityModel {
-
-        private String name;
-
-        private String snippet;
-
-        /**
-         * Whatever it is, don't treat as date.
-         */
-        private String date;
-    }
-
-    @EqualsAndHashCode(callSuper = true)
-    @Data
-    @AllArgsConstructor
-    private static class TestEntity4 extends AbstractEntityModel {
-
-        private String linkText;
-
-        private String teaser;
-    }
-
-    @EqualsAndHashCode(callSuper = true)
-    @Data
-    @AllArgsConstructor
-    private static class TestEntity5 extends AbstractEntityModel {
-
-        private String text;
-    }
-
-    @EqualsAndHashCode(callSuper = true)
-    @Data
-    @AllArgsConstructor
-    private static class TestEntity6 extends AbstractEntityModel {
-
-        private RichText text;
-    }
-
-    @EqualsAndHashCode(callSuper = true)
-    @Data
-    @AllArgsConstructor
-    private static class TestEntity7 extends AbstractEntityModel {
-
-        private String alternateText;
-    }
-
-    @EqualsAndHashCode(callSuper = true)
-    @Data
-    private static class EmptyTestEntity extends AbstractEntityModel {
-
-    }
-
 }

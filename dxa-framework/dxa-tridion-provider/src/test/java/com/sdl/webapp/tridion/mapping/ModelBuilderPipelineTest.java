@@ -6,7 +6,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
-import com.sdl.webapp.common.api.model.page.PageModelImpl;
+import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Page;
@@ -118,7 +118,7 @@ public class ModelBuilderPipelineTest {
         //given
         Page page = mock(Page.class);
         ContentProvider contentProvider = mock(ContentProvider.class);
-        PageModelImpl pageModel = new PageModelImpl();
+        DefaultPageModel pageModel = new DefaultPageModel();
 
         when(lowPageBuilder.createPage(same(page), any(PageModel.class), same(localization), same(contentProvider))).thenReturn(pageModel);
         when(highPageBuilder.createPage(same(page), any(PageModel.class), same(localization), same(contentProvider))).thenReturn(pageModel);

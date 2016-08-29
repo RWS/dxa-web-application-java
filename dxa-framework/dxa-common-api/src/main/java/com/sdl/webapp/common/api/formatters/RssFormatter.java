@@ -1,12 +1,11 @@
 package com.sdl.webapp.common.api.formatters;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.formatters.dto.FeedItem;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sun.syndication.feed.rss.Description;
 import com.sun.syndication.feed.rss.Item;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URISyntaxException;
 
 /**
  * Produces the feed in RSS format.
@@ -19,7 +18,7 @@ public class RssFormatter extends FeedFormatter {
     }
 
     @Override
-    public Object getSyndicationItem(FeedItem teaser) throws URISyntaxException {
+    public Object getSyndicationItem(FeedItem teaser) {
         Item item = new Item();
 
         if (teaser.getHeadline() != null) {

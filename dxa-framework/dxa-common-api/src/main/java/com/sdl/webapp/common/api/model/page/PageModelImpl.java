@@ -1,27 +1,17 @@
 package com.sdl.webapp.common.api.model.page;
 
 import com.sdl.webapp.common.api.model.PageModel;
-import lombok.ToString;
+import lombok.NoArgsConstructor;
 
-@ToString
 /**
- * <p>PageModelImpl class.</p>
+ * Class for backward compatibility.
+ * @deprecated since creation, since 1.6, will be dropped in preference for {@link DefaultPageModel}
  */
+@Deprecated
+@NoArgsConstructor
+public class PageModelImpl extends AbstractPageModelImpl {
 
-//todo dxa2 remove this class, make AbstractPageModelImpl not abstract
-public class PageModelImpl extends AbstractPageModelImpl implements PageModel {
-    /**
-     * <p>Constructor for PageModelImpl.</p>
-     */
-    public PageModelImpl() {
-    }
-
-    /**
-     * <p>Constructor for PageModelImpl.</p>
-     *
-     * @param other a {@link com.sdl.webapp.common.api.model.PageModel} object.
-     */
-    public PageModelImpl(PageModel other) {
-        super(other);
+    public PageModelImpl(PageModel pageModel) {
+        super(pageModel);
     }
 }

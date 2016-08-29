@@ -20,7 +20,7 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
-import com.sdl.webapp.common.api.model.page.PageModelImpl;
+import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -307,9 +307,9 @@ public final class PageBuilderImpl implements PageBuilder {
         Schema pageMetadataSchema = genericPage.getSchema();
 
         PageModel pageModel;
-        if (pageModelType == PageModelImpl.class) {
+        if (pageModelType == DefaultPageModel.class) {
             // Standard Page Model
-            pageModel = new PageModelImpl();
+            pageModel = new DefaultPageModel();
         } else if (pageModelType != null && pageMetadataSchema == null) {
             // Custom Page Model but no Page metadata that can be mapped; simply create a Page Model instance of the right type.
             try {

@@ -75,10 +75,10 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("test")
-public class AbstractDefaultProviderTest {
+public class AbstractDefaultContentProviderTest {
 
     @Autowired
-    private AbstractDefaultProvider abstractDefaultProvider;
+    private AbstractDefaultContentProvider abstractDefaultContentProvider;
 
     @Autowired
     private ModelBuilderPipeline modelBuilderPipeline;
@@ -93,7 +93,7 @@ public class AbstractDefaultProviderTest {
                 .thenReturn(entity);
 
         //when
-        EntityModel entityModel = abstractDefaultProvider.getEntityModel("1-1", localization);
+        EntityModel entityModel = abstractDefaultContentProvider.getEntityModel("1-1", localization);
 
         //then
         assertEquals(entityModel.getXpmMetadata().get("IsQueryBased"), true);
@@ -102,7 +102,7 @@ public class AbstractDefaultProviderTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfIdIsWrong() throws DxaException {
         //when
-        abstractDefaultProvider.getEntityModel("1", null);
+        abstractDefaultContentProvider.getEntityModel("1", null);
 
         //then
         //exception is thrown
@@ -111,7 +111,7 @@ public class AbstractDefaultProviderTest {
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfIdIsEmpty() throws DxaException {
         //when
-        abstractDefaultProvider.getEntityModel("", null);
+        abstractDefaultContentProvider.getEntityModel("", null);
 
         //then
         //exception is thrown
@@ -120,7 +120,7 @@ public class AbstractDefaultProviderTest {
     @Test(expected = NullPointerException.class)
     public void shouldThrowExceptionIfIdIsNull() throws DxaException {
         //when
-        abstractDefaultProvider.getEntityModel(null, null);
+        abstractDefaultContentProvider.getEntityModel(null, null);
 
         //then
         //exception is thrown
@@ -138,7 +138,7 @@ public class AbstractDefaultProviderTest {
 
         //when
         //file.exists = false, parent.exists = true
-        boolean notExist = AbstractDefaultProvider.isToBeRefreshed(file, 1000L);
+        boolean notExist = AbstractDefaultContentProvider.isToBeRefreshed(file, 1000L);
 
         //then
         assertTrue(notExist);
@@ -157,7 +157,7 @@ public class AbstractDefaultProviderTest {
 
         //when
         //file.exists = false, parent.exists = false, parent.mkdirs = true
-        boolean newFile = AbstractDefaultProvider.isToBeRefreshed(file, 500L);
+        boolean newFile = AbstractDefaultContentProvider.isToBeRefreshed(file, 500L);
 
         //then
         assertFalse(newFile);
@@ -176,7 +176,7 @@ public class AbstractDefaultProviderTest {
 
         //when
         //file.exists = false, parent.exists = false, parent.mkdirs = false
-        AbstractDefaultProvider.isToBeRefreshed(file, 500L);
+        AbstractDefaultContentProvider.isToBeRefreshed(file, 500L);
         //then
         //exception
     }
@@ -193,7 +193,7 @@ public class AbstractDefaultProviderTest {
 
         //when
         //file.exists = true, parent.exists = true
-        boolean oldFile = AbstractDefaultProvider.isToBeRefreshed(file, 1500L);
+        boolean oldFile = AbstractDefaultContentProvider.isToBeRefreshed(file, 1500L);
 
         //then
         verify(parent, never()).mkdirs();
@@ -205,7 +205,7 @@ public class AbstractDefaultProviderTest {
     public void shouldGetQueryFromDynamicListAndCallExecuteImplementation() throws ContentProviderException {
         //given
         SimpleBrokerQuery query = new SimpleBrokerQuery();
-        AbstractDefaultProvider spy = spy(abstractDefaultProvider);
+        AbstractDefaultContentProvider spy = spy(abstractDefaultContentProvider);
 
         final Date dateCreated_m = new Date();
         final ComponentMetadata componentMetadata = ComponentMetadata.builder()
@@ -297,11 +297,11 @@ public class AbstractDefaultProviderTest {
     static class SpringContext {
 
         @Bean
-        public AbstractDefaultProvider defaultProvider() {
-            return new AbstractDefaultProvider() {
+        public AbstractDefaultContentProvider defaultProvider() {
+            return new AbstractDefaultContentProvider() {
                 @Override
                 protected StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException {
-                    return mock(AbstractDefaultProvider.StaticContentFile.class);
+                    return mock(AbstractDefaultContentProvider.StaticContentFile.class);
                 }
 
                 @Override

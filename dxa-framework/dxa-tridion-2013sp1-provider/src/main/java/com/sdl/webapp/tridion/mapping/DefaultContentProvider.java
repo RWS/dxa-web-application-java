@@ -1,22 +1,5 @@
 package com.sdl.webapp.tridion.mapping;
 
-import com.sdl.web.api.broker.querying.BrokerQuery;
-import com.sdl.web.api.broker.querying.QueryImpl;
-import com.sdl.web.api.broker.querying.criteria.Criteria;
-import com.sdl.web.api.broker.querying.criteria.content.ItemSchemaCriteria;
-import com.sdl.web.api.broker.querying.criteria.content.PublicationCriteria;
-import com.sdl.web.api.broker.querying.criteria.operators.AndCriteria;
-import com.sdl.web.api.broker.querying.criteria.taxonomy.TaxonomyKeywordCriteria;
-import com.sdl.web.api.broker.querying.filter.LimitFilter;
-import com.sdl.web.api.broker.querying.filter.PagingFilter;
-import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
-import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
-import com.sdl.web.api.broker.querying.sorting.SortDirection;
-import com.sdl.web.api.broker.querying.sorting.SortParameter;
-import com.sdl.web.api.content.BinaryContentRetriever;
-import com.sdl.web.api.dynamic.DynamicMetaRetriever;
-import com.sdl.web.api.meta.WebComponentMetaFactory;
-import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
@@ -25,9 +8,24 @@ import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
+import com.tridion.broker.querying.Query;
+import com.tridion.broker.querying.criteria.Criteria;
+import com.tridion.broker.querying.criteria.content.ItemSchemaCriteria;
+import com.tridion.broker.querying.criteria.content.PublicationCriteria;
+import com.tridion.broker.querying.criteria.operators.AndCriteria;
+import com.tridion.broker.querying.criteria.taxonomy.TaxonomyKeywordCriteria;
+import com.tridion.broker.querying.filter.LimitFilter;
+import com.tridion.broker.querying.filter.PagingFilter;
+import com.tridion.broker.querying.sorting.SortColumn;
+import com.tridion.broker.querying.sorting.SortDirection;
+import com.tridion.broker.querying.sorting.SortParameter;
+import com.tridion.broker.querying.sorting.column.CustomMetaKeyColumn;
+import com.tridion.content.BinaryFactory;
 import com.tridion.data.BinaryData;
+import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
+import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.NameValuePair;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -51,25 +49,25 @@ import static com.sdl.webapp.common.util.ImageUtils.writeToFile;
 @Component
 @Slf4j
 @SuppressWarnings("Duplicates")
-public class DefaultProvider extends AbstractDefaultProvider {
+public class DefaultContentProvider extends AbstractDefaultContentProvider {
 
     private static final Object LOCK = new Object();
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultProvider.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultContentProvider.class);
 
     @Autowired
     private DynamicMetaRetriever dynamicMetaRetriever;
 
     @Autowired
-    private BinaryContentRetriever binaryContentRetriever;
+    private BinaryFactory binaryFactory;
 
     @Autowired
     private LinkResolver linkResolver;
 
     @Override
-    protected DefaultProvider.StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException {
+    protected DefaultContentProvider.StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException {
         BinaryMeta binaryMeta;
-        WebComponentMetaFactory factory = new WebComponentMetaFactoryImpl(publicationId);
+        ComponentMetaFactory factory = new ComponentMetaFactory(publicationId);
         ComponentMeta componentMeta;
         int itemId;
 
@@ -89,7 +87,7 @@ public class DefaultProvider extends AbstractDefaultProvider {
 
         long componentTime = componentMeta.getLastPublicationDate().getTime();
         if (isToBeRefreshed(file, componentTime)) {
-            BinaryData binaryData = binaryContentRetriever.getBinary(publicationId, itemId, binaryMeta.getVariantId());
+            BinaryData binaryData = binaryFactory.getBinary(publicationId, itemId, binaryMeta.getVariantId());
 
             LOG.debug("Writing binary content to file: {}", file);
             writeToFile(file, pathInfo, binaryData.getBytes());
@@ -102,7 +100,7 @@ public class DefaultProvider extends AbstractDefaultProvider {
 
     @Override
     protected List<ComponentMetadata> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {
-        BrokerQuery query = new QueryImpl(buildCriteria(simpleBrokerQuery));
+        Query query = new Query(buildCriteria(simpleBrokerQuery));
 
         if (!isNullOrEmpty(simpleBrokerQuery.getSort()) &&
                 !Objects.equals(simpleBrokerQuery.getSort().toLowerCase(), "none")) {
@@ -128,7 +126,7 @@ public class DefaultProvider extends AbstractDefaultProvider {
             return Collections.emptyList();
         }
 
-        final WebComponentMetaFactory cmf = new WebComponentMetaFactoryImpl(simpleBrokerQuery.getPublicationId());
+        final ComponentMetaFactory cmf = new ComponentMetaFactory(simpleBrokerQuery.getPublicationId());
         final List<ComponentMetadata> results = new ArrayList<>();
 
         simpleBrokerQuery.setHasMore(ids.length > pageSize);
@@ -141,47 +139,6 @@ public class DefaultProvider extends AbstractDefaultProvider {
         }
 
         return results;
-    }
-
-    private Criteria buildCriteria(@NotNull SimpleBrokerQuery query) {
-        final List<Criteria> children = new ArrayList<>();
-
-        if (query.getSchemaId() > 0) {
-            children.add(new ItemSchemaCriteria(query.getSchemaId()));
-        }
-
-        if (query.getPublicationId() > 0) {
-            children.add(new PublicationCriteria(query.getPublicationId()));
-        }
-
-        for (Map.Entry<String, String> entry : query.getKeywordFilters().entries()) {
-            children.add(new TaxonomyKeywordCriteria(entry.getKey(), entry.getValue(), true));
-        }
-
-        return new AndCriteria(children);
-    }
-
-    private SortParameter getSortParameter(SimpleBrokerQuery simpleBrokerQuery) {
-        SortDirection dir = simpleBrokerQuery.getSort().toLowerCase().endsWith("asc") ?
-                SortDirection.ASCENDING : SortDirection.DESCENDING;
-        return new SortParameter(getSortColumn(simpleBrokerQuery), dir);
-    }
-
-    private BrokerSortColumn getSortColumn(SimpleBrokerQuery simpleBrokerQuery) {
-        final String sortTrim = simpleBrokerQuery.getSort().trim();
-        final int pos = sortTrim.indexOf(' ');
-        final String sortCol = pos > 0 ? sortTrim.substring(0, pos) : sortTrim;
-        switch (sortCol.toLowerCase()) {
-            case "title":
-                return SortParameter.ITEMS_TITLE;
-
-            case "pubdate":
-                return SortParameter.ITEMS_LAST_PUBLISHED_DATE;
-
-            default:
-                // Default is to assume that its a custom metadata date field
-                return new CustomMetaKeyColumn(simpleBrokerQuery.getSort(), MetadataType.DATE);
-        }
     }
 
     private ComponentMetadata convert(ComponentMeta compMeta) {
@@ -221,4 +178,44 @@ public class DefaultProvider extends AbstractDefaultProvider {
                 .build();
     }
 
+    private Criteria buildCriteria(@NotNull SimpleBrokerQuery query) {
+        final List<Criteria> children = new ArrayList<>();
+
+        if (query.getSchemaId() > 0) {
+            children.add(new ItemSchemaCriteria(query.getSchemaId()));
+        }
+
+        if (query.getPublicationId() > 0) {
+            children.add(new PublicationCriteria(query.getPublicationId()));
+        }
+
+
+        for (Map.Entry<String, String> entry : query.getKeywordFilters().entries()) {
+            children.add(new TaxonomyKeywordCriteria(entry.getKey(), entry.getValue(), true));
+        }
+
+        return new AndCriteria(children.toArray(new Criteria[children.size()]));
+    }
+
+    private SortParameter getSortParameter(SimpleBrokerQuery simpleBrokerQuery) {
+        SortDirection dir = simpleBrokerQuery.getSort().toLowerCase().endsWith("asc") ? SortDirection.ASCENDING : SortDirection.DESCENDING;
+        return new SortParameter(getSortColumn(simpleBrokerQuery), dir);
+    }
+
+    private SortColumn getSortColumn(SimpleBrokerQuery simpleBrokerQuery) {
+        final String sortTrim = simpleBrokerQuery.getSort().trim();
+        final int pos = sortTrim.indexOf(' ');
+        final String sortCol = pos > 0 ? sortTrim.substring(0, pos) : sortTrim;
+        switch (sortCol.toLowerCase()) {
+            case "title":
+                return SortParameter.ITEMS_TITLE;
+
+            case "pubdate":
+                return SortParameter.ITEMS_LAST_PUBLISHED_DATE;
+
+            default:
+                // Default is to assume that its a custom metadata date field
+                return new CustomMetaKeyColumn(simpleBrokerQuery.getSort(), MetadataType.DATE);
+        }
+    }
 }

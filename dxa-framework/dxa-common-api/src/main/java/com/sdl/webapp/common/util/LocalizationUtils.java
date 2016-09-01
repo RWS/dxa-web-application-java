@@ -49,11 +49,11 @@ public final class LocalizationUtils {
      * <p>Adds an explicit <code>index</code> page name if other page is not in a <code>path</code>.</p>
      * <p>Adds an explicit <code>.html</code> extension if other extension is not in a <code>path</code>.</p>
      * <pre>
-     * <code>&lt;empty&gt;    -> index.html</code>
-     * <code>/          -> /index.html</code>
-     * <code>test       -> test.html</code>
-     * <code>/test/     -> /test/index.html</code>
-     * <code>page.ext   -> page.ext</code>
+     * <code>&lt;empty&gt;    -&gt; index.html</code>
+     * <code>/          -&gt; /index.html</code>
+     * <code>test       -&gt; test.html</code>
+     * <code>/test/     -&gt; /test/index.html</code>
+     * <code>page.ext   -&gt; page.ext</code>
      * </pre>
      *
      * @param path path to normalize

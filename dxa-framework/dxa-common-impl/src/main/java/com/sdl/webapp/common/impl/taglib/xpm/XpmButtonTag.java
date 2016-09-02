@@ -40,9 +40,9 @@ public class XpmButtonTag extends XpmMarkupTag {
                             .build())
                     .build();
         } else {
-            String path = ApplicationContextHolder.getContext().getBean(WebRequestContext.class).getLocalization().getPath();
             String title = "Edit " + this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
-            String editUrl = path + this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY);
+            String editUrl = ApplicationContextHolder.getContext().getBean(WebRequestContext.class).getLocalization().localizePath(
+                    this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY).toString());
             return HtmlBuilders.div()
                     .withClass("xpm-button")
                     .withAttribute("style", "z-index:1")

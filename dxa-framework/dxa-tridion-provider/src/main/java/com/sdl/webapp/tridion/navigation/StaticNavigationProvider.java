@@ -11,7 +11,6 @@ import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.util.LocalizationUtils;
 import com.sdl.webapp.common.util.LocalizationUtils.TryFindPage;
-import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -166,11 +165,12 @@ public class StaticNavigationProvider implements NavigationProvider {
     private InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
         return LocalizationUtils.findPageByPath(path, localization, new TryFindPage<InputStream>() {
             @Override
-            @Synchronized
             public InputStream tryFindPage(String path, int publicationId) throws ContentProviderException {
                 final String pageContent;
                 try {
-                    pageContent = pageFactory.findSourcePageByUrl(path, publicationId);
+                    synchronized (this) {
+                        pageContent = pageFactory.findSourcePageByUrl(path, publicationId);
+                    }
                 } catch (ItemNotFoundException e) {
                     log.debug("Page not found: [{}] {}", publicationId, path);
                     return null;

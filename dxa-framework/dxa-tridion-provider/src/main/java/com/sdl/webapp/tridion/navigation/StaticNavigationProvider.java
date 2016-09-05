@@ -38,6 +38,8 @@ public class StaticNavigationProvider implements NavigationProvider {
 
     static final String TYPE_STRUCTURE_GROUP = "StructureGroup";
 
+    private static final Object $LOCK = new Object();
+
     private final ObjectMapper objectMapper;
 
     private final LinkResolver linkResolver;
@@ -168,7 +170,7 @@ public class StaticNavigationProvider implements NavigationProvider {
             public InputStream tryFindPage(String path, int publicationId) throws ContentProviderException {
                 final String pageContent;
                 try {
-                    synchronized (this) {
+                    synchronized ($LOCK) {
                         pageContent = pageFactory.findSourcePageByUrl(path, publicationId);
                     }
                 } catch (ItemNotFoundException e) {

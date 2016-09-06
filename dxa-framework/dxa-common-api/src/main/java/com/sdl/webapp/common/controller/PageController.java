@@ -337,7 +337,7 @@ public class PageController extends BaseController {
         try {
             return contentProvider.getPageModel(path, localization);
         } catch (PageNotFoundException e) {
-            log.info("Page not found: {}", path, e);
+            log.info("Page not found: {}, localizationId: {}", path, localization.getId());
             throw new NotFoundException("Page not found: " + path, e);
         } catch (ContentProviderException e) {
             log.error("An unexpected error occurred", e);

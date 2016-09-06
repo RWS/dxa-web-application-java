@@ -2,6 +2,9 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.FluentIterable;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
+import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.query.AbstractQuery;
@@ -19,7 +22,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery> extends AbstractEntityModel {
+public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery> extends AbstractEntityModel implements FeedItemsProvider {
 
     @JsonProperty("Start")
     private int start;
@@ -55,4 +58,9 @@ public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery
      * @return a class object of T, should never return null
      */
     public abstract Class<T> getEntityType();
+
+    @Override
+    public List<FeedItem> extractFeedItems() {
+        return collectFeedItems(FluentIterable.from(getQueryResults()).filter(FeedItemsProvider.class).toList());
+    }
 }

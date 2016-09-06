@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.formatters;
 
-import com.sdl.webapp.common.api.formatters.dto.FeedItem;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sun.syndication.feed.rss.Item;
 import org.junit.Test;

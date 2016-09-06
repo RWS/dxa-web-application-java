@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ServiceConfig ConnectionTimeout="10000" CacheEnabled="true" CacheExpirationDuration="5"
+<ServiceConfig ConnectionTimeout="10000" CacheEnabled="true" CacheExpirationDuration="*CD_CACHE_DURATION*"
                ServiceAvailabilityCheck="false">
     <!-- NOTE: cache expiration is set to only 5 seconds to prevent caching issues with XPM Session Preview. It should be set higher on a Live site -->
 

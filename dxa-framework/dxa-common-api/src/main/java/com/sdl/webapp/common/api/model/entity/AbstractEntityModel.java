@@ -6,44 +6,34 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticMappingIgnore;
+import com.sdl.webapp.common.api.model.AbstractViewModel;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 
-import java.util.HashMap;
 import java.util.Map;
+
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Abstract implementation of entity model. This is a basic extension point to create your models.
  */
 @Data
+@EqualsAndHashCode(callSuper = true)
 @SemanticMappingIgnore
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class AbstractEntityModel implements EntityModel, RichTextFragment {
+public abstract class AbstractEntityModel extends AbstractViewModel implements EntityModel, RichTextFragment {
 
     @JsonProperty("Id")
     private String id;
 
-    @JsonProperty("XpmMetadata")
-    private Map<String, Object> xpmMetadata;
-
     @JsonProperty("XpmPropertyMetadata")
     private Map<String, String> xpmPropertyMetadata;
-
-    @JsonProperty("MvcData")
-    private MvcData mvcData;
-
-    @JsonProperty("HtmlClasses")
-    private String htmlClasses;
-
-    @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    @JsonProperty("ExtensionData")
-    private Map<String, Object> extensionData;
 
     /**
      * {@inheritDoc}
@@ -51,22 +41,8 @@ public abstract class AbstractEntityModel implements EntityModel, RichTextFragme
     @Override
     @SneakyThrows(JsonProcessingException.class)
     public String getXpmMarkup(Localization localization) {
-        return this.xpmMetadata == null ? "" : String.format("<!-- Start Component Presentation: %s -->",
-                ApplicationContextHolder.getContext().getBean(ObjectMapper.class).writeValueAsString(this.xpmMetadata));
-    }
-
-    /**
-     * Adds a key-value pair as an extension data.
-     *
-     * @param key   key for the value
-     * @param value value to add
-     */
-    @Override
-    public void addExtensionData(String key, Object value) {
-        if (extensionData == null) {
-            extensionData = new HashMap<>();
-        }
-        extensionData.put(key, value);
+        return isEmpty(getXpmMetadata()) ? "" : String.format("<!-- Start Component Presentation: %s -->",
+                ApplicationContextHolder.getContext().getBean(ObjectMapper.class).writeValueAsString(getXpmMetadata()));
     }
 
     /**

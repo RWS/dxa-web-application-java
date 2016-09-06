@@ -8,18 +8,15 @@ import javax.servlet.jsp.tagext.TagSupport;
 
 public class XpmIfEnabledTag extends TagSupport {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int doStartTag() throws JspException {
         return isPreview() ? EVAL_BODY_INCLUDE : SKIP_BODY;
     }
 
     /**
-     * <p>isPreview.</p>
+     * Checks if XPM Preview is enabled.
      *
-     * @return a boolean.
+     * @return whether this is preview mode
      */
     protected boolean isPreview() {
         return WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())

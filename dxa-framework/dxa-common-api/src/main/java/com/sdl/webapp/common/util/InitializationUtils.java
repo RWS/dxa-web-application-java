@@ -1,11 +1,9 @@
 package com.sdl.webapp.common.util;
 
-import com.sdl.webapp.common.api.localization.Localization;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -280,35 +278,4 @@ public final class InitializationUtils {
         log.debug("Registered {}", listener.getClass().getName());
     }
 
-    /**
-     * Content Manager utils class holds helper-methods for the logic related to CM operations.
-     */
-    @Slf4j
-    public static final class ContentManagerUtils {
-
-        /**
-         * Retrieves the schema ID from the localization configuration by the schema key.
-         *
-         * @param schemaKey    schema key as a name of configuration property,
-         *                     should be either a content type (e.g. <code>"json"</code>)
-         *                     or schema name + content type (e.g. "dev.json")
-         * @param localization current localization
-         * @return gets a schema key from localization, in case of fail returns <code>0</code>
-         */
-        public static int schemaIdFromSchemaKey(@NotNull String schemaKey, @NotNull Localization localization) {
-            final String[] parts = schemaKey.split("\\.");
-            if (parts.length > 2) {
-                log.warn("Schema Key {} should be either content_type (e.g. \"json\") of schema_name.content_type (e.g. \"dev.json\")");
-                return 0;
-            }
-            final String configKey = parts.length > 1 ? (parts[0] + ".schemas." + parts[1]) : ("core.schemas." + parts[0]);
-            final String schemaId = localization.getConfiguration(configKey);
-            try {
-                return Integer.parseInt(schemaId);
-            } catch (NumberFormatException e) {
-                log.warn("Error while parsing schema id: {}", schemaId, e);
-                return 0;
-            }
-        }
-    }
 }

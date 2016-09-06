@@ -7,7 +7,7 @@ buildscript {
     }
     //noinspection GroovyAssignabilityCheck
     dependencies {
-        classpath group: 'com.sdl.dxa', name: 'dxa-builder', version: '1.6.0-SNAPSHOT'
+        classpath group: 'com.sdl.dxa', name: 'dxa-builder', version: version
     }
 }
 
@@ -44,6 +44,8 @@ task buildDxa(type: MavenBuildTask) {
     }
 
     verbose = project.hasProperty('verbose')
+
+    batch = project.hasProperty('batch')
 
     if (project.hasProperty('mavenProperties')) {
         mavenProperties = project.mavenProperties

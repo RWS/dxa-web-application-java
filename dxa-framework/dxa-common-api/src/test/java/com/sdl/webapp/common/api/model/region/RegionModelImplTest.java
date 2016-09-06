@@ -1,14 +1,17 @@
 package com.sdl.webapp.common.api.model.region;
 
+import com.google.common.collect.Lists;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
+import com.sdl.webapp.common.api.model.TestEntity;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.xpm.ComponentType;
 import com.sdl.webapp.common.api.xpm.XpmRegion;
 import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -23,11 +26,16 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
+import static com.sdl.webapp.common.api.model.TestEntity.entity;
+import static com.sdl.webapp.common.api.model.TestEntity.feedItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +48,7 @@ public class RegionModelImplTest {
     public void shouldAddEntity() throws Exception {
         //given
         RegionModelImpl model = new RegionModelImpl("name");
-        TestEntity entity = new TestEntity();
+        TestEntity entity = mock(TestEntity.class);
 
         //when
         model.addEntity(entity);
@@ -53,7 +61,9 @@ public class RegionModelImplTest {
     public void shouldGetEntity() throws Exception {
         //given
         RegionModelImpl model = new RegionModelImpl("name");
-        final TestEntity testEntity = new TestEntity();
+        final TestEntity testEntity = mock(TestEntity.class);
+        doCallRealMethod().when(testEntity).setId(anyString());
+        doCallRealMethod().when(testEntity).getId();
         testEntity.setId("123");
         model.setEntities(new ArrayList<EntityModel>() {{
             add(testEntity);
@@ -135,8 +145,27 @@ public class RegionModelImplTest {
         assertEquals("value", regionModel.getExtensionData().get("key"));
     }
 
-    private static class TestEntity extends AbstractEntityModel {
+    @Test
+    public void shouldCollectionRegionsAndEntitiesAsFeedItems() throws DxaException {
+        //given
+        FeedItem feedItem1 = feedItem("1");
+        FeedItem feedItem2 = feedItem("2");
+        FeedItem feedItem3 = feedItem("3");
 
+        RegionModelImpl regionModel = new RegionModelImpl("name");
+        RegionModelSetImpl subRegions = new RegionModelSetImpl();
+        RegionModelImpl subRegion = new RegionModelImpl("name2");
+        subRegions.add(subRegion);
+        regionModel.setRegions(subRegions);
+        subRegion.addEntity(entity(feedItem1));
+
+        regionModel.setEntities(Lists.<EntityModel>newArrayList(entity(feedItem2), entity(feedItem3), new TestEntity.TestEntityNoFeed()));
+
+        //when
+        List<FeedItem> feedItems = regionModel.extractFeedItems();
+
+        //then
+        assertThat(feedItems, IsIterableContainingInOrder.contains(feedItem1, feedItem2, feedItem3));
     }
 
     @Profile("test")

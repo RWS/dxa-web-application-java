@@ -16,6 +16,11 @@ public interface ViewModel {
      */
     MvcData getMvcData();
 
+    /**
+     * Sets MVC information for this ViewModel, containing data of view name, view area, and other.
+     *
+     * @param mvcData MVC information for this ViewModel
+     */
     void setMvcData(MvcData mvcData);
 
     Map<String, Object> getXpmMetadata();

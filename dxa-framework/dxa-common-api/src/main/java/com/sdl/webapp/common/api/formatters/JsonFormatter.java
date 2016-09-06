@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.api.formatters;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.formatters.dto.FeedItem;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,11 +25,9 @@ public class JsonFormatter extends BaseFormatter {
 
     /**
      * JSON formatter doesn't need any processing and returns model as it is.
-     *
-     * @throws Exception always throws {@link UnsupportedOperationException}
      */
     @Override
-    public Object getSyndicationItem(FeedItem item) throws Exception {
+    public Object getSyndicationItem(FeedItem item) {
         throw new UnsupportedOperationException("This method shall not be called!");
     }
 }

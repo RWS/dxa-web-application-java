@@ -104,6 +104,18 @@ To ease the installation you can use the latest [`/install-libs/`](https://githu
 
 **'dxa-framework' project has a Maven profile '2013sp1' which should be enabled to build tridion-provider for that version: `mvn install -P 2013sp1`**
 
+DXA Builder
+-----------
+Current DXA Builder is available in Maven Central, latest DXA Builder is also available as a public snapshot.
+
+You may need DXA Builder to be installed locally to run the SNAPSHOT build if you haven't configured snapshot repository and you don't want to.
+To install it run the wrapper script of `dxa-builder` project: `gradlew(.bat) publishLocal` 
+On Windows you can also just run `get-started.cmd` script at first run.
+
+Snapshots
+---------
+DXA publishes SNAPSHOT versions to Sonatype. If you want to use them, you have to configure `https://oss.sonatype.org/content/repositories/snapshots` as a repository in your Maven settings. Read [this](https://maven.apache.org/settings.html#Repositories) for instructions.
+
 License
 -------
 Copyright (c) 2014-2016 SDL Group.

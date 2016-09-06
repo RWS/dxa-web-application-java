@@ -203,6 +203,8 @@ task install(dependsOn: ['help', 'unzip']) << {
     def fullListExpected = project.hasProperty('fullList')
     println "= INFO: Expecting all artifacts: ${fullListExpected}"
 
+    def localRepoPath = project.hasProperty('localRepositoryPath') ? project.localRepositoryPath : ''
+
     def notFound = []
     artifacts.each {
         def matcher = it.relativePath =~ /^%(.+)%(.*)/
@@ -240,6 +242,9 @@ task install(dependsOn: ['help', 'unzip']) << {
         def command = "${isWindows ? 'cmd /c' : ''} mvn -q install:install-file " +
                 "-DgroupId=${it.groupId} -DartifactId=${it.artifactId} -Dversion=${it.version} -Dpackaging=jar " +
                 "-Dfile=\"${file.absolutePath}\""
+        if (!localRepoPath.empty) {
+            command += " -DlocalRepositoryPath=${localRepoPath}"
+        }
         def execute = command.execute()
         execute.in.eachLine { println it }
         if (execute.exitValue()) {

@@ -1,11 +1,12 @@
 package com.sdl.webapp.common.api.model.region;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
+import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.AbstractViewModel;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RegionModel;
@@ -22,20 +23,19 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
+import static com.google.common.collect.FluentIterable.from;
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
 
 
 /**
  * Basic implementation of region model. This is a basic extension point to create your region models.
  */
-@EqualsAndHashCode(of = "name")
+@EqualsAndHashCode(of = "name", callSuper = true)
 @Slf4j
-public class RegionModelImpl implements RegionModel {
+public class RegionModelImpl extends AbstractViewModel implements RegionModel {
 
     /**
      * The XPM metadata key used for the ID of the (Include) Page from which the Region originates.
@@ -65,11 +65,6 @@ public class RegionModelImpl implements RegionModel {
     @Setter
     private String name;
 
-    @JsonIgnore
-    @Getter
-    @Setter
-    private String htmlClasses;
-
     @JsonProperty("Entities")
     @Getter
     @Setter
@@ -78,25 +73,10 @@ public class RegionModelImpl implements RegionModel {
     //region model into inconsistent state when inner map is full but list is empty
     private List<EntityModel> entities = new ArrayList<>();
 
-    @JsonProperty("XpmMetadata")
-    @Getter
-//    setter explicitly defined
-    private Map<String, Object> xpmMetadata = new HashMap<>();
-
-    @JsonProperty("MvcData")
-    @Getter
-    @Setter
-    private MvcData mvcData;
-
     @JsonProperty("Regions")
     @Getter
     @Setter
     private RegionModelSet regions;
-
-    @JsonProperty("ExtensionData")
-    @Getter
-    @Setter
-    private Map<String, Object> extensionData;
 
     /**
      * <p>Constructor for RegionModelImpl.</p>
@@ -136,7 +116,7 @@ public class RegionModelImpl implements RegionModel {
      */
     public RegionModelImpl(MvcData mvcData) throws DxaException {
         this(mvcData.getRegionName());
-        this.mvcData = mvcData;
+        setMvcData(mvcData);
     }
 
     private static XpmRegionConfig getXpmRegionConfig() {
@@ -169,15 +149,6 @@ public class RegionModelImpl implements RegionModel {
     }
 
     /**
-     * <p>Setter for the field <code>xpmMetadata</code>.</p>
-     *
-     * @param xpmMetadata a {@link java.util.Map} object.
-     */
-    public void setXpmMetadata(Map<String, Object> xpmMetadata) {
-        this.xpmMetadata = ImmutableMap.copyOf(xpmMetadata);
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
@@ -203,17 +174,10 @@ public class RegionModelImpl implements RegionModel {
                 0);
     }
 
-    /**
-     * Adds a key-value pair as an extension data.
-     *
-     * @param key   key for the value
-     * @param value value to add
-     */
     @Override
-    public void addExtensionData(String key, Object value) {
-        if (extensionData == null) {
-            extensionData = new HashMap<>();
-        }
-        extensionData.put(key, value);
+    public List<FeedItem> extractFeedItems() {
+        List<FeedItem> feedItems = collectFeedItems(regions);
+        feedItems.addAll(collectFeedItems(from(entities).filter(FeedItemsProvider.class).toList()));
+        return feedItems;
     }
 }

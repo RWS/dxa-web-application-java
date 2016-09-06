@@ -18,8 +18,8 @@ task wrapper(type: Wrapper) {
 defaultTasks 'publishLocal'
 
 repositories {
-    mavenCentral()
     mavenLocal()
+    mavenCentral()
     maven {
         url "https://oss.sonatype.org/content/repositories/snapshots"
     }
@@ -77,8 +77,13 @@ publishing {
     repositories {
         maven {
             if (!isRelease) {
-                name "sonatype-nexus-snapshots"
-                url "https://oss.sonatype.org/content/repositories/snapshots"
+                if (project.hasProperty("remoteRepoUrl")) {
+                    name "custom-remote-repo"
+                    url project["remoteRepoUrl"]
+                } else {
+                    name "sonatype-nexus-snapshots"
+                    url "https://oss.sonatype.org/content/repositories/snapshots"
+                }
             } else {
                 if (project.hasProperty('release')) {
                     name "sonatype-nexus-staging"

@@ -1,27 +1,20 @@
 package com.sdl.webapp.tridion.mapping;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.content.LinkResolver;
-import com.sdl.webapp.common.api.content.NavigationProvider;
-import com.sdl.webapp.common.api.content.NavigationProviderException;
-import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.DynamicList;
-import com.sdl.webapp.common.api.model.entity.Link;
-import com.sdl.webapp.common.api.model.entity.NavigationLinks;
-import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.ImageUtils;
+import com.sdl.webapp.common.util.LocalizationUtils.TryFindPage;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -51,24 +44,21 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import static com.sdl.webapp.common.util.FileUtils.hasExtension;
 import static com.sdl.webapp.common.util.FileUtils.isFileOlderThan;
 import static com.sdl.webapp.common.util.FileUtils.parentFolderExists;
+import static com.sdl.webapp.common.util.LocalizationUtils.findPageByPath;
 import static com.sdl.webapp.util.dd4t.TcmUtils.buildTcmUri;
 import static com.sdl.webapp.util.dd4t.TcmUtils.buildTemplateTcmUri;
 import static java.util.Collections.singletonList;
@@ -78,23 +68,16 @@ import static java.util.Collections.singletonList;
  * Implementation of {@link ContentProvider} that uses DD4T to provide content.
  */
 @Slf4j
-public abstract class AbstractDefaultProvider implements ContentProvider, NavigationProvider {
+public abstract class AbstractDefaultContentProvider implements ContentProvider {
 
     private static final Object LOCK = new Object();
 
-    private static final String DEFAULT_PAGE_NAME = "index";
-
-    private static final String DEFAULT_PAGE_EXTENSION = ".html";
 
     private static final String STATIC_FILES_DIR = "BinaryData";
 
     private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
-
-    private static final String NAVIGATION_MODEL_URL = "/navigation.json";
-
-    private static final String TYPE_STRUCTURE_GROUP = "StructureGroup";
 
     @Autowired
     private PageFactory dd4tPageFactory;
@@ -106,50 +89,10 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
     private ModelBuilderPipeline modelBuilderPipeline;
 
     @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private LinkResolver linkResolver;
-
-    @Autowired
     private WebRequestContext webRequestContext;
-
-    private static <T> T findPage(String path, Localization localization, TryFindPage<T> callback)
-            throws ContentProviderException {
-        String processedPath = processPath(path);
-        final int publicationId = Integer.parseInt(localization.getId());
-
-        log.debug("Try to find page: [{}] {}", publicationId, processedPath);
-        T page = callback.tryFindPage(processedPath, publicationId);
-        if (page == null && !path.endsWith("/") && !hasExtension(path)) {
-            processedPath = processPath(path + '/');
-            log.debug("Try to find page: [{}] {}", publicationId, processedPath);
-            page = callback.tryFindPage(processedPath, publicationId);
-        }
-
-        if (page == null) {
-            throw new PageNotFoundException("Page not found: [" + publicationId + "] " + processedPath);
-        }
-
-        return page;
-    }
-
-    private static String processPath(String path) {
-
-        if (StringUtils.isEmpty(path)) {
-            return DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
-        }
-        if (path.endsWith("/")) {
-            path = path + DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
-        }
-        if (!hasExtension(path)) {
-            path = path + DEFAULT_PAGE_EXTENSION;
-        }
-        return path;
-    }
 
     protected static boolean isToBeRefreshed(File file, long time) throws ContentProviderException {
         if (isFileOlderThan(file, time)) {
@@ -163,66 +106,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
 
     private static String removeVersionNumber(String path) {
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
-    }
-
-    private static boolean createBreadcrumbLinks(SitemapItem item, String requestPath, List<Link> links) {
-        if (requestPath.startsWith(item.getUrl().toLowerCase())) {
-            // Add link for this matching item
-            links.add(createLinkForItem(item));
-
-            // Add links for the following matching subitems
-            boolean firstItem = true;
-            for (SitemapItem subItem : item.getItems()) {
-                // Fix to correct the breadcrumb
-                // TODO: Implement this propertly
-                if (firstItem) {
-                    firstItem = false;
-                } else {
-                    if (createBreadcrumbLinks(subItem, requestPath, links)) {
-                        return true;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-    private static List<Link> createLinksForVisibleItems(Iterable<SitemapItem> items) {
-        final List<Link> links = new ArrayList<>();
-        for (SitemapItem item : items) {
-            if (item.isVisible()) {
-                links.add(createLinkForItem(item));
-            }
-        }
-        return links;
-    }
-
-    private static Link createLinkForItem(SitemapItem item) {
-        final Link link = new Link();
-        link.setUrl(item.getUrl());
-        link.setLinkText(item.getTitle());
-        return link;
-    }
-
-    private static SitemapItem findContextNavigationStructureGroup(SitemapItem item, String requestPath) {
-        if (item.getType().equals(TYPE_STRUCTURE_GROUP) && requestPath.startsWith(item.getUrl().toLowerCase())) {
-            // Check if there is a matching subitem, if yes, then return it
-            for (SitemapItem subItem : item.getItems()) {
-                final SitemapItem matchingSubItem = findContextNavigationStructureGroup(subItem, requestPath);
-                if (matchingSubItem != null) {
-                    return matchingSubItem;
-                }
-            }
-
-            // Otherwise return this matching item
-            return item;
-        }
-
-        // No matching item
-        return null;
     }
 
     @NotNull
@@ -325,7 +208,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
     @SneakyThrows(UnsupportedEncodingException.class)
     public PageModel getPageModel(String path, final Localization localization) throws ContentProviderException {
         path = UriUtils.encodePath(path, "UTF-8");
-        return findPage(path, localization, new TryFindPage<PageModel>() {
+        return findPageByPath(path, localization, new TryFindPage<PageModel>() {
             @Override
             public PageModel tryFindPage(String path, int publicationId) throws ContentProviderException {
                 final org.dd4t.contentmodel.Page genericPage;
@@ -345,7 +228,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
                             "] " + path, e);
                 }
 
-                return modelBuilderPipeline.createPageModel(genericPage, localization, AbstractDefaultProvider.this);
+                return modelBuilderPipeline.createPageModel(genericPage, localization, AbstractDefaultContentProvider.this);
             }
         });
     }
@@ -452,80 +335,6 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
     @Contract("_ -> !null")
     protected abstract List<ComponentMetadata> executeQuery(SimpleBrokerQuery query);
 
-    private InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
-        return findPage(path, localization, new TryFindPage<InputStream>() {
-            @Override
-            public InputStream tryFindPage(String path, int publicationId) throws ContentProviderException {
-                final String pageContent;
-                try {
-                    synchronized (LOCK) {
-                        pageContent = dd4tPageFactory.findSourcePageByUrl(path, publicationId);
-                    }
-                } catch (ItemNotFoundException e) {
-                    log.debug("Page not found: [{}] {}", publicationId, path);
-                    return null;
-                } catch (FactoryException e) {
-                    throw new ContentProviderException("Exception while getting page content for: [" + publicationId +
-                            "] " + path, e);
-                }
-
-                // NOTE: This assumes page content is always in UTF-8 encoding
-                return new ByteArrayInputStream(pageContent.getBytes(StandardCharsets.UTF_8));
-            }
-        });
-    }
-
-    @Override
-    public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
-        try {
-            final String path = localization.localizePath(NAVIGATION_MODEL_URL);
-            return resolveLinks(objectMapper.readValue(this.getPageContent(path, localization),
-                    SitemapItem.class), localization);
-        } catch (ContentProviderException | IOException e) {
-            throw new NavigationProviderException("Exception while loading navigation model", e);
-        }
-    }
-
-    @Override
-    public NavigationLinks getTopNavigationLinks(String requestPath, Localization localization)
-            throws NavigationProviderException {
-        final SitemapItem navigationModel = getNavigationModel(localization);
-        return new NavigationLinks(createLinksForVisibleItems(navigationModel.getItems()));
-    }
-
-    @Override
-    public NavigationLinks getContextNavigationLinks(String requestPath, Localization localization)
-            throws NavigationProviderException {
-        final SitemapItem navigationModel = getNavigationModel(localization);
-        final SitemapItem contextNavigationItem = findContextNavigationStructureGroup(navigationModel, requestPath);
-
-        final List<Link> links = contextNavigationItem != null ?
-                createLinksForVisibleItems(contextNavigationItem.getItems()) : Collections.<Link>emptyList();
-
-        return new NavigationLinks(links);
-    }
-
-    @Override
-    public NavigationLinks getBreadcrumbNavigationLinks(String requestPath, Localization localization)
-            throws NavigationProviderException {
-        final SitemapItem navigationModel = getNavigationModel(localization);
-
-        final List<Link> links = new ArrayList<>();
-        createBreadcrumbLinks(navigationModel, requestPath, links);
-
-        return new NavigationLinks(links);
-    }
-
-    private SitemapItem resolveLinks(SitemapItem sitemapItem, Localization localization) {
-        sitemapItem.setUrl(linkResolver.resolveLink(sitemapItem.getUrl(), localization.getId()));
-
-        for (SitemapItem subItem : sitemapItem.getItems()) {
-            resolveLinks(subItem, localization);
-        }
-
-        return sitemapItem;
-    }
-
     @SneakyThrows(UnsupportedEncodingException.class)
     protected String prependFullUrlIfNeeded(String path) {
         String baseUrl = webRequestContext.getBaseUrl();
@@ -555,10 +364,7 @@ public abstract class AbstractDefaultProvider implements ContentProvider, Naviga
         }
     }
 
-    private interface TryFindPage<T> {
 
-        T tryFindPage(String path, int publicationId) throws ContentProviderException;
-    }
 
     protected static final class StaticContentFile {
 

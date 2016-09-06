@@ -2,9 +2,11 @@ package com.sdl.webapp.common.api.formatters;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static com.sdl.webapp.common.api.formats.DefaultDataFormatter.getScoreFromAcceptString;
@@ -13,6 +15,7 @@ import static com.sdl.webapp.common.api.formats.DefaultDataFormatter.getScoreFro
  * BaseFormatter with base logic to be used by the format specific formatters.
  */
 @RequiredArgsConstructor
+@Slf4j
 public abstract class BaseFormatter implements DataFormatter {
 
     protected final HttpServletRequest request;
@@ -56,21 +59,21 @@ public abstract class BaseFormatter implements DataFormatter {
 
     @Override
     public List<String> getValidTypes(List<String> allowedTypes) {
-        List<String> result = new ArrayList<>();
-
         String requestHeader = request.getHeader("Accept");
-        if (requestHeader != null) {
+        if (requestHeader == null) {
+            log.debug("Request header Accept is empty, returning empty list");
+            return Collections.emptyList();
+        }
 
-            for (String type : requestHeader.split(",")) {
-
-                for (String mediaType : allowedTypes) {
-
-                    if (type.contains(mediaType)) {
-                        result.add(type);
-                    }
+        List<String> result = new ArrayList<>();
+        for (String type : requestHeader.split(",")) {
+            for (String mediaType : allowedTypes) {
+                if (type.contains(mediaType)) {
+                    result.add(type);
                 }
             }
         }
+
         return result;
     }
 }

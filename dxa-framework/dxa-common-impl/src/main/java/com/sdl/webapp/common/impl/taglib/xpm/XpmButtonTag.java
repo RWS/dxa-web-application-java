@@ -1,18 +1,16 @@
 package com.sdl.webapp.common.impl.taglib.xpm;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.markup.html.HtmlMultiNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
+import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.Setter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Setter
 public class XpmButtonTag extends XpmMarkupTag {
-    private static final Logger LOG = LoggerFactory.getLogger(XpmButtonTag.class);
-
     private RegionModel region;
 
     private boolean isInclude() {
@@ -42,9 +40,9 @@ public class XpmButtonTag extends XpmMarkupTag {
                             .build())
                     .build();
         } else {
-            String path = this.pageContext.getServletContext().getContextPath();
             String title = "Edit " + this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
-            String editUrl = '/' + path + this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY);
+            String editUrl = ApplicationContextHolder.getContext().getBean(WebRequestContext.class).getLocalization().localizePath(
+                    this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY).toString());
             return HtmlBuilders.div()
                     .withClass("xpm-button")
                     .withAttribute("style", "z-index:1")

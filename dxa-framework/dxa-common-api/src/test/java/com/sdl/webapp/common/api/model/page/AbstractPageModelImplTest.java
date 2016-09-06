@@ -1,22 +1,28 @@
 package com.sdl.webapp.common.api.model.page;
 
 import com.google.common.collect.ImmutableMap;
+import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
+import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.Test;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
+import static com.sdl.webapp.common.api.model.TestEntity.entity;
+import static com.sdl.webapp.common.api.model.TestEntity.feedItem;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -29,6 +35,7 @@ public class AbstractPageModelImplTest {
 
     private static final String XPM_PAGE_SETTINGS_MARKUP = "<!-- Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\"," +
             "\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"} -->";
+
     private static final String XPM_PAGE_SCRIPT = "<script type=\"text/javascript\" language=\"javascript\" defer=\"defer\" " +
             "src=\"%s/WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js\" id=\"tridion.siteedit\"></script>";
 
@@ -55,7 +62,7 @@ public class AbstractPageModelImplTest {
     @Test
     public void shouldReturnIfIfContainsRegion() throws Exception {
         //given
-        AbstractPageModelImpl pageModel = new PageModelImpl();
+        AbstractPageModelImpl pageModel = new DefaultPageModel();
         RegionModelSet regions = new RegionModelSetImpl();
         regions.add(new RegionModelImpl("testname"));
         pageModel.setRegions(regions);
@@ -72,7 +79,7 @@ public class AbstractPageModelImplTest {
     @Test(expected = NullPointerException.class)
     public void shouldThrowNPEIfXpmMetadataIsNull() {
         //given
-        AbstractPageModelImpl pageModel = new PageModelImpl();
+        AbstractPageModelImpl pageModel = new DefaultPageModel();
 
         //when
         pageModel.setXpmMetadata(null);
@@ -84,7 +91,7 @@ public class AbstractPageModelImplTest {
     @Test
     public void shouldNeverHaveNullXpmMetadata() {
         //given
-        AbstractPageModelImpl pageModel = new PageModelImpl();
+        AbstractPageModelImpl pageModel = new DefaultPageModel();
 
         //when
 
@@ -95,7 +102,7 @@ public class AbstractPageModelImplTest {
     @Test
     public void shouldReturnXpmMetadataIfAllSet() {
         //given
-        AbstractPageModelImpl pageModel = new PageModelImpl();
+        AbstractPageModelImpl pageModel = new DefaultPageModel();
         ImmutableMap<String, Object> xpmMetadata = getXpmBuilder().build();
         pageModel.setXpmMetadata(xpmMetadata);
 
@@ -114,7 +121,7 @@ public class AbstractPageModelImplTest {
     @Test
     public void shouldReturnXpmMetadataIfAllSet2() {
         //given
-        AbstractPageModelImpl pageModel = new PageModelImpl();
+        AbstractPageModelImpl pageModel = new DefaultPageModel();
         String cmsUrl = "http://cms.url";
         ImmutableMap<String, Object> xpmMetadata = getXpmBuilder().put("CmsUrl", cmsUrl + '/').build();
         pageModel.setXpmMetadata(xpmMetadata);
@@ -132,7 +139,7 @@ public class AbstractPageModelImplTest {
     @Test
     public void shouldCopyPageModel() throws DxaException {
         //given
-        AbstractPageModelImpl pageModel = new PageModelImpl();
+        DefaultPageModel pageModel = new DefaultPageModel();
         pageModel.setId("123");
         pageModel.setName("name");
         pageModel.setTitle("title");
@@ -145,7 +152,7 @@ public class AbstractPageModelImplTest {
         pageModel.setXpmMetadata(getXpmBuilder().build());
 
         //when
-        AbstractPageModelImpl pageModel2 = new PageModelImpl(pageModel);
+        DefaultPageModel pageModel2 = new DefaultPageModel(pageModel);
 
         //then
         assertFalse(pageModel == pageModel2);
@@ -179,5 +186,30 @@ public class AbstractPageModelImplTest {
 
         //then
         assertEquals("value", pageModel.getExtensionData().get("key"));
+    }
+
+    @Test
+    public void shouldCollectFeedItems() throws DxaException {
+        //given
+        FeedItem feedItem = feedItem("1");
+        FeedItem feedItem2 = feedItem("2");
+
+        DefaultPageModel pageModel = new DefaultPageModel();
+        RegionModelSetImpl regions = new RegionModelSetImpl();
+        RegionModelImpl regionModel = new RegionModelImpl("name");
+        regionModel.addEntity(entity(feedItem));
+        regions.add(regionModel);
+
+        RegionModelImpl regionModel2 = new RegionModelImpl("name2");
+        regionModel.addEntity(entity(feedItem2));
+        regions.add(regionModel2);
+
+        pageModel.setRegions(regions);
+
+        //when
+        List<FeedItem> feedItems = pageModel.extractFeedItems();
+
+        //then
+        assertThat(feedItems, IsIterableContainingInOrder.contains(feedItem, feedItem2));
     }
 }

@@ -25,7 +25,7 @@ import static com.google.common.collect.Collections2.transform;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
- * Navigation Provider implementation based on Taxonomies (Categories & Keywords).
+ * Navigation Provider implementation based on Taxonomies (Categories &amp; Keywords).
  * <p>Falls back to {@link StaticNavigationProvider} when dynamic navigation is not available.</p>
  */
 @Slf4j

@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 import static com.sdl.webapp.common.util.FileUtils.hasExtension;
@@ -109,6 +110,26 @@ public final class LocalizationUtils {
         }
 
         return page;
+    }
+
+    /**
+     * Removes sequence digits from the page title. Sequence number is always 3-digit.
+     * If no sequence number is found, then the string is not changed.
+     * <pre>
+     *     <code>001 Home</code> will be <code>"Home"</code>
+     *     <code>Home</code> will stay <code>"Home"</code>
+     * </pre>
+     *
+     * @param pageTitle page title which may contain a sequence number
+     * @return string without sequence number, null parameter returns null
+     */
+    @Contract("null -> null; !null -> !null")
+    public static String removeSequenceFromPageTitle(String pageTitle) {
+        if (pageTitle == null) {
+            return null;
+        }
+
+        return pageTitle.replaceFirst("^\\d{3}\\s?([^\\d])", "$1").replaceFirst("^\\s", "");
     }
 
     /**

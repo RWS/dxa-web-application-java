@@ -8,6 +8,7 @@ import org.junit.Test;
 import static com.sdl.webapp.common.util.LocalizationUtils.DEFAULT_PAGE_EXTENSION;
 import static com.sdl.webapp.common.util.LocalizationUtils.DEFAULT_PAGE_NAME;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -165,5 +166,25 @@ public class LocalizationUtilsTest {
         //then
         verify(localization).getId();
         verify(callback).tryFindPage(eq("mypage.html"), eq(1));
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void shouldReplaceSequenceInPageTitle() {
+        //when
+        String s = LocalizationUtils.removeSequenceFromPageTitle("125 years of my company");
+        String s1 = LocalizationUtils.removeSequenceFromPageTitle("125 years of my company");
+        String s2 = LocalizationUtils.removeSequenceFromPageTitle("1256 years of my company");
+        String s3 = LocalizationUtils.removeSequenceFromPageTitle("12 years of my company");
+        String s4 = LocalizationUtils.removeSequenceFromPageTitle("012 12 years of my company");
+        String s5 = LocalizationUtils.removeSequenceFromPageTitle(null);
+
+        //then
+        assertEquals("years of my company", s);
+        assertEquals("years of my company", s1);
+        assertEquals("1256 years of my company", s2);
+        assertEquals("12 years of my company", s3);
+        assertEquals("12 years of my company", s4);
+        assertNull(s5);
     }
 }

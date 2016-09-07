@@ -7,6 +7,7 @@ import com.sdl.web.api.dynamic.DynamicMappingsRetriever;
 import com.sdl.web.api.dynamic.DynamicMappingsRetrieverImpl;
 import com.sdl.web.api.dynamic.DynamicMetaRetriever;
 import com.sdl.web.api.dynamic.DynamicMetaRetrieverImpl;
+import com.tridion.taxonomies.TaxonomyFactory;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.providers.ComponentPresentationProvider;
@@ -28,11 +29,11 @@ public class SpringContextConfiguration {
     @Autowired
     private PayloadCacheProvider cacheProvider;
 
-    /**
-     * <p>linkProvider.</p>
-     *
-     * @return a {@link org.dd4t.providers.impl.BrokerLinkProvider} object.
-     */
+    @Bean
+    public TaxonomyFactory webTaxonomyFactory() {
+        return new TaxonomyFactory();
+    }
+
     @Bean
     public BrokerLinkProvider linkProvider() {
         BrokerLinkProvider linkProvider = new BrokerLinkProvider();

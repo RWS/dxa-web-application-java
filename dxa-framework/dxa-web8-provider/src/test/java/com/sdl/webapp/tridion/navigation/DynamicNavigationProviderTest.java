@@ -19,10 +19,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -168,27 +166,6 @@ public class DynamicNavigationProviderTest {
         assertEquals("url", item.getUrl());
         assertTrue(item.isVisible());
         assertTrue(item.isVisible());
-    }
-
-    @Test
-    public void shouldReturnTaxonomyNodeItemsForTopNavigation() {
-        //given
-        String taxonomyId = "taxonomyId";
-        Keyword keyword = mockKeyword("1-2", "name");
-        when(taxonomyFactory.getTaxonomyKeywords(eq("taxonomyId"), any(DepthFilter.class))).thenReturn(keyword);
-        Keyword child1 = mockKeyword("1-2", "child1");
-        when(child1.getKeywordURI()).thenReturn("12-13");
-        when(keyword.getKeywordChildren()).thenReturn(Lists.newArrayList(child1, child1));
-
-        //when
-        List<SitemapItem> list = dynamicNavigationProvider.getTopNavigationLinksInternal(taxonomyId, localization);
-
-        //then
-        verify(taxonomyFactory).getTaxonomyKeywords(eq(taxonomyId), any(DepthFilter.class));
-        Iterator<SitemapItem> iterator = list.iterator();
-        assertEquals("t2-k13", iterator.next().getId());
-        assertEquals("t2-k13", iterator.next().getId());
-        assertFalse(iterator.hasNext());
     }
 
     private Keyword mockKeyword(String taxonomyURI, String name) {

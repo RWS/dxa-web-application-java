@@ -47,12 +47,6 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
     }
 
     @Override
-    protected List<SitemapItem> getTopNavigationLinksInternal(String taxonomyId, Localization localization) {
-        Keyword taxonomyRoot = taxonomyFactory.getTaxonomyKeywords(taxonomyId, new DepthFilter(1, DepthFilter.FILTER_DOWN));
-        return createTaxonomyNode(taxonomyRoot, localization).getItems();
-    }
-
-    @Override
     @NotNull
     protected SitemapItem createTaxonomyNode(@NotNull String rootId, @NotNull Localization localization) {
         Keyword root = taxonomyFactory.getTaxonomyKeywords(rootId, new DepthFilter(-1, DepthFilter.FILTER_DOWN));

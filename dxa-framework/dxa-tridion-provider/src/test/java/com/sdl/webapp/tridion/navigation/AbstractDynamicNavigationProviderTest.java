@@ -7,7 +7,12 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.exceptions.DxaException;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +30,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -45,11 +51,6 @@ public class AbstractDynamicNavigationProviderTest {
     @Spy
     private AbstractDynamicNavigationProvider dynamicNavigationProvider = new AbstractDynamicNavigationProvider(staticNavigationProvider, linkResolver) {
         @Override
-        protected List<SitemapItem> getTopNavigationLinksInternal(String taxonomyId, Localization localization) {
-            return null;
-        }
-
-        @Override
         protected SitemapItem createTaxonomyNode(String taxonomyId, Localization localization) {
             return null;
         }
@@ -64,13 +65,13 @@ public class AbstractDynamicNavigationProviderTest {
     public void init() throws NavigationProviderException, DxaException {
         SitemapItem staticSitemapItem = new SitemapItem();
         staticSitemapItem.setTitle("Static");
-
         when(staticNavigationProvider.getNavigationModel(eq(localization))).thenReturn(staticSitemapItem);
 
         NavigationLinks staticNavigationLinks = new NavigationLinks();
         staticNavigationLinks.setId("Static");
-
         when(staticNavigationProvider.getTopNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
+        when(staticNavigationProvider.getContextNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
+        when(staticNavigationProvider.getBreadcrumbNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
 
         when(dynamicNavigationProvider.getNavigationTaxonomyId(any(Localization.class))).thenReturn("taxonomyId");
 
@@ -105,8 +106,27 @@ public class AbstractDynamicNavigationProviderTest {
 
         //then
         verify(staticNavigationProvider).getNavigationModel(eq(localization));
+        verify(dynamicNavigationProvider).getNavigationTaxonomyId(eq(localization));
         assertEquals("Static", sitemapItem.getTitle());
+    }
 
+    @Test
+    public void shouldFallbackToStaticIfTaxonomyIsNotAvailable() throws NavigationProviderException, DxaException {
+        //given
+        when(dynamicNavigationProvider.getNavigationModel(any(Localization.class))).thenReturn(new SitemapItem());
+
+        verifyCallbackForNavigationLinksTests();
+    }
+
+    @Test
+    public void shouldFallbackToStaticIfTaxonomyIsNull() throws NavigationProviderException, DxaException {
+        //given
+        when(dynamicNavigationProvider.getNavigationModel(any(Localization.class))).thenReturn(null);
+
+        verifyCallbackForNavigationLinksTests();
+    }
+
+    private void verifyCallbackForNavigationLinksTests() throws NavigationProviderException {
         //when
         NavigationLinks navigationLinks = dynamicNavigationProvider.getTopNavigationLinks("1", localization);
 
@@ -114,24 +134,35 @@ public class AbstractDynamicNavigationProviderTest {
         verify(staticNavigationProvider).getTopNavigationLinks(eq("1"), eq(localization));
         assertEquals("Static", navigationLinks.getId());
 
+        //when
+        navigationLinks = dynamicNavigationProvider.getContextNavigationLinks("1", localization);
 
-        //then for all cases
-        verify(dynamicNavigationProvider, times(2)).getNavigationTaxonomyId(eq(localization));
+        //then
+        verify(staticNavigationProvider).getContextNavigationLinks(eq("1"), eq(localization));
+        assertEquals("Static", navigationLinks.getId());
+
+        //when
+        navigationLinks = dynamicNavigationProvider.getBreadcrumbNavigationLinks("1", localization);
+
+        //then
+        verify(staticNavigationProvider).getBreadcrumbNavigationLinks(eq("1"), eq(localization));
+        assertEquals("Static", navigationLinks.getId());
+
+        //then for two cases
+        verify(dynamicNavigationProvider, times(3)).getNavigationModel(eq(localization));
     }
 
     @Test
     public void shouldFilterItemsAndResolveUrls() throws NavigationProviderException {
         //given
-        when(dynamicNavigationProvider.getTopNavigationLinksInternal(anyString(), any(Localization.class)))
-                .thenReturn(Lists.newArrayList(siteMapItem(true, "qwe"), siteMapItem(false, "asd"), siteMapItem(true, ""), siteMapItem(true, null)));
+        List<SitemapItem> items = getSitemapItems();
 
         //when
-        List<Link> links = dynamicNavigationProvider.getTopNavigationLinks("path", localization).getItems();
+        List<Link> links = dynamicNavigationProvider.prepareItemsAsVisibleNavigation(localization, items).getItems();
 
         //then
-        verify(dynamicNavigationProvider).getTopNavigationLinksInternal(eq("taxonomyId"), eq(localization));
-        assertTrue(links.size() == 1);
-        assertEquals("resolved-qwe", links.get(0).getUrl());
+        assertTrue(links.size() == 2);
+        assertEquals("resolved-qwe.html", links.get(0).getUrl());
     }
 
     @Test
@@ -148,6 +179,164 @@ public class AbstractDynamicNavigationProviderTest {
         assertNull(notFound);
     }
 
+    @Test
+    public void shouldProcessNavigationFromTheTop() throws NavigationProviderException {
+        verifyProcessNavigationWithMatcher(new Action() {
+            @Override
+            public void perform() throws NavigationProviderException {
+                dynamicNavigationProvider.getTopNavigationLinks("qwe", localization);
+            }
+        }, new BaseMatcher<List<SitemapItem>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                List<SitemapItem> list = (List<SitemapItem>) item;
+
+                return list.size() == 5;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Top navigation shouldn't filter any item out");
+            }
+        });
+    }
+
+    @Test
+    public void shouldProcessNavigationFromTheCurrentContext() throws NavigationProviderException {
+        verifyProcessNavigationWithMatcher(new Action() {
+            @Override
+            public void perform() throws NavigationProviderException {
+                dynamicNavigationProvider.getContextNavigationLinks("child_2", localization);
+            }
+        }, new BaseMatcher<List<SitemapItem>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                List<SitemapItem> list = (List<SitemapItem>) item;
+
+                //we expect parent instead of child
+                return list.size() == 2 && list.get(0).getUrl().equals("child_2.html") && list.get(1).getUrl().equals("child_3.html");
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Context navigation should find current context level");
+            }
+        });
+    }
+
+    @Test
+    public void shouldProcessNavigationFromTheCurrentContextWhenNothingFound() throws NavigationProviderException {
+        verifyProcessNavigationWithMatcher(new Action() {
+            @Override
+            public void perform() throws NavigationProviderException {
+                dynamicNavigationProvider.getContextNavigationLinks("not exist", localization);
+            }
+        }, new BaseMatcher<List<SitemapItem>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                List<SitemapItem> list = (List<SitemapItem>) item;
+
+                return list.size() == 0;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Context navigation should process empty list if nothing found");
+            }
+        });
+    }
+
+    @Test
+    public void shouldProcessNavigationForBreadcrumbs() throws NavigationProviderException {
+        when(localization.getPath()).thenReturn("qwe.html");
+
+        verifyProcessNavigationWithMatcher(new Action() {
+            @Override
+            public void perform() throws NavigationProviderException {
+                dynamicNavigationProvider.getBreadcrumbNavigationLinks("child_2", localization);
+            }
+        }, new BaseMatcher<List<SitemapItem>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                List<SitemapItem> list = (List<SitemapItem>) item;
+
+                //we expect parent instead of child
+                return list.size() == 3 &&
+                        list.get(0).getUrl().equals("qwe.html") &&
+                        list.get(1).getUrl().equals("child.html") &&
+                        list.get(2).getUrl().equals("child_2.html");
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Context navigation should find current context level for breadcrumbs");
+            }
+        });
+    }
+
+    @Test
+    public void shouldFindHomeIfItsASibling() throws NavigationProviderException {
+        when(localization.getPath()).thenReturn("root.html");
+
+        verifyProcessNavigationWithMatcher(new Action() {
+            @Override
+            public void perform() throws NavigationProviderException {
+                dynamicNavigationProvider.getBreadcrumbNavigationLinks("qwe.html", localization);
+            }
+        }, new BaseMatcher<List<SitemapItem>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                List<SitemapItem> list = (List<SitemapItem>) item;
+
+                //we expect parent instead of child
+                return list.get(0).getUrl().equalsIgnoreCase("root.html");
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Context navigation should find home if it's not a root level");
+            }
+        });
+    }
+
+    private void verifyProcessNavigationWithMatcher(Action action, Matcher<List<SitemapItem>> matcher) throws NavigationProviderException {
+        //given
+        when(dynamicNavigationProvider.getNavigationModel(any(Localization.class))).thenReturn(getNavigationModel());
+
+        //when
+        action.perform();
+
+        //then
+        verify(dynamicNavigationProvider).prepareItemsAsVisibleNavigation(eq(localization), argThat(matcher));
+    }
+
+    @NotNull
+    private SitemapItem getNavigationModel() {
+        SitemapItem model = new TaxonomyNode();
+        model.setItems(getSitemapItems());
+        return model;
+    }
+
+    @NotNull
+    private List<SitemapItem> getSitemapItems() {
+        SitemapItem item = siteMapItem(true, "qwe.html");
+        SitemapItem child = new SitemapItem();
+        child.setUrl("child.html");
+        child.setItems(Lists.newArrayList(siteMapItem(true, "child_2.html"), siteMapItem(true, "child_3.html")));
+        item.setItems(Lists.newArrayList(child));
+        return Lists.newArrayList(
+                item,
+                siteMapItem(true, "root.html"),
+                siteMapItem(false, "asd"),
+                siteMapItem(true, ""),
+                siteMapItem(true, null));
+    }
+
     private SitemapItem siteMapItem(boolean visible, String url) {
         SitemapItem sitemapItem = new SitemapItem();
         sitemapItem.setVisible(visible);
@@ -155,5 +344,8 @@ public class AbstractDynamicNavigationProviderTest {
         return sitemapItem;
     }
 
+    private interface Action {
 
+        void perform() throws NavigationProviderException;
+    }
 }

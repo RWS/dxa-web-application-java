@@ -3,10 +3,13 @@ package com.sdl.webapp.common.util;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.webapp.common.util.FileUtils.hasExtension;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -81,6 +84,20 @@ public final class LocalizationUtils {
     }
 
     /**
+     * Strips the default page extension from the page path.
+     *
+     * @param path path to process
+     * @return path without a default extension
+     */
+    public static String stripDefaultExtension(String path) {
+        if (path.endsWith(DEFAULT_PAGE_EXTENSION)) {
+            log.trace("Stripping default extension {} from path {}", DEFAULT_PAGE_EXTENSION, path);
+            return path.substring(0, path.lastIndexOf(DEFAULT_PAGE_EXTENSION));
+        }
+        return path;
+    }
+
+    /**
      * Tries to find a page in localization using the logic from callback.
      *
      * @param path         path a page to find
@@ -130,6 +147,19 @@ public final class LocalizationUtils {
         }
 
         return pageTitle.replaceFirst("^\\d{3}\\s?([^\\d])", "$1").replaceFirst("^\\s", "");
+    }
+
+    /**
+     * Tests whether the given path is home (or root) path of the given localization.
+     *
+     * @param urlToCheck   url to test against
+     * @param localization current localization
+     * @return whether the URL provided is home (or root)
+     */
+    public static boolean isHomePath(@Nullable String urlToCheck, @NonNull Localization localization) {
+        String homePath = isNullOrEmpty(localization.getPath()) ? "/" : localization.getPath();
+
+        return urlToCheck != null && homePath.equalsIgnoreCase(urlToCheck);
     }
 
     /**

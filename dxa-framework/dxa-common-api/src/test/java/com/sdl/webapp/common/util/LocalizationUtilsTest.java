@@ -3,12 +3,15 @@ package com.sdl.webapp.common.util;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import static com.sdl.webapp.common.util.LocalizationUtils.DEFAULT_PAGE_EXTENSION;
 import static com.sdl.webapp.common.util.LocalizationUtils.DEFAULT_PAGE_NAME;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -186,5 +189,30 @@ public class LocalizationUtilsTest {
         assertEquals("12 years of my company", s3);
         assertEquals("12 years of my company", s4);
         assertNull(s5);
+    }
+
+    @Test
+    public void shouldStripDefaultExtension() {
+        assertEquals("index", LocalizationUtils.stripDefaultExtension("index.html"));
+        assertEquals("index.ext", LocalizationUtils.stripDefaultExtension("index.ext"));
+        assertEquals("/path/to/index", LocalizationUtils.stripDefaultExtension("/path/to/index.html"));
+        assertEquals("/path/to/index", LocalizationUtils.stripDefaultExtension("/path/to/index"));
+    }
+
+    @Test
+    public void shouldDefineWhetherThePathIsHome() {
+        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization("/")));
+        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization(null)));
+        assertTrue(LocalizationUtils.isHomePath("/childpub", mockLocalization("/childpub")));
+
+        assertFalse(LocalizationUtils.isHomePath("/nothome", mockLocalization("/")));
+        assertFalse(LocalizationUtils.isHomePath("/childpub/nothome", mockLocalization("/childpub")));
+    }
+
+    @NotNull
+    private Localization mockLocalization(String path) {
+        Localization localization = mock(Localization.class);
+        when(localization.getPath()).thenReturn(path);
+        return localization;
     }
 }

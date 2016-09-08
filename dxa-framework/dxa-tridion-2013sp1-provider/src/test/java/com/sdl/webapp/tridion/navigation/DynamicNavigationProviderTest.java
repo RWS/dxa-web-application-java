@@ -9,6 +9,8 @@ import com.tridion.meta.PageMeta;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.filters.DepthFilter;
+import org.dd4t.core.caching.impl.CacheElementImpl;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,6 +46,9 @@ public class DynamicNavigationProviderTest {
     @Mock
     private Localization localization;
 
+    @Mock
+    private PayloadCacheProvider payloadCacheProvider;
+
     @InjectMocks
     private DynamicNavigationProvider dynamicNavigationProvider;
 
@@ -54,6 +59,7 @@ public class DynamicNavigationProviderTest {
         ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypeTaxonomyNode", "TaxonomyNode");
         ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypeStructureGroup", "StructureGroup");
         ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypePage", "Page");
+        when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(new CacheElementImpl<>(null, true));
     }
 
     @Test

@@ -13,6 +13,7 @@ import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.filters.DepthFilter;
 import lombok.extern.slf4j.Slf4j;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +42,8 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
     private final TaxonomyFactory taxonomyFactory;
 
     @Autowired
-    public DynamicNavigationProvider(StaticNavigationProvider staticNavigationProvider, LinkResolver linkResolver, TaxonomyFactory taxonomyFactory) {
-        super(staticNavigationProvider, linkResolver);
+    public DynamicNavigationProvider(StaticNavigationProvider staticNavigationProvider, LinkResolver linkResolver, TaxonomyFactory taxonomyFactory, PayloadCacheProvider cacheProvider) {
+        super(staticNavigationProvider, linkResolver, cacheProvider);
         this.taxonomyFactory = taxonomyFactory;
     }
 

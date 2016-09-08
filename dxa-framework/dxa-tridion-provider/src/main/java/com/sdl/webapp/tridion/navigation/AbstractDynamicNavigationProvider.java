@@ -14,6 +14,8 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.dd4t.core.caching.CacheElement;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,6 +42,8 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
 
     private final LinkResolver linkResolver;
 
+    private final PayloadCacheProvider cacheProvider;
+
     @Value("${dxa.tridion.navigation.taxonomy.marker}")
     protected String taxonomyNavigationMarker;
 
@@ -53,20 +57,36 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     protected String sitemapItemTypePage;
 
     @Autowired
-    public AbstractDynamicNavigationProvider(StaticNavigationProvider staticNavigationProvider, LinkResolver linkResolver) {
+    public AbstractDynamicNavigationProvider(StaticNavigationProvider staticNavigationProvider, LinkResolver linkResolver, PayloadCacheProvider cacheProvider) {
         this.staticNavigationProvider = staticNavigationProvider;
         this.linkResolver = linkResolver;
+        this.cacheProvider = cacheProvider;
     }
 
     @Override
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
-        String taxonomyId = getNavigationTaxonomyIdInternal(localization);
-        if (isFallbackRequired(taxonomyId, localization)) {
-            return staticNavigationProvider.getNavigationModel(localization);
+        CacheElement<SitemapItem> navigationModel = cacheProvider.loadPayloadFromLocalCache(localization.getId());
+        if (navigationModel.isExpired()) {
+            //noinspection SynchronizationOnLocalVariableOrMethodParameter
+            synchronized (navigationModel) {
+                if (navigationModel.isExpired()) {
+                    navigationModel.setExpired(false);
+
+                    String taxonomyId = getNavigationTaxonomyIdInternal(localization);
+                    if (isFallbackRequired(taxonomyId, localization)) {
+                        return staticNavigationProvider.getNavigationModel(localization);
+                    }
+
+                    navigationModel.setPayload(createTaxonomyNode(taxonomyId, localization));
+                    log.debug("Put navigation model for taxonomy id {} for localization id {} in cache", taxonomyId, localization.getId());
+
+                }
+            }
         }
 
-        return createTaxonomyNode(taxonomyId, localization);
+        return navigationModel.getPayload();
     }
+
 
     @Override
     public NavigationLinks getTopNavigationLinks(String requestPath, final Localization localization) throws NavigationProviderException {

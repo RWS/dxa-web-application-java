@@ -9,19 +9,16 @@ import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.exceptions.DxaException;
+import org.dd4t.core.caching.impl.CacheElementImpl;
+import org.dd4t.providers.PayloadCacheProvider;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
@@ -32,34 +29,43 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class AbstractDynamicNavigationProviderTest {
 
-    @Mock
-    private StaticNavigationProvider staticNavigationProvider;
+    private StaticNavigationProvider staticNavigationProvider = mock(StaticNavigationProvider.class);
 
-    @Mock
-    private Localization localization;
+    private Localization localization = mock(Localization.class);
 
-    @Mock
-    private LinkResolver linkResolver;
+    private LinkResolver linkResolver = mock(LinkResolver.class);
 
-    @Spy
-    private AbstractDynamicNavigationProvider dynamicNavigationProvider = new AbstractDynamicNavigationProvider(staticNavigationProvider, linkResolver) {
-        @Override
-        protected SitemapItem createTaxonomyNode(String taxonomyId, Localization localization) {
-            return null;
-        }
+    private PayloadCacheProvider payloadCacheProvider = mock(PayloadCacheProvider.class);
 
-        @Override
-        protected String getNavigationTaxonomyId(Localization localization) {
-            return null;
-        }
-    };
+    private AbstractDynamicNavigationProvider defaultDynamicNavigationProvider = getTestProvider(false, getNavigationModel(), "taxonomyId");
+
+    @NotNull
+    private AbstractDynamicNavigationProvider getTestProvider(final boolean callRealNavigationModel, final SitemapItem model, final String taxonomyId) {
+        return spy(new AbstractDynamicNavigationProvider(staticNavigationProvider, linkResolver, payloadCacheProvider) {
+            @Override
+            public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
+                return callRealNavigationModel ? super.getNavigationModel(localization) : createTaxonomyNode(taxonomyId, localization);
+            }
+
+            @Override
+            protected SitemapItem createTaxonomyNode(String taxonomyId, Localization localization) {
+                return model;
+            }
+
+            @Override
+            protected String getNavigationTaxonomyId(Localization localization) {
+                return taxonomyId;
+            }
+        });
+    }
 
     @Before
     public void init() throws NavigationProviderException, DxaException {
@@ -73,83 +79,79 @@ public class AbstractDynamicNavigationProviderTest {
         when(staticNavigationProvider.getContextNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
         when(staticNavigationProvider.getBreadcrumbNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
 
-        when(dynamicNavigationProvider.getNavigationTaxonomyId(any(Localization.class))).thenReturn("taxonomyId");
-
-        ReflectionTestUtils.setField(dynamicNavigationProvider, "staticNavigationProvider", staticNavigationProvider);
-        ReflectionTestUtils.setField(dynamicNavigationProvider, "linkResolver", linkResolver);
-
         when(linkResolver.resolveLink(anyString(), anyString())).thenAnswer(new Answer<String>() {
             @Override
             public String answer(InvocationOnMock invocation) throws Throwable {
                 return "resolved-" + invocation.getArguments()[0];
             }
         });
+
+        when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(new CacheElementImpl<>(null, true));
     }
 
     @Test
     public void shouldGetNavigationModel() throws NavigationProviderException, DxaException {
         //when
-        dynamicNavigationProvider.getNavigationModel(localization);
+        AbstractDynamicNavigationProvider testProvider = getTestProvider(true, getNavigationModel(), "taxonomyId");
+        testProvider.getNavigationModel(localization);
 
         //then
-        verify(dynamicNavigationProvider).getNavigationTaxonomyId(eq(localization));
-        verify(dynamicNavigationProvider).createTaxonomyNode(eq("taxonomyId"), eq(localization));
+        verify(testProvider).getNavigationTaxonomyId(eq(localization));
+        verify(testProvider).createTaxonomyNode(eq("taxonomyId"), eq(localization));
     }
 
     @Test
     public void shouldFallbackToStaticIfTaxonomyIdIsNull() throws NavigationProviderException, DxaException {
         //given
-        when(dynamicNavigationProvider.getNavigationTaxonomyId(any(Localization.class))).thenReturn(null);
+        AbstractDynamicNavigationProvider testProvider = getTestProvider(true, getNavigationModel(), null);
 
         //when
-        SitemapItem sitemapItem = dynamicNavigationProvider.getNavigationModel(localization);
+        SitemapItem sitemapItem = testProvider.getNavigationModel(localization);
 
         //then
         verify(staticNavigationProvider).getNavigationModel(eq(localization));
-        verify(dynamicNavigationProvider).getNavigationTaxonomyId(eq(localization));
+        verify(testProvider).getNavigationTaxonomyId(eq(localization));
         assertEquals("Static", sitemapItem.getTitle());
     }
 
     @Test
     public void shouldFallbackToStaticIfTaxonomyIsNotAvailable() throws NavigationProviderException, DxaException {
         //given
-        when(dynamicNavigationProvider.getNavigationModel(any(Localization.class))).thenReturn(new SitemapItem());
-
-        verifyCallbackForNavigationLinksTests();
+        AbstractDynamicNavigationProvider testProvider = getTestProvider(false, new SitemapItem(), "taxonomyId");
+        verifyCallbackForNavigationLinksTests(testProvider);
     }
 
     @Test
     public void shouldFallbackToStaticIfTaxonomyIsNull() throws NavigationProviderException, DxaException {
         //given
-        when(dynamicNavigationProvider.getNavigationModel(any(Localization.class))).thenReturn(null);
-
-        verifyCallbackForNavigationLinksTests();
+        AbstractDynamicNavigationProvider testProvider = getTestProvider(false, null, "taxonomyId");
+        verifyCallbackForNavigationLinksTests(testProvider);
     }
 
-    private void verifyCallbackForNavigationLinksTests() throws NavigationProviderException {
+    private void verifyCallbackForNavigationLinksTests(AbstractDynamicNavigationProvider testProvider) throws NavigationProviderException {
         //when
-        NavigationLinks navigationLinks = dynamicNavigationProvider.getTopNavigationLinks("1", localization);
+        NavigationLinks navigationLinks = testProvider.getTopNavigationLinks("1", localization);
 
         //then
         verify(staticNavigationProvider).getTopNavigationLinks(eq("1"), eq(localization));
         assertEquals("Static", navigationLinks.getId());
 
         //when
-        navigationLinks = dynamicNavigationProvider.getContextNavigationLinks("1", localization);
+        navigationLinks = testProvider.getContextNavigationLinks("1", localization);
 
         //then
         verify(staticNavigationProvider).getContextNavigationLinks(eq("1"), eq(localization));
         assertEquals("Static", navigationLinks.getId());
 
         //when
-        navigationLinks = dynamicNavigationProvider.getBreadcrumbNavigationLinks("1", localization);
+        navigationLinks = testProvider.getBreadcrumbNavigationLinks("1", localization);
 
         //then
         verify(staticNavigationProvider).getBreadcrumbNavigationLinks(eq("1"), eq(localization));
         assertEquals("Static", navigationLinks.getId());
 
         //then for two cases
-        verify(dynamicNavigationProvider, times(3)).getNavigationModel(eq(localization));
+        verify(testProvider, times(3)).getNavigationModel(eq(localization));
     }
 
     @Test
@@ -158,7 +160,7 @@ public class AbstractDynamicNavigationProviderTest {
         List<SitemapItem> items = getSitemapItems();
 
         //when
-        List<Link> links = dynamicNavigationProvider.prepareItemsAsVisibleNavigation(localization, items).getItems();
+        List<Link> links = defaultDynamicNavigationProvider.prepareItemsAsVisibleNavigation(localization, items).getItems();
 
         //then
         assertTrue(links.size() == 2);
@@ -171,8 +173,8 @@ public class AbstractDynamicNavigationProviderTest {
         String url = "hello-world/index.html";
 
         //when
-        String index = dynamicNavigationProvider.findIndexPageUrl(Lists.newArrayList(siteMapItem(true, "qwe"), siteMapItem(true, url)));
-        String notFound = dynamicNavigationProvider.findIndexPageUrl(Lists.newArrayList(siteMapItem(true, "qwe"), siteMapItem(true, "asd")));
+        String index = defaultDynamicNavigationProvider.findIndexPageUrl(Lists.newArrayList(siteMapItem(true, "qwe"), siteMapItem(true, url)));
+        String notFound = defaultDynamicNavigationProvider.findIndexPageUrl(Lists.newArrayList(siteMapItem(true, "qwe"), siteMapItem(true, "asd")));
 
         //then
         assertEquals(url, index);
@@ -184,7 +186,7 @@ public class AbstractDynamicNavigationProviderTest {
         verifyProcessNavigationWithMatcher(new Action() {
             @Override
             public void perform() throws NavigationProviderException {
-                dynamicNavigationProvider.getTopNavigationLinks("qwe", localization);
+                defaultDynamicNavigationProvider.getTopNavigationLinks("qwe", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -207,7 +209,7 @@ public class AbstractDynamicNavigationProviderTest {
         verifyProcessNavigationWithMatcher(new Action() {
             @Override
             public void perform() throws NavigationProviderException {
-                dynamicNavigationProvider.getContextNavigationLinks("child_2", localization);
+                defaultDynamicNavigationProvider.getContextNavigationLinks("child_2", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -231,7 +233,7 @@ public class AbstractDynamicNavigationProviderTest {
         verifyProcessNavigationWithMatcher(new Action() {
             @Override
             public void perform() throws NavigationProviderException {
-                dynamicNavigationProvider.getContextNavigationLinks("not exist", localization);
+                defaultDynamicNavigationProvider.getContextNavigationLinks("not exist", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -256,7 +258,7 @@ public class AbstractDynamicNavigationProviderTest {
         verifyProcessNavigationWithMatcher(new Action() {
             @Override
             public void perform() throws NavigationProviderException {
-                dynamicNavigationProvider.getBreadcrumbNavigationLinks("child_2", localization);
+                defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("child_2", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -285,7 +287,7 @@ public class AbstractDynamicNavigationProviderTest {
         verifyProcessNavigationWithMatcher(new Action() {
             @Override
             public void perform() throws NavigationProviderException {
-                dynamicNavigationProvider.getBreadcrumbNavigationLinks("qwe.html", localization);
+                defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("qwe.html", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -306,13 +308,13 @@ public class AbstractDynamicNavigationProviderTest {
 
     private void verifyProcessNavigationWithMatcher(Action action, Matcher<List<SitemapItem>> matcher) throws NavigationProviderException {
         //given
-        when(dynamicNavigationProvider.getNavigationModel(any(Localization.class))).thenReturn(getNavigationModel());
+        when(defaultDynamicNavigationProvider.getNavigationModel(any(Localization.class))).thenReturn(getNavigationModel());
 
         //when
         action.perform();
 
         //then
-        verify(dynamicNavigationProvider).prepareItemsAsVisibleNavigation(eq(localization), argThat(matcher));
+        verify(defaultDynamicNavigationProvider).prepareItemsAsVisibleNavigation(eq(localization), argThat(matcher));
     }
 
     @NotNull

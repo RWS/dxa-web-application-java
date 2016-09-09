@@ -2,12 +2,12 @@ package com.sdl.webapp.tridion.navigation;
 
 import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.content.LinkResolver;
-import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
+import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.dd4t.core.caching.impl.CacheElementImpl;
 import org.dd4t.providers.PayloadCacheProvider;

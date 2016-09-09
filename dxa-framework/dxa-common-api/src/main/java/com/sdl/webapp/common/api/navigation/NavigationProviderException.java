@@ -1,11 +1,9 @@
-package com.sdl.webapp.common.api.content;
+package com.sdl.webapp.common.api.navigation;
 
 /**
  * Thrown when an error occurs related to a navigation provider.
- * @deprecated since 1.6, use {@link com.sdl.webapp.common.api.navigation.NavigationProviderException} instead
  */
-@Deprecated
-public class NavigationProviderException extends ContentProviderException {
+public class NavigationProviderException extends com.sdl.webapp.common.api.content.NavigationProviderException {
 
     public NavigationProviderException() {
     }

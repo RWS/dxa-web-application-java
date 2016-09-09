@@ -7,8 +7,6 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
-import com.sdl.webapp.common.api.content.NavigationProvider;
-import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.formats.DataFormatter;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -19,6 +17,8 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.api.navigation.NavigationProvider;
+import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
@@ -229,7 +229,7 @@ public class PageController extends BaseController {
      * <p>handleGetNavigationJson.</p>
      *
      * @return a {@link java.lang.String} object.
-     * @throws com.sdl.webapp.common.api.content.NavigationProviderException if any.
+     * @throws NavigationProviderException if any.
      * @throws com.fasterxml.jackson.core.JsonProcessingException            if any.
      */
     @RequestMapping(method = RequestMethod.GET, value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)

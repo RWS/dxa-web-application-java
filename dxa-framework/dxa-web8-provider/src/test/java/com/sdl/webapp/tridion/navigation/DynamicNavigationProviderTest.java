@@ -5,6 +5,8 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.util.TcmUtils;
+import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
+import com.tridion.meta.PageMeta;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.filters.DepthFilter;
@@ -147,6 +149,25 @@ public class DynamicNavigationProviderTest {
         assertEquals("TaxonomyNode", item1.getType());
         assertEquals("child11", item1.getItems().get(0).getTitle());
         assertEquals("child2", items.next().getTitle());
+    }
+
+    @Test
+    public void shouldConvertToPageMetaDTO() {
+        //given 
+        PageMeta pageMeta = mock(PageMeta.class);
+        when(pageMeta.getId()).thenReturn(1);
+        when(pageMeta.getTitle()).thenReturn("title");
+        when(pageMeta.getURLPath()).thenReturn("url");
+
+        //when
+        Object toDto = ReflectionTestUtils.invokeMethod(dynamicNavigationProvider, "toDto", pageMeta);
+
+        //then
+        assertTrue(toDto instanceof PageMetaDTO);
+        PageMetaDTO dto = (PageMetaDTO) toDto;
+        assertEquals(1, dto.getId());
+        assertEquals("title", dto.getTitle());
+        assertEquals("url", dto.getUrl());
     }
 
     private Keyword mockKeyword(String taxonomyURI, String name) {

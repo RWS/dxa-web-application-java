@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
 import org.dd4t.core.caching.impl.CacheElementImpl;
 import org.dd4t.providers.PayloadCacheProvider;
@@ -24,6 +25,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
+import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
+import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -70,6 +73,7 @@ public class AbstractDynamicNavigationProviderTest {
         };
 
         ReflectionTestUtils.setField(provider, "sitemapItemTypePage", "Page");
+        ReflectionTestUtils.setField(provider, "sitemapItemTypeTaxonomyNode", "TaxonomyNode");
         return spy(provider);
     }
 
@@ -336,6 +340,65 @@ public class AbstractDynamicNavigationProviderTest {
 
         assertFalse(sitemapItemNoSequence.isVisible());
         assertFalse(sitemapItemNoUrl.isVisible());
+    }
+
+    @Test
+    public void shouldCreateTaxonomyNodeFromKeyword() {
+        //given 
+        KeywordDTO.KeywordDTOBuilder builder = KeywordDTO.builder()
+                .keywordUri("1-2")
+                .taxonomyUri("3-4")
+                .name("000 Root")
+                .key("key")
+                .withChildren(true)
+                .referenceContentCount(1)
+                .description("description")
+                .keywordAbstract(true);
+
+        KeywordDTO keyword = builder.build();
+        KeywordDTO keywordRoot = builder.taxonomyUri("1-2").build();
+
+        KeywordDTO withoutChildren = builder.withChildren(false).referenceContentCount(0).build();
+        KeywordDTO withChildren1 = builder.withChildren(true).referenceContentCount(0).build();
+        KeywordDTO withChildren2 = builder.withChildren(false).referenceContentCount(1).build();
+
+        String taxonomyId = "42";
+        String taxonomyNodeUrl = "node-url.html";
+        List<SitemapItem> children = Lists.newArrayList(siteMapItem(true, "child1"));
+
+        //when
+        TaxonomyNode node = defaultDynamicNavigationProvider.createTaxonomyNodeFromKeyword(keyword, taxonomyId, taxonomyNodeUrl,
+                children);
+
+        TaxonomyNode nodeRoot = defaultDynamicNavigationProvider.createTaxonomyNodeFromKeyword(keywordRoot, taxonomyId, taxonomyNodeUrl,
+                children);
+
+        TaxonomyNode nodeWithoutChildren = defaultDynamicNavigationProvider.createTaxonomyNodeFromKeyword(withoutChildren, taxonomyId, taxonomyNodeUrl,
+                children);
+
+        TaxonomyNode nodeWithChildren1 = defaultDynamicNavigationProvider.createTaxonomyNodeFromKeyword(withChildren1, taxonomyId, taxonomyNodeUrl,
+                children);
+
+        TaxonomyNode nodeWithChildren2 = defaultDynamicNavigationProvider.createTaxonomyNodeFromKeyword(withChildren2, taxonomyId, taxonomyNodeUrl,
+                children);
+
+        //then
+        assertEquals(getTaxonomySitemapIdentifier(taxonomyId, KEYWORD, "2"), node.getId());
+        assertEquals("TaxonomyNode", node.getType());
+        assertEquals("node-url", node.getUrl());
+        assertEquals("Root", node.getTitle());
+        assertTrue(node.isVisible());
+        assertEquals(children, node.getItems());
+        assertEquals("key", node.getKey());
+        assertTrue(node.isWithChildren());
+        assertEquals("description", node.getDescription());
+        assertTrue(node.isTaxonomyAbstract());
+        assertEquals(1, node.getClassifiedItemsCount());
+
+        assertEquals(getTaxonomySitemapIdentifier(taxonomyId), nodeRoot.getId());
+        assertFalse(nodeWithoutChildren.isWithChildren());
+        assertTrue(nodeWithChildren1.isWithChildren());
+        assertTrue(nodeWithChildren2.isWithChildren());
     }
 
     private void verifyProcessNavigationWithMatcher(Action action, Matcher<List<SitemapItem>> matcher) throws NavigationProviderException {

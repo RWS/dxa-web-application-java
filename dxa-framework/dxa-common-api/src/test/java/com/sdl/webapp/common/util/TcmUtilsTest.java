@@ -1,4 +1,4 @@
-package com.sdl.webapp.util.dd4t;
+package com.sdl.webapp.common.util;
 
 import org.junit.Test;
 

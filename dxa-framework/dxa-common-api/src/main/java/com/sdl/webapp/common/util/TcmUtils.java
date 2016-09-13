@@ -1,4 +1,4 @@
-package com.sdl.webapp.util.dd4t;
+package com.sdl.webapp.common.util;
 
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import lombok.extern.slf4j.Slf4j;

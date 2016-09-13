@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
-import com.sdl.webapp.util.dd4t.TcmUtils;
+import com.sdl.webapp.common.util.TcmUtils;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.filters.DepthFilter;

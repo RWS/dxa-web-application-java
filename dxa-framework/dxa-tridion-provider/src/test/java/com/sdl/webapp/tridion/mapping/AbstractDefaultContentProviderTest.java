@@ -53,7 +53,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.sdl.webapp.util.dd4t.TcmUtils.buildTcmUri;
+import static com.sdl.webapp.common.util.TcmUtils.buildTcmUri;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

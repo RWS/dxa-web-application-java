@@ -36,9 +36,9 @@ import static com.sdl.webapp.common.util.LocalizationUtils.isHomePath;
 import static com.sdl.webapp.common.util.LocalizationUtils.normalizePathToDefaults;
 import static com.sdl.webapp.common.util.LocalizationUtils.removeSequenceFromPageTitle;
 import static com.sdl.webapp.common.util.LocalizationUtils.stripDefaultExtension;
-import static com.sdl.webapp.util.dd4t.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
-import static com.sdl.webapp.util.dd4t.TcmUtils.Taxonomies.SitemapItemType.PAGE;
-import static com.sdl.webapp.util.dd4t.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
+import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
+import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.PAGE;
+import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
 
 /**
  * Navigation Provider implementation based on Taxonomies (Categories &amp; Keywords).

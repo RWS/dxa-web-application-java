@@ -5,7 +5,6 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.util.dd4t.TcmUtils;
-import com.tridion.meta.PageMeta;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.filters.DepthFilter;
@@ -58,7 +57,6 @@ public class DynamicNavigationProviderTest {
         ReflectionTestUtils.setField(dynamicNavigationProvider, "taxonomyNavigationMarker", "[Taxonomy]");
         ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypeTaxonomyNode", "TaxonomyNode");
         ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypeStructureGroup", "StructureGroup");
-        ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypePage", "Page");
         when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(new CacheElementImpl<>(null, true));
     }
 
@@ -111,7 +109,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldCreateTaxonomyNode() {
         //given
-        Keyword keyword = mockKeyword("10-20", "Root");
+        Keyword keyword = mockKeyword("10-20", "000 Root");
         when(taxonomyFactory.getTaxonomyKeywords(eq("rootId"), any(DepthFilter.class))).thenReturn(keyword);
         Keyword child1 = mockKeyword("1-2", "child1");
         when(child1.getKeywordURI()).thenReturn("12-13");
@@ -137,7 +135,6 @@ public class DynamicNavigationProviderTest {
         assertEquals("t20", node.getId());
         assertEquals("TaxonomyNode", node.getType());
         assertEquals("Root", node.getTitle());
-        assertTrue(node.isVisible());
         assertEquals("keywordKey", node.getKey());
         assertEquals("keywordDesc", node.getDescription());
         assertTrue(node.isTaxonomyAbstract());
@@ -150,28 +147,6 @@ public class DynamicNavigationProviderTest {
         assertEquals("TaxonomyNode", item1.getType());
         assertEquals("child11", item1.getItems().get(0).getTitle());
         assertEquals("child2", items.next().getTitle());
-    }
-
-    @Test
-    public void shouldCreateSiteMapItemFromPageMeta() {
-        //given
-        PageMeta pageMeta = mock(PageMeta.class);
-        when(pageMeta.getId()).thenReturn(13);
-        when(pageMeta.getTitle()).thenReturn("title");
-        when(pageMeta.getURLPath()).thenReturn("url");
-
-        //when
-        Object sitemapItem = ReflectionTestUtils.invokeMethod(dynamicNavigationProvider, "createSitemapItem", pageMeta, "42");
-
-        //then
-        assertTrue(sitemapItem instanceof SitemapItem);
-        SitemapItem item = (SitemapItem) sitemapItem;
-        assertEquals("t42-p13", item.getId());
-        assertEquals("Page", item.getType());
-        assertEquals("title", item.getTitle());
-        assertEquals("url", item.getUrl());
-        assertTrue(item.isVisible());
-        assertTrue(item.isVisible());
     }
 
     private Keyword mockKeyword(String taxonomyURI, String name) {

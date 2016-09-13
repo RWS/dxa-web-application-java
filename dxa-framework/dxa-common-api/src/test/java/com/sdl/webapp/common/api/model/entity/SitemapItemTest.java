@@ -51,44 +51,6 @@ public class SitemapItemTest {
     }
 
     @Test
-    public void shouldRemoveSequenceFromTitle() {
-        //given 
-        SitemapItem sitemapItem = new SitemapItem();
-
-        //when
-        sitemapItem.setTitle("012 Title");
-
-        //then
-        assertEquals("Title", sitemapItem.getTitle());
-    }
-
-    @Test
-    public void shouldRemoveNothingButSequenceFromTitle() {
-        //given
-        SitemapItem sitemapItem = new SitemapItem();
-
-        //when
-        sitemapItem.setTitle("0121 Title");
-        String title1 = sitemapItem.getTitle();
-
-        sitemapItem.setTitle("21 Title");
-        String title2 = sitemapItem.getTitle();
-
-        sitemapItem.setTitle("Title");
-        String title3 = sitemapItem.getTitle();
-
-        sitemapItem.setTitle(null);
-        String titleNull = sitemapItem.getTitle();
-
-
-        //then
-        assertEquals("0121 Title", title1);
-        assertEquals("21 Title", title2);
-        assertEquals("Title", title3);
-        assertEquals(null, titleNull);
-    }
-
-    @Test
     public void shouldFindSubItemWithUrl() {
         //given 
         SitemapItem sitemapItem = new SitemapItem();

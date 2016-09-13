@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.util.LocalizationUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
@@ -46,19 +45,6 @@ public class SitemapItem extends AbstractEntityModel {
 
     @JsonIgnore
     private SitemapItem parent;
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    /**
-     * Setter for the title which also removes sequence (001 Home -&gt; Home) combination from the title.
-     *
-     * @param title title to set
-     */
-    public void setTitle(String title) {
-        this.title = LocalizationUtils.removeSequenceFromPageTitle(title);
-    }
 
     public List<SitemapItem> getItems() {
         return this.items;

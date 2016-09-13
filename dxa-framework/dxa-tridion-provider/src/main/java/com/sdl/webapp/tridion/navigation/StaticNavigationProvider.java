@@ -92,7 +92,7 @@ public class StaticNavigationProvider implements NavigationProvider {
             // Add links for the following matching subitems
             // first element was just added, skip it
 
-            ListIterator<SitemapItem> iterator = item.getItems().size() == 0 ?
+            ListIterator<SitemapItem> iterator = item.getItems().isEmpty() ?
                     Collections.<SitemapItem>emptyList().listIterator() : item.getItems().listIterator(1);
             while (iterator.hasNext()) {
                 if (createBreadcrumbLinks(iterator.next(), requestPath, links)) {

@@ -5,6 +5,8 @@ import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
+import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
+import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
 import com.sdl.webapp.util.dd4t.TcmUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.meta.PageMeta;
@@ -23,14 +25,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.comparator.NullSafeComparator;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
-
-import static com.sdl.webapp.util.dd4t.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
-import static com.sdl.webapp.util.dd4t.TcmUtils.Taxonomies.SitemapItemType.PAGE;
-import static com.sdl.webapp.util.dd4t.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
+import java.util.Set;
+import java.util.TreeSet;
 
 @SuppressWarnings("Duplicates")
 @Service
@@ -38,6 +36,13 @@ import static com.sdl.webapp.util.dd4t.TcmUtils.Taxonomies.getTaxonomySitemapIde
 @Slf4j
 @Profile("dynamic.navigation.provider")
 public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider {
+
+    private static final NullSafeComparator<SitemapItem> SITEMAP_SORT_BY_TITLE = new NullSafeComparator<>(new Comparator<SitemapItem>() {
+        @Override
+        public int compare(SitemapItem o1, SitemapItem o2) {
+            return o1.getTitle().compareTo(o2.getTitle());
+        }
+    }, true);
 
     private final TaxonomyFactory taxonomyFactory;
 
@@ -50,7 +55,7 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
     @Override
     @NotNull
     protected SitemapItem createTaxonomyNode(@NotNull String rootId, @NotNull Localization localization) {
-        Keyword root = taxonomyFactory.getTaxonomyKeywords(rootId, new DepthFilter(-1, DepthFilter.FILTER_DOWN));
+        Keyword root = taxonomyFactory.getTaxonomyKeywords(rootId, new DepthFilter(DepthFilter.UNLIMITED_DEPTH, DepthFilter.FILTER_DOWN));
         return createTaxonomyNode(root, localization);
     }
 
@@ -77,7 +82,7 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
 
         String taxonomyNodeUrl = null;
 
-        List<SitemapItem> children = new ArrayList<>();
+        Set<SitemapItem> children = new TreeSet<>(SITEMAP_SORT_BY_TITLE);
 
         for (Keyword childKeyword : keyword.getKeywordChildren()) {
             children.add(createTaxonomyNode(childKeyword, localization));
@@ -91,60 +96,23 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
             children.addAll(pageSitemapItems);
         }
 
-        return createTaxonomyNode(keyword, taxonomyId, taxonomyNodeUrl, children);
-    }
-
-    private TaxonomyNode createTaxonomyNode(@NotNull Keyword keyword, String taxonomyId, String taxonomyNodeUrl, List<SitemapItem> children) {
-        boolean isRoot = Objects.equals(keyword.getTaxonomyURI(), keyword.getKeywordURI());
-        String keywordId = keyword.getKeywordURI().split("-")[1];
-
-        TaxonomyNode node = new TaxonomyNode();
-        node.setId(isRoot ? getTaxonomySitemapIdentifier(taxonomyId) : getTaxonomySitemapIdentifier(taxonomyId, KEYWORD, keywordId));
-        node.setType(sitemapItemTypeTaxonomyNode);
-        node.setUrl(taxonomyNodeUrl);
-        node.setTitle(keyword.getKeywordName());
-        node.setVisible(true);
-        node.setItems(children);
-        node.setKey(keyword.getKeywordKey());
-        node.setWithChildren(keyword.hasKeywordChildren() || keyword.getReferencedContentCount() > 0);
-        node.setDescription(keyword.getKeywordDescription());
-        node.setTaxonomyAbstract(keyword.isKeywordAbstract());
-        node.setClassifiedItemsCount(keyword.getReferencedContentCount());
-        return node;
+        return createTaxonomyNodeFromKeyword(toDto(keyword), taxonomyId, taxonomyNodeUrl, new ArrayList<>(children));
     }
 
     private List<SitemapItem> addChildSitemapItemsForPages(@NotNull Keyword keyword, @NotNull String taxonomyId, @NotNull Localization localization) {
-        List<SitemapItem> items = new ArrayList<>();
+        Set<SitemapItem> items = new TreeSet<>(SITEMAP_SORT_BY_TITLE);
 
         try {
-            PageMetaFactory pageMetaFactory = new PageMetaFactory(localization.getId());
+            PageMetaFactory pageMetaFactory = new PageMetaFactory(Integer.parseInt(localization.getId()));
             PageMeta[] taxonomyPages = pageMetaFactory.getTaxonomyPages(keyword, false);
             for (PageMeta page : taxonomyPages) {
-                SitemapItem sitemapItem = createSitemapItem(page, taxonomyId);
-                items.add(sitemapItem);
+                items.add(createSitemapItemFromPage(toDto(page), taxonomyId));
             }
         } catch (StorageException e) {
             log.error("Error loading taxonomy pages for taxonomyId = {}, localizationId = {} and keyword {}", taxonomyId, localization.getId(), keyword, e);
         }
 
-        Collections.sort(items, new NullSafeComparator<>(new Comparator<SitemapItem>() {
-            @Override
-            public int compare(SitemapItem o1, SitemapItem o2) {
-                return o1.getTitle().compareTo(o2.getTitle());
-            }
-        }, true));
-
-        return items;
-    }
-
-    private SitemapItem createSitemapItem(PageMeta page, String taxonomyId) {
-        SitemapItem item = new SitemapItem();
-        item.setId(getTaxonomySitemapIdentifier(taxonomyId, PAGE, String.valueOf(page.getId())));
-        item.setType(sitemapItemTypePage);
-        item.setTitle(page.getTitle());
-        item.setUrl(page.getURLPath());
-        item.setVisible(true);
-        return item;
+        return new ArrayList<>(items);
     }
 
     private Keyword selectRootOfTaxonomy(@NotNull String[] taxonomies) {
@@ -155,5 +123,26 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
             }
         }
         return null;
+    }
+
+    private PageMetaDTO toDto(PageMeta pageMeta) {
+        return PageMetaDTO.builder()
+                .id(pageMeta.getId())
+                .title(pageMeta.getTitle())
+                .url(pageMeta.getURLPath())
+                .build();
+    }
+
+    private KeywordDTO toDto(Keyword keyword) {
+        return KeywordDTO.builder()
+                .keywordUri(keyword.getKeywordURI())
+                .taxonomyUri(keyword.getTaxonomyURI())
+                .name(keyword.getKeywordName())
+                .key(keyword.getKeywordKey())
+                .withChildren(keyword.hasKeywordChildren())
+                .referenceContentCount(keyword.getReferencedContentCount())
+                .description(keyword.getKeywordDescription())
+                .keywordAbstract(keyword.isKeywordAbstract())
+                .build();
     }
 }

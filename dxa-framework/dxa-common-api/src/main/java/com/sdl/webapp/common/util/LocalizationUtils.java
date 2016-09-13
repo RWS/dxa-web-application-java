@@ -9,6 +9,9 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.webapp.common.util.FileUtils.hasExtension;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -22,6 +25,8 @@ public final class LocalizationUtils {
     static final String DEFAULT_PAGE_NAME = "index";
 
     static final String DEFAULT_PAGE_EXTENSION = ".html";
+
+    private static final Pattern PAGE_TITLE_SEQUENCE = Pattern.compile("^(?<sequence>\\d{3}\\s?)(?<pageName>(?<sequenceStop>[^\\d]).*)$");
 
     /**
      * Retrieves the schema ID from the localization configuration by the schema key.
@@ -89,7 +94,12 @@ public final class LocalizationUtils {
      * @param path path to process
      * @return path without a default extension
      */
+    @Contract("null -> null; !null -> !null")
     public static String stripDefaultExtension(String path) {
+        if (path == null) {
+            return null;
+        }
+
         if (path.endsWith(DEFAULT_PAGE_EXTENSION)) {
             log.trace("Stripping default extension {} from path {}", DEFAULT_PAGE_EXTENSION, path);
             return path.substring(0, path.lastIndexOf(DEFAULT_PAGE_EXTENSION));
@@ -146,7 +156,22 @@ public final class LocalizationUtils {
             return null;
         }
 
-        return pageTitle.replaceFirst("^\\d{3}\\s?([^\\d])", "$1").replaceFirst("^\\s", "");
+        Matcher matcher = PAGE_TITLE_SEQUENCE.matcher(pageTitle);
+        return matcher.matches() ? matcher.group("pageName").replaceFirst("^\\s", "") : pageTitle;
+    }
+
+    /**
+     * Returns whether the given page title contains sequence numbers.
+     *
+     * @param pageTitle page title to check
+     * @return true if the page contains sequence number, false otherwise
+     */
+    public static boolean isWithSequenceDigits(String pageTitle) {
+        if (pageTitle == null) {
+            return false;
+        }
+        Matcher matcher = PAGE_TITLE_SEQUENCE.matcher(pageTitle);
+        return matcher.matches() && matcher.group("sequence") != null;
     }
 
     /**

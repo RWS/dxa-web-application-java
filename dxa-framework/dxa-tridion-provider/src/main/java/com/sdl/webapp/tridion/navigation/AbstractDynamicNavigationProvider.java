@@ -12,6 +12,9 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
+import com.sdl.webapp.common.util.LocalizationUtils;
+import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
+import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.dd4t.core.caching.CacheElement;
@@ -24,12 +27,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Collections2.transform;
 import static com.sdl.webapp.common.util.LocalizationUtils.isHomePath;
 import static com.sdl.webapp.common.util.LocalizationUtils.normalizePathToDefaults;
+import static com.sdl.webapp.common.util.LocalizationUtils.removeSequenceFromPageTitle;
+import static com.sdl.webapp.common.util.LocalizationUtils.stripDefaultExtension;
+import static com.sdl.webapp.util.dd4t.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
+import static com.sdl.webapp.util.dd4t.TcmUtils.Taxonomies.SitemapItemType.PAGE;
+import static com.sdl.webapp.util.dd4t.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
 
 /**
  * Navigation Provider implementation based on Taxonomies (Categories &amp; Keywords).
@@ -141,37 +150,11 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         });
     }
 
-    @NotNull
-    private List<SitemapItem> collectBreadcrumbsToLevel(SitemapItem currentLevel, final Localization localization) {
-        List<SitemapItem> breadcrumbs = new LinkedList<>();
+    protected abstract SitemapItem createTaxonomyNode(String taxonomyId, Localization localization);
 
-        SitemapItem sitemapItem = currentLevel;
+    protected abstract String getNavigationTaxonomyId(Localization localization);
 
-        boolean hasHome = false;
-        while (sitemapItem.getParent() != null) {
-            breadcrumbs.add(sitemapItem);
-            hasHome = isHomePath(sitemapItem.getUrl(), localization);
-            sitemapItem = sitemapItem.getParent();
-        }
-
-        // The Home TaxonomyNode/Keyword may be a top-level sibling instead of an ancestor
-        if (!hasHome) {
-            SitemapItem item = Iterables.find(sitemapItem.getItems(), new Predicate<SitemapItem>() {
-                @Override
-                public boolean apply(SitemapItem input) {
-                    return isHomePath(input.getUrl(), localization);
-                }
-            }, null);
-            if (item != null) {
-                breadcrumbs.add(item);
-            }
-        }
-
-        Collections.reverse(breadcrumbs);
-        return breadcrumbs;
-    }
-
-    protected String findIndexPageUrl(@NonNull List<SitemapItem> pageSitemapItems) {
+    String findIndexPageUrl(@NonNull List<SitemapItem> pageSitemapItems) {
         //noinspection StaticPseudoFunctionalStyleMethod
         SitemapItem index = Iterables.find(pageSitemapItems, new Predicate<SitemapItem>() {
             @Override
@@ -183,9 +166,38 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         return index != null ? index.getUrl() : null;
     }
 
-    protected abstract SitemapItem createTaxonomyNode(String taxonomyId, Localization localization);
+    SitemapItem createSitemapItemFromPage(PageMetaDTO page, String taxonomyId) {
+        SitemapItem item = new SitemapItem();
+        item.setId(getTaxonomySitemapIdentifier(taxonomyId, PAGE, String.valueOf(page.getId())));
+        item.setType(sitemapItemTypePage);
+        item.setTitle(removeSequenceFromPageTitle(page.getTitle()));
+        item.setUrl(stripDefaultExtension(page.getUrl()));
+        item.setVisible(isVisibleItem(page.getTitle(), page.getUrl()));
+        return item;
+    }
 
-    protected abstract String getNavigationTaxonomyId(Localization localization);
+    TaxonomyNode createTaxonomyNodeFromKeyword(@NotNull KeywordDTO keyword, String taxonomyId, String taxonomyNodeUrl, List<SitemapItem> children) {
+        boolean isRoot = Objects.equals(keyword.getTaxonomyUri(), keyword.getKeywordUri());
+        String keywordId = keyword.getKeywordUri().split("-")[1];
+
+        TaxonomyNode node = new TaxonomyNode();
+        node.setId(isRoot ? getTaxonomySitemapIdentifier(taxonomyId) : getTaxonomySitemapIdentifier(taxonomyId, KEYWORD, keywordId));
+        node.setType(sitemapItemTypeTaxonomyNode);
+        node.setUrl(stripDefaultExtension(taxonomyNodeUrl));
+        node.setTitle(removeSequenceFromPageTitle(keyword.getName()));
+        node.setVisible(isVisibleItem(keyword.getName(), taxonomyNodeUrl));
+        node.setItems(children);
+        node.setKey(keyword.getKey());
+        node.setWithChildren(keyword.isWithChildren() || keyword.getReferenceContentCount() > 0);
+        node.setDescription(keyword.getDescription());
+        node.setTaxonomyAbstract(keyword.isKeywordAbstract());
+        node.setClassifiedItemsCount(keyword.getReferenceContentCount());
+        return node;
+    }
+
+    private boolean isVisibleItem(String pageName, String pageUrl) {
+        return LocalizationUtils.isWithSequenceDigits(pageName) && !isNullOrEmpty(pageUrl);
+    }
 
     private NavigationLinks processNavigationLinks(String requestPath, Localization localization, NavigationProcessing navigationProcessing) throws NavigationProviderException {
         SitemapItem navigationModel = getNavigationModel(localization);
@@ -242,6 +254,36 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         String taxonomyId = getNavigationTaxonomyId(localization);
         log.trace("Taxonomy ID is {} for localization {}", taxonomyId, localization);
         return taxonomyId;
+    }
+
+    @NotNull
+    private List<SitemapItem> collectBreadcrumbsToLevel(SitemapItem currentLevel, final Localization localization) {
+        List<SitemapItem> breadcrumbs = new LinkedList<>();
+
+        SitemapItem sitemapItem = currentLevel;
+
+        boolean hasHome = false;
+        while (sitemapItem.getParent() != null) {
+            breadcrumbs.add(sitemapItem);
+            hasHome = isHomePath(sitemapItem.getUrl(), localization);
+            sitemapItem = sitemapItem.getParent();
+        }
+
+        // The Home TaxonomyNode/Keyword may be a top-level sibling instead of an ancestor
+        if (!hasHome) {
+            SitemapItem item = Iterables.find(sitemapItem.getItems(), new Predicate<SitemapItem>() {
+                @Override
+                public boolean apply(SitemapItem input) {
+                    return isHomePath(input.getUrl(), localization);
+                }
+            }, null);
+            if (item != null) {
+                breadcrumbs.add(item);
+            }
+        }
+
+        Collections.reverse(breadcrumbs);
+        return breadcrumbs;
     }
 
     private interface NavigationProcessing {

@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
 import org.dd4t.core.caching.impl.CacheElementImpl;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.hamcrest.BaseMatcher;
@@ -19,10 +20,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -49,7 +52,7 @@ public class AbstractDynamicNavigationProviderTest {
 
     @NotNull
     private AbstractDynamicNavigationProvider getTestProvider(final boolean callRealNavigationModel, final SitemapItem model, final String taxonomyId) {
-        return spy(new AbstractDynamicNavigationProvider(staticNavigationProvider, linkResolver, payloadCacheProvider) {
+        AbstractDynamicNavigationProvider provider = new AbstractDynamicNavigationProvider(staticNavigationProvider, linkResolver, payloadCacheProvider) {
             @Override
             public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
                 return callRealNavigationModel ? super.getNavigationModel(localization) : createTaxonomyNode(taxonomyId, localization);
@@ -64,7 +67,10 @@ public class AbstractDynamicNavigationProviderTest {
             protected String getNavigationTaxonomyId(Localization localization) {
                 return taxonomyId;
             }
-        });
+        };
+
+        ReflectionTestUtils.setField(provider, "sitemapItemTypePage", "Page");
+        return spy(provider);
     }
 
     @Before
@@ -304,6 +310,32 @@ public class AbstractDynamicNavigationProviderTest {
                 description.appendText("Context navigation should find home if it's not a root level");
             }
         });
+    }
+
+    @Test
+    public void shouldCreateSiteMapItemFromPageMeta() {
+        //given
+        PageMetaDTO.PageMetaDTOBuilder builder = PageMetaDTO.builder().id(13).title("000 title").url("url.html");
+        PageMetaDTO pageMeta = builder.build();
+        PageMetaDTO pageMetaNoSequence = builder.title("title").build();
+        PageMetaDTO pageMetaNoUrl = builder.url("").build();
+
+        //when
+        SitemapItem sitemapItem = defaultDynamicNavigationProvider.createSitemapItemFromPage(pageMeta, "42");
+        SitemapItem sitemapItemNoSequence = defaultDynamicNavigationProvider.createSitemapItemFromPage(pageMetaNoSequence, "42");
+        SitemapItem sitemapItemNoUrl = defaultDynamicNavigationProvider.createSitemapItemFromPage(pageMetaNoUrl, "42");
+
+        //then
+        assertEquals("t42-p13", sitemapItem.getId());
+        assertEquals("Page", sitemapItem.getType());
+        //sequence is stripped
+        assertEquals("title", sitemapItem.getTitle());
+        //extension is stripped
+        assertEquals("url", sitemapItem.getUrl());
+        assertTrue(sitemapItem.isVisible());
+
+        assertFalse(sitemapItemNoSequence.isVisible());
+        assertFalse(sitemapItemNoUrl.isVisible());
     }
 
     private void verifyProcessNavigationWithMatcher(Action action, Matcher<List<SitemapItem>> matcher) throws NavigationProviderException {

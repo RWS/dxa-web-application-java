@@ -176,7 +176,7 @@ public class LocalizationUtilsTest {
     public void shouldReplaceSequenceInPageTitle() {
         //when
         String s = LocalizationUtils.removeSequenceFromPageTitle("125 years of my company");
-        String s1 = LocalizationUtils.removeSequenceFromPageTitle("125 years of my company");
+        String s1 = LocalizationUtils.removeSequenceFromPageTitle("125 125 years of my company");
         String s2 = LocalizationUtils.removeSequenceFromPageTitle("1256 years of my company");
         String s3 = LocalizationUtils.removeSequenceFromPageTitle("12 years of my company");
         String s4 = LocalizationUtils.removeSequenceFromPageTitle("012 12 years of my company");
@@ -184,11 +184,21 @@ public class LocalizationUtilsTest {
 
         //then
         assertEquals("years of my company", s);
-        assertEquals("years of my company", s1);
+        assertEquals("125 years of my company", s1);
         assertEquals("1256 years of my company", s2);
         assertEquals("12 years of my company", s3);
         assertEquals("12 years of my company", s4);
         assertNull(s5);
+    }
+
+    @Test
+    public void shouldCheckIfPageTitleIsWithSequence() {
+        assertTrue(LocalizationUtils.isWithSequenceDigits("125 years of my company"));
+        assertTrue(LocalizationUtils.isWithSequenceDigits("125 125 years of my company"));
+        assertFalse(LocalizationUtils.isWithSequenceDigits("1256 years of my company"));
+        assertFalse(LocalizationUtils.isWithSequenceDigits("12 years of my company"));
+        assertTrue(LocalizationUtils.isWithSequenceDigits("012 12 years of my company"));
+        assertFalse(LocalizationUtils.isWithSequenceDigits(null));
     }
 
     @Test
@@ -197,6 +207,7 @@ public class LocalizationUtilsTest {
         assertEquals("index.ext", LocalizationUtils.stripDefaultExtension("index.ext"));
         assertEquals("/path/to/index", LocalizationUtils.stripDefaultExtension("/path/to/index.html"));
         assertEquals("/path/to/index", LocalizationUtils.stripDefaultExtension("/path/to/index"));
+        assertNull(LocalizationUtils.stripDefaultExtension(null));
     }
 
     @Test

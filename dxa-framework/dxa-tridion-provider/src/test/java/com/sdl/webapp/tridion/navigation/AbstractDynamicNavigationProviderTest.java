@@ -23,6 +23,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Iterator;
 import java.util.List;
 
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
@@ -173,21 +174,22 @@ public class AbstractDynamicNavigationProviderTest {
         List<Link> links = defaultDynamicNavigationProvider.prepareItemsAsVisibleNavigation(localization, items).getItems();
 
         //then
-        assertTrue(links.size() == 2);
-        assertEquals("resolved-qwe.html", links.get(0).getUrl());
+        assertTrue(links.size() == 3);
+        assertEquals("resolved-/index", links.get(0).getUrl());
     }
 
     @Test
     public void shouldFindTheIndexPageFromSitemaps() {
         //given 
         String url = "hello-world/index.html";
+        String expected = "hello-world";
 
         //when
         String index = defaultDynamicNavigationProvider.findIndexPageUrl(Lists.newArrayList(siteMapItem(true, "qwe"), siteMapItem(true, url)));
         String notFound = defaultDynamicNavigationProvider.findIndexPageUrl(Lists.newArrayList(siteMapItem(true, "qwe"), siteMapItem(true, "asd")));
 
         //then
-        assertEquals(url, index);
+        assertEquals(expected, index);
         assertNull(notFound);
     }
 
@@ -196,7 +198,7 @@ public class AbstractDynamicNavigationProviderTest {
         verifyProcessNavigationWithMatcher(new Action() {
             @Override
             public void perform() throws NavigationProviderException {
-                defaultDynamicNavigationProvider.getTopNavigationLinks("qwe", localization);
+                defaultDynamicNavigationProvider.getTopNavigationLinks("/", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -204,7 +206,7 @@ public class AbstractDynamicNavigationProviderTest {
             public boolean matches(Object item) {
                 List<SitemapItem> list = (List<SitemapItem>) item;
 
-                return list.size() == 5;
+                return list.size() == 7;
             }
 
             @Override
@@ -219,7 +221,7 @@ public class AbstractDynamicNavigationProviderTest {
         verifyProcessNavigationWithMatcher(new Action() {
             @Override
             public void perform() throws NavigationProviderException {
-                defaultDynamicNavigationProvider.getContextNavigationLinks("child_2", localization);
+                defaultDynamicNavigationProvider.getContextNavigationLinks("/child/child_2", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -228,7 +230,10 @@ public class AbstractDynamicNavigationProviderTest {
                 List<SitemapItem> list = (List<SitemapItem>) item;
 
                 //we expect parent instead of child
-                return list.size() == 2 && list.get(0).getUrl().equals("child_2.html") && list.get(1).getUrl().equals("child_3.html");
+                Iterator<SitemapItem> iterator = list.iterator();
+                return iterator.next().getUrl().equals("/child/child_2") &&
+                        iterator.next().getUrl().equals("/child/child_3") &&
+                        !iterator.hasNext();
             }
 
             @Override
@@ -263,12 +268,12 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Test
     public void shouldProcessNavigationForBreadcrumbs() throws NavigationProviderException {
-        when(localization.getPath()).thenReturn("qwe.html");
+        when(localization.getPath()).thenReturn("/");
 
         verifyProcessNavigationWithMatcher(new Action() {
             @Override
             public void perform() throws NavigationProviderException {
-                defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("child_2", localization);
+                defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/child/child_2", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -277,10 +282,10 @@ public class AbstractDynamicNavigationProviderTest {
                 List<SitemapItem> list = (List<SitemapItem>) item;
 
                 //we expect parent instead of child
-                return list.size() == 3 &&
-                        list.get(0).getUrl().equals("qwe.html") &&
-                        list.get(1).getUrl().equals("child.html") &&
-                        list.get(2).getUrl().equals("child_2.html");
+                Iterator<SitemapItem> iterator = list.iterator();
+                return iterator.next().getUrl().equals("/child") &&
+                        iterator.next().getUrl().equals("/child/child_2") &&
+                        !iterator.hasNext();
             }
 
             @Override
@@ -292,12 +297,12 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Test
     public void shouldFindHomeIfItsASibling() throws NavigationProviderException {
-        when(localization.getPath()).thenReturn("root.html");
+        when(localization.getPath()).thenReturn("/imitation_home");
 
         verifyProcessNavigationWithMatcher(new Action() {
             @Override
             public void perform() throws NavigationProviderException {
-                defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("qwe.html", localization);
+                defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/about", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -305,8 +310,11 @@ public class AbstractDynamicNavigationProviderTest {
             public boolean matches(Object item) {
                 List<SitemapItem> list = (List<SitemapItem>) item;
 
-                //we expect parent instead of child
-                return list.get(0).getUrl().equalsIgnoreCase("root.html");
+                //home link is a sibling of current level, but we still expect it in a breadcrumb
+                Iterator<SitemapItem> iterator = list.iterator();
+                return iterator.next().getUrl().equals("/imitation_home") &&
+                        iterator.next().getUrl().equals("/about") &&
+                        !iterator.hasNext();
             }
 
             @Override
@@ -332,8 +340,8 @@ public class AbstractDynamicNavigationProviderTest {
         //then
         assertEquals("t42-p13", sitemapItem.getId());
         assertEquals("Page", sitemapItem.getType());
-        //sequence is stripped
-        assertEquals("title", sitemapItem.getTitle());
+        //sequence is NOT stripped
+        assertEquals("000 title", sitemapItem.getTitle());
         //extension is stripped
         assertEquals("url", sitemapItem.getUrl());
         assertTrue(sitemapItem.isVisible());
@@ -386,7 +394,7 @@ public class AbstractDynamicNavigationProviderTest {
         assertEquals(getTaxonomySitemapIdentifier(taxonomyId, KEYWORD, "2"), node.getId());
         assertEquals("TaxonomyNode", node.getType());
         assertEquals("node-url", node.getUrl());
-        assertEquals("Root", node.getTitle());
+        assertEquals("000 Root", node.getTitle());
         assertTrue(node.isVisible());
         assertEquals(children, node.getItems());
         assertEquals("key", node.getKey());
@@ -421,15 +429,29 @@ public class AbstractDynamicNavigationProviderTest {
 
     @NotNull
     private List<SitemapItem> getSitemapItems() {
-        SitemapItem item = siteMapItem(true, "qwe.html");
+        /*
+        +/index
+        +/child
+            +/child/child_2
+            +/child/child_3
+        +/about
+        +/imitation_home
+        -/hidden
+        +""
+        +null
+        */
+
+        SitemapItem home = siteMapItem(true, "/index");
+
         SitemapItem child = new SitemapItem();
-        child.setUrl("child.html");
-        child.setItems(Lists.newArrayList(siteMapItem(true, "child_2.html"), siteMapItem(true, "child_3.html")));
-        item.setItems(Lists.newArrayList(child));
+        child.setUrl("/child");
+        child.setItems(Lists.newArrayList(siteMapItem(true, "/child/child_2"), siteMapItem(true, "/child/child_3")));
         return Lists.newArrayList(
-                item,
-                siteMapItem(true, "root.html"),
-                siteMapItem(false, "asd"),
+                home,
+                child,
+                siteMapItem(true, "/about"),
+                siteMapItem(true, "/imitation_home"),
+                siteMapItem(false, "/hidden"),
                 siteMapItem(true, ""),
                 siteMapItem(true, null));
     }

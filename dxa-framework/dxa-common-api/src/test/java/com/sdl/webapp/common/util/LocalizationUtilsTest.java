@@ -220,6 +220,35 @@ public class LocalizationUtilsTest {
         assertFalse(LocalizationUtils.isHomePath("/childpub/nothome", mockLocalization("/childpub")));
     }
 
+    @Test
+    public void shouldDefineIndexPath() {
+        //when
+        assertTrue(LocalizationUtils.isIndexPath("/index.html"));
+        assertTrue(LocalizationUtils.isIndexPath("/page/index"));
+        assertTrue(LocalizationUtils.isIndexPath("/page/index.html"));
+        assertTrue(LocalizationUtils.isIndexPath("/page/long/path/index.html"));
+        assertTrue(LocalizationUtils.isIndexPath("/"));
+        assertTrue(LocalizationUtils.isIndexPath("/page/"));
+
+        assertFalse(LocalizationUtils.isIndexPath("/page"));
+        assertFalse(LocalizationUtils.isIndexPath("page"));
+        assertFalse(LocalizationUtils.isIndexPath(null));
+    }
+
+    @Test
+    public void shouldStripIndexPath() {
+        //when
+        assertEquals("/", LocalizationUtils.stripIndexPath("/index"));
+        assertEquals("/", LocalizationUtils.stripIndexPath("/index.html"));
+        assertEquals("/page", LocalizationUtils.stripIndexPath("/page/index"));
+        assertEquals("/page", LocalizationUtils.stripIndexPath("/page/index.html"));
+
+        assertEquals("/page/page.html", LocalizationUtils.stripIndexPath("/page/page.html"));
+        assertEquals("", LocalizationUtils.stripIndexPath(""));
+        assertEquals("/", LocalizationUtils.stripIndexPath("/"));
+        assertNull(LocalizationUtils.stripIndexPath(null));
+    }
+
     @NotNull
     private Localization mockLocalization(String path) {
         Localization localization = mock(Localization.class);

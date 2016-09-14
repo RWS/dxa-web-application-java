@@ -111,13 +111,17 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldCreateTaxonomyNode() {
         //given
-        Keyword keyword = mockKeyword("10-20", "000 Root");
+        //[Taxonomy]Root
+        //  010 child1
+        //      child11
+        //  000 child2
+        Keyword keyword = mockKeyword("10-20", "[Taxonomy]Root");
         when(taxonomyFactory.getTaxonomyKeywords(eq("rootId"), any(DepthFilter.class))).thenReturn(keyword);
-        Keyword child1 = mockKeyword("1-2", "child1");
+        Keyword child1 = mockKeyword("1-2", "010 child1");
         when(child1.getKeywordURI()).thenReturn("12-13");
         Keyword child11 = mockKeyword("5-6", "child11");
         when(child1.getKeywordChildren()).thenReturn(Collections.singletonList(child11));
-        Keyword child2 = mockKeyword("3-4", "child2");
+        Keyword child2 = mockKeyword("3-4", "000 child2");
         when(keyword.getKeywordChildren()).thenReturn(Lists.newArrayList(child1, child2));
 
         //when
@@ -136,19 +140,21 @@ public class DynamicNavigationProviderTest {
         TaxonomyNode node = (TaxonomyNode) item;
         assertEquals("t20", node.getId());
         assertEquals("TaxonomyNode", node.getType());
-        assertEquals("Root", node.getTitle());
+        assertEquals("[Taxonomy]Root", node.getTitle());
         assertEquals("keywordKey", node.getKey());
         assertEquals("keywordDesc", node.getDescription());
         assertTrue(node.isTaxonomyAbstract());
         assertEquals(0, node.getClassifiedItemsCount());
 
         Iterator<SitemapItem> items = node.getItems().iterator();
+        //child2 goes first because of sequence prefix
+        //although it's stripped
+        assertEquals("child2", items.next().getTitle());
         SitemapItem item1 = items.next();
         assertEquals("child1", item1.getTitle());
         assertEquals("t2-k13", item1.getId());
         assertEquals("TaxonomyNode", item1.getType());
         assertEquals("child11", item1.getItems().get(0).getTitle());
-        assertEquals("child2", items.next().getTitle());
     }
 
     @Test

@@ -21,8 +21,6 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
@@ -59,12 +57,12 @@ public class MarkupImpl implements Markup {
     }
 
     private static HtmlElement siteMapListHelper(SitemapItem item) {
-        if (!item.getUrl().endsWith("/index")) {
+        if (item != null && item.getUrl() != null && !item.getUrl().endsWith("/index")) {
             final SimpleElementBuilder itemElementBuilder = HtmlBuilders.element("li")
                     .withNode(HtmlBuilders.a(item.getUrl()).withTitle(item.getTitle()).withTextualContent(item.getTitle())
                             .build());
 
-            if (!item.getItems().isEmpty()) {
+            if (item.getItems() != null && !item.getItems().isEmpty()) {
                 final SimpleElementBuilder childListBuilder = HtmlBuilders.element("ul").withClass("list-unstyled");
                 for (SitemapItem child : item.getItems()) {
                     final HtmlElement childElement = siteMapListHelper(child);
@@ -79,14 +77,6 @@ public class MarkupImpl implements Markup {
         }
 
         return null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public WebRequestContext getWebRequestContext() {
-        return webRequestContext;
     }
 
     /** {@inheritDoc} */
@@ -234,7 +224,16 @@ public class MarkupImpl implements Markup {
     /** {@inheritDoc} */
     @Override
     public String siteMapList(SitemapItem item) {
+        //todo dxa2 do this in JSP
         final HtmlElement htmlElement = siteMapListHelper(item);
         return htmlElement != null ? htmlElement.toHtml() : "";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public WebRequestContext getWebRequestContext() {
+        return webRequestContext;
     }
 }

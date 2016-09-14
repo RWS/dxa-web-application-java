@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
+import com.sdl.webapp.common.util.LocalizationUtils;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
@@ -22,13 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.springframework.util.comparator.NullSafeComparator;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 @SuppressWarnings("Duplicates")
 @Service
@@ -36,13 +34,6 @@ import java.util.TreeSet;
 @Slf4j
 @Profile("dynamic.navigation.provider")
 public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider {
-
-    private static final NullSafeComparator<SitemapItem> SITEMAP_SORT_BY_TITLE = new NullSafeComparator<>(new Comparator<SitemapItem>() {
-        @Override
-        public int compare(SitemapItem o1, SitemapItem o2) {
-            return o1.getTitle().compareTo(o2.getTitle());
-        }
-    }, true);
 
     private final TaxonomyFactory taxonomyFactory;
 
@@ -82,25 +73,35 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
 
         String taxonomyNodeUrl = null;
 
-        Set<SitemapItem> children = new TreeSet<>(SITEMAP_SORT_BY_TITLE);
+        List<SitemapItem> children = new ArrayList<>();
 
         for (Keyword childKeyword : keyword.getKeywordChildren()) {
             children.add(createTaxonomyNode(childKeyword, localization));
         }
 
         if (keyword.getReferencedContentCount() > 0) {
-            List<SitemapItem> pageSitemapItems = addChildSitemapItemsForPages(keyword, taxonomyId, localization);
+            List<SitemapItem> pageSitemapItems = getChildrenPages(keyword, taxonomyId, localization);
 
             taxonomyNodeUrl = findIndexPageUrl(pageSitemapItems);
+            log.trace("taxonomyNodeUrl = {}", taxonomyNodeUrl);
 
             children.addAll(pageSitemapItems);
+        }
+
+        Collections.sort(children, SITEMAP_SORT_BY_TITLE);
+
+        for (SitemapItem child : children) {
+            child.setTitle(LocalizationUtils.removeSequenceFromPageTitle(child.getTitle()));
         }
 
         return createTaxonomyNodeFromKeyword(toDto(keyword), taxonomyId, taxonomyNodeUrl, new ArrayList<>(children));
     }
 
-    private List<SitemapItem> addChildSitemapItemsForPages(@NotNull Keyword keyword, @NotNull String taxonomyId, @NotNull Localization localization) {
-        Set<SitemapItem> items = new TreeSet<>(SITEMAP_SORT_BY_TITLE);
+    private List<SitemapItem> getChildrenPages(@NotNull Keyword keyword, @NotNull String taxonomyId, @NotNull Localization localization) {
+        log.trace("Getting SitemapItems for all classified Pages (ordered by Page Title, including sequence prefix if any), " +
+                "keyword {}, taxonomyId {}, localization {}", keyword, taxonomyId, localization);
+
+        List<SitemapItem> items = new ArrayList<>();
 
         try {
             PageMetaFactory pageMetaFactory = new PageMetaFactory(Integer.parseInt(localization.getId()));
@@ -112,7 +113,7 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
             log.error("Error loading taxonomy pages for taxonomyId = {}, localizationId = {} and keyword {}", taxonomyId, localization.getId(), keyword, e);
         }
 
-        return new ArrayList<>(items);
+        return items;
     }
 
     private Keyword selectRootOfTaxonomy(@NotNull String[] taxonomies) {

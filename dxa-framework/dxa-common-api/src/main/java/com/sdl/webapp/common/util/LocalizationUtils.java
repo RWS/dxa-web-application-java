@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.webapp.common.util.FileUtils.hasExtension;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -27,6 +28,8 @@ public final class LocalizationUtils {
     static final String DEFAULT_PAGE_EXTENSION = ".html";
 
     private static final Pattern PAGE_TITLE_SEQUENCE = Pattern.compile("^(?<sequence>\\d{3}\\s?)(?<pageName>(?<sequenceStop>[^\\d]).*)$");
+
+    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/index(\\.html)?)$");
 
     /**
      * Retrieves the schema ID from the localization configuration by the schema key.
@@ -95,7 +98,8 @@ public final class LocalizationUtils {
      * @return path without a default extension
      */
     @Contract("null -> null; !null -> !null")
-    public static String stripDefaultExtension(String path) {
+    @Nullable
+    public static String stripDefaultExtension(@Nullable String path) {
         if (path == null) {
             return null;
         }
@@ -105,6 +109,22 @@ public final class LocalizationUtils {
             return path.substring(0, path.lastIndexOf(DEFAULT_PAGE_EXTENSION));
         }
         return path;
+    }
+
+    /**
+     * Strips the index path from the page path.
+     *
+     * @param path path to process
+     * @return path without 'index' part if any
+     */
+    @Nullable
+    public static String stripIndexPath(@Nullable String path) {
+        if (path == null) {
+            return null;
+        }
+
+        Matcher matcher = INDEX_PATH_REGEXP.matcher(path);
+        return matcher.matches() ? defaultIfBlank(matcher.group("main"), "/") : path;
     }
 
     /**
@@ -185,6 +205,20 @@ public final class LocalizationUtils {
         String homePath = isNullOrEmpty(localization.getPath()) ? "/" : localization.getPath();
 
         return urlToCheck != null && homePath.equalsIgnoreCase(urlToCheck);
+    }
+
+    /**
+     * Checks if the given path is an <code>index</code> path. Basically checks if the path ends with either 'index' or 'index.html'.
+     * <pre>
+     *     /page/index =&gt; true
+     *     /page/index.html =&gt; true
+     * </pre>
+     *
+     * @param urlToCheck url to check
+     * @return true if index path, false otherwise
+     */
+    public static boolean isIndexPath(@Nullable String urlToCheck) {
+        return urlToCheck != null && INDEX_PATH_REGEXP.matcher(normalizePathToDefaults(urlToCheck)).matches();
     }
 
     /**

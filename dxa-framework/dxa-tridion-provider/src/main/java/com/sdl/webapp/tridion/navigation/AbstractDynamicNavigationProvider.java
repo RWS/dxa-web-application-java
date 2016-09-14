@@ -22,9 +22,11 @@ import org.dd4t.providers.PayloadCacheProvider;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.util.comparator.NullSafeComparator;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -33,9 +35,9 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Collections2.transform;
 import static com.sdl.webapp.common.util.LocalizationUtils.isHomePath;
-import static com.sdl.webapp.common.util.LocalizationUtils.normalizePathToDefaults;
-import static com.sdl.webapp.common.util.LocalizationUtils.removeSequenceFromPageTitle;
+import static com.sdl.webapp.common.util.LocalizationUtils.isIndexPath;
 import static com.sdl.webapp.common.util.LocalizationUtils.stripDefaultExtension;
+import static com.sdl.webapp.common.util.LocalizationUtils.stripIndexPath;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.PAGE;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
@@ -46,6 +48,13 @@ import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapI
  */
 @Slf4j
 public abstract class AbstractDynamicNavigationProvider implements NavigationProvider {
+
+    static final NullSafeComparator<SitemapItem> SITEMAP_SORT_BY_TITLE = new NullSafeComparator<>(new Comparator<SitemapItem>() {
+        @Override
+        public int compare(SitemapItem o1, SitemapItem o2) {
+            return o1.getTitle().compareTo(o2.getTitle());
+        }
+    }, true);
 
     private final StaticNavigationProvider staticNavigationProvider;
 
@@ -117,7 +126,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         return processNavigationLinks(requestPath, localization, new NavigationProcessing() {
             @Override
             public List<SitemapItem> processNavigation(SitemapItem navigationModel) {
-                SitemapItem currentLevel = navigationModel.findWithUrl(normalizePathToDefaults(requestPath));
+                SitemapItem currentLevel = navigationModel.findWithUrl(stripDefaultExtension(requestPath));
 
                 if (currentLevel != null && !(currentLevel instanceof TaxonomyNode)) {
                     currentLevel = currentLevel.getParent();
@@ -138,7 +147,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         return processNavigationLinks(requestPath, localization, new NavigationProcessing() {
             @Override
             public List<SitemapItem> processNavigation(SitemapItem navigationModel) {
-                SitemapItem currentLevel = navigationModel.findWithUrl(normalizePathToDefaults(requestPath));
+                SitemapItem currentLevel = navigationModel.findWithUrl(stripDefaultExtension(requestPath));
 
                 return currentLevel == null ? Collections.<SitemapItem>emptyList() : collectBreadcrumbsToLevel(currentLevel, localization);
             }
@@ -159,18 +168,19 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         SitemapItem index = Iterables.find(pageSitemapItems, new Predicate<SitemapItem>() {
             @Override
             public boolean apply(SitemapItem input) {
-                return input.getUrl().endsWith("/index.html");
+                return isIndexPath(input.getUrl());
             }
         }, null);
 
-        return index != null ? index.getUrl() : null;
+        log.trace("Index page is {} in {}", index, pageSitemapItems);
+        return index != null ? stripIndexPath(index.getUrl()) : null;
     }
 
     SitemapItem createSitemapItemFromPage(PageMetaDTO page, String taxonomyId) {
         SitemapItem item = new SitemapItem();
         item.setId(getTaxonomySitemapIdentifier(taxonomyId, PAGE, String.valueOf(page.getId())));
         item.setType(sitemapItemTypePage);
-        item.setTitle(removeSequenceFromPageTitle(page.getTitle()));
+        item.setTitle(page.getTitle());
         item.setUrl(stripDefaultExtension(page.getUrl()));
         item.setVisible(isVisibleItem(page.getTitle(), page.getUrl()));
         return item;
@@ -184,7 +194,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         node.setId(isRoot ? getTaxonomySitemapIdentifier(taxonomyId) : getTaxonomySitemapIdentifier(taxonomyId, KEYWORD, keywordId));
         node.setType(sitemapItemTypeTaxonomyNode);
         node.setUrl(stripDefaultExtension(taxonomyNodeUrl));
-        node.setTitle(removeSequenceFromPageTitle(keyword.getName()));
+        node.setTitle(keyword.getName());
         node.setVisible(isVisibleItem(keyword.getName(), taxonomyNodeUrl));
         node.setItems(children);
         node.setKey(keyword.getKey());

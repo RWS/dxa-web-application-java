@@ -16,34 +16,34 @@
 
 package org.dd4t.core.factories.impl;
 
+import java.text.ParseException;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.caching.CacheElement;
+import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.ProcessorException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.processors.RunPhase;
 import org.dd4t.core.util.TCMURI;
-import org.dd4t.databind.DataBindFactory;
 import org.dd4t.providers.ComponentPresentationProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
-
 public class ComponentPresentationFactoryImpl extends BaseFactory implements ComponentPresentationFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComponentPresentationFactoryImpl.class);
-    private static final ComponentPresentationFactoryImpl INSTANCE = new ComponentPresentationFactoryImpl();
+    @Resource
     protected ComponentPresentationProvider componentPresentationProvider;
+    @Resource
+    protected DataBinder dataBinder;
 
-    protected ComponentPresentationFactoryImpl () {
+	protected ComponentPresentationFactoryImpl () {
         LOG.debug("Create new instance");
-    }
-
-    public static ComponentPresentationFactoryImpl getInstance () {
-        return INSTANCE;
     }
 
     /**
@@ -106,7 +106,7 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
                     }
 
                     // Building STMs here.
-                    componentPresentation = DataBindFactory.buildDynamicComponentPresentation(rawComponentPresentation, ComponentPresentation.class);
+                    componentPresentation = dataBinder.buildComponentPresentation(rawComponentPresentation, ComponentPresentation.class);
 
                     LOG.debug("Running pre caching processors");
                     // TODO: support full CPs?
@@ -149,5 +149,13 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
 
     public void setComponentPresentationProvider (ComponentPresentationProvider componentPresentationProvider) {
         this.componentPresentationProvider = componentPresentationProvider;
-    }
+    }    
+
+    public DataBinder getDataBinder() {
+		return dataBinder;
+	}
+
+	public void setDataBinder(DataBinder dataBinder) {
+		this.dataBinder = dataBinder;
+	}	
 }

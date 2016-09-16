@@ -27,7 +27,6 @@ import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.ModelConverter;
 import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.databind.DataBindFactory;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.builder.AbstractModelConverter;
 import org.dd4t.databind.util.DataBindConstants;
@@ -37,6 +36,7 @@ import org.dd4t.databind.viewmodel.base.ModelFieldMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -57,6 +57,9 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
     private Class<? extends org.dd4t.contentmodel.Field> concreteFieldImpl;
 
+    @Resource
+    protected JsonDataBinder databinder;
+
     public JsonModelConverter () {
 
     }
@@ -72,7 +75,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         JsonNode rawJsonData = (JsonNode) data;
 
         LOG.info("Conversion start.");
-        this.concreteFieldImpl = JsonDataBinder.getInstance().getConcreteFieldImpl();
+        this.concreteFieldImpl = databinder.getConcreteFieldImpl();
         if (model instanceof TridionViewModel) {
             LOG.debug("We have a Tridion view model. Setting additional properties");
             setTridionProperties((TridionViewModel) model, rawJsonData);
@@ -266,8 +269,9 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
     private <T extends BaseViewModel> void deserializeAndBuildModels (final T model, final String fieldName, final Field modelField, final FieldType tridionDataFieldType, final List<JsonNode> nodeList) throws SerializationException, IllegalAccessException, IOException {
         if (modelField.getType().equals(List.class)) {
             final Type parametrizedType = TypeUtils.getRuntimeTypeOfTypeParameter(modelField.getGenericType());
+            LOG.debug("Interface check: " + TypeUtils.classIsViewModel((Class<?>) parametrizedType));
 
-            if (TypeUtils.classIsViewModel((Class<?>) parametrizedType) || DataBindFactory.classHasViewModelDerivatives(((Class<?>) parametrizedType).getCanonicalName())) {
+            if (TypeUtils.classIsViewModel((Class<?>) parametrizedType) || databinder.classHasViewModelDerivatives(((Class<?>) parametrizedType).getCanonicalName())) {
                 for (JsonNode node : nodeList) {
 
 
@@ -288,7 +292,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
                 }
             }
 
-        } else if (TypeUtils.classIsViewModel(modelField.getType()) || DataBindFactory.classHasViewModelDerivatives(modelField.getType().getCanonicalName())) {
+        } else if (TypeUtils.classIsViewModel(modelField.getType()) || databinder.classHasViewModelDerivatives(modelField.getType().getCanonicalName())) {
             final Class<T> modelClassToUse = (Class<T>) modelField.getType();
             checkTypeAndBuildModel(model, fieldName, nodeList.get(0), modelField, modelClassToUse);
         } else {
@@ -349,7 +353,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
      * @throws SerializationException serialization issues
      * @throws IllegalAccessException Class instantiation issues
      */
-    private static <T extends BaseViewModel> void checkTypeAndBuildModel (final T model, final String fieldName, final JsonNode currentField, final Field modelField, final Class<T> modelClassToUse) throws SerializationException, IllegalAccessException {
+    private <T extends BaseViewModel> void checkTypeAndBuildModel (final T model, final String fieldName, final JsonNode currentField, final Field modelField, final Class<T> modelClassToUse) throws SerializationException, IllegalAccessException {
         if (!model.getClass().equals(modelField.getType())) {
             LOG.debug("Building a model or Component for field:{}, type: {}", fieldName, modelField.getType().getName());
             final BaseViewModel strongModel = buildModelForField(currentField, modelClassToUse);
@@ -364,8 +368,9 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         }
     }
 
-    private static <T extends BaseViewModel> BaseViewModel buildModelForField (final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {
+    private <T extends BaseViewModel> BaseViewModel buildModelForField (final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {
 
+        final BaseViewModel strongModel = databinder.buildModel(currentField, modelClassToUse, "");
         if (Modifier.isAbstract(modelClassToUse.getModifiers()) || Modifier.isInterface(modelClassToUse.getModifiers())) {
 
             // Get root element name
@@ -373,7 +378,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
             if (StringUtils.isNotEmpty(rootElementName)) {
                 // attempt get a concrete class for this interface
 
-                final Class<? extends BaseViewModel> concreteClass = DataBindFactory.getModelClassesForInterfaceOrAbstractField(modelClassToUse.getCanonicalName(), rootElementName);
+                final Class<? extends BaseViewModel> concreteClass = databinder.getConcreteModel(modelClassToUse.getCanonicalName(), rootElementName);
                 if (concreteClass == null) {
                     LOG.error("Attempt to find a concrete model class for interface or abstract class: {} failed miserably as there was no registered class for root element name: '{}' Will return null.", modelClassToUse.getCanonicalName(), rootElementName);
                     return null;
@@ -391,8 +396,8 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         }
     }
 
-    private static String getRootElementNameFromComponentOrEmbeddedField (final JsonNode currentField) {
-        final String rootElementName = DataBindFactory.getRootElementName(currentField);
+    private String getRootElementNameFromComponentOrEmbeddedField (final JsonNode currentField) {
+        final String rootElementName = databinder.getRootElementName(currentField);
 
         if (StringUtils.isNotEmpty(rootElementName)) {
             return rootElementName;
@@ -410,8 +415,8 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         return null;
     }
 
-    private static <T extends BaseViewModel> BaseViewModel getBaseViewModel (final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {
-        final BaseViewModel strongModel = DataBindFactory.buildModel(currentField, modelClassToUse, "");
+    private  <T extends BaseViewModel> BaseViewModel getBaseViewModel (final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {
+        final BaseViewModel strongModel = databinder.buildModel(currentField, modelClassToUse, "");
         final ViewModel viewModelParameters = modelClassToUse.getAnnotation(ViewModel.class);
         if (viewModelParameters.setRawData()) {
             strongModel.setRawData(currentField.toString());
@@ -424,7 +429,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
         if (currentField.has(DataBindConstants.COMPONENT_TYPE)) {
             LOG.debug("Building a linked Component or Multimedia component");
-            final Component component = JsonDataBinder.getInstance().buildComponent(currentField, JsonDataBinder.getInstance().getConcreteComponentImpl());
+            final Component component = databinder.buildComponent(currentField, databinder.getConcreteComponentImpl());
             setFieldValue(model, f, component, fieldType);
         } else {
             final org.dd4t.contentmodel.Field renderedField = JsonUtils.renderComponentField(currentField, this.concreteFieldImpl);
@@ -439,4 +444,13 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         model.setLastModified(JsonUtils.getDateFromField(DataBindConstants.LAST_MODIFIED_DATE, rawComponent));
         model.setTcmUri(JsonUtils.getTcmUriFromField(DataBindConstants.ID, rawComponent));
     }
+
+
+    public JsonDataBinder getDatabinder() {
+		return databinder;
+	}
+
+	public void setDatabinder(JsonDataBinder databinder) {
+		this.databinder = databinder;
+	}
 }

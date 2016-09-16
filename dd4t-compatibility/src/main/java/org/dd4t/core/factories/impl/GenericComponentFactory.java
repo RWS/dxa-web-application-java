@@ -22,10 +22,13 @@ import org.dd4t.contentmodel.exceptions.NotAuthenticatedException;
 import org.dd4t.contentmodel.exceptions.NotAuthorizedException;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.factories.ComponentFactory;
+import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.request.RequestContext;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
 
 /**
  * Backwards compatibility class
@@ -33,8 +36,10 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class GenericComponentFactory extends BaseFactory implements ComponentFactory {
+	@Resource
+	protected ComponentPresentationFactory componentPresentationFactory;
 
-    private static final Logger LOG = LoggerFactory.getLogger(GenericComponentFactory.class);
+	private static final Logger LOG = LoggerFactory.getLogger(GenericComponentFactory.class);
 
     @Override
     public void setCacheProvider (PayloadCacheProvider cacheAgent) {
@@ -45,7 +50,7 @@ public class GenericComponentFactory extends BaseFactory implements ComponentFac
     public Component getComponent (String uri) throws ItemNotFoundException, NotAuthorizedException, NotAuthenticatedException {
         ComponentPresentation cp;
         try {
-            cp = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(uri, null);
+            cp = componentPresentationFactory.getComponentPresentation(uri, null);
         } catch (FactoryException e) {
             LOG.error(e.getLocalizedMessage(), e);
             return null;
@@ -63,7 +68,7 @@ public class GenericComponentFactory extends BaseFactory implements ComponentFac
     public Component getComponent (String componentUri, String componentTemplateUri) throws ItemNotFoundException, NotAuthorizedException, NotAuthenticatedException {
         ComponentPresentation cp;
         try {
-            cp = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(componentUri, componentTemplateUri);
+            cp = componentPresentationFactory.getComponentPresentation(componentUri, componentTemplateUri);
         } catch (FactoryException e) {
             LOG.error(e.getLocalizedMessage(), e);
             return null;
@@ -84,5 +89,12 @@ public class GenericComponentFactory extends BaseFactory implements ComponentFac
         return null;
     }
 
+    public ComponentPresentationFactory getComponentPresentationFactory() {
+		return componentPresentationFactory;
+	}
 
+	public void setComponentPresentationFactory(
+			ComponentPresentationFactory componentPresentationFactory) {
+		this.componentPresentationFactory = componentPresentationFactory;
+	}
 }

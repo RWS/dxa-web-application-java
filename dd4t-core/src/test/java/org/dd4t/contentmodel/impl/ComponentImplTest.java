@@ -1,19 +1,17 @@
 package org.dd4t.contentmodel.impl;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.HashMap;
+
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.serializers.Serializer;
-import org.dd4t.core.serializers.impl.SerializerFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-
-import java.util.HashMap;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public class ComponentImplTest {
 
@@ -22,7 +20,7 @@ public class ComponentImplTest {
     @Before
     public void setUp () throws Exception {
         serializer = new org.dd4t.core.serializers.impl.json.JSONSerializer();
-        SerializerFactory.getInstance().setSerializer(serializer);
+        //SerializerFactory.getInstance().setSerializer(serializer);
     }
 
     @Test
@@ -33,7 +31,7 @@ public class ComponentImplTest {
 
         //when
         String content = serialize(component);
-        ComponentImpl deserialized = SerializerFactory.deserialize(content, ComponentImpl.class);
+        ComponentImpl deserialized = serializer.deserialize(content, ComponentImpl.class);
 
         //then
         assertNotNull(deserialized);
@@ -52,7 +50,7 @@ public class ComponentImplTest {
 
         //when
         String content = serialize(component);
-        ComponentImpl deserialized = SerializerFactory.deserialize(content, ComponentImpl.class);
+        ComponentImpl deserialized = serializer.deserialize(content, ComponentImpl.class);
 
         //then
         assertNotNull(deserialized);

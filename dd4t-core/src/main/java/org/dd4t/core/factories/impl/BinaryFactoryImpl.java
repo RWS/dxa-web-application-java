@@ -35,18 +35,12 @@ import java.text.ParseException;
 public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(BinaryFactoryImpl.class);
-    // Singleton implementation
-    private static final BinaryFactoryImpl INSTANCE = new BinaryFactoryImpl();
 
     private PayloadCacheProvider cacheProvider;
     private BinaryProvider binaryProvider;
 
     protected BinaryFactoryImpl () {
         LOG.debug("Create new instance");
-    }
-
-    public static BinaryFactoryImpl getInstance () {
-        return INSTANCE;
     }
 
     /**

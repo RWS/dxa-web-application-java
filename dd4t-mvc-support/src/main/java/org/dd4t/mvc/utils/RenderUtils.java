@@ -16,26 +16,6 @@
 
 package org.dd4t.mvc.utils;
 
-import org.apache.commons.lang3.StringUtils;
-import org.dd4t.contentmodel.Component;
-import org.dd4t.contentmodel.ComponentPresentation;
-import org.dd4t.contentmodel.ComponentTemplate;
-import org.dd4t.contentmodel.Field;
-import org.dd4t.core.databind.BaseViewModel;
-import org.dd4t.core.exceptions.FactoryException;
-import org.dd4t.core.exceptions.RenderException;
-import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
-import org.dd4t.core.util.Constants;
-import org.dd4t.core.util.TCMURI;
-import org.dd4t.databind.DataBindFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletResponseWrapper;
 import java.io.CharArrayWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -43,6 +23,28 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletResponseWrapper;
+
+import org.apache.commons.lang3.StringUtils;
+import org.dd4t.contentmodel.Component;
+import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.core.databind.BaseViewModel;
+import org.dd4t.core.databind.DataBinder;
+import org.dd4t.core.exceptions.FactoryException;
+import org.dd4t.core.exceptions.RenderException;
+import org.dd4t.core.factories.ComponentPresentationFactory;
+import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
+import org.dd4t.core.util.Constants;
+import org.dd4t.core.util.TCMURI;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  *
@@ -59,10 +61,12 @@ public class RenderUtils {
      * If the component template has a template parameter viewName, the value of
      * that parameter is returned. Otherwise the title of the component template
      * is returned.
+     * @throws IOException 
      */
-    public static String getViewName (final ComponentPresentation cp) {
+    public static String getViewName (final ComponentPresentation cp) throws IOException {
         ComponentTemplate componentTemplate = cp.getComponentTemplate();
-        String viewNameKey = DataBindFactory.findComponentTemplateViewName(componentTemplate);
+        DataBinder databinder = ApplicationContextProvider.getBean(DataBinder.class);
+        String viewNameKey = databinder.findComponentTemplateViewName(componentTemplate);
 
         if (StringUtils.isNotEmpty(viewNameKey)) {
             return viewNameKey;
@@ -76,8 +80,9 @@ public class RenderUtils {
      * by schemaName and templateName. To align with the .Net variant of DD4T
      * the schema and template matches uses the startsWith method and there also
      * is support for the negation of the expression.
+     * @throws IOException 
      */
-    public static List<ComponentPresentation> filterComponentPresentations (final List<ComponentPresentation> componentPresentations, final String schemaName, final String rootElementName, final String viewName, final String region) {
+    public static List<ComponentPresentation> filterComponentPresentations (final List<ComponentPresentation> componentPresentations, final String schemaName, final String rootElementName, final String viewName, final String region) throws IOException {
         boolean regionIsSet = false;
 
         if (region != null) {
@@ -219,8 +224,9 @@ public class RenderUtils {
      * @param response               , the http response
      * @param componentPresentations , the list with component presentations
      * @return as string with all component presentations rendered and concatenated.
+     * @throws IOException 
      */
-    public static String renderComponentPresentations (final HttpServletRequest request, final HttpServletResponse response, final List<ComponentPresentation> componentPresentations) throws FactoryException {
+    public static String renderComponentPresentations (final HttpServletRequest request, final HttpServletResponse response, final List<ComponentPresentation> componentPresentations) throws FactoryException, IOException {
         final StringBuilder output = new StringBuilder();
 
         if (componentPresentations == null) {
@@ -241,8 +247,9 @@ public class RenderUtils {
      * @param response the http response
      * @param cp       the component presentation
      * @return the rendered component presentation as a string.
+     * @throws IOException 
      */
-    public static String renderComponentPresentation (final HttpServletRequest request, final HttpServletResponse response, final ComponentPresentation cp) throws FactoryException {
+    public static String renderComponentPresentation (final HttpServletRequest request, final HttpServletResponse response, final ComponentPresentation cp) throws FactoryException, IOException {
         return getResponse(request, response, cp, getViewName(cp));
     }
 
@@ -256,7 +263,8 @@ public class RenderUtils {
      * @param viewName     the view name
      */
     public static String renderDynamicComponentPresentation (final HttpServletRequest request, final HttpServletResponse response, final String componentURI, final String templateURI, final String viewName) throws FactoryException {
-        final ComponentPresentation componentPresentation = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(componentURI, templateURI);
+    	ComponentPresentationFactory cpf = ApplicationContextProvider.getBean(ComponentPresentationFactory.class);
+        final ComponentPresentation componentPresentation = cpf.getComponentPresentation(componentURI, templateURI);
         return getResponse(request, response, componentPresentation, viewName);
     }
 

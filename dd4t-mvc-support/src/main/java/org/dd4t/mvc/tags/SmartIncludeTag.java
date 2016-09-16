@@ -16,11 +16,13 @@
 
 package org.dd4t.mvc.tags;
 
+import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.PageFactory;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
 import org.dd4t.core.resolvers.PublicationResolver;
 import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.HttpUtils;
+import org.dd4t.mvc.utils.ApplicationContextProvider;
 import org.dd4t.mvc.utils.PublicationResolverFactory;
 import org.dd4t.mvc.utils.RenderUtils;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
+
 import java.io.IOException;
 import java.net.URL;
 
@@ -73,8 +76,8 @@ public class SmartIncludeTag extends TagSupport {
         }
 
         String includeUrl = page;
+        PageFactory pageFactory = ApplicationContextProvider.getBean(PageFactory.class);
 
-        final PageFactory pageFactory = PageFactoryImpl.getInstance();
         try {
             final int publicationId = publicationResolver.getPublicationId();
             boolean pageFound;

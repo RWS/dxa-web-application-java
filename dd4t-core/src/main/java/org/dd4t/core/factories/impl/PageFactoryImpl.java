@@ -16,10 +16,16 @@
 
 package org.dd4t.core.factories.impl;
 
+import java.io.IOException;
+import java.text.ParseException;
+
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.PageImpl;
 import org.dd4t.core.caching.CacheElement;
+import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.ProcessorException;
@@ -27,32 +33,21 @@ import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.PageFactory;
 import org.dd4t.core.processors.RunPhase;
 import org.dd4t.core.util.TCMURI;
-import org.dd4t.databind.DataBindFactory;
 import org.dd4t.providers.PageProvider;
 import org.dd4t.providers.ProviderResultItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.text.ParseException;
-
 // TODO: refactor duplicate code
 public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(PageFactoryImpl.class);
-    private static final PageFactoryImpl INSTANCE = new PageFactoryImpl();
-
-    protected PageFactoryImpl () {
-        LOG.debug("Create new instance");
-    }
-
-    public static PageFactoryImpl getInstance () {
-        return INSTANCE;
-    }
-
+    
     @Resource
     protected PageProvider pageProvider;
+    
+    @Resource
+    protected DataBinder dataBinder;
 
     /**
      * @param uri of the page
@@ -344,7 +339,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
     @Override
     public <T extends Page> T deserialize (final String source, final Class<? extends T> clazz) throws FactoryException {
-        return DataBindFactory.buildPage(source, clazz);
+        return dataBinder.buildPage(source, clazz);
     }
 
     /**
@@ -368,4 +363,12 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
     public void setPageProvider (PageProvider provider) {
         this.pageProvider = provider;
     }
+    
+    public DataBinder getDataBinder() {
+		return dataBinder;
+	}
+
+	public void setDataBinder(DataBinder dataBinder) {
+		this.dataBinder = dataBinder;
+	}	    
 }

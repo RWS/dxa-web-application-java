@@ -23,12 +23,14 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.dd4t.contentmodel.impl.PageImpl;
+import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.util.CompressionUtils;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import javax.xml.stream.XMLStreamException;
+
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -36,11 +38,12 @@ import java.net.URISyntaxException;
 import java.util.zip.GZIPInputStream;
 
 public class DD4TModelConverter {
+	protected static ApplicationContext context;
 
 	public static void main (String[] args) throws IOException, XMLStreamException, SerializationException, URISyntaxException {
 
 		// Load Spring
-		ApplicationContext context = new ClassPathXmlApplicationContext("application-context.xml");
+		context = new ClassPathXmlApplicationContext("application-context.xml");
 
 
 //		System.out.println(testXml + xml2 + xml3);
@@ -80,8 +83,9 @@ public class DD4TModelConverter {
 
 	private static void deserializeJson (String content) throws IOException, SerializationException {
 		String content1 = CompressionUtils.decompressGZip(CompressionUtils.decodeBase64(content));//test4;//
+        DataBinder databinder = context.getBean(DataBinder.class);
 
-		PageImpl page = DataBindFactory.buildPage(content1, PageImpl.class);
+		PageImpl page = databinder.buildPage(content1, PageImpl.class);
 		System.out.println(content1);
 		System.out.println("Page Title: " + page.getTitle());
 	}

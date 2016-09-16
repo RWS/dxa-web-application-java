@@ -37,7 +37,6 @@ import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.util.TCMURI;
-import org.dd4t.databind.DataBindFactory;
 import org.dd4t.databind.builder.BaseDataBinder;
 import org.dd4t.databind.serializers.json.BaseFieldMixIn;
 import org.dd4t.databind.serializers.json.ComponentPresentationDeserializer;
@@ -61,10 +60,10 @@ import java.util.Set;
  */
 public class JsonDataBinder extends BaseDataBinder implements DataBinder {
     private static final Logger LOG = LoggerFactory.getLogger(JsonDataBinder.class);
-    private static final JsonDataBinder INSTANCE = new JsonDataBinder();
+
     private static final ObjectMapper GENERIC_MAPPER = new ObjectMapper();
 
-    static {
+	static {
         GENERIC_MAPPER.configure(MapperFeature.IGNORE_DUPLICATE_MODULE_REGISTRATIONS,true);
         GENERIC_MAPPER.registerModule(new JodaModule());
         GENERIC_MAPPER.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -73,10 +72,6 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 
     private JsonDataBinder () {
         LoggerFactory.getLogger(JsonDataBinder.class).info("Creating a JsonDataBinder instance.");
-    }
-
-    public static JsonDataBinder getInstance () {
-        return INSTANCE;
     }
 
     @Override
@@ -103,8 +98,8 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
     public ComponentPresentation buildDynamicComponentPresentation (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException {
         final Set<String> modelNames = new HashSet<>();
         try {
-            String viewModelName = DataBindFactory.findComponentTemplateViewName(componentPresentation.getComponentTemplate());
-            final Component component = DataBindFactory.buildComponent(componentPresentation.getRawComponentContent(), aClass);
+            String viewModelName = findComponentTemplateViewName(componentPresentation.getComponentTemplate());
+            final Component component = buildComponent(componentPresentation.getRawComponentContent(), aClass);
             componentPresentation.setComponent(component);
             String rootElementName = component.getSchema().getRootElement();
 
@@ -118,9 +113,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
                 modelNames.add(rootElementName);
             }
             final JsonNode rawComponentData = GENERIC_MAPPER.readTree(componentPresentation.getRawComponentContent());
-            final Map<String, BaseViewModel> models = DataBindFactory.buildModels(rawComponentData, modelNames, componentPresentation.getComponentTemplate().getId());
-
-
+            final Map<String, BaseViewModel> models = buildModels(rawComponentData, modelNames, componentPresentation.getComponentTemplate().getId());
 
             componentPresentation.setViewModel(models);
         } catch (SerializationException | IOException e) {
@@ -240,7 +233,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 
     protected void configureMapper () {
         // This is the hook where view models are custom generated
-        final ComponentPresentationDeserializer componentPresentationDeserializer = new ComponentPresentationDeserializer(this.concreteComponentPresentationImpl, this.concreteComponentTemplateImpl, this.concreteComponentImpl);
+        final ComponentPresentationDeserializer componentPresentationDeserializer = new ComponentPresentationDeserializer(this.concreteComponentPresentationImpl, this.concreteComponentTemplateImpl, this.concreteComponentImpl, this);
         final SimpleModule module = new SimpleModule("ComponentPresentationDeserializerModule", new Version(1, 0, 0, "RELEASE", "org.dd4t", "dd4t-databind"));
         module.addDeserializer(ComponentPresentation.class, componentPresentationDeserializer);
 
@@ -258,9 +251,9 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
         }
 
         final Map<String, Field> metaData = template.getMetadata();
-        if (metaData != null && metaData.containsKey(JsonDataBinder.getInstance().viewModelMetaKeyName)) {
+        if (metaData != null && metaData.containsKey(viewModelMetaKeyName)) {
 
-            Field viewNameField = metaData.get(JsonDataBinder.getInstance().viewModelMetaKeyName);
+            Field viewNameField = metaData.get(viewModelMetaKeyName);
             if (viewNameField != null) {
                 List<Object> values = viewNameField.getValues();
                 if (!values.isEmpty()) {

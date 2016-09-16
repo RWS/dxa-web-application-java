@@ -16,21 +16,23 @@
 
 package org.dd4t.core.factories.impl;
 
+import java.io.IOException;
+import java.text.ParseException;
+
+import javax.annotation.Resource;
+
 import org.dd4t.contentmodel.Keyword;
 import org.dd4t.contentmodel.impl.KeywordImpl;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.TaxonomyFactory;
-import org.dd4t.core.serializers.impl.SerializerFactory;
+import org.dd4t.core.serializers.Serializer;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.TaxonomyProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.text.ParseException;
 
 /**
  * Service class that wraps around a Taxonomy provider and provides cache functionality. It also offers utility methods
@@ -42,18 +44,13 @@ import java.text.ParseException;
 public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(TaxonomyFactoryImpl.class);
-    private static final TaxonomyFactoryImpl INSTANCE = new TaxonomyFactoryImpl();
     private static final String NOT_FOUND_ERROR_MESSAGE = "Failed to read taxonomy {} from provider";
 
-    private TaxonomyProvider taxonomyProvider;
+    @Resource
+    protected TaxonomyProvider taxonomyProvider;
 
-    private TaxonomyFactoryImpl () {
-        LOG.debug("Create new instance");
-    }
-
-    public static TaxonomyFactoryImpl getInstance () {
-        return INSTANCE;
-    }
+	@Resource
+    protected Serializer serializer;
 
     /**
      * Returns the root Keyword of Taxonomy by reading the specified taxonomy from the local cache or from the
@@ -111,8 +108,8 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
         return taxonomy;
     }
 
-    private static Keyword deserialize (final String taxonomySource, final Class<KeywordImpl> keywordClass) throws SerializationException {
-        return SerializerFactory.deserialize(taxonomySource, keywordClass);
+    private Keyword deserialize (final String taxonomySource, final Class<KeywordImpl> keywordClass) throws SerializationException {
+        return serializer.deserialize(taxonomySource, keywordClass);
     }
 
     /**
@@ -189,4 +186,13 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
     public void setTaxonomyProvider (TaxonomyProvider taxonomyProvider) {
         this.taxonomyProvider = taxonomyProvider;
     }
+    
+    public Serializer getSerializer() {
+		return serializer;
+	}
+
+	public void setSerializer(Serializer serializer) {
+		this.serializer = serializer;
+	}
+    
 }

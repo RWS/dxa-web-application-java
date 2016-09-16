@@ -16,11 +16,13 @@
 
 package org.dd4t.core.processors.impl;
 
+import javax.annotation.Resource;
+
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Item;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.core.exceptions.FactoryException;
-import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
+import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.processors.Processor;
 import org.dd4t.core.request.RequestContext;
 import org.slf4j.Logger;
@@ -36,8 +38,11 @@ import org.slf4j.LoggerFactory;
 public class DcpResolver extends BaseProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(DcpResolver.class);
+    
+    @Resource
+    protected ComponentPresentationFactory componentPresentationFactory;
 
-    @Override
+	@Override
     public void execute (Item item, RequestContext context) {
         LOG.debug("Processing item: {} ", item);
         if (item instanceof Page) {
@@ -50,14 +55,23 @@ public class DcpResolver extends BaseProcessor implements Processor {
                     LOG.debug("Detected dynamic component presentation " + cp);
 
                     try {
-                        final ComponentPresentation componentPresentation = ComponentPresentationFactoryImpl.getInstance().getComponentPresentation(cp.getComponent().getId(), cp.getComponentTemplate().getId());
+                        final ComponentPresentation componentPresentation = componentPresentationFactory.getComponentPresentation(cp.getComponent().getId(), cp.getComponentTemplate().getId());
                         cp.setComponent(componentPresentation.getComponent());
                         cp.setViewModel(componentPresentation.getAllViewModels());
                     } catch (FactoryException e) {
                         LOG.error("Unable to find dynamic component by id " + cp.getComponent().getId(), e);
                     }
                 }
-            }
+            }       
         }
     }
+	
+    public ComponentPresentationFactory getComponentPresentationFactory() {
+		return componentPresentationFactory;
+	}
+
+	public void setComponentPresentationFactory(
+			ComponentPresentationFactory componentPresentationFactory) {
+		this.componentPresentationFactory = componentPresentationFactory;
+	}	
 }

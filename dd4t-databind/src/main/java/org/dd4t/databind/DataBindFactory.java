@@ -25,7 +25,9 @@ import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.exceptions.SerializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
@@ -39,10 +41,11 @@ public class DataBindFactory {
     private static final Logger LOG = LoggerFactory.getLogger(DataBindFactory.class);
     private static final DataBindFactory INSTANCE = new DataBindFactory();
 
+    @Resource
     private DataBinder dataBinder;
 
     private DataBindFactory () {
-        LOG.info("DataBindFactory init.");
+
     }
 
     public static DataBindFactory getInstance () {
@@ -110,6 +113,7 @@ public class DataBindFactory {
         return INSTANCE.dataBinder.renderDefaultComponentsIfNoModelFound();
     }
 
+    @Autowired
     public void setDataBinder (DataBinder dataBinder) {
         this.dataBinder = dataBinder;
     }

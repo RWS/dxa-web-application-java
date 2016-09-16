@@ -10,8 +10,11 @@ import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
+import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
+import com.sdl.webapp.common.api.navigation.OnDemandNavigationProvider;
+import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
 import com.sdl.webapp.common.util.LocalizationUtils;
 import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
@@ -19,21 +22,30 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.providers.PayloadCacheProvider;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.comparator.NullSafeComparator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Collections2.transform;
+import static com.google.common.collect.Sets.difference;
+import static com.google.common.collect.Sets.newHashSet;
+import static com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder.parse;
 import static com.sdl.webapp.common.util.LocalizationUtils.isHomePath;
 import static com.sdl.webapp.common.util.LocalizationUtils.isIndexPath;
 import static com.sdl.webapp.common.util.LocalizationUtils.stripDefaultExtension;
@@ -47,7 +59,7 @@ import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapI
  * <p>Falls back to {@link StaticNavigationProvider} when dynamic navigation is not available.</p>
  */
 @Slf4j
-public abstract class AbstractDynamicNavigationProvider implements NavigationProvider {
+public abstract class AbstractDynamicNavigationProvider implements NavigationProvider, OnDemandNavigationProvider {
 
     static final NullSafeComparator<SitemapItem> SITEMAP_SORT_BY_TITLE = new NullSafeComparator<>(new Comparator<SitemapItem>() {
         @Override
@@ -105,7 +117,6 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         return navigationModel.getPayload();
     }
 
-
     @Override
     public NavigationLinks getTopNavigationLinks(String requestPath, final Localization localization) throws NavigationProviderException {
         return processNavigationLinks(requestPath, localization, new NavigationProcessing() {
@@ -159,9 +170,70 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         });
     }
 
+    @Override
+    public List<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) {
+        log.trace("sitemapItemId: {}, Navigation filter: {}, localization {}", sitemapItemId, navigationFilter, localization);
+
+        if (isNullOrEmpty(sitemapItemId)) {
+            log.trace("Sitemap ID is empty, expanding taxonomy roots");
+            return expandTaxonomyRoots(navigationFilter, localization);
+        }
+
+        TaxonomySitemapItemUrisHolder info = parse(sitemapItemId, localization);
+        if (info == null) {
+            log.warn("SitemapID {} is wrong for Taxonomy navigation, return empty list of items", sitemapItemId);
+            return Collections.emptyList();
+        }
+
+        if (navigationFilter.isWithAncestors()) {
+            log.trace("Filter with ancestors, expanding ancestors");
+            return expandAncestors(info, navigationFilter, localization);
+        }
+
+        if (navigationFilter.getDescendantLevels() != 0 && !info.isPage()) {
+            log.trace("Filter with descendants, expanding descendants");
+            return expandDescendants(info, navigationFilter, localization);
+        }
+
+        log.trace("Filter is not specific, doing nothing");
+        return Collections.emptyList();
+    }
+
+    @Contract("_, _ -> !null")
+    protected abstract List<SitemapItem> expandTaxonomyRoots(NavigationFilter navigationFilter, Localization localization);
+
+    @Contract("_, _, _ -> !null")
+    protected abstract List<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization);
+
     protected abstract SitemapItem createTaxonomyNode(String taxonomyId, Localization localization);
 
     protected abstract String getNavigationTaxonomyId(Localization localization);
+
+    /**
+     * One single ancestor for a given keyword. Although same keyword may be in few places, we don't expect it due to
+     * technical limitation in CME. So basically we ignore the fact that keyword may be in many places (like page) and
+     * expect only a single entry. Because of that we have only one taxonomy root for Keyword's ancestors.
+     *
+     * @param uris             URIs of your current context taxonomy node
+     * @param navigationFilter navigation filter
+     * @param localization     current localization
+     * @return root of a taxonomy
+     */
+    @Nullable
+    protected abstract TaxonomyNode expandAncestorsForKeyword(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization);
+
+    /**
+     * Ancestors for a page is a list of same ROOT node with different children.
+     * Basically, these different ROOTs (with same ID, because we are still within one taxonomy) contain
+     * different children for different paths your page may be in.
+     *
+     * @param uris             URIs of your current context taxonomy node
+     * @param navigationFilter navigation filter
+     * @param localization     current localization
+     * @return a list of roots of taxonomy with different paths for items
+     */
+    @Contract("_, _, _ -> !null")
+    protected abstract List<SitemapItem> collectAncestorsForPage(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization);
 
     String findIndexPageUrl(@NonNull List<SitemapItem> pageSitemapItems) {
         //noinspection StaticPseudoFunctionalStyleMethod
@@ -294,6 +366,105 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
 
         Collections.reverse(breadcrumbs);
         return breadcrumbs;
+    }
+
+    @NonNull
+    private List<SitemapItem> expandAncestors(@NonNull TaxonomySitemapItemUrisHolder uris, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) {
+        if (!uris.isPage() && !uris.isKeyword()) {
+            log.debug("URIs {} is not a page nor keyword, can't expand ancestors, filter {}, localization {}", uris, navigationFilter, localization);
+            return Collections.emptyList();
+        }
+
+        SitemapItem taxonomyRoot = uris.isPage() ?
+                expandAncestorsForPage(uris, navigationFilter, localization) :
+                expandAncestorsForKeyword(uris, navigationFilter, localization);
+
+        if (taxonomyRoot != null) {
+            if (navigationFilter.getDescendantLevels() == 0) {
+                log.trace("No descendants have been requested; ensure Items properties are null on the leaf Taxonomy Nodes");
+                pruneLeaves(taxonomyRoot);
+            } else {
+                addDescendants(taxonomyRoot, navigationFilter, localization);
+            }
+
+            return Lists.newArrayList(taxonomyRoot);
+        }
+
+        log.debug("Taxonomy root is null, can't find it, returning empty list, uris {}, localization {}, filter {}", uris, localization, navigationFilter);
+        return Collections.emptyList();
+    }
+
+    @Nullable
+    private SitemapItem expandAncestorsForPage(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+        List<SitemapItem> nodes = collectAncestorsForPage(uris, navigationFilter, localization);
+
+        if (nodes.isEmpty()) {
+            return null;
+        }
+
+        SitemapItem mergedNode = nodes.get(0);
+        ListIterator<SitemapItem> iterator = nodes.listIterator(1);
+        while (iterator.hasNext()) {
+            mergeSubtrees(iterator.next(), mergedNode);
+        }
+
+        return mergedNode;
+    }
+
+    private void mergeSubtrees(@NonNull SitemapItem nodeToMerge, @NonNull SitemapItem mergedNode) {
+        List<SitemapItem> items = nodeToMerge.getItems();
+        if (items == null) {
+            return;
+        }
+
+        for (final SitemapItem childNode : items) {
+            SitemapItem childKeywordToMergeInto = mergedNode.getItems() == null ? null :
+                    Iterables.find(mergedNode.getItems(), new Predicate<SitemapItem>() {
+                        @Override
+                        public boolean apply(SitemapItem input) {
+                            return Objects.equals(childNode.getId(), input.getId());
+                        }
+                    }, null);
+            if (childKeywordToMergeInto == null) {
+                if (mergedNode.getItems() == null) {
+                    mergedNode.setItems(new ArrayList<SitemapItem>());
+                }
+                mergedNode.getItems().add(childNode);
+            } else {
+                mergeSubtrees(childNode, childKeywordToMergeInto);
+            }
+        }
+    }
+
+    private void addDescendants(@NonNull SitemapItem taxonomyNode, NavigationFilter navigationFilter, Localization localization) {
+        if (taxonomyNode.getItems() != null) {
+            for (SitemapItem child : taxonomyNode.getItems()) {
+                addDescendants(child, navigationFilter, localization);
+            }
+        }
+
+        Set<SitemapItem> additionalChildren = new HashSet<>(expandDescendants(parse(taxonomyNode.getId(), localization), navigationFilter, localization));
+
+        for (SitemapItem child : difference(additionalChildren, newHashSet(taxonomyNode.getItems()))) {
+            taxonomyNode.addItem(child);
+        }
+    }
+
+    private void pruneLeaves(@NonNull SitemapItem sitemapItem) {
+        if (sitemapItem.getItems() == null) {
+            log.trace("this leaf of SitemapItem {} is already pruned; nothing to do", sitemapItem);
+            return;
+        }
+
+        if (sitemapItem.getItems().isEmpty()) {
+            log.trace("the leaf of SitemapItem {} is pruned", sitemapItem);
+            sitemapItem.setItems(null);
+        } else {
+            log.trace("tot a leaf {}; prune its children recursively", sitemapItem);
+            for (SitemapItem item : sitemapItem.getItems()) {
+                pruneLeaves(item);
+            }
+        }
     }
 
     private interface NavigationProcessing {

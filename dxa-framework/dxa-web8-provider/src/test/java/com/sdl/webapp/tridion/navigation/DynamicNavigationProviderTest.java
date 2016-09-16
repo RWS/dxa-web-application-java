@@ -4,12 +4,15 @@ import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
+import com.sdl.webapp.common.api.navigation.NavigationFilter;
+import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
 import com.tridion.meta.PageMeta;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.filters.DepthFilter;
+import com.tridion.taxonomies.filters.TaxonomyFilter;
 import org.dd4t.core.caching.impl.CacheElementImpl;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.junit.Before;
@@ -17,11 +20,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -51,6 +56,7 @@ public class DynamicNavigationProviderTest {
     private PayloadCacheProvider payloadCacheProvider;
 
     @InjectMocks
+    @Spy
     private DynamicNavigationProvider dynamicNavigationProvider;
 
     @Before
@@ -174,6 +180,36 @@ public class DynamicNavigationProviderTest {
         assertEquals(1, dto.getId());
         assertEquals("title", dto.getTitle());
         assertEquals("url", dto.getUrl());
+    }
+
+    @Test
+    public void shouldReturnEmptyListIfKeywordIsNull() {
+        //given 
+        when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class))).thenReturn(null);
+
+        //when
+        List<SitemapItem> items = dynamicNavigationProvider.expandDescendants(TaxonomySitemapItemUrisHolder.parse("t1-p1", localization),
+                NavigationFilter.DEFAULT, localization);
+
+        //then
+        assertTrue(items.isEmpty());
+    }
+
+    @Test
+    public void shouldExpandDescendants() {
+        //given
+        NavigationFilter navigationFilter = mock(NavigationFilter.class);
+        when(navigationFilter.getDescendantLevels()).thenReturn(1);
+        when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class))).thenReturn(mockKeyword("1-2", "000 Root"));
+
+        //when
+        dynamicNavigationProvider.expandDescendants(TaxonomySitemapItemUrisHolder.parse("t1-p1", localization),
+                navigationFilter, localization);
+
+        //then
+        verify(navigationFilter, atLeastOnce()).getDescendantLevels();
+        verify(taxonomyFactory).getTaxonomyKeywords(eq("tcm:1-1-512"), any(TaxonomyFilter.class));
+        //todo finish
     }
 
     private Keyword mockKeyword(String taxonomyURI, String name) {

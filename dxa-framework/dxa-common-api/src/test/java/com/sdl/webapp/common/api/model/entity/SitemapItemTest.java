@@ -97,4 +97,16 @@ public class SitemapItemTest {
         assertEquals(sitemapItem, child.getParent());
     }
 
+    @Test
+    public void shouldNotFailWhenItemsIsNull() {
+        //given
+        SitemapItem item = new SitemapItem();
+
+        //when
+        item.setItems(null);
+
+        //then
+        assertNull(item.getItems());
+    }
+
 }

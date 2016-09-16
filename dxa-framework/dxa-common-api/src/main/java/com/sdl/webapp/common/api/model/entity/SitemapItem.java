@@ -14,13 +14,14 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Data
 @ToString(exclude = {"parent"})
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, exclude = {"parent", "items"})
 @Slf4j
 public class SitemapItem extends AbstractEntityModel {
 
@@ -46,6 +47,7 @@ public class SitemapItem extends AbstractEntityModel {
     @JsonIgnore
     private SitemapItem parent;
 
+    @Nullable
     public List<SitemapItem> getItems() {
         return this.items;
     }
@@ -55,11 +57,27 @@ public class SitemapItem extends AbstractEntityModel {
      *
      * @param items items to set
      */
-    public void setItems(List<SitemapItem> items) {
+    public void setItems(@Nullable List<SitemapItem> items) {
         this.items = items;
-        for (SitemapItem item : items) {
-            item.parent = this;
+        if (items != null) {
+            for (SitemapItem item : items) {
+                item.parent = this;
+            }
         }
+    }
+
+    /**
+     * Adds an item to a collection of items and initializes it if needed.
+     *
+     * @param item item to add
+     * @return itself
+     */
+    public SitemapItem addItem(SitemapItem item) {
+        if (this.items == null) {
+            this.items = new ArrayList<>();
+        }
+        this.items.add(item);
+        return this;
     }
 
     /**

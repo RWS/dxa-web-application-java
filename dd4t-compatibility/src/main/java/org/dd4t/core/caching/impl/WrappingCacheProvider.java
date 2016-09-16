@@ -48,7 +48,7 @@ public class WrappingCacheProvider implements CacheProvider {
         CacheElement<Object> cacheElement = internalProvider.loadPayloadFromLocalCache(key);
         cacheElement.setPayload(ob);
 
-        storeInItemCache(key, cacheElement, dependingPublicationId, dependingItemId);
+        internalProvider.storeInItemCache(key, cacheElement, dependingPublicationId, dependingItemId);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class WrappingCacheProvider implements CacheProvider {
         CacheElement<Object> cacheElement = internalProvider.loadPayloadFromLocalCache(key);
         cacheElement.setPayload(ob);
 
-        storeInItemCache(key, cacheElement, dependingPublicationId, dependingCompId);
+        internalProvider.storeInItemCache(key, cacheElement, dependingPublicationId, dependingCompId);
     }
 
     @Override
@@ -64,6 +64,6 @@ public class WrappingCacheProvider implements CacheProvider {
         CacheElement<Object> cacheElement = internalProvider.loadPayloadFromLocalCache(key);
         cacheElement.setPayload(ob);
 
-        storeInItemCache(key, cacheElement, dependingPublicationId, dependingItemId);
+        internalProvider.storeInItemCache(key, cacheElement, dependingPublicationId, dependingItemId);
     }   
 }

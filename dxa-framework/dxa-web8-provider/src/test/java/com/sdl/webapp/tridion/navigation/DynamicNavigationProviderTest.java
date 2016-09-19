@@ -13,7 +13,6 @@ import com.tridion.meta.PageMeta;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.filters.DepthFilter;
-import com.tridion.taxonomies.filters.TaxonomyFilter;
 import org.dd4t.core.caching.impl.CacheElementImpl;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.hamcrest.BaseMatcher;
@@ -51,8 +50,9 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicNavigationProviderTest {
 
-    //then
-    private static final BaseMatcher<WebTaxonomyFilter> FILTER_UP_MATCHER = getDepthFilterMatcher(DepthFilter.FILTER_UP);
+    private static final BaseMatcher<DepthFilter> FILTER_UP_MATCHER = getDepthFilterMatcher(DepthFilter.FILTER_UP);
+
+    private static final BaseMatcher<DepthFilter> FILTER_DOWN_MATCHER = getDepthFilterMatcher(DepthFilter.FILTER_DOWN);
 
     @Mock
     private TaxonomyFactory taxonomyFactory;
@@ -74,17 +74,18 @@ public class DynamicNavigationProviderTest {
     private DynamicNavigationProvider dynamicNavigationProvider;
 
     @NotNull
-    private static BaseMatcher<WebTaxonomyFilter> getDepthFilterMatcher(int direction) {
-        return new BaseMatcher<WebTaxonomyFilter>() {
+    private static BaseMatcher<DepthFilter> getDepthFilterMatcher(int direction) {
+        return new BaseMatcher<DepthFilter>() {
             @Override
             public boolean matches(Object item) {
 
-                return ((int) ReflectionTestUtils.getField(
-                        ReflectionTestUtils.getField(item, "depthFilter"), "depthDirection")) == DepthFilter.FILTER_UP;
+                return ((Integer) ReflectionTestUtils.getField(
+                        ReflectionTestUtils.getField(item, "depthFilter"), "depthDirection")) == direction;
             }
 
             @Override
             public void describeTo(Description description) {
+                description.appendText("Direction should be " + direction);
             }
         };
     }
@@ -214,35 +215,16 @@ public class DynamicNavigationProviderTest {
 
     @Test
     public void shouldReturnEmptyListIfKeywordIsNull() {
-        //given 
+        //given
         when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class))).thenReturn(null);
 
         //when
-        List<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-p1", localization),
+        List<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-k1", localization),
                 NavigationFilter.DEFAULT, localization);
 
         //then
         assertTrue(items.isEmpty());
-    }
-
-    @Test
-    public void shouldExpandDescendants() {
-        //given
-        NavigationFilter navigationFilter = mock(NavigationFilter.class);
-        when(navigationFilter.getDescendantLevels()).thenReturn(1);
-        Keyword keyword = mockKeyword("1-2", "000 Root");
-        when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class))).thenReturn(keyword);
-
-//        when(dynamicNavigationProvider).
-
-        //when
-        dynamicNavigationProvider.expandDescendants(parse("t1-p1", localization),
-                navigationFilter, localization);
-
-        //then
-        verify(navigationFilter, atLeastOnce()).getDescendantLevels();
-        verify(taxonomyFactory).getTaxonomyKeywords(eq("tcm:1-1-512"), any(TaxonomyFilter.class));
-        //todo finish
+        verify(taxonomyFactory).getTaxonomyKeywords(eq("tcm:1-1-1024"), argThat(FILTER_DOWN_MATCHER));
     }
 
     @Test
@@ -289,7 +271,7 @@ public class DynamicNavigationProviderTest {
         TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-k1", localization), new NavigationFilter(), localization);
 
         //then
-        verify(taxonomyFactory, never()).getTaxonomyKeywords(anyString(), argThat(FILTER_UP_MATCHER), anyString());
+        verify(taxonomyFactory).getTaxonomyKeywords(anyString(), argThat(FILTER_UP_MATCHER), anyString());
         assertNull(taxonomyNode);
     }
 

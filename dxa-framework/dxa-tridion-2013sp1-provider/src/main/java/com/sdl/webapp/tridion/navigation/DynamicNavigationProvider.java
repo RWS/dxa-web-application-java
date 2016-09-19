@@ -76,7 +76,7 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
 
     @Override
     protected List<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
-        Keyword keyword = taxonomyFactory.getTaxonomyKeywords(uris.getTaxonomyUri(), new DepthFilter(navigationFilter.getDescendantLevels(), DepthFilter.FILTER_DOWN));
+        Keyword keyword = taxonomyFactory.getTaxonomyKeywords(uris.getKeywordUri(), new DepthFilter(navigationFilter.getDescendantLevels(), DepthFilter.FILTER_DOWN));
 
         if (keyword == null) {
             log.warn("Keyword '{}' in Taxonomy '{}' was not found.", uris.getKeywordUri(), uris.getTaxonomyUri());

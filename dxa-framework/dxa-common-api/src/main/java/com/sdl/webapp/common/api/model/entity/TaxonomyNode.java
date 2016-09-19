@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ComparisonChain;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -31,14 +32,19 @@ public class TaxonomyNode extends SitemapItem {
         }
     }, true);
 
+    @JsonProperty("Key")
     private String key;
 
+    @JsonProperty("Description")
     private String description;
 
+    @JsonProperty("IsAbstract")
     private boolean taxonomyAbstract;
 
+    @JsonProperty("HasChildNodes")
     private boolean withChildren;
 
+    @JsonProperty("ClassifiedItemsCount")
     private int classifiedItemsCount;
 
     @NotNull

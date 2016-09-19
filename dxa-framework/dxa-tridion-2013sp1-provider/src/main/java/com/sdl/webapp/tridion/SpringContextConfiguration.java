@@ -4,6 +4,7 @@ import com.sdl.context.engine.repository.ContextRepositoryManager;
 import com.tridion.content.BinaryFactory;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.taxonomies.TaxonomyFactory;
+import com.tridion.taxonomies.TaxonomyRelationManager;
 import lombok.extern.slf4j.Slf4j;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
@@ -80,6 +81,11 @@ public class SpringContextConfiguration {
         return new TaxonomyFactory();
     }
 
+    @Bean
+    public TaxonomyRelationManager taxonomyRelationManager() {
+        return new TaxonomyRelationManager();
+    }
+    
     @Bean
     public BrokerLinkProvider linkProvider() {
         BrokerLinkProvider linkProvider = new BrokerLinkProvider();

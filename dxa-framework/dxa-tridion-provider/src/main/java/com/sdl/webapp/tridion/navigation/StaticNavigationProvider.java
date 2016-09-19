@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.PageFactory;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,8 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Objects;
 
 /**
@@ -91,9 +92,7 @@ public class StaticNavigationProvider implements NavigationProvider {
 
             // Add links for the following matching subitems
             // first element was just added, skip it
-
-            ListIterator<SitemapItem> iterator = item.getItems().isEmpty() ?
-                    Collections.<SitemapItem>emptyList().listIterator() : item.getItems().listIterator(1);
+            Iterator<SitemapItem> iterator = sitemapIteratorWithoutFirst(item);
             while (iterator.hasNext()) {
                 if (createBreadcrumbLinks(iterator.next(), requestPath, links)) {
                     return true;
@@ -103,6 +102,13 @@ public class StaticNavigationProvider implements NavigationProvider {
         }
 
         return false;
+    }
+
+    @NotNull
+    private static Iterator<SitemapItem> sitemapIteratorWithoutFirst(SitemapItem item) {
+        return item.getItems().isEmpty() ?
+                Collections.<SitemapItem>emptyList().iterator() :
+                item.getItems().listIterator(1);
     }
 
     private static Link linkForItem(SitemapItem item) {

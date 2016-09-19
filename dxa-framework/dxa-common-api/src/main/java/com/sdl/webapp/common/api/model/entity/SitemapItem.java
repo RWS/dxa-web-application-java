@@ -11,10 +11,12 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -47,13 +49,19 @@ public class SitemapItem extends AbstractEntityModel {
     @JsonIgnore
     private SitemapItem parent;
 
-    @Nullable
+    @JsonIgnore
+    private String originalTitle;
+
+    @JsonIgnore
+    private boolean home = false;
+
+    @NotNull
     public List<SitemapItem> getItems() {
-        return this.items;
+        return this.items == null ? Collections.<SitemapItem>emptyList() : this.items;
     }
 
     /**
-     * Setter for the children items which also sets parent field to the current objet.
+     * Setter for the children items which also sets parent field to the current object.
      *
      * @param items items to set
      */
@@ -72,12 +80,29 @@ public class SitemapItem extends AbstractEntityModel {
      * @param item item to add
      * @return itself
      */
+    @NotNull
     public SitemapItem addItem(SitemapItem item) {
         if (this.items == null) {
             this.items = new ArrayList<>();
         }
         this.items.add(item);
         return this;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    /**
+     * Setter for title which also sets original title <strong>if original title is not yet set</strong>.
+     *
+     * @param title title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+        if (this.originalTitle == null) {
+            setOriginalTitle(title);
+        }
     }
 
     /**
@@ -107,10 +132,6 @@ public class SitemapItem extends AbstractEntityModel {
             return this;
         }
 
-        if (getItems() == null) {
-            return null;
-        }
-
         for (SitemapItem item : getItems()) {
             SitemapItem sub = item.findWithUrl(urlToFind);
             if (sub != null) {
@@ -119,5 +140,4 @@ public class SitemapItem extends AbstractEntityModel {
         }
         return null;
     }
-
 }

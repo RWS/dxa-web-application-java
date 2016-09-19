@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion.navigation;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -775,7 +774,8 @@ public class AbstractDynamicNavigationProviderTest {
         SitemapItem level2 = level1.getItems().get(0);
         assertEquals("t1-k22", level2.getId());
 
-        assertNull(level2.getItems());
+        assertFalse(((TaxonomyNode) level2).isWithChildren());
+        assertTrue(level2.getItems().size() == 0);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -796,7 +796,7 @@ public class AbstractDynamicNavigationProviderTest {
         assertEquals("t1", root.getId());
 
         assertTrue(root.getItems().size() == 7);
-        SitemapItem level1 = root.getItems().get(0);
+        SitemapItem level1 = root.getItems().get(1);
         assertEquals("t1-k2", level1.getId());
 
         assertTrue(level1.getItems().size() == 3);
@@ -858,7 +858,8 @@ public class AbstractDynamicNavigationProviderTest {
         assertTrue(level1.getItems().size() == 1);
 
         SitemapItem level2 = level1.getItems().get(0);
-        assertNull(level2.getItems());
+        assertFalse(((TaxonomyNode) level2).isWithChildren());
+        assertTrue(level2.getItems().size() == 0);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -882,7 +883,7 @@ public class AbstractDynamicNavigationProviderTest {
         assertEquals("t1", root.getId());
 
         assertTrue(root.getItems().size() == 7);
-        SitemapItem level1 = root.getItems().get(0);
+        SitemapItem level1 = root.getItems().get(1);
         assertEquals("t1-k2", level1.getId());
 
         assertTrue(level1.getItems().size() == 3);
@@ -944,8 +945,10 @@ public class AbstractDynamicNavigationProviderTest {
         assertEquals("t1-k22", level1.getItems().get(0).getId());
         assertEquals("t1-k24", level1.getItems().get(1).getId());
 
-        assertNull(level1.getItems().get(0).getItems());
-        assertNull(level1.getItems().get(1).getItems());
+        assertTrue(level1.getItems().get(0).getItems().size() == 0);
+        assertFalse(((TaxonomyNode) level1.getItems().get(0)).isWithChildren());
+        assertTrue(level1.getItems().get(1).getItems().size() == 0);
+        assertFalse(((TaxonomyNode) level1.getItems().get(1)).isWithChildren());
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -967,24 +970,14 @@ public class AbstractDynamicNavigationProviderTest {
         assertEquals("t1", root.getId());
 
         assertTrue(root.getItems().size() == 7);
-        SitemapItem level1 = root.getItems().get(0);
+        SitemapItem level1 = root.getItems().get(1);
         assertEquals("t1-k2", level1.getId());
 
         assertTrue(level1.getItems().size() == 3);
 
-        assertTrue(Iterables.find(level1.getItems(), new Predicate<SitemapItem>() {
-            @Override
-            public boolean apply(SitemapItem input) {
-                return "t1-k22".equals(input.getId());
-            }
-        }).getItems().size() == 3);
-
-        assertTrue(Iterables.find(level1.getItems(), new Predicate<SitemapItem>() {
-            @Override
-            public boolean apply(SitemapItem input) {
-                return "t1-k24".equals(input.getId());
-            }
-        }).getItems().size() == 1);
+        //"t1-k22"
+        assertTrue(level1.getItems().get(0).getItems().size() == 3);
+        assertTrue(level1.getItems().get(2).getItems().size() == 1);
     }
 
     @Test
@@ -1065,19 +1058,24 @@ public class AbstractDynamicNavigationProviderTest {
 
     private SitemapItem siteMapItem(String id, boolean visible, String url) {
         SitemapItem sitemapItem = new SitemapItem();
-        sitemapItem.setVisible(visible);
-        sitemapItem.setUrl(url);
-        sitemapItem.setId(id);
+        fillSitemapItem(sitemapItem, id, url, visible);
         return sitemapItem;
     }
 
     private TaxonomyNode taxonomyNode(String id, String url, boolean visible, List<SitemapItem> items) {
         TaxonomyNode node = new TaxonomyNode();
-        node.setVisible(visible);
-        node.setUrl(url);
         node.setItems(items);
-        node.setId(id);
+        fillSitemapItem(node, id, url, visible);
         return node;
+    }
+
+    private void fillSitemapItem(SitemapItem sitemapItem, String id, String url, boolean visible) {
+        sitemapItem.setVisible(visible);
+        sitemapItem.setUrl(url);
+        sitemapItem.setId(id);
+        String title = visible && !Strings.isNullOrEmpty(url) ?
+                Strings.padStart(id.replaceFirst("t1(-[kp](\\d+))?", "$2"), 3, '0') + " " + id : id;
+        sitemapItem.setTitle(title);
     }
 
     @NotNull

@@ -45,10 +45,13 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
 
     private final TaxonomyFactory taxonomyFactory;
 
+    private final TaxonomyRelationManager relationManager;
+
     @Autowired
-    public DynamicNavigationProvider(StaticNavigationProvider staticNavigationProvider, LinkResolver linkResolver, TaxonomyFactory taxonomyFactory, PayloadCacheProvider cacheProvider) {
+    public DynamicNavigationProvider(StaticNavigationProvider staticNavigationProvider, LinkResolver linkResolver, TaxonomyFactory taxonomyFactory, PayloadCacheProvider cacheProvider, TaxonomyRelationManager relationManager) {
         super(staticNavigationProvider, linkResolver, cacheProvider);
         this.taxonomyFactory = taxonomyFactory;
+        this.relationManager = relationManager;
     }
 
     @Override
@@ -134,7 +137,6 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
             return Collections.emptyList();
         }
 
-        TaxonomyRelationManager relationManager = new TaxonomyRelationManager();
         DepthFilter depthFilter = new DepthFilter(DepthFilter.UNLIMITED_DEPTH, DepthFilter.FILTER_UP);
         Keyword[] keywords = relationManager.getTaxonomyKeywords(uris.getTaxonomyUri(), uris.getPageUri(), null, depthFilter, ItemTypes.PAGE);
 
@@ -176,8 +178,6 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
                 children.addAll(pageSitemapItems);
             }
         }
-
-        Collections.sort(children, SITEMAP_SORT_BY_TITLE);
 
         for (SitemapItem child : children) {
             child.setTitle(LocalizationUtils.removeSequenceFromPageTitle(child.getTitle()));

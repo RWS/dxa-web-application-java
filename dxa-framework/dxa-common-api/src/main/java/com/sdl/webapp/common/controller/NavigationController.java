@@ -154,9 +154,10 @@ public class NavigationController extends BaseController {
         homeItem.setTitle(navigationModel.getTitle());
         homeItem.setUrl(navigationModel.getUrl());
         homeItem.setItems(homeSubItems);
+        homeItem.setHome(true);
 
         // Add the "Home" item as the first item
-        topSubItems.add(0, homeItem);
+        navigationModel.addItem(homeItem);
 
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);

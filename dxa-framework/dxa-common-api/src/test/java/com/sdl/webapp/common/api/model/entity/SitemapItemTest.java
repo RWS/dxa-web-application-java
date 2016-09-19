@@ -98,15 +98,20 @@ public class SitemapItemTest {
     }
 
     @Test
-    public void shouldNotFailWhenItemsIsNull() {
+    public void shouldSetOriginalTitleWhenSettingTitle() {
         //given
-        SitemapItem item = new SitemapItem();
+        SitemapItem sitemapItem = new SitemapItem();
 
         //when
-        item.setItems(null);
+        sitemapItem.setTitle("title");
 
         //then
-        assertNull(item.getItems());
-    }
+        assertEquals("title", sitemapItem.getOriginalTitle());
 
+        //when
+        sitemapItem.setTitle("another title");
+
+        //then original title wasn't changed
+        assertEquals("title", sitemapItem.getOriginalTitle());
+    }
 }

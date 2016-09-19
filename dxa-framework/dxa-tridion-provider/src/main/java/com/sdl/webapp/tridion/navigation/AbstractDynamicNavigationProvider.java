@@ -27,13 +27,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.util.comparator.NullSafeComparator;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -60,13 +57,6 @@ import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapI
  */
 @Slf4j
 public abstract class AbstractDynamicNavigationProvider implements NavigationProvider, OnDemandNavigationProvider {
-
-    static final NullSafeComparator<SitemapItem> SITEMAP_SORT_BY_TITLE = new NullSafeComparator<>(new Comparator<SitemapItem>() {
-        @Override
-        public int compare(SitemapItem o1, SitemapItem o2) {
-            return o1.getTitle().compareTo(o2.getTitle());
-        }
-    }, true);
 
     private final StaticNavigationProvider staticNavigationProvider;
 
@@ -143,7 +133,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
                     currentLevel = currentLevel.getParent();
                 }
 
-                return currentLevel == null || currentLevel.getItems() == null ? Collections.<SitemapItem>emptyList() : currentLevel.getItems();
+                return currentLevel == null ? Collections.<SitemapItem>emptyList() : currentLevel.getItems();
             }
 
             @Override
@@ -380,10 +370,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
                 expandAncestorsForKeyword(uris, navigationFilter, localization);
 
         if (taxonomyRoot != null) {
-            if (navigationFilter.getDescendantLevels() == 0) {
-                log.trace("No descendants have been requested; ensure Items properties are null on the leaf Taxonomy Nodes");
-                pruneLeaves(taxonomyRoot);
-            } else {
+            if (navigationFilter.getDescendantLevels() != 0) {
                 addDescendants(taxonomyRoot, navigationFilter, localization);
             }
 
@@ -412,24 +399,16 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     }
 
     private void mergeSubtrees(@NonNull SitemapItem nodeToMerge, @NonNull SitemapItem mergedNode) {
-        List<SitemapItem> items = nodeToMerge.getItems();
-        if (items == null) {
-            return;
-        }
 
-        for (final SitemapItem childNode : items) {
-            SitemapItem childKeywordToMergeInto = mergedNode.getItems() == null ? null :
-                    Iterables.find(mergedNode.getItems(), new Predicate<SitemapItem>() {
-                        @Override
-                        public boolean apply(SitemapItem input) {
-                            return Objects.equals(childNode.getId(), input.getId());
-                        }
-                    }, null);
-            if (childKeywordToMergeInto == null) {
-                if (mergedNode.getItems() == null) {
-                    mergedNode.setItems(new ArrayList<SitemapItem>());
+        for (final SitemapItem childNode : nodeToMerge.getItems()) {
+            SitemapItem childKeywordToMergeInto = Iterables.find(mergedNode.getItems(), new Predicate<SitemapItem>() {
+                @Override
+                public boolean apply(SitemapItem input) {
+                    return Objects.equals(childNode.getId(), input.getId());
                 }
-                mergedNode.getItems().add(childNode);
+            }, null);
+            if (childKeywordToMergeInto == null) {
+                mergedNode.addItem(childNode);
             } else {
                 mergeSubtrees(childNode, childKeywordToMergeInto);
             }
@@ -437,33 +416,15 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     }
 
     private void addDescendants(@NonNull SitemapItem taxonomyNode, NavigationFilter navigationFilter, Localization localization) {
-        if (taxonomyNode.getItems() != null) {
-            for (SitemapItem child : taxonomyNode.getItems()) {
-                addDescendants(child, navigationFilter, localization);
-            }
+
+        for (SitemapItem child : taxonomyNode.getItems()) {
+            addDescendants(child, navigationFilter, localization);
         }
 
-        Set<SitemapItem> additionalChildren = new HashSet<>(expandDescendants(parse(taxonomyNode.getId(), localization), navigationFilter, localization));
+        Set<SitemapItem> additionalChildren = new LinkedHashSet<>(expandDescendants(parse(taxonomyNode.getId(), localization), navigationFilter, localization));
 
         for (SitemapItem child : difference(additionalChildren, newHashSet(taxonomyNode.getItems()))) {
             taxonomyNode.addItem(child);
-        }
-    }
-
-    private void pruneLeaves(@NonNull SitemapItem sitemapItem) {
-        if (sitemapItem.getItems() == null) {
-            log.trace("this leaf of SitemapItem {} is already pruned; nothing to do", sitemapItem);
-            return;
-        }
-
-        if (sitemapItem.getItems().isEmpty()) {
-            log.trace("the leaf of SitemapItem {} is pruned", sitemapItem);
-            sitemapItem.setItems(null);
-        } else {
-            log.trace("tot a leaf {}; prune its children recursively", sitemapItem);
-            for (SitemapItem item : sitemapItem.getItems()) {
-                pruneLeaves(item);
-            }
         }
     }
 

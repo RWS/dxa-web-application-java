@@ -16,7 +16,6 @@ import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import com.sdl.webapp.common.markup.html.builders.SimpleElementBuilder;
-import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -37,8 +36,8 @@ import java.util.Map;
 import java.util.Set;
 
 @Component
-@Slf4j
 public class MarkupImpl implements Markup {
+    private static final Logger LOG = LoggerFactory.getLogger(MarkupImpl.class);
 
     private static final HtmlAttribute TYPEOF_REGION_ATTR = new HtmlAttribute("typeof", "Region");
 
@@ -110,6 +109,7 @@ public class MarkupImpl implements Markup {
     public String region(RegionModel region) {
         return Joiner.on(' ').join(Arrays.asList(
                 TYPEOF_REGION_ATTR.toHtml(),
+                new HtmlAttribute("data-region", "1").toHtml(),
                 new HtmlAttribute("resource", region.getName()).toHtml()));
     }
 
@@ -130,11 +130,11 @@ public class MarkupImpl implements Markup {
         }
 
         if (!vocabularies.isEmpty()) {
-            return new HtmlAttribute("prefix", Joiner.on(' ').join(vocabularies)).toHtml() +
+            return new HtmlAttribute("data-entity", entity.getId()).toHtml() + ' ' + new HtmlAttribute("prefix", Joiner.on(' ').join(vocabularies)).toHtml() +
                     ' ' + new HtmlAttribute("typeof", Joiner.on(' ').join(entityTypes)).toHtml();
         }
 
-        return "";
+        return new HtmlAttribute("data-entity", entity.getId()).toHtml();
     }
 
     /** {@inheritDoc} */
@@ -151,7 +151,7 @@ public class MarkupImpl implements Markup {
 
         final Field field = ReflectionUtils.findField(entityClass, fieldName);
         if (field == null) {
-            log.warn("Entity of type {} does not contain a field named {}", entityClass.getName(), fieldName);
+            LOG.warn("Entity of type {} does not contain a field named {}", entityClass.getName(), fieldName);
             return "";
         }
 

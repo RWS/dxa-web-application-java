@@ -79,10 +79,22 @@ public class RegionXpmMarkup implements MarkupDecorator {
                     //
                     ParsableHtmlNode regionMarkup = (ParsableHtmlNode) markup;
                     Element html = regionMarkup.getHtmlElement();
-                    if (html != null && !RegionXpmMarkup.isFirstNodeXpmEntityXPMMarkup(html)) {
-                        html.prepend(buildXpmMarkup(region, webRequestContext.getLocalization()).toHtml());
-                        markupInjected = true;
+                    if(html != null)
+                    {
+                        if(!html.getElementsByAttribute("data-region").isEmpty()) {
+                            html = html.getElementsByAttribute("data-region").first();
+                        }
+                        if (!RegionXpmMarkup.isFirstNodeXpmEntityXPMMarkup(html)) {
+                            html.prepend(buildXpmMarkup(region, webRequestContext.getLocalization()).toHtml());
+                            markupInjected = true;
+                        }
+                        html.removeAttr("data-region");
+                        while(html.parentNode() != null && html.parentNode() instanceof Element && html.parentNode().nodeName() != "body")
+                        {
+                            html = (Element)html.parentNode();
+                        }
                     }
+
                 }
 
                 if (!markupInjected) {

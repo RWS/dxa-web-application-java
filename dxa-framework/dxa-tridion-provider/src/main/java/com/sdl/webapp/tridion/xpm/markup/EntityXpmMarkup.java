@@ -96,13 +96,21 @@ public class EntityXpmMarkup implements MarkupDecorator {
                 ParsableHtmlNode entityMarkup = (ParsableHtmlNode) markup;
                 Element html = entityMarkup.getHtmlElement();
                 if (html != null) {   // If an HTML element (not a comment etc)
+                    if(!html.getElementsByAttribute("data-entity").isEmpty()) {
+                        html = html.getElementsByAttribute("data-entity").first();
+                    }
                     html.prepend(buildXpmMarkup(entity, webRequestContext.getLocalization()).toHtml());
+                    html.removeAttr("data-entity");
                     Elements properties = html.select("[data-entity-property-xpath]");
                     for (Element property : properties) {
                         processProperty(property);
                     }
 
                     markupInjected = true;
+                    while(html.parentNode() != null && html.parentNode() instanceof Element && html.parentNode().nodeName() != "body")
+                    {
+                        html = (Element)html.parentNode();
+                    }
                 }
             }
 
@@ -114,6 +122,7 @@ public class EntityXpmMarkup implements MarkupDecorator {
                         .withNode(markup).build();
             }
         }
+
 
         return markup;
     }

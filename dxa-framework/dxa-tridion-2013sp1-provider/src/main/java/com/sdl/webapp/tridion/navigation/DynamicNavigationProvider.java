@@ -62,7 +62,8 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
         DepthFilter depthFilter = new DepthFilter(maximumDepth, DepthFilter.FILTER_DOWN);
 
         List<Keyword> roots = new ArrayList<>();
-        for (String id : taxonomyFactory.getTaxonomies(TcmUtils.buildPublicationTcmUri(localization.getId()))) {
+        String[] taxonomies = taxonomyFactory.getTaxonomies(TcmUtils.buildPublicationTcmUri(localization.getId()));
+        for (String id : taxonomies) {
             roots.add(taxonomyFactory.getTaxonomyKeywords(id, depthFilter));
         }
 
@@ -76,7 +77,8 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
 
     @Override
     protected List<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
-        Keyword keyword = taxonomyFactory.getTaxonomyKeywords(uris.getKeywordUri(), new DepthFilter(navigationFilter.getDescendantLevels(), DepthFilter.FILTER_DOWN));
+        Keyword keyword = taxonomyFactory.getTaxonomyKeywords(uris.getTaxonomyUri(),
+                new DepthFilter(navigationFilter.getDescendantLevels(), DepthFilter.FILTER_DOWN), uris.getKeywordUri());
 
         if (keyword == null) {
             log.warn("Keyword '{}' in Taxonomy '{}' was not found.", uris.getKeywordUri(), uris.getTaxonomyUri());

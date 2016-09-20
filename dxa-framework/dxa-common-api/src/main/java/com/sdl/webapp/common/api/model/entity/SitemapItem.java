@@ -24,7 +24,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Data
 @ToString(exclude = {"parent"})
-@EqualsAndHashCode(callSuper = true, exclude = {"parent", "items"})
+@EqualsAndHashCode(callSuper = true, of = {"title", "originalTitle", "type", "publishedDate"})
 @Slf4j
 @NoArgsConstructor
 public class SitemapItem extends AbstractEntityModel {

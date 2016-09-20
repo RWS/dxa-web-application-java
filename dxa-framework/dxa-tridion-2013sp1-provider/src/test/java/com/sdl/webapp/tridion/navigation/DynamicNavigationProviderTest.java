@@ -78,7 +78,7 @@ public class DynamicNavigationProviderTest {
             @Override
             public boolean matches(Object item) {
 
-                return ((int) ReflectionTestUtils.getField(item, "depthDirection")) == direction;
+                return ((Integer) ReflectionTestUtils.getField(item, "depthDirection")) == direction;
             }
 
             @Override
@@ -222,7 +222,7 @@ public class DynamicNavigationProviderTest {
 
         //then
         assertTrue(items.isEmpty());
-        verify(taxonomyFactory).getTaxonomyKeywords(eq("tcm:1-1-1024"), argThat(FILTER_DOWN_MATCHER));
+        verify(taxonomyFactory).getTaxonomyKeywords(eq("tcm:1-1-512"), argThat(FILTER_DOWN_MATCHER), eq("tcm:1-1-1024"));
     }
 
     @Test

@@ -476,6 +476,13 @@ public class AbstractDynamicNavigationProviderTest {
         assertTrue(iterator.next().getUrl().equals("resolved-/about"));
         assertTrue(iterator.next().getUrl().equals("resolved-/imitation_home"));
         assertFalse(iterator.hasNext());
+
+        //also when
+        //TSI-1956
+        NavigationLinks linksIndexInPath = defaultDynamicNavigationProvider.getContextNavigationLinks("/index/", localization);
+
+        //also then
+        assertEquals(links, linksIndexInPath);
     }
 
     @Test
@@ -505,7 +512,7 @@ public class AbstractDynamicNavigationProviderTest {
     public void shouldProcessNavigationForBreadcrumbs() throws NavigationProviderException {
         when(localization.getPath()).thenReturn("/");
 
-        verifyProcessNavigationWithMatcher(new Action() {
+        NavigationLinks links = verifyProcessNavigationWithMatcher(new Action() {
             @Override
             public NavigationLinks perform() throws NavigationProviderException {
                 return defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/child/child_2", localization);
@@ -528,6 +535,13 @@ public class AbstractDynamicNavigationProviderTest {
                 description.appendText("Context navigation should find current context level for breadcrumbs");
             }
         });
+
+        //also when
+        //TSI-1956
+        NavigationLinks linksIndexInPath = defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/child/child_2/", localization);
+
+        //also then
+        assertEquals(links, linksIndexInPath);
     }
 
     @Test

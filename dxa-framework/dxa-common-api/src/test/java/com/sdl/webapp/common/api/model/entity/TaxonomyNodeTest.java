@@ -64,4 +64,26 @@ public class TaxonomyNodeTest extends SitemapItemTest {
         assertEquals(fourth, iterator.next());
         assertFalse(iterator.hasNext());
     }
+
+    @Test
+    public void shouldOnlySortTaxonomyNodeItems() {
+        //given 
+        SitemapItem item = new SitemapItem();
+
+        SitemapItem first = new SitemapItem();
+        SitemapItem second = new SitemapItem();
+
+        first.setTitle("bbb");
+        second.setTitle("aaa");
+
+        item.setItems(Lists.newArrayList(first, second));
+
+        //when
+        List<SitemapItem> items = item.getItems();
+
+        //then
+        Iterator<SitemapItem> iterator = items.iterator();
+        assertEquals(first, iterator.next());
+        assertEquals(second, iterator.next());
+    }
 }

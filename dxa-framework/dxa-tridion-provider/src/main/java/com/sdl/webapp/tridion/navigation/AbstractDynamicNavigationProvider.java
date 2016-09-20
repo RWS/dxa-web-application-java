@@ -50,6 +50,8 @@ import static com.sdl.webapp.common.util.LocalizationUtils.stripIndexPath;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.PAGE;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
+import static com.sdl.webapp.tridion.navigation.AbstractDynamicNavigationProvider.NavigationProcessing.FilterVisible.FILTERING;
+import static com.sdl.webapp.tridion.navigation.AbstractDynamicNavigationProvider.NavigationProcessing.FilterVisible.NO_FILTERING;
 
 /**
  * Navigation Provider implementation based on Taxonomies (Categories &amp; Keywords).
@@ -119,7 +121,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
             public NavigationLinks fallback(String requestPath, Localization localization) throws NavigationProviderException {
                 return staticNavigationProvider.getTopNavigationLinks(requestPath, localization);
             }
-        });
+        }, FILTERING);
     }
 
     @Override
@@ -140,7 +142,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
             public NavigationLinks fallback(String requestPath, Localization localization) throws NavigationProviderException {
                 return staticNavigationProvider.getContextNavigationLinks(requestPath, localization);
             }
-        });
+        }, FILTERING);
     }
 
     @Override
@@ -157,7 +159,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
             public NavigationLinks fallback(String requestPath, Localization localization) throws NavigationProviderException {
                 return staticNavigationProvider.getBreadcrumbNavigationLinks(requestPath, localization);
             }
-        });
+        }, NO_FILTERING);
     }
 
     @Override
@@ -271,18 +273,20 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         return LocalizationUtils.isWithSequenceDigits(pageName) && !isNullOrEmpty(pageUrl);
     }
 
-    private NavigationLinks processNavigationLinks(String requestPath, Localization localization, NavigationProcessing navigationProcessing) throws NavigationProviderException {
+    private NavigationLinks processNavigationLinks(String requestPath, Localization localization,
+                                                   NavigationProcessing navigationProcessing, NavigationProcessing.FilterVisible filter) throws NavigationProviderException {
         SitemapItem navigationModel = getNavigationModel(localization);
         if (isFallbackRequired(navigationModel, localization)) {
             return navigationProcessing.fallback(requestPath, localization);
         }
 
-        return prepareItemsAsVisibleNavigation(localization, navigationProcessing.processNavigation(navigationModel));
+        return prepareItemsAsVisibleNavigation(localization,
+                navigationProcessing.processNavigation(navigationModel), filter == FILTERING);
     }
 
     @NotNull
-    NavigationLinks prepareItemsAsVisibleNavigation(Localization localization, List<SitemapItem> navigationLinks) {
-        Collection<SitemapItem> items = filterNavigationLinks(navigationLinks);
+    NavigationLinks prepareItemsAsVisibleNavigation(Localization localization, List<SitemapItem> navigationLinks, boolean filter) {
+        Collection<SitemapItem> items = filter ? filterNavigationLinks(navigationLinks) : navigationLinks;
 
         return new NavigationLinks(resolveLinksUrl(localization, items));
     }
@@ -428,10 +432,14 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         }
     }
 
-    private interface NavigationProcessing {
+    interface NavigationProcessing {
 
         List<SitemapItem> processNavigation(SitemapItem navigationModel);
 
         NavigationLinks fallback(String requestPath, Localization localization) throws NavigationProviderException;
+
+        enum FilterVisible {
+            FILTERING, NO_FILTERING
+        }
     }
 }

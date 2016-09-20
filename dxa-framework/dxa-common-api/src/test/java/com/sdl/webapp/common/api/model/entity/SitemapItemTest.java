@@ -97,4 +97,21 @@ public class SitemapItemTest {
         assertEquals(sitemapItem, child.getParent());
     }
 
+    @Test
+    public void shouldSetOriginalTitleWhenSettingTitle() {
+        //given
+        SitemapItem sitemapItem = new SitemapItem();
+
+        //when
+        sitemapItem.setTitle("title");
+
+        //then
+        assertEquals("title", sitemapItem.getOriginalTitle());
+
+        //when
+        sitemapItem.setTitle("another title");
+
+        //then original title wasn't changed
+        assertEquals("title", sitemapItem.getOriginalTitle());
+    }
 }

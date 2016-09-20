@@ -4,33 +4,44 @@ import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
+import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
 import com.tridion.meta.PageMeta;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
+import com.tridion.taxonomies.TaxonomyRelationManager;
 import com.tridion.taxonomies.filters.DepthFilter;
 import org.dd4t.core.caching.impl.CacheElementImpl;
 import org.dd4t.providers.PayloadCacheProvider;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
+import static com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder.parse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,8 +49,15 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicNavigationProviderTest {
 
+    private static final BaseMatcher<DepthFilter> FILTER_UP_MATCHER = getDepthFilterMatcher(DepthFilter.FILTER_UP);
+
+    private static final BaseMatcher<DepthFilter> FILTER_DOWN_MATCHER = getDepthFilterMatcher(DepthFilter.FILTER_DOWN);
+
     @Mock
     private TaxonomyFactory taxonomyFactory;
+
+    @Mock
+    private TaxonomyRelationManager relationManager;
 
     @Mock
     private StaticNavigationProvider staticNavigationProvider;
@@ -51,7 +69,24 @@ public class DynamicNavigationProviderTest {
     private PayloadCacheProvider payloadCacheProvider;
 
     @InjectMocks
+    @Spy
     private DynamicNavigationProvider dynamicNavigationProvider;
+
+    @NotNull
+    private static BaseMatcher<DepthFilter> getDepthFilterMatcher(final int direction) {
+        return new BaseMatcher<DepthFilter>() {
+            @Override
+            public boolean matches(Object item) {
+
+                return ((Integer) ReflectionTestUtils.getField(item, "depthDirection")) == direction;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Direction should be " + direction);
+            }
+        };
+    }
 
     @Before
     public void init() {
@@ -174,6 +209,82 @@ public class DynamicNavigationProviderTest {
         assertEquals(1, dto.getId());
         assertEquals("title", dto.getTitle());
         assertEquals("url", dto.getUrl());
+    }
+
+    @Test
+    public void shouldReturnEmptyListIfKeywordIsNull() {
+        //given
+        when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class))).thenReturn(null);
+
+        //when
+        List<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-k1", localization),
+                NavigationFilter.DEFAULT, localization);
+
+        //then
+        assertTrue(items.isEmpty());
+        verify(taxonomyFactory).getTaxonomyKeywords(eq("tcm:1-1-512"), argThat(FILTER_DOWN_MATCHER), eq("tcm:1-1-1024"));
+    }
+
+    @Test
+    public void shouldNotCollectAnythingIfNotPage() {
+        //when
+        List<SitemapItem> items = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-k1", localization), new NavigationFilter(), localization);
+
+        //then
+        assertTrue(items.size() == 0);
+        verify(relationManager, never()).getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), any(DepthFilter.class), anyInt());
+    }
+
+    @Test
+    public void shouldNotCollectAnythingIfNotKeyword() {
+        //when
+        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-p1", localization), new NavigationFilter(), localization);
+
+        //then
+        assertNull(taxonomyNode);
+        verify(taxonomyFactory, never()).getTaxonomyKeywords(anyString(), any(DepthFilter.class), anyString());
+    }
+
+    @Test
+    public void shouldReturnEmptyListIfRootIsNull() {
+        //given
+        when(relationManager.getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), any(DepthFilter.class), anyInt()))
+                .thenReturn(null);
+
+        //when
+        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization), new NavigationFilter(), localization);
+
+        verify(relationManager).getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), argThat(FILTER_UP_MATCHER), anyInt());
+
+        assertTrue(sitemapItems.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnNullIfKeywordIsNull() {
+        //given
+        when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class), anyString()))
+                .thenReturn(null);
+
+        //when
+        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-k1", localization), new NavigationFilter(), localization);
+
+        //then
+        verify(taxonomyFactory).getTaxonomyKeywords(anyString(), argThat(FILTER_UP_MATCHER), anyString());
+        assertNull(taxonomyNode);
+    }
+
+    @Test
+    public void shouldReturnEmptyListIfRootIsEmpty() {
+        //given
+        when(relationManager.getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), any(DepthFilter.class), anyInt()))
+                .thenReturn(new Keyword[]{});
+
+        //when
+        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization), new NavigationFilter(), localization);
+
+        //then
+        verify(relationManager).getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), argThat(FILTER_UP_MATCHER), anyInt());
+        assertTrue(sitemapItems.isEmpty());
     }
 
     private Keyword mockKeyword(String taxonomyURI, String name) {

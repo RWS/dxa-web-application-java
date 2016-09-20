@@ -212,12 +212,12 @@ public class LocalizationUtilsTest {
 
     @Test
     public void shouldDefineWhetherThePathIsHome() {
-        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization("/")));
-        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization(null)));
-        assertTrue(LocalizationUtils.isHomePath("/childpub", mockLocalization("/childpub")));
+        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization("/", "1")));
+        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization(null, "1")));
+        assertTrue(LocalizationUtils.isHomePath("/childpub", mockLocalization("/childpub", "1")));
 
-        assertFalse(LocalizationUtils.isHomePath("/nothome", mockLocalization("/")));
-        assertFalse(LocalizationUtils.isHomePath("/childpub/nothome", mockLocalization("/childpub")));
+        assertFalse(LocalizationUtils.isHomePath("/nothome", mockLocalization("/", "1")));
+        assertFalse(LocalizationUtils.isHomePath("/childpub/nothome", mockLocalization("/childpub", "1")));
     }
 
     @Test
@@ -250,8 +250,9 @@ public class LocalizationUtilsTest {
     }
 
     @NotNull
-    private Localization mockLocalization(String path) {
+    private Localization mockLocalization(String path, String id) {
         Localization localization = mock(Localization.class);
+        when(localization.getId()).thenReturn(id);
         when(localization.getPath()).thenReturn(path);
         return localization;
     }

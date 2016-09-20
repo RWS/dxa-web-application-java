@@ -7,21 +7,26 @@ import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Data
 @ToString(exclude = {"parent"})
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true, of = {"title", "originalTitle", "type", "publishedDate"})
 @Slf4j
+@NoArgsConstructor
 public class SitemapItem extends AbstractEntityModel {
 
     @JsonProperty("Title")
@@ -46,19 +51,68 @@ public class SitemapItem extends AbstractEntityModel {
     @JsonIgnore
     private SitemapItem parent;
 
+    @JsonIgnore
+    private String originalTitle;
+
+    public SitemapItem(SitemapItem other) {
+        super(other);
+        this.title = other.title;
+        this.url = other.url;
+        this.type = other.type;
+        this.items = other.items;
+        this.publishedDate = other.publishedDate;
+        this.visible = other.visible;
+        this.parent = other.parent;
+        this.originalTitle = other.originalTitle;
+    }
+
+    @NotNull
     public List<SitemapItem> getItems() {
-        return this.items;
+        return this.items == null ? Collections.<SitemapItem>emptyList() : this.items;
     }
 
     /**
-     * Setter for the children items which also sets parent field to the current objet.
+     * Setter for the children items which also sets parent field to the current object.
      *
      * @param items items to set
      */
-    public void setItems(List<SitemapItem> items) {
+    public void setItems(@Nullable List<SitemapItem> items) {
         this.items = items;
-        for (SitemapItem item : items) {
-            item.parent = this;
+        if (items != null) {
+            for (SitemapItem item : items) {
+                item.parent = this;
+            }
+        }
+    }
+
+    /**
+     * Adds an item to a collection of items and initializes it if needed.
+     *
+     * @param item item to add
+     * @return itself
+     */
+    @NotNull
+    public SitemapItem addItem(SitemapItem item) {
+        if (this.items == null) {
+            this.items = new ArrayList<>();
+        }
+        this.items.add(item);
+        return this;
+    }
+
+    public String getTitle() {
+        return this.title;
+    }
+
+    /**
+     * Setter for title which also sets original title <strong>if original title is not yet set</strong>.
+     *
+     * @param title title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+        if (this.originalTitle == null) {
+            setOriginalTitle(title);
         }
     }
 
@@ -89,10 +143,6 @@ public class SitemapItem extends AbstractEntityModel {
             return this;
         }
 
-        if (getItems() == null) {
-            return null;
-        }
-
         for (SitemapItem item : getItems()) {
             SitemapItem sub = item.findWithUrl(urlToFind);
             if (sub != null) {
@@ -101,5 +151,4 @@ public class SitemapItem extends AbstractEntityModel {
         }
         return null;
     }
-
 }

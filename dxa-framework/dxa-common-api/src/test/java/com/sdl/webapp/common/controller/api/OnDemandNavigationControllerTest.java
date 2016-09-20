@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.controller;
+package com.sdl.webapp.common.controller.api;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -6,7 +6,6 @@ import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.OnDemandNavigationProvider;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -19,7 +18,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ApiControllerTest {
+public class OnDemandNavigationControllerTest {
 
     @Mock
     private OnDemandNavigationProvider onDemandNavigationProvider;
@@ -28,21 +27,15 @@ public class ApiControllerTest {
     private WebRequestContext webRequestContext;
 
     @InjectMocks
-    private ApiController apiController;
-
-    @Before
-    public void before() {
-
-    }
-
+    private OnDemandNavigationController controller;
 
     @Test(expected = UnsupportedOperationException.class)
     public void shouldThrowExceptionInCaseOnDemandIsNotEnabled() {
         //given
-        ApiController controller = new ApiController();
+        OnDemandNavigationController controller = new OnDemandNavigationController(null, null);
 
         //when
-        controller.handleGetNavigationSubtree("", true, 0);
+        controller.handle("", true, 0);
 
         //then
         //UOE
@@ -53,7 +46,7 @@ public class ApiControllerTest {
         //given
 
         //when
-        apiController.handleGetNavigationSubtree("t1-k23", true, 123);
+        controller.handle("t1-k23", true, 123);
 
         //then
         verify(onDemandNavigationProvider).getNavigationSubtree(eq("t1-k23"), argThat(new BaseMatcher<NavigationFilter>() {

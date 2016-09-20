@@ -25,7 +25,6 @@ public class TaxonomyNode extends SitemapItem {
         @Override
         public int compare(SitemapItem o1, SitemapItem o2) {
             return ComparisonChain.start()
-                    .compareTrueFirst(o1.isHome(), o2.isHome())
                     .compare(o1.getOriginalTitle(), o2.getOriginalTitle())
                     .compare(o1.getId(), o2.getId())
                     .result();

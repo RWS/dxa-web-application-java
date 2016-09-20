@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @ToString(exclude = {"parent"})
 @EqualsAndHashCode(callSuper = true, exclude = {"parent", "items"})
 @Slf4j
+@NoArgsConstructor
 public class SitemapItem extends AbstractEntityModel {
 
     @JsonProperty("Title")
@@ -52,8 +54,17 @@ public class SitemapItem extends AbstractEntityModel {
     @JsonIgnore
     private String originalTitle;
 
-    @JsonIgnore
-    private boolean home = false;
+    public SitemapItem(SitemapItem other) {
+        super(other);
+        this.title = other.title;
+        this.url = other.url;
+        this.type = other.type;
+        this.items = other.items;
+        this.publishedDate = other.publishedDate;
+        this.visible = other.visible;
+        this.parent = other.parent;
+        this.originalTitle = other.originalTitle;
+    }
 
     @NotNull
     public List<SitemapItem> getItems() {

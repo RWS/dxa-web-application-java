@@ -3,11 +3,15 @@ package com.sdl.webapp.common.util;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
 import static com.sdl.webapp.common.util.LocalizationUtils.DEFAULT_PAGE_EXTENSION;
 import static com.sdl.webapp.common.util.LocalizationUtils.DEFAULT_PAGE_NAME;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -165,5 +169,90 @@ public class LocalizationUtilsTest {
         //then
         verify(localization).getId();
         verify(callback).tryFindPage(eq("mypage.html"), eq(1));
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void shouldReplaceSequenceInPageTitle() {
+        //when
+        String s = LocalizationUtils.removeSequenceFromPageTitle("125 years of my company");
+        String s1 = LocalizationUtils.removeSequenceFromPageTitle("125 125 years of my company");
+        String s2 = LocalizationUtils.removeSequenceFromPageTitle("1256 years of my company");
+        String s3 = LocalizationUtils.removeSequenceFromPageTitle("12 years of my company");
+        String s4 = LocalizationUtils.removeSequenceFromPageTitle("012 12 years of my company");
+        String s5 = LocalizationUtils.removeSequenceFromPageTitle(null);
+
+        //then
+        assertEquals("years of my company", s);
+        assertEquals("125 years of my company", s1);
+        assertEquals("1256 years of my company", s2);
+        assertEquals("12 years of my company", s3);
+        assertEquals("12 years of my company", s4);
+        assertNull(s5);
+    }
+
+    @Test
+    public void shouldCheckIfPageTitleIsWithSequence() {
+        assertTrue(LocalizationUtils.isWithSequenceDigits("125 years of my company"));
+        assertTrue(LocalizationUtils.isWithSequenceDigits("125 125 years of my company"));
+        assertFalse(LocalizationUtils.isWithSequenceDigits("1256 years of my company"));
+        assertFalse(LocalizationUtils.isWithSequenceDigits("12 years of my company"));
+        assertTrue(LocalizationUtils.isWithSequenceDigits("012 12 years of my company"));
+        assertFalse(LocalizationUtils.isWithSequenceDigits(null));
+    }
+
+    @Test
+    public void shouldStripDefaultExtension() {
+        assertEquals("index", LocalizationUtils.stripDefaultExtension("index.html"));
+        assertEquals("index.ext", LocalizationUtils.stripDefaultExtension("index.ext"));
+        assertEquals("/path/to/index", LocalizationUtils.stripDefaultExtension("/path/to/index.html"));
+        assertEquals("/path/to/index", LocalizationUtils.stripDefaultExtension("/path/to/index"));
+        assertNull(LocalizationUtils.stripDefaultExtension(null));
+    }
+
+    @Test
+    public void shouldDefineWhetherThePathIsHome() {
+        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization("/")));
+        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization(null)));
+        assertTrue(LocalizationUtils.isHomePath("/childpub", mockLocalization("/childpub")));
+
+        assertFalse(LocalizationUtils.isHomePath("/nothome", mockLocalization("/")));
+        assertFalse(LocalizationUtils.isHomePath("/childpub/nothome", mockLocalization("/childpub")));
+    }
+
+    @Test
+    public void shouldDefineIndexPath() {
+        //when
+        assertTrue(LocalizationUtils.isIndexPath("/index.html"));
+        assertTrue(LocalizationUtils.isIndexPath("/page/index"));
+        assertTrue(LocalizationUtils.isIndexPath("/page/index.html"));
+        assertTrue(LocalizationUtils.isIndexPath("/page/long/path/index.html"));
+        assertTrue(LocalizationUtils.isIndexPath("/"));
+        assertTrue(LocalizationUtils.isIndexPath("/page/"));
+
+        assertFalse(LocalizationUtils.isIndexPath("/page"));
+        assertFalse(LocalizationUtils.isIndexPath("page"));
+        assertFalse(LocalizationUtils.isIndexPath(null));
+    }
+
+    @Test
+    public void shouldStripIndexPath() {
+        //when
+        assertEquals("/", LocalizationUtils.stripIndexPath("/index"));
+        assertEquals("/", LocalizationUtils.stripIndexPath("/index.html"));
+        assertEquals("/page", LocalizationUtils.stripIndexPath("/page/index"));
+        assertEquals("/page", LocalizationUtils.stripIndexPath("/page/index.html"));
+
+        assertEquals("/page/page.html", LocalizationUtils.stripIndexPath("/page/page.html"));
+        assertEquals("", LocalizationUtils.stripIndexPath(""));
+        assertEquals("/", LocalizationUtils.stripIndexPath("/"));
+        assertNull(LocalizationUtils.stripIndexPath(null));
+    }
+
+    @NotNull
+    private Localization mockLocalization(String path) {
+        Localization localization = mock(Localization.class);
+        when(localization.getPath()).thenReturn(path);
+        return localization;
     }
 }

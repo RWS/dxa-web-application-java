@@ -3,10 +3,18 @@ package com.sdl.webapp.common.util;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.webapp.common.util.FileUtils.hasExtension;
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
@@ -18,6 +26,10 @@ public final class LocalizationUtils {
     static final String DEFAULT_PAGE_NAME = "index";
 
     static final String DEFAULT_PAGE_EXTENSION = ".html";
+
+    private static final Pattern PAGE_TITLE_SEQUENCE = Pattern.compile("^(?<sequence>\\d{3}\\s?)(?<pageName>(?<sequenceStop>[^\\d]).*)$");
+
+    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/index(\\.html)?)$");
 
     /**
      * Retrieves the schema ID from the localization configuration by the schema key.
@@ -80,6 +92,42 @@ public final class LocalizationUtils {
     }
 
     /**
+     * Strips the default page extension from the page path.
+     *
+     * @param path path to process
+     * @return path without a default extension
+     */
+    @Contract("null -> null; !null -> !null")
+    @Nullable
+    public static String stripDefaultExtension(@Nullable String path) {
+        if (path == null) {
+            return null;
+        }
+
+        if (path.endsWith(DEFAULT_PAGE_EXTENSION)) {
+            log.trace("Stripping default extension {} from path {}", DEFAULT_PAGE_EXTENSION, path);
+            return path.substring(0, path.lastIndexOf(DEFAULT_PAGE_EXTENSION));
+        }
+        return path;
+    }
+
+    /**
+     * Strips the index path from the page path.
+     *
+     * @param path path to process
+     * @return path without 'index' part if any
+     */
+    @Nullable
+    public static String stripIndexPath(@Nullable String path) {
+        if (path == null) {
+            return null;
+        }
+
+        Matcher matcher = INDEX_PATH_REGEXP.matcher(path);
+        return matcher.matches() ? defaultIfBlank(matcher.group("main"), "/") : path;
+    }
+
+    /**
      * Tries to find a page in localization using the logic from callback.
      *
      * @param path         path a page to find
@@ -109,6 +157,68 @@ public final class LocalizationUtils {
         }
 
         return page;
+    }
+
+    /**
+     * Removes sequence digits from the page title. Sequence number is always 3-digit.
+     * If no sequence number is found, then the string is not changed.
+     * <pre>
+     *     <code>001 Home</code> will be <code>"Home"</code>
+     *     <code>Home</code> will stay <code>"Home"</code>
+     * </pre>
+     *
+     * @param pageTitle page title which may contain a sequence number
+     * @return string without sequence number, null parameter returns null
+     */
+    @Contract("null -> null; !null -> !null")
+    public static String removeSequenceFromPageTitle(String pageTitle) {
+        if (pageTitle == null) {
+            return null;
+        }
+
+        Matcher matcher = PAGE_TITLE_SEQUENCE.matcher(pageTitle);
+        return matcher.matches() ? matcher.group("pageName").replaceFirst("^\\s", "") : pageTitle;
+    }
+
+    /**
+     * Returns whether the given page title contains sequence numbers.
+     *
+     * @param pageTitle page title to check
+     * @return true if the page contains sequence number, false otherwise
+     */
+    public static boolean isWithSequenceDigits(String pageTitle) {
+        if (pageTitle == null) {
+            return false;
+        }
+        Matcher matcher = PAGE_TITLE_SEQUENCE.matcher(pageTitle);
+        return matcher.matches() && matcher.group("sequence") != null;
+    }
+
+    /**
+     * Tests whether the given path is home (or root) path of the given localization.
+     *
+     * @param urlToCheck   url to test against
+     * @param localization current localization
+     * @return whether the URL provided is home (or root)
+     */
+    public static boolean isHomePath(@Nullable String urlToCheck, @NonNull Localization localization) {
+        String homePath = isNullOrEmpty(localization.getPath()) ? "/" : localization.getPath();
+
+        return urlToCheck != null && homePath.equalsIgnoreCase(urlToCheck);
+    }
+
+    /**
+     * Checks if the given path is an <code>index</code> path. Basically checks if the path ends with either 'index' or 'index.html'.
+     * <pre>
+     *     /page/index =&gt; true
+     *     /page/index.html =&gt; true
+     * </pre>
+     *
+     * @param urlToCheck url to check
+     * @return true if index path, false otherwise
+     */
+    public static boolean isIndexPath(@Nullable String urlToCheck) {
+        return urlToCheck != null && INDEX_PATH_REGEXP.matcher(normalizePathToDefaults(urlToCheck)).matches();
     }
 
     /**

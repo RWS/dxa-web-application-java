@@ -1,9 +1,9 @@
 package com.sdl.webapp.common.controller;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.NavigationProvider;
-import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.api.navigation.NavigationProvider;
+import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.markup.Markup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,7 +62,7 @@ public class SiteMapXmlController {
      * Handles a request for the sitemap in XML format.
      *
      * @return The sitemap in XML format.
-     * @throws com.sdl.webapp.common.api.content.NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
+     * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
     @RequestMapping(method = RequestMethod.GET, value = "/sitemap.xml", produces = "application/xml; charset=utf-8")
     @ResponseBody

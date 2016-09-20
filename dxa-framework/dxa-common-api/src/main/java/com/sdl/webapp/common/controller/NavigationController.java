@@ -1,8 +1,6 @@
 package com.sdl.webapp.common.controller;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.NavigationProvider;
-import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -10,6 +8,8 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
+import com.sdl.webapp.common.api.navigation.NavigationProvider;
+import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +52,7 @@ public class NavigationController extends BaseController {
      * <p>Constructor for NavigationController.</p>
      *
      * @param webRequestContext  a {@link com.sdl.webapp.common.api.WebRequestContext} object.
-     * @param navigationProvider a {@link com.sdl.webapp.common.api.content.NavigationProvider} object.
+     * @param navigationProvider a {@link com.sdl.webapp.common.api.navigation.NavigationProvider} object.
      */
     @Autowired
     public NavigationController(WebRequestContext webRequestContext, NavigationProvider navigationProvider) {
@@ -125,7 +125,7 @@ public class NavigationController extends BaseController {
      * @param request  The request.
      * @param entityId The name of the entity.
      * @return The name of the entity view that should be rendered for this request.
-     * @throws com.sdl.webapp.common.api.content.NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
+     * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
     @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.SITEMAP_ACTION_NAME + "/{entityId}")
     public String handleGetSiteMap(HttpServletRequest request,

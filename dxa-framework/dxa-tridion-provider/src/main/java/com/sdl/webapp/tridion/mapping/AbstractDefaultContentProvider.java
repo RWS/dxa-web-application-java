@@ -59,8 +59,8 @@ import java.util.regex.Pattern;
 import static com.sdl.webapp.common.util.FileUtils.isFileOlderThan;
 import static com.sdl.webapp.common.util.FileUtils.parentFolderExists;
 import static com.sdl.webapp.common.util.LocalizationUtils.findPageByPath;
-import static com.sdl.webapp.util.dd4t.TcmUtils.buildTcmUri;
-import static com.sdl.webapp.util.dd4t.TcmUtils.buildTemplateTcmUri;
+import static com.sdl.webapp.common.util.TcmUtils.buildTcmUri;
+import static com.sdl.webapp.common.util.TcmUtils.buildTemplateTcmUri;
 import static java.util.Collections.singletonList;
 
 

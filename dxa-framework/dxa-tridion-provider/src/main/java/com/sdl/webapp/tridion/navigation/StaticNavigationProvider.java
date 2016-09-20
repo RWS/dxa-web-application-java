@@ -3,12 +3,12 @@ package com.sdl.webapp.tridion.navigation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
-import com.sdl.webapp.common.api.content.NavigationProvider;
-import com.sdl.webapp.common.api.content.NavigationProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.api.navigation.NavigationProvider;
+import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.util.LocalizationUtils;
 import com.sdl.webapp.common.util.LocalizationUtils.TryFindPage;
 import lombok.extern.slf4j.Slf4j;
@@ -92,7 +92,7 @@ public class StaticNavigationProvider implements NavigationProvider {
             // Add links for the following matching subitems
             // first element was just added, skip it
 
-            ListIterator<SitemapItem> iterator = item.getItems().size() == 0 ?
+            ListIterator<SitemapItem> iterator = item.getItems().isEmpty() ?
                     Collections.<SitemapItem>emptyList().listIterator() : item.getItems().listIterator(1);
             while (iterator.hasNext()) {
                 if (createBreadcrumbLinks(iterator.next(), requestPath, links)) {

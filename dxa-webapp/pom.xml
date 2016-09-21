@@ -165,6 +165,15 @@
             </dependencies>
         </profile>
         <profile>
+            <id>audience-manager-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-audience-manager</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>test-module</id>
             <dependencies>
                 <dependency>

@@ -139,7 +139,7 @@ public class SitemapItem extends AbstractEntityModel {
      */
     @Nullable
     public SitemapItem findWithUrl(@NonNull String urlToFind) {
-        if (getUrl() != null && getUrl().equalsIgnoreCase(urlToFind)) {
+        if (getUrl() != null && urlToFind.matches(getUrl() + "/?")) {
             return this;
         }
 

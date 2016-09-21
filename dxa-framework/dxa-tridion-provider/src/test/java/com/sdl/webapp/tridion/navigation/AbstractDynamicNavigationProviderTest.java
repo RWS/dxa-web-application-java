@@ -41,6 +41,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -332,7 +333,7 @@ public class AbstractDynamicNavigationProviderTest {
         List<SitemapItem> items = getSitemapItems();
 
         //when
-        List<Link> links = defaultDynamicNavigationProvider.prepareItemsAsVisibleNavigation(localization, items).getItems();
+        List<Link> links = defaultDynamicNavigationProvider.prepareItemsAsVisibleNavigation(localization, items, true).getItems();
 
         //then
         assertTrue(links.size() == 4);
@@ -360,7 +361,7 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Test
     public void shouldProcessNavigationFromTheTop() throws NavigationProviderException {
-        verifyProcessNavigationWithMatcher(new Action() {
+        prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
             public NavigationLinks perform() throws NavigationProviderException {
                 return defaultDynamicNavigationProvider.getTopNavigationLinks("/", localization);
@@ -383,7 +384,7 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Test
     public void shouldProcessNavigationFromTheCurrentContextForTaxonomyWithIndex() throws NavigationProviderException {
-        verifyProcessNavigationWithMatcher(new Action() {
+        prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
             public NavigationLinks perform() throws NavigationProviderException {
                 return defaultDynamicNavigationProvider.getContextNavigationLinks("/child/child_2", localization);
@@ -411,7 +412,7 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Test
     public void shouldProcessNavigationFromTheCurrentContextAndGetParentItems() throws NavigationProviderException {
-        verifyProcessNavigationWithMatcher(new Action() {
+        prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
             public NavigationLinks perform() throws NavigationProviderException {
                 return defaultDynamicNavigationProvider.getContextNavigationLinks("/child/child_3", localization);
@@ -439,7 +440,7 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Test
     public void shouldProcessNavigationFromTheCurrentContextOnTheRoot() throws NavigationProviderException {
-        NavigationLinks links = verifyProcessNavigationWithMatcher(new Action() {
+        NavigationLinks links = prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
             public NavigationLinks perform() throws NavigationProviderException {
                 return defaultDynamicNavigationProvider.getContextNavigationLinks("/index", localization);
@@ -476,11 +477,18 @@ public class AbstractDynamicNavigationProviderTest {
         assertTrue(iterator.next().getUrl().equals("resolved-/about"));
         assertTrue(iterator.next().getUrl().equals("resolved-/imitation_home"));
         assertFalse(iterator.hasNext());
+
+        //also when
+        //TSI-1956
+        NavigationLinks linksIndexInPath = defaultDynamicNavigationProvider.getContextNavigationLinks("/index/", localization);
+
+        //also then
+        assertEquals(links, linksIndexInPath);
     }
 
     @Test
     public void shouldProcessNavigationFromTheCurrentContextWhenNothingFound() throws NavigationProviderException {
-        verifyProcessNavigationWithMatcher(new Action() {
+        prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
             public NavigationLinks perform() throws NavigationProviderException {
                 return defaultDynamicNavigationProvider.getContextNavigationLinks("not exist", localization);
@@ -505,7 +513,7 @@ public class AbstractDynamicNavigationProviderTest {
     public void shouldProcessNavigationForBreadcrumbs() throws NavigationProviderException {
         when(localization.getPath()).thenReturn("/");
 
-        verifyProcessNavigationWithMatcher(new Action() {
+        NavigationLinks links = prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
             public NavigationLinks perform() throws NavigationProviderException {
                 return defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/child/child_2", localization);
@@ -528,13 +536,48 @@ public class AbstractDynamicNavigationProviderTest {
                 description.appendText("Context navigation should find current context level for breadcrumbs");
             }
         });
+
+        //also when
+        //TSI-1956
+        NavigationLinks linksIndexInPath = defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/child/child_2/", localization);
+
+        //also then
+        assertEquals(links, linksIndexInPath);
+    }
+
+    @Test //TSI-1958
+    public void shouldIncludeEvenHiddenElementsIntoBreadcrumb() throws NavigationProviderException {
+        NavigationLinks links = prepareItemsAsVisibleNavigationCalledWith(new Action() {
+            @Override
+            public NavigationLinks perform() throws NavigationProviderException {
+                return defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/hidden", localization);
+            }
+        }, new BaseMatcher<List<SitemapItem>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                List<SitemapItem> list = (List<SitemapItem>) item;
+
+                Iterator<SitemapItem> iterator = list.iterator();
+                return iterator.next().getUrl().equals("/hidden") &&
+                        !iterator.hasNext();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Context navigation should include hidden elements for breadcrumbs");
+            }
+        });
+
+        assertFalse("Hidden element not filtered", links.getItems().isEmpty());
+        assertTrue("The only element is resolved-/hidden", links.getItems().get(0).getUrl().equals("resolved-/hidden"));
     }
 
     @Test
     public void shouldFindHomeIfItsASibling() throws NavigationProviderException {
         when(localization.getPath()).thenReturn("/imitation_home");
 
-        verifyProcessNavigationWithMatcher(new Action() {
+        prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
             public NavigationLinks perform() throws NavigationProviderException {
                 return defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/about", localization);
@@ -1039,7 +1082,7 @@ public class AbstractDynamicNavigationProviderTest {
         };
     }
 
-    private NavigationLinks verifyProcessNavigationWithMatcher(Action action, Matcher<List<SitemapItem>> matcher) throws NavigationProviderException {
+    private NavigationLinks prepareItemsAsVisibleNavigationCalledWith(Action action, Matcher<List<SitemapItem>> matcher) throws NavigationProviderException {
         //given
         when(defaultDynamicNavigationProvider.getNavigationModel(any(Localization.class))).thenReturn(getNavigationModel());
 
@@ -1047,7 +1090,7 @@ public class AbstractDynamicNavigationProviderTest {
         NavigationLinks links = action.perform();
 
         //then
-        verify(defaultDynamicNavigationProvider).prepareItemsAsVisibleNavigation(eq(localization), argThat(matcher));
+        verify(defaultDynamicNavigationProvider).prepareItemsAsVisibleNavigation(eq(localization), argThat(matcher), anyBoolean());
 
         return links;
     }

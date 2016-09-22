@@ -8,7 +8,6 @@ import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -34,23 +33,18 @@ public class EntityController extends BaseController {
      *
      * @param request  The request.
      * @param entityId The entity id.
-     * @param map      the model map to deal with forms
      * @return The name of the entity view that should be rendered for this request.
      * @throws ContentProviderException If an error occurs so that the entity cannot not be retrieved.
      * @throws java.lang.Exception      if any.
      */
     @RequestMapping(value = DefaultsMvcData.CoreAreaConstants.ENTITY_ACTION_NAME + "/{entityId}")
     public String handleGetEntity(HttpServletRequest request,
-                                  @PathVariable String entityId, ModelMap map)
+                                  @PathVariable String entityId)
             throws Exception {
-        return handleEntityRequest(request, entityId, map);
+        return handleEntityRequest(request, entityId);
     }
 
     protected String handleEntityRequest(HttpServletRequest request, String entityId) throws Exception {
-        return handleEntityRequest(request, entityId, null);
-    }
-
-    protected String handleEntityRequest(HttpServletRequest request, String entityId, ModelMap map) throws Exception {
         LOG.trace("handleGetEntity: entityId={}", entityId);
 
         final EntityModel originalModel = getEntityFromRequest(request, entityId);

@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
@@ -116,7 +115,7 @@ public class NavigationController extends BaseController {
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      * @throws java.lang.Exception         if any.
      */
-    @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.NAVIGATION_ACTION_NAME + "/{entityId}")
+    @RequestMapping(value = DefaultsMvcData.CoreAreaConstants.NAVIGATION_ACTION_NAME + "/{entityId}")
     public String handleGetNavigation(HttpServletRequest request,
                                       @PathVariable String entityId, @RequestParam String navType)
             throws Exception {
@@ -171,7 +170,7 @@ public class NavigationController extends BaseController {
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
-    @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.SITEMAP_ACTION_NAME + "/{entityId}")
+    @RequestMapping(value = DefaultsMvcData.CoreAreaConstants.SITEMAP_ACTION_NAME + "/{entityId}")
     public String handleGetSiteMap(HttpServletRequest request,
                                    @PathVariable String entityId) throws NavigationProviderException {
         LOG.trace("handleGetSiteMap: entityId={}", entityId);

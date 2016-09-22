@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -35,7 +34,7 @@ public class RegionController extends BaseController {
      * @return The name of the region view that should be rendered for this request.
      * @throws java.lang.Exception exception
      */
-    @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.REGION_ACTION_NAME + "/{regionName}")
+    @RequestMapping(value = DefaultsMvcData.CoreAreaConstants.REGION_ACTION_NAME + "/{regionName}")
     public String handleGetRegion(HttpServletRequest request, @PathVariable String regionName) throws Exception {
         LOG.trace("handleGetRegion: regionName={}", regionName);
 

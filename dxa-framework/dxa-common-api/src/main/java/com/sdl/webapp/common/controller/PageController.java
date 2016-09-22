@@ -33,7 +33,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -59,7 +58,7 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.SOCIALSHARE
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
- * Main controller. This handles requests that come from the client.
+ * Page controller is a main controller and a entry point to DXA. This handles requests that come from the client.
  */
 @Controller
 @Slf4j
@@ -102,15 +101,15 @@ public class PageController extends BaseController {
     }
 
     /**
-     * Gets a page requested by a client. This is the main handler method which gets called when a client sends a
-     * request for a page.
+     * Main mapping that handles requests to a page made by a client. This is the main handler method which gets called
+     * when a client sends a request for a page.
      *
-     * @param request  The request.
-     * @param response the response
-     * @return The view name of the page.
-     * @throws java.lang.Exception exception
+     * @param request  current request data object
+     * @param response the response data object
+     * @return the view name of the page to render
+     * @throws java.lang.Exception exception if any
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/**", produces = {MediaType.TEXT_HTML_VALUE, MediaType.ALL_VALUE})
+    @RequestMapping(value = "/**", produces = {MediaType.TEXT_HTML_VALUE, MediaType.ALL_VALUE})
     public String handleGetPage(HttpServletRequest request, HttpServletResponse response) throws Exception {
         final String requestPath = webRequestContext.getRequestPath();
         log.trace("handleGetPage: requestPath={}", requestPath);
@@ -148,12 +147,12 @@ public class PageController extends BaseController {
     }
 
     /**
-     * <p>handleGetPageFormatted.</p>
+     * Handles requests to a page with a requested custom format.
      *
-     * @param request a {@link javax.servlet.http.HttpServletRequest} object.
-     * @return a {@link org.springframework.web.servlet.ModelAndView} object.
+     * @param request current request data object
+     * @return {@link ModelAndView} data object with information about the current view
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/**", params = {"format"},
+    @RequestMapping(value = "/**", params = {"format"},
             produces = {"application/rss+xml", MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
     public ModelAndView handleGetPageFormatted(final HttpServletRequest request) {
 
@@ -167,17 +166,7 @@ public class PageController extends BaseController {
         return dataFormatters.view(page);
     }
 
-    /**
-     * <p>handleResolve.</p>
-     *
-     * @param itemId         a {@link java.lang.String} object.
-     * @param localizationId a {@link java.lang.String} object.
-     * @param defaultPath    a {@link java.lang.String} object.
-     * @param defaultItem    a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
-     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "/resolve/{itemId}")
+    @RequestMapping(value = "/resolve/{itemId}")
     public String handleResolve(@PathVariable String itemId, @RequestParam String localizationId,
                                 @RequestParam(required = false) String defaultPath,
                                 @RequestParam(required = false) String defaultItem) throws DxaException {
@@ -195,19 +184,7 @@ public class PageController extends BaseController {
         return "redirect:" + url;
     }
 
-    // Blank page for XPM
-
-    /**
-     * <p>handleResolveLoc.</p>
-     *
-     * @param itemId         a {@link java.lang.String} object.
-     * @param localizationId a {@link java.lang.String} object.
-     * @param defaultPath    a {@link java.lang.String} object.
-     * @param defaultItem    a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
-     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "/{locPath}/resolve/{itemId}")
+    @RequestMapping(value = "/{locPath}/resolve/{itemId}")
     public String handleResolveLoc(@PathVariable String itemId,
                                    @RequestParam String localizationId, @RequestParam String defaultPath,
                                    @RequestParam(required = false) String defaultItem) throws DxaException {
@@ -215,27 +192,19 @@ public class PageController extends BaseController {
     }
 
     /**
-     * <p>blankPage.</p>
+     * Blank page that is needed for XPM.
      *
-     * @return a {@link java.lang.String} object.
+     * @return a blank page
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/se_blank.html", produces = "text/html")
+    @RequestMapping(value = "/se_blank.html", produces = "text/html")
     @ResponseBody
     public String blankPage() {
         return "";
     }
 
-    /**
-     * <p>handleGetNavigationJson.</p>
-     *
-     * @return a {@link java.lang.String} object.
-     * @throws NavigationProviderException if any.
-     * @throws com.fasterxml.jackson.core.JsonProcessingException            if any.
-     */
-    @RequestMapping(method = RequestMethod.GET, value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)
-    public
+    @RequestMapping(value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    String handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
+    public String handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
         log.trace("handleGetNavigationJson");
 
         SitemapItem model = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
@@ -244,24 +213,16 @@ public class PageController extends BaseController {
     }
 
     /**
-     * Throws a {@code BadRequestException} when a request is made to an URL under /system/mvc which is not handled
+     * Throws a {@code BadRequestException} when a request is made to an URL under {@code /system/mvc} which is not handled
      * by another controller.
      *
      * @param request The request.
      */
-    @RequestMapping(method = RequestMethod.GET, value = INCLUDE_PATH_PREFIX + "**")
+    @RequestMapping(value = INCLUDE_PATH_PREFIX + "**")
     public void handleGetUnknownAction(HttpServletRequest request) {
         throw new BadRequestException("Request to unknown action: " + urlPathHelper.getRequestUri(request));
     }
 
-    /**
-     * Handles a {@code NotFoundException}.
-     *
-     * @param request  The request.
-     * @param response response
-     * @return The name of the view that renders the "not found" page.
-     * @throws java.lang.Exception exception
-     */
     @ExceptionHandler(NotFoundException.class)
     public String handleNotFoundException(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // TODO TSI-775: No need to prefix with WebRequestContext.Localization.Path here (?)
@@ -322,8 +283,6 @@ public class PageController extends BaseController {
     }
 
     /**
-     * {@inheritDoc}
-     * <p>
      * Handles non-specific exceptions.
      */
     @ExceptionHandler(Exception.class)
@@ -347,7 +306,7 @@ public class PageController extends BaseController {
 
     /**
      * Enriches all the Region/Entity Models embedded in the given Page Model.
-     * Used by <see cref="FormatDataAttribute"/> to get all embedded Models enriched without rendering any Views.
+     * Used to get all embedded Models enriched without rendering any Views.
      *
      * @param model   The Page Model to enrich.
      * @param request http request

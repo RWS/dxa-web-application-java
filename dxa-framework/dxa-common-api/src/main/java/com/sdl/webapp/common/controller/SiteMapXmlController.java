@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,7 +63,7 @@ public class SiteMapXmlController {
      * @return The sitemap in XML format.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
-    @RequestMapping(method = RequestMethod.GET, value = "/sitemap.xml", produces = "application/xml; charset=utf-8")
+    @RequestMapping(value = "/sitemap.xml", produces = "application/xml; charset=utf-8")
     @ResponseBody
     public String handleGetSiteMapXml() throws NavigationProviderException {
         LOG.trace("handleGetSiteMapXml");

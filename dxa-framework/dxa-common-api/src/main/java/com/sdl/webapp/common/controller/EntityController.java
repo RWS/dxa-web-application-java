@@ -8,9 +8,9 @@ import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,14 +20,12 @@ import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREF
 import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
 
 /**
- * Entity controller for the Core area.
- * <p>
- * This handles include requests to /system/mvc/Core/Entity/{regionName}/{entityId}
- * </p>
+ * Entity controller for the Core area that handles include requests to <code>/system/mvc/Core/Entity/Entity/{entityId}</code>.
  */
 @Controller
 @RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + '/' + ENTITY_CONTROLLER_NAME)
 public class EntityController extends BaseController {
+
     private static final Logger LOG = LoggerFactory.getLogger(EntityController.class);
 
 
@@ -36,26 +34,23 @@ public class EntityController extends BaseController {
      *
      * @param request  The request.
      * @param entityId The entity id.
+     * @param map      the model map to deal with forms
      * @return The name of the entity view that should be rendered for this request.
      * @throws ContentProviderException If an error occurs so that the entity cannot not be retrieved.
-     * @throws java.lang.Exception if any.
+     * @throws java.lang.Exception      if any.
      */
-    @RequestMapping(method = RequestMethod.GET, value = DefaultsMvcData.CoreAreaConstants.ENTITY_ACTION_NAME + "/{entityId}")
+    @RequestMapping(value = DefaultsMvcData.CoreAreaConstants.ENTITY_ACTION_NAME + "/{entityId}")
     public String handleGetEntity(HttpServletRequest request,
-                                  @PathVariable String entityId)
+                                  @PathVariable String entityId, ModelMap map)
             throws Exception {
-        return handleEntityRequest(request, entityId);
+        return handleEntityRequest(request, entityId, map);
     }
 
-    /**
-     * <p>handleEntityRequest.</p>
-     *
-     * @param request  a {@link javax.servlet.http.HttpServletRequest} object.
-     * @param entityId a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
-     * @throws java.lang.Exception if any.
-     */
     protected String handleEntityRequest(HttpServletRequest request, String entityId) throws Exception {
+        return handleEntityRequest(request, entityId, null);
+    }
+
+    protected String handleEntityRequest(HttpServletRequest request, String entityId, ModelMap map) throws Exception {
         LOG.trace("handleGetEntity: entityId={}", entityId);
 
         final EntityModel originalModel = getEntityFromRequest(request, entityId);

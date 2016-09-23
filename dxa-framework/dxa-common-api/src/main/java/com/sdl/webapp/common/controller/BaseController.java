@@ -11,8 +11,11 @@ import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.Validator;
+import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
@@ -109,6 +112,7 @@ public abstract class BaseController {
      * @throws java.lang.Exception exception
      */
     protected ViewModel enrichModel(ViewModel model, HttpServletRequest httpServletRequest) throws Exception {
+
         //Check if an exception was generated when creating the model, so now is the time to throw it
         // TODO: shouldn't we just render the ExceptionEntity using an Exception View?
         if (model.getClass().isAssignableFrom(ExceptionEntity.class)) {
@@ -117,7 +121,42 @@ public abstract class BaseController {
                     exceptionEntity.getException() : new RuntimeException("Unknown exception while rendering");
         }
 
+        if (modelBindingRequired(model, httpServletRequest)) {
+            log.trace("Model data [model id:{} <> request] binding is required", model);
+            ServletRequestDataBinder dataBinder = new ServletRequestDataBinder(model);
+            dataBinder.bind(httpServletRequest);
+            Validator validator = dataBindValidator();
+            if (validator != null) {
+                dataBinder.setValidator(validator);
+                dataBinder.validate();
+                httpServletRequest.setAttribute("dataBinding", dataBinder.getBindingResult());
+            }
+        }
+
         return (ViewModel) processModel(model, model.getClass());
+    }
+
+    /**
+     * Returns whether controller should attempt to bind data from request to model. Override if you need a data binding.
+     * If you want to have data binding, you may also want to validate it afterwards. Check {@link #dataBindValidator()}.
+     *
+     * @return to bind or not to bind
+     */
+    protected boolean modelBindingRequired(ViewModel model, HttpServletRequest httpServletRequest) {
+        return false;
+    }
+
+    /**
+     * Returns a Spring {@link Validator} that may be used to validate {@link ViewModel} after data binding. Is called
+     * only if model binding is required {@link #modelBindingRequired(ViewModel, HttpServletRequest)}.     *
+     * <p>If this method returns {@code null}, there will be no validation obviously.</p>
+     * <p>The validation result (if this method returns {@code !null}) is set as request attribute with a key {@code dataBinding}.</p>
+     *
+     * @return a validator to use during data binding, or null to not to use validation
+     */
+    @Nullable
+    protected Validator dataBindValidator() {
+        return null;
     }
 
     /**

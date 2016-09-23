@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.ViewModel;
+import com.sdl.webapp.common.api.model.entity.RedirectEntity;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,9 +50,15 @@ public class EntityController extends BaseController {
 
         final EntityModel originalModel = getEntityFromRequest(request, entityId);
         final ViewModel enrichedEntity = enrichModel(originalModel, request);
+
         final EntityModel entity = enrichedEntity instanceof EntityModel ? (EntityModel) enrichedEntity : originalModel;
 
         request.setAttribute(ENTITY_MODEL, entity);
+
+        if (enrichedEntity instanceof RedirectEntity) {
+            LOG.debug("Redirect entity from enrichModel(), so doing a redirect {}", enrichedEntity);
+            return "RedirectView";
+        }
 
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);

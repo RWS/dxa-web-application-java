@@ -100,7 +100,7 @@ To use SmartTarget 2013SP1 module you also need
  - `com.tridion.smarttarget : smarttarget_entitymodel : 2014sp1`
  - `com.tridion.smarttarget : smarttarget_google-analytics : 2014sp1`
  
-To use AudienceManager 2013SP1 modul you also need
+To use AudienceManager 2013SP1 module you also need
  - `com.tridion.marketingsolution : profile : 7.1.0-SNAPSHOT`
  - `com.tridion.marketingsolution : profilesync : 7.1.0-SNAPSHOT`
  - `com.tridion.marketingsolution : utils : 7.1.0-SNAPSHOT`

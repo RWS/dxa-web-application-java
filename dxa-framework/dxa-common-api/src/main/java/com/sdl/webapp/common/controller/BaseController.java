@@ -148,7 +148,7 @@ public abstract class BaseController {
 
     /**
      * Returns a Spring {@link Validator} that may be used to validate {@link ViewModel} after data binding. Is called
-     * only if model binding is required {@link #modelBindingRequired(ViewModel, HttpServletRequest)}.     *
+     * only if model binding is required {@link #modelBindingRequired(ViewModel, HttpServletRequest)}.
      * <p>If this method returns {@code null}, there will be no validation obviously.</p>
      * <p>The validation result (if this method returns {@code !null}) is set as request attribute with a key {@code dataBinding}.</p>
      *

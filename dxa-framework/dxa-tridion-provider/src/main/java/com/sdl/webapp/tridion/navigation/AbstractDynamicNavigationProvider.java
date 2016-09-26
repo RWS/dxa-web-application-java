@@ -321,7 +321,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
 
     private boolean logFallback(boolean isFallback, Localization localization) {
         if (isFallback) {
-            log.warn("Taxonomy navigation is not available, fallback to static navigation is required, localization {}", localization);
+            log.warn("Taxonomy navigation is not available, fallback to static navigation is required, localizationId {}", localization.getId());
         }
         return isFallback;
     }

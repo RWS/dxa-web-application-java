@@ -54,6 +54,28 @@ def artifacts = [
         relativePath: '%cd%/Content Delivery/roles/api/java/third-party-lib/easylicense.jar'
 ],
 
+//      From Outbound E-Mail (Audience Manager)
+[
+        groupId     : 'com.tridion.marketingsolution', artifactId: 'profile', version: '7.1.0-SNAPSHOT',
+        relativePath: '%cd%/Outbound E-Mail/Presentation System/Java/Subscription/oe_profile.jar'
+],
+[
+        groupId     : 'com.tridion.marketingsolution', artifactId: 'profilesync', version: '7.1.0-SNAPSHOT',
+        relativePath: '%cd%/Outbound E-Mail/Presentation System/Java/Subscription/oe_profilesync.jar'
+],
+[
+        groupId     : 'com.tridion.marketingsolution', artifactId: 'utils', version: '7.1.0-SNAPSHOT',
+        relativePath: '%cd%/Outbound E-Mail/Presentation System/Java/Subscription/oe_utils.jar'
+],
+[
+        groupId     : 'com.tridion.marketingsolution', artifactId: 'tracking', version: '7.1.0-SNAPSHOT',
+        relativePath: '%cd%/Outbound E-Mail/Presentation System/Java/Tracking/oe_tracking.jar'
+],
+[
+        groupId     : 'com.tridion.marketingsolution', artifactId: 'trackingsync', version: '7.1.0-SNAPSHOT',
+        relativePath: '%cd%/Outbound E-Mail/Presentation System/Java/Tracking/oe_trackingsync.jar'
+],
+
 //      From /roles/preview
 [
         groupId     : 'com.tridion', artifactId: 'cd_odata', version: '7.1.0',

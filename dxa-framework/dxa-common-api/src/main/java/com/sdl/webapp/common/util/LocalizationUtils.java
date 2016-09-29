@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.util;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -157,6 +158,18 @@ public final class LocalizationUtils {
         }
 
         return page;
+    }
+
+    /**
+     * Extracts the current request URL from current request and replaces it with a given path.
+     *
+     * @param webRequestContext current {@link WebRequestContext}
+     * @param newPath           path to replace the old path with
+     * @return full URL of current request with given path appended
+     */
+    @Contract("_, _ -> !null")
+    public static String replaceRequestContextPath(@NotNull WebRequestContext webRequestContext, @NotNull String newPath) {
+        return webRequestContext.getBaseUrl().replace(webRequestContext.getRequestPath(), newPath.startsWith("/") ? newPath : ("/" + newPath));
     }
 
     /**

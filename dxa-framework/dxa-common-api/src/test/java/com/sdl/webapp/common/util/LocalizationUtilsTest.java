@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.util;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -247,6 +248,22 @@ public class LocalizationUtilsTest {
         assertEquals("", LocalizationUtils.stripIndexPath(""));
         assertEquals("/", LocalizationUtils.stripIndexPath("/"));
         assertNull(LocalizationUtils.stripIndexPath(null));
+    }
+
+    @Test
+    public void shouldReplaceCurrentPathWithGiven() {
+        //given 
+        WebRequestContext context = mock(WebRequestContext.class);
+        when(context.getBaseUrl()).thenReturn("http://sdl.com/my/path/index.html");
+        when(context.getRequestPath()).thenReturn("/my/path/index.html");
+
+        //when
+        String path = LocalizationUtils.replaceRequestContextPath(context, "/newPath.html");
+        String path2 = LocalizationUtils.replaceRequestContextPath(context, "newPath.html");
+
+        //then
+        assertEquals("http://sdl.com/newPath.html", path);
+        assertEquals("http://sdl.com/newPath.html", path);
     }
 
     @NotNull

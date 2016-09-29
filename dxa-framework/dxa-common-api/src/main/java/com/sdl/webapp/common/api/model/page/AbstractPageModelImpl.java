@@ -44,6 +44,9 @@ public abstract class AbstractPageModelImpl extends AbstractViewModel implements
     @JsonProperty("Title")
     protected String title;
 
+    @JsonProperty("Url")
+    protected String url;
+
     @JsonProperty("Meta")
     protected Map<String, String> meta = new HashMap<>();
 
@@ -54,6 +57,7 @@ public abstract class AbstractPageModelImpl extends AbstractViewModel implements
         this.id = pageModel.getId();
         this.name = pageModel.getName();
         this.title = pageModel.getTitle();
+        this.url = pageModel.getUrl();
         this.regions.addAll(pageModel.getRegions());
         this.meta.putAll(pageModel.getMeta());
 

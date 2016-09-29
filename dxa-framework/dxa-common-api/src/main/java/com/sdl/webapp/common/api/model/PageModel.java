@@ -19,6 +19,10 @@ public interface PageModel extends ViewModel, FeedItemsProvider {
 
     void setTitle(String name);
 
+    String getUrl();
+
+    void setUrl(String url);
+
     Map<String, String> getMeta();
 
     void setMeta(Map<String, String> pageMeta);

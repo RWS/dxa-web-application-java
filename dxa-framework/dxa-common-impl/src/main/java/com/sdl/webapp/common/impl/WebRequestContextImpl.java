@@ -10,6 +10,7 @@ import com.sdl.webapp.common.api.localization.LocalizationNotResolvedException;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.api.localization.LocalizationResolverException;
 import com.sdl.webapp.common.api.localization.UnknownLocalizationHandler;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.impl.contextengine.BrowserClaims;
 import com.sdl.webapp.common.impl.contextengine.DeviceClaims;
@@ -81,6 +82,10 @@ public class WebRequestContextImpl implements WebRequestContext {
     @Getter
     @Setter
     private String pageId;
+
+    @Getter
+    @Setter
+    private PageModel page;
 
     private Stack<RegionModel> parentRegionStack = new Stack<>();
 

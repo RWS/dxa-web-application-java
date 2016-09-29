@@ -14,6 +14,7 @@ import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.ImageUtils;
+import com.sdl.webapp.common.util.LocalizationUtils;
 import com.sdl.webapp.common.util.LocalizationUtils.TryFindPage;
 import lombok.NonNull;
 import lombok.SneakyThrows;
@@ -221,14 +222,19 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
                         }
                     }
                 } catch (ItemNotFoundException e) {
-                    log.debug("Page not found: [{}] {}", publicationId, path);
+                    log.debug("Page not found: [{}] {}", publicationId, path, e);
                     return null;
                 } catch (FactoryException e) {
                     throw new ContentProviderException("Exception while getting page model for: [" + publicationId +
                             "] " + path, e);
                 }
 
-                return modelBuilderPipeline.createPageModel(genericPage, localization, AbstractDefaultContentProvider.this);
+                PageModel pageModel = modelBuilderPipeline.createPageModel(genericPage, localization, AbstractDefaultContentProvider.this);
+                if (pageModel != null) {
+                    pageModel.setUrl(LocalizationUtils.stripDefaultExtension(path));
+                    webRequestContext.setPage(pageModel);
+                }
+                return pageModel;
             }
         });
     }

@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api;
 
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 
 import javax.servlet.ServletRequest;
@@ -162,6 +163,10 @@ public interface WebRequestContext {
     @Deprecated
     void setNoLocalization(boolean value);
 
+    /**
+     * @deprecated since 1.6, use {@link #getPage()}
+     */
+    @Deprecated
     String getPageId();
 
     /**
@@ -169,6 +174,16 @@ public interface WebRequestContext {
      */
     @Deprecated
     void setPageId(String value);
+
+    /**
+     * Return the current page model.
+     *
+     * @return the current page model
+     */
+    PageModel getPage();
+
+    @Deprecated
+    void setPage(PageModel page);
 
     boolean isDeveloperMode();
 

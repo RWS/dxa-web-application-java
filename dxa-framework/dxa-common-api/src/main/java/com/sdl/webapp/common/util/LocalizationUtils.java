@@ -30,7 +30,7 @@ public final class LocalizationUtils {
 
     private static final Pattern PAGE_TITLE_SEQUENCE = Pattern.compile("^(?<sequence>\\d{3}\\s?)(?<pageName>(?<sequenceStop>[^\\d]).*)$");
 
-    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/index(\\.html)?)$");
+    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/(index(\\.html)?)?)$");
 
     /**
      * Retrieves the schema ID from the localization configuration by the schema key.
@@ -232,6 +232,38 @@ public final class LocalizationUtils {
      */
     public static boolean isIndexPath(@Nullable String urlToCheck) {
         return urlToCheck != null && INDEX_PATH_REGEXP.matcher(normalizePathToDefaults(urlToCheck)).matches();
+    }
+
+    /**
+     * Decides if the current request path is in a given context path. In other words decides whether requested {@code path}
+     * is in a context of current {@code request}.
+     * <pre>
+     *     request to {@code /page} is in context of path {@code /page}
+     *     request to {@code /page/child} is in context of path {@code /page} and {@code /page/child}
+     *            but definitely not in {@code /other} nor {@code /other/child}
+     * </pre>
+     * <p>There is a special treatment of {@code /} home requests. Home request is only in same context if path is
+     * <strong>exactly {@code /}</strong></p> because any request then is in context of home.
+     *
+     * @param requestPath  current request path
+     * @param localization current localization
+     * @param path         given path to test against
+     * @return whether we can say that request is under context of path
+     */
+    public static boolean isActiveContextPath(@Nullable String requestPath, @NonNull Localization localization, @Nullable String path) {
+        String stripIndexPath = stripIndexPath(path);
+        String originatingRequestUri = stripIndexPath(requestPath);
+        if (stripIndexPath == null || originatingRequestUri == null) {
+            log.trace("Path or originating path is null, return false");
+            return false;
+        }
+
+
+        if (isHomePath(originatingRequestUri, localization) || isHomePath(stripIndexPath, localization)) {
+            return stripIndexPath.equalsIgnoreCase(originatingRequestUri);
+        }
+
+        return originatingRequestUri.startsWith(stripIndexPath);
     }
 
     /**

@@ -245,9 +245,52 @@ public class LocalizationUtilsTest {
         assertEquals("/page", LocalizationUtils.stripIndexPath("/page/index.html"));
 
         assertEquals("/page/page.html", LocalizationUtils.stripIndexPath("/page/page.html"));
+        assertEquals("/page/page", LocalizationUtils.stripIndexPath("/page/page"));
+        assertEquals("/page/page", LocalizationUtils.stripIndexPath("/page/page/"));
         assertEquals("", LocalizationUtils.stripIndexPath(""));
         assertEquals("/", LocalizationUtils.stripIndexPath("/"));
         assertNull(LocalizationUtils.stripIndexPath(null));
+    }
+
+    @Test
+    public void shouldResolveWhetherPathIsInRequestContext() {
+        //given
+        String path = "/page/about";
+        Localization localization = mockLocalization("/", "1");
+
+        //when, then
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/page"));
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/page/"));
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/page/about"));
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/page/about/"));
+
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/"));
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/page/about/path"));
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/other"));
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, null));
+    }
+
+
+    @Test
+    public void shouldTreatHomeSpecially() {
+        //given
+        String path = "/";
+        Localization localization = mockLocalization("/", "1");
+
+        //when, then
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/"));
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/test"));
+    }
+
+    @Test
+    public void shouldTreatHomeSpeciallyIfLocalizationIsNotRoot() {
+        //given
+        String path = "/test";
+        Localization localization = mockLocalization("/test", "1");
+
+        //when, then
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/test"));
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/"));
     }
 
     @Test

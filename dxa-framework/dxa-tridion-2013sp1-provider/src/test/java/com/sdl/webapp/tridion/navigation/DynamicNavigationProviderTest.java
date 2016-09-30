@@ -94,6 +94,10 @@ public class DynamicNavigationProviderTest {
         ReflectionTestUtils.setField(dynamicNavigationProvider, "taxonomyNavigationMarker", "[Taxonomy]");
         ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypeTaxonomyNode", "TaxonomyNode");
         ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypeStructureGroup", "StructureGroup");
+
+        dynamicNavigationProvider.setTaxonomyFactory(taxonomyFactory);
+        dynamicNavigationProvider.setRelationManager(relationManager);
+
         when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(new CacheElementImpl<>(null, true));
     }
 

@@ -20,6 +20,7 @@ import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.TaxonomyRelationManager;
 import com.tridion.taxonomies.filters.DepthFilter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.jetbrains.annotations.NotNull;
@@ -43,15 +44,15 @@ import static com.google.common.collect.Lists.newArrayList;
 @Profile("dynamic.navigation.provider")
 public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider {
 
-    private final TaxonomyFactory taxonomyFactory;
+    @Setter
+    private TaxonomyFactory taxonomyFactory = new TaxonomyFactory();
 
-    private final TaxonomyRelationManager relationManager;
+    @Setter
+    private TaxonomyRelationManager relationManager = new TaxonomyRelationManager();
 
     @Autowired
-    public DynamicNavigationProvider(StaticNavigationProvider staticNavigationProvider, LinkResolver linkResolver, TaxonomyFactory taxonomyFactory, PayloadCacheProvider cacheProvider, TaxonomyRelationManager relationManager) {
+    public DynamicNavigationProvider(StaticNavigationProvider staticNavigationProvider, LinkResolver linkResolver, PayloadCacheProvider cacheProvider) {
         super(staticNavigationProvider, linkResolver, cacheProvider);
-        this.taxonomyFactory = taxonomyFactory;
-        this.relationManager = relationManager;
     }
 
     @Override

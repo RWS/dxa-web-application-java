@@ -422,7 +422,9 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     private void addDescendants(@NonNull SitemapItem taxonomyNode, NavigationFilter navigationFilter, Localization localization) {
 
         for (SitemapItem child : taxonomyNode.getItems()) {
-            addDescendants(child, navigationFilter, localization);
+            if (child instanceof TaxonomyNode) {
+                addDescendants(child, navigationFilter, localization);
+            }
         }
 
         Set<SitemapItem> additionalChildren = new LinkedHashSet<>(expandDescendants(parse(taxonomyNode.getId(), localization), navigationFilter, localization));

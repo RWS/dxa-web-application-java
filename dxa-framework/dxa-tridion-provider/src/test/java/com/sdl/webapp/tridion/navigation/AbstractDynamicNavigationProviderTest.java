@@ -21,6 +21,7 @@ import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
@@ -188,6 +189,11 @@ public class AbstractDynamicNavigationProviderTest {
                 siteMapItem("t1-p222", true, "/child/child_2/child_2_2")
         ));
 
+        //TSI-1980, should never be called
+        mockDescendants("t1-p211", list(
+                siteMapItem("t1-p2211", true, "/child/child_2/child_2_1/child_2_1_1")
+        ));
+
         mockDescendants("t1-k24", list(
                 siteMapItem("t1-p222", true, "/child/child_2/child_2_2")
         ));
@@ -213,6 +219,13 @@ public class AbstractDynamicNavigationProviderTest {
                         ))
                 ))
         ));
+    }
+
+    @After
+    public void finish() {
+        //TSI-1980, never called because it's a page, don't attempt to get descendants for page
+        verify(defaultDynamicNavigationProvider, never())
+                .expandDescendants(argThat(keyToItemsMatcher("t1-p211")), any(NavigationFilter.class), any(Localization.class));
     }
 
     @NotNull
@@ -934,6 +947,8 @@ public class AbstractDynamicNavigationProviderTest {
         assertEquals("t1-k22", level2.getId());
 
         assertTrue(level2.getItems().size() == 3);
+
+        assertTrue(level2.getItems().get(0).getItems().isEmpty());
     }
 
     @Test

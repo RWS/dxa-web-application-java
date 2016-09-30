@@ -211,6 +211,18 @@ public class DynamicNavigationProviderTest {
         assertEquals("url", dto.getUrl());
     }
 
+    //TSI-1980
+    @Test
+    public void shouldReturnEmptyListIfPageUrisPassed() {
+        //given
+        //when
+        List<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-p1", localization),
+                NavigationFilter.DEFAULT, localization);
+
+        //then
+        assertTrue(items.isEmpty());
+    }
+
     @Test
     public void shouldReturnEmptyListIfKeywordIsNull() {
         //given

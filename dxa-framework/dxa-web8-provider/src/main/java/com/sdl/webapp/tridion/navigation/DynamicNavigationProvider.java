@@ -77,6 +77,11 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
 
     @Override
     protected List<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+        if (uris.isPage()) {
+            log.debug("Page cannot have descendants, return emptyList, uris = ", uris);
+            return Collections.emptyList();
+        }
+
         Keyword keyword = taxonomyFactory.getTaxonomyKeywords(uris.getTaxonomyUri(),
                 new DepthFilter(navigationFilter.getDescendantLevels(), DepthFilter.FILTER_DOWN), uris.getKeywordUri());
 

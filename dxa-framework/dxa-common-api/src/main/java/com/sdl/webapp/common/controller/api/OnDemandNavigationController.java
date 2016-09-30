@@ -19,6 +19,7 @@ import java.util.List;
 /**
  * Handles requests to on-demand navigation API.
  */
+@SuppressWarnings("MVCPathVariableInspection")
 @Controller
 @RequestMapping(method = RequestMethod.GET, value = {"/api/navigation/subtree", "/{path}/api/navigation/subtree"})
 @Profile("dynamic.navigation.provider")
@@ -36,7 +37,7 @@ public class OnDemandNavigationController {
     }
 
     @ResponseBody
-    @RequestMapping("/")
+    @RequestMapping
     public List<SitemapItem> handle(@RequestParam(value = "includeAncestors", required = false, defaultValue = "false") boolean includeAncestors,
                                     @RequestParam(value = "descendantLevels", required = false, defaultValue = "1") int descendantLevels) {
         return handleInternal(null, includeAncestors, descendantLevels);

@@ -253,6 +253,22 @@ public class LocalizationUtilsTest {
     }
 
     @Test
+    public void shouldReplaceCurrentPathWithGiven() {
+        //given
+        WebRequestContext context = mock(WebRequestContext.class);
+        when(context.getBaseUrl()).thenReturn("http://sdl.com/my/path/index.html");
+        when(context.getRequestPath()).thenReturn("/my/path/index.html");
+
+        //when
+        String path = LocalizationUtils.replaceRequestContextPath(context, "/newPath.html");
+        String path2 = LocalizationUtils.replaceRequestContextPath(context, "newPath.html");
+
+        //then
+        assertEquals("http://sdl.com/newPath.html", path);
+        assertEquals("http://sdl.com/newPath.html", path);
+    }
+
+    @Test
     public void shouldResolveWhetherPathIsInRequestContext() {
         //given
         String path = "/page/about";
@@ -295,7 +311,7 @@ public class LocalizationUtilsTest {
 
     @Test
     public void shouldReplaceCurrentPathWithGiven() {
-        //given 
+        //given
         WebRequestContext context = mock(WebRequestContext.class);
         when(context.getBaseUrl()).thenReturn("http://sdl.com/my/path/index.html");
         when(context.getRequestPath()).thenReturn("/my/path/index.html");

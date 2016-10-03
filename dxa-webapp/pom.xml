@@ -165,11 +165,20 @@
             </dependencies>
         </profile>
         <profile>
-            <id>audience-manager-module</id>
+            <id>audience-manager-2013sp1-module</id>
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-audience-manager</artifactId>
+                    <artifactId>dxa-module-audience-manager-2013sp1</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>audience-manager-web8-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-audience-manager-web8</artifactId>
                 </dependency>
             </dependencies>
         </profile>

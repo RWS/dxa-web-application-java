@@ -19,10 +19,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 @EqualsAndHashCode
-/**
- * <p>LocalizationImpl class.</p>
- */
-@ToString
+@ToString(of = {"id", "path"})
 public class LocalizationImpl implements Localization {
 
     private static final String FAVICON_PATH = "/favicon.ico";
@@ -114,13 +111,6 @@ public class LocalizationImpl implements Localization {
 
     /** {@inheritDoc} */
     @Override
-    public List<String> getDataFormats() {
-        String[] formats = getConfiguration("core.dataFormats").split("(\\s*)?,(\\s*)?");
-        return Arrays.asList(formats);
-    }
-
-    /** {@inheritDoc} */
-    @Override
     public String getCulture() {
         return getConfiguration("core.culture");
     }
@@ -160,6 +150,15 @@ public class LocalizationImpl implements Localization {
             }
         }
         return url;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<String> getDataFormats() {
+        String[] formats = getConfiguration("core.dataFormats").split("(\\s*)?,(\\s*)?");
+        return Arrays.asList(formats);
     }
 
     public static final class Builder {

@@ -64,6 +64,7 @@ public class DefaultDataFormatter implements DataFormatter {
         return null;
     }
 
+    //todo dxa2 this should be handled by mvc layer
     @Override
     public ModelAndView view(Object model) {
         String format = getFormat();

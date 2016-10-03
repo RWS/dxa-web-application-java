@@ -22,7 +22,6 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaCo
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.LIST_CONTROLLER_NAME;
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static org.springframework.util.CollectionUtils.isEmpty;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  * List controller for the Core area that handles include requests to <code>/system/mvc/Core/List/{regionName}/{entityId}</code>.
@@ -55,7 +54,7 @@ public class ListController extends EntityController {
      * @return the name of the entity view that should be rendered for this request.
      * @throws java.lang.Exception exception in case view is not resolved for any reason
      */
-    @RequestMapping(method = GET, value = LIST_ACTION_NAME + "/{entityId}")
+    @RequestMapping(value = LIST_ACTION_NAME + "/{entityId}")
     public String handleGetList(HttpServletRequest request, @PathVariable String entityId) throws Exception {
         log.trace("handleGetList: entityId={}", entityId);
         // The List action is effectively just an alias for the general Entity action (we keep it for backward compatibility).

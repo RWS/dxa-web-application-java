@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.common.base.Strings.nullToEmpty;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.a;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.element;
@@ -71,9 +72,15 @@ public class MarkupImpl implements Markup {
                 return null;
             }
 
-            final SimpleElementBuilder builder = element("li").withNode(
-                    a(url).withTitle(item.getTitle()).withTextualContent(item.getTitle()).build()
-            );
+            final SimpleElementBuilder builder = element("li");
+
+            if (!isNullOrEmpty(url)) {
+                builder.withNode(
+                        a(url).withTitle(item.getTitle()).withTextualContent(item.getTitle()).build()
+                );
+            } else {
+                builder.withTextualContent(item.getTitle());
+            }
 
             if (item.getItems().isEmpty()) {
                 return builder.build();
@@ -95,7 +102,7 @@ public class MarkupImpl implements Markup {
 
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */

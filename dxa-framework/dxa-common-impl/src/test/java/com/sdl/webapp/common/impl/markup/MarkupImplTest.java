@@ -215,7 +215,7 @@ public class MarkupImplTest {
         ));
 
         SitemapItem child3 = sitemapItem("3", null, list(
-                sitemapItem("31", "http://sdl.com", list())
+                sitemapItem("31", "", list())
         ));
 
         SitemapItem root = sitemapItem("Root", "", list(child1, child2, child3, null));
@@ -224,11 +224,11 @@ public class MarkupImplTest {
         String siteMapListReturn = markup.siteMapList(root);
 
         //then
-        assertEquals("<li><a href=\"\" title=\"Root\">Root</a>" +
+        assertEquals("<li>Root" +
                 "<ul class=\"list-unstyled\">" +
                 "<li><a href=\"http://dxa.com/\" title=\"1\">1</a><ul class=\"list-unstyled\"></ul></li>" +
-                "<li><a href=\"\" title=\"2\">2</a><ul class=\"list-unstyled\"><li><a href=\"http://sdl.com\" title=\"21\">21</a></li></ul></li>" +
-                "<li><a href=\"\" title=\"3\">3</a><ul class=\"list-unstyled\"><li><a href=\"http://sdl.com\" title=\"31\">31</a></li></ul></li>" +
+                "<li>2<ul class=\"list-unstyled\"><li><a href=\"http://sdl.com\" title=\"21\">21</a></li></ul></li>" +
+                "<li>3<ul class=\"list-unstyled\"><li>31</li></ul></li>" +
                 "</ul>" +
                 "</li>", siteMapListReturn);
     }

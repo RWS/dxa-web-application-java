@@ -218,7 +218,9 @@ public class MarkupImplTest {
                 sitemapItem("31", "http://sdl.com", list())
         ));
 
-        SitemapItem root = sitemapItem("Root", "", list(child1, child2, child3, null));
+        SitemapItem emptyGroup = sitemapItem("4", "/empty", list());
+
+        SitemapItem root = sitemapItem("Root", "", list(child1, child2, child3, emptyGroup, null));
 
         //when
         String siteMapListReturn = markup.siteMapList(root);

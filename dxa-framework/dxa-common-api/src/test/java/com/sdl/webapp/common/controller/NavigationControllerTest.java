@@ -1,9 +1,9 @@
 package com.sdl.webapp.common.controller;
 
-import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
@@ -18,7 +18,9 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
@@ -38,16 +40,22 @@ public class NavigationControllerTest {
     private NavigationController navigationController;
 
     private static SitemapItem getStaticModel() {
-        SitemapItem model = getSitemap("home", "/", "Home", "StructureGroup");
+        SitemapItem home = getSitemap("home", "/", "Home", "StructureGroup");
 
         SitemapItem child1 = getSitemap("child1", "/child1", "Child1", "Page");
         SitemapItem child2 = getSitemap("child2", "/child2", "Child2", "StructureGroup");
+        child2.setItems(newArrayList(getSitemap("child21", "/child21", "Child21", "Page")));
 
-        model.setItems(Lists.newArrayList(child1, child2));
+        //empty top-level group are suppressed
+        SitemapItem child3 = getSitemap("child3", "/child3", "Child3", "StructureGroup");
 
-        model.setMvcData(MvcDataCreator.creator().fromQualifiedName("Area:View").create());
+        SitemapItem taxonomyNode = new TaxonomyNode();
 
-        return model;
+        home.setItems(newArrayList(child1, child2, child3, taxonomyNode));
+
+        home.setMvcData(MvcDataCreator.creator().fromQualifiedName("Area:View").create());
+
+        return home;
     }
 
     private static SitemapItem getSitemap(String id, String url, String title, String type) {
@@ -80,6 +88,7 @@ public class NavigationControllerTest {
         assertEquals("home", home.getId());
         assertEquals("child1", home.getItems().get(0).getId());
         assertEquals("child2", top.next().getId());
+        assertFalse(top.hasNext());
 
         assertEquals(view, "Area/Entity/View");
     }
@@ -102,5 +111,6 @@ public class NavigationControllerTest {
         assertEquals("home", item.getId());
         assertEquals("child1", top.next().getId());
         assertEquals("child2", top.next().getId());
+        assertFalse(top.hasNext());
     }
 }

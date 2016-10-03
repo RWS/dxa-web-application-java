@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
@@ -182,12 +184,24 @@ public class NavigationController extends BaseController {
 
         navigationModel.setXpmMetadata(entity.getXpmMetadata());
         navigationModel.setXpmPropertyMetadata(entity.getXpmPropertyMetadata());
-        request.setAttribute(ENTITY_MODEL, navigationModel);
-
         moveHomeItemToTopLevelIfNeeded(navigationModel);
+
+        suppressTopLevelEmptyItems(navigationModel);
+
+        request.setAttribute(ENTITY_MODEL, navigationModel);
 
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);
         return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
+    }
+
+    private void suppressTopLevelEmptyItems(SitemapItem navigationModel) {
+        Iterator<SitemapItem> iterator = navigationModel.getItems().iterator();
+        while (iterator.hasNext()) {
+            SitemapItem item = iterator.next();
+            if (("StructureGroup".equals(item.getType()) || item instanceof TaxonomyNode) && item.getItems().isEmpty()) {
+                iterator.remove();
+            }
+        }
     }
 }

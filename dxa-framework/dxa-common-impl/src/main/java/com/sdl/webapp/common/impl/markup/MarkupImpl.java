@@ -62,7 +62,7 @@ public class MarkupImpl implements Markup {
     }
 
     @Nullable
-    private static HtmlElement siteMapListHelper(SitemapItem item) {
+    private static HtmlElement siteMapListHelper(SitemapItem item, SitemapItem root) {
 
         if (item != null) {
             String url = nullToEmpty(item.getUrl());
@@ -81,7 +81,7 @@ public class MarkupImpl implements Markup {
 
             SimpleElementBuilder innerUl = element("ul").withClass("list-unstyled");
             for (SitemapItem child : item.getItems()) {
-                HtmlElement element = siteMapListHelper(child);
+                HtmlElement element = siteMapListHelper(child, root);
                 if (element != null) {
                     innerUl.withNode(element);
                 }
@@ -95,7 +95,7 @@ public class MarkupImpl implements Markup {
 
         return null;
     }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -266,7 +266,7 @@ public class MarkupImpl implements Markup {
     @Override
     public String siteMapList(SitemapItem item) {
         //todo dxa2 do this in JSP
-        final HtmlElement htmlElement = siteMapListHelper(item);
+        final HtmlElement htmlElement = siteMapListHelper(item, item);
         return htmlElement != null ? htmlElement.toHtml() : "";
     }
 

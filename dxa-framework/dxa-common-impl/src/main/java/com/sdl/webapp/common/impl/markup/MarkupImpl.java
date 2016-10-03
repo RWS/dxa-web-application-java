@@ -14,9 +14,10 @@ import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.markup.Markup;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
-import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import com.sdl.webapp.common.markup.html.builders.SimpleElementBuilder;
+import com.sdl.webapp.common.util.LocalizationUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.LocalDate;
@@ -33,6 +34,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static com.google.common.base.Strings.nullToEmpty;
+import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.a;
+import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.element;
 
 @Component
 @Slf4j
@@ -56,36 +61,52 @@ public class MarkupImpl implements Markup {
         this.webRequestContext = webRequestContext;
     }
 
+    @Nullable
     private static HtmlElement siteMapListHelper(SitemapItem item) {
-        if (item != null && item.getUrl() != null && !item.getUrl().endsWith("/index")) {
-            final SimpleElementBuilder itemElementBuilder = HtmlBuilders.element("li")
-                    .withNode(HtmlBuilders.a(item.getUrl()).withTitle(item.getTitle()).withTextualContent(item.getTitle())
-                            .build());
 
-            if (item.getItems() != null && !item.getItems().isEmpty()) {
-                final SimpleElementBuilder childListBuilder = HtmlBuilders.element("ul").withClass("list-unstyled");
-                for (SitemapItem child : item.getItems()) {
-                    final HtmlElement childElement = siteMapListHelper(child);
-                    if (childElement != null) {
-                        childListBuilder.withNode(childElement);
-                    }
-                }
-                itemElementBuilder.withNode(childListBuilder.build());
+        if (item != null) {
+            String url = nullToEmpty(item.getUrl());
+            // don't process index paths, we treat them as a duplication of Parent group
+            if (LocalizationUtils.isIndexPath(url)) {
+                return null;
             }
 
-            return itemElementBuilder.build();
+            final SimpleElementBuilder builder = element("li").withNode(
+                    a(url).withTitle(item.getTitle()).withTextualContent(item.getTitle()).build()
+            );
+
+            if (item.getItems().isEmpty()) {
+                return builder.build();
+            }
+
+            SimpleElementBuilder innerUl = element("ul").withClass("list-unstyled");
+            for (SitemapItem child : item.getItems()) {
+                HtmlElement element = siteMapListHelper(child);
+                if (element != null) {
+                    innerUl.withNode(element);
+                }
+            }
+
+            builder.withNode(innerUl.build());
+
+
+            return builder.build();
         }
 
         return null;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String url(String path) {
         return webRequestContext.getContextPath() + path;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String versionedContent(String path) {
         Localization localization = webRequestContext.getLocalization();
@@ -95,7 +116,9 @@ public class MarkupImpl implements Markup {
         return webRequestContext.getContextPath() + localization.localizePath("/system/" + localization.getVersion() + path);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String region(RegionModel region) {
         return Joiner.on(' ').join(Arrays.asList(
@@ -103,7 +126,9 @@ public class MarkupImpl implements Markup {
                 new HtmlAttribute("resource", region.getName()).toHtml()));
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String entity(EntityModel entity) {
         final List<String> vocabularies = new ArrayList<>();
@@ -127,13 +152,17 @@ public class MarkupImpl implements Markup {
         return "";
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String property(EntityModel entity, String fieldName) {
         return property(entity, fieldName, 0);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String property(EntityModel entity, String fieldName, int index) {
 
@@ -181,19 +210,25 @@ public class MarkupImpl implements Markup {
         return markup;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String resource(String key) {
         return webRequestContext.getLocalization().getResource(key);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String formatDate(DateTime dateTime) {
         return DateTimeFormat.fullDate().withLocale(webRequestContext.getLocalization().getLocale()).print(dateTime);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String formatDateDiff(DateTime dateTime) {
         final int dayDiff = Days.daysBetween(dateTime.toLocalDate(), LocalDate.now()).getDays();
@@ -209,19 +244,25 @@ public class MarkupImpl implements Markup {
                 .print(dateTime);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String formatMessage(String pattern, Object... args) {
         return MessageFormat.format(pattern, args);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String replaceLineEndsWithHtmlBreaks(String text) {
         return text.replaceAll("\\. ", "<br/>");
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String siteMapList(SitemapItem item) {
         //todo dxa2 do this in JSP

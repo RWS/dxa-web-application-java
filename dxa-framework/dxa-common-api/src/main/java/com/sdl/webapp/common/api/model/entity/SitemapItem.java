@@ -80,7 +80,9 @@ public class SitemapItem extends AbstractEntityModel {
         this.items = items;
         if (items != null) {
             for (SitemapItem item : items) {
-                item.parent = this;
+                if (item != null) {
+                    item.parent = this;
+                }
             }
         }
     }

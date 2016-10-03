@@ -222,6 +222,7 @@ public final class LocalizationUtils {
 
     /**
      * Checks if the given path is an <code>index</code> path. Basically checks if the path ends with either 'index' or 'index.html'.
+     * Paths thath are finished with "/" and not with "index" are <strong>NOT</strong> index pages. Although they technically are.
      * <pre>
      *     /page/index =&gt; true
      *     /page/index.html =&gt; true
@@ -231,7 +232,7 @@ public final class LocalizationUtils {
      * @return true if index path, false otherwise
      */
     public static boolean isIndexPath(@Nullable String urlToCheck) {
-        return urlToCheck != null && INDEX_PATH_REGEXP.matcher(normalizePathToDefaults(urlToCheck)).matches();
+        return urlToCheck != null && INDEX_PATH_REGEXP.matcher(urlToCheck.replaceFirst("/$", "")).matches();
     }
 
     /**

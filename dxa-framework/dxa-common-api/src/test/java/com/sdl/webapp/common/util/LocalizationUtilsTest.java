@@ -228,9 +228,9 @@ public class LocalizationUtilsTest {
         assertTrue(LocalizationUtils.isIndexPath("/page/index"));
         assertTrue(LocalizationUtils.isIndexPath("/page/index.html"));
         assertTrue(LocalizationUtils.isIndexPath("/page/long/path/index.html"));
-        assertTrue(LocalizationUtils.isIndexPath("/"));
-        assertTrue(LocalizationUtils.isIndexPath("/page/"));
 
+        assertFalse(LocalizationUtils.isIndexPath("/"));
+        assertFalse(LocalizationUtils.isIndexPath("/page/"));
         assertFalse(LocalizationUtils.isIndexPath("/page"));
         assertFalse(LocalizationUtils.isIndexPath("page"));
         assertFalse(LocalizationUtils.isIndexPath(null));

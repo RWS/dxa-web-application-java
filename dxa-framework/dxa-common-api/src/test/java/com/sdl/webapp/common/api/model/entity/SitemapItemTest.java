@@ -97,7 +97,7 @@ public class SitemapItemTest {
         SitemapItem child = new SitemapItem();
 
         //when
-        sitemapItem.setItems(Lists.newArrayList(child));
+        sitemapItem.setItems(Lists.newArrayList(child, null));
 
         //then
         assertEquals(sitemapItem, child.getParent());

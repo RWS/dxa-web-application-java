@@ -13,7 +13,7 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -206,23 +206,42 @@ public class MarkupImplTest {
     @Test
     public void shouldReturnSiteMapList() {
         //given
-        SitemapItem sitemap = new SitemapItem();
-        sitemap.setUrl("http://dxa.com/");
-        sitemap.setTitle("DXA");
+        SitemapItem child11 = sitemapItem("11", "http://dxa.com/index", list());
 
-        SitemapItem sitemapChild = new SitemapItem();
-        sitemapChild.setUrl("http://dxa.com/index");
-        sitemapChild.setTitle("DXAChild");
+        SitemapItem child1 = sitemapItem("1", "http://dxa.com/", list(child11));
 
-        List<SitemapItem> siteItems = new ArrayList<>();
-        siteItems.add(sitemapChild);
+        SitemapItem child2 = sitemapItem("2", "", list(
+                sitemapItem("21", "http://sdl.com", list())
+        ));
 
-        sitemap.setItems(siteItems);
+        SitemapItem child3 = sitemapItem("3", null, list(
+                sitemapItem("31", "http://sdl.com", list())
+        ));
+
+        SitemapItem root = sitemapItem("Root", "", list(child1, child2, child3, null));
 
         //when
-        String siteMapListReturn = markup.siteMapList(sitemap);
+        String siteMapListReturn = markup.siteMapList(root);
 
         //then
-        assertEquals("<li><a href=\"http://dxa.com/\" title=\"DXA\">DXA</a><ul class=\"list-unstyled\"></ul></li>", siteMapListReturn);
+        assertEquals("<li><a href=\"\" title=\"Root\">Root</a>" +
+                "<ul class=\"list-unstyled\">" +
+                "<li><a href=\"http://dxa.com/\" title=\"1\">1</a><ul class=\"list-unstyled\"></ul></li>" +
+                "<li><a href=\"\" title=\"2\">2</a><ul class=\"list-unstyled\"><li><a href=\"http://sdl.com\" title=\"21\">21</a></li></ul></li>" +
+                "<li><a href=\"\" title=\"3\">3</a><ul class=\"list-unstyled\"><li><a href=\"http://sdl.com\" title=\"31\">31</a></li></ul></li>" +
+                "</ul>" +
+                "</li>", siteMapListReturn);
+    }
+
+    private SitemapItem sitemapItem(String title, String url, List<SitemapItem> items) {
+        SitemapItem item = new SitemapItem();
+        item.setUrl(url);
+        item.setTitle(title);
+        item.setItems(items);
+        return item;
+    }
+
+    private List<SitemapItem> list(SitemapItem... sitemapItems) {
+        return Arrays.asList(sitemapItems);
     }
 }

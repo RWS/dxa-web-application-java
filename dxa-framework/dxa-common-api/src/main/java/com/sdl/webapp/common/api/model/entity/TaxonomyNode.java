@@ -50,7 +50,9 @@ public class TaxonomyNode extends SitemapItem {
     @Override
     public List<SitemapItem> getItems() {
         List<SitemapItem> items = super.getItems();
-        Collections.sort(items, SITEMAP_SORT_BY_TITLE_AND_ID);
+        synchronized (SITEMAP_SORT_BY_TITLE_AND_ID) {
+            Collections.sort(items, SITEMAP_SORT_BY_TITLE_AND_ID);
+        }
         return items;
     }
 

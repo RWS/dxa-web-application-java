@@ -92,12 +92,12 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (navigationModel) {
                 if (navigationModel.isExpired()) {
-                    navigationModel.setExpired(false);
-
                     String taxonomyId = getNavigationTaxonomyIdInternal(localization);
                     if (isFallbackRequired(taxonomyId, localization)) {
                         return staticNavigationProvider.getNavigationModel(localization);
                     }
+
+                    navigationModel.setExpired(false);
 
                     navigationModel.setPayload(createTaxonomyNode(taxonomyId, localization));
                     log.debug("Put navigation model for taxonomy id {} for localization id {} in cache", taxonomyId, localization.getId());

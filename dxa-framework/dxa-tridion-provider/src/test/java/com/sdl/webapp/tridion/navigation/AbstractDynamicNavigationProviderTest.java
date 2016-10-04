@@ -14,6 +14,7 @@ import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
+import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.impl.CacheElementImpl;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.hamcrest.BaseMatcher;
@@ -24,6 +25,7 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -81,6 +83,8 @@ public class AbstractDynamicNavigationProviderTest {
     private LinkResolver linkResolver = mock(LinkResolver.class);
 
     private PayloadCacheProvider payloadCacheProvider = mock(PayloadCacheProvider.class);
+
+    private CacheElement<Object> cacheElement = spy(new CacheElementImpl<>(null, true));
 
     private AbstractDynamicNavigationProvider defaultDynamicNavigationProvider = getTestProvider(false, getNavigationModel(), "taxonomyId");
 
@@ -150,7 +154,7 @@ public class AbstractDynamicNavigationProviderTest {
             }
         });
 
-        when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(new CacheElementImpl<>(null, true));
+        when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(cacheElement);
 
 
         doReturn(Collections.<SitemapItem>emptyList()).when(defaultDynamicNavigationProvider).expandDescendants(
@@ -295,6 +299,10 @@ public class AbstractDynamicNavigationProviderTest {
         SitemapItem sitemapItem = testProvider.getNavigationModel(localization);
 
         //then
+        //TSI-2001
+        verify(cacheElement, never()).setPayload(Matchers.anyObject());
+        verify(cacheElement, never()).setExpired(anyBoolean());
+
         verify(staticNavigationProvider).getNavigationModel(eq(localization));
         verify(testProvider).getNavigationTaxonomyId(eq(localization));
         assertEquals("Static", sitemapItem.getTitle());

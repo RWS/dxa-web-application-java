@@ -227,6 +227,7 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
                 .id(pageMeta.getId())
                 .title(pageMeta.getTitle())
                 .url(pageMeta.getURLPath())
+                .publishedDate(pageMeta.getLastPublicationDate())
                 .build();
     }
 

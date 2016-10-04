@@ -25,6 +25,7 @@ import org.dd4t.providers.PayloadCacheProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -247,6 +248,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         item.setTitle(page.getTitle());
         item.setUrl(stripDefaultExtension(page.getUrl()));
         item.setVisible(isVisibleItem(page.getTitle(), page.getUrl()));
+        item.setPublishedDate(new DateTime(page.getPublishedDate()));
         return item;
     }
 

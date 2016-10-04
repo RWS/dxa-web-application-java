@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.util;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -29,7 +30,7 @@ public final class LocalizationUtils {
 
     private static final Pattern PAGE_TITLE_SEQUENCE = Pattern.compile("^(?<sequence>\\d{3}\\s?)(?<pageName>(?<sequenceStop>[^\\d]).*)$");
 
-    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/index(\\.html)?)$");
+    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/(index(\\.html)?)?)$");
 
     /**
      * Retrieves the schema ID from the localization configuration by the schema key.
@@ -160,6 +161,18 @@ public final class LocalizationUtils {
     }
 
     /**
+     * Extracts the current request URL from current request and replaces it with a given path.
+     *
+     * @param webRequestContext current {@link WebRequestContext}
+     * @param newPath           path to replace the old path with
+     * @return full URL of current request with given path appended
+     */
+    @Contract("_, _ -> !null")
+    public static String replaceRequestContextPath(@NotNull WebRequestContext webRequestContext, @NotNull String newPath) {
+        return webRequestContext.getBaseUrl().replace(webRequestContext.getRequestPath(), newPath.startsWith("/") ? newPath : ("/" + newPath));
+    }
+
+    /**
      * Removes sequence digits from the page title. Sequence number is always 3-digit.
      * If no sequence number is found, then the string is not changed.
      * <pre>
@@ -209,6 +222,7 @@ public final class LocalizationUtils {
 
     /**
      * Checks if the given path is an <code>index</code> path. Basically checks if the path ends with either 'index' or 'index.html'.
+     * Paths thath are finished with "/" and not with "index" are <strong>NOT</strong> index pages. Although they technically are.
      * <pre>
      *     /page/index =&gt; true
      *     /page/index.html =&gt; true
@@ -218,7 +232,39 @@ public final class LocalizationUtils {
      * @return true if index path, false otherwise
      */
     public static boolean isIndexPath(@Nullable String urlToCheck) {
-        return urlToCheck != null && INDEX_PATH_REGEXP.matcher(normalizePathToDefaults(urlToCheck)).matches();
+        return urlToCheck != null && INDEX_PATH_REGEXP.matcher(urlToCheck.replaceFirst("/$", "")).matches();
+    }
+
+    /**
+     * Decides if the current request path is in a given context path. In other words decides whether requested {@code path}
+     * is in a context of current {@code request}.
+     * <pre>
+     *     request to {@code /page} is in context of path {@code /page}
+     *     request to {@code /page/child} is in context of path {@code /page} and {@code /page/child}
+     *            but definitely not in {@code /other} nor {@code /other/child}
+     * </pre>
+     * <p>There is a special treatment of {@code /} home requests. Home request is only in same context if path is
+     * <strong>exactly {@code /}</strong></p> because any request then is in context of home.
+     *
+     * @param requestPath  current request path
+     * @param localization current localization
+     * @param path         given path to test against
+     * @return whether we can say that request is under context of path
+     */
+    public static boolean isActiveContextPath(@Nullable String requestPath, @NonNull Localization localization, @Nullable String path) {
+        String stripIndexPath = stripIndexPath(path);
+        String originatingRequestUri = stripIndexPath(requestPath);
+        if (stripIndexPath == null || originatingRequestUri == null) {
+            log.trace("Path or originating path is null, return false");
+            return false;
+        }
+
+
+        if (isHomePath(originatingRequestUri, localization) || isHomePath(stripIndexPath, localization)) {
+            return stripIndexPath.equalsIgnoreCase(originatingRequestUri);
+        }
+
+        return originatingRequestUri.startsWith(stripIndexPath);
     }
 
     /**

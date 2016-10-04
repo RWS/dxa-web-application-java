@@ -28,6 +28,10 @@ import java.util.Properties;
 @Slf4j
 public final class InitializationUtils {
 
+    private static final String REGISTERED_FOR_MAPPING_LOG_MESSAGE = "Registered {} for mapping {}";
+
+    private static final String REGISTERED_LOG_MESSAGE = "Registered {}";
+
     // keep the order for internal usage
     private static List<Resource> resources;
 
@@ -63,7 +67,7 @@ public final class InitializationUtils {
             properties = dxaProperties;
         }
 
-        log.debug("Properties {} returned", properties);
+        log.trace("Properties {} returned", properties);
         return properties;
     }
 
@@ -96,7 +100,7 @@ public final class InitializationUtils {
             resources = availableResources;
         }
 
-        log.debug("Returned list of resources {}", resources);
+        log.trace("Returned list of resources {}", resources);
         return resources;
     }
 
@@ -112,7 +116,7 @@ public final class InitializationUtils {
                                                               @NonNull Servlet servlet, @NonNull String mapping) {
         ServletRegistration.Dynamic registration = servletContext.addServlet(servlet.getClass().getName(), servlet);
         registration.addMapping(mapping);
-        log.debug("Registered {} for mapping {}", servlet.getClass(), mapping);
+        log.info(REGISTERED_FOR_MAPPING_LOG_MESSAGE, servlet.getClass(), mapping);
         return registration;
     }
 
@@ -129,10 +133,10 @@ public final class InitializationUtils {
         if (isClassPresent(className)) {
             ServletRegistration.Dynamic registration = servletContext.addServlet(className, className);
             registration.addMapping(mapping);
-            log.debug("Registered {} for mapping {}", className, mapping);
+            log.debug(REGISTERED_FOR_MAPPING_LOG_MESSAGE, className, mapping);
             return registration;
         }
-        log.debug("Failed to register {}", className);
+        log.info("Failed to register {}", className);
         return null;
     }
 
@@ -144,7 +148,7 @@ public final class InitializationUtils {
      */
     public static boolean isClassPresent(@NonNull String className) {
         boolean present = ClassUtils.isPresent(className, ClassUtils.getDefaultClassLoader());
-        log.debug("{} isClassPresent: {}", className, present);
+        log.trace("{} isClassPresent: {}", className, present);
         return present;
     }
 
@@ -200,7 +204,7 @@ public final class InitializationUtils {
 
         FilterRegistration.Dynamic registration = servletContext.addFilter(clazz.getName(), clazz);
         registration.addMappingForUrlPatterns(null, false, urlMappings);
-        log.debug("Registered {} for mapping {}", clazz.getName(), urlMappings);
+        log.info(REGISTERED_FOR_MAPPING_LOG_MESSAGE, clazz.getName(), urlMappings);
         return registration;
     }
 
@@ -217,10 +221,10 @@ public final class InitializationUtils {
         if (isClassPresent(className)) {
             FilterRegistration.Dynamic registration = servletContext.addFilter(className, className);
             registration.addMappingForUrlPatterns(null, false, urlMappings);
-            log.debug("Registered {} for mapping {}", className, urlMappings);
+            log.info(REGISTERED_FOR_MAPPING_LOG_MESSAGE, className, urlMappings);
             return registration;
         }
-        log.debug("Failed to register {}, class is not in classpath", className);
+        log.warn("Failed to register {}, class is not in classpath", className);
         return null;
     }
 
@@ -236,7 +240,7 @@ public final class InitializationUtils {
                                                             @NonNull Filter filter, @NonNull String... urlMappings) {
         FilterRegistration.Dynamic registration = servletContext.addFilter(filter.getClass().getName(), filter);
         registration.addMappingForUrlPatterns(null, false, urlMappings);
-        log.debug("Registered {} for mapping {}", filter.getClass().getName(), urlMappings);
+        log.info(REGISTERED_FOR_MAPPING_LOG_MESSAGE, filter.getClass().getName(), urlMappings);
         return registration;
     }
 
@@ -249,9 +253,9 @@ public final class InitializationUtils {
     public static void registerListener(@NonNull ServletContext servletContext, @NonNull String className) {
         if (isClassPresent(className)) {
             servletContext.addListener(className);
-            log.debug("Registered {}", className);
+            log.info(REGISTERED_LOG_MESSAGE, className);
         } else {
-            log.debug("Failed to register {}, class is not in classpath", className);
+            log.warn("Failed to register {}, class is not in classpath", className);
         }
     }
 
@@ -264,7 +268,7 @@ public final class InitializationUtils {
     public static void registerListener(@NonNull ServletContext servletContext,
                                         @NonNull Class<? extends EventListener> listenerClass) {
         servletContext.addListener(listenerClass);
-        log.debug("Registered {}", listenerClass.getClass().getName());
+        log.info(REGISTERED_LOG_MESSAGE, listenerClass.getClass().getName());
     }
 
     /**
@@ -275,7 +279,6 @@ public final class InitializationUtils {
      */
     public static void registerListener(@NonNull ServletContext servletContext, @NonNull EventListener listener) {
         servletContext.addListener(listener);
-        log.debug("Registered {}", listener.getClass().getName());
+        log.info(REGISTERED_LOG_MESSAGE, listener.getClass().getName());
     }
-
 }

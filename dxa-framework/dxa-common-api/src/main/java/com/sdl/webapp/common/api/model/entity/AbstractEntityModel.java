@@ -14,6 +14,7 @@ import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 
 import java.util.Map;
@@ -27,6 +28,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @EqualsAndHashCode(callSuper = true)
 @SemanticMappingIgnore
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
 public abstract class AbstractEntityModel extends AbstractViewModel implements EntityModel, RichTextFragment {
 
     @JsonProperty("Id")
@@ -34,6 +36,12 @@ public abstract class AbstractEntityModel extends AbstractViewModel implements E
 
     @JsonProperty("XpmPropertyMetadata")
     private Map<String, String> xpmPropertyMetadata;
+
+    public AbstractEntityModel(AbstractEntityModel other) {
+        super(other);
+        this.id = other.id;
+        this.xpmPropertyMetadata = other.xpmPropertyMetadata;
+    }
 
     /**
      * {@inheritDoc}

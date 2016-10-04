@@ -108,6 +108,7 @@ public class StaticNavigationProviderTest {
         child1Group.setItems(Lists.newArrayList(child1, child11));
         child11Group.setItems(Lists.newArrayList(child11));
 
+        // CM orders navigation model and the collection IS already sorted once we load it in DXA
         when(objectMapper.readValue(any(InputStream.class), eq(SitemapItem.class))).thenReturn(parentGroup);
     }
 

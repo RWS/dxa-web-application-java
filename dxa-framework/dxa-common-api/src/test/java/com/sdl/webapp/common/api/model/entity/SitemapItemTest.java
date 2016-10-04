@@ -55,20 +55,26 @@ public class SitemapItemTest {
         //given 
         SitemapItem sitemapItem = new SitemapItem();
         sitemapItem.setUrl("url");
+
         SitemapItem itemToFind = new SitemapItem();
         itemToFind.setUrl("path");
         itemToFind.setTitle("title");
+
         SitemapItem parent = new SitemapItem();
         parent.setUrl("parent");
         parent.setItems(Lists.newArrayList(itemToFind));
+
         sitemapItem.setItems(Lists.newArrayList(parent));
 
         //when
         SitemapItem found = sitemapItem.findWithUrl("path");
+        //TSI-1956
+        SitemapItem foundWithSlash = sitemapItem.findWithUrl("path/");
 
         //then
         assertNotNull(found);
         assertEquals(itemToFind, found);
+        assertEquals(itemToFind, foundWithSlash);
     }
 
     @Test
@@ -91,10 +97,27 @@ public class SitemapItemTest {
         SitemapItem child = new SitemapItem();
 
         //when
-        sitemapItem.setItems(Lists.newArrayList(child));
+        sitemapItem.setItems(Lists.newArrayList(child, null));
 
         //then
         assertEquals(sitemapItem, child.getParent());
     }
 
+    @Test
+    public void shouldSetOriginalTitleWhenSettingTitle() {
+        //given
+        SitemapItem sitemapItem = new SitemapItem();
+
+        //when
+        sitemapItem.setTitle("title");
+
+        //then
+        assertEquals("title", sitemapItem.getOriginalTitle());
+
+        //when
+        sitemapItem.setTitle("another title");
+
+        //then original title wasn't changed
+        assertEquals("title", sitemapItem.getOriginalTitle());
+    }
 }

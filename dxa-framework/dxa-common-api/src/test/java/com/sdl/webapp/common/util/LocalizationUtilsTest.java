@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.util;
 
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -212,12 +213,12 @@ public class LocalizationUtilsTest {
 
     @Test
     public void shouldDefineWhetherThePathIsHome() {
-        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization("/")));
-        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization(null)));
-        assertTrue(LocalizationUtils.isHomePath("/childpub", mockLocalization("/childpub")));
+        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization("/", "1")));
+        assertTrue(LocalizationUtils.isHomePath("/", mockLocalization(null, "1")));
+        assertTrue(LocalizationUtils.isHomePath("/childpub", mockLocalization("/childpub", "1")));
 
-        assertFalse(LocalizationUtils.isHomePath("/nothome", mockLocalization("/")));
-        assertFalse(LocalizationUtils.isHomePath("/childpub/nothome", mockLocalization("/childpub")));
+        assertFalse(LocalizationUtils.isHomePath("/nothome", mockLocalization("/", "1")));
+        assertFalse(LocalizationUtils.isHomePath("/childpub/nothome", mockLocalization("/childpub", "1")));
     }
 
     @Test
@@ -227,9 +228,9 @@ public class LocalizationUtilsTest {
         assertTrue(LocalizationUtils.isIndexPath("/page/index"));
         assertTrue(LocalizationUtils.isIndexPath("/page/index.html"));
         assertTrue(LocalizationUtils.isIndexPath("/page/long/path/index.html"));
-        assertTrue(LocalizationUtils.isIndexPath("/"));
-        assertTrue(LocalizationUtils.isIndexPath("/page/"));
 
+        assertFalse(LocalizationUtils.isIndexPath("/"));
+        assertFalse(LocalizationUtils.isIndexPath("/page/"));
         assertFalse(LocalizationUtils.isIndexPath("/page"));
         assertFalse(LocalizationUtils.isIndexPath("page"));
         assertFalse(LocalizationUtils.isIndexPath(null));
@@ -244,14 +245,74 @@ public class LocalizationUtilsTest {
         assertEquals("/page", LocalizationUtils.stripIndexPath("/page/index.html"));
 
         assertEquals("/page/page.html", LocalizationUtils.stripIndexPath("/page/page.html"));
+        assertEquals("/page/page", LocalizationUtils.stripIndexPath("/page/page"));
+        assertEquals("/page/page", LocalizationUtils.stripIndexPath("/page/page/"));
         assertEquals("", LocalizationUtils.stripIndexPath(""));
         assertEquals("/", LocalizationUtils.stripIndexPath("/"));
         assertNull(LocalizationUtils.stripIndexPath(null));
     }
 
+    @Test
+    public void shouldReplaceCurrentPathWithGiven() {
+        //given
+        WebRequestContext context = mock(WebRequestContext.class);
+        when(context.getBaseUrl()).thenReturn("http://sdl.com/my/path/index.html");
+        when(context.getRequestPath()).thenReturn("/my/path/index.html");
+
+        //when
+        String path = LocalizationUtils.replaceRequestContextPath(context, "/newPath.html");
+        String path2 = LocalizationUtils.replaceRequestContextPath(context, "newPath.html");
+
+        //then
+        assertEquals("http://sdl.com/newPath.html", path);
+        assertEquals("http://sdl.com/newPath.html", path);
+    }
+
+    @Test
+    public void shouldResolveWhetherPathIsInRequestContext() {
+        //given
+        String path = "/page/about";
+        Localization localization = mockLocalization("/", "1");
+
+        //when, then
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/page"));
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/page/"));
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/page/about"));
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/page/about/"));
+
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/"));
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/page/about/path"));
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/other"));
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, null));
+    }
+
+
+    @Test
+    public void shouldTreatHomeSpecially() {
+        //given
+        String path = "/";
+        Localization localization = mockLocalization("/", "1");
+
+        //when, then
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/"));
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/test"));
+    }
+
+    @Test
+    public void shouldTreatHomeSpeciallyIfLocalizationIsNotRoot() {
+        //given
+        String path = "/test";
+        Localization localization = mockLocalization("/test", "1");
+
+        //when, then
+        assertTrue(LocalizationUtils.isActiveContextPath(path, localization, "/test"));
+        assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/"));
+    }
+
     @NotNull
-    private Localization mockLocalization(String path) {
+    private Localization mockLocalization(String path, String id) {
         Localization localization = mock(Localization.class);
+        when(localization.getId()).thenReturn(id);
         when(localization.getPath()).thenReturn(path);
         return localization;
     }

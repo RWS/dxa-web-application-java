@@ -3,6 +3,8 @@ package com.sdl.webapp.common.util;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.springframework.core.io.Resource;
+import org.springframework.web.context.ConfigurableWebApplicationContext;
+import org.springframework.web.context.ConfigurableWebEnvironment;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -28,6 +30,7 @@ import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 public class InitializationUtilsTest {
@@ -273,5 +276,39 @@ public class InitializationUtilsTest {
         verify(context, never()).addServlet(same(className), same(className));
         verify(filterRegistration, never()).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
         assertNull(servletRegistration1);
+    }
+
+    @Test
+    public void shouldSkipLoadingSpringProfilesFromPropertiesIfTheyAreInContext() {
+        //given 
+        ServletContext servletContext = mock(ServletContext.class);
+        ConfigurableWebApplicationContext applicationContext = mock(ConfigurableWebApplicationContext.class);
+
+        when(servletContext.getInitParameter(anyString())).thenReturn("not null");
+
+        //when
+        InitializationUtils.loadActiveSpringProfiles(servletContext, applicationContext);
+
+        //then
+        verify(servletContext).getInitParameter("spring.profiles.active");
+        verifyZeroInteractions(applicationContext);
+    }
+
+    @Test
+    public void shouldLoadActiveAndIncludeSpringProfiles() {
+        //given
+        ServletContext servletContext = mock(ServletContext.class);
+        ConfigurableWebApplicationContext applicationContext = mock(ConfigurableWebApplicationContext.class);
+        ConfigurableWebEnvironment environment = mock(ConfigurableWebEnvironment.class);
+
+        when(applicationContext.getEnvironment()).thenReturn(environment);
+
+        //when
+        InitializationUtils.loadActiveSpringProfiles(servletContext, applicationContext);
+
+        //then
+        for (String profile : new String[]{"profile1", "profile2", "profile3", "profile4", "profile5"}) {
+            verify(environment).addActiveProfile(eq(profile));
+        }
     }
 }

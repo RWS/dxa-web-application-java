@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion.navigation;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -7,7 +8,9 @@ import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
+import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
+import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
@@ -17,15 +20,21 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
+import static com.google.common.collect.Lists.newArrayList;
+import static com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder.parse;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
 import static org.junit.Assert.assertEquals;
@@ -33,15 +42,36 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+/**
+ * Tests for On-demand for each use case:
+ * <pre>
+ * Type  Ancest.  Desc.   Name of test
+ * k     true     0 //shouldExpandAncestorsKeywordDescendantsZero
+ * k     true     1 //shouldExpandAncestorsKeywordDescendantsOne
+ * k     false    0 //shouldNotExpandAncestorsKeywordDescendantsZero
+ * k     false    1 //shouldNotExpandAncestorsKeywordDescendantsOne
+ * p     true     0 //shouldExpandAncestorsPageDescendantsZero
+ * p     true     1 //shouldExpandAncestorsPageDescendantsOne
+ * p     false    0 //shouldNotExpandAncestorsPageDescendantsZero
+ * p     false    1 //shouldNotExpandAncestorsPageDescendantsOne
+ * pm    true     0 //shouldExpandAncestorsMultiPageDescendantsZero
+ * pm    true     1 //shouldExpandAncestorsMultiPageDescendantsOne
+ * pm    false    0 //shouldNotExpandAncestorsMultiPageDescendantsZero
+ * pm    false    1 //shouldNotExpandAncestorsMultiPageDescendantsOne
+ * </pre>
+ */
 public class AbstractDynamicNavigationProviderTest {
 
     private StaticNavigationProvider staticNavigationProvider = mock(StaticNavigationProvider.class);
@@ -63,6 +93,16 @@ public class AbstractDynamicNavigationProviderTest {
             }
 
             @Override
+            protected List<SitemapItem> expandTaxonomyRoots(NavigationFilter navigationFilter, Localization localization) {
+                return null;
+            }
+
+            @Override
+            protected List<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+                return null;
+            }
+
+            @Override
             protected SitemapItem createTaxonomyNode(String taxonomyId, Localization localization) {
                 return model;
             }
@@ -70,6 +110,17 @@ public class AbstractDynamicNavigationProviderTest {
             @Override
             protected String getNavigationTaxonomyId(Localization localization) {
                 return taxonomyId;
+            }
+
+            @Nullable
+            @Override
+            protected TaxonomyNode expandAncestorsForKeyword(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+                return null;
+            }
+
+            @Override
+            protected List<SitemapItem> collectAncestorsForPage(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+                return null;
             }
         };
 
@@ -80,6 +131,8 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Before
     public void init() throws NavigationProviderException, DxaException {
+        when(localization.getId()).thenReturn("1");
+
         SitemapItem staticSitemapItem = new SitemapItem();
         staticSitemapItem.setTitle("Static");
         when(staticNavigationProvider.getNavigationModel(eq(localization))).thenReturn(staticSitemapItem);
@@ -98,6 +151,128 @@ public class AbstractDynamicNavigationProviderTest {
         });
 
         when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(new CacheElementImpl<>(null, true));
+
+
+        doReturn(Collections.<SitemapItem>emptyList()).when(defaultDynamicNavigationProvider).expandDescendants(
+                any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
+
+
+        mockSingleAncestorForKeyword("t1-k22", taxonomyNode("t1", "/", true, list(
+                taxonomyNode("t1-k2", "/child", true, list(
+                        taxonomyNode("t1-k22", "/child/child_2", true, list())
+                ))
+        )));
+
+        //region Descendants
+        doReturn(Collections.<SitemapItem>emptyList()).when(defaultDynamicNavigationProvider).expandDescendants(
+                any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
+
+        mockDescendants("t1", list(
+                siteMapItem("t1-p1", true, "/index"),
+                taxonomyNode("t1-k2", "/child", true, list()),
+                siteMapItem("t1-p3", true, "/about"),
+                siteMapItem("t1-p4", true, "/imitation_home"),
+                siteMapItem("t1-p5", false, "/hidden"),
+                siteMapItem("t1-p6", true, ""),
+                siteMapItem("t1-p7", true, null)
+        ));
+
+        mockDescendants("t1-k2", list(
+                taxonomyNode("t1-k22", "/child/child_2", true, list()),
+                taxonomyNode("t1-p23", "/child/child_3", true, list()),
+                taxonomyNode("t1-k24", "/child/child_4", true, list())
+        ));
+
+        mockDescendants("t1-k22", list(
+                siteMapItem("t1-p220", true, "/child/child_2/index"),
+                siteMapItem("t1-p221", true, "/child/child_2/child_2_1"),
+                siteMapItem("t1-p222", true, "/child/child_2/child_2_2")
+        ));
+
+        //TSI-1980, should never be called
+        mockDescendants("t1-p211", list(
+                siteMapItem("t1-p2211", true, "/child/child_2/child_2_1/child_2_1_1")
+        ));
+
+        mockDescendants("t1-k24", list(
+                siteMapItem("t1-p222", true, "/child/child_2/child_2_2")
+        ));
+        //endregion
+
+        mockAncestorsForPage("t1-p220", list(
+                taxonomyNode("t1", "/", true, list(
+                        taxonomyNode("t1-k2", "/child", true, list(
+                                taxonomyNode("t1-k22", "/child/child_2", true, list())
+                        ))
+                ))
+        ));
+
+        mockAncestorsForPage("t1-p222", list(
+                taxonomyNode("t1", "/", true, list(
+                        taxonomyNode("t1-k2", "/child", true, list(
+                                taxonomyNode("t1-k22", "/child/child_2", true, list())
+                        ))
+                )),
+                taxonomyNode("t1", "/", true, list(
+                        taxonomyNode("t1-k2", "/child", true, list(
+                                taxonomyNode("t1-k24", "/child/child_4", true, list())
+                        ))
+                ))
+        ));
+    }
+
+    @After
+    public void finish() {
+        //TSI-1980, never called because it's a page, don't attempt to get descendants for page
+        verify(defaultDynamicNavigationProvider, never())
+                .expandDescendants(argThat(keyToItemsMatcher("t1-p211")), any(NavigationFilter.class), any(Localization.class));
+    }
+
+    @NotNull
+    private TaxonomyNode getNavigationModel() {
+        return taxonomyNode("t1", "/", true, getSitemapItems());
+    }
+
+    @NotNull
+    private List<SitemapItem> getSitemapItems() {
+        /*
+        ROOT:
+            +/index
+            +/child
+                +/child/child_2
+                    +/child/child_2/index
+                    +/child/child_2/child_2_1
+                    +/child/child_2/child_2_2
+                +/child/child_3
+                +/child/child_4
+                    +/child/child_2/child_2_2
+            +/about
+            +/imitation_home
+            -/hidden
+            +""
+            +null
+        */
+
+        return newArrayList(
+                siteMapItem("t1-p1", true, "/index"),
+                taxonomyNode("t1-k2", "/child", true,
+                        newArrayList(
+                                taxonomyNode("t1-k22", "/child/child_2", true, newArrayList(
+                                        siteMapItem("t1-p220", true, "/child/child_2/index"),
+                                        siteMapItem("t1-p221", true, "/child/child_2/child_2_1"),
+                                        siteMapItem("t1-p222", true, "/child/child_2/child_2_2"))
+                                ),
+                                siteMapItem("t1-p23", true, "/child/child_3"),
+                                taxonomyNode("t1-k24", "/child/child_4", true, newArrayList(
+                                        //duplicate page (sic!)
+                                        siteMapItem("t1-p222", true, "/child/child_2/child_2_2"))
+                                )
+                        )),
+                siteMapItem("t1-p3", true, "/about"),
+                siteMapItem("t1-p4", true, "/imitation_home"),
+                siteMapItem("t1-p5", false, "/hidden"),
+                siteMapItem("t1-p6", true, ""),
+                siteMapItem("t1-p7", true, null));
     }
 
     @Test
@@ -171,10 +346,10 @@ public class AbstractDynamicNavigationProviderTest {
         List<SitemapItem> items = getSitemapItems();
 
         //when
-        List<Link> links = defaultDynamicNavigationProvider.prepareItemsAsVisibleNavigation(localization, items).getItems();
+        List<Link> links = defaultDynamicNavigationProvider.prepareItemsAsVisibleNavigation(localization, items, true).getItems();
 
         //then
-        assertTrue(links.size() == 3);
+        assertTrue(links.size() == 4);
         assertEquals("resolved-/index", links.get(0).getUrl());
     }
 
@@ -185,8 +360,12 @@ public class AbstractDynamicNavigationProviderTest {
         String expected = "hello-world";
 
         //when
-        String index = defaultDynamicNavigationProvider.findIndexPageUrl(Lists.newArrayList(siteMapItem(true, "qwe"), siteMapItem(true, url)));
-        String notFound = defaultDynamicNavigationProvider.findIndexPageUrl(Lists.newArrayList(siteMapItem(true, "qwe"), siteMapItem(true, "asd")));
+        String index = defaultDynamicNavigationProvider.findIndexPageUrl(newArrayList(
+                siteMapItem("t1-p1", true, "qwe"),
+                siteMapItem("t1-p2", true, url)));
+        String notFound = defaultDynamicNavigationProvider.findIndexPageUrl(newArrayList(
+                siteMapItem("t1-p1", true, "qwe"),
+                siteMapItem("t1-p2", true, "asd")));
 
         //then
         assertEquals(expected, index);
@@ -195,10 +374,10 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Test
     public void shouldProcessNavigationFromTheTop() throws NavigationProviderException {
-        verifyProcessNavigationWithMatcher(new Action() {
+        prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
-            public void perform() throws NavigationProviderException {
-                defaultDynamicNavigationProvider.getTopNavigationLinks("/", localization);
+            public NavigationLinks perform() throws NavigationProviderException {
+                return defaultDynamicNavigationProvider.getTopNavigationLinks("/", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -217,11 +396,11 @@ public class AbstractDynamicNavigationProviderTest {
     }
 
     @Test
-    public void shouldProcessNavigationFromTheCurrentContext() throws NavigationProviderException {
-        verifyProcessNavigationWithMatcher(new Action() {
+    public void shouldProcessNavigationFromTheCurrentContextForTaxonomyWithIndex() throws NavigationProviderException {
+        prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
-            public void perform() throws NavigationProviderException {
-                defaultDynamicNavigationProvider.getContextNavigationLinks("/child/child_2", localization);
+            public NavigationLinks perform() throws NavigationProviderException {
+                return defaultDynamicNavigationProvider.getContextNavigationLinks("/child/child_2", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -229,10 +408,11 @@ public class AbstractDynamicNavigationProviderTest {
             public boolean matches(Object item) {
                 List<SitemapItem> list = (List<SitemapItem>) item;
 
-                //we expect parent instead of child
+                //child_2 has an index page, so we're getting its siblings instead of child_3
                 Iterator<SitemapItem> iterator = list.iterator();
-                return iterator.next().getUrl().equals("/child/child_2") &&
-                        iterator.next().getUrl().equals("/child/child_3") &&
+                return iterator.next().getUrl().equals("/child/child_2/index") &&
+                        iterator.next().getUrl().equals("/child/child_2/child_2_1") &&
+                        iterator.next().getUrl().equals("/child/child_2/child_2_2") &&
                         !iterator.hasNext();
             }
 
@@ -244,11 +424,87 @@ public class AbstractDynamicNavigationProviderTest {
     }
 
     @Test
-    public void shouldProcessNavigationFromTheCurrentContextWhenNothingFound() throws NavigationProviderException {
-        verifyProcessNavigationWithMatcher(new Action() {
+    public void shouldProcessNavigationFromTheCurrentContextAndGetParentItems() throws NavigationProviderException {
+        prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
-            public void perform() throws NavigationProviderException {
-                defaultDynamicNavigationProvider.getContextNavigationLinks("not exist", localization);
+            public NavigationLinks perform() throws NavigationProviderException {
+                return defaultDynamicNavigationProvider.getContextNavigationLinks("/child/child_3", localization);
+            }
+        }, new BaseMatcher<List<SitemapItem>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                List<SitemapItem> list = (List<SitemapItem>) item;
+
+                //child_3 has a parent, so we expect its parent's children
+                Iterator<SitemapItem> iterator = list.iterator();
+                return iterator.next().getUrl().equals("/child/child_2") &&
+                        iterator.next().getUrl().equals("/child/child_3") &&
+                        iterator.next().getUrl().equals("/child/child_4") &&
+                        !iterator.hasNext();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Context navigation should find current context level");
+            }
+        });
+    }
+
+    @Test
+    public void shouldProcessNavigationFromTheCurrentContextOnTheRoot() throws NavigationProviderException {
+        NavigationLinks links = prepareItemsAsVisibleNavigationCalledWith(new Action() {
+            @Override
+            public NavigationLinks perform() throws NavigationProviderException {
+                return defaultDynamicNavigationProvider.getContextNavigationLinks("/index", localization);
+            }
+        }, new BaseMatcher<List<SitemapItem>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                List<SitemapItem> list = (List<SitemapItem>) item;
+
+                //we expect filtering to be called with whole root level list of items
+                Iterator<SitemapItem> iterator = list.iterator();
+                return iterator.next().getUrl().equals("/index") &&
+                        iterator.next().getUrl().equals("/child") &&
+                        iterator.next().getUrl().equals("/about") &&
+                        iterator.next().getUrl().equals("/imitation_home") &&
+                        iterator.next().getUrl().equals("/hidden") &&
+                        iterator.next().getId().equals("t1-p6") &&
+                        iterator.next().getId().equals("t1-p7") &&
+                        !iterator.hasNext();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Context navigation should find current context level");
+            }
+        });
+
+        //then
+        //although links are filtered and resolved
+        Iterator<Link> iterator = links.getItems().iterator();
+        assertTrue(iterator.next().getUrl().equals("resolved-/index"));
+        assertTrue(iterator.next().getUrl().equals("resolved-/child"));
+        assertTrue(iterator.next().getUrl().equals("resolved-/about"));
+        assertTrue(iterator.next().getUrl().equals("resolved-/imitation_home"));
+        assertFalse(iterator.hasNext());
+
+        //also when
+        //TSI-1956
+        NavigationLinks linksIndexInPath = defaultDynamicNavigationProvider.getContextNavigationLinks("/index/", localization);
+
+        //also then
+        assertEquals(links, linksIndexInPath);
+    }
+
+    @Test
+    public void shouldProcessNavigationFromTheCurrentContextWhenNothingFound() throws NavigationProviderException {
+        prepareItemsAsVisibleNavigationCalledWith(new Action() {
+            @Override
+            public NavigationLinks perform() throws NavigationProviderException {
+                return defaultDynamicNavigationProvider.getContextNavigationLinks("not exist", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -270,10 +526,10 @@ public class AbstractDynamicNavigationProviderTest {
     public void shouldProcessNavigationForBreadcrumbs() throws NavigationProviderException {
         when(localization.getPath()).thenReturn("/");
 
-        verifyProcessNavigationWithMatcher(new Action() {
+        NavigationLinks links = prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
-            public void perform() throws NavigationProviderException {
-                defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/child/child_2", localization);
+            public NavigationLinks perform() throws NavigationProviderException {
+                return defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/child/child_2", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -293,16 +549,51 @@ public class AbstractDynamicNavigationProviderTest {
                 description.appendText("Context navigation should find current context level for breadcrumbs");
             }
         });
+
+        //also when
+        //TSI-1956
+        NavigationLinks linksIndexInPath = defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/child/child_2/", localization);
+
+        //also then
+        assertEquals(links, linksIndexInPath);
+    }
+
+    @Test //TSI-1958
+    public void shouldIncludeEvenHiddenElementsIntoBreadcrumb() throws NavigationProviderException {
+        NavigationLinks links = prepareItemsAsVisibleNavigationCalledWith(new Action() {
+            @Override
+            public NavigationLinks perform() throws NavigationProviderException {
+                return defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/hidden", localization);
+            }
+        }, new BaseMatcher<List<SitemapItem>>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public boolean matches(Object item) {
+                List<SitemapItem> list = (List<SitemapItem>) item;
+
+                Iterator<SitemapItem> iterator = list.iterator();
+                return iterator.next().getUrl().equals("/hidden") &&
+                        !iterator.hasNext();
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Context navigation should include hidden elements for breadcrumbs");
+            }
+        });
+
+        assertFalse("Hidden element not filtered", links.getItems().isEmpty());
+        assertTrue("The only element is resolved-/hidden", links.getItems().get(0).getUrl().equals("resolved-/hidden"));
     }
 
     @Test
     public void shouldFindHomeIfItsASibling() throws NavigationProviderException {
         when(localization.getPath()).thenReturn("/imitation_home");
 
-        verifyProcessNavigationWithMatcher(new Action() {
+        prepareItemsAsVisibleNavigationCalledWith(new Action() {
             @Override
-            public void perform() throws NavigationProviderException {
-                defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/about", localization);
+            public NavigationLinks perform() throws NavigationProviderException {
+                return defaultDynamicNavigationProvider.getBreadcrumbNavigationLinks("/about", localization);
             }
         }, new BaseMatcher<List<SitemapItem>>() {
             @SuppressWarnings("unchecked")
@@ -372,7 +663,7 @@ public class AbstractDynamicNavigationProviderTest {
 
         String taxonomyId = "42";
         String taxonomyNodeUrl = "node-url.html";
-        List<SitemapItem> children = Lists.newArrayList(siteMapItem(true, "child1"));
+        List<SitemapItem> children = newArrayList(siteMapItem("t1-k1", true, "child1"));
 
         //when
         TaxonomyNode node = defaultDynamicNavigationProvider.createTaxonomyNodeFromKeyword(keyword, taxonomyId, taxonomyNodeUrl,
@@ -409,62 +700,452 @@ public class AbstractDynamicNavigationProviderTest {
         assertTrue(nodeWithChildren2.isWithChildren());
     }
 
-    private void verifyProcessNavigationWithMatcher(Action action, Matcher<List<SitemapItem>> matcher) throws NavigationProviderException {
+    @Test
+    public void shouldExpandTaxonomyRootsIfSiteMapIsEmpty() {
+        //given
+        NavigationFilter filter = mock(NavigationFilter.class);
+        Localization localization = mock(Localization.class);
+
+        //when
+        defaultDynamicNavigationProvider.getNavigationSubtree("", filter, localization);
+
+        //then
+        verify(defaultDynamicNavigationProvider).expandTaxonomyRoots(eq(filter), eq(localization));
+    }
+
+    @Test
+    public void shouldReturnEmptyListIfSiteMapIdIsWrong() {
+        //given
+        NavigationFilter filter = mock(NavigationFilter.class);
+        Localization localization = mock(Localization.class);
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree("wrong id", filter, localization);
+
+        //then
+        verify(defaultDynamicNavigationProvider, never()).collectAncestorsForPage(any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
+        verify(defaultDynamicNavigationProvider, never()).expandDescendants(any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
+        verify(defaultDynamicNavigationProvider, never()).expandTaxonomyRoots(any(NavigationFilter.class), any(Localization.class));
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void shouldTryExpandAncestorsKeywordWithNullResult() {
+        //given 
+        NavigationFilter navigationFilter = getNavigationFilter(true, 1);
+        String sitemapItemId = "t1-k2";
+
+        when(defaultDynamicNavigationProvider.expandAncestorsForKeyword(any(TaxonomySitemapItemUrisHolder.class), eq(navigationFilter), eq(localization)))
+                .thenReturn(null);
+
+        //when
+        List<SitemapItem> emptyList = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+
+        //then
+        verify(defaultDynamicNavigationProvider).expandAncestorsForKeyword(eq(parse(sitemapItemId, localization)), eq(navigationFilter), eq(localization));
+        assertTrue(emptyList.isEmpty());
+    }
+
+    @Test
+    public void shouldExpandAncestorsPageWithNoResult() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(true, 0);
+        String sitemapItemId = "t1-p1";
+
+        AbstractDynamicNavigationProvider testProvider = getTestProvider(false, getNavigationModel(), "t1");
+
+        when(testProvider.collectAncestorsForPage(any(TaxonomySitemapItemUrisHolder.class), eq(navigationFilter), eq(localization)))
+                .thenReturn(Collections.<SitemapItem>emptyList());
+
+        //when
+        List<SitemapItem> emptyList = testProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+
+        //then
+        verify(testProvider).collectAncestorsForPage(eq(parse(sitemapItemId, localization)), eq(navigationFilter), eq(localization));
+        assertTrue(emptyList.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnEmptyListIfExpandingAncestorsForNotPageNorKeyword() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(true, 1);
+        String sitemapItemId = "t1";
+
+        //when
+        List<SitemapItem> emptyList = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+
+        //then
+        assertTrue(emptyList.isEmpty());
+    }
+
+    @Test
+    public void shouldExpandDescendantsIfFilterSaysSo() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(false, 1);
+        String sitemapItemId = "t1-k2";
+
+        //when
+        defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+
+        //then
+        verify(defaultDynamicNavigationProvider).expandDescendants(eq(parse(sitemapItemId, localization)), eq(navigationFilter), eq(localization));
+    }
+
+    @Test
+    public void shouldSkipExpandingDescendantsWithPage() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(false, 1);
+        String sitemapItemId = "t1-p2";
+
+        //when
+        defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+
+        //then
+        verify(defaultDynamicNavigationProvider, never()).expandDescendants(eq(parse(sitemapItemId, localization)), eq(navigationFilter), eq(localization));
+    }
+
+    //region KEYWORDS
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void shouldExpandAncestorsKeywordDescendantsZero() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(true, 0);
+        String currentContext = "t1-k22";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        //only root, because of ancestors true
+        assertTrue(list.size() == 1);
+
+        SitemapItem root = list.get(0);
+        assertEquals("t1", root.getId());
+
+        assertTrue(root.getItems().size() == 1);
+        SitemapItem level1 = root.getItems().get(0);
+        assertEquals("t1-k2", level1.getId());
+
+        assertTrue(level1.getItems().size() == 1);
+        SitemapItem level2 = level1.getItems().get(0);
+        assertEquals("t1-k22", level2.getId());
+
+        assertFalse(((TaxonomyNode) level2).isWithChildren());
+        assertTrue(level2.getItems().size() == 0);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void shouldExpandAncestorsKeywordDescendantsOne() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(true, 1);
+        String currentContext = "t1-k22";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        //only root, because of ancestors true
+        assertTrue(list.size() == 1);
+
+        SitemapItem root = list.get(0);
+        assertEquals("t1", root.getId());
+
+        assertTrue(root.getItems().size() == 7);
+        SitemapItem level1 = root.getItems().get(1);
+        assertEquals("t1-k2", level1.getId());
+
+        assertTrue(level1.getItems().size() == 3);
+        SitemapItem level2 = level1.getItems().get(0);
+        assertEquals("t1-k22", level2.getId());
+
+        assertTrue(level2.getItems().size() == 3);
+    }
+
+    @Test
+    public void shouldNotExpandAncestorsKeywordDescendantsZero() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(false, 0);
+        String currentContext = "t1-k22";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void shouldNotExpandAncestorsKeywordDescendantsOne() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(false, 1);
+        String currentContext = "t1-k22";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        assertTrue(list.size() == 3);
+        assertEquals("t1-p220", list.get(0).getId());
+    }
+    //endregion
+
+    //region SINGLE PAGE
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void shouldExpandAncestorsPageDescendantsZero() {
+        //given 
+        NavigationFilter navigationFilter = getNavigationFilter(true, 0);
+        String sitemapItemId = "t1-p220";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+
+        //then
+        //only root, because of ancestors true
+        assertTrue(list.size() == 1);
+
+        SitemapItem root = list.get(0);
+        assertEquals("t1", root.getId());
+
+        assertTrue(root.getItems().size() == 1);
+
+        SitemapItem level1 = root.getItems().get(0);
+        assertTrue(level1.getItems().size() == 1);
+
+        SitemapItem level2 = level1.getItems().get(0);
+        assertFalse(((TaxonomyNode) level2).isWithChildren());
+        assertTrue(level2.getItems().size() == 0);
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void shouldExpandAncestorsPageDescendantsOne() {
+        // given
+        NavigationFilter navigationFilter = getNavigationFilter(true, 1);
+        String currentContext = "t1-p220";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        //one root node with all children expanded because first we want ancestors, second we want 1 level of children
+        //basically the whole tree
+
+        //only root, because of ancestors true
+        assertTrue(list.size() == 1);
+
+        SitemapItem root = list.get(0);
+        assertEquals("t1", root.getId());
+
+        assertTrue(root.getItems().size() == 7);
+        SitemapItem level1 = root.getItems().get(1);
+        assertEquals("t1-k2", level1.getId());
+
+        assertTrue(level1.getItems().size() == 3);
+        SitemapItem level2 = level1.getItems().get(0);
+        assertEquals("t1-k22", level2.getId());
+
+        assertTrue(level2.getItems().size() == 3);
+
+        assertTrue(level2.getItems().get(0).getItems().isEmpty());
+    }
+
+    @Test
+    public void shouldNotExpandAncestorsPageDescendantsZero() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(false, 0);
+        String currentContext = "t1-p220";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void shouldNotExpandAncestorsPageDescendantsOne() {
+        NavigationFilter navigationFilter = getNavigationFilter(false, 1);
+        String currentContext = "t1-p220";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        assertTrue(list.isEmpty());
+    }
+    //endregion
+
+    //region MULTI PAGE
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void shouldExpandAncestorsMultiPageDescendantsZero() {
+        // given
+        NavigationFilter navigationFilter = getNavigationFilter(true, 0);
+        String currentContext = "t1-p222";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        //only root, because of ancestors true
+        assertTrue(list.size() == 1);
+
+        SitemapItem root = list.get(0);
+        assertEquals("t1", root.getId());
+
+        assertTrue(root.getItems().size() == 1);
+        SitemapItem level1 = root.getItems().get(0);
+        assertEquals("t1-k2", level1.getId());
+
+        assertTrue(level1.getItems().size() == 2);
+        assertEquals("t1-k22", level1.getItems().get(0).getId());
+        assertEquals("t1-k24", level1.getItems().get(1).getId());
+
+        assertTrue(level1.getItems().get(0).getItems().size() == 0);
+        assertFalse(((TaxonomyNode) level1.getItems().get(0)).isWithChildren());
+        assertTrue(level1.getItems().get(1).getItems().size() == 0);
+        assertFalse(((TaxonomyNode) level1.getItems().get(1)).isWithChildren());
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    @Test
+    public void shouldExpandAncestorsMultiPageDescendantsOne() {
+        // given
+        NavigationFilter navigationFilter = getNavigationFilter(true, 1);
+        String currentContext = "t1-p222";
+
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        //only root, because of ancestors true
+        assertTrue(list.size() == 1);
+
+        SitemapItem root = list.get(0);
+        assertEquals("t1", root.getId());
+
+        assertTrue(root.getItems().size() == 7);
+        SitemapItem level1 = root.getItems().get(1);
+        assertEquals("t1-k2", level1.getId());
+
+        assertTrue(level1.getItems().size() == 3);
+
+        //"t1-k22"
+        assertTrue(level1.getItems().get(0).getItems().size() == 3);
+        assertTrue(level1.getItems().get(2).getItems().size() == 1);
+    }
+
+    @Test
+    public void shouldNotExpandAncestorsMultiPageDescendantsZero() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(false, 0);
+        String currentContext = "t1-p222";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        assertTrue(list.isEmpty());
+    }
+
+    @Test
+    public void shouldNotExpandAncestorsMultiPageDescendantsOne() {
+        NavigationFilter navigationFilter = getNavigationFilter(false, 1);
+        String currentContext = "t1-p222";
+
+        //when
+        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+
+        //then
+        assertTrue(list.isEmpty());
+    }
+    //endregion
+
+    private void mockDescendants(final String key, final List<SitemapItem> items) {
+        BaseMatcher<TaxonomySitemapItemUrisHolder> keyMatcher = keyToItemsMatcher(key);
+
+        doReturn(items).when(defaultDynamicNavigationProvider).expandDescendants(argThat(keyMatcher), any(NavigationFilter.class), any(Localization.class));
+    }
+
+    private void mockSingleAncestorForKeyword(final String key, final SitemapItem root) {
+        BaseMatcher<TaxonomySitemapItemUrisHolder> keyMatcher = keyToItemsMatcher(key);
+
+        doReturn(root).when(defaultDynamicNavigationProvider).expandAncestorsForKeyword(argThat(keyMatcher), any(NavigationFilter.class), any(Localization.class));
+    }
+
+    private void mockAncestorsForPage(final String key, final List<SitemapItem> items) {
+        BaseMatcher<TaxonomySitemapItemUrisHolder> keyMatcher = keyToItemsMatcher(key);
+
+        doReturn(items).when(defaultDynamicNavigationProvider).collectAncestorsForPage(argThat(keyMatcher), any(NavigationFilter.class), any(Localization.class));
+    }
+
+    @NotNull
+    private BaseMatcher<TaxonomySitemapItemUrisHolder> keyToItemsMatcher(final String key) {
+        return new BaseMatcher<TaxonomySitemapItemUrisHolder>() {
+            @Override
+            public boolean matches(Object item) {
+                return Objects.equals(item, TaxonomySitemapItemUrisHolder.parse(key, localization));
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Matches a key " + key);
+            }
+        };
+    }
+
+    private NavigationLinks prepareItemsAsVisibleNavigationCalledWith(Action action, Matcher<List<SitemapItem>> matcher) throws NavigationProviderException {
         //given
         when(defaultDynamicNavigationProvider.getNavigationModel(any(Localization.class))).thenReturn(getNavigationModel());
 
         //when
-        action.perform();
+        NavigationLinks links = action.perform();
 
         //then
-        verify(defaultDynamicNavigationProvider).prepareItemsAsVisibleNavigation(eq(localization), argThat(matcher));
+        verify(defaultDynamicNavigationProvider).prepareItemsAsVisibleNavigation(eq(localization), argThat(matcher), anyBoolean());
+
+        return links;
     }
 
-    @NotNull
-    private SitemapItem getNavigationModel() {
-        SitemapItem model = new TaxonomyNode();
-        model.setItems(getSitemapItems());
-        return model;
+    private List<SitemapItem> list(SitemapItem... items) {
+        return Lists.newArrayList(items);
     }
 
-    @NotNull
-    private List<SitemapItem> getSitemapItems() {
-        /*
-        +/index
-        +/child
-            +/child/child_2
-            +/child/child_3
-        +/about
-        +/imitation_home
-        -/hidden
-        +""
-        +null
-        */
-
-        SitemapItem home = siteMapItem(true, "/index");
-
-        SitemapItem child = new SitemapItem();
-        child.setUrl("/child");
-        child.setItems(Lists.newArrayList(siteMapItem(true, "/child/child_2"), siteMapItem(true, "/child/child_3")));
-        return Lists.newArrayList(
-                home,
-                child,
-                siteMapItem(true, "/about"),
-                siteMapItem(true, "/imitation_home"),
-                siteMapItem(false, "/hidden"),
-                siteMapItem(true, ""),
-                siteMapItem(true, null));
-    }
-
-    private SitemapItem siteMapItem(boolean visible, String url) {
+    private SitemapItem siteMapItem(String id, boolean visible, String url) {
         SitemapItem sitemapItem = new SitemapItem();
+        fillSitemapItem(sitemapItem, id, url, visible);
+        return sitemapItem;
+    }
+
+    private TaxonomyNode taxonomyNode(String id, String url, boolean visible, List<SitemapItem> items) {
+        TaxonomyNode node = new TaxonomyNode();
+        node.setItems(items);
+        fillSitemapItem(node, id, url, visible);
+        return node;
+    }
+
+    private void fillSitemapItem(SitemapItem sitemapItem, String id, String url, boolean visible) {
         sitemapItem.setVisible(visible);
         sitemapItem.setUrl(url);
-        return sitemapItem;
+        sitemapItem.setId(id);
+        String title = visible && !Strings.isNullOrEmpty(url) ?
+                Strings.padStart(id.replaceFirst("t1(-[kp](\\d+))?", "$2"), 3, '0') + " " + id : id;
+        sitemapItem.setTitle(title);
+    }
+
+    @NotNull
+    private NavigationFilter getNavigationFilter(boolean ancestors, int levels) {
+        NavigationFilter navigationFilter = new NavigationFilter();
+        navigationFilter.setWithAncestors(ancestors);
+        navigationFilter.setDescendantLevels(levels);
+        return navigationFilter;
     }
 
     private interface Action {
 
-        void perform() throws NavigationProviderException;
+        NavigationLinks perform() throws NavigationProviderException;
     }
 }

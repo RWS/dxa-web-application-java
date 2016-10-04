@@ -1,9 +1,11 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperties;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
+import com.sdl.webapp.common.util.LocalizationUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,4 +32,16 @@ public class Link extends AbstractEntityModel {
     @SemanticProperty("e:alternateText")
     @JsonProperty("AlternateText")
     private String alternateText;
+
+    /**
+     * Decides whether this request path is in context of this link.
+     *
+     * @param requestPath  current request path
+     * @param localization current localization
+     * @return whether this request path is in context of this link
+     */
+    public boolean isCurrentContext(String requestPath, Localization localization) {
+        return LocalizationUtils.isActiveContextPath(requestPath, localization, getUrl());
+    }
+
 }

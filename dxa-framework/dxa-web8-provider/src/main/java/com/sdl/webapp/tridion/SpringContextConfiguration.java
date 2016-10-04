@@ -7,6 +7,7 @@ import com.sdl.web.api.dynamic.DynamicMappingsRetriever;
 import com.sdl.web.api.dynamic.DynamicMappingsRetrieverImpl;
 import com.sdl.web.api.dynamic.DynamicMetaRetriever;
 import com.sdl.web.api.dynamic.DynamicMetaRetrieverImpl;
+import com.sdl.web.api.taxonomies.TaxonomyRelationManager;
 import com.tridion.taxonomies.TaxonomyFactory;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
@@ -34,6 +35,11 @@ public class SpringContextConfiguration {
         return new TaxonomyFactory();
     }
 
+    @Bean
+    public TaxonomyRelationManager taxonomyRelationManager() {
+        return new TaxonomyRelationManager();
+    }
+    
     @Bean
     public BrokerLinkProvider linkProvider() {
         BrokerLinkProvider linkProvider = new BrokerLinkProvider();

@@ -37,6 +37,7 @@ public abstract class AbstractViewModel implements ViewModel {
     private String htmlClasses;
 
     @JsonXpmAware
+    @JsonProperty("XpmMetadata")
     private Map<String, Object> xpmMetadata = new HashMap<>();
 
     @JsonProperty("MvcData")

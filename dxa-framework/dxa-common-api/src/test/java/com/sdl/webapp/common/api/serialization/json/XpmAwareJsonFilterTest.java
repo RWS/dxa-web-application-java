@@ -6,11 +6,13 @@ import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.annotation.Annotation;
 
@@ -29,6 +31,11 @@ public class XpmAwareJsonFilterTest {
 
     @InjectMocks
     private XpmAwareJsonFilter xpmAwareJsonFilter;
+
+    @Before
+    public void init() {
+        ReflectionTestUtils.setField(xpmAwareJsonFilter, "enabled", true);
+    }
 
     @Test
     public void shouldIncludeIfXpmAndAnnotated() {
@@ -105,6 +112,18 @@ public class XpmAwareJsonFilterTest {
         //then
         assertTrue(include);
         assertTrue(include1);
+    }
+
+    @Test
+    public void shouldIncludeIfNotEnabled() {
+        //given 
+        XpmAwareJsonFilter filter = new XpmAwareJsonFilter(null);
+
+        //when
+        boolean include = filter.include(null);
+
+        //then
+        assertTrue(include);
     }
 
     private AnnotatedMember getAnnotatedMember(Annotation annotation) {

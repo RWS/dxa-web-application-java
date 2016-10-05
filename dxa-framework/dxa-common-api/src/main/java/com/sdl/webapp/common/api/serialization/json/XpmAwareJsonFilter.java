@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +19,9 @@ public final class XpmAwareJsonFilter implements DxaViewModelJsonPropertyFilter 
 
     private final WebRequestContext webRequestContext;
 
+    @Value("${dxa.json.xpm.aware}")
+    private boolean enabled;
+
     @Autowired
     public XpmAwareJsonFilter(WebRequestContext webRequestContext) {
         this.webRequestContext = webRequestContext;
@@ -25,6 +29,10 @@ public final class XpmAwareJsonFilter implements DxaViewModelJsonPropertyFilter 
 
     @Override
     public boolean include(PropertyWriter writer) {
+        if (!enabled) {
+            return true;
+        }
+
         boolean isXpmAware;
         if (writer instanceof BeanPropertyWriter) {
             isXpmAware = ((BeanPropertyWriter) writer).getMember().hasAnnotation(JsonXpmAware.class);

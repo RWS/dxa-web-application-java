@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.synchronizedList;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Data
@@ -145,10 +146,13 @@ public class SitemapItem extends AbstractEntityModel {
             return this;
         }
 
-        for (SitemapItem item : getItems()) {
-            SitemapItem sub = item.findWithUrl(urlToFind);
-            if (sub != null) {
-                return sub;
+        List<SitemapItem> list = synchronizedList(getItems());
+        synchronized (list) {
+            for (SitemapItem item : list) {
+                SitemapItem sub = item.findWithUrl(urlToFind);
+                if (sub != null) {
+                    return sub;
+                }
             }
         }
         return null;

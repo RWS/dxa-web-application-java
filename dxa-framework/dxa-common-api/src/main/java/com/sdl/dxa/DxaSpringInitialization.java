@@ -2,8 +2,11 @@ package com.sdl.dxa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
+import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import com.sdl.webapp.common.util.InitializationUtils;
 import com.sdl.webapp.common.views.AtomView;
@@ -27,6 +30,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import java.util.Locale;
 
+import static com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter.FILTER_NAME;
 import static com.sdl.webapp.common.util.InitializationUtils.loadDxaProperties;
 import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitialization;
 
@@ -147,9 +151,21 @@ public class DxaSpringInitialization {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         objectMapper.registerModule(new JodaModule());
+        objectMapper.setFilters(jsonFilterProvider());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         traceBeanInitialization(objectMapper);
         return objectMapper;
+    }
+
+    @Bean
+    public FilterProvider jsonFilterProvider() {
+        SimpleFilterProvider provider = new SimpleFilterProvider();
+        return provider.addFilter(FILTER_NAME, dxaViewModelJsonChainFilter());
+    }
+
+    @Bean
+    public DxaViewModelJsonChainFilter dxaViewModelJsonChainFilter() {
+        return new DxaViewModelJsonChainFilter();
     }
 
     private static class OptionalJstlView extends JstlView {

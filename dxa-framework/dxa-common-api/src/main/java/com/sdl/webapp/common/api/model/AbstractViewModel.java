@@ -1,9 +1,12 @@
 package com.sdl.webapp.common.api.model;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
+import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
+import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -23,6 +26,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @Data
 @NoArgsConstructor
 @Slf4j
+@JsonFilter(DxaViewModelJsonChainFilter.FILTER_NAME)
 public abstract class AbstractViewModel implements ViewModel {
 
     @JsonProperty("ExtensionData")
@@ -32,7 +36,7 @@ public abstract class AbstractViewModel implements ViewModel {
     @JsonIgnore
     private String htmlClasses;
 
-    @JsonProperty("XpmMetadata")
+    @JsonXpmAware
     private Map<String, Object> xpmMetadata = new HashMap<>();
 
     @JsonProperty("MvcData")

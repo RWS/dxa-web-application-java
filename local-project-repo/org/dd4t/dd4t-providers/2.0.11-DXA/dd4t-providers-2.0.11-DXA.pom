@@ -98,7 +98,7 @@
         <profile>
             <id>web8</id>
             <properties>
-                <tridion.version>8.3.0-1009</tridion.version>
+                <tridion.version>8.3.0-1012</tridion.version>
                 <java.version>1.8</java.version>
                 <build.classifier>web8</build.classifier>
             </properties>

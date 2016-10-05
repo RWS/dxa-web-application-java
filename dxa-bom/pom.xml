@@ -48,17 +48,14 @@
         <classifier.2013sp1>2013sp1</classifier.2013sp1>
         <classifier.web8>web8</classifier.web8>
 
-        <dd4t.version>2.0.10-DXA</dd4t.version>
-        <cd-cil.version>8.2.0-1011</cd-cil.version>
+        <dd4t.version>2.0.11-DXA</dd4t.version>
+        <cd-cil.version>8.3.0-1012</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
 
         <!-- Caching -->
-        <cache-api.version>1.0.0</cache-api.version>
-        <ehcache.version>2.8.3</ehcache.version>
         <!--2013SP1: <ehcache-version>2.8.2</ehcache-version>-->
-        <jcache.version>1.0.1</jcache.version>
 
         <!-- Apache Commons -->
         <commons-beanutils-version>1.8.3</commons-beanutils-version>
@@ -375,22 +372,6 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>${ehcache.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>javax.cache</groupId>
-                <artifactId>cache-api</artifactId>
-                <version>${cache-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ehcache</groupId>
-                <artifactId>jcache</artifactId>
-                <version>${jcache.version}</version>
             </dependency>
 
             <dependency>

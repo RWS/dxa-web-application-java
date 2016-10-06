@@ -204,12 +204,10 @@ public class PageController extends BaseController {
 
     @RequestMapping(value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
+    public SitemapItem handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
         log.trace("handleGetNavigationJson");
 
-        SitemapItem model = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
-
-        return objectMapper.writeValueAsString(model);
+        return navigationProvider.getNavigationModel(webRequestContext.getLocalization());
     }
 
     /**

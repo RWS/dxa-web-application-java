@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.serialization.json.annotation;
 
-import com.sdl.webapp.common.api.serialization.json.XpmAwareJsonFilter;
+import com.sdl.webapp.common.api.serialization.json.filter.XpmAwareJsonFilter;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,4 +1,4 @@
-package com.sdl.webapp.common.api.serialization.json;
+package com.sdl.webapp.common.api.serialization.json.filter;
 
 import com.fasterxml.jackson.databind.PropertyName;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;

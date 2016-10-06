@@ -1,8 +1,9 @@
-package com.sdl.webapp.common.api.serialization.json;
+package com.sdl.webapp.common.api.serialization.json.filter;
 
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonPropertyFilter;
 import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

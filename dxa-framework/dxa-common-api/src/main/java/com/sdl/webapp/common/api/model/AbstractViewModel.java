@@ -1,11 +1,9 @@
 package com.sdl.webapp.common.api.model;
 
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
-import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,7 +24,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @Data
 @NoArgsConstructor
 @Slf4j
-@JsonFilter(DxaViewModelJsonChainFilter.FILTER_NAME)
+//@JsonFilter(DxaViewModelJsonChainFilter.FILTER_NAME)
 public abstract class AbstractViewModel implements ViewModel {
 
     @JsonProperty("ExtensionData")

@@ -44,6 +44,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
 
+import static com.sdl.webapp.common.api.serialization.json.filter.IgnoreByNameInRequestFilter.ignoreByName;
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static com.sdl.webapp.common.controller.ControllerUtils.SECTION_ERROR_VIEW;
 import static com.sdl.webapp.common.controller.ControllerUtils.SERVER_ERROR_VIEW;
@@ -204,9 +205,9 @@ public class PageController extends BaseController {
 
     @RequestMapping(value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public SitemapItem handleGetNavigationJson() throws NavigationProviderException, JsonProcessingException {
+    public SitemapItem handleGetNavigationJson(HttpServletRequest request) throws NavigationProviderException, JsonProcessingException {
         log.trace("handleGetNavigationJson");
-
+        ignoreByName(request, "XpmMetadata", "XpmPropertyMetadata");
         return navigationProvider.getNavigationModel(webRequestContext.getLocalization());
     }
 

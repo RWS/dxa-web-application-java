@@ -31,7 +31,7 @@ public final class CsrfUtils {
     }
 
     static boolean verifyToken(HttpServletRequest request) {
-        return !"POST".equals(request.getMethod()) || request.getParameter(CSRF_TOKEN_NAME).equals(
-                request.getSession().getAttribute(CSRF_TOKEN_NAME));
+        String csrfToken = request.getParameter(CSRF_TOKEN_NAME);
+        return !"POST".equals(request.getMethod()) || (csrfToken != null && csrfToken.equals(request.getSession().getAttribute(CSRF_TOKEN_NAME)));
     }
 }

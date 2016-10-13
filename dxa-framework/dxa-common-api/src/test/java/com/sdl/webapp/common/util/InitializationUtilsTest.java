@@ -172,6 +172,26 @@ public class InitializationUtilsTest {
         verify(registration).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldRegisterFilterByClassWithGivenName() {
+        //given
+        ServletContext context = mock(ServletContext.class);
+        String mapping = "/mapping";
+        String filterName = "myName";
+        Class<Filter> filterClass = Filter.class;
+        FilterRegistration.Dynamic registration = mock(FilterRegistration.Dynamic.class);
+        when(context.addFilter(eq(filterName), same(filterClass))).thenReturn(registration);
+
+        //when
+        FilterRegistration.Dynamic filterRegistration = InitializationUtils.registerFilter(context, filterName, filterClass, mapping);
+
+        //then
+        assertSame(registration, filterRegistration);
+        verify(context).addFilter(eq(filterName), same(filterClass));
+        verify(registration).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
+    }
+
     @Test
     public void shouldGiveClassForNameIfPresentOfNullOtherwise() {
         //when
@@ -209,7 +229,6 @@ public class InitializationUtilsTest {
         ServletContext context = mock(ServletContext.class);
         String className = "javax.servlet.Servlet";
         String mapping = "/mapping";
-
         ServletRegistration.Dynamic servletRegistration = mock(ServletRegistration.Dynamic.class);
         when(context.addServlet(same(className), same(className))).thenReturn(servletRegistration);
 

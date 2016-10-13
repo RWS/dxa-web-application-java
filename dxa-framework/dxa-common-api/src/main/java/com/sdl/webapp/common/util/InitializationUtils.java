@@ -209,6 +209,24 @@ public final class InitializationUtils {
     }
 
     /**
+     * <p>Registers filter in the given servlet context with a given name.</p>
+     *
+     * @param servletContext current servlet context
+     * @param filterName     name of the filter to register
+     * @param clazz          classname of a filter to register
+     * @param urlMappings    mappings for the filter
+     * @return dynamic registration object or <code>null</code> if classname if not found
+     */
+    public static FilterRegistration.Dynamic registerFilter(@NonNull ServletContext servletContext, @NonNull String filterName,
+                                                            @NonNull Class<? extends Filter> clazz, @NonNull String... urlMappings) {
+
+        FilterRegistration.Dynamic registration = servletContext.addFilter(filterName, clazz);
+        registration.addMappingForUrlPatterns(null, false, urlMappings);
+        log.info(REGISTERED_FOR_MAPPING_LOG_MESSAGE, filterName, urlMappings);
+        return registration;
+    }
+
+    /**
      * <p>Registers filter in the given servlet context if class is found in classpath.</p>
      *
      * @param servletContext current servlet context

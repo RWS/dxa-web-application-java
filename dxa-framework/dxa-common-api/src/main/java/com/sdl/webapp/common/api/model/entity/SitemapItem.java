@@ -74,10 +74,10 @@ public class SitemapItem extends AbstractEntityModel {
 
     /**
      * Setter for the children items which also sets parent field to the current object.
-     * <p>
+     * <p></p>
      * <strong>NB! the given set may be wrapped with another {@link Set} implementation!</strong>
      * This means that the current code may not work as you expect:
-     * <code><pre>
+     * <pre><code>
      * SitemapItem item = new SitemapItem();
      * Set&lt;SitemapItem&gt; children = new HashSet&lt;&gt;();
      * item.setItems(children);
@@ -88,10 +88,9 @@ public class SitemapItem extends AbstractEntityModel {
      *
      * // although this still may be true:
      * assert children.equals(item.getItems());
-     * </pre></code>
+     * </code></pre>
      * Out of the box for DXA it is true for {@link TaxonomyNode} as it wraps the passed collection with a {@link java.util.SortedSet}.
      * Use {@link #addItem(SitemapItem)} to add items.
-     * </p>
      *
      * @param items items to set
      */

@@ -17,10 +17,12 @@ import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import static java.util.Collections.synchronizedList;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Data
@@ -40,7 +42,7 @@ public class SitemapItem extends AbstractEntityModel {
     private String type;
 
     @JsonProperty("Items")
-    private List<SitemapItem> items;
+    private Set<SitemapItem> items;
 
     @JsonProperty("PublishedDate")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
@@ -69,7 +71,7 @@ public class SitemapItem extends AbstractEntityModel {
 
     @NotNull
     public List<SitemapItem> getItems() {
-        return this.items == null ? Collections.<SitemapItem>emptyList() : this.items;
+        return this.items == null ? Collections.<SitemapItem>emptyList() : new ArrayList<>(this.items);
     }
 
     /**
@@ -78,7 +80,11 @@ public class SitemapItem extends AbstractEntityModel {
      * @param items items to set
      */
     public void setItems(@Nullable List<SitemapItem> items) {
-        this.items = items;
+        this.items = wrapItems(items);
+        ensureParentsSet(items);
+    }
+
+    private void ensureParentsSet(@Nullable List<SitemapItem> items) {
         if (items != null) {
             for (SitemapItem item : items) {
                 if (item != null) {
@@ -97,10 +103,15 @@ public class SitemapItem extends AbstractEntityModel {
     @NotNull
     public SitemapItem addItem(SitemapItem item) {
         if (this.items == null) {
-            this.items = new ArrayList<>();
+            this.items = wrapItems(Collections.<SitemapItem>emptySet());
         }
         this.items.add(item);
         return this;
+    }
+
+    @Contract("null -> !null; !null -> !null")
+    protected Set<SitemapItem> wrapItems(@Nullable Collection<SitemapItem> items) {
+        return items == null ? new HashSet<>(Collections.<SitemapItem>emptySet()) : new HashSet<>(items);
     }
 
     public String getTitle() {
@@ -146,13 +157,10 @@ public class SitemapItem extends AbstractEntityModel {
             return this;
         }
 
-        List<SitemapItem> list = synchronizedList(getItems());
-        synchronized (list) {
-            for (SitemapItem item : list) {
-                SitemapItem sub = item.findWithUrl(urlToFind);
-                if (sub != null) {
-                    return sub;
-                }
+        for (SitemapItem item : getItems()) {
+            SitemapItem sub = item.findWithUrl(urlToFind);
+            if (sub != null) {
+                return sub;
             }
         }
         return null;

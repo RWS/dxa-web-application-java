@@ -5,11 +5,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.SortedSet;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TaxonomyNodeTest extends SitemapItemTest {
@@ -85,5 +89,18 @@ public class TaxonomyNodeTest extends SitemapItemTest {
         Iterator<SitemapItem> iterator = items.iterator();
         assertEquals(first, iterator.next());
         assertEquals(second, iterator.next());
+    }
+
+    @Test
+    public void shouldWrapItemsInSortedSet() {
+        //when
+        Set<SitemapItem> set = new TaxonomyNode().wrapItems(Collections.<SitemapItem>emptySet());
+        Set<SitemapItem> set2 = new TaxonomyNode().wrapItems(null);
+        Set<SitemapItem> set3 = new TaxonomyNode().wrapItems(Lists.newArrayList(new SitemapItem()));
+
+        //then
+        assertTrue(SortedSet.class.isAssignableFrom(set.getClass()) && set.isEmpty());
+        assertTrue(SortedSet.class.isAssignableFrom(set2.getClass()) && set2.isEmpty());
+        assertTrue(SortedSet.class.isAssignableFrom(set2.getClass()) && !set3.isEmpty());
     }
 }

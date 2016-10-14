@@ -10,10 +10,13 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
+import java.util.Set;
 
+import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -119,5 +122,16 @@ public class SitemapItemTest {
 
         //then original title wasn't changed
         assertEquals("title", sitemapItem.getOriginalTitle());
+    }
+
+    @Test
+    public void shouldWrapCollectionInSet() {
+        //when
+        Set<SitemapItem> set1 = new SitemapItem().wrapItems(null);
+        Set<SitemapItem> set2 = new SitemapItem().wrapItems(Lists.newArrayList(new SitemapItem()));
+
+        //then
+        assertTrue(set1.isEmpty());
+        assertFalse(set2.isEmpty());
     }
 }

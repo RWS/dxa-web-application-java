@@ -10,7 +10,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.util.comparator.NullSafeComparator;
 
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
@@ -48,7 +47,7 @@ public class TaxonomyNode extends SitemapItem {
     private int classifiedItemsCount;
 
     @Override
-    protected Set<SitemapItem> wrapItems(@Nullable Collection<SitemapItem> items) {
+    protected Set<SitemapItem> wrapItems(@Nullable Set<SitemapItem> items) {
         TreeSet<SitemapItem> treeSet = new TreeSet<>(SITEMAP_SORT_BY_TITLE_AND_ID);
         if (items != null) {
             treeSet.addAll(items);

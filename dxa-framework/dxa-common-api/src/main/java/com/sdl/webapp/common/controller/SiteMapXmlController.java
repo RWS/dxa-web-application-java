@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.util.List;
+import java.util.Collection;
 
 import static com.sdl.webapp.common.controller.ControllerUtils.SERVER_ERROR_VIEW;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
@@ -42,7 +42,7 @@ public class SiteMapXmlController {
         this.markup = markup;
     }
 
-    private static void writeSitemapItemsXml(List<SitemapItem> items, PrintWriter out) {
+    private static void writeSitemapItemsXml(Collection<SitemapItem> items, PrintWriter out) {
         for (SitemapItem item : items) {
             if (item.getType().equals("Page") && item.getUrl().startsWith("/")) {
                 out.println("<url>");

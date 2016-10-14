@@ -106,9 +106,15 @@ public class StaticNavigationProvider implements NavigationProvider {
 
     @NotNull
     private static Iterator<SitemapItem> sitemapIteratorWithoutFirst(SitemapItem item) {
-        return item.getItems().isEmpty() ?
-                Collections.<SitemapItem>emptyList().iterator() :
-                item.getItems().listIterator(1);
+        if (item.getItems().isEmpty()) {
+            return Collections.<SitemapItem>emptyList().iterator();
+        } else {
+            Iterator<SitemapItem> iterator = item.getItems().iterator();
+            if (iterator.hasNext()) {
+                iterator.next();
+            }
+            return iterator;
+        }
     }
 
     private static Link linkForItem(SitemapItem item) {

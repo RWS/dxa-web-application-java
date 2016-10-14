@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import java.util.Collection;
 
 import static com.sdl.webapp.common.api.serialization.json.filter.IgnoreByNameInRequestFilter.ignoreByName;
 
@@ -41,24 +41,24 @@ public class OnDemandNavigationController {
 
     @ResponseBody
     @RequestMapping
-    public List<SitemapItem> handle(@RequestParam(value = "includeAncestors", required = false, defaultValue = "false") boolean includeAncestors,
-                                    @RequestParam(value = "descendantLevels", required = false, defaultValue = "1") int descendantLevels,
-                                    HttpServletRequest request) {
+    public Collection<SitemapItem> handle(@RequestParam(value = "includeAncestors", required = false, defaultValue = "false") boolean includeAncestors,
+                                          @RequestParam(value = "descendantLevels", required = false, defaultValue = "1") int descendantLevels,
+                                          HttpServletRequest request) {
 
         return handleInternal(null, includeAncestors, descendantLevels, request);
     }
 
     @ResponseBody
     @RequestMapping("/{sitemapItemId}")
-    public List<SitemapItem> handle(@PathVariable("sitemapItemId") String sitemapItemId,
-                                    @RequestParam(value = "includeAncestors", required = false, defaultValue = "false") boolean includeAncestors,
-                                    @RequestParam(value = "descendantLevels", required = false, defaultValue = "1") int descendantLevels,
-                                    HttpServletRequest request) {
+    public Collection<SitemapItem> handle(@PathVariable("sitemapItemId") String sitemapItemId,
+                                          @RequestParam(value = "includeAncestors", required = false, defaultValue = "false") boolean includeAncestors,
+                                          @RequestParam(value = "descendantLevels", required = false, defaultValue = "1") int descendantLevels,
+                                          HttpServletRequest request) {
         return handleInternal(sitemapItemId, includeAncestors, descendantLevels, request);
     }
 
-    private List<SitemapItem> handleInternal(String sitemapItemId, boolean includeAncestors, int descendantLevels,
-                                             HttpServletRequest request) {
+    private Collection<SitemapItem> handleInternal(String sitemapItemId, boolean includeAncestors, int descendantLevels,
+                                                   HttpServletRequest request) {
         if (onDemandNavigationProvider == null) {
             String message = "On-Demand Navigation is not enabled because current navigation provider doesn't support it. " +
                     "If you are using your own navigation provider, you should Implement OnDemandNavigationProvider interface, " +

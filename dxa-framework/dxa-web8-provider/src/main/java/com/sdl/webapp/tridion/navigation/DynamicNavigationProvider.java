@@ -31,10 +31,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
-import static com.google.common.collect.Lists.newArrayList;
 
 @SuppressWarnings("Duplicates")
 @Service
@@ -55,7 +56,7 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
     }
 
     @Override
-    protected List<SitemapItem> expandTaxonomyRoots(final NavigationFilter navigationFilter, final Localization localization) {
+    protected Set<SitemapItem> expandTaxonomyRoots(final NavigationFilter navigationFilter, final Localization localization) {
         final int maximumDepth = navigationFilter.getDescendantLevels() > 0 ?
                 navigationFilter.getDescendantLevels() - 1 : navigationFilter.getDescendantLevels();
 
@@ -67,7 +68,7 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
             roots.add(taxonomyFactory.getTaxonomyKeywords(id, depthFilter));
         }
 
-        return newArrayList(transform(roots, new Function<Keyword, SitemapItem>() {
+        return new LinkedHashSet<>(transform(roots, new Function<Keyword, SitemapItem>() {
             @Override
             public SitemapItem apply(Keyword keyword) {
                 return createTaxonomyNode(keyword, maximumDepth, navigationFilter, localization);
@@ -76,10 +77,10 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
     }
 
     @Override
-    protected List<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+    protected Set<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
         if (uris.isPage()) {
             log.debug("Page cannot have descendants, return emptyList, uris = ", uris);
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
 
         Keyword keyword = taxonomyFactory.getTaxonomyKeywords(uris.getTaxonomyUri(),
@@ -87,7 +88,7 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
 
         if (keyword == null) {
             log.warn("Keyword '{}' in Taxonomy '{}' was not found.", uris.getKeywordUri(), uris.getTaxonomyUri());
-            return Collections.emptyList();
+            return Collections.emptySet();
         }
 
         return createTaxonomyNode(keyword, navigationFilter.getDescendantLevels(), navigationFilter, localization).getItems();
@@ -190,7 +191,7 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
             child.setTitle(LocalizationUtils.removeSequenceFromPageTitle(child.getTitle()));
         }
 
-        return createTaxonomyNodeFromKeyword(toDto(keyword), taxonomyId, taxonomyNodeUrl, new ArrayList<>(children));
+        return createTaxonomyNodeFromKeyword(toDto(keyword), taxonomyId, taxonomyNodeUrl, new LinkedHashSet<>(children));
     }
 
     private List<SitemapItem> getChildrenPages(@NotNull Keyword keyword, @NotNull String taxonomyId, @NotNull Localization localization) {

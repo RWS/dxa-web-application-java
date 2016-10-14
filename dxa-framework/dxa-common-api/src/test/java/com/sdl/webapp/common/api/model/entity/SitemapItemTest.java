@@ -10,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static junit.framework.TestCase.assertFalse;
@@ -65,9 +66,9 @@ public class SitemapItemTest {
 
         SitemapItem parent = new SitemapItem();
         parent.setUrl("parent");
-        parent.setItems(Lists.newArrayList(itemToFind));
+        parent.setItems(new LinkedHashSet<>(Lists.newArrayList(itemToFind)));
 
-        sitemapItem.setItems(Lists.newArrayList(parent));
+        sitemapItem.setItems(new LinkedHashSet<>(Lists.newArrayList(parent)));
 
         //when
         SitemapItem found = sitemapItem.findWithUrl("path");
@@ -84,7 +85,7 @@ public class SitemapItemTest {
     public void shouldReturnNullIfNoSubItemFound() {
         //given
         SitemapItem sitemapItem = new SitemapItem();
-        sitemapItem.setItems(Collections.<SitemapItem>emptyList());
+        sitemapItem.setItems(Collections.<SitemapItem>emptySet());
 
         //when
         SitemapItem found = sitemapItem.findWithUrl("path");
@@ -100,7 +101,7 @@ public class SitemapItemTest {
         SitemapItem child = new SitemapItem();
 
         //when
-        sitemapItem.setItems(Lists.newArrayList(child, null));
+        sitemapItem.setItems(new LinkedHashSet<>(Lists.newArrayList(child, null)));
 
         //then
         assertEquals(sitemapItem, child.getParent());
@@ -128,10 +129,33 @@ public class SitemapItemTest {
     public void shouldWrapCollectionInSet() {
         //when
         Set<SitemapItem> set1 = new SitemapItem().wrapItems(null);
-        Set<SitemapItem> set2 = new SitemapItem().wrapItems(Lists.newArrayList(new SitemapItem()));
+        Set<SitemapItem> set2 = new SitemapItem().wrapItems(new LinkedHashSet<>(Lists.newArrayList(new SitemapItem())));
 
         //then
         assertTrue(set1.isEmpty());
         assertFalse(set2.isEmpty());
+    }
+
+    @Test
+    public void shouldRemoveItemFromItemsCollection() {
+        //given 
+        SitemapItem item = new SitemapItem();
+        SitemapItem item1 = new SitemapItem();
+        SitemapItem item2 = new SitemapItem();
+        item1.setId("1");
+        item2.setId("2");
+
+        item.addItem(item1);
+        item.addItem(item2);
+
+        //then
+        assertTrue(item.getItems().size() == 2);
+
+        //when
+        item.removeItem(item2);
+
+        //then
+        assertTrue(item.getItems().size() == 1);
+        assertTrue(item.getItems().contains(item1));
     }
 }

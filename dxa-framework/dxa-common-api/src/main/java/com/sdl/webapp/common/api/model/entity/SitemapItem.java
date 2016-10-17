@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.Data;
@@ -40,6 +41,7 @@ public class SitemapItem extends AbstractEntityModel {
     private String type;
 
     @JsonProperty("Items")
+    @JsonDeserialize(as = LinkedHashSet.class)
     private Set<SitemapItem> items;
 
     @JsonProperty("PublishedDate")

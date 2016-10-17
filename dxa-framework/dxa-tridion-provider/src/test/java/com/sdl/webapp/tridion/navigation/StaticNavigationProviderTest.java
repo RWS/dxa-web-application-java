@@ -2,6 +2,7 @@ package com.sdl.webapp.tridion.navigation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.sdl.dxa.DxaSpringInitialization;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -9,6 +10,7 @@ import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
+import org.apache.commons.io.IOUtils;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.PageFactory;
@@ -20,6 +22,7 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
@@ -250,6 +253,30 @@ public class StaticNavigationProviderTest {
         assertEquals("parent", iterator.next().getUrl());
         assertEquals("parent/child1", iterator.next().getUrl());
         assertEquals("parent/child1/child11", iterator.next().getUrl());
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void shouldSaveOrderDefinedByCMInNavigationJson() throws NavigationProviderException, FactoryException, IOException {
+        //given
+        InputStream navigation = new ClassPathResource("navigation.json").getInputStream();
+        String navigationJson = IOUtils.toString(navigation);
+        when(pageFactory.findSourcePageByUrl(anyString(), anyInt())).thenReturn(navigationJson);
+
+        ReflectionTestUtils.setField(provider, "objectMapper", new DxaSpringInitialization().objectMapper());
+
+        //when
+        SitemapItem navigationModel = provider.getNavigationModel(localization);
+
+        //then
+        Iterator<SitemapItem> iterator = navigationModel.getItems().iterator();
+        assertEquals("Home", iterator.next().getTitle());
+        assertEquals("Articles", iterator.next().getTitle());
+        assertEquals("Further Information", iterator.next().getTitle());
+        assertEquals("About", iterator.next().getTitle());
+        assertEquals("Impress", iterator.next().getTitle());
+        assertEquals("Search Results", iterator.next().getTitle());
+        assertEquals("Sitemap", iterator.next().getTitle());
         assertFalse(iterator.hasNext());
     }
 

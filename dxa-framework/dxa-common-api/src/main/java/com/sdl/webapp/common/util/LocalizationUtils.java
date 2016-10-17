@@ -93,6 +93,17 @@ public final class LocalizationUtils {
     }
 
     /**
+     * Checks whether the given path ends with a default extension.
+     * Keep in mind that page without name is impossible, so passing '.html' would give {@code false}.
+     *
+     * @param path the path to check
+     * @return whether the path ends with the default extension '.html'
+     */
+    public static boolean hasDefaultExtension(@Nullable String path) {
+        return path != null && path.endsWith(DEFAULT_PAGE_EXTENSION) && path.length() > DEFAULT_PAGE_EXTENSION.length();
+    }
+
+    /**
      * Strips the default page extension from the page path.
      *
      * @param path path to process

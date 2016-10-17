@@ -309,6 +309,17 @@ public class LocalizationUtilsTest {
         assertFalse(LocalizationUtils.isActiveContextPath(path, localization, "/"));
     }
 
+    @Test
+    public void shouldDetectDefaultExtension() {
+        //when
+        assertTrue(LocalizationUtils.hasDefaultExtension("index.html"));
+        assertTrue(LocalizationUtils.hasDefaultExtension("page/index.html"));
+
+        assertFalse(LocalizationUtils.hasDefaultExtension("index.htm"));
+        assertFalse(LocalizationUtils.hasDefaultExtension("index.php"));
+        assertFalse(LocalizationUtils.hasDefaultExtension(".html"));
+    }
+
     @NotNull
     private Localization mockLocalization(String path, String id) {
         Localization localization = mock(Localization.class);

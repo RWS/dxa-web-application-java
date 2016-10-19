@@ -5,6 +5,7 @@ import org.mockito.Matchers;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ConfigurableWebEnvironment;
+import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -330,4 +331,29 @@ public class InitializationUtilsTest {
             verify(environment).addActiveProfile(eq(profile));
         }
     }
+
+    @Test
+    public void shouldUserClassNameForFilterRegistration() {
+        //given 
+        ServletContext servletContext = mock(ServletContext.class);
+        Class<DelegatingFilterProxy> classToMock = DelegatingFilterProxy.class;
+        String expectedName = classToMock.getName();
+        Filter filter = new DelegatingFilterProxy();
+        FilterRegistration.Dynamic filterRegistration = mock(FilterRegistration.Dynamic.class);
+        when(servletContext.addFilter(anyString(), anyString())).thenReturn(filterRegistration);
+        when(servletContext.addFilter(anyString(), same(classToMock))).thenReturn(filterRegistration);
+        when(servletContext.addFilter(anyString(), same(filter))).thenReturn(filterRegistration);
+
+        //when
+        InitializationUtils.registerFilter(servletContext, classToMock, "/");
+        InitializationUtils.registerFilter(servletContext, "org.springframework.web.filter.DelegatingFilterProxy", "/");
+        InitializationUtils.registerFilter(servletContext, filter, "/");
+
+        //then
+        verify(servletContext).addFilter(eq(expectedName), eq(classToMock));
+        verify(servletContext).addFilter(eq(expectedName), eq("org.springframework.web.filter.DelegatingFilterProxy"));
+        verify(servletContext).addFilter(eq(expectedName), eq(filter));
+    }
+
+
 }

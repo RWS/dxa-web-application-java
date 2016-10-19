@@ -209,7 +209,12 @@ public final class InitializationUtils {
     }
 
     /**
-     * <p>Registers filter in the given servlet context with a given name.</p>
+     * Registers filter in the given servlet context with a given name.
+     * <p>Typically name of the filter is a classname as implemented in {@link #registerFilter(ServletContext, Class, String...)} and
+     * {@link #registerFilter(ServletContext, Filter, String...)} and {@link #registerFilter(ServletContext, String, String...)}.</p>
+     * <p>Use this name if filter name is important for you implementation. Otherwise there will be no guarantee that same filter
+     * is not registered twice from different parts of code since filter registration is aware of filter name which is aligned for those
+     * three methods</p>
      *
      * @param servletContext current servlet context
      * @param filterName     name of the filter to register
@@ -286,7 +291,7 @@ public final class InitializationUtils {
     public static void registerListener(@NonNull ServletContext servletContext,
                                         @NonNull Class<? extends EventListener> listenerClass) {
         servletContext.addListener(listenerClass);
-        log.info(REGISTERED_LOG_MESSAGE, listenerClass.getClass().getName());
+        log.info(REGISTERED_LOG_MESSAGE, listenerClass.getName());
     }
 
     /**

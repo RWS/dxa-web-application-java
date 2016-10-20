@@ -227,6 +227,33 @@
             </dependencies>
         </profile>
         <profile>
+            <id>2013sp1-live</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa</groupId>
+                    <artifactId>dxa-tridion-2013sp1-provider</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>com.tridion</groupId>
+                            <artifactId>cd_session</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>com.tridion</groupId>
+                            <artifactId>cd_wrapper</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>com.tridion</groupId>
+                            <artifactId>cd_preview_ambient</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>com.tridion</groupId>
+                            <artifactId>cd_preview_web</artifactId>
+                        </exclusion>
+                    </exclusions>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>web8</id>
             <activation>
                 <activeByDefault>true</activeByDefault>

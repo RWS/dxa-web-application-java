@@ -60,8 +60,16 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
      * @throws org.dd4t.core.exceptions.FactoryException
      */
     @Override
-    public Page getPage (String uri) throws FactoryException {
+    public Page getPage (final String uri) throws FactoryException {
+        return getPage(uri, PageImpl.class);
+    }
+
+    @Override
+    public <T extends Page> T getPage (final String uri, final Class<T> pageModel) throws FactoryException {
         LOG.debug("Enter getPage with uri: {}", uri);
+        if (!pageModel.getClass().isInstance(Page.class)) {
+            throw new SerializationException("Given model class does not implement the Page interface");
+        }
 
         CacheElement<Page> cacheElement = cacheProvider.loadPayloadFromLocalCache(uri);
         Page page;
@@ -91,7 +99,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
                     }
 
 
-                    page = deserialize(pageSource, PageImpl.class);
+                    page = deserialize(pageSource, pageModel);
                     page.setLastPublishedDate(resultItem.getLastPublishDate());
                     page.setRevisionDate(resultItem.getRevisionDate());
 
@@ -113,7 +121,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
             page = cacheElement.getPayload();
         }
         executePostCacheProcessors(page);
-        return page;
+        return (T) page;
     }
 
     /**
@@ -124,7 +132,23 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
      */
     @Override
     public Page findPageByUrl (String url, int publicationId) throws FactoryException {
+        return findPageByUrl(url, publicationId, PageImpl.class);
+    }
+
+    /**
+     * @param url           the url of the page
+     * @param publicationId the publication Id
+     * @return a GenericPage object
+     * @throws org.dd4t.core.exceptions.FactoryException
+     */
+    @Override
+    public <T extends Page> T findPageByUrl (String url, int publicationId, Class<T> pageModel) throws FactoryException {
         LOG.debug("Enter findPageByUrl with url: {} and publicationId: {}", url, publicationId);
+
+        if (!pageModel.getClass().isInstance(Page.class)) {
+            throw new SerializationException("Given model class does not implement the Page interface");
+        }
+
 
         String cacheKey = publicationId + "-" + url.toLowerCase();
         CacheElement<Page> cacheElement = cacheProvider.loadPayloadFromLocalCache(cacheKey);
@@ -147,7 +171,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
                     }
 
                     try {
-                        page = deserialize(pageSource, PageImpl.class);
+                        page = deserialize(pageSource, pageModel);
                         // TODO: replace DCPs here with the real DCPs?
 
                         page.setLastPublishedDate(resultItem.getLastPublishDate());
@@ -174,7 +198,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
             page = cacheElement.getPayload();
         }
         executePostCacheProcessors(page);
-        return page;
+        return (T) page;
     }
 
     private void executePostCacheProcessors (final Page page) {

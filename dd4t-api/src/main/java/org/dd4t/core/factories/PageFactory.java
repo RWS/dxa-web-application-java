@@ -33,6 +33,17 @@ public interface PageFactory extends Factory {
     Page getPage (String uri) throws FactoryException;
 
     /**
+     * Get a Page by its URI. Deserialize into any object implementing the Page interface.
+     *
+     * @param uri the page Uri
+     * @param pageModel the Class to deserialize into
+     * @param <T> the Type to return
+     * @return a deserialied object
+     * @throws FactoryException
+     */
+    <T extends Page> T getPage(final String uri, final Class<T> pageModel ) throws FactoryException;
+
+    /**
      * Find page by its URL. The url and publication id are specified. No
      * security available; the method will fail if a SecurityFilter is
      * configured on the factory.
@@ -41,6 +52,14 @@ public interface PageFactory extends Factory {
      * @throws org.dd4t.core.exceptions.FactoryException
      */
     Page findPageByUrl (String url, int publicationId) throws FactoryException;
+
+    /**
+     * Find page by its URL. The url and publication id are specified. Deserialize into any object implementing the Page interface.
+     *
+     * @return a Page Object
+     * @throws org.dd4t.core.exceptions.FactoryException
+     */
+    <T extends Page> T findPageByUrl (String url, int publicationId, Class<T> pageModel) throws FactoryException;
 
     /**
      * Find the source of the Page by Url. The url and publication id are specified.

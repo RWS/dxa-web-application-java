@@ -15,7 +15,6 @@ public class Image extends TridionViewModelBase {
     @ViewModelProperty(isMetadata = true)
     private String focusPoint;
 
-    // TODO: always null
     @ViewModelProperty(entityFieldName = "Url")
     private String url;
 

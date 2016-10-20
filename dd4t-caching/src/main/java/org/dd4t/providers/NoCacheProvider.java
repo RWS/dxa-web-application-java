@@ -1,10 +1,8 @@
-package org.dd4t.core.providers;
+package org.dd4t.providers;
 
 import org.dd4t.core.caching.Cachable;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.CacheInvalidator;
-import org.dd4t.providers.CacheProvider;
-import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +10,7 @@ import java.util.Collection;
 
 /**
  * dd4t-parent
- *
+ * TODO: merge with org.dd4t.providers.NoCacheProvider
  * @author R. Kempees
  */
 public class NoCacheProvider implements PayloadCacheProvider, CacheInvalidator, CacheProvider {

@@ -17,10 +17,12 @@
 package org.dd4t.providers;
 
 import org.dd4t.core.caching.Cachable;
+import org.dd4t.core.caching.CacheDependency;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.impl.CacheElementImpl;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * TODO: move this to dd4t-caching
@@ -66,4 +68,17 @@ public class NoCacheProvider implements PayloadCacheProvider, CacheProvider {
     public Object loadFromLocalCache (String key) {
         return null;
     }
+
+	@Override
+	public <T> void storeInItemCache(String key, CacheElement<T> cacheElement,
+			List<CacheDependency> dependencies) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addDependency(String cacheKey, String dependencyKey) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -194,6 +194,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         Class<?> fieldTypeOfFieldToSet = TypeUtils.determineTypeOfField(modelField);
 
         // no multivalued fields here, Sir
+        // TODO: see if we're going to set BinaryData here
         if (fieldTypeOfFieldToSet == String.class) {
             modelField.set(model, currentField.textValue());
         } else if (fieldTypeOfFieldToSet == int.class || fieldTypeOfFieldToSet == Integer.class) {

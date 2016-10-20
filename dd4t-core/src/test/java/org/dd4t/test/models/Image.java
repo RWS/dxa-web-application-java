@@ -9,7 +9,7 @@ import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
  *
  * @author R. Kempees
  */
-@ViewModel(rootElementNames = {"undefined"})
+@ViewModel
 public class Image extends TridionViewModelBase {
 
     @ViewModelProperty(isMetadata = true)

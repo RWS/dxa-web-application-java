@@ -3,7 +3,6 @@ package org.dd4t.core.serializers.impl;
 import org.apache.commons.io.FileUtils;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.PageImpl;
-import org.dd4t.core.serializers.Serializer;
 import org.dd4t.core.util.CompressionUtils;
 import org.dd4t.core.util.DateUtils;
 import org.dd4t.databind.DataBindFactory;
@@ -27,14 +26,12 @@ public class SerializerFactoryTest {
     @Test
     public void testDeserializePage () throws Exception {
 
-        String notFoundPage = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("test.json").toURI()));
+        String testPage = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("fulltestencoded.json").toURI()));
 
-        String pageSource = CompressionUtils.decompressGZip(CompressionUtils.decodeBase64(notFoundPage));
+        //System.out.println(CompressionUtils.encodeBase64(CompressionUtils.compressGZip(testPage)));
 
-        // Deserialize Test Content
+        String pageSource = CompressionUtils.decompressGZip(CompressionUtils.decodeBase64(testPage));
 
-        // TODO: move away from the SerializerFactory for Pages and CPs
-        //Page page = SerializerFactory.deserialize(pageSource, PageImpl.class);
         Page page = DataBindFactory.buildPage(pageSource, PageImpl.class);
 
         DateTime revisionDate = DateUtils.convertStringToDate("2015-05-10T00:03:25");

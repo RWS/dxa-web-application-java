@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.util;
 
+import com.google.common.base.Splitter;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.springframework.core.io.Resource;
@@ -16,12 +17,14 @@ import javax.servlet.ServletRegistration;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.EventListener;
+import java.util.Iterator;
 import java.util.Properties;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
@@ -65,6 +68,24 @@ public class InitializationUtilsTest {
         assertEquals("modules", properties.getProperty("dxa.override.modules"));
         assertEquals("user", properties.getProperty("dxa.override.user"));
         assertEquals("addons", properties.getProperty("dxa.override.addons"));
+    }
+
+    @Test
+    public void shouldCollectionSpringProfilesInclude() {
+        //given 
+
+        //when
+        Properties properties = InitializationUtils.loadDxaProperties();
+
+        //then
+        Iterator<String> iterator = Splitter.on(',').omitEmptyStrings().trimResults().split(properties.getProperty("spring.profiles.include")).iterator();
+        assertEquals("profile-default", iterator.next());
+        assertEquals("profile-cid", iterator.next());
+        assertEquals("profile3", iterator.next());
+        assertEquals("profile4", iterator.next());
+        assertEquals("profile5", iterator.next());
+        assertEquals("profile-staging", iterator.next());
+        assertFalse(iterator.hasNext());
     }
 
     @Test

@@ -81,14 +81,12 @@ public final class InitializationUtils {
     }
 
     /**
-     * Loads all available DXA properties files.
-     * <p>
-     * <p>Respects following files in following order:
+     * Loads all available DXA properties files. Respects following files in following order:
      * <pre>
      *  <code>dxa.defaults.properties</code>,
      *  <code>classpath*:/dxa.modules.*.properties</code>,
      *  <code>dxa.properties</code>,
-     *  <code>classpath*:/dxa.addons.*.properties</code></pre></p>
+     *  <code>classpath*:/dxa.addons.*.properties</code></pre>
      *
      * @return a collection of DXA properties files
      */

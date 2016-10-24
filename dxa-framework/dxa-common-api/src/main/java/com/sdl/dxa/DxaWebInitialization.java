@@ -2,6 +2,7 @@ package com.sdl.dxa;
 
 import com.sdl.webapp.common.util.InitializationUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.Ordered;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
@@ -21,7 +22,7 @@ import static com.sdl.webapp.common.util.InitializationUtils.registerServlet;
  * deployment descriptor.</p>
  */
 @Slf4j
-public class DxaWebInitialization implements WebApplicationInitializer {
+public class DxaWebInitialization implements WebApplicationInitializer, Ordered {
 
     private static void registerWebServiceServlet(ServletContext servletContext) {
         ServletRegistration.Dynamic registration = registerServlet(servletContext,
@@ -58,5 +59,10 @@ public class DxaWebInitialization implements WebApplicationInitializer {
 
             log.info("Default DXA web application initialization complete.");
         }
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.HIGHEST_PRECEDENCE;
     }
 }

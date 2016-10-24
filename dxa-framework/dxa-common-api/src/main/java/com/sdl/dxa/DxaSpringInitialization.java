@@ -20,6 +20,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -60,7 +62,10 @@ public class DxaSpringInitialization {
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-        configurer.setProperties(InitializationUtils.loadDxaProperties());
+        MutablePropertySources propertySources = new MutablePropertySources();
+        propertySources.addLast(new PropertiesPropertySource("dxa.properties.merged", InitializationUtils.loadDxaProperties()));
+        configurer.setPropertySources(propertySources);
+        configurer.setNullValue("null");
         traceBeanInitialization(configurer);
         return configurer;
     }

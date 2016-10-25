@@ -12,10 +12,10 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Collection;
 
 import static com.sdl.webapp.common.controller.ControllerUtils.SERVER_ERROR_VIEW;
@@ -62,8 +62,9 @@ public class SiteMapXmlController {
      *
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
-    @RequestMapping(value = "/sitemap.xml")
-    public void handleGetSiteMapXml(HttpServletResponse response) throws NavigationProviderException, IOException {
+    @RequestMapping(value = "/sitemap.xml", produces = MediaType.APPLICATION_XML_VALUE)
+    @ResponseBody
+    public String handleGetSiteMapXml(HttpServletResponse response) throws NavigationProviderException {
         LOG.trace("handleGetSiteMapXml");
 
         final SitemapItem navigationModel = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
@@ -74,8 +75,7 @@ public class SiteMapXmlController {
         writeSitemapItemsXml(navigationModel.getItems(), builder);
         builder.append("</urlset>");
 
-        response.getWriter().write(builder.toString());
-        response.setContentType(MediaType.APPLICATION_XML_VALUE);
+        return builder.toString();
     }
 
     @ExceptionHandler(Exception.class)

@@ -192,6 +192,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 
         try {
             // This appears a limitation in the Java Generics implementation.
+            // TODO: check for abstract or interface types and try to find a concrete type for it!
             final T concreteModel = (T) modelClass.newInstance();
 
             if (concreteModel instanceof TridionViewModel && !StringUtils.isEmpty(templateUri)) {

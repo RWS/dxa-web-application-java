@@ -16,6 +16,8 @@
 
 package org.dd4t.core.request;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * TODO: update comment - CWA is sooo old ;)
  * Bean Interface describes the request which is given to CWA for retrieval. It will at the
@@ -30,5 +32,5 @@ package org.dd4t.core.request;
  */
 
 public interface RequestContext {
-    Object getRequest ();
+    HttpServletRequest getRequest ();
 }

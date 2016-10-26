@@ -25,15 +25,6 @@
         <module>dxa-web8-provider</module>
     </modules>
 
-    <profiles>
-        <profile>
-            <id>2013sp1</id>
-            <modules>
-                <module>dxa-tridion-2013sp1-provider</module>
-            </modules>
-        </profile>
-    </profiles>
-
     <scm>
         <url>https://github.com/sdl/dxa-web-application-java</url>
         <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
@@ -71,7 +62,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dxa-bom.version>1.6.0-SNAPSHOT</dxa-bom.version>
-        <java-version>1.7</java-version>
+        <java-version>1.8</java-version>
     </properties>
 
     <dependencyManagement>

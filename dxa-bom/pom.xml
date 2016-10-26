@@ -45,17 +45,11 @@
     </developers>
 
     <properties>
-        <classifier.2013sp1>2013sp1</classifier.2013sp1>
-        <classifier.web8>web8</classifier.web8>
-
-        <dd4t.version>2.0.13-DXA</dd4t.version>
+        <dd4t.version>2.1.0-DXA</dd4t.version>
         <cd-cil.version>8.3.0-1013</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
-
-        <!-- Caching -->
-        <!--2013SP1: <ehcache-version>2.8.2</ehcache-version>-->
 
         <!-- Apache Commons -->
         <commons-beanutils-version>1.8.3</commons-beanutils-version>
@@ -66,7 +60,6 @@
         <commons-io-version>2.4</commons-io-version>
         <commons-jexl-version>2.1.1</commons-jexl-version>
         <commons-pool-version>1.6</commons-pool-version>
-        <!--2013SP1: <commons-pool-version>1.5.3</commons-pool-version>-->
         <commons-lang.version>2.6</commons-lang.version>
         <commons-lang3.version>3.0</commons-lang3.version>
         <commons-discovery.version>0.5</commons-discovery.version>
@@ -79,15 +72,13 @@
 
         <!-- Google -->
         <guava-version>18.0</guava-version>
-        <!--2013SP1: <guava-version>14.0.1</guava-version>-->
         <google-apis.version>1.21.0</google-apis.version>
         <google-api-services-analytics.version>v3-rev126-1.21.0</google-api-services-analytics.version>
 
         <!-- Joda Time -->
         <joda-time-version>2.5</joda-time-version>
 
-        <!--Web8: <jackson.version>2.6.0</jackson.version>-->
-        <jackson.version>2.4.3</jackson.version>
+        <jackson.version>2.6.0</jackson.version>
 
         <woodstox-version>4.4.1</woodstox-version>
 
@@ -100,8 +91,6 @@
         <!-- Logging -->
         <logback.version>1.1.3</logback.version>
         <slf4j-version>1.7.12</slf4j-version>
-        <!--2013SP1: <slf4j-version>1.6.4</slf4j-version>-->
-        <!--2013SP1: <logback-version>1.0.0</logback-version>-->
 
         <!-- Servlet and JSP APIs -->
         <servlet-api-version>3.1.0</servlet-api-version>
@@ -128,7 +117,6 @@
         <jersey-client.version>1.12</jersey-client.version>
         <jdom.version>1.0</jdom.version>
         <xalan-version>2.7.2</xalan-version>
-        <!--2013SP1: <xalan-version>2.7.1</xalan-version>-->
 
         <dozer.version>5.5.1</dozer.version>
 
@@ -154,12 +142,6 @@
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-tridion-provider</artifactId>
                 <version>${dxa.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-tridion-2013sp1-provider</artifactId>
-                <version>${dxa.version}</version>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
@@ -261,35 +243,6 @@
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-providers</artifactId>
                 <version>${dd4t.version}</version>
-                <classifier>${classifier.2013sp1}</classifier>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.tridion.contentdelivery</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl.web</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.dd4t</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.dd4t</groupId>
-                <artifactId>dd4t-providers</artifactId>
-                <version>${dd4t.version}</version>
-                <classifier>${classifier.web8}</classifier>
                 <exclusions>
                     <exclusion>
                         <groupId>com.tridion.contentdelivery</groupId>

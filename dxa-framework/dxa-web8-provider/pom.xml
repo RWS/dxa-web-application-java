@@ -100,7 +100,6 @@
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-providers</artifactId>
-            <classifier>web8</classifier>
         </dependency>
 
         <dependency>

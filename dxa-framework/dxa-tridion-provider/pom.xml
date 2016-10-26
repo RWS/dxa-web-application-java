@@ -12,7 +12,7 @@
     <artifactId>dxa-tridion-provider</artifactId>
 
     <name>DXA - Tridion provider</name>
-    <description>DXA Providers functionality common for both Tridion 2013SP1/Web 8</description>
+    <description>DXA Providers version-independent functionality</description>
 
     <dependencies>
         <!-- SDL Digital Experience Accelerator -->

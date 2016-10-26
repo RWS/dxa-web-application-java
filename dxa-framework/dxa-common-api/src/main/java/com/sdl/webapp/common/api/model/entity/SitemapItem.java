@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.api.model.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -45,7 +44,6 @@ public class SitemapItem extends AbstractEntityModel {
     private Set<SitemapItem> items;
 
     @JsonProperty("PublishedDate")
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
     private DateTime publishedDate;
 
     @JsonProperty("Visible")
@@ -71,7 +69,7 @@ public class SitemapItem extends AbstractEntityModel {
 
     @NotNull
     public Set<SitemapItem> getItems() {
-        return this.items == null ? Collections.<SitemapItem>emptySet() : this.items;
+        return this.items == null ? Collections.emptySet() : this.items;
     }
 
     /**

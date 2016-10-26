@@ -10,7 +10,7 @@
       "Id": "tcm:8-640-64",
       "Type": "Page",
       "Items": [],
-      "PublishedDate": "2016-08-18T13:37:17Z",
+      "PublishedDate": "2016-08-18T13:37:17.000Z",
       "Visible": true
     },
     {
@@ -25,7 +25,7 @@
           "Id": "tcm:8-643-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-18T13:37:17Z",
+          "PublishedDate": "2016-08-18T13:37:17.000+0000",
           "Visible": true
         },
         {
@@ -34,7 +34,7 @@
           "Id": "tcm:8-4574-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-18T13:36:17Z",
+          "PublishedDate": "2016-08-18T13:36:17.000+0000",
           "Visible": true
         },
         {
@@ -49,7 +49,7 @@
               "Id": "tcm:8-642-64",
               "Type": "Page",
               "Items": [],
-              "PublishedDate": "2016-08-18T13:37:17Z",
+              "PublishedDate": "2016-08-18T13:37:17.000+0000",
               "Visible": true
             },
             {
@@ -58,7 +58,7 @@
               "Id": "tcm:8-4569-64",
               "Type": "Page",
               "Items": [],
-              "PublishedDate": "2016-08-17T17:14:47Z",
+              "PublishedDate": "2016-08-17T17:14:47.000+0000",
               "Visible": false
             },
             {
@@ -67,7 +67,7 @@
               "Id": "tcm:8-4570-64",
               "Type": "Page",
               "Items": [],
-              "PublishedDate": "2016-08-17T17:14:47Z",
+              "PublishedDate": "2016-08-17T17:14:47.000+0000",
               "Visible": false
             },
             {
@@ -76,7 +76,7 @@
               "Id": "tcm:8-4571-64",
               "Type": "Page",
               "Items": [],
-              "PublishedDate": "2016-08-17T17:14:47Z",
+              "PublishedDate": "2016-08-17T17:14:47.000+0000",
               "Visible": false
             },
             {
@@ -85,7 +85,7 @@
               "Id": "tcm:8-4572-64",
               "Type": "Page",
               "Items": [],
-              "PublishedDate": "2016-08-17T17:14:47Z",
+              "PublishedDate": "2016-08-17T17:14:47.000+0000",
               "Visible": false
             }
           ],
@@ -108,7 +108,7 @@
           "Id": "tcm:8-644-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-18T13:29:18Z",
+          "PublishedDate": "2016-08-18T13:29:18.000+0000",
           "Visible": true
         },
         {
@@ -117,7 +117,7 @@
           "Id": "tcm:8-645-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-18T13:34:18Z",
+          "PublishedDate": "2016-08-18T13:34:18.000+0000",
           "Visible": true
         },
         {
@@ -126,7 +126,7 @@
           "Id": "tcm:8-646-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-18T13:28:47Z",
+          "PublishedDate": "2016-08-18T13:28:47.000+0000",
           "Visible": true
         },
         {
@@ -135,7 +135,7 @@
           "Id": "tcm:8-647-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-18T13:25:47Z",
+          "PublishedDate": "2016-08-18T13:25:47.000+0000",
           "Visible": true
         }
       ],
@@ -154,7 +154,7 @@
           "Id": "tcm:8-648-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-18T13:33:17Z",
+          "PublishedDate": "2016-08-18T13:33:17.000+0000",
           "Visible": true
         },
         {
@@ -163,7 +163,7 @@
           "Id": "tcm:8-649-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-17T17:14:47Z",
+          "PublishedDate": "2016-08-17T17:14:47.000+0000",
           "Visible": true
         },
         {
@@ -172,7 +172,7 @@
           "Id": "tcm:8-650-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-17T17:14:47Z",
+          "PublishedDate": "2016-08-17T17:14:47.000+0000",
           "Visible": true
         },
         {
@@ -181,7 +181,7 @@
           "Id": "tcm:8-651-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-18T13:34:18Z",
+          "PublishedDate": "2016-08-18T13:34:18.000+0000",
           "Visible": true
         },
         {
@@ -190,7 +190,7 @@
           "Id": "tcm:8-652-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-18T13:34:18Z",
+          "PublishedDate": "2016-08-18T13:34:18.000+0000",
           "Visible": true
         }
       ],
@@ -209,7 +209,7 @@
           "Id": "tcm:8-9541-64",
           "Type": "Page",
           "Items": [],
-          "PublishedDate": "2016-08-17T17:14:47Z",
+          "PublishedDate": "2016-08-17T17:14:47.000+0000",
           "Visible": false
         }
       ],
@@ -222,7 +222,7 @@
       "Id": "tcm:8-9284-64",
       "Type": "Page",
       "Items": [],
-      "PublishedDate": "2016-08-17T17:14:47Z",
+      "PublishedDate": "2016-08-17T17:14:47.000+0000",
       "Visible": false
     },
     {
@@ -231,7 +231,7 @@
       "Id": "tcm:8-4859-64",
       "Type": "Page",
       "Items": [],
-      "PublishedDate": "2016-08-17T17:14:47Z",
+      "PublishedDate": "2016-08-17T17:14:47.000+0000",
       "Visible": false
     }
   ],

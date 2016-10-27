@@ -11,7 +11,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.mock.web.MockHttpServletRequest;
 
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
@@ -35,7 +40,7 @@ public class OnDemandNavigationControllerTest {
         OnDemandNavigationController controller = new OnDemandNavigationController(null, null);
 
         //when
-        controller.handle("", true, 0);
+        controller.handle("", true, 0, new MockHttpServletRequest());
 
         //then
         //UOE
@@ -44,9 +49,12 @@ public class OnDemandNavigationControllerTest {
     @Test
     public void shouldCreateNavigationFilterAndPassItToNavigationProvider() {
         //given
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        MockHttpServletRequest request2 = new MockHttpServletRequest();
 
         //when
-        controller.handle("t1-k23", true, 123);
+        controller.handle("t1-k23", true, 123, request);
+        controller.handle(true, 123, request2);
 
         //then
         verify(onDemandNavigationProvider).getNavigationSubtree(eq("t1-k23"), argThat(new BaseMatcher<NavigationFilter>() {
@@ -61,5 +69,11 @@ public class OnDemandNavigationControllerTest {
 
             }
         }), any(Localization.class));
+        List<String> properties = Arrays.asList(request.getAttribute("Ignore_By_Name_In_Request_Filter").toString().split(","));
+        List<String> properties2 = Arrays.asList(request2.getAttribute("Ignore_By_Name_In_Request_Filter").toString().split(","));
+        assertTrue(properties.contains("XpmMetadata"));
+        assertTrue(properties2.contains("XpmMetadata"));
+        assertTrue(properties.contains("XpmPropertyMetadata"));
+        assertTrue(properties2.contains("XpmPropertyMetadata"));
     }
 }

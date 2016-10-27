@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.Data;
@@ -16,9 +17,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -39,7 +41,8 @@ public class SitemapItem extends AbstractEntityModel {
     private String type;
 
     @JsonProperty("Items")
-    private List<SitemapItem> items;
+    @JsonDeserialize(as = LinkedHashSet.class)
+    private Set<SitemapItem> items;
 
     @JsonProperty("PublishedDate")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSSZ")
@@ -67,17 +70,38 @@ public class SitemapItem extends AbstractEntityModel {
     }
 
     @NotNull
-    public List<SitemapItem> getItems() {
-        return this.items == null ? Collections.<SitemapItem>emptyList() : this.items;
+    public Set<SitemapItem> getItems() {
+        return this.items == null ? Collections.<SitemapItem>emptySet() : this.items;
     }
 
     /**
      * Setter for the children items which also sets parent field to the current object.
+     * <p></p>
+     * <strong>NB! the given set may be wrapped with another {@link Set} implementation!</strong>
+     * This means that the current code may not work as you expect:
+     * <pre><code>
+     * SitemapItem item = new SitemapItem();
+     * Set&lt;SitemapItem&gt; children = new HashSet&lt;&gt;();
+     * item.setItems(children);
+     * children.add(new SitemapItem()); // here children may be a different set than one that might be really set!
+     *
+     * // so this MAY BE true:
+     * assert children != item.getItems();
+     *
+     * // although this still may be true:
+     * assert children.equals(item.getItems());
+     * </code></pre>
+     * Out of the box for DXA it is true for {@link TaxonomyNode} as it wraps the passed collection with a {@link java.util.SortedSet}.
+     * Use {@link #addItem(SitemapItem)} to add items.
      *
      * @param items items to set
      */
-    public void setItems(@Nullable List<SitemapItem> items) {
-        this.items = items;
+    public void setItems(@Nullable Set<SitemapItem> items) {
+        this.items = wrapItems(items);
+        ensureParentsSet(items);
+    }
+
+    private void ensureParentsSet(@Nullable Collection<SitemapItem> items) {
         if (items != null) {
             for (SitemapItem item : items) {
                 if (item != null) {
@@ -96,10 +120,25 @@ public class SitemapItem extends AbstractEntityModel {
     @NotNull
     public SitemapItem addItem(SitemapItem item) {
         if (this.items == null) {
-            this.items = new ArrayList<>();
+            this.items = wrapItems(new LinkedHashSet<SitemapItem>());
         }
         this.items.add(item);
         return this;
+    }
+
+    /**
+     * Removes an item from a collection of items.
+     *
+     * @param item item to remove
+     * @return true is item was removed, false if there was no item or collection wasn't initialized
+     */
+    public boolean removeItem(SitemapItem item) {
+        return this.items != null && this.items.remove(item);
+    }
+
+    @Contract("null -> !null; !null -> !null")
+    protected Set<SitemapItem> wrapItems(@Nullable Set<SitemapItem> items) {
+        return items == null ? new LinkedHashSet<SitemapItem>() : items;
     }
 
     public String getTitle() {

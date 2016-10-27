@@ -10,7 +10,7 @@
         <version>1.0.3</version>
     </parent>
 
-    <version>1.6.0-SNAPSHOT</version>
+    <version>1.6.0</version>
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-webapp</artifactId>
     <packaging>war</packaging>
@@ -19,7 +19,7 @@
     <url>http://www.sdl.com/cxc/digital-experience/web-experience-management/digital-experience-accelerator.html</url>
 
     <properties>
-        <dxa-bom.version>1.6.0-SNAPSHOT</dxa-bom.version>
+        <dxa-bom.version>1.6.0</dxa-bom.version>
         <dxa-release-branch>release/1.6</dxa-release-branch>
     </properties>
 
@@ -223,6 +223,33 @@
                 <dependency>
                     <groupId>com.microsoft.sqlserver</groupId>
                     <artifactId>sqljdbc4</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>2013sp1-live</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa</groupId>
+                    <artifactId>dxa-tridion-2013sp1-provider</artifactId>
+                    <exclusions>
+                        <exclusion>
+                            <groupId>com.tridion</groupId>
+                            <artifactId>cd_session</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>com.tridion</groupId>
+                            <artifactId>cd_wrapper</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>com.tridion</groupId>
+                            <artifactId>cd_preview_ambient</artifactId>
+                        </exclusion>
+                        <exclusion>
+                            <groupId>com.tridion</groupId>
+                            <artifactId>cd_preview_web</artifactId>
+                        </exclusion>
+                    </exclusions>
                 </dependency>
             </dependencies>
         </profile>

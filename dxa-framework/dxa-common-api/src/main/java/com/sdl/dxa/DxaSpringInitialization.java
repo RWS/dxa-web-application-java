@@ -2,8 +2,11 @@ package com.sdl.dxa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
+import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import com.sdl.webapp.common.util.InitializationUtils;
 import com.sdl.webapp.common.views.AtomView;
@@ -17,6 +20,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -27,6 +32,7 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import java.util.Locale;
 
+import static com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter.FILTER_NAME;
 import static com.sdl.webapp.common.util.InitializationUtils.loadDxaProperties;
 import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitialization;
 
@@ -56,7 +62,10 @@ public class DxaSpringInitialization {
     @Bean
     public static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
-        configurer.setProperties(InitializationUtils.loadDxaProperties());
+        MutablePropertySources propertySources = new MutablePropertySources();
+        propertySources.addLast(new PropertiesPropertySource("dxa.properties.merged", InitializationUtils.loadDxaProperties()));
+        configurer.setPropertySources(propertySources);
+        configurer.setNullValue("null");
         traceBeanInitialization(configurer);
         return configurer;
     }
@@ -73,31 +82,38 @@ public class DxaSpringInitialization {
 
     @Bean
     public ViewResolver dxaViewResolver() {
-        UrlBasedViewResolver viewResolver = new UrlBasedViewResolver() {
+        final UrlBasedViewResolver viewResolver = new UrlBasedViewResolver() {
 
             @Override
             public View resolveViewName(String viewName, Locale locale) throws Exception {
-                viewName = processDeviceFamily(viewName);
-
-                View overriddenView = super.resolveViewName(viewResolverOverride + "/" + viewName, locale);
-                if (null != overriddenView) {
-                    log.debug("Found overridden view for {}, using it", viewName);
-                    return overriddenView;
+                if (viewName.startsWith(FORWARD_URL_PREFIX) || viewName.startsWith(REDIRECT_URL_PREFIX)) {
+                    return super.resolveViewName(viewName, locale);
                 }
 
-                return super.resolveViewName(viewName, locale);
+                View view = tryViewNames(locale, processDeviceFamily(viewName), viewResolverOverride + "/" + viewName);
+
+                return view != null ? view : super.resolveViewName(viewName, locale);
+            }
+
+            private View tryViewNames(Locale locale, String... viewNames) throws Exception {
+                for (String viewName : viewNames) {
+                    View view = super.resolveViewName(viewName, locale);
+                    if (null != view) {
+                        log.debug("Found view name {}, using it", viewName);
+                        return view;
+                    }
+                }
+                return null;
             }
 
             private String processDeviceFamily(String viewName) {
                 ContextEngine contextEngine = ApplicationContextHolder.getContext().getBean(ContextEngine.class);
                 String deviceFamily = contextEngine.getDeviceFamily();
-                if (!"desktop".equals(deviceFamily)) {
-                    viewName = viewName + "." + deviceFamily;
-                    log.debug("ViewName is changed to {} and current device family is {}", viewName, deviceFamily);
-                }
-                return viewName;
+                log.debug("Current device family is {}", deviceFamily);
+                return "desktop".equals(deviceFamily) ? viewName : (viewName + "." + deviceFamily);
             }
         };
+
         viewResolver.setViewClass(OptionalJstlView.class);
         viewResolver.setOrder(1);
         viewResolver.setPrefix(viewResolverPrefix);
@@ -140,9 +156,21 @@ public class DxaSpringInitialization {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         objectMapper.registerModule(new JodaModule());
+        objectMapper.setFilters(jsonFilterProvider());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         traceBeanInitialization(objectMapper);
         return objectMapper;
+    }
+
+    @Bean
+    public FilterProvider jsonFilterProvider() {
+        SimpleFilterProvider provider = new SimpleFilterProvider();
+        return provider.addFilter(FILTER_NAME, dxaViewModelJsonChainFilter());
+    }
+
+    @Bean
+    public DxaViewModelJsonChainFilter dxaViewModelJsonChainFilter() {
+        return new DxaViewModelJsonChainFilter();
     }
 
     private static class OptionalJstlView extends JstlView {

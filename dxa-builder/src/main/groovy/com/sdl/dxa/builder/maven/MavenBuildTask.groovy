@@ -36,7 +36,7 @@ class MavenBuildTask extends DefaultTask {
 
         CountDownLatch latch
 
-        def callback = { output ->
+        def callback = { Output output ->
             if (output.code != 0) {
                 pool.shutdown()
                 outputPool.shutdown()
@@ -48,7 +48,8 @@ class MavenBuildTask extends DefaultTask {
                     println "Well, there is an error. Press <Enter> to finish."
                     System.in.read()
                 }
-                throw new RuntimeException("Error building ${output.command}")
+                println "Error building ${output.command}"
+                System.exit(output.code);
             } else {
                 outputPool.submit {
                     println "= SUCCESS (in ${output.timeSeconds}s): ${output.command}"

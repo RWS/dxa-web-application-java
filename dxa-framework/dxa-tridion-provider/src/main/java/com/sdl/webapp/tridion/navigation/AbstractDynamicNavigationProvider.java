@@ -25,15 +25,16 @@ import org.dd4t.providers.PayloadCacheProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Objects;
 import java.util.Set;
 
@@ -92,12 +93,12 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
             //noinspection SynchronizationOnLocalVariableOrMethodParameter
             synchronized (navigationModel) {
                 if (navigationModel.isExpired()) {
-                    navigationModel.setExpired(false);
-
                     String taxonomyId = getNavigationTaxonomyIdInternal(localization);
                     if (isFallbackRequired(taxonomyId, localization)) {
                         return staticNavigationProvider.getNavigationModel(localization);
                     }
+
+                    navigationModel.setExpired(false);
 
                     navigationModel.setPayload(createTaxonomyNode(taxonomyId, localization));
                     log.debug("Put navigation model for taxonomy id {} for localization id {} in cache", taxonomyId, localization.getId());
@@ -113,7 +114,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     public NavigationLinks getTopNavigationLinks(String requestPath, final Localization localization) throws NavigationProviderException {
         return processNavigationLinks(requestPath, localization, new NavigationProcessing() {
             @Override
-            public List<SitemapItem> processNavigation(SitemapItem navigationModel) {
+            public Collection<SitemapItem> processNavigation(SitemapItem navigationModel) {
                 return navigationModel.getItems();
             }
 
@@ -128,7 +129,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     public NavigationLinks getContextNavigationLinks(final String requestPath, Localization localization) throws NavigationProviderException {
         return processNavigationLinks(requestPath, localization, new NavigationProcessing() {
             @Override
-            public List<SitemapItem> processNavigation(SitemapItem navigationModel) {
+            public Collection<SitemapItem> processNavigation(SitemapItem navigationModel) {
                 SitemapItem currentLevel = navigationModel.findWithUrl(stripDefaultExtension(requestPath));
 
                 if (currentLevel != null && !(currentLevel instanceof TaxonomyNode)) {
@@ -149,7 +150,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     public NavigationLinks getBreadcrumbNavigationLinks(final String requestPath, final Localization localization) throws NavigationProviderException {
         return processNavigationLinks(requestPath, localization, new NavigationProcessing() {
             @Override
-            public List<SitemapItem> processNavigation(SitemapItem navigationModel) {
+            public Collection<SitemapItem> processNavigation(SitemapItem navigationModel) {
                 SitemapItem currentLevel = navigationModel.findWithUrl(stripDefaultExtension(requestPath));
 
                 return currentLevel == null ? Collections.<SitemapItem>emptyList() : collectBreadcrumbsToLevel(currentLevel, localization);
@@ -163,7 +164,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     }
 
     @Override
-    public List<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) {
+    public Collection<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) {
         log.trace("sitemapItemId: {}, Navigation filter: {}, localization {}", sitemapItemId, navigationFilter, localization);
 
         if (isNullOrEmpty(sitemapItemId)) {
@@ -191,11 +192,28 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         return Collections.emptyList();
     }
 
+    /**
+     * Expands root Taxonomies.
+     * We don't expect two equal Taxonomies at root level, so the method returns {@link Set}.
+     *
+     * @param navigationFilter navigation filter
+     * @param localization     current localization
+     * @return a set of root Taxonomies
+     */
     @Contract("_, _ -> !null")
-    protected abstract List<SitemapItem> expandTaxonomyRoots(NavigationFilter navigationFilter, Localization localization);
+    protected abstract Set<SitemapItem> expandTaxonomyRoots(NavigationFilter navigationFilter, Localization localization);
 
+    /**
+     * Expands descendants for a given {@link SitemapItem}.
+     * We don't expect two equals items at the same level, so the method returns {@link Set}.
+     *
+     * @param uris             information about URI of current item
+     * @param navigationFilter navigation filter
+     * @param localization     curren localization
+     * @return a set of descendants of item with passed URI
+     */
     @Contract("_, _, _ -> !null")
-    protected abstract List<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization);
+    protected abstract Set<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization);
 
     protected abstract SitemapItem createTaxonomyNode(String taxonomyId, Localization localization);
 
@@ -218,6 +236,8 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
      * Ancestors for a page is a list of same ROOT node with different children.
      * Basically, these different ROOTs (with same ID, because we are still within one taxonomy) contain
      * different children for different paths your page may be in.
+     * <p>Unless other methods for descendants, this method returns {@link List} because the root Taxonomies will be the same object
+     * even if page is in multiple places.</p>
      *
      * @param uris             URIs of your current context taxonomy node
      * @param navigationFilter navigation filter
@@ -247,10 +267,11 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         item.setTitle(page.getTitle());
         item.setUrl(stripDefaultExtension(page.getUrl()));
         item.setVisible(isVisibleItem(page.getTitle(), page.getUrl()));
+        item.setPublishedDate(new DateTime(page.getPublishedDate()));
         return item;
     }
 
-    TaxonomyNode createTaxonomyNodeFromKeyword(@NotNull KeywordDTO keyword, String taxonomyId, String taxonomyNodeUrl, List<SitemapItem> children) {
+    TaxonomyNode createTaxonomyNodeFromKeyword(@NotNull KeywordDTO keyword, String taxonomyId, String taxonomyNodeUrl, Set<SitemapItem> children) {
         boolean isRoot = Objects.equals(keyword.getTaxonomyUri(), keyword.getKeywordUri());
         String keywordId = keyword.getKeywordUri().split("-")[1];
 
@@ -285,7 +306,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     }
 
     @NotNull
-    NavigationLinks prepareItemsAsVisibleNavigation(Localization localization, List<SitemapItem> navigationLinks, boolean filter) {
+    NavigationLinks prepareItemsAsVisibleNavigation(Localization localization, Collection<SitemapItem> navigationLinks, boolean filter) {
         Collection<SitemapItem> items = filter ? filterNavigationLinks(navigationLinks) : navigationLinks;
 
         return new NavigationLinks(resolveLinksUrl(localization, items));
@@ -302,7 +323,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     }
 
     @NotNull
-    private Collection<SitemapItem> filterNavigationLinks(List<SitemapItem> navigationLinks) {
+    private Collection<SitemapItem> filterNavigationLinks(Collection<SitemapItem> navigationLinks) {
         return filter(navigationLinks, new Predicate<SitemapItem>() {
             @Override
             public boolean apply(SitemapItem input) {
@@ -393,8 +414,8 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
             return null;
         }
 
-        SitemapItem mergedNode = nodes.get(0);
-        ListIterator<SitemapItem> iterator = nodes.listIterator(1);
+        Iterator<SitemapItem> iterator = nodes.iterator();
+        SitemapItem mergedNode = iterator.next();
         while (iterator.hasNext()) {
             mergeSubtrees(iterator.next(), mergedNode);
         }
@@ -436,7 +457,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
 
     interface NavigationProcessing {
 
-        List<SitemapItem> processNavigation(SitemapItem navigationModel);
+        Collection<SitemapItem> processNavigation(SitemapItem navigationModel);
 
         NavigationLinks fallback(String requestPath, Localization localization) throws NavigationProviderException;
 

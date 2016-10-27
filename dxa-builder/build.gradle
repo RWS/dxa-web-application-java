@@ -1,5 +1,5 @@
 group 'com.sdl.dxa'
-version '1.6.0-SNAPSHOT'
+version '1.6.0'
 
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
@@ -8,7 +8,7 @@ apply plugin: 'signing'
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-def isRelease = !version.endsWith("-SNAPSHOT")
+def isRelease = !version.endsWith("-SNAPSHOT") && project.hasProperty('release')
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
@@ -85,10 +85,8 @@ publishing {
                     url "https://oss.sonatype.org/content/repositories/snapshots"
                 }
             } else {
-                if (project.hasProperty('release')) {
-                    name "sonatype-nexus-staging"
-                    url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                }
+                name "sonatype-nexus-staging"
+                url "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
             }
 
             if (project.hasProperty("publishUsername") && project.hasProperty("publishPassword")) {

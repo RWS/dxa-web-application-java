@@ -15,8 +15,9 @@ import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Locale;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -206,19 +207,19 @@ public class MarkupImplTest {
     @Test
     public void shouldReturnSiteMapList() {
         //given
-        SitemapItem child11 = sitemapItem("11", "http://dxa.com/index", list());
+        SitemapItem child11 = sitemapItem("11", "http://dxa.com/index", set());
 
-        SitemapItem child1 = sitemapItem("1", "http://dxa.com/", list(child11));
+        SitemapItem child1 = sitemapItem("1", "http://dxa.com/", set(child11));
 
-        SitemapItem child2 = sitemapItem("2", "", list(
-                sitemapItem("21", "http://sdl.com", list())
+        SitemapItem child2 = sitemapItem("2", "", set(
+                sitemapItem("21", "http://sdl.com", set())
         ));
 
-        SitemapItem child3 = sitemapItem("3", null, list(
-                sitemapItem("31", "", list())
+        SitemapItem child3 = sitemapItem("3", null, set(
+                sitemapItem("31", "", set())
         ));
 
-        SitemapItem root = sitemapItem("Root", "", list(child1, child2, child3, null));
+        SitemapItem root = sitemapItem("Root", "", set(child1, child2, child3, null));
 
         //when
         String siteMapListReturn = markup.siteMapList(root);
@@ -233,7 +234,7 @@ public class MarkupImplTest {
                 "</li>", siteMapListReturn);
     }
 
-    private SitemapItem sitemapItem(String title, String url, List<SitemapItem> items) {
+    private SitemapItem sitemapItem(String title, String url, Set<SitemapItem> items) {
         SitemapItem item = new SitemapItem();
         item.setUrl(url);
         item.setTitle(title);
@@ -241,7 +242,7 @@ public class MarkupImplTest {
         return item;
     }
 
-    private List<SitemapItem> list(SitemapItem... sitemapItems) {
-        return Arrays.asList(sitemapItems);
+    private Set<SitemapItem> set(SitemapItem... sitemapItems) {
+        return new LinkedHashSet<>(Arrays.asList(sitemapItems));
     }
 }

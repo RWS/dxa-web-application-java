@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.util;
 
+import com.google.common.base.Joiner;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,8 @@ public final class InitializationUtils {
 
     private static final String REGISTERED_LOG_MESSAGE = "Registered {}";
 
+    private static final String SPRING_PROFILES_INCLUDE = "spring.profiles.include";
+
     // keep the order for internal usage
     private static List<Resource> resources;
 
@@ -46,11 +49,9 @@ public final class InitializationUtils {
     }
 
     /**
-     * <p>Loads all properties from classpath from two files <code>dxa.defaults.properties</code>
-     * and <code>dxa.properties</code>. The latter has a priority is exists.</p>
-     * <p>If your module has its own properties, you should load them manually when using this method.
-     * Despite DXA loads all dxa.**.properties into a Spring context, this method does not.</p>
+     * Loads all properties from classpath from known files in the order defined by {@link #getAllResources()}.
      * <p>Once loaded properties are cached permanently.</p>
+     * <p>There is a special treatment for {@code spring.profiles.include} property: it's collected from all properties files appending latter values.</p>
      *
      * @return merged properties for DXA
      */
@@ -59,9 +60,17 @@ public final class InitializationUtils {
         if (properties == null) {
             Properties dxaProperties = new Properties();
             for (Resource resource : getAllResources()) {
+                Properties current = new Properties();
                 // order is guaranteed by #getAllResources() and internal usage of List
-                dxaProperties.load(new BOMInputStream(resource.getInputStream()));
+                current.load(new BOMInputStream(resource.getInputStream()));
                 log.debug("Properties from {} are loaded", resource);
+
+                if (current.containsKey(SPRING_PROFILES_INCLUDE) && dxaProperties.containsKey(SPRING_PROFILES_INCLUDE)) {
+                    current.setProperty(SPRING_PROFILES_INCLUDE,
+                            Joiner.on(',').join(dxaProperties.getProperty(SPRING_PROFILES_INCLUDE), current.getProperty(SPRING_PROFILES_INCLUDE)));
+                }
+
+                dxaProperties.putAll(current);
             }
 
             properties = dxaProperties;
@@ -72,11 +81,12 @@ public final class InitializationUtils {
     }
 
     /**
-     * Loads all available DXA properties files.
-     * <p>
-     * <p>Respects <code>dxa.defaults.properties</code>,
-     * <code>classpath*:/dxa.modules.*.properties</code>, <code>dxa.properties</code>,
-     * <code>classpath*:/dxa.addons.*.properties</code>.</p>
+     * Loads all available DXA properties files. Respects following files in following order:
+     * <pre>
+     *  <code>dxa.defaults.properties</code>,
+     *  <code>classpath*:/dxa.modules.*.properties</code>,
+     *  <code>dxa.properties</code>,
+     *  <code>classpath*:/dxa.addons.*.properties</code></pre>
      *
      * @return a collection of DXA properties files
      */
@@ -209,6 +219,29 @@ public final class InitializationUtils {
     }
 
     /**
+     * Registers filter in the given servlet context with a given name.
+     * <p>Typically name of the filter is a classname as implemented in {@link #registerFilter(ServletContext, Class, String...)} and
+     * {@link #registerFilter(ServletContext, Filter, String...)} and {@link #registerFilter(ServletContext, String, String...)}.</p>
+     * <p>Use this name if filter name is important for you implementation. Otherwise there will be no guarantee that same filter
+     * is not registered twice from different parts of code since filter registration is aware of filter name which is aligned for those
+     * three methods</p>
+     *
+     * @param servletContext current servlet context
+     * @param filterName     name of the filter to register
+     * @param clazz          classname of a filter to register
+     * @param urlMappings    mappings for the filter
+     * @return dynamic registration object or <code>null</code> if classname if not found
+     */
+    public static FilterRegistration.Dynamic registerFilter(@NonNull ServletContext servletContext, @NonNull String filterName,
+                                                            @NonNull Class<? extends Filter> clazz, @NonNull String... urlMappings) {
+
+        FilterRegistration.Dynamic registration = servletContext.addFilter(filterName, clazz);
+        registration.addMappingForUrlPatterns(null, false, urlMappings);
+        log.info(REGISTERED_FOR_MAPPING_LOG_MESSAGE, filterName, urlMappings);
+        return registration;
+    }
+
+    /**
      * <p>Registers filter in the given servlet context if class is found in classpath.</p>
      *
      * @param servletContext current servlet context
@@ -268,7 +301,7 @@ public final class InitializationUtils {
     public static void registerListener(@NonNull ServletContext servletContext,
                                         @NonNull Class<? extends EventListener> listenerClass) {
         servletContext.addListener(listenerClass);
-        log.info(REGISTERED_LOG_MESSAGE, listenerClass.getClass().getName());
+        log.info(REGISTERED_LOG_MESSAGE, listenerClass.getName());
     }
 
     /**

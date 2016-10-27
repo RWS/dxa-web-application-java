@@ -16,9 +16,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.InternalResourceView;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.Locale;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -50,6 +53,21 @@ public class DxaSpringInitializationTest {
         //then
         assertNotNull(view);
         assertTrue(view.toString().contains("TestView.android.jsp"));
+    }
+
+    @Test
+    public void shouldDetectRedirectOrForwardRequests() throws Exception {
+        //given 
+
+        //when
+        View view = dxaViewResolver.resolveViewName("redirect:RedirectTestView", Locale.getDefault());
+        View view2 = dxaViewResolver.resolveViewName("forward:ForwardTestView", Locale.getDefault());
+
+        //then
+        assertTrue(view instanceof RedirectView);
+        assertTrue(view2 instanceof InternalResourceView);
+        assertEquals("RedirectTestView", ((RedirectView) view).getUrl());
+        assertEquals("ForwardTestView", ((InternalResourceView) view2).getUrl());
     }
 
     @Configuration

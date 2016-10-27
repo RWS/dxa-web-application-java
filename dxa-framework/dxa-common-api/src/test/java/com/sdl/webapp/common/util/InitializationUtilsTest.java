@@ -1,10 +1,12 @@
 package com.sdl.webapp.common.util;
 
+import com.google.common.base.Splitter;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ConfigurableWebEnvironment;
+import org.springframework.web.filter.DelegatingFilterProxy;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -15,12 +17,14 @@ import javax.servlet.ServletRegistration;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.EventListener;
+import java.util.Iterator;
 import java.util.Properties;
 
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertThat;
@@ -64,6 +68,24 @@ public class InitializationUtilsTest {
         assertEquals("modules", properties.getProperty("dxa.override.modules"));
         assertEquals("user", properties.getProperty("dxa.override.user"));
         assertEquals("addons", properties.getProperty("dxa.override.addons"));
+    }
+
+    @Test
+    public void shouldCollectionSpringProfilesInclude() {
+        //given 
+
+        //when
+        Properties properties = InitializationUtils.loadDxaProperties();
+
+        //then
+        Iterator<String> iterator = Splitter.on(',').omitEmptyStrings().trimResults().split(properties.getProperty("spring.profiles.include")).iterator();
+        assertEquals("profile-default", iterator.next());
+        assertEquals("profile-cid", iterator.next());
+        assertEquals("profile3", iterator.next());
+        assertEquals("profile4", iterator.next());
+        assertEquals("profile5", iterator.next());
+        assertEquals("profile-staging", iterator.next());
+        assertFalse(iterator.hasNext());
     }
 
     @Test
@@ -172,6 +194,26 @@ public class InitializationUtilsTest {
         verify(registration).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
     }
 
+    @SuppressWarnings("unchecked")
+    @Test
+    public void shouldRegisterFilterByClassWithGivenName() {
+        //given
+        ServletContext context = mock(ServletContext.class);
+        String mapping = "/mapping";
+        String filterName = "myName";
+        Class<Filter> filterClass = Filter.class;
+        FilterRegistration.Dynamic registration = mock(FilterRegistration.Dynamic.class);
+        when(context.addFilter(eq(filterName), same(filterClass))).thenReturn(registration);
+
+        //when
+        FilterRegistration.Dynamic filterRegistration = InitializationUtils.registerFilter(context, filterName, filterClass, mapping);
+
+        //then
+        assertSame(registration, filterRegistration);
+        verify(context).addFilter(eq(filterName), same(filterClass));
+        verify(registration).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
+    }
+
     @Test
     public void shouldGiveClassForNameIfPresentOfNullOtherwise() {
         //when
@@ -209,7 +251,6 @@ public class InitializationUtilsTest {
         ServletContext context = mock(ServletContext.class);
         String className = "javax.servlet.Servlet";
         String mapping = "/mapping";
-
         ServletRegistration.Dynamic servletRegistration = mock(ServletRegistration.Dynamic.class);
         when(context.addServlet(same(className), same(className))).thenReturn(servletRegistration);
 
@@ -311,4 +352,29 @@ public class InitializationUtilsTest {
             verify(environment).addActiveProfile(eq(profile));
         }
     }
+
+    @Test
+    public void shouldUserClassNameForFilterRegistration() {
+        //given 
+        ServletContext servletContext = mock(ServletContext.class);
+        Class<DelegatingFilterProxy> classToMock = DelegatingFilterProxy.class;
+        String expectedName = classToMock.getName();
+        Filter filter = new DelegatingFilterProxy();
+        FilterRegistration.Dynamic filterRegistration = mock(FilterRegistration.Dynamic.class);
+        when(servletContext.addFilter(anyString(), anyString())).thenReturn(filterRegistration);
+        when(servletContext.addFilter(anyString(), same(classToMock))).thenReturn(filterRegistration);
+        when(servletContext.addFilter(anyString(), same(filter))).thenReturn(filterRegistration);
+
+        //when
+        InitializationUtils.registerFilter(servletContext, classToMock, "/");
+        InitializationUtils.registerFilter(servletContext, "org.springframework.web.filter.DelegatingFilterProxy", "/");
+        InitializationUtils.registerFilter(servletContext, filter, "/");
+
+        //then
+        verify(servletContext).addFilter(eq(expectedName), eq(classToMock));
+        verify(servletContext).addFilter(eq(expectedName), eq("org.springframework.web.filter.DelegatingFilterProxy"));
+        verify(servletContext).addFilter(eq(expectedName), eq(filter));
+    }
+
+
 }

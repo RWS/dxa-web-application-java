@@ -21,9 +21,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
@@ -88,8 +88,8 @@ public class NavigationController extends BaseController {
             return;
         }
 
-        List<SitemapItem> pages = new ArrayList<>();
-        List<SitemapItem> groups = new ArrayList<>();
+        Set<SitemapItem> pages = new LinkedHashSet<>();
+        Set<SitemapItem> groups = new LinkedHashSet<>();
 
         SitemapItem home = new SitemapItem(navigationModel);
         home.setItems(pages);

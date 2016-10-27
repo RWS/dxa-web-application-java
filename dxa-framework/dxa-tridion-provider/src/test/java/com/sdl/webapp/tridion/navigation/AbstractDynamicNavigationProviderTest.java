@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion.navigation;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.Link;
@@ -14,6 +13,7 @@ import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
+import org.dd4t.core.caching.CacheElement;
 import org.dd4t.core.caching.impl.CacheElementImpl;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.hamcrest.BaseMatcher;
@@ -24,14 +24,19 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Matchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder.parse;
@@ -82,6 +87,8 @@ public class AbstractDynamicNavigationProviderTest {
 
     private PayloadCacheProvider payloadCacheProvider = mock(PayloadCacheProvider.class);
 
+    private CacheElement<Object> cacheElement = spy(new CacheElementImpl<>(null, true));
+
     private AbstractDynamicNavigationProvider defaultDynamicNavigationProvider = getTestProvider(false, getNavigationModel(), "taxonomyId");
 
     @NotNull
@@ -93,12 +100,12 @@ public class AbstractDynamicNavigationProviderTest {
             }
 
             @Override
-            protected List<SitemapItem> expandTaxonomyRoots(NavigationFilter navigationFilter, Localization localization) {
+            protected Set<SitemapItem> expandTaxonomyRoots(NavigationFilter navigationFilter, Localization localization) {
                 return null;
             }
 
             @Override
-            protected List<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+            protected Set<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
                 return null;
             }
 
@@ -150,26 +157,26 @@ public class AbstractDynamicNavigationProviderTest {
             }
         });
 
-        when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(new CacheElementImpl<>(null, true));
+        when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(cacheElement);
 
 
-        doReturn(Collections.<SitemapItem>emptyList()).when(defaultDynamicNavigationProvider).expandDescendants(
+        doReturn(Collections.<SitemapItem>emptySet()).when(defaultDynamicNavigationProvider).expandDescendants(
                 any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
 
 
-        mockSingleAncestorForKeyword("t1-k22", taxonomyNode("t1", "/", true, list(
-                taxonomyNode("t1-k2", "/child", true, list(
-                        taxonomyNode("t1-k22", "/child/child_2", true, list())
+        mockSingleAncestorForKeyword("t1-k22", taxonomyNode("t1", "/", true, set(
+                taxonomyNode("t1-k2", "/child", true, set(
+                        taxonomyNode("t1-k22", "/child/child_2", true, set())
                 ))
         )));
 
         //region Descendants
-        doReturn(Collections.<SitemapItem>emptyList()).when(defaultDynamicNavigationProvider).expandDescendants(
+        doReturn(Collections.<SitemapItem>emptySet()).when(defaultDynamicNavigationProvider).expandDescendants(
                 any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
 
-        mockDescendants("t1", list(
+        mockDescendants("t1", set(
                 siteMapItem("t1-p1", true, "/index"),
-                taxonomyNode("t1-k2", "/child", true, list()),
+                taxonomyNode("t1-k2", "/child", true, set()),
                 siteMapItem("t1-p3", true, "/about"),
                 siteMapItem("t1-p4", true, "/imitation_home"),
                 siteMapItem("t1-p5", false, "/hidden"),
@@ -177,45 +184,45 @@ public class AbstractDynamicNavigationProviderTest {
                 siteMapItem("t1-p7", true, null)
         ));
 
-        mockDescendants("t1-k2", list(
-                taxonomyNode("t1-k22", "/child/child_2", true, list()),
-                taxonomyNode("t1-p23", "/child/child_3", true, list()),
-                taxonomyNode("t1-k24", "/child/child_4", true, list())
+        mockDescendants("t1-k2", set(
+                taxonomyNode("t1-k22", "/child/child_2", true, set()),
+                taxonomyNode("t1-p23", "/child/child_3", true, set()),
+                taxonomyNode("t1-k24", "/child/child_4", true, set())
         ));
 
-        mockDescendants("t1-k22", list(
+        mockDescendants("t1-k22", set(
                 siteMapItem("t1-p220", true, "/child/child_2/index"),
                 siteMapItem("t1-p221", true, "/child/child_2/child_2_1"),
                 siteMapItem("t1-p222", true, "/child/child_2/child_2_2")
         ));
 
         //TSI-1980, should never be called
-        mockDescendants("t1-p211", list(
+        mockDescendants("t1-p211", set(
                 siteMapItem("t1-p2211", true, "/child/child_2/child_2_1/child_2_1_1")
         ));
 
-        mockDescendants("t1-k24", list(
+        mockDescendants("t1-k24", set(
                 siteMapItem("t1-p222", true, "/child/child_2/child_2_2")
         ));
         //endregion
 
         mockAncestorsForPage("t1-p220", list(
-                taxonomyNode("t1", "/", true, list(
-                        taxonomyNode("t1-k2", "/child", true, list(
-                                taxonomyNode("t1-k22", "/child/child_2", true, list())
+                taxonomyNode("t1", "/", true, set(
+                        taxonomyNode("t1-k2", "/child", true, set(
+                                taxonomyNode("t1-k22", "/child/child_2", true, set())
                         ))
                 ))
         ));
 
         mockAncestorsForPage("t1-p222", list(
-                taxonomyNode("t1", "/", true, list(
-                        taxonomyNode("t1-k2", "/child", true, list(
-                                taxonomyNode("t1-k22", "/child/child_2", true, list())
+                taxonomyNode("t1", "/", true, set(
+                        taxonomyNode("t1-k2", "/child", true, set(
+                                taxonomyNode("t1-k22", "/child/child_2", true, set())
                         ))
                 )),
-                taxonomyNode("t1", "/", true, list(
-                        taxonomyNode("t1-k2", "/child", true, list(
-                                taxonomyNode("t1-k24", "/child/child_4", true, list())
+                taxonomyNode("t1", "/", true, set(
+                        taxonomyNode("t1-k2", "/child", true, set(
+                                taxonomyNode("t1-k24", "/child/child_4", true, set())
                         ))
                 ))
         ));
@@ -234,7 +241,7 @@ public class AbstractDynamicNavigationProviderTest {
     }
 
     @NotNull
-    private List<SitemapItem> getSitemapItems() {
+    private Set<SitemapItem> getSitemapItems() {
         /*
         ROOT:
             +/index
@@ -253,17 +260,17 @@ public class AbstractDynamicNavigationProviderTest {
             +null
         */
 
-        return newArrayList(
+        return set(
                 siteMapItem("t1-p1", true, "/index"),
                 taxonomyNode("t1-k2", "/child", true,
-                        newArrayList(
-                                taxonomyNode("t1-k22", "/child/child_2", true, newArrayList(
+                        set(
+                                taxonomyNode("t1-k22", "/child/child_2", true, set(
                                         siteMapItem("t1-p220", true, "/child/child_2/index"),
                                         siteMapItem("t1-p221", true, "/child/child_2/child_2_1"),
                                         siteMapItem("t1-p222", true, "/child/child_2/child_2_2"))
                                 ),
                                 siteMapItem("t1-p23", true, "/child/child_3"),
-                                taxonomyNode("t1-k24", "/child/child_4", true, newArrayList(
+                                taxonomyNode("t1-k24", "/child/child_4", true, set(
                                         //duplicate page (sic!)
                                         siteMapItem("t1-p222", true, "/child/child_2/child_2_2"))
                                 )
@@ -295,6 +302,10 @@ public class AbstractDynamicNavigationProviderTest {
         SitemapItem sitemapItem = testProvider.getNavigationModel(localization);
 
         //then
+        //TSI-2001
+        verify(cacheElement, never()).setPayload(Matchers.anyObject());
+        verify(cacheElement, never()).setExpired(anyBoolean());
+
         verify(staticNavigationProvider).getNavigationModel(eq(localization));
         verify(testProvider).getNavigationTaxonomyId(eq(localization));
         assertEquals("Static", sitemapItem.getTitle());
@@ -343,7 +354,7 @@ public class AbstractDynamicNavigationProviderTest {
     @Test
     public void shouldFilterItemsAndResolveUrls() throws NavigationProviderException {
         //given
-        List<SitemapItem> items = getSitemapItems();
+        Set<SitemapItem> items = getSitemapItems();
 
         //when
         List<Link> links = defaultDynamicNavigationProvider.prepareItemsAsVisibleNavigation(localization, items, true).getItems();
@@ -383,7 +394,7 @@ public class AbstractDynamicNavigationProviderTest {
             @SuppressWarnings("unchecked")
             @Override
             public boolean matches(Object item) {
-                List<SitemapItem> list = (List<SitemapItem>) item;
+                Set<SitemapItem> list = (Set<SitemapItem>) item;
 
                 return list.size() == 7;
             }
@@ -406,7 +417,7 @@ public class AbstractDynamicNavigationProviderTest {
             @SuppressWarnings("unchecked")
             @Override
             public boolean matches(Object item) {
-                List<SitemapItem> list = (List<SitemapItem>) item;
+                Set<SitemapItem> list = (Set<SitemapItem>) item;
 
                 //child_2 has an index page, so we're getting its siblings instead of child_3
                 Iterator<SitemapItem> iterator = list.iterator();
@@ -434,7 +445,7 @@ public class AbstractDynamicNavigationProviderTest {
             @SuppressWarnings("unchecked")
             @Override
             public boolean matches(Object item) {
-                List<SitemapItem> list = (List<SitemapItem>) item;
+                Set<SitemapItem> list = (Set<SitemapItem>) item;
 
                 //child_3 has a parent, so we expect its parent's children
                 Iterator<SitemapItem> iterator = list.iterator();
@@ -462,7 +473,7 @@ public class AbstractDynamicNavigationProviderTest {
             @SuppressWarnings("unchecked")
             @Override
             public boolean matches(Object item) {
-                List<SitemapItem> list = (List<SitemapItem>) item;
+                Set<SitemapItem> list = (Set<SitemapItem>) item;
 
                 //we expect filtering to be called with whole root level list of items
                 Iterator<SitemapItem> iterator = list.iterator();
@@ -663,7 +674,7 @@ public class AbstractDynamicNavigationProviderTest {
 
         String taxonomyId = "42";
         String taxonomyNodeUrl = "node-url.html";
-        List<SitemapItem> children = newArrayList(siteMapItem("t1-k1", true, "child1"));
+        Set<SitemapItem> children = new LinkedHashSet<>(newArrayList(siteMapItem("t1-k1", true, "child1")));
 
         //when
         TaxonomyNode node = defaultDynamicNavigationProvider.createTaxonomyNodeFromKeyword(keyword, taxonomyId, taxonomyNodeUrl,
@@ -720,7 +731,7 @@ public class AbstractDynamicNavigationProviderTest {
         Localization localization = mock(Localization.class);
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree("wrong id", filter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree("wrong id", filter, localization);
 
         //then
         verify(defaultDynamicNavigationProvider, never()).collectAncestorsForPage(any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
@@ -739,7 +750,7 @@ public class AbstractDynamicNavigationProviderTest {
                 .thenReturn(null);
 
         //when
-        List<SitemapItem> emptyList = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+        Collection<SitemapItem> emptyList = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
         verify(defaultDynamicNavigationProvider).expandAncestorsForKeyword(eq(parse(sitemapItemId, localization)), eq(navigationFilter), eq(localization));
@@ -758,7 +769,7 @@ public class AbstractDynamicNavigationProviderTest {
                 .thenReturn(Collections.<SitemapItem>emptyList());
 
         //when
-        List<SitemapItem> emptyList = testProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+        Collection<SitemapItem> emptyList = testProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
         verify(testProvider).collectAncestorsForPage(eq(parse(sitemapItemId, localization)), eq(navigationFilter), eq(localization));
@@ -772,7 +783,7 @@ public class AbstractDynamicNavigationProviderTest {
         String sitemapItemId = "t1";
 
         //when
-        List<SitemapItem> emptyList = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+        Collection<SitemapItem> emptyList = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
         assertTrue(emptyList.isEmpty());
@@ -813,21 +824,21 @@ public class AbstractDynamicNavigationProviderTest {
         String currentContext = "t1-k22";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         //only root, because of ancestors true
         assertTrue(list.size() == 1);
 
-        SitemapItem root = list.get(0);
+        SitemapItem root = get(list, 0);
         assertEquals("t1", root.getId());
 
         assertTrue(root.getItems().size() == 1);
-        SitemapItem level1 = root.getItems().get(0);
+        SitemapItem level1 = root.getItems().iterator().next();
         assertEquals("t1-k2", level1.getId());
 
         assertTrue(level1.getItems().size() == 1);
-        SitemapItem level2 = level1.getItems().get(0);
+        SitemapItem level2 = level1.getItems().iterator().next();
         assertEquals("t1-k22", level2.getId());
 
         assertFalse(((TaxonomyNode) level2).isWithChildren());
@@ -842,25 +853,26 @@ public class AbstractDynamicNavigationProviderTest {
         String currentContext = "t1-k22";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         //only root, because of ancestors true
         assertTrue(list.size() == 1);
 
-        SitemapItem root = list.get(0);
+        SitemapItem root = get(list, 0);
         assertEquals("t1", root.getId());
 
         assertTrue(root.getItems().size() == 7);
-        SitemapItem level1 = root.getItems().get(1);
+        SitemapItem level1 = get(root.getItems(), 1);
         assertEquals("t1-k2", level1.getId());
 
         assertTrue(level1.getItems().size() == 3);
-        SitemapItem level2 = level1.getItems().get(0);
+        SitemapItem level2 = get(level1.getItems(), 0);
         assertEquals("t1-k22", level2.getId());
 
         assertTrue(level2.getItems().size() == 3);
     }
+
 
     @Test
     public void shouldNotExpandAncestorsKeywordDescendantsZero() {
@@ -869,7 +881,7 @@ public class AbstractDynamicNavigationProviderTest {
         String currentContext = "t1-k22";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         assertTrue(list.isEmpty());
@@ -882,11 +894,11 @@ public class AbstractDynamicNavigationProviderTest {
         String currentContext = "t1-k22";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         assertTrue(list.size() == 3);
-        assertEquals("t1-p220", list.get(0).getId());
+        assertEquals("t1-p220", get(list, 0).getId());
     }
     //endregion
 
@@ -899,21 +911,21 @@ public class AbstractDynamicNavigationProviderTest {
         String sitemapItemId = "t1-p220";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
         //only root, because of ancestors true
         assertTrue(list.size() == 1);
 
-        SitemapItem root = list.get(0);
+        SitemapItem root = get(list, 0);
         assertEquals("t1", root.getId());
 
         assertTrue(root.getItems().size() == 1);
 
-        SitemapItem level1 = root.getItems().get(0);
+        SitemapItem level1 = get(root.getItems(), 0);
         assertTrue(level1.getItems().size() == 1);
 
-        SitemapItem level2 = level1.getItems().get(0);
+        SitemapItem level2 = get(level1.getItems(), 0);
         assertFalse(((TaxonomyNode) level2).isWithChildren());
         assertTrue(level2.getItems().size() == 0);
     }
@@ -926,7 +938,7 @@ public class AbstractDynamicNavigationProviderTest {
         String currentContext = "t1-p220";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         //one root node with all children expanded because first we want ancestors, second we want 1 level of children
@@ -935,20 +947,20 @@ public class AbstractDynamicNavigationProviderTest {
         //only root, because of ancestors true
         assertTrue(list.size() == 1);
 
-        SitemapItem root = list.get(0);
+        SitemapItem root = get(list, 0);
         assertEquals("t1", root.getId());
 
         assertTrue(root.getItems().size() == 7);
-        SitemapItem level1 = root.getItems().get(1);
+        SitemapItem level1 = get(root.getItems(), 1);
         assertEquals("t1-k2", level1.getId());
 
         assertTrue(level1.getItems().size() == 3);
-        SitemapItem level2 = level1.getItems().get(0);
+        SitemapItem level2 = get(level1.getItems(), 0);
         assertEquals("t1-k22", level2.getId());
 
         assertTrue(level2.getItems().size() == 3);
 
-        assertTrue(level2.getItems().get(0).getItems().isEmpty());
+        assertTrue(get(level2.getItems(), 0).getItems().isEmpty());
     }
 
     @Test
@@ -958,7 +970,7 @@ public class AbstractDynamicNavigationProviderTest {
         String currentContext = "t1-p220";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         assertTrue(list.isEmpty());
@@ -970,7 +982,7 @@ public class AbstractDynamicNavigationProviderTest {
         String currentContext = "t1-p220";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         assertTrue(list.isEmpty());
@@ -986,27 +998,27 @@ public class AbstractDynamicNavigationProviderTest {
         String currentContext = "t1-p222";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         //only root, because of ancestors true
         assertTrue(list.size() == 1);
 
-        SitemapItem root = list.get(0);
+        SitemapItem root = get(list, 0);
         assertEquals("t1", root.getId());
 
         assertTrue(root.getItems().size() == 1);
-        SitemapItem level1 = root.getItems().get(0);
+        SitemapItem level1 = get(root.getItems(), 0);
         assertEquals("t1-k2", level1.getId());
 
         assertTrue(level1.getItems().size() == 2);
-        assertEquals("t1-k22", level1.getItems().get(0).getId());
-        assertEquals("t1-k24", level1.getItems().get(1).getId());
+        assertEquals("t1-k22", get(level1.getItems(), 0).getId());
+        assertEquals("t1-k24", get(level1.getItems(), 1).getId());
 
-        assertTrue(level1.getItems().get(0).getItems().size() == 0);
-        assertFalse(((TaxonomyNode) level1.getItems().get(0)).isWithChildren());
-        assertTrue(level1.getItems().get(1).getItems().size() == 0);
-        assertFalse(((TaxonomyNode) level1.getItems().get(1)).isWithChildren());
+        assertTrue(get(level1.getItems(), 0).getItems().size() == 0);
+        assertFalse(((TaxonomyNode) get(level1.getItems(), 0)).isWithChildren());
+        assertTrue(get(level1.getItems(), 1).getItems().size() == 0);
+        assertFalse(((TaxonomyNode) get(level1.getItems(), 1)).isWithChildren());
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -1018,24 +1030,24 @@ public class AbstractDynamicNavigationProviderTest {
 
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         //only root, because of ancestors true
         assertTrue(list.size() == 1);
 
-        SitemapItem root = list.get(0);
+        SitemapItem root = get(list, 0);
         assertEquals("t1", root.getId());
 
         assertTrue(root.getItems().size() == 7);
-        SitemapItem level1 = root.getItems().get(1);
+        SitemapItem level1 = get(root.getItems(), 1);
         assertEquals("t1-k2", level1.getId());
 
         assertTrue(level1.getItems().size() == 3);
 
         //"t1-k22"
-        assertTrue(level1.getItems().get(0).getItems().size() == 3);
-        assertTrue(level1.getItems().get(2).getItems().size() == 1);
+        assertTrue(get(level1.getItems(), 0).getItems().size() == 3);
+        assertTrue(get(level1.getItems(), 2).getItems().size() == 1);
     }
 
     @Test
@@ -1045,7 +1057,7 @@ public class AbstractDynamicNavigationProviderTest {
         String currentContext = "t1-p222";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         assertTrue(list.isEmpty());
@@ -1057,14 +1069,14 @@ public class AbstractDynamicNavigationProviderTest {
         String currentContext = "t1-p222";
 
         //when
-        List<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
+        Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree(currentContext, navigationFilter, localization);
 
         //then
         assertTrue(list.isEmpty());
     }
     //endregion
 
-    private void mockDescendants(final String key, final List<SitemapItem> items) {
+    private void mockDescendants(final String key, final Set<SitemapItem> items) {
         BaseMatcher<TaxonomySitemapItemUrisHolder> keyMatcher = keyToItemsMatcher(key);
 
         doReturn(items).when(defaultDynamicNavigationProvider).expandDescendants(argThat(keyMatcher), any(NavigationFilter.class), any(Localization.class));
@@ -1111,7 +1123,11 @@ public class AbstractDynamicNavigationProviderTest {
     }
 
     private List<SitemapItem> list(SitemapItem... items) {
-        return Lists.newArrayList(items);
+        return Arrays.asList(items);
+    }
+
+    private Set<SitemapItem> set(SitemapItem... items) {
+        return new LinkedHashSet<>(list(items));
     }
 
     private SitemapItem siteMapItem(String id, boolean visible, String url) {
@@ -1120,7 +1136,7 @@ public class AbstractDynamicNavigationProviderTest {
         return sitemapItem;
     }
 
-    private TaxonomyNode taxonomyNode(String id, String url, boolean visible, List<SitemapItem> items) {
+    private TaxonomyNode taxonomyNode(String id, String url, boolean visible, Set<SitemapItem> items) {
         TaxonomyNode node = new TaxonomyNode();
         node.setItems(items);
         fillSitemapItem(node, id, url, visible);
@@ -1142,6 +1158,14 @@ public class AbstractDynamicNavigationProviderTest {
         navigationFilter.setWithAncestors(ancestors);
         navigationFilter.setDescendantLevels(levels);
         return navigationFilter;
+    }
+
+    private <T> T get(Collection<T> set, int index) {
+        Iterator<T> iterator = set.iterator();
+        for (int i = 0; i < index; i++) {
+            iterator.next();
+        }
+        return iterator.next();
     }
 
     private interface Action {

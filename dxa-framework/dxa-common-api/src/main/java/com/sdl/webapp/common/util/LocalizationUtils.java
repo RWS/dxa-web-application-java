@@ -5,11 +5,14 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.http.client.utils.URIBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.net.URISyntaxException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -93,6 +96,17 @@ public final class LocalizationUtils {
     }
 
     /**
+     * Checks whether the given path ends with a default extension.
+     * Keep in mind that page without name is impossible, so passing '.html' would give {@code false}.
+     *
+     * @param path the path to check
+     * @return whether the path ends with the default extension '.html'
+     */
+    public static boolean hasDefaultExtension(@Nullable String path) {
+        return path != null && path.endsWith(DEFAULT_PAGE_EXTENSION) && path.length() > DEFAULT_PAGE_EXTENSION.length();
+    }
+
+    /**
      * Strips the default page extension from the page path.
      *
      * @param path path to process
@@ -168,8 +182,12 @@ public final class LocalizationUtils {
      * @return full URL of current request with given path appended
      */
     @Contract("_, _ -> !null")
+    @SneakyThrows(URISyntaxException.class)
     public static String replaceRequestContextPath(@NotNull WebRequestContext webRequestContext, @NotNull String newPath) {
-        return webRequestContext.getBaseUrl().replace(webRequestContext.getRequestPath(), newPath.startsWith("/") ? newPath : ("/" + newPath));
+        String pathToSet = new URIBuilder(newPath).getPath();
+        return new URIBuilder(webRequestContext.getBaseUrl())
+                .setPath(pathToSet.startsWith("/") ? pathToSet : ("/" + pathToSet))
+                .build().toString();
     }
 
     /**

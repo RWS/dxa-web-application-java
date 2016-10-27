@@ -8,15 +8,15 @@ import com.sdl.webapp.common.markup.Markup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.List;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Collection;
 
 import static com.sdl.webapp.common.controller.ControllerUtils.SERVER_ERROR_VIEW;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
@@ -42,17 +42,17 @@ public class SiteMapXmlController {
         this.markup = markup;
     }
 
-    private static void writeSitemapItemsXml(List<SitemapItem> items, PrintWriter out) {
+    private static void writeSitemapItemsXml(Collection<SitemapItem> items, StringBuilder builder) {
         for (SitemapItem item : items) {
-            if (item.getType().equals("Page") && item.getUrl().startsWith("/")) {
-                out.println("<url>");
-                out.println("<loc>" + item.getUrl() + "</loc>");
+            if ("Page".equals(item.getType()) && item.getUrl().startsWith("/")) {
+                builder.append("<url>");
+                builder.append("<loc>").append(item.getUrl()).append("</loc>");
                 if (item.getPublishedDate() != null) {
-                    out.println("<lastmod>" + item.getPublishedDate() + "</lastmod>");
+                    builder.append("<lastmod>").append(item.getPublishedDate()).append("</lastmod>");
                 }
-                out.println("</url>");
+                builder.append("</url>");
             } else {
-                writeSitemapItemsXml(item.getItems(), out);
+                writeSitemapItemsXml(item.getItems(), builder);
             }
         }
     }
@@ -60,25 +60,22 @@ public class SiteMapXmlController {
     /**
      * Handles a request for the sitemap in XML format.
      *
-     * @return The sitemap in XML format.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
-    @RequestMapping(value = "/sitemap.xml", produces = "application/xml; charset=utf-8")
+    @RequestMapping(value = "/sitemap.xml", produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
-    public String handleGetSiteMapXml() throws NavigationProviderException {
+    public String handleGetSiteMapXml(HttpServletResponse response) throws NavigationProviderException {
         LOG.trace("handleGetSiteMapXml");
 
         final SitemapItem navigationModel = navigationProvider.getNavigationModel(webRequestContext.getLocalization());
 
-        final StringWriter sw = new StringWriter();
-        final PrintWriter out = new PrintWriter(sw);
+        StringBuilder builder = new StringBuilder();
+        builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+        builder.append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
+        writeSitemapItemsXml(navigationModel.getItems(), builder);
+        builder.append("</urlset>");
 
-        out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        out.println("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
-        writeSitemapItemsXml(navigationModel.getItems(), out);
-        out.println("</urlset>");
-
-        return sw.toString();
+        return builder.toString();
     }
 
     @ExceptionHandler(Exception.class)

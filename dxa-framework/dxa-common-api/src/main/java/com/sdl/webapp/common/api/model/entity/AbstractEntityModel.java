@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticMappingIgn
 import com.sdl.webapp.common.api.model.AbstractViewModel;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.RichTextFragment;
+import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
@@ -35,6 +36,7 @@ public abstract class AbstractEntityModel extends AbstractViewModel implements E
     private String id;
 
     @JsonProperty("XpmPropertyMetadata")
+    @JsonXpmAware
     private Map<String, String> xpmPropertyMetadata;
 
     public AbstractEntityModel(AbstractEntityModel other) {

@@ -1,0 +1,240 @@
+{
+  "Title": "Home",
+  "Url": "/",
+  "Id": "tcm:8-3-4",
+  "Type": "StructureGroup",
+  "Items": [
+    {
+      "Title": "Home",
+      "Url": "/index",
+      "Id": "tcm:8-640-64",
+      "Type": "Page",
+      "Items": [],
+      "PublishedDate": "2016-08-18T13:37:17Z",
+      "Visible": true
+    },
+    {
+      "Title": "Articles",
+      "Url": "/articles",
+      "Id": "tcm:8-282-4",
+      "Type": "StructureGroup",
+      "Items": [
+        {
+          "Title": "Articles",
+          "Url": "/articles/index",
+          "Id": "tcm:8-643-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-18T13:37:17Z",
+          "Visible": true
+        },
+        {
+          "Title": "View all articles ",
+          "Url": "/articles/all-articles",
+          "Id": "tcm:8-4574-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-18T13:36:17Z",
+          "Visible": true
+        },
+        {
+          "Title": "News",
+          "Url": "/articles/news",
+          "Id": "tcm:8-286-4",
+          "Type": "StructureGroup",
+          "Items": [
+            {
+              "Title": "News Index ",
+              "Url": "/articles/news/index",
+              "Id": "tcm:8-642-64",
+              "Type": "Page",
+              "Items": [],
+              "PublishedDate": "2016-08-18T13:37:17Z",
+              "Visible": true
+            },
+            {
+              "Title": "Cras vel justo semp",
+              "Url": "/articles/news/news1",
+              "Id": "tcm:8-4569-64",
+              "Type": "Page",
+              "Items": [],
+              "PublishedDate": "2016-08-17T17:14:47Z",
+              "Visible": false
+            },
+            {
+              "Title": "Praesent facilisis consectet.",
+              "Url": "/articles/news/news2",
+              "Id": "tcm:8-4570-64",
+              "Type": "Page",
+              "Items": [],
+              "PublishedDate": "2016-08-17T17:14:47Z",
+              "Visible": false
+            },
+            {
+              "Title": "Fusce ullamcorper ",
+              "Url": "/articles/news/news3",
+              "Id": "tcm:8-4571-64",
+              "Type": "Page",
+              "Items": [],
+              "PublishedDate": "2016-08-17T17:14:47Z",
+              "Visible": false
+            },
+            {
+              "Title": "Aliquam quis egesta ",
+              "Url": "/articles/news/news4",
+              "Id": "tcm:8-4572-64",
+              "Type": "Page",
+              "Items": [],
+              "PublishedDate": "2016-08-17T17:14:47Z",
+              "Visible": false
+            }
+          ],
+          "PublishedDate": null,
+          "Visible": true
+        }
+      ],
+      "PublishedDate": null,
+      "Visible": true
+    },
+    {
+      "Title": "Further Information",
+      "Url": "/further-information",
+      "Id": "tcm:8-284-4",
+      "Type": "StructureGroup",
+      "Items": [
+        {
+          "Title": "Further Information",
+          "Url": "/further-information/index",
+          "Id": "tcm:8-644-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-18T13:29:18Z",
+          "Visible": true
+        },
+        {
+          "Title": "FAQ ",
+          "Url": "/further-information/faq",
+          "Id": "tcm:8-645-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-18T13:34:18Z",
+          "Visible": true
+        },
+        {
+          "Title": "Image Library",
+          "Url": "/further-information/image-library",
+          "Id": "tcm:8-646-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-18T13:28:47Z",
+          "Visible": true
+        },
+        {
+          "Title": "Downloads ",
+          "Url": "/further-information/downloads",
+          "Id": "tcm:8-647-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-18T13:25:47Z",
+          "Visible": true
+        }
+      ],
+      "PublishedDate": null,
+      "Visible": true
+    },
+    {
+      "Title": "About",
+      "Url": "/about",
+      "Id": "tcm:8-285-4",
+      "Type": "StructureGroup",
+      "Items": [
+        {
+          "Title": "Company Information",
+          "Url": "/about/index",
+          "Id": "tcm:8-648-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-18T13:33:17Z",
+          "Visible": true
+        },
+        {
+          "Title": "Head Office",
+          "Url": "/about/office-location",
+          "Id": "tcm:8-649-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-17T17:14:47Z",
+          "Visible": true
+        },
+        {
+          "Title": "Contact information",
+          "Url": "/about/contact",
+          "Id": "tcm:8-650-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-17T17:14:47Z",
+          "Visible": true
+        },
+        {
+          "Title": "Terms of use",
+          "Url": "/about/terms",
+          "Id": "tcm:8-651-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-18T13:34:18Z",
+          "Visible": true
+        },
+        {
+          "Title": "Privacy Policy",
+          "Url": "/about/privacy",
+          "Id": "tcm:8-652-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-18T13:34:18Z",
+          "Visible": true
+        }
+      ],
+      "PublishedDate": null,
+      "Visible": false
+    },
+    {
+      "Title": "Impress",
+      "Url": "/impress",
+      "Id": "tcm:8-2528-4",
+      "Type": "StructureGroup",
+      "Items": [
+        {
+          "Title": "Impress.js Presentation",
+          "Url": "/impress/index",
+          "Id": "tcm:8-9541-64",
+          "Type": "Page",
+          "Items": [],
+          "PublishedDate": "2016-08-17T17:14:47Z",
+          "Visible": false
+        }
+      ],
+      "PublishedDate": null,
+      "Visible": false
+    },
+    {
+      "Title": "Search Results",
+      "Url": "/search",
+      "Id": "tcm:8-9284-64",
+      "Type": "Page",
+      "Items": [],
+      "PublishedDate": "2016-08-17T17:14:47Z",
+      "Visible": false
+    },
+    {
+      "Title": "Sitemap",
+      "Url": "/sitemap",
+      "Id": "tcm:8-4859-64",
+      "Type": "Page",
+      "Items": [],
+      "PublishedDate": "2016-08-17T17:14:47Z",
+      "Visible": false
+    }
+  ],
+  "PublishedDate": null,
+  "Visible": false
+}

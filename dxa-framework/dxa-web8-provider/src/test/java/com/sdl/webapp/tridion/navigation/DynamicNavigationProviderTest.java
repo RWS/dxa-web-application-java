@@ -30,6 +30,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import static com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder.parse;
 import static org.junit.Assert.assertEquals;
@@ -191,7 +192,7 @@ public class DynamicNavigationProviderTest {
         assertEquals("child1", item1.getTitle());
         assertEquals("t2-k13", item1.getId());
         assertEquals("TaxonomyNode", item1.getType());
-        assertEquals("child11", item1.getItems().get(0).getTitle());
+        assertEquals("child11", item1.getItems().iterator().next().getTitle());
     }
 
     @Test
@@ -218,7 +219,7 @@ public class DynamicNavigationProviderTest {
     public void shouldReturnEmptyListIfPageUrisPassed() {
         //given
         //when
-        List<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-p1", localization),
+        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-p1", localization),
                 NavigationFilter.DEFAULT, localization);
 
         //then
@@ -231,7 +232,7 @@ public class DynamicNavigationProviderTest {
         when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class))).thenReturn(null);
 
         //when
-        List<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-k1", localization),
+        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-k1", localization),
                 NavigationFilter.DEFAULT, localization);
 
         //then

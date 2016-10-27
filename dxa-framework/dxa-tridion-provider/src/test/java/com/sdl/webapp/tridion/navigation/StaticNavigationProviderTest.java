@@ -2,6 +2,7 @@ package com.sdl.webapp.tridion.navigation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.sdl.dxa.DxaSpringInitialization;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -9,6 +10,7 @@ import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
+import org.apache.commons.io.IOUtils;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.PageFactory;
@@ -20,12 +22,16 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 import static com.sdl.webapp.tridion.navigation.StaticNavigationProvider.TYPE_STRUCTURE_GROUP;
 import static org.junit.Assert.assertEquals;
@@ -79,7 +85,7 @@ public class StaticNavigationProviderTest {
         sitemapItem.setTitle(title);
         sitemapItem.setUrl(url);
         sitemapItem.setVisible(visible);
-        sitemapItem.setItems(Collections.<SitemapItem>emptyList());
+        sitemapItem.setItems(Collections.<SitemapItem>emptySet());
         return sitemapItem;
     }
 
@@ -104,9 +110,9 @@ public class StaticNavigationProviderTest {
 
         SitemapItem child2 = getSiteMap("child2", "parent/child2", false);
 
-        parentGroup.setItems(Lists.newArrayList(parent, child1Group, child2));
-        child1Group.setItems(Lists.newArrayList(child1, child11));
-        child11Group.setItems(Lists.newArrayList(child11));
+        parentGroup.setItems(new LinkedHashSet<>(Lists.newArrayList(parent, child1Group, child2)));
+        child1Group.setItems(new LinkedHashSet<>(Lists.newArrayList(child1, child11)));
+        child11Group.setItems(new LinkedHashSet<>(Lists.newArrayList(child11)));
 
         // CM orders navigation model and the collection IS already sorted once we load it in DXA
         when(objectMapper.readValue(any(InputStream.class), eq(SitemapItem.class))).thenReturn(parentGroup);
@@ -122,12 +128,13 @@ public class StaticNavigationProviderTest {
         verify(pageFactory).findSourcePageByUrl(eq(NORMALIZED_PATH), eq(1));
         verify(linkResolver, times(2)).resolveLink(eq("parent"), eq("1"));
         assertEquals("parent", sitemapItem.getUrl());
-        assertEquals("parent", sitemapItem.getItems().get(0).getUrl());
-        assertEquals("parent", sitemapItem.getItems().get(0).getTitle());
-        assertEquals("parent/child1", sitemapItem.getItems().get(1).getUrl());
-        assertEquals("child1", sitemapItem.getItems().get(1).getTitle());
-        assertEquals("parent/child2", sitemapItem.getItems().get(2).getUrl());
-        assertEquals("child2", sitemapItem.getItems().get(2).getTitle());
+        List<SitemapItem> items = new ArrayList<>(sitemapItem.getItems());
+        assertEquals("parent", items.get(0).getUrl());
+        assertEquals("parent", items.get(0).getTitle());
+        assertEquals("parent/child1", items.get(1).getUrl());
+        assertEquals("child1", items.get(1).getTitle());
+        assertEquals("parent/child2", items.get(2).getUrl());
+        assertEquals("child2", items.get(2).getTitle());
     }
 
     @Test(expected = NavigationProviderException.class)
@@ -249,5 +256,28 @@ public class StaticNavigationProviderTest {
         assertFalse(iterator.hasNext());
     }
 
+    @Test
+    public void shouldSaveOrderDefinedByCMInNavigationJson() throws NavigationProviderException, FactoryException, IOException {
+        //given
+        InputStream navigation = new ClassPathResource("navigation.json").getInputStream();
+        String navigationJson = IOUtils.toString(navigation);
+        when(pageFactory.findSourcePageByUrl(anyString(), anyInt())).thenReturn(navigationJson);
+
+        ReflectionTestUtils.setField(provider, "objectMapper", new DxaSpringInitialization().objectMapper());
+
+        //when
+        SitemapItem navigationModel = provider.getNavigationModel(localization);
+
+        //then
+        Iterator<SitemapItem> iterator = navigationModel.getItems().iterator();
+        assertEquals("Home", iterator.next().getTitle());
+        assertEquals("Articles", iterator.next().getTitle());
+        assertEquals("Further Information", iterator.next().getTitle());
+        assertEquals("About", iterator.next().getTitle());
+        assertEquals("Impress", iterator.next().getTitle());
+        assertEquals("Search Results", iterator.next().getTitle());
+        assertEquals("Sitemap", iterator.next().getTitle());
+        assertFalse(iterator.hasNext());
+    }
 
 }

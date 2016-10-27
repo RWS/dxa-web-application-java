@@ -17,6 +17,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 
 import static com.google.common.collect.Lists.newArrayList;
 import static org.junit.Assert.assertEquals;
@@ -44,14 +45,14 @@ public class NavigationControllerTest {
 
         SitemapItem child1 = getSitemap("child1", "/child1", "Child1", "Page");
         SitemapItem child2 = getSitemap("child2", "/child2", "Child2", "StructureGroup");
-        child2.setItems(newArrayList(getSitemap("child21", "/child21", "Child21", "Page")));
+        child2.setItems(new LinkedHashSet<>(newArrayList(getSitemap("child21", "/child21", "Child21", "Page"))));
 
         //empty top-level group are suppressed
         SitemapItem child3 = getSitemap("child3", "/child3", "Child3", "StructureGroup");
 
         SitemapItem taxonomyNode = new TaxonomyNode();
 
-        home.setItems(newArrayList(child1, child2, child3, taxonomyNode));
+        home.setItems(new LinkedHashSet<>(newArrayList(child1, child2, child3, taxonomyNode)));
 
         home.setMvcData(MvcDataCreator.creator().fromQualifiedName("Area:View").create());
 
@@ -86,7 +87,7 @@ public class NavigationControllerTest {
         Iterator<SitemapItem> top = item.getItems().iterator();
         SitemapItem home = top.next();
         assertEquals("home", home.getId());
-        assertEquals("child1", home.getItems().get(0).getId());
+        assertEquals("child1", home.getItems().iterator().next().getId());
         assertEquals("child2", top.next().getId());
         assertFalse(top.hasNext());
 

@@ -4,7 +4,7 @@ SDL Digital Experience Accelerator Java Spring MVC web application
 
 About
 -----
-The SDL Digital Experience Accelerator (DXA) is a reference implementation of SDL Web 8 and SDL Tridion 2013 SP1 intended to help you create, design and publish an SDL Web/Tridion-based website quickly.
+The SDL Digital Experience Accelerator (DXA) is a reference implementation of SDL Web 8 and SDL Tridion 2013 SP1(*) intended to help you create, design and publish an SDL Web/Tridion-based website quickly.
 
 It is available for .NET and Java Web Applications and has a modular architecture consisting of a Framework and example web application providing core functionality and separate Modules for additional, optional functionality.
 
@@ -16,7 +16,7 @@ Furthermore, the compiled DXA artifacts are available on [Maven Central](http://
 To facilitate upgrades, it is highly recommended to use official, compiled DXA artifacts from Maven Central instead of a custom build.
 If you really have to modify the DXA Framework, we kindly request you to submit your changes as a Contribution; see below. 
 
-
+(*) SDL Tridion 2013 SP1 is only supported up to DXA version 1.6.
 
 Support
 ---------------
@@ -65,51 +65,6 @@ Furthermore, Pull Requests on release branches are expected to be extensively te
 
 Of course, it's also possible (and appreciated) to report an Issue without associated Pull Requests.
 
-
-Prerequisites for building
---------------------------
-In order to build the DXA sources against SDL Tridion 2013 SP1, you need these artifacts (`groudId : artifactId : version`) to be installed into your Maven repository:
- - `com.tridion : cd_ambient : 7.1.0`
- - `com.tridion : cd_broker : 7.1.0`
- - `com.tridion : cd_cache : 7.1.0`
- - `com.tridion : cd_core : 7.1.0`
- - `com.tridion : cd_datalayer : 7.1.0`
- - `com.tridion : cd_deployer : 7.1.0`
- - `com.tridion : cd_dynamic : 7.1.0`
- - `com.tridion : cd_linking : 7.1.0`
- - `com.tridion : cd_model : 7.1.0`
- - `com.tridion : cd_odata : 7.1.0`
- - `com.tridion : cd_odata_types : 7.1.0`
- - `com.tridion : cd_preview_ambient : 7.1.0`
- - `com.tridion : cd_preview_web : 7.1.0`
- - `com.tridion : cd_preview_webservice : 7.1.0`
- - `com.tridion : cd_session : 7.1.0`
- - `com.tridion : cd_tcdl : 7.1.0`
- - `com.tridion : cd_upload : 7.1.0`
- - `com.tridion : cd_wrapper : 7.1.0`
- - `com.tridion : cwd_cartridge : 7.1.2`
- - `com.tridion : cwd_engine : 7.1.2`
- - `com.tridion : cwd_image : 7.1.2`
- - `com.tridion : cwd_resource : 7.1.2`
- - `com.vs.ezlicrun : easylicense : 2.5`
-
-To use SmartTarget 2013SP1 module you also need
- - `com.tridion.smarttarget : session_cartridge : 2014sp1`
- - `com.tridion.smarttarget : smarttarget_cartridge : 2014sp1`
- - `com.tridion.smarttarget : smarttarget_core : 2014sp1`
- - `com.tridion.smarttarget : smarttarget_entitymodel : 2014sp1`
- - `com.tridion.smarttarget : smarttarget_google-analytics : 2014sp1`
- 
-To use AudienceManager 2013SP1 module you also need
- - `com.tridion.marketingsolution : profile : 7.1.0-SNAPSHOT`
- - `com.tridion.marketingsolution : profilesync : 7.1.0-SNAPSHOT`
- - `com.tridion.marketingsolution : utils : 7.1.0-SNAPSHOT`
- - `com.tridion.marketingsolution : tracking : 7.1.0-SNAPSHOT`
- - `com.tridion.marketingsolution : trackingsync : 7.1.0-SNAPSHOT`
-
-To ease the installation you can use the latest [`/install-libs/`](https://github.com/sdl/dxa-web-application-java/tree/develop/install-libs). For help, run `install`.
-
-**'dxa-framework' project has a Maven profile '2013sp1' which should be enabled to build tridion-provider for that version: `mvn install -P 2013sp1`**
 
 DXA Builder
 -----------

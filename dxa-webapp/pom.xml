@@ -10,7 +10,7 @@
         <version>1.0.3</version>
     </parent>
 
-    <version>1.6.0</version>
+    <version>1.7.0-SNAPSHOT</version>
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-webapp</artifactId>
     <packaging>war</packaging>
@@ -19,8 +19,9 @@
     <url>http://www.sdl.com/cxc/digital-experience/web-experience-management/digital-experience-accelerator.html</url>
 
     <properties>
-        <dxa-bom.version>1.6.0</dxa-bom.version>
+        <dxa-bom.version>1.7.0-SNAPSHOT</dxa-bom.version>
         <dxa-release-branch>release/1.6</dxa-release-branch>
+        <java-version>1.8</java-version>
     </properties>
 
     <scm>
@@ -138,15 +139,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>smarttarget-2013sp1-module</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-smarttarget-2013sp1</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>smarttarget-web8-module</id>
             <dependencies>
                 <dependency>
@@ -165,15 +157,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>audience-manager-2013sp1-module</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-audience-manager-2013sp1</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>audience-manager-web8-module</id>
             <dependencies>
                 <dependency>
@@ -188,85 +171,6 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-test</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <id>2013sp1</id>
-            <properties>
-                <build.classifier>2013sp1</build.classifier>
-                <java-version>1.7</java-version>
-            </properties>
-            <dependencyManagement>
-                <dependencies>
-                    <dependency>
-                        <groupId>com.sdl.dxa</groupId>
-                        <artifactId>dxa-bom-2013sp1</artifactId>
-                        <version>${dxa-bom.version}</version>
-                        <type>pom</type>
-                        <scope>import</scope>
-                    </dependency>
-                    <dependency>
-                        <groupId>net.sf.ehcache</groupId>
-                        <artifactId>ehcache</artifactId>
-                        <version>2.8.2</version>
-                    </dependency>
-                </dependencies>
-            </dependencyManagement>
-
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa</groupId>
-                    <artifactId>dxa-tridion-2013sp1-provider</artifactId>
-                </dependency>
-                <dependency>
-                    <groupId>com.microsoft.sqlserver</groupId>
-                    <artifactId>sqljdbc4</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>2013sp1-live</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa</groupId>
-                    <artifactId>dxa-tridion-2013sp1-provider</artifactId>
-                    <exclusions>
-                        <exclusion>
-                            <groupId>com.tridion</groupId>
-                            <artifactId>cd_session</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>com.tridion</groupId>
-                            <artifactId>cd_wrapper</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>com.tridion</groupId>
-                            <artifactId>cd_preview_ambient</artifactId>
-                        </exclusion>
-                        <exclusion>
-                            <groupId>com.tridion</groupId>
-                            <artifactId>cd_preview_web</artifactId>
-                        </exclusion>
-                    </exclusions>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
-            <id>web8</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <properties>
-                <build.classifier>web8</build.classifier>
-                <java-version>1.8</java-version>
-            </properties>
-
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa</groupId>
-                    <artifactId>dxa-web8-provider</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -305,6 +209,11 @@
         <dependency>
             <groupId>com.sdl.dxa.modules</groupId>
             <artifactId>dxa-module-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-web8-provider</artifactId>
         </dependency>
 
         <dependency>

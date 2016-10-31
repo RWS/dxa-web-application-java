@@ -4,7 +4,7 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>1.6.0</version>
+        <version>1.7.0-SNAPSHOT</version>
         <relativePath>../../dxa-framework</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -100,7 +100,6 @@
         <dependency>
             <groupId>org.dd4t</groupId>
             <artifactId>dd4t-providers</artifactId>
-            <classifier>web8</classifier>
         </dependency>
 
         <dependency>

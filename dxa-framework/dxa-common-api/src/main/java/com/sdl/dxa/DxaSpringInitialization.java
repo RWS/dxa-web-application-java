@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
@@ -156,7 +157,8 @@ public class DxaSpringInitialization {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
         objectMapper.registerModule(new JodaModule());
-        objectMapper.setFilters(jsonFilterProvider());
+        objectMapper.setFilterProvider(jsonFilterProvider());
+        objectMapper.setDateFormat(new StdDateFormat());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         traceBeanInitialization(objectMapper);
         return objectMapper;

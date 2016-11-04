@@ -17,6 +17,9 @@ import java.util.Date;
  * @author R. Kempees
  */
 public interface ProviderResultItem<T> {
+	int getPublicationId();
+	
+	int getItemId();
 
     T getSourceContent ();
 

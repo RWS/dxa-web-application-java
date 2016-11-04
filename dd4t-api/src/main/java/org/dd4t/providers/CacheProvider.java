@@ -16,9 +16,11 @@
 
 package org.dd4t.providers;
 
-import org.dd4t.core.caching.Cachable;
-
 import java.util.Collection;
+import java.util.List;
+
+import org.dd4t.core.caching.Cachable;
+import org.dd4t.core.caching.CacheDependency;
 
 @Deprecated
 public interface CacheProvider {
@@ -49,4 +51,13 @@ public interface CacheProvider {
      * Store given item in the cache with a reference to supplied Tridion Keyword.
      */
     void storeInKeywordCache (String key, Object ob, int dependingPublicationId, int dependingItemId);
+    
+	/**
+	 * Stores given item in the cache with a dependency to all given dependencies.
+	 * 
+	 * @param key
+	 * @param ob
+	 * @param dependencies
+	 */
+	public void storeInItemCache(String key, Object ob, List<CacheDependency> dependencies);    
 }

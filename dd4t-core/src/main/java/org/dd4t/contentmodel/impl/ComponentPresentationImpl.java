@@ -20,12 +20,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Condition;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.core.databind.BaseViewModel;
+import org.simpleframework.xml.Element;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -38,11 +40,12 @@ import java.util.Map;
  * @author bjornl, rai, sdl
  */
 public class ComponentPresentationImpl implements ComponentPresentation {
-
+	@Element(name = "component", required = false)
     @JsonProperty ("Component")
     @JsonDeserialize (as = ComponentImpl.class)
     private Component component;
 
+	@Element(name = "componentTemplate", required = false)
     @JsonProperty ("ComponentTemplate")
     @JsonDeserialize (as = ComponentTemplateImpl.class)
     private ComponentTemplate componentTemplate;
@@ -51,9 +54,11 @@ public class ComponentPresentationImpl implements ComponentPresentation {
     @JsonDeserialize (contentAs = FieldSetImpl.class)
     private Map<String, FieldSet> extensionData;
 
+	@Element(name = "isDynamic", required = false)
     @JsonProperty ("IsDynamic")
     private boolean isDynamic;
 
+	@Element(name = "renderedContent", required = false)
     @JsonProperty ("RenderedContent")
     private String renderedContent;
 

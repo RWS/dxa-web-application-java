@@ -65,5 +65,11 @@ public interface DataBinder {
 
     boolean renderDefaultComponentsIfNoModelFound ();
 
-
+    /**
+     * Method indicates if the databinder can deserialize the given source correctly.
+     *
+     * @param source
+     * @return
+     */
+    boolean canDeserialize(String source);
 }

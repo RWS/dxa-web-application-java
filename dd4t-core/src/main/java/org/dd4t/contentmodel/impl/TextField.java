@@ -17,17 +17,20 @@
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldType;
+import org.simpleframework.xml.Attribute;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class TextField extends BaseField implements Field {
-
+	@Attribute(required = false)
     @JsonProperty ("CategoryId")
     private String categoryId;
 
+	@Attribute(required = false)
     @JsonProperty ("CategoryName")
     private String categoryName;
 

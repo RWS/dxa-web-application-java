@@ -33,9 +33,13 @@ public class BasicRequestContext implements RequestContext {
     public BasicRequestContext () {
         this.req = HttpUtils.getCurrentRequest();
     }
+    
+    public BasicRequestContext (HttpServletRequest req) {
+        this.req = req;
+    }
 
     @Override
-    public HttpServletRequest getRequest () {
+    public HttpServletRequest getServletRequest() {
         return req;
     }
 

@@ -16,6 +16,13 @@ public class StringResultItemImpl implements ProviderResultItem<String> {
     private String sourceContent;
     private DateTime lastPublishDate;
     private DateTime revisionDate;
+    private int itemId;
+    private int publicationId;    
+    
+    public StringResultItemImpl(int pubid, int itemid){
+    	this.itemId = itemid;
+    	this.publicationId = pubid;
+    }
 
 
     @Override
@@ -56,4 +63,22 @@ public class StringResultItemImpl implements ProviderResultItem<String> {
             this.revisionDate = new DateTime(revisionDate);
         }
     }
+
+    @Override
+	public int getPublicationId() {
+		return publicationId;
+	}
+
+	public void setPublicationId(int publicationId) {
+		this.publicationId = publicationId;
+	}
+
+    @Override
+	public int getItemId() {
+		return itemId;
+	}
+
+	public void setItemId(int itemId) {
+		this.itemId = itemId;
+	}
 }

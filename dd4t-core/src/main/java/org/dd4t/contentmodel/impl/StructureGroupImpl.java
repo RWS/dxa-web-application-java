@@ -17,10 +17,12 @@
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.dd4t.contentmodel.StructureGroup;
+import org.simpleframework.xml.Element;
 
 public class StructureGroupImpl extends BaseItem implements StructureGroup {
-
+	@Element(name = "publicationId")
     @JsonProperty ("PublicationId")
     private String publicationId;
 

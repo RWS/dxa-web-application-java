@@ -19,21 +19,26 @@ package org.dd4t.contentmodel.impl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.dd4t.contentmodel.*;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementMap;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class ComponentImpl extends BaseComponent implements GenericComponent, HasContent, HasMetadata, HasMultimedia {
-
+	@Element(name = "componentType", required = false)
     @JsonProperty ("ComponentType")
     @JsonDeserialize (as = ComponentImpl.ComponentType.class)
     protected ComponentType componentType;
 
+	@ElementMap(name = "fields", keyType = String.class, valueType = Field.class, entry = "item", required = false)
     @JsonProperty ("Fields")
     @JsonDeserialize (contentAs = BaseField.class)
     private Map<String, Field> content;
 
+	@Element(name = "multimedia", required = false)
     @JsonProperty ("Multimedia")
     @JsonDeserialize (as = MultimediaImpl.class)
     private Multimedia multimedia;

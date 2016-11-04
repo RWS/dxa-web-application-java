@@ -15,7 +15,7 @@
  */
 package org.dd4t.contentmodel.exceptions;
 
-public class NotAuthorizedException extends Exception {
+public class NotAuthorizedException extends  org.dd4t.core.exceptions.NotAuthorizedException {
 
     private static final long serialVersionUID = 7860070186906683875L;
 

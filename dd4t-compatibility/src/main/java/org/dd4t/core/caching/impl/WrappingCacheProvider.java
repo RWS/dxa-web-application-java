@@ -1,10 +1,12 @@
 package org.dd4t.core.caching.impl;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.annotation.Resource;
 
 import org.dd4t.core.caching.Cachable;
+import org.dd4t.core.caching.CacheDependency;
 import org.dd4t.core.caching.CacheElement;
 import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.PayloadCacheProvider;
@@ -65,5 +67,15 @@ public class WrappingCacheProvider implements CacheProvider {
         cacheElement.setPayload(ob);
 
         internalProvider.storeInItemCache(key, cacheElement, dependingPublicationId, dependingItemId);
-    }   
+    }
+
+	@Override
+	public void storeInItemCache(String key, Object ob,
+			List<CacheDependency> dependencies) {
+
+        CacheElement<Object> cacheElement = internalProvider.loadPayloadFromLocalCache(key);
+        cacheElement.setPayload(ob);
+
+        internalProvider.storeInItemCache(key, cacheElement, dependencies);
+	}   
 }

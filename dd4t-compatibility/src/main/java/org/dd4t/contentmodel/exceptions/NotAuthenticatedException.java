@@ -1,6 +1,6 @@
 package org.dd4t.contentmodel.exceptions;
 
-public class NotAuthenticatedException extends Exception {
+public class NotAuthenticatedException extends  org.dd4t.core.exceptions.NotAuthenticatedException {
 
     /**
      *

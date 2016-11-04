@@ -15,7 +15,7 @@
  */
 package org.dd4t.contentmodel.exceptions;
 
-public class ItemNotFoundException extends Exception {
+public class ItemNotFoundException extends org.dd4t.core.exceptions.ItemNotFoundException {
 
     private static final long serialVersionUID = 8243724759254216595L;
 

@@ -17,11 +17,13 @@
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.dd4t.contentmodel.HasMetadata;
 import org.dd4t.contentmodel.PageTemplate;
+import org.simpleframework.xml.Element;
 
 public class PageTemplateImpl extends BaseRepositoryLocalItem implements PageTemplate, HasMetadata {
-
+	@Element(name = "fileExtension")
     @JsonProperty ("FileExtension")
     private String fileExtension;
 

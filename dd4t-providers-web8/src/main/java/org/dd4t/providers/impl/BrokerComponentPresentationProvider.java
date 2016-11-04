@@ -24,6 +24,8 @@ import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.providers.AbstractComponentPresentationProvider;
 import org.dd4t.providers.ComponentPresentationProvider;
+import org.dd4t.providers.ComponentPresentationResultItem;
+import org.dd4t.providers.ComponentPresentationResultItemImpl;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,6 +67,53 @@ public class BrokerComponentPresentationProvider extends AbstractComponentPresen
     @Override
     public String getDynamicComponentPresentation (int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
 
+        ComponentPresentation result;
+        result = getComponentPresentation(componentId, templateId, publicationId);
+        final String resultString;
+        resultString = result.getContent();
+
+        if (!StringUtils.isEmpty(resultString)) {
+            return decodeAndDecompressContent(resultString);
+        }
+        return null;
+    }
+
+    @Override
+    public ComponentPresentationResultItem<String> getDynamicComponentPresentationItem (int componentId, int publicationId) throws ItemNotFoundException, SerializationException{
+        return getDynamicComponentPresentationItem(componentId, 0, publicationId);
+    }
+
+    @Override
+    public ComponentPresentationResultItem<String> getDynamicComponentPresentationItem (int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException{
+
+        ComponentPresentation result = getComponentPresentation(componentId, templateId, publicationId);
+        String resultString;
+        ComponentPresentationResultItemImpl resultModel;
+
+        if(result != null){
+            resultModel = new ComponentPresentationResultItemImpl(result.getPublicationId(), result.getComponentId(), result.getComponentTemplateId());
+
+            assertQueryResultNotNull(result,componentId,templateId,publicationId);
+            resultString = result.getContent();
+
+            if (!StringUtils.isEmpty(resultString)) {
+                resultModel.setContentSource(decodeAndDecompressContent(resultString));
+            }
+            else{
+                resultModel.setContentSource(resultString);
+            }
+        }
+        else{
+            resultModel = new ComponentPresentationResultItemImpl(0, 0, 0);
+        }
+
+        return resultModel;
+
+    }
+
+    protected ComponentPresentation getComponentPresentation(final int componentId, final int templateId, final int
+            publicationId) throws ItemNotFoundException {
+
         WebComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);
 
         if (factory == null) {
@@ -72,8 +121,7 @@ public class BrokerComponentPresentationProvider extends AbstractComponentPresen
             FACTORY_CACHE.put(publicationId, factory);
         }
 
-        ComponentPresentation result;
-        String resultString;
+        final ComponentPresentation result;
         if (templateId != 0) {
             result = factory.getComponentPresentation(componentId, templateId);
         } else {
@@ -81,11 +129,6 @@ public class BrokerComponentPresentationProvider extends AbstractComponentPresen
         }
 
         assertQueryResultNotNull(result,componentId,templateId,publicationId);
-        resultString = result.getContent();
-
-        if (!StringUtils.isEmpty(resultString)) {
-            return decodeAndDecompressContent(resultString);
-        }
-        return null;
+        return result;
     }
 }

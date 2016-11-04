@@ -17,10 +17,13 @@
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.dd4t.contentmodel.OrganizationalItem;
+import org.simpleframework.xml.Element;
 
 public class OrganizationalItemImpl extends BaseItem implements OrganizationalItem {
 
+	@Element(name = "publicationId")
     @JsonProperty ("PublicationId")
     private String publicationId;
 

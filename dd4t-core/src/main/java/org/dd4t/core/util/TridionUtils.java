@@ -60,7 +60,7 @@ public class TridionUtils {
             return null;
         }
 
-        return HttpUtils.getSessionPreviewToken((HttpServletRequest) context.getRequest());
+        return HttpUtils.getSessionPreviewToken((HttpServletRequest) context.getServletRequest());
     }
 
     public static String getRootElementName (final Component component) {

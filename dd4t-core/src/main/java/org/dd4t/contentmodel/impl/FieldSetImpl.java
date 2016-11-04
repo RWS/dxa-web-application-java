@@ -21,10 +21,13 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
+
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Schema;
 import org.dd4t.databind.builder.json.JsonDataBinder;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,9 +44,12 @@ public class FieldSetImpl implements FieldSet {
     private static final Logger LOG = LoggerFactory.getLogger(FieldSetImpl.class);
 
     private final Map<String, Object> rawContent = new HashMap<>();
+    
+    @ElementMap(name = "fields", keyType = String.class, valueType = Field.class, entry = "item", required = false)    
     @JsonIgnore
     private Map<String, Field> content = new HashMap<>();
 
+    @Element(name = "schema", required = true)
     @JsonProperty ("Schema")
     private Schema schema;
 

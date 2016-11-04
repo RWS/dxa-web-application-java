@@ -60,6 +60,11 @@ public class NoCacheProvider implements PayloadCacheProvider, CacheInvalidator, 
     }
 
     @Override
+    public void storeInItemCache(final String key, final Object ob, final List<CacheDependency> dependencies) {
+        LOG.debug("Nothing to store by design.");
+    }
+
+    @Override
     public <T> CacheElement<T> loadPayloadFromLocalCache (final String key) {
         LOG.debug("Nothing to load by design.");
         return null;

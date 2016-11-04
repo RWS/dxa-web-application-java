@@ -20,12 +20,17 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.Keyword;
 import org.dd4t.core.serializers.impl.json.FieldTypeConverter;
+import org.simpleframework.xml.Attribute;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
+import org.simpleframework.xml.convert.Convert;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -33,34 +38,41 @@ import java.util.List;
 
 @JsonIgnoreProperties (value = {"Value"}, ignoreUnknown = true)
 public abstract class BaseField implements Field {
-
+	@Element(name = "name", required = false)
     @JsonProperty ("Name")
     private String name;
-
+	
+	@ElementList(name = "textValues", required = false)
     @JsonProperty ("Values")
     private List<String> textValues;
 
+	@ElementList(name = "numericValues", required = false)
     @JsonProperty ("NumericValues")
     private List<Double> numericValues;
 
+	@ElementList(name = "dateTimeValues", required = false)	
     @JsonProperty ("DateTimeValues")
     private List<String> dateValues;
 
+	@ElementList(name = "linkedComponentValues", required = false)
     @JsonProperty ("LinkedComponentValues")
     @JsonDeserialize (contentAs = ComponentImpl.class)
     private List<Component> componentLinkValues;
 
+	@ElementList(name = "keywords", type = KeywordImpl.class, required = false)	
     @JsonDeserialize (contentAs = KeywordImpl.class)
     private List<Keyword> keywordValues;
 
+	@ElementList(name = "embeddedValues", type = FieldSetImpl.class, required = false)
     @JsonProperty ("EmbeddedValues")
     @JsonDeserialize (contentAs = FieldSetImpl.class)
     private List<FieldSet> embeddedValues;
 
+	@Attribute(required = false)
     @JsonProperty ("FieldType")
-    @JsonDeserialize (converter = FieldTypeConverter.class)
     private FieldType fieldType;
 
+	@Attribute(required = false)
     @JsonProperty ("XPath")
     private String xPath;
 

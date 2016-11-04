@@ -137,7 +137,7 @@ public interface Component extends RepositoryLocalItem {
 
     String getEclId ();
 
-    enum ComponentType {
+    public enum ComponentType {
         MULTIMEDIA(0), NORMAL(1), UNKNOWN(-1);
         private final int value;
         private static final Logger LOG = LoggerFactory.getLogger(ComponentType.class);

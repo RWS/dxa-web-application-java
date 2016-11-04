@@ -17,10 +17,12 @@
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.dd4t.contentmodel.Schema;
+import org.simpleframework.xml.Element;
 
 public class SchemaImpl extends BaseRepositoryLocalItem implements Schema {
-
+    @Element(name = "rootElement", required = false)
     @JsonProperty ("RootElementName")
     private String rootElement;
 

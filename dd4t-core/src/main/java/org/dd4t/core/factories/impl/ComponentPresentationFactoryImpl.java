@@ -17,6 +17,7 @@
 package org.dd4t.core.factories.impl;
 
 import java.text.ParseException;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -29,8 +30,10 @@ import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.ProcessorException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.processors.RunPhase;
+import org.dd4t.core.request.RequestContext;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.ComponentPresentationProvider;
+import org.dd4t.providers.ComponentPresentationResultItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,12 +43,33 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
     @Resource
     protected ComponentPresentationProvider componentPresentationProvider;
     @Resource
-    protected DataBinder dataBinder;
+    protected List<DataBinder> dataBinders;
 
-	protected ComponentPresentationFactoryImpl () {
-        LOG.debug("Create new instance");
+
+    /**
+     * Method finds the relevant databinder for given source by calling canDeserialize() on them.
+     * 
+     * @param source
+     * @return
+     */
+    protected DataBinder selectDataBinder(final String source) throws FactoryException{
+    	if(dataBinders == null || dataBinders.size() == 0 ){
+    		return null;
+    	}
+    	
+    	if(dataBinders.size() == 1){
+    		return dataBinders.get(0);
+    	}
+    	
+    	for(DataBinder binder : dataBinders){
+    		if(binder.canDeserialize(source)){
+    			return binder;
+    		}
+    	}
+    	
+    	return null;
     }
-
+    
     /**
      * Get the component by the component uri and template uri.
      * but NO CT rendering (so from the Dynamic Template Tab) should take place,
@@ -64,25 +88,34 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
      * @throws org.dd4t.core.exceptions.FactoryException if no item found NotAuthorizedException if the user is not authorized to get the component
      */
     @Override
-    public ComponentPresentation getComponentPresentation (String componentURI, String templateURI) throws FactoryException {
+    public ComponentPresentation getComponentPresentation (String componentURI, String templateURI, RequestContext context) throws FactoryException {
         LOG.debug("Enter getComponentPresentation with componentURI: {} and templateURI: {}", componentURI, templateURI);
 
-        if (StringUtils.isEmpty(templateURI)) {
-            throw new ItemNotFoundException("Provide a CT view or TCMURI");
-        }
-
+        int templateId = 0;
         final TCMURI componentTcmUri;
         final TCMURI templateTcmUri;
+
         try {
             componentTcmUri = new TCMURI(componentURI);
-            templateTcmUri = new TCMURI(templateURI);
         } catch (ParseException e) {
             throw new ItemNotFoundException(e);
+        }        
+        
+        // if we have a valid uri use it, otherwise the 0 default will be handled by provider
+        if (!StringUtils.isEmpty(templateURI)) {
+            try {
+                templateTcmUri = new TCMURI(templateURI);
+                
+                templateId = templateTcmUri.getItemId();
+
+            } catch (ParseException e) {
+                throw new ItemNotFoundException("Provide a valid TCMURI");
+            }
         }
+
         componentURI = componentTcmUri.toString();
         int publicationId = componentTcmUri.getPublicationId();
         int componentId = componentTcmUri.getItemId();
-        int templateId = templateTcmUri.getItemId();
 
         String key = getKey(publicationId, componentId, templateId);
         CacheElement<ComponentPresentation> cacheElement = cacheProvider.loadPayloadFromLocalCache(key);
@@ -94,8 +127,9 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
             synchronized (cacheElement) {
                 if (cacheElement.isExpired()) {
 
-                    String rawComponentPresentation;
-                    rawComponentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
+                	ComponentPresentationResultItem<String> result = componentPresentationProvider.getDynamicComponentPresentationItem(componentId, templateId, publicationId);
+                    String rawComponentPresentation = result.getSourceContent();
+                    //rawComponentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
 
                     if (rawComponentPresentation == null) {
 
@@ -106,11 +140,14 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
                     }
 
                     // Building STMs here.
-                    componentPresentation = dataBinder.buildComponentPresentation(rawComponentPresentation, ComponentPresentation.class);
+                    componentPresentation = selectDataBinder(rawComponentPresentation).buildComponentPresentation(rawComponentPresentation, ComponentPresentation.class);
+                    
+                    // necessary for backwards compatibility to dd4t-1 (no way to get template URI otherwise)
+                    componentPresentation.getComponentTemplate().setId(new TCMURI(result.getPublicationId(), result.getTemplateId(), 32).toString());                    
 
                     LOG.debug("Running pre caching processors");
                     // TODO: support full CPs?
-                    this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING, getRequestContext());
+                    this.executeProcessors(componentPresentation.getComponent(), RunPhase.BEFORE_CACHING, context);
                     cacheElement.setPayload(componentPresentation);
                     cacheProvider.storeInItemCache(key, cacheElement, publicationId, componentId);
                     cacheElement.setExpired(false);
@@ -129,7 +166,7 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
         if (componentPresentation != null) {
             LOG.debug("Running Post caching Processors");
             try {
-                this.executeProcessors(componentPresentation.getComponent(), RunPhase.AFTER_CACHING, getRequestContext());
+                this.executeProcessors(componentPresentation.getComponent(), RunPhase.AFTER_CACHING, context);
             } catch (ProcessorException e) {
                 LOG.error(e.getLocalizedMessage(), e);
             }
@@ -151,11 +188,29 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
         this.componentPresentationProvider = componentPresentationProvider;
     }    
 
-    public DataBinder getDataBinder() {
-		return dataBinder;
+    public List<DataBinder> getDataBinders() {
+		return dataBinders;
 	}
 
-	public void setDataBinder(DataBinder dataBinder) {
-		this.dataBinder = dataBinder;
+	public void setDataBinders(List<DataBinder> dataBinder) {
+		this.dataBinders = dataBinder;
+	}
+
+	@Override
+	public ComponentPresentation getComponentPresentation(String componentURI)
+			throws FactoryException {
+		return getComponentPresentation(componentURI, null, null);
+	}
+
+	@Override
+	public ComponentPresentation getComponentPresentation(String componentURI,
+			String viewOrTemplateURI) throws FactoryException {
+		return getComponentPresentation(componentURI, viewOrTemplateURI, null);
+	}
+
+	@Override
+	public ComponentPresentation getComponentPresentation(String componentURI,
+			RequestContext context) throws FactoryException {
+		return getComponentPresentation(componentURI, null, context);
 	}	
 }

@@ -16,15 +16,23 @@
 
 package org.dd4t.contentmodel.impl;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.dd4t.contentmodel.*;
-import org.dd4t.core.util.DateUtils;
-import org.joda.time.DateTime;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.dd4t.contentmodel.Category;
+import org.dd4t.contentmodel.Field;
+import org.dd4t.contentmodel.OrganizationalItem;
+import org.dd4t.contentmodel.Publication;
+import org.dd4t.contentmodel.RepositoryLocalItem;
+import org.dd4t.contentmodel.Schema;
+import org.dd4t.core.util.DateUtils;
+import org.joda.time.DateTime;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementMap;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 /**
  * Base class for all tridion items except for publications and organizational items
@@ -32,29 +40,35 @@ import java.util.Map;
  * @author bjornl
  */
 public abstract class BaseRepositoryLocalItem extends BaseItem implements RepositoryLocalItem {
-
+	@Element(name = "revisionDate", required = false)
     @JsonProperty ("RevisionDate")
     protected String revisionDateAsString;
 
+	@Element(name = "publication", required = false)
     @JsonProperty ("Publication")
     @JsonDeserialize (as = PublicationImpl.class)
     protected Publication publication;
 
+	@Element(name = "owningPublication", required = false)
     @JsonProperty ("OwningPublication")
     @JsonDeserialize (as = PublicationImpl.class)
     protected Publication owningPublication;
 
     // TODO: move lower in the chain
+	@Element(name = "folder", required = false)	
     @JsonProperty ("Folder")
     @JsonDeserialize (as = OrganizationalItemImpl.class)
     protected OrganizationalItem organizationalItem;
 
+	@Element(name = "lastPublishedDate", required = false)	
     @JsonProperty ("LastPublishedDate")
     protected String lastPublishedDateAsString;
 
+	@Element(name = "version", required = false)
     @JsonProperty ("Version")
     protected int version;
 
+	@ElementMap(name = "metadata", keyType = String.class, valueType = Field.class, entry = "item", required = false)
     @JsonProperty ("MetadataFields")
     // TODO: for XML add a separate MixIn
     @JsonDeserialize (contentAs = BaseField.class)
@@ -63,6 +77,8 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
     @JsonProperty ("Categories")
     @JsonDeserialize (contentAs = CategoryImpl.class)
     protected List<Category> categories;
+    
+	@Element(name = "schema", required = false)
     @JsonProperty ("Schema")
     @JsonDeserialize (as = SchemaImpl.class)
     private Schema schema;

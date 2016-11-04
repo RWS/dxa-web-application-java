@@ -50,7 +50,7 @@ public class GenericComponentFactory extends BaseFactory implements ComponentFac
     public Component getComponent (String uri) throws ItemNotFoundException, NotAuthorizedException, NotAuthenticatedException {
         ComponentPresentation cp;
         try {
-            cp = componentPresentationFactory.getComponentPresentation(uri, null);
+            cp = componentPresentationFactory.getComponentPresentation(uri);
         } catch (FactoryException e) {
             LOG.error(e.getLocalizedMessage(), e);
             return null;

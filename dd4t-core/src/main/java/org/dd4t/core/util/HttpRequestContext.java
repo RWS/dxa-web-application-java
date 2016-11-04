@@ -35,7 +35,7 @@ public class HttpRequestContext implements RequestContext {
     }
 
     @Override
-    public HttpServletRequest getRequest () {
+    public HttpServletRequest getServletRequest () {
         return this.httpServletRequest;
     }
 

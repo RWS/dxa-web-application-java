@@ -107,4 +107,8 @@ public interface Page extends RepositoryLocalItem {
     DateTime getRevisionDate ();
 
     void setRevisionDate (DateTime date);
+    
+    String getUrl();
+    
+    void setUrl(String url);
 }

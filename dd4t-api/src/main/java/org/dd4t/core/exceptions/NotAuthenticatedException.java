@@ -16,7 +16,7 @@
 
 package org.dd4t.core.exceptions;
 
-public class NotAuthenticatedException extends Exception {
+public class NotAuthenticatedException extends FactoryException {
 
     private static final long serialVersionUID = -1393489613071343863L;
 

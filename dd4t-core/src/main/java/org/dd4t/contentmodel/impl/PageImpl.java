@@ -18,7 +18,10 @@ package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.dd4t.contentmodel.*;
+import org.simpleframework.xml.Element;
+import org.simpleframework.xml.ElementList;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,18 +30,21 @@ import java.util.List;
  * TODO: Region support. Or are we just sticking the region on the CP?
  */
 public class PageImpl extends BasePage implements GenericPage, HasMetadata {
-
+	@Element(name = "fileName")
     @JsonProperty ("Filename")
     protected String fileName;
 
+	@Element(name = "pageTemplate")
     @JsonProperty ("PageTemplate")
     @JsonDeserialize (as = PageTemplateImpl.class)
     protected PageTemplate pageTemplate;
 
+	@ElementList(name = "componentPresentations", required = false)
     @JsonProperty ("ComponentPresentations")
     @JsonDeserialize (contentAs = ComponentPresentation.class)
     protected List<ComponentPresentation> componentPresentations;
 
+	@Element(name = "structureGroup", required = false)
     @JsonProperty ("StructureGroup")
     @JsonDeserialize (as = StructureGroupImpl.class)
     protected StructureGroup structureGroup;
@@ -47,8 +53,18 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
     public PageTemplate getPageTemplate () {
         return pageTemplate;
     }
+    
+    protected String url;    
 
-    @Override
+    public String getUrl() {
+		return url;
+	}
+
+	public void setUrl(String url) {
+		this.url = url;
+	}
+
+	@Override
     public void setPageTemplate (PageTemplate pageTemplate) {
         this.pageTemplate = pageTemplate;
     }

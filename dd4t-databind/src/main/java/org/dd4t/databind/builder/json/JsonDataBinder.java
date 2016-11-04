@@ -284,4 +284,13 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
         }
         return null;
     }
+
+    /**
+     * To-Do: implement sanity checking that we're given json
+     * 
+     */
+	@Override
+	public boolean canDeserialize(String source) {
+		return true;
+	}
 }

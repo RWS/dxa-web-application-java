@@ -199,7 +199,7 @@
                 </exclusions>
                 <scope>runtime</scope>
             </dependency>
-
+            
             <!-- TODO: move to example web app -->
             <dependency>
                 <groupId>com.microsoft.sqlserver</groupId>
@@ -216,7 +216,7 @@
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-client</artifactId>
                 <version>${activemq.version}</version>
-            </dependency>
+            </dependency>            
         </dependencies>
     </dependencyManagement>
 </project>

@@ -30,9 +30,9 @@ import java.text.ParseException;
 public interface PageProvider extends BaseProvider {
 
 
-    ProviderResultItem<String> getPageById (int id, int publication) throws IOException, ItemNotFoundException, SerializationException;
+    PageProviderResultItem<String> getPageById (int id, int publication) throws IOException, ItemNotFoundException, SerializationException;
 
-    ProviderResultItem<String> getPageByURL (String url, int publication) throws ItemNotFoundException, SerializationException;
+    PageProviderResultItem<String> getPageByURL (String url, int publication) throws ItemNotFoundException, SerializationException;
 
 
     String getPageContentById (int id, int publication) throws IOException, ItemNotFoundException, SerializationException;

@@ -32,5 +32,5 @@ import javax.servlet.http.HttpServletRequest;
  */
 
 public interface RequestContext {
-    HttpServletRequest getRequest ();
+	HttpServletRequest getServletRequest ();
 }

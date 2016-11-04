@@ -18,8 +18,10 @@ package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Item;
+import org.simpleframework.xml.Element;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -33,10 +35,11 @@ import java.util.Map;
  * @author Quirijn Slings, Raimond Kempees
  */
 public abstract class BaseItem implements Item, Serializable {
-
+	@Element(name = "id")
     @JsonProperty ("Id")
     private String id;
 
+	@Element(name = "title")
     @JsonProperty ("Title")
     private String title;
 

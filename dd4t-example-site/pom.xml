@@ -15,11 +15,23 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<tridion.version>7.1.0</tridion.version>
 		<spring.version>3.1.0.RELEASE</spring.version>
 		<hibernate.version>4.2.10.Final</hibernate.version>
 		<jersey.version>1.12</jersey.version>
 	</properties>
+	
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.dd4t</groupId>
+                <artifactId>dd4t-bom-2013SP1</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+    	
 	<dependencies>
 		<dependency>
 			<groupId>org.dd4t</groupId>
@@ -47,90 +59,75 @@
 			<version>${project.version}</version>
 		</dependency>
 		
-		<!-- Tridion jarfiles (poms from maven4 tridion) -->
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_ambient</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_broker</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_cache</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_core</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_datalayer</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_dynamic</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_linking</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_model</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
-		<!-- Tridion XPM jars (poms by maven4tridion) -->
+		<!-- Tridion XPM jars (poms by maven4tridion) 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_odata</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_odata_types</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_preview_ambient</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_preview_web</artifactId>
-			<version>${tridion.version}</version>
-		</dependency>
+		</dependency>-->
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_session</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<dependency>
 			<groupId>com.tridion</groupId>
 			<artifactId>cd_wrapper</artifactId>
-			<version>${tridion.version}</version>
 		</dependency>
 
 		<!-- Jersey jars (open source) -->

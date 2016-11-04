@@ -17,10 +17,12 @@
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.dd4t.contentmodel.ComponentTemplate;
+import org.simpleframework.xml.Element;
 
 public class ComponentTemplateImpl extends BaseRepositoryLocalItem implements ComponentTemplate {
-
+	@Element(name = "outputFormat", required = false)
     @JsonProperty ("OutputFormat")
     private String outputFormat;
 

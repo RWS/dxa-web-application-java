@@ -17,9 +17,11 @@
 package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+
 import org.dd4t.contentmodel.BinaryData;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Multimedia;
+import org.simpleframework.xml.Element;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -28,27 +30,35 @@ public class MultimediaImpl extends BaseField implements Multimedia {
 
     private BinaryData binaryData;
 
+	@Element(name = "height", required = false)
     @JsonProperty ("Height")
     private int height;
 
+	@Element(name = "width", required = false)
     @JsonProperty ("Width")
     private int width;
 
+	@Element(name = "size", required = false)
     @JsonProperty ("Size")
     private int size;
 
+	@Element(name = "alt", required = false)
     @JsonProperty ("Alt")
     private String alt;
 
+	@Element(name = "url", required = false)
     @JsonProperty ("Url")
     private String url;
 
+	@Element(name = "mimeType", required = false)
     @JsonProperty ("MimeType")
     private String mimeType;
 
+	@Element(name = "fileExtension", required = false)
     @JsonProperty ("FileExtension")
     private String fileExtension;
 
+	@Element(name = "fileName", required = false)
     @JsonProperty ("FileName")
     private String fileName;
 

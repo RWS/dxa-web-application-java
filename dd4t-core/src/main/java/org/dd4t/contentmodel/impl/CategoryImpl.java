@@ -19,14 +19,16 @@ package org.dd4t.contentmodel.impl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.dd4t.contentmodel.Category;
 import org.dd4t.contentmodel.Keyword;
+import org.simpleframework.xml.ElementList;
 
 import java.util.LinkedList;
 import java.util.List;
 
 public class CategoryImpl extends BaseItem implements Category {
-
+	@ElementList(name = "keywords", required = false, type = KeywordImpl.class)
     @JsonProperty ("Keywords")
     @JsonDeserialize (contentAs = KeywordImpl.class)
     private List<Keyword> keywords;

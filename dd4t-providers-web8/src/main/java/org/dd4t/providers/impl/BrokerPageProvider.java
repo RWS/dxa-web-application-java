@@ -31,8 +31,8 @@ import org.dd4t.core.util.Constants;
 import org.dd4t.core.util.TCMURI;
 import org.dd4t.providers.BaseBrokerProvider;
 import org.dd4t.providers.PageProvider;
-import org.dd4t.providers.ProviderResultItem;
-import org.dd4t.providers.StringResultItemImpl;
+import org.dd4t.providers.PageProviderResultItem;
+import org.dd4t.providers.PageResultItemImpl;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,10 +54,11 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
     private static final PageContentRetriever PAGE_CONTENT_RETRIEVER = new PageContentRetrieverImpl();
 
     @Override
-    public ProviderResultItem<String> getPageById (final int id, final int publication) throws IOException, ItemNotFoundException, SerializationException {
+    public PageProviderResultItem<String> getPageById (final int id, final int publication) throws IOException, ItemNotFoundException, SerializationException {
 
         final PageMeta pageMeta = getPageMetaById(id, publication);
-        final ProviderResultItem<String> pageResult = new StringResultItemImpl();
+        PageProviderResultItem<String> pageResult = new PageResultItemImpl(pageMeta.getPublicationId(), pageMeta.getId(), pageMeta.getURLPath());
+
         pageResult.setLastPublishDate(pageMeta.getLastPublicationDate());
         pageResult.setRevisionDate(pageMeta.getModificationDate());
         pageResult.setContentSource(getPageContentById(id, publication));
@@ -66,9 +67,10 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
     }
 
     @Override
-    public ProviderResultItem<String> getPageByURL (final String url, final int publication) throws ItemNotFoundException, SerializationException {
+    public PageProviderResultItem<String> getPageByURL (final String url, final int publication) throws ItemNotFoundException, SerializationException {
         final PageMeta pageMeta = getPageMetaByURL(url, publication);
-        final ProviderResultItem<String> pageResult = new StringResultItemImpl();
+        PageProviderResultItem<String> pageResult = new PageResultItemImpl(pageMeta.getPublicationId(), pageMeta.getId(), pageMeta.getURLPath());
+
         pageResult.setLastPublishDate(pageMeta.getLastPublicationDate());
         pageResult.setRevisionDate(pageMeta.getModificationDate());
         pageResult.setContentSource(getPageContentById(pageMeta.getId(), pageMeta.getPublicationId()));

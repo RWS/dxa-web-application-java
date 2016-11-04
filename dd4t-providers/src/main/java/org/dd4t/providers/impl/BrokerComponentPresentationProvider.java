@@ -23,6 +23,8 @@ import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.providers.AbstractComponentPresentationProvider;
 import org.dd4t.providers.ComponentPresentationProvider;
+import org.dd4t.providers.ComponentPresentationResultItem;
+import org.dd4t.providers.ComponentPresentationResultItemImpl;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -63,6 +65,16 @@ public class BrokerComponentPresentationProvider extends AbstractComponentPresen
      */
     @Override
     public String getDynamicComponentPresentation (int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
+        return getDynamicComponentPresentationItem(componentId, templateId, publicationId).getSourceContent();
+    }
+    
+    @Override
+    public ComponentPresentationResultItem<String> getDynamicComponentPresentationItem (int componentId, int publicationId) throws ItemNotFoundException, SerializationException{
+    	return getDynamicComponentPresentationItem(componentId, 0, publicationId);    
+    }
+    
+    @Override
+    public ComponentPresentationResultItem<String> getDynamicComponentPresentationItem (int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException{
         ComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);
 
         if (factory == null) {
@@ -72,18 +84,32 @@ public class BrokerComponentPresentationProvider extends AbstractComponentPresen
 
         ComponentPresentation result;
         String resultString;
+        ComponentPresentationResultItemImpl resultmodel;
+        
         if (templateId != 0) {
             result = factory.getComponentPresentation(componentId, templateId);
         } else {
             result = factory.getComponentPresentationWithHighestPriority(componentId);
         }
-
-        assertQueryResultNotNull(result,componentId,templateId,publicationId);
-        resultString = result.getContent();
-
-        if (!StringUtils.isEmpty(resultString)) {
-            return decodeAndDecompressContent(resultString);
+        
+        if(result != null){        
+        	resultmodel = new ComponentPresentationResultItemImpl(result.getPublicationId(), result.getComponentId(), result.getComponentTemplateId());
+	
+	        assertQueryResultNotNull(result,componentId,templateId,publicationId);
+	        resultString = result.getContent();
+	
+	        if (!StringUtils.isEmpty(resultString)) {
+	        	resultmodel.setContentSource(decodeAndDecompressContent(resultString));
+	        }
+	        else{
+	        	resultmodel.setContentSource(resultString);
+	        }
+	    }
+        else{
+	        resultmodel = new ComponentPresentationResultItemImpl(0, 0, 0);
         }
-        return null;
+        
+        return resultmodel;    	
+    
     }
 }

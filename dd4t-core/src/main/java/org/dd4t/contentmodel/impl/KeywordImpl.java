@@ -20,9 +20,11 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.Keyword;
 import org.dd4t.core.util.TCMURI;
+import org.simpleframework.xml.Attribute;
 
 import java.util.List;
 import java.util.Map;
@@ -37,9 +39,11 @@ public class KeywordImpl extends BaseItem implements Keyword {
     @JsonProperty ("ClassifiedItems")
     private List<TCMURI> classifiedItems;
 
+	@Attribute(name = "description", required = false)
     @JsonProperty ("Description")
     private String description;
 
+	@Attribute(name = "key", required = false)
     @JsonProperty ("Key")
     private String key;
 
@@ -51,12 +55,14 @@ public class KeywordImpl extends BaseItem implements Keyword {
     @JsonDeserialize (contentAs = KeywordImpl.class)
     private List<Keyword> parentKeywords;
 
+	@Attribute(name = "path")
     @JsonProperty ("Path")
     private String path;
 
     @JsonProperty ("RelatedKeywords")
     private List<TCMURI> relatedKeywords;
 
+	@Attribute(name = "taxonomyId")
     @JsonProperty ("TaxonomyId")
     private String taxonomyId;
 

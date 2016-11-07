@@ -45,7 +45,7 @@
     </developers>
 
     <properties>
-        <dd4t.version>2.1.0-DXA</dd4t.version>
+        <dd4t.version>2.1.1-DXA</dd4t.version>
         <cd-cil.version>8.3.0-1013</cd-cil.version>
 
         <!-- DXA versions -->
@@ -78,7 +78,7 @@
         <!-- Joda Time -->
         <joda-time-version>2.5</joda-time-version>
 
-        <jackson.version>2.6.0</jackson.version>
+        <jackson.version>2.8.3</jackson.version>
 
         <woodstox-version>4.4.1</woodstox-version>
 
@@ -102,8 +102,9 @@
         <!-- JUnit and other test libraries -->
         <junit-version>4.11</junit-version>
         <hamcrest-version>1.3</hamcrest-version>
-        <mockito-version>1.10.8</mockito-version>
+        <mockito-version>1.10.19</mockito-version>
         <reflections-version>0.9.9-RC2</reflections-version>
+        <powermock.version>1.6.6</powermock.version>
 
         <!-- Necessary for Spring 3 to process @Configuration annotated classes -->
         <cglib.version>2.2.2</cglib.version>
@@ -421,6 +422,18 @@
                 <groupId>org.reflections</groupId>
                 <artifactId>reflections</artifactId>
                 <version>${reflections-version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-module-junit4</artifactId>
+                <version>${powermock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.powermock</groupId>
+                <artifactId>powermock-api-mockito</artifactId>
+                <version>${powermock.version}</version>
                 <scope>test</scope>
             </dependency>
 

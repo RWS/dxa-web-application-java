@@ -1,7 +1,9 @@
 package com.sdl.webapp.common.api.serialization.json.filter;
 
 import com.fasterxml.jackson.databind.PropertyName;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
+import com.fasterxml.jackson.databind.introspect.AnnotationMap;
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -15,11 +17,10 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -40,7 +41,7 @@ public class XpmAwareJsonFilterTest {
     @Test
     public void shouldIncludeIfXpmAndAnnotated() {
         //given
-        AnnotatedMember member = getAnnotatedMember(mock(JsonXpmAware.class));
+        AnnotatedMember member = getAnnotatedMember(JsonXpmAware.class);
         PropertyWriter writer = propertyWriter(BeanPropertyWriter.class, "Test", member);
 
         when(webRequestContext.isPreview()).thenReturn(true);
@@ -55,7 +56,7 @@ public class XpmAwareJsonFilterTest {
     @Test
     public void shouldIncludeIfNoWebRequestContext() {
         //given
-        AnnotatedMember member = getAnnotatedMember(mock(JsonXpmAware.class));
+        AnnotatedMember member = getAnnotatedMember(JsonXpmAware.class);
         PropertyWriter writer = propertyWriter(BeanPropertyWriter.class, "Test", member);
 
         when(webRequestContext.isPreview()).thenReturn(true);
@@ -72,7 +73,7 @@ public class XpmAwareJsonFilterTest {
     @Test
     public void shouldExcludeIfNotXpmAndAnnotated() {
         //given
-        AnnotatedMember member = getAnnotatedMember(mock(JsonXpmAware.class));
+        AnnotatedMember member = getAnnotatedMember(JsonXpmAware.class);
         PropertyWriter writer = propertyWriter(BeanPropertyWriter.class, "Test", member);
 
         when(webRequestContext.isPreview()).thenReturn(false);
@@ -126,10 +127,16 @@ public class XpmAwareJsonFilterTest {
         assertTrue(include);
     }
 
-    private AnnotatedMember getAnnotatedMember(Annotation annotation) {
-        AnnotatedMember member = mock(AnnotatedMember.class);
-        doReturn(annotation).when(member).getAnnotation(eq(JsonXpmAware.class));
-        return member;
+    private AnnotatedMember getAnnotatedMember(Class<? extends Annotation> annotation) {
+        AnnotationMap annMap = new AnnotationMap();
+        if (annotation != null) {
+            ReflectionTestUtils.setField(annMap, "_annotations", new HashMap<Class<?>, Annotation>() {
+                {
+                    put(annotation, mock(annotation));
+                }
+            });
+        }
+        return new AnnotatedField(null, null, annMap);
     }
 
     private PropertyWriter propertyWriter(Class<? extends PropertyWriter> aClass, String propName, AnnotatedMember member) {
@@ -137,7 +144,7 @@ public class XpmAwareJsonFilterTest {
         when(writer.getName()).thenReturn(propName);
         when(writer.getFullName()).thenReturn(mock(PropertyName.class));
         if (aClass.equals(BeanPropertyWriter.class)) {
-            when(((BeanPropertyWriter) writer).getMember()).thenReturn(member);
+            when(writer.getMember()).thenReturn(member);
         }
         return writer;
     }

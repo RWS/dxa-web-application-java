@@ -290,6 +290,7 @@ public final class LocalizationUtils {
      *
      * @param <T> way to return the page
      */
+    @FunctionalInterface
     public interface TryFindPage<T> {
 
         /**

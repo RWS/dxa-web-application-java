@@ -1,8 +1,6 @@
 package com.sdl.webapp.common.api.localization;
 
-/**
- * Localization factory.
- */
+@FunctionalInterface
 public interface LocalizationFactory {
 
     /**

@@ -56,26 +56,6 @@ public class DefaultMediaHelper implements MediaHelper {
         return (int) Math.ceil(dimension / aspect);
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getResponsiveImageUrl(String url, String widthFactor, double aspect, int containerSize) {
-        final int width = roundWidth(getResponsiveWidth(widthFactor, containerSize));
-
-        // Height is calculated from the aspect ratio (0 means preserve aspect ratio)
-        boolean aspectIzZero = aspect == 0.0;
-        final int height = aspectIzZero ? 0 : divideByAspect(width, aspect);
-
-        return responsiveMediaUrlBuilder
-                .newInstance()
-                .setBaseUrl(url)
-                .setZeroAspect(aspectIzZero)
-                .setWidth(String.valueOf(width))
-                .setHeight(String.valueOf(height))
-                .build();
-    }
-
     /** {@inheritDoc} */
     @Override
     public int getResponsiveWidth(String widthFactor, int containerSize) {
@@ -146,6 +126,26 @@ public class DefaultMediaHelper implements MediaHelper {
         return divideByAspect(getResponsiveWidth(widthFactor, containerSize), aspect);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getResponsiveImageUrl(String url, String widthFactor, double aspect, int containerSize) {
+        final int width = roundWidth(getResponsiveWidth(widthFactor, containerSize));
+
+        // Height is calculated from the aspect ratio (0 means preserve aspect ratio)
+        boolean aspectIzZero = aspect == 0.0;
+        final int height = aspectIzZero ? 0 : divideByAspect(width, aspect);
+
+        return responsiveMediaUrlBuilder
+                .newInstance()
+                .setBaseUrl(url)
+                .setZeroAspect(aspectIzZero)
+                .setWidth(String.valueOf(width))
+                .setHeight(String.valueOf(height))
+                .build();
+    }
+
     /** {@inheritDoc} */
     @Override
     public int getGridSize() {
@@ -209,7 +209,7 @@ public class DefaultMediaHelper implements MediaHelper {
     }
 
     @Component
-    protected static class DefaultResponsiveMediaUrlBuilder extends ResponsiveMediaUrlBuilder {
+    protected static class DefaultResponsiveMediaUrlBuilder implements ResponsiveMediaUrlBuilder {
 
         @Override
         public Builder newInstance() {

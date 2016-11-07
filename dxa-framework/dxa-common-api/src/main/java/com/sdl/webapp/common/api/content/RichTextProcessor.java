@@ -3,9 +3,7 @@ package com.sdl.webapp.common.api.content;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RichText;
 
-/**
- * <p>RichTextProcessor interface.</p>
- */
+@FunctionalInterface
 public interface RichTextProcessor {
     /**
      * Resolves links in the specified content.

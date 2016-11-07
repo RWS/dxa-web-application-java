@@ -24,7 +24,7 @@ public class RichText {
     }
 
     public RichText(List<RichTextFragment> fragments) {
-        this.fragments = (fragments != null) ? fragments : new LinkedList<RichTextFragment>();
+        this.fragments = (fragments != null) ? fragments : new LinkedList<>();
     }
 
     @JsonIgnore

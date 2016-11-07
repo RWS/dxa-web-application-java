@@ -93,6 +93,7 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
         return entityModel;
     }
 
+    @FunctionalInterface
     private interface Strategy<T> {
 
         T apply(T entity, EntityBuilder builder) throws ContentProviderException;

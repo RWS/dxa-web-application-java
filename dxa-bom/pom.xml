@@ -125,6 +125,7 @@
 
         <aspectj.version>1.6.12</aspectj.version>
         <findbugs.annotations.version>2.0.1</findbugs.annotations.version>
+        <openpojo.version>0.8.4</openpojo.version>
     </properties>
 
     <dependencyManagement>
@@ -326,6 +327,11 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.openpojo</groupId>
+                <artifactId>openpojo</artifactId>
+                <version>${openpojo.version}</version>
             </dependency>
 
             <dependency>

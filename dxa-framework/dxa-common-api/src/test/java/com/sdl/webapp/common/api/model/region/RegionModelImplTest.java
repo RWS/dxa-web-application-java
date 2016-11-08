@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.TestEntity;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.xpm.ComponentType;
@@ -31,6 +32,7 @@ import java.util.List;
 import static com.sdl.webapp.common.api.model.TestEntity.entity;
 import static com.sdl.webapp.common.api.model.TestEntity.feedItem;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
@@ -159,13 +161,32 @@ public class RegionModelImplTest {
         regionModel.setRegions(subRegions);
         subRegion.addEntity(entity(feedItem1));
 
-        regionModel.setEntities(Lists.<EntityModel>newArrayList(entity(feedItem2), entity(feedItem3), new TestEntity.TestEntityNoFeed()));
+        regionModel.setEntities(Lists.newArrayList(entity(feedItem2), entity(feedItem3), new TestEntity.TestEntityNoFeed()));
 
         //when
         List<FeedItem> feedItems = regionModel.extractFeedItems();
 
         //then
         assertThat(feedItems, IsIterableContainingInOrder.contains(feedItem1, feedItem2, feedItem3));
+    }
+
+    @Test
+    public void shouldInitRegionModelSet() throws DxaException {
+        //given 
+        RegionModelImpl regionModel = new RegionModelImpl("name");
+
+        //when
+        RegionModelSet regions = regionModel.getRegions();
+
+        //then
+        assertNotNull(regions);
+
+        //when
+        regionModel.setRegions(null);
+        regions = regionModel.getRegions();
+
+        //then
+        assertNull(regions);
     }
 
     @Profile("test")
@@ -186,7 +207,7 @@ public class RegionModelImplTest {
             when(componentType.getTemplateId()).thenReturn("234");
             when(xpmRegion.getComponentTypes()).thenReturn(Collections.singletonList(componentType));
 
-            when(xpmRegionConfig.getXpmRegion(anyString(), Matchers.<Localization>any())).thenReturn(xpmRegion);
+            when(xpmRegionConfig.getXpmRegion(anyString(), Matchers.any())).thenReturn(xpmRegion);
             return xpmRegionConfig;
         }
     }

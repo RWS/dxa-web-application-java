@@ -78,8 +78,6 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     @Setter
     private RegionModelSet regions = new RegionModelSetImpl();
 
-	
-
     /**
      * <p>Constructor for RegionModelImpl.</p>
      *

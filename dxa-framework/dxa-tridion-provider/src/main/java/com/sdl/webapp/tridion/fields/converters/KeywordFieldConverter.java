@@ -1,14 +1,22 @@
 package com.sdl.webapp.tridion.fields.converters;
 
+import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.KeywordModel;
 import com.sdl.webapp.common.api.model.entity.Tag;
 import com.sdl.webapp.common.util.TcmUtils;
+import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
 import com.sdl.webapp.tridion.mapping.ModelBuilderPipeline;
+import lombok.extern.slf4j.Slf4j;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.Keyword;
 import org.dd4t.contentmodel.impl.BaseField;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -26,39 +34,17 @@ import static java.lang.Boolean.parseBoolean;
  * @see AbstractFieldConverter
  */
 @Component
-public class KeywordFieldConverter extends AbstractFieldConverter {
+@Slf4j
+public class KeywordFieldConverter implements FieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.KEYWORD};
 
-    private static final Converter<Tag> TAG_CONVERTER = new Converter<Tag>() {
-        @Override
-        public Tag convert(Keyword keyword) {
-            final Tag tag = new Tag();
-            tag.setDisplayText(getKeywordDisplayText(keyword));
-            tag.setKey(getKeywordKey(keyword));
-            tag.setTagCategory(keyword.getTaxonomyId());
-            return tag;
-        }
-    };
+    private final SemanticMapper semanticMapper;
 
-    private static final Converter<String> STRING_CONVERTER = new Converter<String>() {
-        @Override
-        public String convert(Keyword keyword) {
-            return getKeywordDisplayText(keyword);
-        }
-    };
-
-    private static final Converter<Boolean> BOOLEAN_CONVERTER = new Converter<Boolean>() {
-        @Override
-        public Boolean convert(Keyword keyword) {
-            final String key = keyword.getKey();
-            final String title = keyword.getTitle();
-
-            return parseBoolean(isNullOrEmpty(key) ? title : key);
-        }
-    };
-
-    private static final Converter<KeywordModel> KEYWORD_CONVERTER = new KeywordConverter();
+    @Autowired
+    public KeywordFieldConverter(SemanticMapper semanticMapper) {
+        this.semanticMapper = semanticMapper;
+    }
 
     @Override
     public FieldType[] supportedFieldTypes() {
@@ -66,30 +52,35 @@ public class KeywordFieldConverter extends AbstractFieldConverter {
     }
 
     @Override
-    protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
+    public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType,
+                                SemanticFieldDataProviderImpl semanticFieldDataProvider, ModelBuilderPipeline builder) throws FieldConverterException {
+        Class<?> targetClass = targetType.isCollection() ? targetType.getElementTypeDescriptor().getObjectType() : targetType.getObjectType();
+        Converter<?> converter = getConverter(targetClass, semanticField, semanticFieldDataProvider);
+
         final List<Keyword> keywords = field.getKeywordValues();
-
-        final List<Object> values = new ArrayList<>(keywords.size());
-
-        Converter<?> converter = getConverter(targetClass);
-
-        for (Keyword keyword : keywords) {
-            values.add(converter.convert(keyword));
+        if (semanticField.isMultiValue()) {
+            List<Object> list = new ArrayList<>();
+            for (Keyword keyword : keywords) {
+                list.add(converter.convert(keyword));
+            }
+            return list;
+        } else {
+            return keywords.isEmpty() ? null : converter.convert(keywords.get(0));
         }
-
-        return values;
     }
 
-    private Converter<?> getConverter(Class<?> targetClass) throws UnsupportedTargetTypeException {
+    private Converter<?> getConverter(Class<?> targetClass,
+                                      SemanticField semanticField,
+                                      SemanticFieldDataProvider semanticFieldDataProvider) throws UnsupportedTargetTypeException {
         Converter<?> converter;
         if (targetClass.isAssignableFrom(Tag.class)) {
-            converter = TAG_CONVERTER;
+            converter = new TagConverter();
         } else if (targetClass.isAssignableFrom(Boolean.class)) {
-            converter = BOOLEAN_CONVERTER;
+            converter = new BooleanConverter();
         } else if (targetClass.isAssignableFrom(String.class)) {
-            converter = STRING_CONVERTER;
+            converter = new StringConverter();
         } else if (targetClass.isAssignableFrom(KeywordModel.class)) {
-            converter = KEYWORD_CONVERTER;
+            converter = new KeywordConverter(semanticMapper, semanticField, semanticFieldDataProvider);
         } else {
             throw new UnsupportedTargetTypeException(targetClass);
         }
@@ -99,7 +90,7 @@ public class KeywordFieldConverter extends AbstractFieldConverter {
     @FunctionalInterface
     private interface Converter<T> {
 
-        T convert(Keyword keyword);
+        T convert(Keyword keyword) throws FieldConverterException;
 
         default String getKeywordDisplayText(Keyword keyword) {
             return isNullOrEmpty(keyword.getDescription()) ? keyword.getTitle() : keyword.getDescription();
@@ -110,7 +101,50 @@ public class KeywordFieldConverter extends AbstractFieldConverter {
         }
     }
 
+    private static class TagConverter implements Converter<Tag> {
+
+        @Override
+        public Tag convert(Keyword keyword) {
+            final Tag tag = new Tag();
+            tag.setDisplayText(getKeywordDisplayText(keyword));
+            tag.setKey(getKeywordKey(keyword));
+            tag.setTagCategory(keyword.getTaxonomyId());
+            return tag;
+        }
+    }
+
+    private static class StringConverter implements Converter<String> {
+
+        @Override
+        public String convert(Keyword keyword) {
+            return getKeywordDisplayText(keyword);
+        }
+    }
+
+    private static class BooleanConverter implements Converter<Boolean> {
+
+        @Override
+        public Boolean convert(Keyword keyword) {
+            final String key = keyword.getKey();
+            final String title = keyword.getTitle();
+
+            return parseBoolean(isNullOrEmpty(key) ? title : key);
+        }
+    }
+
     private static class KeywordConverter implements Converter<KeywordModel> {
+
+        private final SemanticMapper semanticMapper;
+
+        private SemanticField semanticField;
+
+        private SemanticFieldDataProvider semanticFieldDataProvider;
+
+        KeywordConverter(SemanticMapper semanticMapper, SemanticField semanticField, SemanticFieldDataProvider semanticFieldDataProvider) {
+            this.semanticMapper = semanticMapper;
+            this.semanticField = semanticField;
+            this.semanticFieldDataProvider = semanticFieldDataProvider;
+        }
 
         private String getMetadataSchemaId(Keyword keyword) {
             if (keyword.getExtensionData() == null ||
@@ -123,12 +157,17 @@ public class KeywordFieldConverter extends AbstractFieldConverter {
         }
 
         @Override
-        public KeywordModel convert(Keyword keyword) {
+        public KeywordModel convert(Keyword keyword) throws FieldConverterException {
             KeywordModel keywordModel;
             if (isNullOrEmpty(getMetadataSchemaId(keyword))) {
                 keywordModel = new KeywordModel();
             } else {
-                throw new UnsupportedOperationException();
+                try {
+                    keywordModel = semanticMapper.createEntity(KeywordModel.class, semanticField.getEmbeddedFields(), semanticFieldDataProvider);
+                } catch (SemanticMappingException e) {
+                    log.error("Failed to do a semantic mapping for keyword {}", keyword, e);
+                    throw new FieldConverterException("Failed to do a semantic mapping for keyword", e);
+                }
             }
 
             keywordModel.setId(String.valueOf(TcmUtils.getItemId(keyword.getId())));

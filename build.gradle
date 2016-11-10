@@ -1,5 +1,10 @@
 import com.sdl.dxa.builder.maven.MavenBuildTask
 import com.sdl.dxa.builder.maven.MavenHelpTask
+import groovy.xml.DOMBuilder
+import groovy.xml.XmlUtil
+import groovy.xml.dom.DOMCategory
+
+apply plugin: 'groovy'
 
 buildscript {
     repositories {
@@ -20,25 +25,50 @@ task wrapper(type: Wrapper) {
 
 task help(type: MavenHelpTask)
 
-task buildDxa(type: MavenBuildTask) {
+task buildFramework(type: MavenBuildTask) {
     configurations = [
             ["dxa-bom"],
             ["dxa-bom-modules"],
             ["dxa-framework"],
             ["> dxa-webapp > clean archetype:create-from-project -Darchetype.properties=archetype.properties"]
     ]
+}
 
-    // special hook for archetypes as id does not inherit <profiles/> nor <build/> sections,
-    // but we still need to sign artifact in case of release
-    if (project.hasProperty('command') && project.command =~ /.*-P(.*\b)?release\b.*/) {
-        configurations << ["> dxa-webapp/target/generated-sources/archetype > ${project.command} " +
-                                   "org.apache.maven.plugins:maven-gpg-plugin:sign " +
-                                   "org.apache.maven.plugins:maven-source-plugin:jar-no-fork " +
-                                   "org.apache.maven.plugins:maven-javadoc-plugin:jar"]
-    } else {
-        configurations << ["dxa-webapp/target/generated-sources/archetype"]
+task prepareArchetype(dependsOn: buildFramework) << {
+    def from = file("${project.projectDir}/dxa-webapp/target/generated-sources/archetype/src/main/resources/archetype-resources/pom.xml")
+    def to = file("${project.projectDir}/dxa-webapp/target/generated-sources/archetype/pom.xml")
+
+    def docFrom = DOMBuilder.parse(new FileReader(from), false, true, true)
+    def docTo = DOMBuilder.parse(new FileReader(to), false, true, true)
+
+    def rootFrom = docFrom.documentElement
+    def rootTo = docTo.documentElement
+
+    def parentTag = rootFrom.getElementsByTagName('parent').item(0)
+
+    use(DOMCategory) {
+        def importNode = docTo.importNode(parentTag, true)
+        rootTo.insertBefore(importNode, rootTo.getFirstChild())
     }
 
+    rootFrom.removeChild(parentTag)
+
+    rootFrom.normalize()
+    rootTo.normalize()
+
+    XmlUtil.serialize rootFrom, from.newPrintWriter()
+    XmlUtil.serialize rootTo, to.newPrintWriter()
+
+    println 'POMs for Archetype have been changed (parent tag moved from archetype itself to its pom)'
+}
+
+task buildArchetype(type: MavenBuildTask, dependsOn: prepareArchetype) {
+    configurations = [["dxa-webapp/target/generated-sources/archetype"]]
+}
+
+task buildDxa(type: MavenBuildTask, dependsOn: [buildFramework, buildArchetype])
+
+def mavenSettings = {
     if (project.hasProperty('command')) {
         command = project.command
     }
@@ -51,3 +81,7 @@ task buildDxa(type: MavenBuildTask) {
         mavenProperties = project.mavenProperties
     }
 }
+
+buildFramework mavenSettings
+buildArchetype mavenSettings
+buildDxa mavenSettings

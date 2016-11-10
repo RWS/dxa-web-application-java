@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Set;
 
@@ -70,6 +71,17 @@ public abstract class PojosTest {
         return pojoClass -> {
             Object basicInstance = ValidationHelper.getBasicInstance(pojoClass);
             Object basicInstance2 = ValidationHelper.getBasicInstance(pojoClass);
+
+            for (Field field : pojoClass.getClazz().getDeclaredFields()) {
+                try {
+                    Object value = field.getType().newInstance();
+                    field.setAccessible(true);
+                    field.set(basicInstance, value);
+                    field.set(basicInstance2, value);
+                } catch (IllegalAccessException | InstantiationException e) {
+                    log.debug("Tried to instantiate a field with dummy value, but failed since there is no default constructor, skipping");
+                }
+            }
 
             assertEquals(basicInstance2, basicInstance);
             assertEquals(basicInstance2.toString(), basicInstance.toString());

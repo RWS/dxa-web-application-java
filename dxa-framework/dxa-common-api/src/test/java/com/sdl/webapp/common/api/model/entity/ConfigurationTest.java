@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.sdl.webapp.common.api.model.PojosTest;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -7,7 +8,7 @@ import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
-public class ConfigurationTest {
+public class ConfigurationTest extends PojosTest {
 
     @Test
     public void shouldReturnConfiguration() {
@@ -26,5 +27,10 @@ public class ConfigurationTest {
                      "settings=" + settings.toString() +
                      ")",
                      configuration.toString());
+    }
+
+    @Override
+    protected Class<?> getPojoClass() {
+        return Configuration.class;
     }
 }

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 @Slf4j
 public abstract class PojosTest {
@@ -72,6 +73,7 @@ public abstract class PojosTest {
             Object basicInstance = ValidationHelper.getBasicInstance(pojoClass);
             Object basicInstance2 = ValidationHelper.getBasicInstance(pojoClass);
 
+            int c = 0;
             for (Field field : pojoClass.getClazz().getDeclaredFields()) {
                 try {
                     Object value = field.getType().newInstance();
@@ -79,8 +81,17 @@ public abstract class PojosTest {
                     field.set(basicInstance, value);
                     field.set(basicInstance2, value);
                 } catch (IllegalAccessException | InstantiationException e) {
+                    c++;
                     log.debug("Tried to instantiate a field with dummy value, but failed since there is no default constructor, skipping");
                 }
+            }
+
+            if (pojoClass.getClazz().getDeclaredFields().length != c) {
+                log.debug("At least one field instantiated, so doing not-equality check");
+                Object basicInstance3 = ValidationHelper.getBasicInstance(pojoClass);
+                assertNotEquals(basicInstance3, basicInstance);
+                assertNotEquals(basicInstance3.toString(), basicInstance.toString());
+                assertNotEquals(basicInstance3.hashCode(), basicInstance.hashCode());
             }
 
             assertEquals(basicInstance2, basicInstance);

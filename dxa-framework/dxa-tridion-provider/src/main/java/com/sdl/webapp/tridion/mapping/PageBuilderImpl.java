@@ -24,6 +24,7 @@ import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
 import com.sdl.webapp.util.dd4t.FieldUtils;
@@ -331,7 +332,7 @@ public final class PageBuilderImpl implements PageBuilder {
             throw new DxaException(String.format("Cannot instantiate new page of template %s", genericPage.getPageTemplate().getTitle()));
         }
 
-        pageModel.setId(genericPage.getId());
+        pageModel.setId(String.valueOf(TcmUtils.getItemId(genericPage.getId())));
 
         // It's confusing, but what DD4T calls the "title" is what is called the "name" in the view model
         pageModel.setName(genericPage.getTitle());

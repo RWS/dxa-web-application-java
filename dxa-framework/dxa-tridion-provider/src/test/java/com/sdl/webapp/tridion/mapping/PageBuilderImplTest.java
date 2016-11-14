@@ -154,8 +154,10 @@ public class PageBuilderImplTest {
         String titleMetaSeq = "001 titleMeta";
         String descriptionMetaStr = "descriptionMeta";
 
-        DateTime now = DateTime.now();
-        String nowPrinted = ISODateTimeFormat.dateHourMinuteSecond().print(now);
+        DateTime nowPage = DateTime.now().minus(1024);
+        DateTime nowPageTemplate = DateTime.now().minus(2048);
+        String nowPrinted = ISODateTimeFormat.dateHourMinuteSecond().print(nowPage);
+        String nowPageTemplatePrinted = ISODateTimeFormat.dateHourMinuteSecond().print(nowPageTemplate);
 
         String pageTemplateId = "tcm:1-10-20";
 
@@ -166,7 +168,7 @@ public class PageBuilderImplTest {
         when(regionBuilder.buildRegions(any(PageModel.class), anyList(), any(RegionBuilderCallback.class), eq(localization)))
                 .thenReturn(new RegionModelSetImpl());
 
-        PageTemplate pageTemplate = getPageTemplate(pageTemplateId, htmlClasses, new String[]{pageView});
+        PageTemplate pageTemplate = getPageTemplate(pageTemplateId, htmlClasses, new String[]{pageView}, nowPageTemplate);
 
         Page genericPage = mock(Page.class);
         doReturn(pageTemplate).when(genericPage).getPageTemplate();
@@ -186,7 +188,7 @@ public class PageBuilderImplTest {
 
         when(genericPage.getId()).thenReturn(pageId);
         when(genericPage.getTitle()).thenReturn(pageName);
-        when(genericPage.getRevisionDate()).thenReturn(now);
+        when(genericPage.getRevisionDate()).thenReturn(nowPage);
 
         //no includes for this test yet
         when(localization.getIncludes(anyString())).thenReturn(Collections.emptyList());
@@ -249,13 +251,13 @@ public class PageBuilderImplTest {
         Map<String, Object> xpmMetadata = page.getXpmMetadata();
         assertEquals(pageId, xpmMetadata.get("PageID"));
         assertEquals(nowPrinted, xpmMetadata.get("PageModified"));
-        assertEquals(nowPrinted, xpmMetadata.get("PageTemplateModified"));
+        assertEquals(nowPageTemplatePrinted, xpmMetadata.get("PageTemplateModified"));
         assertEquals(pageTemplateId, xpmMetadata.get("PageTemplateID"));
         assertEquals("CMS_URL", xpmMetadata.get("CmsUrl"));
         //endregion
     }
 
-    private PageTemplate getPageTemplate(String id, String htmlClasses, String[] templates) {
+    private PageTemplate getPageTemplate(String id, String htmlClasses, String[] templates, DateTime nowPageTemplate) {
         PageTemplate pageTemplate = mock(PageTemplate.class);
 
         Field templatesField = getFieldWithStringValues("view", templates);
@@ -267,6 +269,7 @@ public class PageBuilderImplTest {
         }}).when(pageTemplate).getMetadata();
 
         when(pageTemplate.getId()).thenReturn(id);
+        when(pageTemplate.getRevisionDate()).thenReturn(nowPageTemplate);
 
         return pageTemplate;
     }

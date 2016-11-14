@@ -73,14 +73,17 @@ public class KeywordFieldConverter implements FieldConverter {
                                       SemanticField semanticField,
                                       SemanticFieldDataProvider semanticFieldDataProvider) throws UnsupportedTargetTypeException {
         Converter<?> converter;
-        if (targetClass.isAssignableFrom(Tag.class)) {
+        if (Tag.class.equals(targetClass)) {
             converter = new TagConverter();
-        } else if (targetClass.isAssignableFrom(Boolean.class)) {
+        } else if (Boolean.class.isAssignableFrom(targetClass)) {
             converter = new BooleanConverter();
-        } else if (targetClass.isAssignableFrom(String.class)) {
+        } else if (String.class.isAssignableFrom(targetClass)) {
             converter = new StringConverter();
-        } else if (targetClass.isAssignableFrom(KeywordModel.class)) {
-            converter = new KeywordConverter(semanticMapper, semanticField, semanticFieldDataProvider);
+        } else if (KeywordModel.class.isAssignableFrom(targetClass)) {
+            //typecast is safe which is guaranteed by if condition
+            //noinspection unchecked
+            converter = new KeywordConverter(semanticMapper, semanticField, semanticFieldDataProvider,
+                    (Class<? extends KeywordModel>) targetClass);
         } else {
             throw new UnsupportedTargetTypeException(targetClass);
         }
@@ -140,10 +143,14 @@ public class KeywordFieldConverter implements FieldConverter {
 
         private SemanticFieldDataProvider semanticFieldDataProvider;
 
-        KeywordConverter(SemanticMapper semanticMapper, SemanticField semanticField, SemanticFieldDataProvider semanticFieldDataProvider) {
+        private Class<? extends KeywordModel> targetClass;
+
+        KeywordConverter(SemanticMapper semanticMapper, SemanticField semanticField,
+                         SemanticFieldDataProvider semanticFieldDataProvider, Class<? extends KeywordModel> targetClass) {
             this.semanticMapper = semanticMapper;
             this.semanticField = semanticField;
             this.semanticFieldDataProvider = semanticFieldDataProvider;
+            this.targetClass = targetClass;
         }
 
         private String getMetadataSchemaId(Keyword keyword) {
@@ -163,7 +170,7 @@ public class KeywordFieldConverter implements FieldConverter {
                 keywordModel = new KeywordModel();
             } else {
                 try {
-                    keywordModel = semanticMapper.createEntity(KeywordModel.class, semanticField.getEmbeddedFields(), semanticFieldDataProvider);
+                    keywordModel = semanticMapper.createEntity(this.targetClass, semanticField.getEmbeddedFields(), semanticFieldDataProvider);
                 } catch (SemanticMappingException e) {
                     log.error("Failed to do a semantic mapping for keyword {}", keyword, e);
                     throw new FieldConverterException("Failed to do a semantic mapping for keyword", e);

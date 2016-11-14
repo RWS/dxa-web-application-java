@@ -301,6 +301,30 @@ public class KeywordFieldConverterTest {
                 any(SemanticFieldDataProvider.class));
     }
 
+    @Test
+    public void shouldMapKeywordModelSubClasses() throws SemanticMappingException {
+        //given 
+        SemanticField semanticField = mockSemanticField(false);
+        TypeDescriptor typeDescriptor = mockTypeDescriptor(false, KeywordModelSubclass.class);
+
+        BaseField baseField = mock(BaseField.class);
+        doReturn(Lists.newArrayList(
+                mockKeyword("tcm:0-1-2", "tcm:0-2-3", "title", "desc", "key", getExtensionData(getMetadataSchemaId()))))
+                .when(baseField).getKeywordValues();
+
+        doReturn(new KeywordModelSubclass()).when(semanticMapper).createEntity(eq(KeywordModelSubclass.class),
+                anyMapOf(FieldSemantics.class, SemanticField.class),
+                any(SemanticFieldDataProvider.class));
+
+        //when
+        converter.getFieldValue(semanticField, baseField, typeDescriptor, semanticFieldDataProviderImpl, modelBuilderPipeline);
+
+        //then
+        verify(semanticMapper).createEntity(eq(KeywordModelSubclass.class),
+                anyMapOf(FieldSemantics.class, SemanticField.class),
+                any(SemanticFieldDataProvider.class));
+    }
+
     @NotNull
     private HashMap<String, FieldSet> getExtensionData(Map<String, Field> metadataSchemaId) {
         return new HashMap<String, FieldSet>() {{
@@ -347,5 +371,9 @@ public class KeywordFieldConverterTest {
         doReturn(key).when(keyword).getKey();
         doReturn(extensionData).when(keyword).getExtensionData();
         return keyword;
+    }
+
+    private static class KeywordModelSubclass extends KeywordModel {
+
     }
 }

@@ -1,5 +1,5 @@
 group 'com.sdl.dxa'
-version '1.6.0'
+version '1.7.0-SNAPSHOT'
 
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'
@@ -25,14 +25,65 @@ repositories {
     }
 }
 
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier "javadoc"
+    from javadoc
+}
+
 task sourceJar(type: Jar) {
-    classifier "sources"
+    classifier = 'sources'
     from sourceSets.main.allSource
 }
 
-task javadocJar(type: Jar) {
-    classifier "javadoc"
-    from javadoc
+ext {
+    pomFilePath = "${project.buildDir}/pom/pom.xml"
+    pomFile = file(pomFilePath)
+}
+
+configurations {
+    pom
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
+    pom pomFile
+}
+
+task signPom(type: Sign) {
+    sign configurations.pom
+}
+
+task signJars(type: Sign, dependsOn: [jar, signPom, javadocJar, sourceJar]) {
+    sign configurations.archives
+}
+task preparePublication(dependsOn: [signPom, signJars])
+
+task publishLocal(dependsOn: [build, publishToMavenLocal])
+task publishRemote(dependsOn: [build, preparePublication, publish])
+
+model {
+    tasks.generatePomFileForMavenJavaPublication {
+        destination = project.ext.pomFile
+    }
+    tasks.signJars {
+        dependsOn(generatePomFileForMavenJavaPublication)
+    }
+}
+
+def getSignatureFiles = {
+    def allFiles = project.tasks.signJars.signatureFiles.collect { it }
+    def signedSources = allFiles.find { it.name.contains('-sources') }
+    def signedJavadoc = allFiles.find { it.name.contains('-javadoc') }
+    def signedPom = allFiles.find { it.name.contains('pom.xml') }
+    def signedJar = (allFiles - [signedSources, signedJavadoc, signedPom])[0]
+    return [
+            [archive: signedSources, classifier: 'sources', extension: 'jar.asc'],
+            [archive: signedJavadoc, classifier: 'javadoc', extension: 'jar.asc'],
+            [archive: signedJar, classifier: null, extension: 'jar.asc'],
+            [archive: signedPom, classifier: null, extension: 'pom.asc']
+    ]
 }
 
 publishing {
@@ -50,6 +101,7 @@ publishing {
                 root.appendNode('name', 'DXA Builder')
                 root.appendNode('description', 'Builder plugin for DXA projects used internally to organize build process')
                 root.appendNode('packaging', 'jar')
+                root.appendNode('url', 'https://www.sdl.com')
 
                 def license = root.appendNode('licenses').appendNode('license')
                 license.appendNode('name', 'The Apache License, Version 2.0')
@@ -71,6 +123,18 @@ publishing {
                 scm.appendNode('url', 'https://github.com/sdl/dxa-web-application-java')
                 scm.appendNode('connection', 'scm:git:git@github.com:sdl/dxa-web-application-java.git')
                 scm.appendNode('developerConnection', 'scm:git:git@github.com:sdl/dxa-web-application-java.git')
+            }
+        }
+
+        if (isRelease) {
+            gpgs(MavenPublication) {
+                println getSignatureFiles()
+                getSignatureFiles().each { signature ->
+                    artifact(signature.archive) {
+                        classifier = signature.classifier
+                        extension = signature.extension
+                    }
+                }
             }
         }
     }
@@ -106,24 +170,8 @@ publishing {
     }
 }
 
-if (isRelease) {
-    signing {
-        sign configurations.archives
-    }
-}
-
 dependencies {
     compile gradleApi()
     compile localGroovy()
     testCompile group: 'junit', name: 'junit', version: '4.11'
-}
-
-task publishLocal() {
-    dependsOn build
-    dependsOn publishToMavenLocal
-}
-
-task publishRemote() {
-    dependsOn publishLocal
-    dependsOn publish
 }

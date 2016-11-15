@@ -98,14 +98,19 @@ public abstract class AbstractInitializer {
 
     private void registerViewModel(String viewName, Class<? extends ViewModel> entityClass, String controllerName) {
         String actualControllerName = getControllerNameForEntityClass(controllerName, entityClass);
-        if (actualControllerName == null) {
-            log.error("Couldn't register view {} because entityClass {} is not of a known type.", viewName, entityClass);
+        boolean shouldHaveControllerName = shouldHaveControllerName(entityClass);
+        if (shouldHaveControllerName && actualControllerName == null) {
+            log.error("Couldn't register view {} because class {} is not of a known type not controller name is explicitly passed.", viewName, entityClass);
             return;
+        }
+
+        if (!shouldHaveControllerName && actualControllerName != null) {
+            log.warn("Controller name is not expected for {} but is {}", entityClass, controllerName);
         }
 
         log.debug("controllerName {} for view {} with entity class {}", actualControllerName, viewName, entityClass);
 
-        MvcData mvcData = isNullOrEmpty(viewName) ? null : MvcDataImpl.newBuilder()
+        MvcData mvcData = isNullOrEmpty(viewName) || isNullOrEmpty(actualControllerName) ? null : MvcDataImpl.newBuilder()
                 .areaName(getAreaName())
                 .viewName(viewName)
                 .controllerName(actualControllerName)
@@ -133,5 +138,11 @@ public abstract class AbstractInitializer {
             return "Page";
         }
         return null;
+    }
+
+    private boolean shouldHaveControllerName(Class<? extends ViewModel> entityClass) {
+        return EntityModel.class.isAssignableFrom(entityClass) ||
+                RegionModel.class.isAssignableFrom(entityClass) ||
+                PageModel.class.isAssignableFrom(entityClass);
     }
 }

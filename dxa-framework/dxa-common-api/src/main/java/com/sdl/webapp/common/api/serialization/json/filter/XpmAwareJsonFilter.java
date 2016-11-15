@@ -36,7 +36,7 @@ public final class XpmAwareJsonFilter implements DxaViewModelJsonPropertyFilter 
 
         boolean isXpmAware;
         if (writer instanceof BeanPropertyWriter) {
-            isXpmAware = ((BeanPropertyWriter) writer).getMember().hasAnnotation(JsonXpmAware.class);
+            isXpmAware = writer.getMember().hasAnnotation(JsonXpmAware.class);
             log.trace("Property {} is BeanPropertyWriter", writer.getFullName());
         } else {
             isXpmAware = "XpmMetadata".equals(writer.getName()) || "XpmPropertyMetadata".equals(writer.getName());

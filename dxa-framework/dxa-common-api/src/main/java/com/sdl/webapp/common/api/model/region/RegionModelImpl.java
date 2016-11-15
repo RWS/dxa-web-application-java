@@ -76,7 +76,7 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     @JsonProperty("Regions")
     @Getter
     @Setter
-    private RegionModelSet regions;
+    private RegionModelSet regions = new RegionModelSetImpl();
 
     /**
      * <p>Constructor for RegionModelImpl.</p>

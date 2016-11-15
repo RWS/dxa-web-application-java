@@ -1,8 +1,12 @@
 package com.sdl.dxa;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import com.sdl.webapp.common.util.InitializationUtils;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,8 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.InternalResourceView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import java.io.IOException;
+import java.util.Date;
 import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
@@ -68,6 +74,45 @@ public class DxaSpringInitializationTest {
         assertTrue(view2 instanceof InternalResourceView);
         assertEquals("RedirectTestView", ((RedirectView) view).getUrl());
         assertEquals("ForwardTestView", ((InternalResourceView) view2).getUrl());
+    }
+
+
+    @Test
+    public void shouldSerializeDatesUsingISO_8601() throws IOException {
+        //given
+        ObjectMapper objectMapper = new DxaSpringInitialization().objectMapper();
+        long timestamp = 42000;
+        String example = "{\"date\" : \"1970-01-01T00:00:42.000+0000\", " +
+                "\"dateZ\" : \"1970-01-01T00:00:42.000Z\"," +
+                "\"dateTime\" : \"1970-01-01T00:00:42.000Z\"," +
+                "\"dateTimeFull\" : \"1970-01-01T00:00:42.000+0000\"}";
+
+        //when
+        DateTest exampleDate = objectMapper.readValue(example, DateTest.class);
+        String serializedDate = objectMapper.writeValueAsString(new DateTest(timestamp));
+
+        //then
+        assertEquals(exampleDate, objectMapper.readValue(serializedDate, DateTest.class));
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class DateTest {
+
+        private Date date;
+
+        private Date dateZ;
+
+        private DateTime dateTime;
+
+        private DateTime dateTimeFull;
+
+        public DateTest(long timestamp) {
+            this.date = new Date(timestamp);
+            this.dateZ = new Date(timestamp);
+            this.dateTime = new DateTime(timestamp);
+            this.dateTimeFull = new DateTime(timestamp);
+        }
     }
 
     @Configuration

@@ -6,9 +6,7 @@ import com.sdl.webapp.common.api.model.RegionModelSet;
 
 import java.util.List;
 
-/**
- * <p>RegionBuilder interface.</p>
- */
+@FunctionalInterface
 public interface RegionBuilder {
 
     /**

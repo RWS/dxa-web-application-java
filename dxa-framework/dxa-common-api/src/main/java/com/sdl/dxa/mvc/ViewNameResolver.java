@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.model.MvcData;
  *
  * @since 1.5
  */
+@FunctionalInterface
 public interface ViewNameResolver {
 
     /**

@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 /**
  * Conditional Entity Evaluator evaluates whether the entity should be included in a page.
  */
+@FunctionalInterface
 public interface ConditionalEntityEvaluator {
 
     /**

@@ -2,7 +2,6 @@ package com.sdl.webapp.common.api.serialization.json;
 
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
-import com.fasterxml.jackson.databind.ser.std.MapProperty;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -19,7 +18,7 @@ public class DxaViewModelJsonChainFilterTest {
     @Test
     public void shouldIncludeIfFiltersNotSet() {
         //when
-        boolean isTrue = new DxaViewModelJsonChainFilter().include(new MapProperty(null));
+        boolean isTrue = new DxaViewModelJsonChainFilter().include(mock(PropertyWriter.class));
 
         //then
         assertTrue(isTrue);

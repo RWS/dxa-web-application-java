@@ -11,6 +11,7 @@ import java.util.Collection;
 /**
  * Supports "on-demand" navigation (i.e. can provide navigation subtrees).
  */
+@FunctionalInterface
 public interface OnDemandNavigationProvider {
 
     /**

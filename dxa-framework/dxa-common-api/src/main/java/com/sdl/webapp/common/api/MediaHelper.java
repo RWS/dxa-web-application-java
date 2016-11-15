@@ -31,9 +31,9 @@ public interface MediaHelper {
     /**
      * <p>getResponsiveImageUrl.</p>
      *
-     * @param url a {@link java.lang.String} object.
-     * @param widthFactor a {@link java.lang.String} object.
-     * @param aspect a double.
+     * @param url           a {@link java.lang.String} object.
+     * @param widthFactor   a {@link java.lang.String} object.
+     * @param aspect        a double.
      * @param containerSize a int.
      * @return a {@link java.lang.String} object.
      */
@@ -97,22 +97,31 @@ public interface MediaHelper {
      * {@code ApplicationContextHolder.getContext().getBean(MediaHelperFactory.class).getMediaHelperInstance()}
      * </p>
      */
+    @FunctionalInterface
     interface MediaHelperFactory {
+
         MediaHelper getMediaHelperInstance();
     }
 
     /**
      * Intended to help to build CD-version-specific, format-specific, CID-existence specific URL.
      */
-    abstract class ResponsiveMediaUrlBuilder {
+    @FunctionalInterface
+    interface ResponsiveMediaUrlBuilder {
 
-        public abstract ResponsiveMediaUrlBuilder.Builder newInstance();
+        ResponsiveMediaUrlBuilder.Builder newInstance();
 
         @Setter
         @Getter
         @Accessors(chain = true)
-        public static abstract class Builder {
-            private String baseUrl, width, height;
+        abstract class Builder {
+
+            private String baseUrl;
+
+            private String width;
+
+            private String height;
+
             private boolean zeroAspect;
 
             public String build() {

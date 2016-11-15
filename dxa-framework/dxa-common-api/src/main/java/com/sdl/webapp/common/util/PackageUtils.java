@@ -61,9 +61,7 @@ public final class PackageUtils {
         }
     }
 
-    /**
-     * Callback interface.
-     */
+    @FunctionalInterface
     public interface ClassCallback {
 
         /**

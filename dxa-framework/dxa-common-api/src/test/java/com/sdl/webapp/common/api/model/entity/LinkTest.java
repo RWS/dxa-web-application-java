@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.PojosTest;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
@@ -8,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class LinkTest {
+public class LinkTest extends PojosTest {
 
     @Test
     public void shouldDecideWhetherTheRequestIsInContextOfLink() {
@@ -26,5 +27,10 @@ public class LinkTest {
         Localization localization = mock(Localization.class);
         when(localization.getPath()).thenReturn(url);
         return localization;
+    }
+
+    @Override
+    protected Class<?> getPojoClass() {
+        return Link.class;
     }
 }

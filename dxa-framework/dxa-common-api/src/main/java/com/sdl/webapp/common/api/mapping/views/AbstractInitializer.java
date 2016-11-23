@@ -99,10 +99,6 @@ public abstract class AbstractInitializer {
     private void registerViewModel(String viewName, Class<? extends ViewModel> entityClass, String controllerName) {
         String actualControllerName = getControllerNameForEntityClass(controllerName, entityClass);
         boolean shouldHaveControllerName = shouldHaveControllerName(entityClass);
-        if (shouldHaveControllerName && actualControllerName == null) {
-            log.error("Couldn't register view {} because class {} is not of a known type not controller name is explicitly passed.", viewName, entityClass);
-            return;
-        }
 
         if (!shouldHaveControllerName && actualControllerName != null) {
             log.warn("Controller name is not expected for {} but is {}", entityClass, controllerName);

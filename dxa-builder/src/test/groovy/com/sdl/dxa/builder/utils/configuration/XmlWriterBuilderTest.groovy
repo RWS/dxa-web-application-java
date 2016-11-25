@@ -7,23 +7,30 @@ class XmlWriterBuilderTest {
 
     @Test
     public void shouldInstantiateXmlBuilder() {
+        def fromPath = path("test.xml")
+        def pathTo = path("test_new.xml")
+
         def xmlWriter = new XmlWriterBuilder().setup {
-            from "from-file"
-            to "to-file"
+            from fromPath
+            to pathTo
         }
 
-        Assert.assertEquals("from-file", xmlWriter.from.path);
-        Assert.assertEquals("to-file", xmlWriter.to.path);
+        Assert.assertEquals("test.xml", xmlWriter.from.name);
+        Assert.assertEquals("test_new.xml", xmlWriter.to.name);
     }
 
     @Test
     public void shouldImplicitlyInitToField() {
+        def fromPath = path("test.xml")
         def xmlWriter = new XmlWriterBuilder().setup {
-            from "from-file"
+            from fromPath
         }
 
-        Assert.assertEquals("from-file", xmlWriter.from.path);
-        Assert.assertEquals("from-file", xmlWriter.to.path);
+        Assert.assertEquals("test.xml", xmlWriter.from.name);
+        Assert.assertEquals("test.xml", xmlWriter.to.name);
     }
 
+    def String path(String path) {
+        new File(getClass().classLoader.getResource("xml").file, path).absolutePath
+    }
 }

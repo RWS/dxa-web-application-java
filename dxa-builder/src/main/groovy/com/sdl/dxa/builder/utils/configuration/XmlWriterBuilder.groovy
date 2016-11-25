@@ -33,6 +33,9 @@ class XmlWriterBuilder extends GenericBuilder<ConfigurationWriter.XmlWriter> {
     Closure setter(String methodName) {
         if (methodName in ['to', 'from']) {
             return { Object[] args ->
+                if (!args[0] instanceof String) {
+                    println "To/From methods should accept String parameter"
+                }
                 instance."$methodName" = new File((String) args[0])
             }
         }

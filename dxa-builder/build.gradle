@@ -59,6 +59,7 @@ task signJars(type: Sign, dependsOn: [jar, signPom, javadocJar, sourceJar]) {
     sign configurations.archives
 }
 task preparePublication(dependsOn: [signPom, signJars])
+preparePublication.enabled = isRelease
 
 task publishLocal(dependsOn: [build, publishToMavenLocal])
 task publishRemote(dependsOn: [build, preparePublication, publish])

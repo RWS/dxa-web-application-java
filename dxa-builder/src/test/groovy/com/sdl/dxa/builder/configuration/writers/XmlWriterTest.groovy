@@ -1,5 +1,6 @@
 package com.sdl.dxa.builder.configuration.writers
 
+import com.sdl.dxa.builder.configuration.parameters.XmlProperty
 import org.jdom2.output.Format
 import org.junit.Assert
 import org.junit.Test
@@ -62,6 +63,36 @@ class XmlWriterTest {
                 .modifyByXPath([:])
                 .save()
 
+        Assert.assertEquals(new File(example).text, new File(pathTo).text)
+    }
+
+    @Test
+    void shouldModifyWithXmlProperty() {
+        //given 
+        def fromPath = path("test.xml")
+        def pathTo = path("test_new.xml")
+        def example = path("test_reformatted.xml")
+
+        def xmlProperty = new XmlProperty().thatAddsXmlNodes([
+                '/element/parent/following-sibling::sibling': 'newTag'
+        ]).thatAddsXmlAttributes([
+                '/element/outerTag/innerTag': 'property'
+        ]).thatModifiesXml(
+                '/element/@property',
+                '/element/parent/text()',
+                '/element/parent/@property',
+                '/element/parent/following-sibling::sibling/text()[1]',
+                '/element/outerTag/innerTag/text()')
+
+        //when
+        new XmlWriter()
+                .from(fromPath)
+                .to(pathTo)
+                .open()
+                .modify(xmlProperty.acceptValue("new value"))
+                .save()
+
+        //then
         Assert.assertEquals(new File(example).text, new File(pathTo).text)
     }
 

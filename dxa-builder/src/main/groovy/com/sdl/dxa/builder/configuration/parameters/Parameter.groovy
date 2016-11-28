@@ -42,16 +42,20 @@ class Parameter {
     }
     //endregion
 
-    def process(boolean batch) {
+    String process(boolean batch, Map<String, ?> configuration = [:]) {
+        if (!this.value && this.dynamicDefault) {
+            this.value = this.dynamicDefault(configuration)
+        }
+
         batch ? get() : request()
     }
 
-    def request() {
+    String request() {
         println "${description}? <Enter> for default '${value ?: 'no default'}'"
         validator?.describe()
 
         def userValue
-        if (System.console()) {
+        if (System.console()) { //special treatment for Windows's cmd.exe
             userValue = System.console().readLine("> ${description}: ") ?: value
         } else {
             userValue = System.in.newReader().readLine() ?: value
@@ -71,7 +75,7 @@ class Parameter {
         value
     }
 
-    def get() {
+    String get() {
         if (!isValid(value)) {
             validator?.describe()
             throw new IllegalArgumentException("Invalid value '${value}' for '${description}'")

@@ -1,7 +1,7 @@
 package com.sdl.dxa.builder.configuration.parameters
 
 class Property {
-    String[] files
+    List<String> files
     String name
     boolean append
     String placeholder
@@ -30,7 +30,7 @@ class Property {
         this
     }
 
-    Property withFile(String file) {
+    Property inFile(String file) {
         if (!this.files) {
             this.files = []
         }
@@ -49,4 +49,7 @@ class Property {
     }
     //endregion
 
+    String deriveValue(String value) {
+        this.valueMapping ? this.valueMapping.get(value) : value
+    }
 }

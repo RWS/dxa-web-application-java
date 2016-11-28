@@ -1,5 +1,6 @@
 package com.sdl.dxa.builder.configuration.writers
 
+import com.sdl.dxa.builder.configuration.parameters.XmlProperty
 import org.jdom2.Document
 import org.jdom2.Element
 import org.jdom2.input.SAXBuilder
@@ -14,24 +15,24 @@ class XmlWriter {
     protected Format xmlFormat = Format.getPrettyFormat().setIndent("    ")
     protected File from, to
 
-    def format(String format) {
+    XmlWriter format(String format) {
         if (format == 'raw') {
             this.xmlFormat = Format.getRawFormat()
         }
         this
     }
 
-    def format(Format format) {
+    XmlWriter format(Format format) {
         this.xmlFormat = format
         this
     }
 
-    def from(String fileName) {
+    XmlWriter from(String fileName) {
         this.from = new File(fileName)
         this
     }
 
-    def to(String fileName) {
+    XmlWriter to(String fileName) {
         this.to = new File(fileName)
         this
     }
@@ -77,6 +78,12 @@ class XmlWriter {
             nodes*.value = value
         }
         this
+    }
+
+    XmlWriter modify(XmlProperty xmlProperty) {
+        addNodesAfter(xmlProperty.addNodesMap)
+        addAttributes(xmlProperty.addAttributesMap)
+        modifyByXPath(xmlProperty.modifyMap)
     }
 
     private bulkEdit(Map<String, ?> map, Closure callback) {

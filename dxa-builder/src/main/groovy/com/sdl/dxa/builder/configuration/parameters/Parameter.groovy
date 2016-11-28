@@ -1,7 +1,7 @@
 package com.sdl.dxa.builder.configuration.parameters
 
 class Parameter {
-    String name
+    String description
     String placeholder
     Property[] properties
     Closure<String> dynamicDefault
@@ -11,8 +11,8 @@ class Parameter {
     private boolean valid = false
 
     //region Builder methods
-    Parameter withName(String name) {
-        this.name = name
+    Parameter withDescription(String description) {
+        this.description = description
         this
     }
 
@@ -42,13 +42,17 @@ class Parameter {
     }
     //endregion
 
+    def process(boolean batch) {
+        batch ? get() : request()
+    }
+
     def request() {
-        println "Enter the value for ${name?.toUpperCase()}? <Enter> for default '${value ?: 'no default'}'"
+        println "${description}? <Enter> for default '${value ?: 'no default'}'"
         validator?.describe()
 
         def userValue
         if (System.console()) {
-            userValue = System.console().readLine("> ${name}: ") ?: value
+            userValue = System.console().readLine("> ${description}: ") ?: value
         } else {
             userValue = System.in.newReader().readLine() ?: value
         }
@@ -70,7 +74,7 @@ class Parameter {
     def get() {
         if (!isValid(value)) {
             validator?.describe()
-            throw new IllegalArgumentException("Invalid value '${value}' for '${name}'")
+            throw new IllegalArgumentException("Invalid value '${value}' for '${description}'")
         }
         value
     }

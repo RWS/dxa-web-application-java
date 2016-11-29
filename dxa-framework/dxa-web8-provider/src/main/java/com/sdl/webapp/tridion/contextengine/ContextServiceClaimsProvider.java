@@ -7,7 +7,9 @@ import com.sdl.context.api.exception.ResolverException;
 import com.sdl.context.api.resolution.Evidence;
 import com.sdl.context.api.resolution.EvidenceBuilder;
 import com.sdl.context.odata.client.api.ODataContextEngine;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.extern.slf4j.Slf4j;
 import org.dd4t.core.util.HttpUtils;
@@ -29,6 +31,9 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
 
     @Autowired
     private ODataContextEngine oDataContextEngine;
+
+    @Autowired
+    private WebRequestContext webRequestContext;
 
     private static Map<String, Object> getClaimsMap(ContextMap<? extends Aspect> contextMap, String aspectName) {
 
@@ -77,6 +82,9 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
                 }
             }
         }
+
+        Localization localization = webRequestContext.getLocalization();
+        evidenceBuilder.withPublicationId(Integer.valueOf(localization.getId()));
 
         ContextMap<? extends Aspect> contextMap;
         try {

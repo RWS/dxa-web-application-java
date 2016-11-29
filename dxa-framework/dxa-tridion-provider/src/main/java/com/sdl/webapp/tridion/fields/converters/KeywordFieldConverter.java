@@ -1,9 +1,12 @@
 package com.sdl.webapp.tridion.fields.converters;
 
-import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
+import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.KeywordModel;
 import com.sdl.webapp.common.api.model.entity.Tag;
 import com.sdl.webapp.common.util.TcmUtils;
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.Boolean.parseBoolean;
@@ -41,9 +45,13 @@ public class KeywordFieldConverter implements FieldConverter {
 
     private final SemanticMapper semanticMapper;
 
+    private final WebRequestContext webRequestContext;
+
+
     @Autowired
-    public KeywordFieldConverter(SemanticMapper semanticMapper) {
+    public KeywordFieldConverter(SemanticMapper semanticMapper, WebRequestContext webRequestContext) {
         this.semanticMapper = semanticMapper;
+        this.webRequestContext = webRequestContext;
     }
 
     @Override
@@ -55,7 +63,7 @@ public class KeywordFieldConverter implements FieldConverter {
     public Object getFieldValue(SemanticField semanticField, BaseField field, TypeDescriptor targetType,
                                 SemanticFieldDataProviderImpl semanticFieldDataProvider, ModelBuilderPipeline builder) throws FieldConverterException {
         Class<?> targetClass = targetType.isCollection() ? targetType.getElementTypeDescriptor().getObjectType() : targetType.getObjectType();
-        Converter<?> converter = getConverter(targetClass, semanticField, semanticFieldDataProvider);
+        Converter<?> converter = getConverter(targetClass);
 
         final List<Keyword> keywords = field.getKeywordValues();
         if (semanticField.isMultiValue()) {
@@ -69,9 +77,7 @@ public class KeywordFieldConverter implements FieldConverter {
         }
     }
 
-    private Converter<?> getConverter(Class<?> targetClass,
-                                      SemanticField semanticField,
-                                      SemanticFieldDataProvider semanticFieldDataProvider) throws UnsupportedTargetTypeException {
+    private Converter<?> getConverter(Class<?> targetClass) throws UnsupportedTargetTypeException {
         Converter<?> converter;
         if (Tag.class.equals(targetClass)) {
             converter = new TagConverter();
@@ -82,8 +88,7 @@ public class KeywordFieldConverter implements FieldConverter {
         } else if (KeywordModel.class.isAssignableFrom(targetClass)) {
             //typecast is safe which is guaranteed by if condition
             //noinspection unchecked
-            converter = new KeywordConverter(semanticMapper, semanticField, semanticFieldDataProvider,
-                    (Class<? extends KeywordModel>) targetClass);
+            converter = new KeywordConverter(semanticMapper, webRequestContext.getLocalization(), (Class<? extends KeywordModel>) targetClass);
         } else {
             throw new UnsupportedTargetTypeException(targetClass);
         }
@@ -139,17 +144,13 @@ public class KeywordFieldConverter implements FieldConverter {
 
         private final SemanticMapper semanticMapper;
 
-        private SemanticField semanticField;
-
-        private SemanticFieldDataProvider semanticFieldDataProvider;
+        private Localization localization;
 
         private Class<? extends KeywordModel> targetClass;
 
-        KeywordConverter(SemanticMapper semanticMapper, SemanticField semanticField,
-                         SemanticFieldDataProvider semanticFieldDataProvider, Class<? extends KeywordModel> targetClass) {
+        KeywordConverter(SemanticMapper semanticMapper, Localization localization, Class<? extends KeywordModel> targetClass) {
             this.semanticMapper = semanticMapper;
-            this.semanticField = semanticField;
-            this.semanticFieldDataProvider = semanticFieldDataProvider;
+            this.localization = localization;
             this.targetClass = targetClass;
         }
 
@@ -166,11 +167,20 @@ public class KeywordFieldConverter implements FieldConverter {
         @Override
         public KeywordModel convert(Keyword keyword) throws FieldConverterException {
             KeywordModel keywordModel;
-            if (isNullOrEmpty(getMetadataSchemaId(keyword))) {
+            String tcmUri = getMetadataSchemaId(keyword);
+            if (isNullOrEmpty(tcmUri)) {
                 keywordModel = new KeywordModel();
             } else {
                 try {
-                    keywordModel = semanticMapper.createEntity(this.targetClass, semanticField.getEmbeddedFields(), semanticFieldDataProvider);
+                    SemanticSchema semanticSchema = localization.getSemanticSchemas().get((long) TcmUtils.getItemId(tcmUri));
+                    if (semanticSchema == null) {
+                        log.warn("Semantic schema with TCM URI {} is not found in localization, skipping semantic mapping", tcmUri, localization);
+                        throw new SemanticMappingException("Semantic schema not found");
+                    }
+                    Map<FieldSemantics, SemanticField> semanticFields = semanticSchema.getSemanticFields();
+
+                    keywordModel = semanticMapper.createEntity(this.targetClass, semanticFields,
+                            SemanticFieldDataProviderImpl.getFor(new SemanticFieldDataProviderImpl.KeywordEntity(keyword)));
                 } catch (SemanticMappingException e) {
                     log.error("Failed to do a semantic mapping for keyword {}", keyword, e);
                     throw new FieldConverterException("Failed to do a semantic mapping for keyword", e);

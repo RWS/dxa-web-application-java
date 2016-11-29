@@ -1,19 +1,20 @@
 package com.sdl.webapp.tridion.contextengine;
 
+import com.sdl.context.api.exception.ResolverException;
+import com.sdl.context.api.resolution.Evidence;
 import com.sdl.context.odata.client.api.ODataContextEngine;
+import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.exceptions.DxaException;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -23,21 +24,34 @@ import java.util.Map;
 import static org.apache.commons.collections.MapUtils.isEmpty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
-@ActiveProfiles("test")
+@RunWith(MockitoJUnitRunner.class)
 public class ContextServiceClaimsProviderTest {
 
-    @Autowired
-    private HttpServletRequest httpServletRequest;
+    @Mock
+    private HttpServletRequest httpServletRequest = new MockHttpServletRequest();
 
-    @Autowired
+    @Mock
+    private ODataContextEngine oDataContextEngine;
+
+    @Mock
+    private WebRequestContext webRequestContext;
+
+    @Mock
+    private Localization localization;
+
+    @InjectMocks
     private ContextServiceClaimsProvider contextServiceClaimsProvider;
 
     @Before
     public void init() {
+        when(webRequestContext.getLocalization()).thenReturn(localization);
+
+        when(localization.getId()).thenReturn("1");
+
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
     }
 
@@ -53,22 +67,23 @@ public class ContextServiceClaimsProviderTest {
         assertTrue(isEmpty(contextClaims));
     }
 
-    @Configuration
-    @Profile("test")
-    public static class SpringConfigurationContext {
-        @Bean
-        public HttpServletRequest httpServletRequest() {
-            return new MockHttpServletRequest();
-        }
+    @Test
+    public void shouldPassLocalizationIdToContextService() throws DxaException, ResolverException {
+        //when
+        contextServiceClaimsProvider.getContextClaims(null);
 
-        @Bean
-        public ContextServiceClaimsProvider contextServiceClaimsProvider() {
-            return new ContextServiceClaimsProvider();
-        }
+        //then
+        verify(localization).getId();
+        verify(oDataContextEngine).resolve(argThat(new BaseMatcher<Evidence>() {
+            @Override
+            public boolean matches(Object item) {
+                return ((Evidence) item).get("publication-id").getValue().equals(1);
+            }
 
-        @Bean
-        public ODataContextEngine oDataContextEngine() {
-            return mock(ODataContextEngine.class);
-        }
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Evidence should contain publication ID");
+            }
+        }));
     }
 }

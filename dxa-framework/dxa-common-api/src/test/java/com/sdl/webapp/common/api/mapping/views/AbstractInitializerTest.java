@@ -57,6 +57,7 @@ public class AbstractInitializerTest {
         verifyRegistration(null, "Page", NoViewPage.class);
         verifyRegistration(null, "Region", NoViewRegion.class);
         verifyRegistration(null, null, NotEntity.class);
+        verifyRegistration(null, "Hello", NotEntity.class);
     }
 
     private void verifyRegistration(final String viewName, final String controllerName, Class<? extends ViewModel> clazz) {
@@ -95,7 +96,8 @@ public class AbstractInitializerTest {
             @RegisteredViewModel(modelClass = NoView2.class),
             @RegisteredViewModel(modelClass = NoViewPage.class),
             @RegisteredViewModel(modelClass = NoViewRegion.class),
-            @RegisteredViewModel(modelClass = NotEntity.class)
+            @RegisteredViewModel(modelClass = NotEntity.class),
+            @RegisteredViewModel(modelClass = NotEntity2.class, controllerName = "Hello")
     })
     private static class TestClass extends AbstractInitializer {
 
@@ -149,6 +151,14 @@ public class AbstractInitializerTest {
     }
 
     private static class NotEntity extends AbstractViewModel {
+
+        @Override
+        public String getXpmMarkup(Localization localization) {
+            return null;
+        }
+    }
+
+    private static class NotEntity2 extends AbstractViewModel {
 
         @Override
         public String getXpmMarkup(Localization localization) {

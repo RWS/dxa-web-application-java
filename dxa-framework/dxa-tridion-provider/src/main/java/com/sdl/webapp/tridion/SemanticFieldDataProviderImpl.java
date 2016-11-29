@@ -8,21 +8,26 @@ import com.sdl.webapp.common.api.mapping.semantic.config.FieldPath;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
+import com.sdl.webapp.common.util.ApplicationContextHolder;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
 import com.sdl.webapp.tridion.fields.converters.ComponentLinkFieldConverter;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
+import com.sdl.webapp.tridion.fields.exceptions.UnsupportedFieldTypeException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
 import com.sdl.webapp.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.webapp.util.dd4t.FieldUtils;
+import lombok.Data;
 import lombok.ToString;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
+import org.dd4t.contentmodel.Keyword;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.util.CollectionUtils;
 
@@ -32,10 +37,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+/**
+ * Instead of direct construction use {@link #getFor(SemanticEntity)}.
+ */
 public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider {
 
     protected static final String METADATA_PATH = "Metadata";
+
     private static final Logger LOG = LoggerFactory.getLogger(SemanticFieldDataProviderImpl.class);
+
     protected final SemanticEntity semanticEntity;
 
     protected final FieldConverterRegistry fieldConverterRegistry;
@@ -46,11 +56,19 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
 
     protected int embeddingLevel = 0;
 
+    //todo dxa2 remove usage of direct construction
     public SemanticFieldDataProviderImpl(SemanticEntity semanticEntity, FieldConverterRegistry fieldConverterRegistry, ModelBuilderPipeline builder) {
         this.semanticEntity = semanticEntity;
         this.semanticEntity.injectDataProvider(this);
         this.fieldConverterRegistry = fieldConverterRegistry;
         this.builder = builder;
+    }
+
+    public static SemanticFieldDataProvider getFor(SemanticFieldDataProviderImpl.SemanticEntity semanticEntity) {
+        ApplicationContext context = ApplicationContextHolder.getContext();
+        return new SemanticFieldDataProviderImpl(semanticEntity,
+                context.getBean(FieldConverterRegistry.class),
+                context.getBean(ModelBuilderPipeline.class));
     }
 
     protected static Field findField(FieldPath path, Map<String, Field> fields) {
@@ -181,17 +199,56 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
         return fieldData;
     }
 
+    /**
+     * Semantic entity is not a DXA entity but is a wrapper for DD4T class containing information of
+     * which fields have content or metadata and how to create a component link. Instead of implementing this interface,
+     * consider extending {@link AbstractSemanticEntity}. Basically just provides information about fields containing in
+     * the particular DD4T entity.
+     * Used by {@link SemanticFieldDataProviderImpl#getFieldData(SemanticField, TypeDescriptor)} to get the field by path.
+     * <p>todo dxa2 this SemanticEntity stuff is confusing</p>
+     */
     public interface SemanticEntity {
+
         Map<String, Field> getFields();
+
         Map<String, Field> getFields(FieldPath path);
+
         Object createLink(Class<?> targetClass) throws SemanticMappingException;
+
         void injectDataProvider(SemanticFieldDataProviderImpl fieldDataProvider);
     }
 
-    @ToString
-    public static class PageEntity implements SemanticEntity {
-        private org.dd4t.contentmodel.Page page;
+    @Data
+    public abstract static class AbstractSemanticEntity implements SemanticEntity {
+
         private SemanticFieldDataProviderImpl fieldDataProvider;
+
+        ComponentLinkFieldConverter getComponentLinkFieldConverter() throws UnsupportedFieldTypeException {
+            return (ComponentLinkFieldConverter) getFieldDataProvider().fieldConverterRegistry.getFieldConverterFor(FieldType.COMPONENTLINK);
+        }
+
+        protected abstract Map<String, Field> getContent();
+
+        protected abstract Map<String, Field> getMetadata();
+
+        @Override
+        public void injectDataProvider(SemanticFieldDataProviderImpl fieldDataProvider) {
+            setFieldDataProvider(fieldDataProvider);
+        }
+
+        @Override
+        public Map<String, Field> getFields(FieldPath path) {
+            return path.getHead().equals(METADATA_PATH) ? getMetadata() : getContent();
+        }
+    }
+
+    /**
+     * Concrete implementation for DD4T {@link Page} with no direct content but with metadata.
+     */
+    @ToString
+    public static class PageEntity extends AbstractSemanticEntity {
+
+        private Page page;
 
         public PageEntity(Page page) {
             this.page = page;
@@ -203,26 +260,28 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
         }
 
         @Override
-        public Map<String, Field> getFields(FieldPath path) {
-            return path.getHead().equals(METADATA_PATH) ? getFields() : Collections.<String, Field>emptyMap();
+        protected Map<String, Field> getContent() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        protected Map<String, Field> getMetadata() {
+            return getFields();
         }
 
         @Override
         public Object createLink(Class<?> targetClass) throws FieldConverterException {
-            return ((ComponentLinkFieldConverter) fieldDataProvider.fieldConverterRegistry.getFieldConverterFor(
-                    FieldType.COMPONENTLINK)).createPageLink(this.page, targetClass);
-        }
-
-        @Override
-        public void injectDataProvider(SemanticFieldDataProviderImpl fieldDataProvider) {
-            this.fieldDataProvider = fieldDataProvider;
+            return getComponentLinkFieldConverter().createPageLink(this.page, targetClass);
         }
     }
 
+    /**
+     * Concrete implementation for DD4T {@link Component} with content and component metadata.
+     */
     @ToString
-    public static class ComponentEntity implements SemanticEntity {
+    public static class ComponentEntity extends AbstractSemanticEntity {
+
         private Component component;
-        private SemanticFieldDataProviderImpl fieldDataProvider;
 
         public ComponentEntity(Component component) {
             this.component = component;
@@ -234,19 +293,51 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
         }
 
         @Override
-        public Map<String, Field> getFields(FieldPath path) {
-            return path.getHead().equals(METADATA_PATH) ? component.getMetadata() : getFields();
+        protected Map<String, Field> getContent() {
+            return getFields();
+        }
+
+        @Override
+        protected Map<String, Field> getMetadata() {
+            return component.getMetadata();
         }
 
         @Override
         public Object createLink(Class<?> targetClass) throws SemanticMappingException {
-            return ((ComponentLinkFieldConverter) fieldDataProvider.fieldConverterRegistry.getFieldConverterFor(
-                    FieldType.COMPONENTLINK)).createComponentLink(component, targetClass, fieldDataProvider.builder);
+            return getComponentLinkFieldConverter().createComponentLink(component, targetClass, getFieldDataProvider().builder);
+        }
+    }
+
+    /**
+     * Concrete implementation for DD4T {@link Keyword} with no direct content but with metadata.
+     */
+    @ToString
+    public static class KeywordEntity extends AbstractSemanticEntity {
+
+        private Keyword keyword;
+
+        public KeywordEntity(Keyword keyword) {
+            this.keyword = keyword;
         }
 
         @Override
-        public void injectDataProvider(SemanticFieldDataProviderImpl fieldDataProvider) {
-            this.fieldDataProvider = fieldDataProvider;
+        public Map<String, Field> getFields() {
+            return keyword.getMetadata();
+        }
+
+        @Override
+        public Object createLink(Class<?> targetClass) throws SemanticMappingException {
+            throw new UnsupportedOperationException("Keyword self-linking is not supported");
+        }
+
+        @Override
+        protected Map<String, Field> getContent() {
+            return Collections.emptyMap();
+        }
+
+        @Override
+        protected Map<String, Field> getMetadata() {
+            return getFields();
         }
     }
 }

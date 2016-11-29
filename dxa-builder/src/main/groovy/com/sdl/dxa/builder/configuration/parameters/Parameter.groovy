@@ -8,6 +8,8 @@ class Parameter {
     Validator validator
     String value
 
+    String versionAdded
+
     private boolean valid = false
 
     //region Builder methods
@@ -40,7 +42,22 @@ class Parameter {
         this.value = project && project.hasProperty(cliName) ? (project[cliName] as String).trim() : defaultValue
         this
     }
+
+    Parameter versionAdded(String version) {
+        this.versionAdded = version
+        this
+    }
     //endregion
+
+    boolean isSupportedInCurrentVersion(String currentVersion) {
+        if (!currentVersion || !versionAdded) {
+            return true
+        }
+        def normalize = { String version ->
+            Integer.parseInt(version.replaceAll(/[^\d]/, "").padRight(5, "0").substring(0, 5))
+        }
+        normalize(currentVersion) >= normalize(versionAdded)
+    }
 
     String process(boolean batch, Map<String, ?> configuration = [:]) {
         if (!this.value && this.dynamicDefault) {

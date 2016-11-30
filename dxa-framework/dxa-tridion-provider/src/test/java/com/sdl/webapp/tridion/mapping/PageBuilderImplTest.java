@@ -5,12 +5,14 @@ import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.RegionBuilder;
 import com.sdl.webapp.common.api.content.RegionBuilderCallback;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
@@ -19,12 +21,30 @@ import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
+import com.sdl.webapp.tridion.fields.converters.ComponentLinkFieldConverter;
+import com.sdl.webapp.tridion.fields.converters.DateFieldConverter;
+import com.sdl.webapp.tridion.fields.converters.EmbeddedFieldConverter;
+import com.sdl.webapp.tridion.fields.converters.ExternalLinkFieldConverter;
+import com.sdl.webapp.tridion.fields.converters.KeywordFieldConverter;
+import com.sdl.webapp.tridion.fields.converters.MultiLineTextFieldConverter;
+import com.sdl.webapp.tridion.fields.converters.MultimediaFieldConverter;
+import com.sdl.webapp.tridion.fields.converters.NumberFieldConverter;
+import com.sdl.webapp.tridion.fields.converters.TextFieldConverter;
+import com.sdl.webapp.tridion.fields.converters.XhtmlFieldConverter;
+import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
+import org.dd4t.contentmodel.FieldType;
+import org.dd4t.contentmodel.Keyword;
+import org.dd4t.contentmodel.Multimedia;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.PageTemplate;
 import org.dd4t.contentmodel.impl.BaseField;
+import org.dd4t.contentmodel.impl.KeywordImpl;
 import org.dd4t.contentmodel.impl.TextField;
+import org.dd4t.core.exceptions.ItemNotFoundException;
+import org.dd4t.core.exceptions.SerializationException;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.joda.time.DateTime;
@@ -36,11 +56,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 import static org.junit.Assert.assertEquals;
@@ -75,9 +99,11 @@ public class PageBuilderImplTest {
     @Mock
     private WebRequestContext webRequestContext;
 
+    @Mock
+    private LinkResolver linkResolver;
 
     @Before
-    public void init() {
+    public void init() throws ItemNotFoundException, SerializationException {
         when(localization.getPath()).thenReturn("/");
         when(localization.getCulture()).thenReturn("nl-en");
 
@@ -87,6 +113,24 @@ public class PageBuilderImplTest {
         when(localization.getConfiguration(eq("core.cmsurl"))).thenReturn("CMS_URL");
 
         when(webRequestContext.getFullUrl()).thenReturn("full-url");
+        when(webRequestContext.getBaseUrl()).thenReturn("/base-url");
+        when(webRequestContext.getContextPath()).thenReturn("/path");
+
+        when(linkResolver.resolveLink(anyString(), anyString())).thenReturn("/resolved-link");
+
+        FieldConverterRegistry fieldConverterRegistry = new FieldConverterRegistry(Lists.newArrayList(
+                new ComponentLinkFieldConverter(linkResolver, webRequestContext),
+                new DateFieldConverter(),
+                new EmbeddedFieldConverter(null),
+                new ExternalLinkFieldConverter(),
+                new KeywordFieldConverter(null, webRequestContext),
+                new MultiLineTextFieldConverter(),
+                new MultimediaFieldConverter(linkResolver, webRequestContext),
+                new NumberFieldConverter(),
+                new TextFieldConverter(),
+                new XhtmlFieldConverter(new DefaultRichTextProcessor(), webRequestContext)
+        ));
+        ReflectionTestUtils.setField(pageBuilder, "fieldConverterRegistry", fieldConverterRegistry);
     }
 
     @Test
@@ -154,6 +198,7 @@ public class PageBuilderImplTest {
         String titleMetaSeq = "001 titleMeta";
         String descriptionMetaStr = "descriptionMeta";
 
+        DateTime now = DateTime.now();
         DateTime nowPage = DateTime.now().minus(1024);
         DateTime nowPageTemplate = DateTime.now().minus(2048);
         String nowPrinted = ISODateTimeFormat.dateHourMinuteSecond().print(nowPage);
@@ -173,14 +218,49 @@ public class PageBuilderImplTest {
         Page genericPage = mock(Page.class);
         doReturn(pageTemplate).when(genericPage).getPageTemplate();
 
-        Field titleMeta = getFieldWithStringValues("title", new String[]{titleMetaSeq});
-        Field descriptionMeta = getFieldWithStringValues("description", new String[]{descriptionMetaStr});
-        Field someField = getFieldWithStringValues("someField", new String[]{"someValue", "someValue2" });
-        Field emptyField = getFieldWithStringValues("emptyField", new String[]{});
+
+        Field titleMeta = getFieldWithValues("title", FieldType.TEXT, titleMetaSeq);
+        Field descriptionMeta = getFieldWithValues("description", FieldType.TEXT, descriptionMetaStr);
+        Field emptyField = getFieldWithValues("emptyField", FieldType.TEXT);
+        Field metadataDefault = getFieldWithValues("metadata-default", FieldType.TEXT, "metadata-default-1", "metadata-default-2");
+        Field internalLink = getFieldWithValues("internalLink", FieldType.COMPONENTLINK, "tcm:componentId");
+        Field image = getFieldWithValues("image", FieldType.MULTIMEDIALINK, "tcm:imageId");
+        Field multiline = getFieldWithValues("multiline", FieldType.MULTILINETEXT, "Line1\r\n", "Line2");
+        Field dateTime = getFieldWithValues("date", FieldType.DATE, now.toString());
+        Field number = getFieldWithValues("number", FieldType.NUMBER, "3.123");
+        Field unknown = getFieldWithValues("unknown", FieldType.UNKNOWN, "unknown");
+        Field embedded = getFieldWithValues("embedded", FieldType.EMBEDDED, getFieldSet(ImmutableMap.of(
+                "1", getFieldWithValues("embedded1", FieldType.TEXT, "embedded1"),
+                "2", getFieldWithValues("embedded2", FieldType.TEXT, "embedded2-1", "embedded2-2"),
+                "3", getFieldWithValues("embedded3", FieldType.DATE, now.toString()))
+        ));
+
+        KeywordImpl k1 = new KeywordImpl();
+        k1.setDescription("desc1");
+        k1.setTitle("title1");
+        KeywordImpl k2 = new KeywordImpl();
+        k2.setTitle("title2");
+        Field keyword = getFieldWithValues("keyword1", FieldType.KEYWORD, k1);
+        Field keyword2 = getFieldWithValues("keyword2", FieldType.KEYWORD, k2);
+        String html = "<p>richText <a href=\"#\">test</a></p>";
+        RichText richTextExample = new RichText(html);
+        Field richText = getFieldWithValues("richText", FieldType.XHTML, html);
+
+
         Map<String, Field> pageMeta = new HashMap<String, Field>() {{
             put(titleMeta.getName(), titleMeta);
             put(descriptionMeta.getName(), descriptionMeta);
-            put(someField.getName(), someField);
+            put(metadataDefault.getName(), metadataDefault);
+            put(internalLink.getName(), internalLink);
+            put(image.getName(), image);
+            put(multiline.getName(), multiline);
+            put(dateTime.getName(), dateTime);
+            put(number.getName(), number);
+            put(embedded.getName(), embedded);
+            put(keyword.getName(), keyword);
+            put(keyword2.getName(), keyword2);
+            put(richText.getName(), richText);
+            put(unknown.getName(), unknown);
             put(emptyField.getName(), emptyField);
             // image empty
         }};
@@ -236,13 +316,27 @@ public class PageBuilderImplTest {
         assertEquals("full-url", meta.get("og:url"));
         assertEquals("article", meta.get("og:type"));
         assertEquals("nl-en", meta.get("og:locale"));
+        assertEquals("/base-url/path/resolved-image", meta.get("og:image"));
         assertEquals(descriptionMetaStr, meta.get("og:description"));
-        //image meta field was not set
-        assertFalse(meta.containsKey("og:image"));
         //endregion
 
-        assertEquals("someValue,someValue2", meta.get("someField"));
+        // format of metadata was set by TSI-1308
+        assertEquals("metadata-default-1,metadata-default-2", meta.get("metadata-default"));
+        assertEquals("/resolved-link", meta.get("internalLink"));
+        assertEquals("/resolved-image", meta.get("image"));
+        assertEquals("Line1\r\n,Line2", meta.get("multiline"));
+        assertEquals(now.toString(), meta.get("date"));
+        assertEquals("3.123", meta.get("number"));
+        assertEquals("embedded1", meta.get("embedded1"));
+        assertEquals("embedded2-1,embedded2-2", meta.get("embedded2"));
+        assertEquals("desc1", meta.get("keyword1"));
+        assertEquals("title2", meta.get("keyword2"));
+        assertEquals(now.toString(), meta.get("embedded3"));
+        assertEquals(html, richTextExample.toString());
+        assertEquals(html, meta.get("richText"));
+        assertFalse(meta.containsKey("embedded"));
         assertFalse(meta.containsKey("emptyField"));
+        assertFalse(meta.containsKey("unknown"));
 
         //page title is postfixed weirdly from localization, ok?
         assertEquals("titleMeta|!", page.getTitle());
@@ -260,8 +354,8 @@ public class PageBuilderImplTest {
     private PageTemplate getPageTemplate(String id, String htmlClasses, String[] templates, DateTime nowPageTemplate) {
         PageTemplate pageTemplate = mock(PageTemplate.class);
 
-        Field templatesField = getFieldWithStringValues("view", templates);
-        Field htmlClassesField = getFieldWithStringValues("htmlClasses", new String[]{htmlClasses});
+        Field templatesField = getFieldWithValues("view", FieldType.TEXT, (Object[]) templates);
+        Field htmlClassesField = getFieldWithValues("htmlClasses", FieldType.TEXT, htmlClasses);
 
         doReturn(new HashMap<String, Field>() {{
             put(templatesField.getName(), templatesField);
@@ -274,12 +368,51 @@ public class PageBuilderImplTest {
         return pageTemplate;
     }
 
-    private Field getFieldWithStringValues(String name, String[] values) {
+    private Field getFieldWithValues(String name, FieldType fieldType, Object... values) {
         BaseField field = mock(BaseField.class);
-        when(field.getTextValues()).thenReturn(Lists.newArrayList(values));
+        List<String> strings = Stream.of(values).map(Object::toString).collect(Collectors.toList());
+
         when(field.getValues()).thenReturn(Lists.newArrayList(values));
         when(field.getName()).thenReturn(name);
+        when(field.getFieldType()).thenReturn(fieldType);
+
+        if (fieldType == FieldType.TEXT || fieldType == FieldType.MULTILINETEXT || fieldType == FieldType.XHTML
+                || fieldType == FieldType.EXTERNALLINK) {
+            when(field.getTextValues()).thenReturn(strings);
+        }
+
+        if (fieldType == FieldType.EMBEDDED) {
+            when(field.getEmbeddedValues()).thenReturn(cast(values, FieldSet.class));
+        }
+        if (fieldType == FieldType.MULTIMEDIALINK || fieldType == FieldType.COMPONENTLINK) {
+            Multimedia multimedia = mock(Multimedia.class);
+            when(multimedia.getUrl()).thenReturn("/resolved-" + name);
+            Component component = mock(Component.class);
+            when(component.getMultimedia()).thenReturn(multimedia);
+            List<Component> list = Lists.newArrayList(component);
+
+            when(field.getLinkedComponentValues()).thenReturn(list);
+        }
+
+        if (fieldType == FieldType.DATE) {
+            when(field.getDateTimeValues()).thenReturn(strings);
+        }
+
+        if (fieldType == FieldType.NUMBER) {
+            when(field.getNumericValues())
+                    .thenReturn(Stream.of(values)
+                            .map(o -> Double.parseDouble(o.toString()))
+                            .collect(Collectors.toList()));
+        }
+
+        if (fieldType == FieldType.KEYWORD) {
+            when(field.getKeywordValues()).thenReturn(cast(values, Keyword.class));
+        }
         return field;
+    }
+
+    private <T> List<T> cast(Object[] values, Class<T> aClass) {
+        return Stream.of(values).map(aClass::cast).collect(Collectors.toList());
     }
 
     private FieldSet getFieldSet(Map<String, Field> map) {

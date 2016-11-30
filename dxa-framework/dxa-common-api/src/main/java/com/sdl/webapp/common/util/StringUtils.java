@@ -1,14 +1,15 @@
 package com.sdl.webapp.common.util;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-/**
- * <p>StringUtils class.</p>
- */
 public final class StringUtils {
 
     /**
@@ -23,13 +24,36 @@ public final class StringUtils {
         }
 
         StringBuffer out = new StringBuffer();
-        Pattern pattern = Pattern.compile("\\{(\\d)\\}");
+        Pattern pattern = Pattern.compile("\\{(\\d)}");
         Matcher matcher = pattern.matcher(cmFormatString);
         while (matcher.find()) {
-            String replacement = String.format("%%%d\\$s", parseInt(matcher.group().replaceAll("[\\{\\}]", "")) + 1);
+            String replacement = String.format("%%%d\\$s", parseInt(matcher.group().replaceAll("[{}]", "")) + 1);
             matcher.appendReplacement(out, replacement);
         }
         matcher.appendTail(out);
         return out.toString();
+    }
+
+
+    /**
+     * Transforms the list of any objects to the {@linkplain List list} of {@linkplain String strings}.
+     * Please note that {@code null} value is interpreted as {@code empty} value.
+     *
+     * @param list list to transform
+     * @return list of strings
+     */
+    public static List<String> toStrings(List<?> list) {
+        return Lists.transform(list, new Function<Object, String>() {
+            @Override
+            public String apply(Object input) {
+                if (input == null) {
+                    return "";
+                }
+                if (input instanceof String) {
+                    return (String) input;
+                }
+                return input.toString();
+            }
+        });
     }
 }

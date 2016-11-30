@@ -11,25 +11,23 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sdl.webapp.common.util.StringUtils.toStrings;
+
 @Component
-/**
- * <p>DateFieldConverter class.</p>
- */
 public class DateFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.DATE};
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public FieldType[] supportedFieldTypes() {
         return SUPPORTED_FIELD_TYPES;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    @Override
+    public List<String> getStringValues(BaseField field) throws FieldConverterException {
+        return toStrings(getFieldValues(field, DateTime.class));
+    }
+
     @Override
     protected List<?> getFieldValues(BaseField field, Class<?> targetClass, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<DateTime> dateTimeValues = new ArrayList<>();

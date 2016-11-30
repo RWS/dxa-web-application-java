@@ -45,7 +45,7 @@ public class FieldConverterTest {
         });
 
         assertEquals("1" + dateStr, Joiner.on("").join(list));
-        assertTrue(list.size() == 5);
+        assertTrue(list.size() == 3);
     }
 
 }

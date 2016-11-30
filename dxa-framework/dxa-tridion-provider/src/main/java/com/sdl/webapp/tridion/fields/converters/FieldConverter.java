@@ -28,7 +28,6 @@ public interface FieldConverter {
      *
      * @param field field to convert
      * @return list of strings
-     * @implNote TSI-1308
      * @since 1.7
      */
     default List<String> getStringValues(BaseField field) throws FieldConverterException {

@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.impl.BaseField;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 @Component
 public class MultimediaFieldConverter extends ComponentLinkFieldConverter {
 
+    @Autowired
     public MultimediaFieldConverter(LinkResolver linkResolver, WebRequestContext webRequestContext) {
         super(linkResolver, webRequestContext);
     }

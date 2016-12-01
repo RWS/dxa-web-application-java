@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.model.AbstractViewModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -50,86 +51,76 @@ public class SemanticMapperImplTest {
     @Autowired
     private SemanticMapperImpl semanticMapper;
 
+    private SemanticFieldDataProvider fieldDataProvider = mock(SemanticFieldDataProvider.class);
+
+    @NotNull
+    private static SemanticField semanticField(String fieldName, String path) {
+        return semanticField(fieldName, path, Collections.emptyMap(), false);
+    }
+
+    @NotNull
+    private static SemanticField semanticField(String fieldName, String path, Map<FieldSemantics, SemanticField> values, boolean multiValue) {
+        return new SemanticField(fieldName, path, multiValue, values);
+    }
+
+    private void mockData(Class<? extends AbstractViewModel> aClass, Map<String, SemanticField> semanticFields, String fieldName, FieldData fieldData, FieldData... rest) throws NoSuchFieldException, SemanticMappingException {
+        when(fieldDataProvider.getFieldData(semanticFields.get(fieldName), new TypeDescriptor(aClass.getDeclaredField(fieldName))))
+                .thenReturn(fieldData, rest);
+    }
+
+
     @Test
     public void shouldCorrectlyResolveSemanticMappings() throws SemanticMappingException, NoSuchFieldException {
         //given
-        final SemanticField headlineField = semanticField("headline", "/TestArticle/headline");
-
-        final SemanticField subheading = semanticField("subheading", "/TestArticle/articleBody/subheading");
-        final Map<FieldSemantics, SemanticField> articleBodyFields = new SemanticMapBuilder()
-                .putSdlCore("TestParagraph", "subheading", subheading)
-                .build();
-
-        final SemanticField dateCreatedField = semanticField("dateCreated", "/Metadata/standardMeta/dateCreated");
-        final Map<FieldSemantics, SemanticField> standardMetaFields = new SemanticMapBuilder()
-                .putSdlCore("StandardMetadata", "dateCreated", dateCreatedField)
-                .putSchemaOrg("TestArticle", "dateCreated", dateCreatedField)
-                .build();
-
-        final SemanticField articleBody = semanticField(articleBodyFields, "articleBody", "/TestArticle/articleBody", true);
-        final Map<FieldSemantics, SemanticField> schemaFields = new SemanticMapBuilder()
-                .putBoth("TestArticle", "headline", headlineField)
-                .putSdlCore("TestArticle", "articleBody", articleBody)
-                .putSchemaOrg("TestArticle", "articleBody", semanticField(Collections.<FieldSemantics, SemanticField>emptyMap(), "articleBody", "/TestArticle/articleBody", true))
-                .putSdlCore("TestArticle", "standardMeta", semanticField(standardMetaFields, "standardMeta", "/Metadata/standardMeta", false))
-                .build();
-
         // headline in Article
-        final SemanticFieldDataProvider fieldDataProvider = mock(SemanticFieldDataProvider.class);
-        when(fieldDataProvider.getFieldData(headlineField, new TypeDescriptor(TestArticle.class.getDeclaredField("headline"))))
-                .thenReturn(new FieldData("HEADLINE", "HeadlineField"));
+        mockData(TestArticle.class, TestArticle.SEMANTIC_FIELDS, "headline", new FieldData("HEADLINE", "tcm:Content/HeadlineField"));
 
         // dattTime in Article
-        final DateTime dateTime = new DateTime(2014, 11, 4, 13, 14, 34, 123, DateTimeZone.UTC);
-        when(fieldDataProvider.getFieldData(dateCreatedField, new TypeDescriptor(TestArticle.class.getDeclaredField("date"))))
-                .thenReturn(new FieldData(dateTime, "DateCreatedField"));
+        DateTime dateTime = new DateTime(2014, 11, 4, 13, 14, 34, 123, DateTimeZone.UTC);
+        mockData(TestArticle.class, TestArticle.SEMANTIC_FIELDS, "date", new FieldData(dateTime, "tcm:Content/DateCreatedField"));
 
         //subheading in Paragraphs
-        String paragraphSubheading1 = "SUBHEADING";
-        String paragraphSubheading2 = "SUBHEADING_2";
-        when(fieldDataProvider.getFieldData(articleBody, new TypeDescriptor(TestArticle.class.getDeclaredField("articleBody"))))
-                .thenReturn(new FieldData(newArrayList(new TestParagraph(paragraphSubheading1), new TestParagraph(paragraphSubheading2)), "ArticleBody"));
-        when(fieldDataProvider.getFieldData(subheading, new TypeDescriptor(TestParagraph.class.getDeclaredField("subheading"))))
-                .thenReturn(new FieldData(paragraphSubheading1, "subheading"), new FieldData(paragraphSubheading2, "subheading"));
+        String subheading1 = "SUBHEADING";
+        String subheading2 = "SUBHEADING_2";
+
+        List<TestParagraph> articleBody = newArrayList(new TestParagraph(subheading1), new TestParagraph(subheading2));
+
+        mockData(TestArticle.class, TestArticle.SEMANTIC_FIELDS, "articleBody", new FieldData(articleBody, "tcm:Content/ArticleBody"));
+
+        mockData(TestParagraph.class, TestParagraph.SEMANTIC_FIELDS, "subheading", new FieldData(subheading1, "subheading"), new FieldData(subheading2, "tcm:Content/subheading"));
+
 
         //when
-        final TestArticle article = semanticMapper.createEntity(TestArticle.class, schemaFields, fieldDataProvider);
+        TestArticle article = semanticMapper.createEntity(TestArticle.class, TestArticle.getSemantics(), fieldDataProvider);
+
 
         //then
         assertThat(article.getHeadline(), is("HEADLINE"));
         assertThat(article.getDate(), is(dateTime));
         Iterator<TestParagraph> iterator = article.getArticleBody().iterator();
-        assertEquals(paragraphSubheading1, iterator.next().getSubheading());
-        assertEquals(paragraphSubheading2, iterator.next().getSubheading());
+        assertEquals(subheading1, iterator.next().getSubheading());
+        assertEquals(subheading2, iterator.next().getSubheading());
 
-        final Map<String, String> propertyData = article.getXpmPropertyMetadata();
-        assertThat(propertyData.entrySet(), hasSize(3));
-        assertThat(propertyData, hasEntry("articleBody", "ArticleBody"));
-        assertThat(propertyData, hasEntry("headline", "HeadlineField"));
-        assertThat(propertyData, hasEntry("date", "DateCreatedField"));
-    }
-
-    @NotNull
-    private SemanticField semanticField(String subheading, String path) {
-        return new SemanticField(subheading, path, false, Collections.<FieldSemantics, SemanticField>emptyMap());
-    }
-
-    @NotNull
-    private SemanticField semanticField(Map<FieldSemantics, SemanticField> values, String subheading, String path, boolean multiValue) {
-        return new SemanticField(subheading, path, multiValue, values);
+        Map<String, String> xpmMetadata = article.getXpmPropertyMetadata();
+        assertThat(xpmMetadata.entrySet(), hasSize(4));
+        assertThat(xpmMetadata, hasEntry("articleBody", "tcm:Content/ArticleBody"));
+        assertThat(xpmMetadata, hasEntry("headline", "tcm:Content/HeadlineField"));
+        assertThat(xpmMetadata, hasEntry("date", "tcm:Content/DateCreatedField"));
+        assertThat(xpmMetadata, hasEntry("emptyField", "tcm:Content/custom:emptyField"));
     }
 
     private static class SemanticMapBuilder extends ImmutableMap.Builder<FieldSemantics, SemanticField> {
 
-        SemanticMapBuilder putBoth(String entityName, String propertyName, SemanticField field) {
-            return putSdlCore(entityName, propertyName, field).putSchemaOrg(entityName, propertyName, field);
+        SemanticMapBuilder both(String entityName, String propertyName, SemanticField field) {
+            return sdlCore(entityName, propertyName, field)
+                    .schemaOrg(entityName, propertyName, field);
         }
 
-        SemanticMapBuilder putSdlCore(String entityName, String propertyName, SemanticField field) {
+        SemanticMapBuilder sdlCore(String entityName, String propertyName, SemanticField field) {
             return (SemanticMapBuilder) put(new FieldSemantics(SDL_CORE_VOCABULARY, entityName, propertyName), field);
         }
 
-        SemanticMapBuilder putSchemaOrg(String entityName, String propertyName, SemanticField field) {
+        SemanticMapBuilder schemaOrg(String entityName, String propertyName, SemanticField field) {
             return (SemanticMapBuilder) put(new FieldSemantics(SCHEMA_ORG_VOCABULARY, entityName, propertyName), field);
         }
     }
@@ -155,6 +146,10 @@ public class SemanticMapperImplTest {
     @AllArgsConstructor
     private static class TestParagraph extends AbstractEntityModel {
 
+        final static Map<String, SemanticField> SEMANTIC_FIELDS = new ImmutableMap.Builder<String, SemanticField>()
+                .put("subheading", semanticField("subheading", "/TestArticle/articleBody/subheading"))
+                .build();
+
         private String subheading;
     }
 
@@ -163,13 +158,44 @@ public class SemanticMapperImplTest {
     @Data
     private static class TestArticle extends AbstractEntityModel {
 
+        final static Map<String, SemanticField> SEMANTIC_FIELDS = new ImmutableMap.Builder<String, SemanticField>()
+                .put("headline", semanticField("headline", "/TestArticle/headline"))
+
+                .put("emptyField", semanticField("emptyField", "/TestArticle/emptyField"))
+
+                .put("articleBody", semanticField("articleBody", "/TestArticle/articleBody",
+                        new SemanticMapBuilder().sdlCore("TestParagraph", "subheading", TestParagraph.SEMANTIC_FIELDS.get("subheading")).build(), true))
+
+                .put("date", semanticField("date", "/TestArticle/date"))
+
+                .put("dateCreated", semanticField("dateCreated", "/TestArticle/dateCreated"))
+
+                .put("standardMeta", semanticField("standardMeta", "/Metadata/standardMeta",
+                        new SemanticMapBuilder()
+                                .sdlCore("StandardMetadata", "date", semanticField("date", "/Metadata/standardMeta/dateCreated"))
+                                .build(), false))
+
+                .build();
+
         @SemanticProperty("s:headline")
         private String headline;
+
+        private String emptyField;
 
         @SemanticProperty("s:articleBody")
         private List<TestParagraph> articleBody;
 
-        @SemanticProperty("s:dateCreated")
         private DateTime date;
+
+        static Map<FieldSemantics, SemanticField> getSemantics() {
+
+            return new SemanticMapBuilder()
+                    .both("TestArticle", "headline", SEMANTIC_FIELDS.get("headline"))
+                    .sdlCore("TestArticle", "emptyField", SEMANTIC_FIELDS.get("emptyField"))
+                    .both("TestArticle", "articleBody", SEMANTIC_FIELDS.get("articleBody"))
+                    .sdlCore("TestArticle", "date", SEMANTIC_FIELDS.get("date"))
+                    .sdlCore("TestArticle", "standardMeta", SEMANTIC_FIELDS.get("standardMeta"))
+                    .build();
+        }
     }
 }

@@ -125,6 +125,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                             LOG.error("Exception while getting field data for: " + field, e);
                         }
 
+                        String xPath = null;
                         if (fieldData != null) {
                             final Object fieldValue = fieldData.getFieldValue();
                             if (fieldValue != null) {
@@ -138,15 +139,17 @@ public class SemanticMapperImpl implements SemanticMapper {
                                 } else {
                                     field.set(entity, fieldValue);
                                 }
-
-                                final String propertyData = fieldData.getPropertyData();
-                                if (!Strings.isNullOrEmpty(propertyData)) {
-                                    propertyDataBuilder.put(field.getName(), propertyData);
-                                }
-
-                                break;
                             }
+                            xPath = fieldData.getPropertyData();
                         }
+
+                        if (Strings.isNullOrEmpty(xPath)) {
+                            xPath = semanticField.getXPath("");
+                        }
+
+                        propertyDataBuilder.put(field.getName(), xPath);
+
+                        break;
                     }
                 }
 

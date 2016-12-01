@@ -10,6 +10,7 @@ import lombok.ToString;
 public final class FieldPath {
 
     private final String head;
+
     private final FieldPath tail;
 
     public FieldPath(String path) {
@@ -29,5 +30,9 @@ public final class FieldPath {
 
     public boolean hasTail() {
         return tail != null;
+    }
+
+    public boolean isMetadata() {
+        return "Metadata".equals(head);
     }
 }

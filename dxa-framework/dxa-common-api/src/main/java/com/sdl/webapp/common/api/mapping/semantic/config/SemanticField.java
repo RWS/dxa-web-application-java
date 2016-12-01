@@ -20,14 +20,6 @@ public final class SemanticField {
 
     private final Map<FieldSemantics, SemanticField> embeddedFields;
 
-    /**
-     * <p>Constructor for SemanticField.</p>
-     *
-     * @param name           a {@link java.lang.String} object.
-     * @param path           a {@link java.lang.String} object.
-     * @param multiValue     a boolean.
-     * @param embeddedFields a {@link java.util.Map} object.
-     */
     public SemanticField(String name, String path, boolean multiValue,
                          Map<FieldSemantics, SemanticField> embeddedFields) {
         this.name = name;

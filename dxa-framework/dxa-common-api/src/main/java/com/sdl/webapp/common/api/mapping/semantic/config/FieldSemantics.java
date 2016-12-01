@@ -17,13 +17,6 @@ public final class FieldSemantics {
 
     private final String propertyName;
 
-    /**
-     * <p>Constructor for FieldSemantics.</p>
-     *
-     * @param vocabulary   a {@link com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary} object.
-     * @param entityName   a {@link java.lang.String} object.
-     * @param propertyName a {@link java.lang.String} object.
-     */
     public FieldSemantics(SemanticVocabulary vocabulary, String entityName, String propertyName) {
         this.vocabulary = vocabulary;
         this.entityName = entityName;

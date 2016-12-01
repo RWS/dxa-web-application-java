@@ -32,6 +32,8 @@ import com.sdl.webapp.tridion.fields.converters.MultimediaFieldConverter;
 import com.sdl.webapp.tridion.fields.converters.NumberFieldConverter;
 import com.sdl.webapp.tridion.fields.converters.TextFieldConverter;
 import com.sdl.webapp.tridion.fields.converters.XhtmlFieldConverter;
+import lombok.Data;
+import lombok.experimental.Accessors;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
@@ -189,13 +191,27 @@ public class PageBuilderImplTest {
 
     @Test
     public void shouldCreatePageAndSetAllMetadata() throws ContentProviderException, DxaException {
+        shouldCreatePageAndSetAllMetadata(
+                new TestDataPage().title("001 titleMeta"),
+                //page title is postfixed weirdly from localization, ok?
+                new TestDataPage().title("titleMeta|!").ogTitle("titleMeta"));
+    }
+
+    @Test
+    public void shouldCreatePageAndNotRemoveNumbersIfNotSequence() throws ContentProviderException, DxaException {
+        shouldCreatePageAndSetAllMetadata(
+                new TestDataPage().title("TSI1234 Page Title"),
+                new TestDataPage().title("TSI1234 Page Title|!").ogTitle("TSI1234 Page Title"));
+    }
+
+    public void shouldCreatePageAndSetAllMetadata(TestDataPage initial, TestDataPage expected) throws ContentProviderException, DxaException {
         //given
         String pageId = "tcm:1-2-3";
         String pageName = "Title";
         String pageView = "Test:TestPage";
         String htmlClasses = "css1, css2 css3";
 
-        String titleMetaSeq = "001 titleMeta";
+        String titleMetaSeq = initial.title;
         String descriptionMetaStr = "descriptionMeta";
 
         DateTime now = DateTime.now();
@@ -305,13 +321,16 @@ public class PageBuilderImplTest {
         assertThat("MvcData matches with that used for view resolving", page.getMvcData(), mvcDataMatcher);
         assertEquals("css1 css2 css3", page.getHtmlClasses());
 
+        assertEquals(expected.title, page.getTitle());
+
         //in this test we don't set regions yet
         assertEquals(new RegionModelSetImpl(), page.getRegions());
+
 
         Map<String, String> meta = page.getMeta();
 
         //region web semantic fields asserts
-        assertEquals("titleMeta", meta.get("og:title"));
+        assertEquals(expected.ogTitle, meta.get("og:title"));
         assertEquals("summary", meta.get("twitter:card"));
         assertEquals("full-url", meta.get("og:url"));
         assertEquals("article", meta.get("og:type"));
@@ -338,8 +357,6 @@ public class PageBuilderImplTest {
         assertFalse(meta.containsKey("emptyField"));
         assertFalse(meta.containsKey("unknown"));
 
-        //page title is postfixed weirdly from localization, ok?
-        assertEquals("titleMeta|!", page.getTitle());
 
         //region XPM Metadata asserts
         Map<String, Object> xpmMetadata = page.getXpmMetadata();
@@ -430,4 +447,16 @@ public class PageBuilderImplTest {
     private static class TestEntity extends AbstractEntityModel {
 
     }
+
+    @Data
+    @Accessors(fluent = true)
+    protected static class TestDataPage {
+
+        String title;
+
+        String ogTitle;
+
+    }
+
+
 }

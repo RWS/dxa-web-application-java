@@ -479,7 +479,7 @@ public final class PageBuilderImpl implements PageBuilder {
             }
         }
 
-        title = title.replaceFirst("\\d{3}\\s", "");
+        title = title.replaceFirst("^\\d{3}\\s", "");
 
         pageMeta.put("twitter:card", "summary");
         pageMeta.put("og:title", title);

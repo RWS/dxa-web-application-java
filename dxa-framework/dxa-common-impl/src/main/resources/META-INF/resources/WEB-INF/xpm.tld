@@ -18,6 +18,11 @@
             <rtexprvalue>true</rtexprvalue>
             <type>com.sdl.webapp.common.api.model.RegionModel</type>
         </attribute>
+        <attribute>
+            <name>cssClass</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+        </attribute>
     </tag>
 
     <tag>

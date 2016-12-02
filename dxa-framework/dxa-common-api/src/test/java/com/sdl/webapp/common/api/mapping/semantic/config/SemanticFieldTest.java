@@ -15,20 +15,20 @@ public class SemanticFieldTest {
 
         SemanticField single = new SemanticField("name", "/Metadata", false, Collections.emptyMap());
         SemanticField metadata = new SemanticField("name", "/Metadata/Test/Test2", false, Collections.emptyMap());
-        SemanticField content = new SemanticField("name", "/Content/Test/Test2", false, Collections.emptyMap());
-        SemanticField withContext = new SemanticField("name", "/Content/Test/Test2", false, Collections.emptyMap());
+        SemanticField content = new SemanticField("name", "/TSISchema/Test/Test2", false, Collections.emptyMap());
+        SemanticField withContext = new SemanticField("name", "/TSISchema/Test/Test2", false, Collections.emptyMap());
 
         //when
         String fromSingle = single.getXPath(null);
         String fromMetadata = metadata.getXPath(null);
         String fromContent = content.getXPath("");
-        String fromContext = withContext.getXPath("tcm:Content/custom:Test[1]/custom:field");
+        String fromContext = withContext.getXPath("tcm:Content/custom:TSISchema/custom:Test[1]/custom:field");
 
         //then
-        assertEquals("tcm:Metadata", fromSingle);
-        assertEquals("tcm:Metadata/custom:Test/custom:Test2", fromMetadata);
-        assertEquals("tcm:Content/custom:Test/custom:Test2", fromContent);
-        assertEquals("tcm:Content/custom:Test[1]/custom:field/custom:Test2", fromContext);
+        assertEquals("tcm:Metadata/custom:Metadata", fromSingle);
+        assertEquals("tcm:Metadata/custom:Metadata/custom:Test/custom:Test2", fromMetadata);
+        assertEquals("tcm:Content/custom:TSISchema/custom:Test/custom:Test2", fromContent);
+        assertEquals("tcm:Content/custom:TSISchema/custom:Test[1]/custom:field/custom:Test2", fromContext);
 
         assertEquals(fieldPath, metadata.getPath());
     }

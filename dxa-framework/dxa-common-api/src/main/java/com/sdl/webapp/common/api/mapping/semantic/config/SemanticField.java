@@ -46,9 +46,12 @@ public final class SemanticField {
 
         StringBuilder builder = new StringBuilder(pathCopy.isMetadata() ? "tcm:Metadata" : "tcm:Content");
 
-        while (pathCopy.hasTail()) {
-            pathCopy = pathCopy.getTail();
+        while (true) {
             builder.append("/custom:").append(pathCopy.getHead());
+            if (!pathCopy.hasTail()) {
+                break;
+            }
+            pathCopy = pathCopy.getTail();
         }
 
         String xPath = builder.toString();

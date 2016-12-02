@@ -110,9 +110,9 @@ public class SemanticMapperImplTest {
         assertThat(xpmMetadata, hasEntry("articleBody", "tcm:Content/ArticleBody"));
         assertThat(xpmMetadata, hasEntry("headline", "tcm:Content/HeadlineField"));
         assertThat(xpmMetadata, hasEntry("date", "tcm:Content/DateCreatedField"));
-        assertThat(xpmMetadata, hasEntry("emptyField", "tcm:Content/custom:emptyField"));
+        assertThat(xpmMetadata, hasEntry("emptyField", "tcm:Content/custom:TestArticle/custom:emptyField"));
         assertThat(xpmMetadata, hasEntry("manyMappings", "tcm:Content/mMapping2"));
-        assertThat(xpmMetadata, hasEntry("manyMappingsNoValue", "tcm:Content/custom:manyMappingsNoValue"));
+        assertThat(xpmMetadata, hasEntry("manyMappingsNoValue", "tcm:Content/custom:TestArticle/custom:manyMappingsNoValue"));
     }
 
     private static class SemanticMapBuilder extends ImmutableMap.Builder<FieldSemantics, SemanticField> {

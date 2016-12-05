@@ -37,6 +37,7 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
     private DateTime lastModifiedDate;
     private DateTime lastPublishDate;
     private boolean setGenericComponentOnComponentPresentation;
+    private boolean isDynamicCP;
 
     private transient Map<String, XPMInfo> fieldMap = new HashMap<String, XPMInfo>();
 
@@ -95,6 +96,14 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
     @Override
     public boolean isMultiValued (final String fieldName) {
         return getFieldMap().get(fieldName).isMultiValued();
+    }
+
+    public boolean isDynamicCP () {
+        return isDynamicCP;
+    }
+
+    public void setIsDynamicCP (final boolean dynamicCP) {
+        isDynamicCP = dynamicCP;
     }
 
     @Override

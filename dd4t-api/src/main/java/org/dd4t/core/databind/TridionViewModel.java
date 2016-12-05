@@ -47,5 +47,9 @@ public interface TridionViewModel extends BaseViewModel {
 
     boolean setGenericComponentOnComponentPresentation ();
 
+    boolean isDynamicCP ();
+
+    void setIsDynamicCP (final boolean dynamicCP);
+
     boolean isMultiValued (final String fieldName);
 }

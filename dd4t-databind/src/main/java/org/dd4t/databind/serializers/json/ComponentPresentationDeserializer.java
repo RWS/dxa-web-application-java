@@ -150,9 +150,15 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 
         } else {
             for (BaseViewModel model : models.values()) {
-                if (model instanceof TridionViewModel && ((TridionViewModel) model).setGenericComponentOnComponentPresentation()) {
-                    LOG.debug("Also setting a Component object on the CP.");
-                    componentPresentation.setComponent(DataBindFactory.buildComponent(rawComponentData, this.concreteComponentClass));
+                if (model instanceof TridionViewModel) {
+
+                    if (((TridionViewModel)model).setGenericComponentOnComponentPresentation()) {
+                        LOG.debug("Also setting a Component object on the CP.");
+                        componentPresentation.setComponent(DataBindFactory.buildComponent(rawComponentData, this.concreteComponentClass));
+                    }
+                    if (componentPresentation.isDynamic()) {
+                        ((TridionViewModel)model).setIsDynamicCP(true);
+                    }
                 }
                 if (model.setRawDataOnModel()) {
                     LOG.debug("Setting raw string data on model.");

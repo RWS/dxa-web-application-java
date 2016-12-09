@@ -1,6 +1,7 @@
 package com.sdl.webapp.tridion;
 
 import com.sdl.context.odata.client.api.ODataContextEngine;
+import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.web.api.content.BinaryContentRetriever;
 import com.sdl.web.api.dynamic.BinaryContentRetrieverImpl;
 import com.sdl.web.api.dynamic.DynamicMappingsRetriever;
@@ -9,6 +10,7 @@ import com.sdl.web.api.dynamic.DynamicMetaRetriever;
 import com.sdl.web.api.dynamic.DynamicMetaRetrieverImpl;
 import com.sdl.web.api.taxonomies.TaxonomyRelationManager;
 import com.tridion.taxonomies.TaxonomyFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.providers.ComponentPresentationProvider;
@@ -25,6 +27,7 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @ComponentScan("com.sdl.webapp.tridion")
+@Slf4j
 public class SpringContextConfiguration {
 
     @Autowired
@@ -112,7 +115,12 @@ public class SpringContextConfiguration {
 
     @Bean
     public ODataContextEngine oDataContextEngine() {
-        return new ODataContextEngine();
+        try {
+            return new ODataContextEngine();
+        } catch (ODataClientRuntimeException ex) {
+            log.warn("No context service available");
+            return null;
+        }
     }
 
     @Configuration

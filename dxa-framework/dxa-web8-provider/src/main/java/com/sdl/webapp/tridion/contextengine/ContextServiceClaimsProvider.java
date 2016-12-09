@@ -86,14 +86,16 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
         Localization localization = webRequestContext.getLocalization();
         evidenceBuilder.withPublicationId(Integer.valueOf(localization.getId()));
 
-        ContextMap<? extends Aspect> contextMap;
-        try {
-            Evidence evidence = evidenceBuilder.build();
-            contextMap = oDataContextEngine.resolve(evidence);
-            log.trace("Current data context engine impl is {}", oDataContextEngine.getClass());
-            log.debug("Requested context map for aspect {} with evidence {}, and got {}", aspectName, evidence, contextMap);
-        } catch (ResolverException e) {
-            throw new DxaException("An error occurred while resolving evidence using the Context Service.", e);
+        ContextMap<? extends Aspect> contextMap = null;
+        if (oDataContextEngine != null) {
+            try {
+                Evidence evidence = evidenceBuilder.build();
+                contextMap = oDataContextEngine.resolve(evidence);
+                log.trace("Current data context engine impl is {}", oDataContextEngine.getClass());
+                log.debug("Requested context map for aspect {} with evidence {}, and got {}", aspectName, evidence, contextMap);
+            } catch (ResolverException e) {
+                throw new DxaException("An error occurred while resolving evidence using the Context Service.", e);
+            }
         }
 
         return getClaimsMap(contextMap, aspectName);

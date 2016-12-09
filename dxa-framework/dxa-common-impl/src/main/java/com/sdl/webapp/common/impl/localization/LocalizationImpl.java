@@ -8,6 +8,7 @@ import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.SiteLocalization;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
+import com.sdl.webapp.common.util.TcmUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -24,6 +25,7 @@ public class LocalizationImpl implements Localization {
 
     private static final String FAVICON_PATH = "/favicon.ico";
     private static final Pattern SYSTEM_ASSETS_PATTERN = Pattern.compile("/system(/v\\d+\\.\\d+)?/assets/.*");
+    private static final String DEFAULT_NAMESPACE = "tcm";
 
     @Getter
     private final String id;
@@ -159,6 +161,14 @@ public class LocalizationImpl implements Localization {
     public List<String> getDataFormats() {
         String[] formats = getConfiguration("core.dataFormats").split("(\\s*)?,(\\s*)?");
         return Arrays.asList(formats);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getNamespace() {
+        return DEFAULT_NAMESPACE;
     }
 
     public static final class Builder {

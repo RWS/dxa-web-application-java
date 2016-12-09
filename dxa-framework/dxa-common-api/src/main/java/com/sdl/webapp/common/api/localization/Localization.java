@@ -120,5 +120,11 @@ public interface Localization {
      */
     List<String> getDataFormats();
 
+    /**
+     * Gets the Namespace
+     *
+     * @return
+     */
+    String getNamespace();
 
 }

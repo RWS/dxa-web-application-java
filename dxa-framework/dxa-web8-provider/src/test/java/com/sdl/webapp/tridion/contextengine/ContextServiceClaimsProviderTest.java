@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -69,6 +70,9 @@ public class ContextServiceClaimsProviderTest {
 
     @Test
     public void shouldPassLocalizationIdToContextService() throws DxaException, ResolverException {
+        //given
+        ReflectionTestUtils.setField(contextServiceClaimsProvider, "isPublicationIdExpected", true);
+
         //when
         contextServiceClaimsProvider.getContextClaims(null);
 
@@ -83,6 +87,29 @@ public class ContextServiceClaimsProviderTest {
             @Override
             public void describeTo(Description description) {
                 description.appendText("Evidence should contain publication ID");
+            }
+        }));
+    }
+
+    @Test
+    public void shouldNotPassLocalizationIdToContextServiceByDefault() throws DxaException, ResolverException {
+        //given
+        // actually default, but here to show it explicitly for better reading
+        ReflectionTestUtils.setField(contextServiceClaimsProvider, "isPublicationIdExpected", false);
+
+        //when
+        contextServiceClaimsProvider.getContextClaims(null);
+
+        //then
+        verify(oDataContextEngine).resolve(argThat(new BaseMatcher<Evidence>() {
+            @Override
+            public boolean matches(Object item) {
+                return ((Evidence) item).get("publication-id") == null;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Evidence should not contain publication ID");
             }
         }));
     }

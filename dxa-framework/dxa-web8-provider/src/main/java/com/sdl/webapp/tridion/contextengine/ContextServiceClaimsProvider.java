@@ -14,6 +14,7 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.extern.slf4j.Slf4j;
 import org.dd4t.core.util.HttpUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.Cookie;
@@ -28,6 +29,9 @@ import java.util.Set;
 public class ContextServiceClaimsProvider implements ContextClaimsProvider {
 
     private static final String CONTEXT_COOKIE_NAME = "context";
+
+    @Value("${dxa.context.service.publication.id:false}")
+    private boolean isPublicationIdExpected;
 
     @Autowired
     private ODataContextEngine oDataContextEngine;
@@ -83,8 +87,10 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
             }
         }
 
-        Localization localization = webRequestContext.getLocalization();
-        evidenceBuilder.withPublicationId(Integer.valueOf(localization.getId()));
+        if (isPublicationIdExpected) {
+            Localization localization = webRequestContext.getLocalization();
+            evidenceBuilder.withPublicationId(Integer.valueOf(localization.getId()));
+        }
 
         ContextMap<? extends Aspect> contextMap;
         try {

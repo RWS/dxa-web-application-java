@@ -29,7 +29,7 @@ public class XpmButtonTag extends XpmMarkupTag {
             String title = "Go Back";
             String editUrl = "javascript:history.back()";
             return HtmlBuilders.div()
-                    .withClass("xpm-button " + cssClass)
+                    .withClass("xpm-button" + (cssClass == null ? "" : cssClass))
                     .withNode(HtmlBuilders.a(editUrl)
                             .withClass("fa-stack fa-lg")
                             .withTitle(title)
@@ -45,7 +45,7 @@ public class XpmButtonTag extends XpmMarkupTag {
             String editUrl = ApplicationContextHolder.getContext().getBean(WebRequestContext.class).getLocalization().localizePath(
                     this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY).toString());
             return HtmlBuilders.div()
-                    .withClass("xpm-button " + cssClass)
+                    .withClass("xpm-button" + (cssClass == null ? "" : cssClass))
                     .withNode(HtmlBuilders.a(editUrl)
                             .withClass("fa-stack fa-lg")
                             .withTitle(title)

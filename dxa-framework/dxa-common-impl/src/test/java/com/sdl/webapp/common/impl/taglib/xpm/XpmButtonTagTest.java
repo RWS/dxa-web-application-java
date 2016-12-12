@@ -18,6 +18,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import java.util.HashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -75,6 +76,23 @@ public class XpmButtonTagTest {
                 "<i class=\"fa fa-arrow-left fa-inverse fa-stack-1x\"></i>" +
                 "</a>" +
                 "</div>", markup.renderHtml());
+    }
+
+    @Test
+    public void shouldDetectWhenCssClassIsNotSet() {
+        //given
+        RegionModel region = mock(RegionModel.class);
+        doReturn(new HashMap<String, Object>()).when(region).getXpmMetadata();
+
+        XpmButtonTag tag = new XpmButtonTag();
+        tag.setRegion(region);
+
+        //when
+        HtmlNode markup = tag.generateXpmMarkup();
+
+        //then
+        String html = markup.renderHtml();
+        assertTrue(html.startsWith("<div class=\"xpm-button\">"));
     }
 
     @Configuration

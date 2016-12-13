@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion;
 
-import com.sdl.context.odata.client.api.ODataContextEngine;
 import com.sdl.web.api.content.BinaryContentRetriever;
 import com.sdl.web.api.dynamic.BinaryContentRetrieverImpl;
 import com.sdl.web.api.dynamic.DynamicMappingsRetriever;
@@ -39,7 +38,7 @@ public class SpringContextConfiguration {
     public TaxonomyRelationManager taxonomyRelationManager() {
         return new TaxonomyRelationManager();
     }
-    
+
     @Bean
     public BrokerLinkProvider linkProvider() {
         BrokerLinkProvider linkProvider = new BrokerLinkProvider();
@@ -108,11 +107,6 @@ public class SpringContextConfiguration {
     @Bean
     public DynamicMappingsRetriever dynamicMappingsRetriever() {
         return new DynamicMappingsRetrieverImpl();
-    }
-
-    @Bean
-    public ODataContextEngine oDataContextEngine() {
-        return new ODataContextEngine();
     }
 
     @Configuration

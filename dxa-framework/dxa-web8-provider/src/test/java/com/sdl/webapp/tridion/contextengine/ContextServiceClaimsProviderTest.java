@@ -3,6 +3,7 @@ package com.sdl.webapp.tridion.contextengine;
 import com.sdl.context.api.exception.ResolverException;
 import com.sdl.context.api.resolution.Evidence;
 import com.sdl.context.odata.client.api.ODataContextEngine;
+import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -15,9 +16,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
@@ -53,6 +56,7 @@ public class ContextServiceClaimsProviderTest {
         when(localization.getId()).thenReturn("1");
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
+        ReflectionTestUtils.setField(contextServiceClaimsProvider, "oDataContextEngine", oDataContextEngine);
     }
 
     @Test
@@ -69,6 +73,9 @@ public class ContextServiceClaimsProviderTest {
 
     @Test
     public void shouldPassLocalizationIdToContextService() throws DxaException, ResolverException {
+        //given
+        ReflectionTestUtils.setField(contextServiceClaimsProvider, "isPublicationIdExpected", true);
+
         //when
         contextServiceClaimsProvider.getContextClaims(null);
 
@@ -85,5 +92,34 @@ public class ContextServiceClaimsProviderTest {
                 description.appendText("Evidence should contain publication ID");
             }
         }));
+    }
+
+    @Test
+    public void shouldNotPassLocalizationIdToContextServiceByDefault() throws DxaException, ResolverException {
+        //given
+        // actually default, but here to show it explicitly for better reading
+        ReflectionTestUtils.setField(contextServiceClaimsProvider, "isPublicationIdExpected", false);
+
+        //when
+        contextServiceClaimsProvider.getContextClaims(null);
+
+        //then
+        verify(oDataContextEngine).resolve(argThat(new BaseMatcher<Evidence>() {
+            @Override
+            public boolean matches(Object item) {
+                return ((Evidence) item).get("publication-id") == null;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Evidence should not contain publication ID");
+            }
+        }));
+    }
+
+    @Test(expected = ODataClientRuntimeException.class)
+    public void shouldInitContextEngineOnStart() throws NoSuchMethodException {
+        assertTrue(contextServiceClaimsProvider.getClass().getDeclaredMethod("init").isAnnotationPresent(PostConstruct.class));
+        contextServiceClaimsProvider.init();
     }
 }

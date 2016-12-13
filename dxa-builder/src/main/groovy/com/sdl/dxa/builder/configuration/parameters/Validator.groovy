@@ -74,10 +74,21 @@ class Validator {
         })
     }
 
-    static Validator domainName() {
-        new Validator(description: 'Should match a valid Domain Name', validate: { String it ->
+    static Validator domainName(boolean validWithPort = false) {
+        new Validator(description: "Should match a valid Domain Name ${validWithPort ? "with" : "without"} port", validate: { String it ->
+            def result = notEmpty().validate(it as String)
+
+            result &= !it.contains('://')
             it = removePath(it)
-            notEmpty().validate(it as String) && DomainValidator.getInstance(true).isValid(it as String)
+
+            if (validWithPort) {
+                if (it.contains(':')) {
+                    def arr = it.split(':')
+                    it = arr[0]
+                    result &= arr.length == 2 && intNumber().validate(arr[1])
+                }
+            }
+            result && DomainValidator.getInstance(true).isValid(it as String)
         })
     }
 

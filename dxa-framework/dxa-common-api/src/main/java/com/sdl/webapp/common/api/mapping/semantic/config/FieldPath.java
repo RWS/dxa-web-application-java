@@ -10,13 +10,9 @@ import lombok.ToString;
 public final class FieldPath {
 
     private final String head;
+
     private final FieldPath tail;
 
-    /**
-     * <p>Constructor for FieldPath.</p>
-     *
-     * @param path a {@link java.lang.String} object.
-     */
     public FieldPath(String path) {
         if (path.startsWith("/")) {
             path = path.substring(1);
@@ -34,5 +30,9 @@ public final class FieldPath {
 
     public boolean hasTail() {
         return tail != null;
+    }
+
+    public boolean isMetadata() {
+        return "Metadata".equals(head);
     }
 }

@@ -27,6 +27,9 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
+import com.sdl.webapp.tridion.fields.converters.FieldConverter;
+import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
+import com.sdl.webapp.tridion.fields.exceptions.UnsupportedFieldTypeException;
 import com.sdl.webapp.util.dd4t.FieldUtils;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -39,10 +42,7 @@ import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.PageTemplate;
 import org.dd4t.contentmodel.Schema;
 import org.dd4t.contentmodel.impl.BaseField;
-import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.ComponentPresentationFactory;
-import org.dd4t.core.resolvers.LinkResolver;
 import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,9 +95,6 @@ public final class PageBuilderImpl implements PageBuilder {
 
     @Autowired
     private ModelBuilderPipeline modelBuilderPipeline;
-
-    @Autowired
-    private LinkResolver linkResolver;
 
     @Autowired
     private WebRequestContext webRequestContext;
@@ -320,7 +317,7 @@ public final class PageBuilderImpl implements PageBuilder {
             } catch (IllegalAccessException e) {
                 throw new DxaException(String.format("Illegal access exception when instantiating new page of type %s", pageModelType), e);
             }
-        } else if(pageMetadataSchema != null){
+        } else if (pageMetadataSchema != null) {
             // Custom Page Model and Page metadata is present; do full-blown model mapping.
             String[] schemaTcmUriParts = pageMetadataSchema.getId().split("-");
 
@@ -482,7 +479,7 @@ public final class PageBuilderImpl implements PageBuilder {
             }
         }
 
-        title = title.replaceFirst("\\d{3}\\s", "");
+        title = title.replaceFirst("^\\d{3}\\s", "");
 
         pageMeta.put("twitter:card", "summary");
         pageMeta.put("og:title", title);
@@ -511,6 +508,7 @@ public final class PageBuilderImpl implements PageBuilder {
         Map<String, String> result = new HashMap<>();
 
         // If it's an embedded field, then process the subfields
+        // this flattens all embedded values
         if (field.getFieldType() == FieldType.EMBEDDED) {
             final List<FieldSet> embeddedValues = ((BaseField) field).getEmbeddedValues();
             if (embeddedValues != null && !embeddedValues.isEmpty()) {
@@ -519,29 +517,20 @@ public final class PageBuilderImpl implements PageBuilder {
                 }
             }
         } else {
-            final String fieldName = field.getName();
+            try {
+                final String fieldName = field.getName();
+                // TSI-1308
+                FieldConverter converter = fieldConverterRegistry.getFieldConverterFor(field.getFieldType());
 
-            String value;
-            switch (fieldName) {
-                case "internalLink":
-                    final String componentId = ((BaseField) field).getTextValues().get(0);
-                    try {
-                        value = linkResolver.resolve(componentId);
-                    } catch (SerializationException | ItemNotFoundException e) {
-                        LOG.warn("Error while resolving link: {}", componentId);
-                        value = componentId;
-                    }
-                    break;
-                case IMAGE_FIELD_NAME:
-                    value = ((BaseField) field).getLinkedComponentValues().get(0).getMultimedia().getUrl();
-                    break;
-                default:
-                    value = Joiner.on(',').join(field.getValues());
-                    break;
-            }
+                String value = Joiner.on(',').join(converter.getStringValues((BaseField) field));
 
-            if (!(StringUtils.isEmpty(value) || result.containsKey(fieldName))) {
-                result.put(fieldName, value);
+                if (!(StringUtils.isEmpty(value) || result.containsKey(fieldName))) {
+                    result.put(fieldName, value);
+                }
+            } catch (UnsupportedFieldTypeException e) {
+                LOG.warn("Field name = {}, type = {} is not supported", field.getName(), field.getFieldType(), e);
+            } catch (FieldConverterException e) {
+                LOG.warn("Exception happened while converting the field name = {}, type = {}", field.getName(), field.getFieldType(), e);
             }
         }
         return result;

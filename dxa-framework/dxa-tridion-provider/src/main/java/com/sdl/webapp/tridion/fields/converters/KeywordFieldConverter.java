@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.sdl.webapp.common.util.StringUtils.toStrings;
 import static java.lang.Boolean.parseBoolean;
 
 /**
@@ -66,15 +67,22 @@ public class KeywordFieldConverter implements FieldConverter {
         Converter<?> converter = getConverter(targetClass);
 
         final List<Keyword> keywords = field.getKeywordValues();
-        if (semanticField.isMultiValue()) {
-            List<Object> list = new ArrayList<>();
-            for (Keyword keyword : keywords) {
-                list.add(converter.convert(keyword));
-            }
-            return list;
-        } else {
-            return keywords.isEmpty() ? null : converter.convert(keywords.get(0));
+        return semanticField.isMultiValue() ?
+                collect(keywords, converter) :
+                keywords.isEmpty() ? null : converter.convert(keywords.get(0));
+    }
+
+    @Override
+    public List<String> getStringValues(BaseField field) throws FieldConverterException {
+        return toStrings(collect(field.getKeywordValues(), getConverter(String.class)));
+    }
+
+    private List<?> collect(List<Keyword> keywords, Converter<?> converter) throws FieldConverterException {
+        List<Object> list = new ArrayList<>();
+        for (Keyword keyword : keywords) {
+            list.add(converter.convert(keyword));
         }
+        return list;
     }
 
     private Converter<?> getConverter(Class<?> targetClass) throws UnsupportedTargetTypeException {

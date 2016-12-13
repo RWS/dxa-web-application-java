@@ -32,14 +32,6 @@ public final class SemanticSchema {
     @Setter
     private Localization localization;
 
-    /**
-     * <p>Constructor for SemanticSchema.</p>
-     *
-     * @param id              a long.
-     * @param rootElement     a {@link java.lang.String} object.
-     * @param entitySemantics a {@link java.util.Set} object.
-     * @param semanticFields  a {@link java.util.Map} object.
-     */
     public SemanticSchema(long id, String rootElement, Set<EntitySemantics> entitySemantics,
                           Map<FieldSemantics, SemanticField> semanticFields) {
         this.id = id;

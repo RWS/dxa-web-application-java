@@ -9,6 +9,7 @@ import org.springframework.core.convert.TypeDescriptor;
 
 import java.util.List;
 
+//todo dxa2 the whole set of converters should be generified
 public abstract class AbstractFieldConverter implements FieldConverter {
 
     @Override

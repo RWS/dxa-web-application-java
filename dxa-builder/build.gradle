@@ -54,12 +54,13 @@ artifacts {
 task signPom(type: Sign) {
     sign configurations.pom
 }
+signPom.enabled = isRelease
 
 task signJars(type: Sign, dependsOn: [jar, signPom, javadocJar, sourceJar]) {
     sign configurations.archives
 }
+signJars.enabled = isRelease
 task preparePublication(dependsOn: [signPom, signJars])
-preparePublication.enabled = isRelease
 
 task publishLocal(dependsOn: [build, publishToMavenLocal])
 task publishRemote(dependsOn: [build, preparePublication, publish])

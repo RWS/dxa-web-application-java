@@ -42,8 +42,6 @@ import java.util.Stack;
  */
 public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider {
 
-    protected static final String METADATA_PATH = "Metadata";
-
     private static final Logger LOG = LoggerFactory.getLogger(SemanticFieldDataProviderImpl.class);
 
     protected final SemanticEntity semanticEntity;
@@ -238,7 +236,7 @@ public class SemanticFieldDataProviderImpl implements SemanticFieldDataProvider 
 
         @Override
         public Map<String, Field> getFields(FieldPath path) {
-            return path.getHead().equals(METADATA_PATH) ? getMetadata() : getContent();
+            return path.isMetadata() ? getMetadata() : getContent();
         }
     }
 

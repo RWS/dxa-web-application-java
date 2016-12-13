@@ -18,10 +18,12 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sdl.webapp.common.util.StringUtils.toStrings;
+
 @Component
 public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
-    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.COMPONENTLINK, FieldType.MULTIMEDIALINK};
+    private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.COMPONENTLINK};
 
     private final LinkResolver linkResolver;
     private final WebRequestContext webRequestContext;
@@ -35,6 +37,11 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
     @Override
     public FieldType[] supportedFieldTypes() {
         return SUPPORTED_FIELD_TYPES;
+    }
+
+    @Override
+    public List<String> getStringValues(BaseField field) throws FieldConverterException {
+        return toStrings(getFieldValues(field, String.class));
     }
 
     @Override

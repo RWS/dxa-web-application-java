@@ -1,7 +1,5 @@
 package com.sdl.webapp.common.impl.mapping;
 
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.mapping.semantic.FieldData;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
@@ -20,6 +18,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -96,7 +95,7 @@ public class SemanticMapperImpl implements SemanticMapper {
             throws SemanticMappingException {
         final T entity = createInstance(entityClass);
 
-        final ImmutableMap.Builder<String, String> propertyDataBuilder = ImmutableMap.builder();
+        final Map<String, String> xpmPropertyMetadata = new HashMap<>();
 
         // Map all the fields (including fields inherited from superclasses) of the entity
         ReflectionUtils.doWithFields(entityClass, new ReflectionUtils.FieldCallback() {
@@ -125,6 +124,8 @@ public class SemanticMapperImpl implements SemanticMapper {
                             LOG.error("Exception while getting field data for: " + field, e);
                         }
 
+                        String xPath = null;
+                        boolean isFieldSet = false;
                         if (fieldData != null) {
                             final Object fieldValue = fieldData.getFieldValue();
                             if (fieldValue != null) {
@@ -139,13 +140,17 @@ public class SemanticMapperImpl implements SemanticMapper {
                                     field.set(entity, fieldValue);
                                 }
 
-                                final String propertyData = fieldData.getPropertyData();
-                                if (!Strings.isNullOrEmpty(propertyData)) {
-                                    propertyDataBuilder.put(field.getName(), propertyData);
-                                }
-
-                                break;
+                                xPath = fieldData.getPropertyData();
+                                isFieldSet = true;
                             }
+                        }
+
+                        if (xPath == null) {
+                            xPath = semanticField.getXPath("");
+                        }
+                        xpmPropertyMetadata.put(field.getName(), xPath);
+                        if (isFieldSet) {
+                            break;
                         }
                     }
                 }
@@ -197,7 +202,7 @@ public class SemanticMapperImpl implements SemanticMapper {
 
         // Set property data (used for semantic markup)
         if (AbstractEntityModel.class.isAssignableFrom(entity.getClass())) {
-            ((AbstractEntityModel) entity).setXpmPropertyMetadata(propertyDataBuilder.build());
+            ((AbstractEntityModel) entity).setXpmPropertyMetadata(xpmPropertyMetadata);
         }
         LOG.trace("entity: {}", entity);
         return entity;

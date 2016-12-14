@@ -94,6 +94,15 @@
 
     <profiles>
         <profile>
+            <id>core-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-core</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>cid-module</id>
             <dependencies>
                 <dependency>
@@ -205,10 +214,6 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.dxa.modules</groupId>
-            <artifactId>dxa-module-core</artifactId>
         </dependency>
 
         <dependency>

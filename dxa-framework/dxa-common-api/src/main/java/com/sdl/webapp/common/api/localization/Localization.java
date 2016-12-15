@@ -121,10 +121,12 @@ public interface Localization {
     List<String> getDataFormats();
 
     /**
-     * Gets the Namespace
+     * Gets URI scheme used inside TCM-URIs
      *
-     * @return
+     * @return The URI scheme
      */
-    String getNamespace();
+    default String getCmUriScheme() {
+        return "tcm";
+    }
 
 }

@@ -25,7 +25,6 @@ public class LocalizationImpl implements Localization {
 
     private static final String FAVICON_PATH = "/favicon.ico";
     private static final Pattern SYSTEM_ASSETS_PATTERN = Pattern.compile("/system(/v\\d+\\.\\d+)?/assets/.*");
-    private static final String DEFAULT_NAMESPACE = "tcm";
 
     @Getter
     private final String id;
@@ -161,14 +160,6 @@ public class LocalizationImpl implements Localization {
     public List<String> getDataFormats() {
         String[] formats = getConfiguration("core.dataFormats").split("(\\s*)?,(\\s*)?");
         return Arrays.asList(formats);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getNamespace() {
-        return DEFAULT_NAMESPACE;
     }
 
     public static final class Builder {

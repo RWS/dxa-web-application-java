@@ -121,7 +121,7 @@ public interface Localization {
     List<String> getDataFormats();
 
     /**
-     * Gets URI scheme used inside TCM-URIs
+     * Gets URI scheme used inside CM-URIs
      *
      * @return The URI scheme
      */

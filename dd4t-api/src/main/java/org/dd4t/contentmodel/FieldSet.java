@@ -26,10 +26,15 @@ import java.util.Map;
 public interface FieldSet {
 
     /**
-     * Get the schema of the component
+     * This method is deprecated in dd4t-2; it will return a null.
+     * If you do want to use it please utilize the  
+     * org.dd4t.core.processors.impl.FieldSetSchemaProcessor from
+     * dd4t-compatibility to have it filled as it was in dd4t-1.
+     * I 
      *
      * @return the schema
      */
+	@Deprecated
     Schema getSchema ();
 
     /**

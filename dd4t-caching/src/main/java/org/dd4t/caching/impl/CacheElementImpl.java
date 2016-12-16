@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package org.dd4t.core.caching.impl;
+package org.dd4t.caching.impl;
 
-import org.dd4t.core.caching.CacheElement;
+import org.dd4t.caching.CacheElement;
 
 /**
  * Wrapper around a 'payload' object that represents the actual object in the

@@ -1,6 +1,6 @@
-package org.dd4t.core.caching.impl;
+package org.dd4t.caching.impl;
 
-import org.dd4t.core.caching.CacheDependency;
+import org.dd4t.caching.CacheDependency;
 
 /**
  * Basic implementation class for a CacheDependency. Supports creation through constructor as well as setters.

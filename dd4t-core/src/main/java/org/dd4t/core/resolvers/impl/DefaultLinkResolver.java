@@ -23,7 +23,7 @@ import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.Schema;
 import org.dd4t.contentmodel.impl.PublicationImpl;
-import org.dd4t.core.caching.CacheElement;
+import org.dd4t.caching.CacheElement;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.resolvers.LinkResolver;

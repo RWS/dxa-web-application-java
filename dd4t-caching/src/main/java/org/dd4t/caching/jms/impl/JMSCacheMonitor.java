@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package org.dd4t.core.caching.jms.impl;
+package org.dd4t.caching.jms.impl;
 
-import java.util.List;
-
-import org.dd4t.core.caching.CacheInvalidator;
-import org.dd4t.core.services.PropertiesService;
-import org.dd4t.core.util.Constants;
+import org.dd4t.caching.CacheInvalidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
-import javax.annotation.Resource;
 
 /**
  * @author Mihai Cadariu

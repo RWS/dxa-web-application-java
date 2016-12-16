@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.dd4t.core.caching.jms.impl;
+package org.dd4t.caching.jms.impl;
 
 import com.tridion.cache.CacheEvent;
-import org.dd4t.core.caching.CacheInvalidator;
+import org.dd4t.caching.CacheInvalidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

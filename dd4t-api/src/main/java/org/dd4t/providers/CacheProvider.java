@@ -19,8 +19,8 @@ package org.dd4t.providers;
 import java.util.Collection;
 import java.util.List;
 
-import org.dd4t.core.caching.Cachable;
-import org.dd4t.core.caching.CacheDependency;
+import org.dd4t.caching.Cachable;
+import org.dd4t.caching.CacheDependency;
 
 @Deprecated
 public interface CacheProvider {

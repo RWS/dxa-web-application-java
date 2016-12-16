@@ -1,9 +1,9 @@
 package org.dd4t.providers;
 
-import org.dd4t.core.caching.Cachable;
-import org.dd4t.core.caching.CacheDependency;
-import org.dd4t.core.caching.CacheElement;
-import org.dd4t.core.caching.CacheInvalidator;
+import org.dd4t.caching.Cachable;
+import org.dd4t.caching.CacheDependency;
+import org.dd4t.caching.CacheElement;
+import org.dd4t.caching.CacheInvalidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.dd4t.providers;
+package org.dd4t.caching.providers;
 
-import org.dd4t.core.caching.Cachable;
-import org.dd4t.core.caching.CacheDependency;
-import org.dd4t.core.caching.CacheElement;
-import org.dd4t.core.caching.impl.CacheElementImpl;
+import org.dd4t.caching.Cachable;
+import org.dd4t.caching.CacheDependency;
+import org.dd4t.caching.CacheElement;
+import org.dd4t.caching.impl.CacheElementImpl;
+import org.dd4t.providers.CacheProvider;
+import org.dd4t.providers.PayloadCacheProvider;
 
 import java.util.Collection;
 import java.util.List;
@@ -69,23 +71,23 @@ public class NoCacheProvider implements PayloadCacheProvider, CacheProvider {
         return null;
     }
 
-	@Override
-	public <T> void storeInItemCache(String key, CacheElement<T> cacheElement,
-			List<CacheDependency> dependencies) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public <T> void storeInItemCache(String key, CacheElement<T> cacheElement,
+                                     List<CacheDependency> dependencies) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public void addDependency(String cacheKey, String dependencyKey) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void storeInItemCache(String key, Object ob,
-			List<CacheDependency> dependencies) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void addDependency(String cacheKey, String dependencyKey) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void storeInItemCache(String key, Object ob,
+                                 List<CacheDependency> dependencies) {
+        // TODO Auto-generated method stub
+
+    }
 }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dd4t.core.caching.jms.impl;
+package org.dd4t.caching.jms.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

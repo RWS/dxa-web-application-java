@@ -23,7 +23,7 @@ import javax.annotation.Resource;
 
 import org.dd4t.contentmodel.Keyword;
 import org.dd4t.contentmodel.impl.KeywordImpl;
-import org.dd4t.core.caching.CacheElement;
+import org.dd4t.caching.CacheElement;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.core.factories.TaxonomyFactory;

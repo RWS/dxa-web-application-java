@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dd4t.core.caching;
+package org.dd4t.caching;
 
 
 /**

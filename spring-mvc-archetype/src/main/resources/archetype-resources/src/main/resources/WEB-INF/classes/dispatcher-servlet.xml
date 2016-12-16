@@ -67,7 +67,7 @@
     </bean>
 
     <!-- DD4T Provider beans -->
-    <bean id="cacheProvider" class="org.dd4t.core.providers.EHCacheProvider" />
+    <bean id="cacheProvider" class="EHCacheProvider" />
 
     <bean id="binaryProvider" class="org.dd4t.providers.impl.BrokerBinaryProvider">
         <property name="contentIsCompressed" value="true"/>
@@ -172,10 +172,10 @@
         as well as the JMS topic in the listener config
     -->
 
-    <bean id="cacheMessageListener" class="org.dd4t.core.caching.jms.impl.JMSCacheMessageListener"/>
-    <bean id="jmsExceptionListener" class="org.dd4t.core.caching.jms.impl.JMSExceptionListener"/>
-    <bean id="jmsCacheMonitor" class="org.dd4t.core.caching.jms.impl.JMSCacheMonitor" />
-    <bean id="jmsTransportListener" class="org.dd4t.core.caching.jms.impl.JMSTransportListener"/>
+    <bean id="cacheMessageListener" class="JMSCacheMessageListener"/>
+    <bean id="jmsExceptionListener" class="JMSExceptionListener"/>
+    <bean id="jmsCacheMonitor" class="JMSCacheMonitor" />
+    <bean id="jmsTransportListener" class="JMSTransportListener"/>
 
     <bean id="connectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">
         <property name="brokerURL" value="${jms.brokerUrl}"/>

@@ -1,4 +1,4 @@
-package org.dd4t.core.caching;
+package org.dd4t.caching;
 
 /**
  * Interface determines the necessary data to act as a cache dependency

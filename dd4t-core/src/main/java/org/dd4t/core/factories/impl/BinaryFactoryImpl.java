@@ -17,7 +17,7 @@
 package org.dd4t.core.factories.impl;
 
 import org.dd4t.contentmodel.Binary;
-import org.dd4t.core.caching.CacheElement;
+import org.dd4t.caching.CacheElement;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.BinaryFactory;

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.dd4t.core.providers;
+package org.dd4t.caching.providers;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -27,12 +27,12 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Element;
 
-import org.dd4t.core.caching.Cachable;
-import org.dd4t.core.caching.CacheDependency;
-import org.dd4t.core.caching.CacheElement;
-import org.dd4t.core.caching.CacheInvalidator;
-import org.dd4t.core.caching.impl.CacheDependencyImpl;
-import org.dd4t.core.caching.impl.CacheElementImpl;
+import org.dd4t.caching.Cachable;
+import org.dd4t.caching.CacheDependency;
+import org.dd4t.caching.CacheElement;
+import org.dd4t.caching.CacheInvalidator;
+import org.dd4t.caching.impl.CacheDependencyImpl;
+import org.dd4t.caching.impl.CacheElementImpl;
 import org.dd4t.core.util.TridionUtils;
 import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.PayloadCacheProvider;

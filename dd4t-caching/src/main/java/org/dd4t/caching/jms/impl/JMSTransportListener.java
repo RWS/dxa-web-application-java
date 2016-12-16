@@ -1,4 +1,4 @@
-package org.dd4t.core.caching.jms.impl;
+package org.dd4t.caching.jms.impl;
 
 import org.apache.activemq.transport.TransportListener;
 

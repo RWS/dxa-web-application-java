@@ -1,13 +1,13 @@
-package org.dd4t.core.caching.impl;
+package org.dd4t.caching.impl;
 
 import java.util.Collection;
 import java.util.List;
 
 import javax.annotation.Resource;
 
-import org.dd4t.core.caching.Cachable;
-import org.dd4t.core.caching.CacheDependency;
-import org.dd4t.core.caching.CacheElement;
+import org.dd4t.caching.CacheElement;
+import org.dd4t.caching.Cachable;
+import org.dd4t.caching.CacheDependency;
 import org.dd4t.providers.CacheProvider;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.slf4j.Logger;

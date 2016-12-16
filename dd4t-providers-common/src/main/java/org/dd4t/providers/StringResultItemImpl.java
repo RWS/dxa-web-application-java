@@ -1,7 +1,6 @@
 package org.dd4t.providers;
 
 import org.dd4t.core.util.Constants;
-import org.dd4t.providers.ProviderResultItem;
 import org.joda.time.DateTime;
 
 import java.util.Date;

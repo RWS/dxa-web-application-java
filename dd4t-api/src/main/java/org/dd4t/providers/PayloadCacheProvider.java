@@ -18,8 +18,8 @@ package org.dd4t.providers;
 
 import java.util.List;
 
-import org.dd4t.core.caching.CacheDependency;
-import org.dd4t.core.caching.CacheElement;
+import org.dd4t.caching.CacheDependency;
+import org.dd4t.caching.CacheElement;
 
 public interface PayloadCacheProvider {
 

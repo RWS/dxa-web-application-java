@@ -286,12 +286,11 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
     }
 
     /**
-     * If it starts with {", it's probably JSON
+     * To-Do: implement sanity checking that we're given json
      * 
      */
-    @Override
-    public boolean canDeserialize(String source) {
-           return source.startsWith("{\"");
-    }
-
+	@Override
+	public boolean canDeserialize(String source) {
+		return source.startsWith("{\"");
+	}
 }

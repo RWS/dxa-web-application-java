@@ -31,10 +31,10 @@ import com.sdl.webapp.tridion.fields.converters.FieldConverter;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedFieldTypeException;
 import com.sdl.webapp.util.dd4t.FieldUtils;
+import com.sdl.webapp.util.dd4t.MvcDataHelper;
 import lombok.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
-import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
@@ -52,15 +52,15 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.sdl.webapp.util.dd4t.MvcDataHelper.createPageMvcData;
+import static com.sdl.webapp.util.dd4t.MvcDataHelper.createRegionMvcData;
+import static com.sdl.webapp.util.dd4t.MvcDataHelper.getRegionName;
 
 @Component
 public final class PageBuilderImpl implements PageBuilder {
@@ -78,20 +78,6 @@ public final class PageBuilderImpl implements PageBuilder {
     private static final String STANDARD_METADATA_DESCRIPTION_FIELD_NAME = "description";
 
     private static final String COMPONENT_PAGE_TITLE_FIELD_NAME = "headline";
-
-    private static final String DEFAULT_AREA_NAME = "Core";
-
-    private static final String PAGE_CONTROLLER_NAME = "Page";
-
-    private static final String PAGE_ACTION_NAME = "Page";
-
-    private static final String REGION_CONTROLLER_NAME = "Region";
-
-    private static final String REGION_ACTION_NAME = "Region";
-
-    private static final String DEFAULT_REGION_NAME = "Main";
-
-    private static final Pattern REGION_VIEW_NAME_PATTERN = Pattern.compile(".*\\[(.*)\\]");
 
     @Autowired
     private ModelBuilderPipeline modelBuilderPipeline;
@@ -173,22 +159,6 @@ public final class PageBuilderImpl implements PageBuilder {
         return metaMap.get(key).getValues().get(0).toString();
     }
 
-    private static String getRegionName(ComponentPresentation cp) {
-        final Map<String, Field> templateMeta = cp.getComponentTemplate().getMetadata();
-        if (templateMeta != null) {
-            String regionName = FieldUtils.getStringValue(templateMeta, "regionName");
-            if (isNullOrEmpty(regionName)) {
-                //fallback if region name field is empty, use regionView name
-                regionName = FieldUtils.getStringValue(templateMeta, "regionView");
-                if (isNullOrEmpty(regionName)) {
-                    regionName = DEFAULT_REGION_NAME;
-                }
-            }
-            return regionName;
-        }
-
-        return null;
-    }
 
     private static Map<String, Object> createXpmMetaData(org.dd4t.contentmodel.Page page, Localization localization) {
         final PageTemplate pageTemplate = page.getPageTemplate();
@@ -203,28 +173,6 @@ public final class PageBuilderImpl implements PageBuilder {
         xpmMetaDataBuilder.put("CmsUrl", localization.getConfiguration("core.cmsurl"));
 
         return xpmMetaDataBuilder.build();
-    }
-
-    private static String[] getPageViewNameParts(PageTemplate pageTemplate) {
-        String fullName = FieldUtils.getStringValue(pageTemplate.getMetadata(), "view");
-        if (isNullOrEmpty(fullName)) {
-            fullName = pageTemplate.getTitle().replaceAll(" ", "");
-        }
-        return splitName(fullName);
-    }
-
-    private static String[] getRegionViewNameParts(ComponentTemplate componentTemplate) {
-        String fullName = FieldUtils.getStringValue(componentTemplate.getMetadata(), "regionView");
-        if (isNullOrEmpty(fullName)) {
-            final Matcher matcher = REGION_VIEW_NAME_PATTERN.matcher(componentTemplate.getTitle());
-            fullName = matcher.matches() ? matcher.group(1) : DEFAULT_REGION_NAME;
-        }
-        return splitName(fullName);
-    }
-
-    private static String[] splitName(String name) {
-        final String[] parts = name.split(":");
-        return parts.length > 1 ? parts : new String[]{DEFAULT_AREA_NAME, name};
     }
 
     /**
@@ -536,66 +484,6 @@ public final class PageBuilderImpl implements PageBuilder {
         return result;
     }
 
-    private MvcData createPageMvcData(PageTemplate pageTemplate) {
-        final String[] viewNameParts = getPageViewNameParts(pageTemplate);
-        return MvcDataCreator.creator()
-                .defaults(DefaultsMvcData.CORE_PAGE)
-                .builder()
-                .areaName(viewNameParts[0])
-                .viewName(viewNameParts[1])
-                .metadata(getMvcMetadata(pageTemplate))
-                .build();
-    }
-
-    private MvcData createRegionMvcData(ComponentTemplate componentTemplate) {
-        final String[] viewNameParts = getRegionViewNameParts(componentTemplate);
-        return MvcDataCreator.creator()
-                .defaults(DefaultsMvcData.CORE_REGION)
-                .builder()
-                .areaName(viewNameParts[0])
-                .viewName(viewNameParts[1])
-                .build();
-    }
-
-    private Map<String, Object> getMvcMetadata(PageTemplate pageTemplate) {
-
-        Map<String, Object> metadata = new HashMap<>();
-        Map<String, Field> metadataFields = pageTemplate.getMetadata();
-        for (Map.Entry<String, Field> entry : metadataFields.entrySet()) {
-
-            String fieldName = entry.getKey();
-            if (fieldName.equals("view") ||
-                    fieldName.equals("includes")) {
-                continue;
-            }
-            Field field = entry.getValue();
-            if (field.getFieldType() == FieldType.EMBEDDED) {
-                // Output embedded field as List<Map<String,String>>
-                //
-                List<Map<String, String>> embeddedDataList = new ArrayList<>();
-                for (Object value : field.getValues()) {
-                    FieldSet fieldSet = (FieldSet) value;
-                    Map<String, String> embeddedData = new HashMap<>();
-                    for (String subFieldName : fieldSet.getContent().keySet()) {
-                        Field subField = fieldSet.getContent().get(subFieldName);
-                        if (!subField.getValues().isEmpty()) {
-                            embeddedData.put(subFieldName, subField.getValues().get(0).toString());
-                        }
-                    }
-                    embeddedDataList.add(embeddedData);
-                }
-                metadata.put(fieldName, embeddedDataList);
-            } else {
-                // Output other field types as single-value text fields
-                //
-                if (field.getValues().size() > 0) {
-                    metadata.put(fieldName, field.getValues().get(0).toString()); // Assume single-value text fields for template metadata
-                }
-            }
-        }
-        return metadata;
-    }
-
     private class DD4TRegionBuilderCallback implements RegionBuilderCallback {
 
         @Override
@@ -615,7 +503,7 @@ public final class PageBuilderImpl implements PageBuilder {
 
         @Override
         public String getRegionName(Object source) throws ContentProviderException {
-            return PageBuilderImpl.getRegionName((ComponentPresentation) source);
+            return MvcDataHelper.getRegionName((ComponentPresentation) source);
         }
 
         @Override

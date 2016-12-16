@@ -22,7 +22,7 @@ public class MvcDataCreatorTest {
     public void shouldShouldCorrectlyParseDifferentTypeOfInitNames() {
         //given
         String fullName = "Core:Entity:YouTubeVideo";
-        String areaViewName = "Core:YouTubeVideo";
+        String areaViewName = "Hello:YouTubeVideo";
         String viewName = "YouTubeVideo";
 
         //when
@@ -40,16 +40,25 @@ public class MvcDataCreatorTest {
                 .create();
 
         //then
-        Parts parts = new Parts()
-                .controllerAreaName("Core")
+
+        assertPartsAreSet(new Parts()
+                .controllerAreaName("Framework")
                 .controllerName("Entity")
                 .areaName("Core")
                 .actionName("Entity")
-                .viewName(viewName);
-
-        assertPartsAreSet(parts, mvcDataFull);
-        assertPartsAreSet(parts, mvcDataHalf);
-        assertPartsAreSet(parts, mvcDataShort);
+                .viewName(viewName), mvcDataFull);
+        assertPartsAreSet(new Parts()
+                .controllerAreaName("Framework")
+                .controllerName("Entity")
+                .areaName("Hello")
+                .actionName("Entity")
+                .viewName(viewName), mvcDataHalf);
+        assertPartsAreSet(new Parts()
+                .controllerAreaName("Framework")
+                .controllerName("Entity")
+                .areaName("AreaName")
+                .actionName("Entity")
+                .viewName(viewName), mvcDataShort);
 
         //when
         mvcDataFull = creator(mvcDataFull).defaults(DefaultsMvcData.CORE_ENTITY).create();
@@ -57,15 +66,24 @@ public class MvcDataCreatorTest {
         mvcDataShort = creator(mvcDataShort).defaults(DefaultsMvcData.CORE_ENTITY).create();
 
         //then
-        Parts fullParts = new Parts()
-                .controllerAreaName("Core")
+        assertPartsAreSet(new Parts()
+                .controllerAreaName("Framework")
                 .controllerName("Entity")
                 .actionName("Entity")
                 .areaName("Core")
-                .viewName(viewName);
-        assertPartsAreSet(fullParts, mvcDataFull);
-        assertPartsAreSet(fullParts, mvcDataHalf);
-        assertPartsAreSet(fullParts, mvcDataShort);
+                .viewName(viewName), mvcDataFull);
+        assertPartsAreSet(new Parts()
+                .controllerAreaName("Framework")
+                .controllerName("Entity")
+                .actionName("Entity")
+                .areaName("Hello")
+                .viewName(viewName), mvcDataHalf);
+        assertPartsAreSet(new Parts()
+                .controllerAreaName("Framework")
+                .controllerName("Entity")
+                .actionName("Entity")
+                .areaName("AreaName")
+                .viewName(viewName), mvcDataShort);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -126,10 +144,10 @@ public class MvcDataCreatorTest {
 
         //then
         assertPartsAreSet(new Parts()
-                .controllerAreaName("Core")
+                .controllerAreaName("Framework")
                 .controllerName("Entity")
                 .actionName("Entity")
-                .areaName("Core")
+                .areaName("AreaName")
                 .viewName(viewName), mvcData);
     }
 

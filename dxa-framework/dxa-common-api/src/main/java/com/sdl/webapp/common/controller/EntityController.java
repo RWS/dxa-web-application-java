@@ -5,7 +5,6 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.RedirectEntity;
-import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -14,20 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.ENTITY_CONTROLLER_NAME;
-import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
+import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_MAPPING;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
 
 /**
- * Entity controller for the Core area that handles include requests to <code>/system/mvc/Core/Entity/Entity/{entityId}</code>.
+ * Entity controller for the Core area that handles include requests to <code>/system/mvc/Framework/Entity/Entity/{entityId}</code>.
+ *
+ * @see ControllerUtils
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + CORE_AREA_NAME + '/' + ENTITY_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_MAPPING + "/Entity")
 public class EntityController extends BaseController {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityController.class);
-
 
     /**
      * Handles a request for an entity.
@@ -38,7 +36,7 @@ public class EntityController extends BaseController {
      * @throws ContentProviderException If an error occurs so that the entity cannot not be retrieved.
      * @throws java.lang.Exception      if any.
      */
-    @RequestMapping(value = DefaultsMvcData.CoreAreaConstants.ENTITY_ACTION_NAME + "/{entityId}")
+    @RequestMapping(value = "Entity" + "/{entityId}")
     public String handleGetEntity(HttpServletRequest request,
                                   @PathVariable String entityId)
             throws Exception {

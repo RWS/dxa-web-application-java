@@ -377,4 +377,12 @@ public class InitializationUtilsTest {
     }
 
 
+    @Test
+    public void shouldGetConfigurationByKey() {
+        //when
+        assertEquals("cid", InitializationUtils.getConfiguration("dxa.modules.cid", null));
+        assertNull(InitializationUtils.getConfiguration("not.existing.key", null));
+        assertEquals("hello", InitializationUtils.getConfiguration("not.existing.key", "hello"));
+    }
+
 }

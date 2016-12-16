@@ -26,6 +26,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.getDefaultActionName;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.getDefaultControllerAreaName;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.getDefaultControllerName;
+
 /**
  * Abstract superclass for controllers with utility methods and exception handling.
  */
@@ -47,9 +51,9 @@ public abstract class BaseController {
     private RequestMappingHandlerMapping requestMappingHandlerMapping;
 
     private static Boolean isCustomAction(MvcData mvcData) {
-        return !Objects.equals(mvcData.getActionName(), "Entity")
-                || !Objects.equals(mvcData.getControllerName(), "Entity")
-                || !Objects.equals(mvcData.getControllerAreaName(), "Core");
+        return !Objects.equals(mvcData.getActionName(), getDefaultActionName())
+                || !Objects.equals(mvcData.getControllerName(), getDefaultControllerName())
+                || !Objects.equals(mvcData.getControllerAreaName(), getDefaultControllerAreaName());
     }
 
     RegionModel getRegionFromRequest(HttpServletRequest request, String regionName) {
@@ -192,8 +196,8 @@ public abstract class BaseController {
 
         MvcData mvcData = entity.getMvcData();
 
-        String controllerName = mvcData.getControllerName() != null ? mvcData.getControllerName() : "Entity";
-        String controllerAreaName = mvcData.getControllerAreaName() != null ? mvcData.getControllerAreaName() : "Core";
+        String controllerName = mvcData.getControllerName() != null ? mvcData.getControllerName() : getDefaultControllerName();
+        String controllerAreaName = mvcData.getControllerAreaName() != null ? mvcData.getControllerAreaName() : getDefaultControllerAreaName();
 
         Map<RequestMappingInfo, HandlerMethod> handlerMethods =
                 this.requestMappingHandlerMapping.getHandlerMethods();

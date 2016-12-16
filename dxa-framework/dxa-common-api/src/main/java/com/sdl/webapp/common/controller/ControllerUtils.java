@@ -13,6 +13,10 @@ public final class ControllerUtils {
 
     public static final String INCLUDE_PATH_PREFIX = "/system/mvc/";
 
+    public static final String FRAMEWORK_CONTROLLER_MAPPING = "Framework";
+
+    public static final String INCLUDE_MAPPING = INCLUDE_PATH_PREFIX + FRAMEWORK_CONTROLLER_MAPPING;
+
     public static final String SECTION_ERROR_VIEW = "Shared/Error/SectionError";
 
     @Deprecated

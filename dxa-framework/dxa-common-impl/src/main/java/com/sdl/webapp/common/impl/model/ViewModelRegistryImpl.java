@@ -21,10 +21,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.getDefaultAreaName;
+
 @Component
-/**
- * <p>ViewModelRegistryImpl class.</p>
- */
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewModelRegistryImpl.class);
@@ -40,23 +39,64 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
-    public void registerViewModel(MvcData viewData, Class<? extends ViewModel> entityClass) {
-        try {
-            if (lock.tryLock(10, TimeUnit.SECONDS)) {
-                if (viewData != null) {
-                    if (viewEntityClassMap.containsKey(viewData)) {
-                        LOG.warn("View {} registered multiple times.", viewData);
-                        return;
-                    }
-                    viewEntityClassMap.put(viewData, entityClass);
-                }
-                semanticMappingRegistry.registerEntity((Class<? extends EntityModel>) entityClass);
-            }
-        } catch (InterruptedException e) {
-            LOG.warn(e.getMessage(), e);
-        } finally {
-            lock.unlock();
+    public Class<? extends ViewModel> getViewEntityClass(final String viewName) throws DxaException {
+
+        final String areaName;
+        final String scopedViewName;
+        if (!viewName.contains(":")) { // default module
+            areaName = getDefaultAreaName();
+            scopedViewName = viewName;
+        } else {
+            String[] parts = viewName.split(":");
+            areaName = parts[0];
+            scopedViewName = parts[1];
         }
+        Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>> keyNamePredicate =
+                new Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>>() {
+                    @Override
+                    public boolean apply(Map.Entry<MvcData, Class<? extends ViewModel>> input) {
+                        return input.getKey().getAreaName().equals(areaName) && input.getKey().getViewName().equals(scopedViewName);
+                    }
+                };
+
+
+        Map<MvcData, Class<? extends ViewModel>> possibleValues = Maps.filterEntries(viewEntityClassMap, keyNamePredicate);
+        if (possibleValues.isEmpty()) {
+            throw new DxaException(String.format("Could not find a view model for the view name %s", viewName));
+        } else {
+            return possibleValues.entrySet().iterator().next().getValue();
+        }
+
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames) {
+        Class<? extends ViewModel> entityClass = null;
+        for (String fullyQualifiedName : semanticTypeNames) {
+            entityClass = getMappedModelTypes(fullyQualifiedName);
+            if (entityClass != null) {
+                break;
+            }
+        }
+        if (entityClass == null) {
+            LOG.error("Cannot determine entity type for semantic schema names: '{}'. Please make sure " +
+                    "that an entry is registered for this view name in the ViewModelRegistry.", semanticTypeNames);
+        }
+        return entityClass;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) {
+
+        Class<? extends ViewModel> retval = this.semanticMappingRegistry.getEntityClassByFullyQualifiedName(semanticTypeName);
+        if (retval != null) {
+            return retval;
+        }
+        //Fallback
+        MvcData mvcData = MvcDataCreator.creator().fromQualifiedName(semanticTypeName).create();
+        return getViewModelType(mvcData);
     }
 
     /**
@@ -96,65 +136,26 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames) {
-        Class<? extends ViewModel> entityClass = null;
-        for (String fullyQualifiedName : semanticTypeNames) {
-            entityClass = getMappedModelTypes(fullyQualifiedName);
-            if (entityClass != null) {
-                break;
-            }
-        }
-        if (entityClass == null) {
-            LOG.error("Cannot determine entity type for semantic schema names: '{}'. Please make sure " +
-                    "that an entry is registered for this view name in the ViewModelRegistry.", semanticTypeNames);
-        }
-        return entityClass;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) {
-
-        Class<? extends ViewModel> retval = this.semanticMappingRegistry.getEntityClassByFullyQualifiedName(semanticTypeName);
-        if (retval != null) {
-            return retval;
-        }
-        //Fallback
-        MvcData mvcData = MvcDataCreator.creator().fromQualifiedName(semanticTypeName).create();
-        return getViewModelType(mvcData);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ViewModel> getViewEntityClass(final String viewName) throws DxaException {
-
-        final String areaName;
-        final String scopedViewName;
-        if (!viewName.contains(":")) { // Core module
-            areaName = "Core";
-            scopedViewName = viewName;
-        } else {
-            String[] parts = viewName.split(":");
-            areaName = parts[0];
-            scopedViewName = parts[1];
-        }
-        Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>> keyNamePredicate =
-                new Predicate<Map.Entry<MvcData, Class<? extends ViewModel>>>() {
-                    @Override
-                    public boolean apply(Map.Entry<MvcData, Class<? extends ViewModel>> input) {
-                        return input.getKey().getAreaName().equals(areaName) && input.getKey().getViewName().equals(scopedViewName);
+    public void registerViewModel(MvcData viewData, Class<? extends ViewModel> entityClass) {
+        try {
+            if (lock.tryLock(10, TimeUnit.SECONDS)) {
+                if (viewData != null) {
+                    if (viewEntityClassMap.containsKey(viewData)) {
+                        LOG.warn("View {} registered multiple times.", viewData);
+                        return;
                     }
-                };
-
-
-        Map<MvcData, Class<? extends ViewModel>> possibleValues = Maps.filterEntries(viewEntityClassMap, keyNamePredicate);
-        if (possibleValues.isEmpty()) {
-            throw new DxaException(String.format("Could not find a view model for the view name %s", viewName));
-        } else {
-            return possibleValues.entrySet().iterator().next().getValue();
+                    viewEntityClassMap.put(viewData, entityClass);
+                }
+                semanticMappingRegistry.registerEntity((Class<? extends EntityModel>) entityClass);
+            }
+        } catch (InterruptedException e) {
+            LOG.warn(e.getMessage(), e);
+        } finally {
+            lock.unlock();
         }
-
     }
 }

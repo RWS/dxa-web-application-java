@@ -274,7 +274,8 @@ public final class PageBuilderImpl implements PageBuilder {
             final Class<? extends ViewModel> entityClass = viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
             pageModel = (PageModel) createViewModel(entityClass, semanticSchema, genericPage);
         } else {
-            throw new DxaException(String.format("Cannot instantiate new page of template %s", genericPage.getPageTemplate().getTitle()));
+            throw new DxaException(String.format("Cannot instantiate new page of template '%s' with Mvc data = %s",
+                    genericPage.getPageTemplate().getTitle(), pageMvcData.toString()));
         }
 
         pageModel.setId(String.valueOf(TcmUtils.getItemId(genericPage.getId())));

@@ -15,6 +15,7 @@ public class XpmButtonTag extends XpmMarkupTag {
     private static final Logger LOG = LoggerFactory.getLogger(XpmButtonTag.class);
 
     private RegionModel region;
+	private String cssClass;
 
     /**
      * <p>Setter for the field <code>region</code>.</p>
@@ -23,6 +24,19 @@ public class XpmButtonTag extends XpmMarkupTag {
      */
     public void setRegion(RegionModel region) {
         this.region = region;
+    }
+
+    /**
+     * <p>Setter for the field <code>cssClass</code>.</p>
+     *
+     * @param cssClass a {@link string} object.
+     */
+    public void setCssClass(String cssClass) {
+        if (!Strings.isNullOrEmpty(cssClass)) {
+            this.cssClass = " " + cssClass;
+        } else {
+            this.cssClass = "";
+        }
     }
 
     private boolean isInclude() {
@@ -39,7 +53,7 @@ public class XpmButtonTag extends XpmMarkupTag {
             String title = "Go Back";
             String editUrl = "javascript:history.back()";
             return HtmlBuilders.div()
-                    .withClass("xpm-button")
+                    .withClass("xpm-button" + cssClass)
                     .withAttribute("style", "z-index:1")
                     .withNode(HtmlBuilders.a(editUrl)
                             .withClass("fa-stack fa-lg")

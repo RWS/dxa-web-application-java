@@ -34,6 +34,7 @@ public class LocalizationImpl implements Localization {
     @Getter
     private final String path;
 
+    @Getter
     private final String mediaRoot;
 
     private final boolean default_;

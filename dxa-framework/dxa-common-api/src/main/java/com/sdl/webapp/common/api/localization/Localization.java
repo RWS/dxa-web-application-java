@@ -25,6 +25,13 @@ public interface Localization {
     String getPath();
 
     /**
+     * <p>getMediaRoot.</p>
+     *
+     * @return a {@Link java.lang.String} object.
+     */
+    String getMediaRoot();
+
+    /**
      * Determines if the specified URL refers to static content in this localization.
      *
      * @return {@code true} if the specified URL refers to static content in this localization, {@code false} otherwise.

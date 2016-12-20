@@ -297,14 +297,25 @@ public final class EntityBuilderImpl implements EntityBuilder {
     }
 
     private void processMediaItems(Component component, Localization localization, AbstractEntityModel entity) {
-        if (entity instanceof MediaItem && component.getMultimedia() != null && !isEmpty(component.getMultimedia().getUrl())) {
+        if (entity instanceof MediaItem && component.getMultimedia() != null ) {
             final Multimedia multimedia = component.getMultimedia();
             final MediaItem mediaItem = (MediaItem) entity;
-            mediaItem.setUrl(multimedia.getUrl());
-            mediaItem.setFileName(multimedia.getFileName());
-            mediaItem.setFileSize(multimedia.getSize());
-            mediaItem.setMimeType(multimedia.getMimeType());
-
+            if ( !isEmpty(multimedia.getUrl()) ) {
+                mediaItem.setUrl(multimedia.getUrl());
+                mediaItem.setFileName(multimedia.getFileName());
+                mediaItem.setFileSize(multimedia.getSize());
+                mediaItem.setMimeType(multimedia.getMimeType());
+            }
+            else if ( component.getExtensionData().get("ECL") != null ) {
+                FieldSet eclData = component.getExtensionData().get("ECL");
+                String filename = (String) eclData.getContent().get("FileName").getValues().get(0);
+                String mime = (String) eclData.getContent().get("MimeType").getValues().get(0);
+                filename = filename.replace(".", "_" + component.getId().substring(4) + ".");
+                mediaItem.setUrl(localization.localizePath(localization.getMediaRoot()) + filename);
+                mediaItem.setFileName(filename);
+                mediaItem.setFileSize(multimedia.getSize());
+                mediaItem.setMimeType(mime);
+            }
             // ECL item is handled as as media item even if it maybe is not so in all cases (such as product items)
             processEclItems(component, localization, entity);
         }

@@ -169,6 +169,15 @@ public abstract class MediaItem extends AbstractEntityModel {
         if (!Strings.isNullOrEmpty(fileSize)) {
             this.fileSize = Integer.parseInt(fileSize);
         }
+
+        Node styleClass = xhtmlElement.getAttributes().getNamedItem("class");
+        if (styleClass != null) {
+            String style = styleClass.getNodeValue();
+            if (!Strings.isNullOrEmpty(style)) {
+                this.setHtmlClasses(style);
+            }
+        }
+
         this.mimeType = xhtmlElement.getAttributes().getNamedItem("data-multimediaMimeType").getNodeValue();
         this.isEmbedded = true;
     }

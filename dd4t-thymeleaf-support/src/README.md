@@ -12,6 +12,6 @@ Place this somewhere near the bottom of the HTML page. Generates the <script> ta
 
 Place this tag directly inside the enclosing element of the component presentation. Note that the DD4T entity (= ViewModel) object must be on the request (in this example, it is called 'entity' but that can be different per implementation).
 
-<xpm:field src="%{entity}" fieldname="somefieldname"/>
+<xpm:field src="${entity}" fieldname="somefieldname"/>
 
 Place this tag directly inside the enclosing element of the field. Note that the DD4T entity (= ViewModel) object must be on the request (in this example, it is called 'entity' but that can be different per implementation).

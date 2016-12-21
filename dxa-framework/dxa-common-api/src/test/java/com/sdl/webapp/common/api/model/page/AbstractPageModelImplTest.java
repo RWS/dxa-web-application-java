@@ -212,4 +212,17 @@ public class AbstractPageModelImplTest {
         //then
         assertThat(feedItems, IsIterableContainingInOrder.contains(feedItem, feedItem2));
     }
+
+    @Test
+    public void shouldRemoveTcmPartFromPageId() {
+        //given 
+        DefaultPageModel pageModel = new DefaultPageModel();
+        pageModel.setId("tcm:1-2-3");
+
+        //when
+        String pureId = pageModel.getIdWithoutTcm();
+
+        //then
+        assertEquals("2", pureId);
+    }
 }

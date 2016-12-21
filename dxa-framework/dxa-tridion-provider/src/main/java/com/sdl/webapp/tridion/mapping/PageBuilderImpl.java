@@ -24,7 +24,6 @@ import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
 import com.sdl.webapp.tridion.fields.converters.FieldConverter;
@@ -278,7 +277,7 @@ public final class PageBuilderImpl implements PageBuilder {
                     genericPage.getPageTemplate().getTitle(), pageMvcData.toString()));
         }
 
-        pageModel.setId(String.valueOf(TcmUtils.getItemId(genericPage.getId())));
+        pageModel.setId(genericPage.getId());
 
         // It's confusing, but what DD4T calls the "title" is what is called the "name" in the view model
         pageModel.setName(genericPage.getTitle());

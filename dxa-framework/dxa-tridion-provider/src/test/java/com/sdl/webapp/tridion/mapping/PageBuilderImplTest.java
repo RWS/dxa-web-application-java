@@ -315,7 +315,7 @@ public class PageBuilderImplTest {
         verify(viewModelRegistry).getViewModelType(argThat(mvcDataMatcher));
 
         //TSI-2131
-        assertEquals("2", page.getId());
+        assertEquals("tcm:1-2-3", page.getId());
         // It's confusing, but what DD4T calls the "title" is what is called the "name" in the view model
         assertEquals(pageName, page.getName());
         assertThat("MvcData matches with that used for view resolving", page.getMvcData(), mvcDataMatcher);

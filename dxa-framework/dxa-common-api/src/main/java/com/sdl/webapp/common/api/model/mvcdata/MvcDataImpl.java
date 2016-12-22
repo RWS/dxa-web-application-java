@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.mvcdata;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Splitter;
 import com.sdl.webapp.common.api.model.MvcData;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -14,7 +15,10 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+
+import static com.sdl.webapp.common.controller.ControllerUtils.FRAMEWORK_CONTROLLER_MAPPING;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Getter
@@ -25,6 +29,9 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MvcDataImpl implements MvcData {
+
+    protected static final List<String> INCLUDE_CONTROLLERS = Splitter.on(",").trimResults().splitToList("Entity, List, Navigation, Region");
+
     @JsonProperty("ControllerAreaName")
     private String controllerAreaName;
 
@@ -54,11 +61,6 @@ public class MvcDataImpl implements MvcData {
     // todo dxa2 return a copy instead of real map
     private Map<String, Object> metadata = new HashMap<>();
 
-    /**
-     * <p>Constructor for MvcDataImpl.</p>
-     *
-     * @param mvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     */
     protected MvcDataImpl(MvcData mvcData) {
         this.controllerAreaName = mvcData.getControllerAreaName();
         this.controllerName = mvcData.getControllerName();
@@ -75,10 +77,6 @@ public class MvcDataImpl implements MvcData {
         return new MvcDataImplBuilder();
     }
 
-    public void addMetadataValue(String key, Object obj) {
-        this.metadata.put(key, obj);
-    }
-
     public Object getMetadataValue(String key) {
         return this.metadata.get(key);
     }
@@ -87,18 +85,36 @@ public class MvcDataImpl implements MvcData {
         return MvcDataImplBuilder.toBuilder(this);
     }
 
+    @Override
+    public String getControllerAreaName() {
+        return INCLUDE_CONTROLLERS.contains(getControllerName()) ? FRAMEWORK_CONTROLLER_MAPPING : controllerAreaName;
+    }
+
+    public void addMetadataValue(String key, Object obj) {
+        this.metadata.put(key, obj);
+    }
+
     /**
      * Builder for MvcData. Lombok's implementation fails on Javadoc.
      */
     public static class MvcDataImplBuilder {
+
         private String controllerAreaName;
+
         private String controllerName;
+
         private String actionName;
+
         private String areaName;
+
         private String viewName;
+
         private String regionAreaName;
+
         private String regionName;
+
         private Map<String, String> routeValues = new HashMap<>();
+
         private Map<String, Object> metadata = new HashMap<>();
 
         protected static MvcDataImplBuilder toBuilder(MvcData mvcData) {

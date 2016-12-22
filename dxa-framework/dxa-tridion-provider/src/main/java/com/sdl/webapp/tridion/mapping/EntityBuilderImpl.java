@@ -7,13 +7,11 @@ import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
-import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
@@ -37,19 +35,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.sdl.webapp.util.dd4t.MvcDataHelper.createMvcData;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
 @Service
 public final class EntityBuilderImpl implements EntityBuilder {
-
-    private static final String DEFAULT_AREA_NAME = "Core";
-
-    private static final String DEFAULT_CONTROLLER_NAME = "Entity";
-
-    private static final String DEFAULT_ACTION_NAME = "Entity";
-
-    private static final String DEFAULT_REGION_NAME = "Main";
 
     @Autowired
     private ViewModelRegistry viewModelRegistry;
@@ -137,101 +128,6 @@ public final class EntityBuilderImpl implements EntityBuilder {
         xpmMetaData.put("ComponentTemplateModified", ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
         xpmMetaData.put("IsRepositoryPublished", componentPresentation.isDynamic());
         return xpmMetaData;
-    }
-
-    private static String[] getControllerNameParts(Map<String, Field> templateMeta) {
-        String fullName = FieldUtils.getStringValue(templateMeta, "controller");
-        if (isEmpty(fullName)) {
-            fullName = DEFAULT_CONTROLLER_NAME;
-        }
-        return splitName(fullName);
-    }
-
-    private static String getActionName(Map<String, Field> templateMeta) {
-        String actionName = FieldUtils.getStringValue(templateMeta, "action");
-        if (isEmpty(actionName)) {
-            actionName = DEFAULT_ACTION_NAME;
-        }
-        return actionName;
-    }
-
-    private static String[] getViewNameParts(ComponentTemplate componentTemplate) {
-        String fullName = FieldUtils.getStringValue(componentTemplate.getMetadata(), "view");
-        if (isEmpty(fullName)) {
-            fullName = componentTemplate.getTitle().replaceAll("\\[.*\\]|\\s", "");
-        }
-        return splitName(fullName);
-    }
-
-    private static String[] getRegionNameParts(Map<String, Field> templateMeta) {
-        String fullName = FieldUtils.getStringValue(templateMeta, "regionView");
-        if (isEmpty(fullName)) {
-            fullName = DEFAULT_REGION_NAME;
-        }
-        return splitName(fullName);
-    }
-
-    private static String[] splitName(String name) {
-        final String[] parts = name.split(":");
-        return parts.length > 1 ? parts : new String[]{DEFAULT_AREA_NAME, name};
-    }
-
-    private static Map<String, Object> getMvcMetadata(ComponentTemplate componentTemplate) {
-
-        // TODO: Move this code into a generic MvcDataHelper class
-
-        Map<String, Object> metadata = new HashMap<>();
-        Map<String, Field> metadataFields = componentTemplate.getMetadata();
-
-        for (Map.Entry<String, Field> entry : metadataFields.entrySet()) {
-            String fieldName = entry.getKey();
-            if ("view".equals(fieldName) || "regionView".equals(fieldName) || "controller".equals(fieldName) ||
-                    "action".equals(fieldName) || "routeValues".equals(fieldName)) {
-                continue;
-            }
-            Field field = entry.getValue();
-            if (!field.getValues().isEmpty()) {
-                metadata.put(fieldName, field.getValues().get(0).toString()); // Assume single-value text fields for template metadata
-            }
-        }
-        return metadata;
-    }
-
-    private static MvcData createMvcData(ComponentPresentation componentPresentation) {
-        final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
-        final Map<String, Field> templateMeta = componentTemplate.getMetadata();
-
-        final String[] controllerNameParts = getControllerNameParts(templateMeta);
-        final String[] viewNameParts = getViewNameParts(componentTemplate);
-        final String[] regionNameParts = getRegionNameParts(templateMeta);
-
-        final String actionName = getActionName(templateMeta);
-
-        final Map<String, Object> mvcMetadata = EntityBuilderImpl.getMvcMetadata(componentPresentation.getComponentTemplate());
-
-        final Map<String, String> routeValues = new HashMap<>();
-
-        String routeValuesStrings = FieldUtils.getStringValue(templateMeta, "routeValues");
-        if (routeValuesStrings != null) {
-            for (String value : routeValuesStrings.split(",")) {
-                final String[] parts = value.split(":");
-                if (parts.length > 1 && !routeValues.containsKey(parts[0])) {
-                    routeValues.put(parts[0], parts[1]);
-                }
-            }
-        }
-
-        return MvcDataImpl.newBuilder()
-                .controllerAreaName(controllerNameParts[0])
-                .controllerName(controllerNameParts[1])
-                .areaName(viewNameParts[0])
-                .viewName(viewNameParts[1])
-                .regionAreaName(regionNameParts[0])
-                .regionName(regionNameParts[1])
-                .actionName(actionName)
-                .metadata(mvcMetadata)
-                .routeValues(routeValues)
-                .build();
     }
 
     /**

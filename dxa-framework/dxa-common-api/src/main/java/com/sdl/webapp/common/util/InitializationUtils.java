@@ -5,6 +5,7 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -25,6 +26,8 @@ import java.util.Collection;
 import java.util.EventListener;
 import java.util.List;
 import java.util.Properties;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 @Slf4j
 public final class InitializationUtils {
@@ -314,4 +317,19 @@ public final class InitializationUtils {
         servletContext.addListener(listener);
         log.info(REGISTERED_LOG_MESSAGE, listener.getClass().getName());
     }
+
+    /**
+     * Returns the value from configuration by {@code key} specified or {@code defaultValue} if there is no property with such key.
+     * Empty values from configuration are treated as values meaning this method doesn't check if the value is blank.
+     *
+     * @param key          key to look up
+     * @param defaultValue default value if configuration property doesn't exist
+     * @return value for key, or defaultValue
+     * @since 1.7
+     */
+    @Nullable
+    public static String getConfiguration(String key, String defaultValue) {
+        return defaultString(loadDxaProperties().getProperty(key), defaultValue);
+    }
+
 }

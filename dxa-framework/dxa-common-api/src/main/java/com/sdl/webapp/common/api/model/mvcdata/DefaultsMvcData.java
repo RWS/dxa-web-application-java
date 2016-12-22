@@ -2,34 +2,26 @@ package com.sdl.webapp.common.api.model.mvcdata;
 
 import lombok.Getter;
 
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.ENTITY_ACTION_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.ENTITY_CONTROLLER_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.ERROR_ACTION_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.ERROR_CONTROLLER_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.PAGE_ACTION_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.PAGE_CONTROLLER_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.REGION_ACTION_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.REGION_CONTROLLER_NAME;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CoreAreaConstants.SHARED_AREA_NAME;
+import static com.sdl.webapp.common.controller.ControllerUtils.FRAMEWORK_CONTROLLER_MAPPING;
+import static com.sdl.webapp.common.util.InitializationUtils.getConfiguration;
 
 @Getter
-/**
- * <p>DefaultsMvcData class.</p>
- */
 public enum DefaultsMvcData {
 
-    CORE_ENTITY("Core", CORE_AREA_NAME, ENTITY_CONTROLLER_NAME, ENTITY_ACTION_NAME),
+    CORE_ENTITY(FRAMEWORK_CONTROLLER_MAPPING, getDefaultAreaName(), "Entity", "Entity"),
 
-    CORE_PAGE("Core", CORE_AREA_NAME, PAGE_CONTROLLER_NAME, PAGE_ACTION_NAME),
+    CORE_PAGE(FRAMEWORK_CONTROLLER_MAPPING, getDefaultAreaName(), "Page", "Page"),
 
-    CORE_REGION("Core", CORE_AREA_NAME, REGION_CONTROLLER_NAME, REGION_ACTION_NAME),
+    CORE_REGION(FRAMEWORK_CONTROLLER_MAPPING, getDefaultAreaName(), "Region", "Region"),
 
-    ERROR_ENTITY("Shared", SHARED_AREA_NAME, ERROR_CONTROLLER_NAME, ERROR_ACTION_NAME);
+    ERROR_ENTITY("Shared", "Shared", "Error", "Entity");
 
     private String controllerAreaName;
+
     private String controllerName;
+
     private String actionName;
+
     private String areaName;
 
     DefaultsMvcData(String controllerAreaName, String areaName, String controllerName, String actionName) {
@@ -39,28 +31,50 @@ public enum DefaultsMvcData {
         this.actionName = actionName;
     }
 
-    public interface CoreAreaConstants {
-        String CORE_AREA_NAME = "Core";
 
-        String SHARED_AREA_NAME = "Shared";
-
-        String PAGE_CONTROLLER_NAME = "Page";
-        String PAGE_ACTION_NAME = "Page";
-
-        String REGION_CONTROLLER_NAME = "Region";
-        String REGION_ACTION_NAME = "Region";
-
-        String ENTITY_CONTROLLER_NAME = "Entity";
-        String ENTITY_ACTION_NAME = "Entity";
-
-        String LIST_CONTROLLER_NAME = "List";
-        String LIST_ACTION_NAME = "List";
-
-        String ERROR_CONTROLLER_NAME = "Error";
-        String ERROR_ACTION_NAME = "Entity";
-
-        String NAVIGATION_CONTROLLER_NAME = "Navigation";
-        String NAVIGATION_ACTION_NAME = "Navigation";
-        String SITEMAP_ACTION_NAME = "SiteMap";
+    /**
+     * Returns the pre-configured area name with defaults to {@code Core}.
+     *
+     * @return pre-configured area name or default name
+     */
+    public static String getDefaultAreaName() {
+        return getConfiguration("dxa.web.default.area.name", "Core");
     }
+
+    /**
+     * Returns the pre-configured region name with defaults to {@code Main}.
+     *
+     * @return pre-configured region name or default name
+     */
+    public static String getDefaultRegionName() {
+        return getConfiguration("dxa.web.default.region.name", "Main");
+    }
+
+    /**
+     * Returns the pre-configured controller name with defaults to {@code Entity}.
+     *
+     * @return pre-configured controller name or default name
+     */
+    public static String getDefaultControllerName() {
+        return getConfiguration("dxa.web.default.controller.name", "Entity");
+    }
+
+    /**
+     * Returns the pre-configured controller area name with defaults to {@code Core}.
+     *
+     * @return pre-configured controller area name or default name
+     */
+    public static String getDefaultControllerAreaName() {
+        return getConfiguration("dxa.web.default.controller.area.name", "Core");
+    }
+
+    /**
+     * Returns the pre-configured action name with defaults to {@code Entity}.
+     *
+     * @return pre-configured action name or default name
+     */
+    public static String getDefaultActionName() {
+        return getConfiguration("dxa.web.default.action.name", "Entity");
+    }
+
 }

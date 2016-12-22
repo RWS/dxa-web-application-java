@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
@@ -73,11 +72,6 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
         return result;
     }
 
-    @PostConstruct
-    public void init() {
-        oDataContextEngine = new ODataContextEngine();
-    }
-
     @Override
     public Map<String, Object> getContextClaims(String aspectName) throws DxaException {
         HttpServletRequest request = HttpUtils.getCurrentRequest();
@@ -101,6 +95,9 @@ public class ContextServiceClaimsProvider implements ContextClaimsProvider {
         ContextMap<? extends Aspect> contextMap;
         try {
             Evidence evidence = evidenceBuilder.build();
+            if (oDataContextEngine == null) {
+                oDataContextEngine = new ODataContextEngine();
+            }
             contextMap = oDataContextEngine.resolve(evidence);
             log.trace("Current data context engine impl is {}", oDataContextEngine.getClass());
             log.debug("Requested context map for aspect {} with evidence {}, and got {}", aspectName, evidence, contextMap);

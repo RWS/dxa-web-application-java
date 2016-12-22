@@ -12,7 +12,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-bom</artifactId>
-    <version>1.7.0-SNAPSHOT</version>
+    <version>1.7.0</version>
     <packaging>pom</packaging>
 
     <name>DXA - Bill of Materials</name>
@@ -45,8 +45,8 @@
     </developers>
 
     <properties>
-        <dd4t.version>2.1.3-DXA17</dd4t.version>
-        <cd-cil.version>8.5.0-1007</cd-cil.version>
+        <dd4t.version>2.1.4-DXA17</dd4t.version>
+        <cd-cil.version>8.5.0-1008</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>

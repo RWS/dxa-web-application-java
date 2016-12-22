@@ -8,7 +8,6 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
-import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import org.jetbrains.annotations.NotNull;
@@ -25,19 +24,21 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
+import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_MAPPING;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
 
 
 /**
  * Navigation controller for the Core area.
  * <p>
- * This handles include requests to /system/mvc/Core/Navigation/Navigation/{regionName}/{entityId}
- * and /system/mvc/Core/Navigation/SiteMap/{regionName}/{entityId}
+ * This handles include requests to /system/mvc/Framework/Navigation/Navigation/{regionName}/{entityId}
+ * and /system/mvc/Framework/Navigation/SiteMap/{regionName}/{entityId}
  * </p>
+ *
+ * @see ControllerUtils
  */
 @Controller
-@RequestMapping(INCLUDE_PATH_PREFIX + DefaultsMvcData.CoreAreaConstants.CORE_AREA_NAME + '/' + DefaultsMvcData.CoreAreaConstants.NAVIGATION_CONTROLLER_NAME)
+@RequestMapping(INCLUDE_MAPPING + "/Navigation")
 public class NavigationController extends BaseController {
 
     private static final Logger LOG = LoggerFactory.getLogger(NavigationController.class);
@@ -117,7 +118,7 @@ public class NavigationController extends BaseController {
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      * @throws java.lang.Exception         if any.
      */
-    @RequestMapping(value = DefaultsMvcData.CoreAreaConstants.NAVIGATION_ACTION_NAME + "/{entityId}")
+    @RequestMapping(value = "Navigation/{entityId}")
     public String handleGetNavigation(HttpServletRequest request,
                                       @PathVariable String entityId, @RequestParam String navType)
             throws Exception {
@@ -172,7 +173,7 @@ public class NavigationController extends BaseController {
      * @return The name of the entity view that should be rendered for this request.
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
-    @RequestMapping(value = DefaultsMvcData.CoreAreaConstants.SITEMAP_ACTION_NAME + "/{entityId}")
+    @RequestMapping(value = "SiteMap/{entityId}")
     public String handleGetSiteMap(HttpServletRequest request,
                                    @PathVariable String entityId) throws NavigationProviderException {
         LOG.trace("handleGetSiteMap: entityId={}", entityId);

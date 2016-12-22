@@ -12,7 +12,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-bom</artifactId>
-    <version>1.7.0</version>
+    <version>1.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>DXA - Bill of Materials</name>

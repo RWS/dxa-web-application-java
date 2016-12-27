@@ -160,6 +160,7 @@
                 <module>dd4t-compatibility</module>
                 <module>dd4t-databind</module>
                 <module>dd4t-mvc-support</module>
+                <module>dd4t-thymeleaf-support</module>
                 <module>dd4t-providers-common</module>
                 <module>dd4t-providers</module>
                 <module>dd4t-providers-web8</module>
@@ -189,6 +190,7 @@
                 <module>dd4t-compatibility</module>
                 <module>dd4t-databind</module>
                 <module>dd4t-mvc-support</module>
+                <module>dd4t-thymeleaf-support</module>
                 <module>dd4t-providers-common</module>
                 <module>dd4t-providers</module>
                 <module>dd4t-providers-web8</module>

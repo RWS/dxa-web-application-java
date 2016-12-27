@@ -3,7 +3,7 @@
     <!-- Properties -->
     <property name="log.pattern" value="%date %-5level %t %logger{0} - %message%n"/>
     <property name="log.history" value="1"/>
-    <property name="log.folder" value="/var/log/dd4t"/>
+    <property name="log.folder" value="~/logs/dd4t"/>
     <property name="log.level" value="DEBUG"/>
 
     <!-- Appenders -->

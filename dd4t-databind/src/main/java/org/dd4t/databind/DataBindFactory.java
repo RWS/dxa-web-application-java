@@ -94,6 +94,14 @@ public class DataBindFactory {
         return INSTANCE.dataBinder.getRootElementName(componentNode);
     }
 
+    public static Class<? extends BaseViewModel> getModelClassesForInterfaceOrAbstractField (final String className, final String rootElementName) {
+        return INSTANCE.dataBinder.getConcreteModel(className, rootElementName);
+    }
+
+    public static boolean classHasViewModelDerivatives (String className) {
+        return INSTANCE.dataBinder.classHasViewModelDerivatives(className);
+    }
+
     public static boolean renderGenericComponentsOnly () {
         return INSTANCE.dataBinder.renderDefaultComponentModelsOnly();
     }

@@ -10,7 +10,7 @@ import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
  * @author R. Kempees
  */
 @ViewModel (rootElementNames = {"embeddableTestTwo"})
-public class EmbeddedTwo extends TridionViewModelBase {
+public class EmbeddedTwo extends TridionViewModelBase implements GenericModelInterface {
 
     @ViewModelProperty
     private String testfieldTwo;

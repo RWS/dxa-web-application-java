@@ -48,6 +48,8 @@ public class TypeUtils {
         return Object.class;
     }
 
+
+
     public static boolean classIsViewModel (Class<?> clazz) {
         if (BaseViewModel.class.isAssignableFrom(clazz)) {
             LOG.debug("Current class is a View Model.");

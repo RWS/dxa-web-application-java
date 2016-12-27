@@ -4,10 +4,9 @@ import org.dd4t.contentmodel.impl.KeywordImpl;
 import org.dd4t.contentmodel.impl.MultimediaImpl;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.annotations.ViewModelProperty;
-import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
 
 @ViewModel (rootElementNames = {"animal"} )
-public class Animal extends TridionViewModelBase {
+public class Animal extends AbstractModelClass implements GenericModelInterface {
     @ViewModelProperty
     private String species;
 

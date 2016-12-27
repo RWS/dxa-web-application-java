@@ -1,6 +1,5 @@
 package org.dd4t.test.models;
 
-import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Keyword;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.annotations.ViewModelProperty;
@@ -44,7 +43,7 @@ public class Generic extends TridionViewModelBase {
     private Image multimedia;
 
     @ViewModelProperty (entityFieldName = "componentlink")
-    private Component componentLink;
+    private AbstractModelClass componentLink;
 
     @ViewModelProperty
     List<EmbeddedOne> embedded;
@@ -104,11 +103,11 @@ public class Generic extends TridionViewModelBase {
         this.multimedia = multimedia;
     }
 
-    public Component getComponentLink () {
+    public AbstractModelClass getComponentLink () {
         return componentLink;
     }
 
-    public void setComponentLink (final Component componentLink) {
+    public void setComponentLink (final AbstractModelClass componentLink) {
         this.componentLink = componentLink;
     }
 

@@ -57,7 +57,13 @@ public interface DataBinder {
      */
     String getRootElementName (Object componentNode);
 
+    boolean classHasViewModelDerivatives(String className);
+
+    Class<? extends BaseViewModel> getConcreteModel (String className, String rootElementName);
+
     boolean renderDefaultComponentModelsOnly ();
 
     boolean renderDefaultComponentsIfNoModelFound ();
+
+
 }

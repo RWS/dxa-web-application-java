@@ -1,10 +1,10 @@
 package org.dd4t.thymeleaf.dialect.processor.xpm;
 
-import java.util.Map;
-import java.util.logging.Logger;
 import org.dd4t.core.services.PropertiesService;
 import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
 import org.dd4t.mvc.utils.XPMRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.context.ITemplateContext;
 import org.thymeleaf.model.IModel;
@@ -23,11 +23,12 @@ import org.thymeleaf.templatemode.TemplateMode;
  */
 
 public class XpmComponentPresentationProcessor extends AbstractElementTagProcessor {
-    private static final Logger LOG = Logger.getLogger(XpmComponentPresentationProcessor.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(XpmComponentPresentationProcessor.class);
     private static final String TAG_NAME = "componentpresentation";
     private static final String SRC_ATTR_NAME = "src";
     private static final int PRECEDENCE = 10000;
-    
+    private static final String XPM_ENABLED = "xpm.enabled";
+
     public XpmComponentPresentationProcessor(final String dialectPrefix, PropertiesService propertiesService) {
      super(TemplateMode.HTML,
              dialectPrefix,
@@ -37,7 +38,7 @@ public class XpmComponentPresentationProcessor extends AbstractElementTagProcess
              false,
              PRECEDENCE
              );
-         String xpmEnabledAsString = propertiesService.getProperty("xpm.enabled");
+         String xpmEnabledAsString = propertiesService.getProperty(XPM_ENABLED);
          if (xpmEnabledAsString != null) {
              XPMRenderer.getInstance().setEnabled(Boolean.parseBoolean(xpmEnabledAsString));
          }
@@ -56,21 +57,17 @@ public class XpmComponentPresentationProcessor extends AbstractElementTagProcess
         
         // check if there is a 'src' attribute on the current tag
         if (! tag.hasAttribute(SRC_ATTR_NAME)) {
-            // TODO: log a warning message
+            LOG.warn("Cannot find the {} attribute on this tag!", SRC_ATTR_NAME);
             return;
         }
 
         // retrieve the entity object from the attribute
-        IStandardExpression expressionComponentPresentation = parser.parseExpression(context, tag.getAttributeValue(SRC_ATTR_NAME));
-        TridionViewModelBase entity = (TridionViewModelBase) expressionComponentPresentation.execute(context);
-
-        Map<String,Object> props = entity.getModelProperties();
-        
-        
+        final IStandardExpression expressionComponentPresentation = parser.parseExpression(context, tag.getAttributeValue(SRC_ATTR_NAME));
+        final TridionViewModelBase entity = (TridionViewModelBase) expressionComponentPresentation.execute(context);
         
         // get an XPM renderer (part of DD4T) and generate the XPM comment for this page
-        XPMRenderer renderer = XPMRenderer.getInstance();
-        String xpmMarkup = renderer.componentPresentation(entity.getTcmUri().toString(), entity.getLastModified(), entity.getTemplateUri().toString(), false);
+        final XPMRenderer renderer = XPMRenderer.getInstance();
+        final String xpmMarkup = renderer.componentPresentation(entity.getTcmUri().toString(), entity.getLastModified(), entity.getTemplateUri().toString(), false);
         
         // create a model with the returned markup
         final IModelFactory modelFactory = context.getModelFactory();

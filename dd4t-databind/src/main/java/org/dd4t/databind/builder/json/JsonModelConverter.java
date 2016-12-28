@@ -392,7 +392,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
     }
 
     private static String getRootElementNameFromComponentOrEmbeddedField (final JsonNode currentField) {
-        String rootElementName = DataBindFactory.getRootElementName(currentField);
+        final String rootElementName = DataBindFactory.getRootElementName(currentField);
 
         if (StringUtils.isNotEmpty(rootElementName)) {
             return rootElementName;

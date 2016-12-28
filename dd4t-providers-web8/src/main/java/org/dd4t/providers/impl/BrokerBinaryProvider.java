@@ -66,10 +66,6 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
     @Override
     public Binary getBinaryByURL (final String url, final int publication) throws ItemNotFoundException, SerializationException {
         final BinaryMeta binaryMeta = getBinaryMetaByURL(url, publication);
-
-        if (binaryMeta == null) {
-            throw new ItemNotFoundException("Unable to find binary content by URL '" + url + "' and publication '" + publication + "'.");
-        }
         TCMURI binaryUri = new TCMURI(binaryMeta.getPublicationId(), (int) binaryMeta.getId(), 16);
         return getBinary(binaryUri, binaryMeta);
     }

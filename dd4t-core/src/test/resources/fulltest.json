@@ -204,7 +204,19 @@
                 "Id": "tcm:7-109-8",
                 "Title": "Generic"
               },
-              "Fields": {},
+              "Fields": {
+                "heading": {
+                  "Name": "heading",
+                  "Values": ["Component Link Heading"],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Content/custom:Generic/custom:heading",
+                  "KeywordValues": []
+                }
+
+              },
               "MetadataFields": {},
               "ComponentType": 1,
               "Folder": {

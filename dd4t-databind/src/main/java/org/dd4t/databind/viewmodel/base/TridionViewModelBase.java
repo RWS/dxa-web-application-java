@@ -98,10 +98,12 @@ public abstract class TridionViewModelBase extends ViewModelBase implements Trid
         return getFieldMap().get(fieldName).isMultiValued();
     }
 
+    @Override
     public boolean isDynamicCP () {
         return isDynamicCP;
     }
 
+    @Override
     public void setIsDynamicCP (final boolean dynamicCP) {
         isDynamicCP = dynamicCP;
     }

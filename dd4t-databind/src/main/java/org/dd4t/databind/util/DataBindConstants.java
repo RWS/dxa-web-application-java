@@ -16,6 +16,12 @@
 
 package org.dd4t.databind.util;
 
+import org.dd4t.core.databind.BaseViewModel;
+import org.dd4t.core.databind.TridionViewModel;
+import org.dd4t.databind.annotations.ViewModel;
+import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
+import org.dd4t.databind.viewmodel.base.ViewModelBase;
+
 /**
  * test
  *
@@ -47,6 +53,12 @@ public class DataBindConstants {
     public static final String COMPONENT_TYPE = "ComponentType";
     public static final String MULTIMEDIA = "Multimedia";
     public static final String XPATH = "XPath";
+    public static final String VIEW_MODEL_ANNOTATION_NAME = ViewModel.class.getCanonicalName();
+    public static final String TRIDION_VIEW_MODEL_BASE_CLASS_NAME = TridionViewModelBase.class.getCanonicalName();
+    public static final String VIEW_MODEL_BASE_CLASS_NAME = ViewModelBase.class.getCanonicalName();
+    public static final String TRIDION_VIEW_MODEL_INTERFACE = TridionViewModel.class.getCanonicalName();
+    public static final String BASE_VIEW_MODEL_INTERFACE = BaseViewModel.class.getCanonicalName();
+    public static final String EMBEDDED_SCHEMA_FIELD_NAME = "EmbeddedSchema";
 
     private DataBindConstants () {
 

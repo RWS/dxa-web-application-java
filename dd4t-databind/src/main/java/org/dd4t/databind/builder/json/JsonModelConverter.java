@@ -17,6 +17,7 @@
 package org.dd4t.databind.builder.json;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Embedded;
@@ -268,16 +269,26 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
             if (TypeUtils.classIsViewModel((Class<?>) parametrizedType) || DataBindFactory.classHasViewModelDerivatives(((Class<?>) parametrizedType).getCanonicalName())) {
                 for (JsonNode node : nodeList) {
-                    checkTypeAndBuildModel(model, fieldName, node, modelField, (Class<T>) parametrizedType);
+
+
+                    if (!node.has(DataBindConstants.ROOT_ELEMENT_NAME)) {
+                        checkTypeAndBuildModel(model, fieldName, node, modelField, (Class<T>) parametrizedType);
+                    } else {
+                        LOG.debug("not handling a schemaNode.");
+                    }
                 }
 
             } else {
                 for (JsonNode node : nodeList) {
-                    deserializeGeneric(model, node, modelField, tridionDataFieldType);
+                    if (!node.has(DataBindConstants.ROOT_ELEMENT_NAME)) {
+                        deserializeGeneric(model, node, modelField, tridionDataFieldType);
+                    } else {
+                        LOG.debug("not handling a schemaNode.");
+                    }
                 }
             }
 
-        } else if (TypeUtils.classIsViewModel(modelField.getType()) || DataBindFactory.classHasViewModelDerivatives(modelField.getType().getCanonicalName()) ) {
+        } else if (TypeUtils.classIsViewModel(modelField.getType()) || DataBindFactory.classHasViewModelDerivatives(modelField.getType().getCanonicalName())) {
             final Class<T> modelClassToUse = (Class<T>) modelField.getType();
             checkTypeAndBuildModel(model, fieldName, nodeList.get(0), modelField, modelClassToUse);
         } else {
@@ -291,18 +302,28 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         // keeps sibling nodes in this child, which has FieldType embedded, while we're actually already in
         // that node's Values
 
+        final JsonNode schemaNode = currentField.get(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME);
         if (embeddedNode != null) {
             final Iterator<JsonNode> embeddedIterator = embeddedNode.elements();
             while (embeddedIterator.hasNext()) {
-                JsonNode embeddedValue = embeddedIterator.next();
-                nodeList.add(embeddedValue);
+                addEmbeddedNodeAndSchemaInfo(nodeList, schemaNode, embeddedIterator);
             }
         } else {
             final Iterator<JsonNode> currentFieldElements = currentField.elements();
             while (currentFieldElements.hasNext()) {
-                nodeList.add(currentFieldElements.next());
+
+                addEmbeddedNodeAndSchemaInfo(nodeList, schemaNode, currentFieldElements);
             }
         }
+    }
+
+    private static void addEmbeddedNodeAndSchemaInfo (final List<JsonNode> nodeList, final JsonNode schemaNode, final Iterator<JsonNode> embeddedIterator) {
+        ObjectNode embeddedValue = (ObjectNode) embeddedIterator.next();
+
+        if (schemaNode != null && !embeddedValue.has(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME)) {
+            embeddedValue.set(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME, schemaNode);
+        }
+        nodeList.add(embeddedValue);
     }
 
     private static void fillLinkedComponentValues (final JsonNode currentField, final List<JsonNode> nodeList) {
@@ -346,19 +367,15 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
     private static <T extends BaseViewModel> BaseViewModel buildModelForField (final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {
 
         if (Modifier.isAbstract(modelClassToUse.getModifiers()) || Modifier.isInterface(modelClassToUse.getModifiers())) {
+
             // Get root element name
-            final String rootElementName = DataBindFactory.getRootElementName(currentField);
-
-
-            // TODO: handle embedded fields as well!
-
-
+            final String rootElementName = getRootElementNameFromComponentOrEmbeddedField(currentField);
             if (StringUtils.isNotEmpty(rootElementName)) {
                 // attempt get a concrete class for this interface
 
                 final Class<? extends BaseViewModel> concreteClass = DataBindFactory.getModelClassesForInterfaceOrAbstractField(modelClassToUse.getCanonicalName(), rootElementName);
-                if (concreteClass ==null) {
-                    LOG.error("Attempt to find a concrete model class for interface or abstract class: {} failed miserably as there was no registered class for root element name: '{}' Will return null.",modelClassToUse.getCanonicalName(),rootElementName);
+                if (concreteClass == null) {
+                    LOG.error("Attempt to find a concrete model class for interface or abstract class: {} failed miserably as there was no registered class for root element name: '{}' Will return null.", modelClassToUse.getCanonicalName(), rootElementName);
                     return null;
                 }
                 LOG.debug("Building: {}", concreteClass.getCanonicalName());
@@ -372,6 +389,25 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
             return getBaseViewModel(currentField, modelClassToUse);
         }
+    }
+
+    private static String getRootElementNameFromComponentOrEmbeddedField (final JsonNode currentField) {
+        String rootElementName = DataBindFactory.getRootElementName(currentField);
+
+        if (StringUtils.isNotEmpty(rootElementName)) {
+            return rootElementName;
+        }
+
+        if (currentField.has(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME)) {
+            final JsonNode schemaNode = currentField.get(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME);
+
+            if (schemaNode.hasNonNull(DataBindConstants.ROOT_ELEMENT_NAME)) {
+                String nodeTypeName = schemaNode.get(DataBindConstants.ROOT_ELEMENT_NAME).textValue();
+                LOG.debug("RootElementName is: {}", nodeTypeName);
+                return nodeTypeName;
+            }
+        }
+        return null;
     }
 
     private static <T extends BaseViewModel> BaseViewModel getBaseViewModel (final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {

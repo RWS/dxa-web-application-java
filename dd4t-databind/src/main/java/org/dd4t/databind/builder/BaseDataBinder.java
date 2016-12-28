@@ -26,11 +26,8 @@ import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.ModelConverter;
-import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.util.DataBindConstants;
-import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
-import org.dd4t.databind.viewmodel.base.ViewModelBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,11 +51,6 @@ import java.util.concurrent.ConcurrentMap;
  */
 public abstract class BaseDataBinder {
     private static final Logger LOG = LoggerFactory.getLogger(BaseDataBinder.class);
-    private static final String VIEW_MODEL_ANNOTATION_NAME = ViewModel.class.getCanonicalName();
-    private static final String TRIDION_VIEW_MODEL_BASE_CLASS_NAME = TridionViewModelBase.class.getCanonicalName();
-    private static final String VIEW_MODEL_BASE_CLASS_NAME = ViewModelBase.class.getCanonicalName();
-    private static final String TRIDION_VIEW_MODEL_INTERFACE = TridionViewModel.class.getCanonicalName();
-    private static final String BASE_VIEW_MODEL_INTERFACE = BaseViewModel.class.getCanonicalName();
 
 
     protected static final ConcurrentMap<String, List<Class<? extends BaseViewModel>>> VIEW_MODELS = new ConcurrentHashMap<>();
@@ -238,7 +230,7 @@ public abstract class BaseDataBinder {
 
         try {
 
-            if (classInfo.hasAnnotation(VIEW_MODEL_ANNOTATION_NAME)) {
+            if (classInfo.hasAnnotation(DataBindConstants.VIEW_MODEL_ANNOTATION_NAME)) {
                 processViewModelClass(classInfo);
             } else if (classInfo.isImplementedInterface()) {
                 processInterfaceForModels(classInfo);
@@ -307,13 +299,13 @@ public abstract class BaseDataBinder {
     }
 
     private boolean isDatabindStandardClass (ClassInfo classInfo) {
-        return classInfo.getClassName().equals(VIEW_MODEL_BASE_CLASS_NAME) || classInfo.getClassName().equals(TRIDION_VIEW_MODEL_BASE_CLASS_NAME) || classInfo.getClassName().equals(TRIDION_VIEW_MODEL_INTERFACE) || classInfo.getClassName().equals(BASE_VIEW_MODEL_INTERFACE);
+        return classInfo.getClassName().equals(DataBindConstants.VIEW_MODEL_BASE_CLASS_NAME) || classInfo.getClassName().equals(DataBindConstants.TRIDION_VIEW_MODEL_BASE_CLASS_NAME) || classInfo.getClassName().equals(DataBindConstants.TRIDION_VIEW_MODEL_INTERFACE) || classInfo.getClassName().equals(DataBindConstants.BASE_VIEW_MODEL_INTERFACE);
     }
 
     private boolean hasNonStandardParent (ClassInfo classInfo) {
         final ClassInfo superClass = classInfo.getDirectSuperclass();
 
-        return superClass != null && (!superClass.getClassName().equals(VIEW_MODEL_BASE_CLASS_NAME) && !superClass.getClassName().equals(TRIDION_VIEW_MODEL_BASE_CLASS_NAME));
+        return superClass != null && (!superClass.getClassName().equals(DataBindConstants.VIEW_MODEL_BASE_CLASS_NAME) && !superClass.getClassName().equals(DataBindConstants.TRIDION_VIEW_MODEL_BASE_CLASS_NAME));
 
     }
 

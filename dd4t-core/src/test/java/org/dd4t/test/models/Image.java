@@ -18,7 +18,6 @@ public class Image extends TridionViewModelBase {
     @ViewModelProperty(entityFieldName = "Url")
     private String url;
 
-
     @ViewModelProperty(entityFieldName = "Height")
     private int height;
 
@@ -27,6 +26,18 @@ public class Image extends TridionViewModelBase {
 
     @ViewModelProperty(entityFieldName = "Size")
     private Integer size;
+
+    @ViewModelProperty(entityFieldName = "Alt")
+    private String alt;
+
+    @ViewModelProperty(entityFieldName = "MimeType")
+    private String mimeType;
+
+    @ViewModelProperty(entityFieldName = "FileExtension")
+    private String fileExtension;
+
+    @ViewModelProperty(entityFieldName = "FileName")
+    private String fileName;
 
     public String getFocusPoint () {
         return focusPoint;
@@ -66,5 +77,37 @@ public class Image extends TridionViewModelBase {
 
     public void setSize (final Integer size) {
         this.size = size;
+    }
+
+    public String getAlt () {
+        return alt;
+    }
+
+    public void setAlt (final String alt) {
+        this.alt = alt;
+    }
+
+    public String getMimeType () {
+        return mimeType;
+    }
+
+    public void setMimeType (final String mimeType) {
+        this.mimeType = mimeType;
+    }
+
+    public String getFileExtension () {
+        return fileExtension;
+    }
+
+    public void setFileExtension (final String fileExtension) {
+        this.fileExtension = fileExtension;
+    }
+
+    public String getFileName () {
+        return fileName;
+    }
+
+    public void setFileName (final String fileName) {
+        this.fileName = fileName;
     }
 }

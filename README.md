@@ -1,7 +1,7 @@
 dd4t-2-java
 ======
 
- - Current stable version: **2.0.6**
+ - Current stable version: **2.0.7**
  - Maven Central: [org.dd4t](http://search.maven.org/#search%7Cga%7C1%7Cg%3A%22org.dd4t%22)
  - Current stable archetype version: [1.5](http://search.maven.org/#artifactdetails%7Corg.dd4t%7Cdd4t-spring-mvc-archetype%7C1.4%7Cmaven-archetype)
 

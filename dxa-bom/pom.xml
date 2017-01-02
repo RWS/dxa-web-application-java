@@ -157,6 +157,12 @@
                 <artifactId>cil</artifactId>
                 <version>${cd-cil.version}</version>
                 <type>pom</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>com.vs.ezlicrun</groupId>
+                        <artifactId>easylicense</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- DD4T -->

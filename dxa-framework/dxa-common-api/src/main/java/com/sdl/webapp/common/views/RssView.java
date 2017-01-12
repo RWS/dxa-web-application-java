@@ -1,12 +1,10 @@
 package com.sdl.webapp.common.views;
 
+import com.rometools.rome.feed.rss.Channel;
+import com.rometools.rome.feed.rss.Item;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formatters.DataFormatter;
 import com.sdl.webapp.common.api.model.PageModel;
-import com.sun.syndication.feed.rss.Channel;
-import com.sun.syndication.feed.rss.Item;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.feed.AbstractRssFeedView;
 
@@ -19,7 +17,7 @@ import java.util.Map;
  * Feed view for RSS representation of page
  */
 public class RssView extends AbstractRssFeedView {
-    private static final Logger LOG = LoggerFactory.getLogger(RssView.class);
+
     @Autowired
     private WebRequestContext context;
 

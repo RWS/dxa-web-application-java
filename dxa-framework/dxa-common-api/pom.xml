@@ -91,26 +91,18 @@
             <artifactId>commons-collections</artifactId>
         </dependency>
 
-        <!-- JSoup -->
         <dependency>
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
         </dependency>
-
-        <!-- RSS -->
         <dependency>
-            <groupId>net.java.dev.rome</groupId>
+            <groupId>com.rometools</groupId>
             <artifactId>rome</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.jetbrains</groupId>
             <artifactId>annotations</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.hamcrest</groupId>
-            <artifactId>hamcrest-library</artifactId>
         </dependency>
 
         <dependency>

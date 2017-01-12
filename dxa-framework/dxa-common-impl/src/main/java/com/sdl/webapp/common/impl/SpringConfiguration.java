@@ -14,9 +14,9 @@ import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.feed.AtomFeedHttpMessageConverter;
 import org.springframework.http.converter.feed.RssChannelHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.support.AllEncompassingFormHttpMessageConverter;
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
-import org.springframework.http.converter.xml.XmlAwareFormHttpMessageConverter;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -33,6 +33,15 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(staticContentInterceptor());
+        registry.addInterceptor(threadLocalInterceptor());
+    }
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.add(mappingJackson2HttpMessageConverter());
@@ -41,7 +50,7 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
         converters.add(getStringHttpMessageConverter());
         converters.add(new ResourceHttpMessageConverter());
         converters.add(new SourceHttpMessageConverter<>());
-        converters.add(new XmlAwareFormHttpMessageConverter());
+        converters.add(new AllEncompassingFormHttpMessageConverter());
 
         ClassLoader classLoader = getClass().getClassLoader();
         if (ClassUtils.isPresent("javax.xml.bind.Binder", classLoader)) {
@@ -51,15 +60,6 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
             converters.add(new AtomFeedHttpMessageConverter());
             converters.add(new RssChannelHttpMessageConverter());
         }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(staticContentInterceptor());
-        registry.addInterceptor(threadLocalInterceptor());
     }
 
     @Bean

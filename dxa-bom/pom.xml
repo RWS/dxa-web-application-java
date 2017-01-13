@@ -50,6 +50,17 @@
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
+        <dxa-modules.version>${dxa.version}</dxa-modules.version>
+        <dxa-module-core.version>${dxa.version}</dxa-module-core.version>
+        <dxa-module-cid.version>${dxa.version}</dxa-module-cid.version>
+        <dxa-module-googleanalytics.version>${dxa.version}</dxa-module-googleanalytics.version>
+        <dxa-module-mediamanager.version>${dxa.version}</dxa-module-mediamanager.version>
+        <dxa-module-search.version>${dxa.version}</dxa-module-search.version>
+        <dxa-module-smarttarget.version>${dxa.version}</dxa-module-smarttarget.version>
+        <dxa-module-context-expressions>${dxa.version}</dxa-module-context-expressions>
+        <dxa-module-51degrees.version>${dxa.version}</dxa-module-51degrees.version>
+        <dxa-module-audience-manager.version>${dxa.version}</dxa-module-audience-manager.version>
+        <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
 
         <!-- Apache Commons -->
         <commons-beanutils-version>1.8.3</commons-beanutils-version>
@@ -130,6 +141,7 @@
 
     <dependencyManagement>
         <dependencies>
+            <!--region DXA Framework dependencies-->
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-common-api</artifactId>
@@ -151,6 +163,79 @@
                 <version>${dxa.version}</version>
                 <scope>runtime</scope>
             </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-core</artifactId>
+                <version>${dxa-module-core.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <artifactId>dxa-module-cid</artifactId>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <version>${dxa-module-cid.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <artifactId>dxa-module-googleanalytics</artifactId>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <version>${dxa-module-googleanalytics.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <artifactId>dxa-module-mediamanager</artifactId>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <version>${dxa-module-mediamanager.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <artifactId>dxa-module-search</artifactId>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <version>${dxa-module-search.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-context-expressions</artifactId>
+                <version>${dxa-module-context-expressions}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-smarttarget-abstract</artifactId>
+                <version>${dxa-module-smarttarget.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-smarttarget-web8</artifactId>
+                <version>${dxa-module-smarttarget.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-51degrees</artifactId>
+                <version>${dxa-module-51degrees.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-audience-manager-abstract</artifactId>
+                <version>${dxa-module-audience-manager.version}</version>
+                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-audience-manager-web8</artifactId>
+                <version>${dxa-module-audience-manager.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-test</artifactId>
+                <version>${dxa-module-test.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <!--endregion-->
 
             <dependency>
                 <groupId>com.sdl.web</groupId>

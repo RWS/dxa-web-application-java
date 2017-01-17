@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.MutablePropertySources;
@@ -45,8 +44,6 @@ import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitializa
 @Configuration
 //todo dxa2 rename com.sdl.webapp to com.sdl.dxa
 @ComponentScan(basePackages = {"com.sdl.webapp", "com.sdl.dxa"})
-//TODO dxa2 remove resource auto-import
-@ImportResource("classpath*:/META-INF/spring-context.xml")
 @Slf4j
 //TODO dxa2 consider moving web-defaults (e.g. view resolvers) to a different configuration
 public class DxaSpringInitialization {

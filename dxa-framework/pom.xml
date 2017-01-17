@@ -23,6 +23,7 @@
         <module>dxa-common-impl</module>
         <module>dxa-tridion-provider</module>
         <module>dxa-web8-provider</module>
+        <module>dxa-compatible</module>
     </modules>
 
     <scm>

@@ -17,13 +17,13 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -38,10 +38,16 @@ public class WebRequestContextImplTest {
     @Mock
     private LocalizationResolver localizationResolver;
 
+    @Mock
+    private HttpServletRequest servletRequest;
+
     @Before
     public void init() {
-        doReturn("Hello").when(webRequestContext).getFullUrl();
+        when(servletRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/context/publication/request"));
+        when(servletRequest.getRequestURI()).thenReturn("/context/publication/request");
+        when(servletRequest.getContextPath()).thenReturn("/context");
     }
+
 
     @Test(expected = LocalizationNotFoundException.class)
     public void shouldThrowExceptionIfNoLocalizationFoundWithSpecialHandler() throws Exception {
@@ -138,5 +144,54 @@ public class WebRequestContextImplTest {
 
         //then
         // exception
+    }
+
+    @Test
+    public void shouldReturnContextPath() {
+        //when
+        String contextPath = webRequestContext.getContextPath();
+
+        //then
+        assertEquals("/context", contextPath);
+    }
+
+    @Test
+    public void shouldReturnRequestPath_RelativeToContext() {
+        //when
+        String requestPath = webRequestContext.getRequestPath();
+
+        //then
+        assertEquals("/publication/request", requestPath);
+    }
+
+    @Test
+    public void shouldReturnBaseUrl() {
+        //when
+        String baseUrl = webRequestContext.getBaseUrl();
+
+        //then
+        assertEquals("http://localhost:8080", baseUrl);
+    }
+
+    @Test
+    public void shouldReturnFullUrl() {
+        //when
+        String fullUrl = webRequestContext.getFullUrl();
+
+        //then
+        assertEquals("http://localhost:8080/context/publication/request", fullUrl);
+    }
+
+    @Test
+    public void shouldBeAwareOfRootRequests() {
+        //given
+        when(servletRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/"));
+        when(servletRequest.getRequestURI()).thenReturn("/");
+
+        //when
+        String baseUrl = webRequestContext.getBaseUrl();
+
+        //then
+        assertEquals("http://localhost:8080", baseUrl);
     }
 }

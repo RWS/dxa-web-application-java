@@ -9,7 +9,9 @@ import java.util.HashMap;
 
 /**
  * <p>MimeUtils class.</p>
+ * @deprecated since 1.8, to remove in DXA 2.0
  */
+@Deprecated
 public final class MimeUtils {
 
     static HashMap<String, String> MIME_TYPES = new HashMap<>();

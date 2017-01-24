@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
 public final class InitializationUtils {
@@ -196,7 +197,7 @@ public final class InitializationUtils {
     }
 
     private static void addActiveProfiles(ConfigurableWebApplicationContext servletAppContext, String activeProfiles) {
-        if (activeProfiles != null) {
+        if (!isEmpty(activeProfiles)) {
             ConfigurableEnvironment environment = servletAppContext.getEnvironment();
             for (String profile : activeProfiles.split(",")) {
                 environment.addActiveProfile(profile.trim());

@@ -1,0 +1,116 @@
+{
+  "Id": "640",
+  "Title": "Home",
+  "Meta": {
+    "twitter:card": "summary",
+    "og:title": "Home",
+    "og:type": "article",
+    "description": "Description"
+  },
+  "Regions": [
+    {
+      "Name": "Header",
+      "IncludePageUrl": "/system/include/header.html",
+      "MvcData": {
+        "ViewName": "Header"
+      },
+      "Regions": [
+        {
+          "Name": "IncludeRegion1"
+        },
+        {
+          "Name": "IncludeRegion2"
+        }
+      ],
+      "Entities": [
+        {
+          "Id": "1024",
+          "LinkUrl": "linkUrl",
+          "BinaryContent": {
+            "FileName": "fileName",
+            "FileSize": 9223372036854775807,
+            "MimeType": "application/xml",
+            "Url": "url"
+          },
+          "ExternalContent": {
+            "DisplayTypeId": "displayTypeId",
+            "Id": "id",
+            "Metadata": {
+              "Key1": "Value1"
+            }
+          },
+          "Content": {
+            "Heading": "Heading",
+            "Ending": "Ending",
+            "itemListElement": {
+              "$type": "ContentModelData[]",
+              "$values": [
+                {
+                  "subheading": "subheading",
+                  "media": {
+                    "$type": "EntityModelData",
+                    "Id": "755",
+                    "BinaryContent": {
+                      "Url": "755-url"
+                    },
+                    "SchemaId": "79"
+                  },
+                  "link": {
+                    "$type": "ContentModelData",
+                    "linkText": "linkText",
+                    "content": {
+                      "$type": "RichTextData",
+                      "Fragments": [
+                        "fragment"
+                      ]
+                    }
+                  }
+                },
+                {
+                  "subheading": "subheading2"
+                }
+              ]
+            }
+          },
+          "MvcData": {
+            "ViewName": "ViewName"
+          },
+          "SchemaId": "10029",
+          "HtmlClasses": "class1 class2",
+          "XpmMetadata": {
+            "XpmKey1": "XpmValue1",
+            "XpmKey2": "XpmValue2"
+          },
+          "Metadata": {
+            "Key1": "Value1",
+            "Key2": "Value2"
+          },
+          "ExtensionData": {
+            "ExtensionKey1": "ExtensionValue1",
+            "ExtensionKey2": 1
+          }
+        },
+        {
+          "Id": "1025"
+        }
+      ]
+    },
+    {
+      "Name": "Footer",
+      "IncludePageUrl": "/system/include/footer.html",
+      "MvcData": {
+        "ViewName": "Footer"
+      }
+    }
+  ],
+  "MvcData": {
+    "ViewName": "ViewName",
+    "ActionName": "ActionName",
+    "ControllerName": "ControllerName",
+    "ControllerAreaName": "ControllerAreaName",
+    "AreaName": "AreaName",
+    "Parameters": {
+      "Key1": "Value1"
+    }
+  }
+}

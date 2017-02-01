@@ -67,7 +67,21 @@
                   }
                 },
                 {
-                  "subheading": "subheading2"
+                  "subheading": "subheading2",
+                  "content": {
+                    "$type": "RichTextData[]",
+                    "$values": [
+                      {
+                        "Fragments": [
+                          "fragment2",
+                          {
+                            "$type": "EntityModelData",
+                            "Id": "756"
+                          }
+                        ]
+                      }
+                    ]
+                  }
                 }
               ]
             }

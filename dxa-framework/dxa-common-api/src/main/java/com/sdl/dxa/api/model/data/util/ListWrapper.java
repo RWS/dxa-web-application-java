@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Wrapper for the polymorphic list JSON representation coming from .NET Template Builder.
- * <p>It serializes the list as the following
+ * <p>It serializes the list as the following meaning that all elements of a list are of type {@link ContentModelData}</p>
  * <pre><code>
  * {
  *     "list": {
@@ -27,7 +27,6 @@ import java.util.List;
  *     }
  * }
  * </code></pre>
- * meaning that all elements of a list are of type {@code {@link ContentModelData}}</p>
  * <p>For the known and excepted types of list subtypes are created so that type information is not expected on leaves.
  * In case of using the generic type, type information is added and expected on leaves by deserializer.</p>
  * <p>Unfortunately it's currently not possible to implement {@link List} interface since Jackson is handling this differently.
@@ -39,18 +38,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ListWrapper<T> {
+public class ListWrapper<T> implements DelegatesToList<T> {
 
     @JsonProperty("$values")
     private List<T> values;
-
-    public T get(int index) {
-        return values.get(index);
-    }
-
-    public boolean empty() {
-        return values.isEmpty();
-    }
 
     /**
      * The concrete implementation of {@link ListWrapper} for {@link ContentModelData}.
@@ -95,9 +86,9 @@ public class ListWrapper<T> {
      */
     @NoArgsConstructor(access = AccessLevel.PRIVATE)
     @JsonTypeName("RichTextData[]")
-    public static class RichTextFragmentListWrapper extends ListWrapper<RichTextData> {
+    public static class RichTextDataListWrapper extends ListWrapper<RichTextData> {
 
-        public RichTextFragmentListWrapper(List<RichTextData> values) {
+        public RichTextDataListWrapper(List<RichTextData> values) {
             super(values);
         }
     }

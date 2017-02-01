@@ -1,7 +1,7 @@
 package com.sdl.dxa.api.model.data;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import org.jetbrains.annotations.NotNull;
+import com.sdl.dxa.api.model.data.util.CanGetAndCast;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -12,18 +12,10 @@ import java.util.Map;
  */
 @JsonTypeName
 public class ContentModelData extends HashMap<String, Object>
-        implements Map<String, Object>, Cloneable, Serializable {
+        implements Map<String, Object>, Cloneable, Serializable, CanGetAndCast<String> {
 
-    /**
-     * Returns and element from the map and casts it to a given class. Basically calls {@link Map#get(Object)} and casts.
-     * Throws a {@link ClassCastException} is casting is not successfull.
-     *
-     * @param key           key of the element
-     * @param expectedClass class to cast to
-     * @param <T>           a required type
-     * @return en element if any, null otherwise
-     */
-    public <T> T getAndCast(String key, @NotNull Class<T> expectedClass) {
-        return expectedClass.cast(get(key));
+    @Override
+    public Object getElement(String identifier) {
+        return get(identifier);
     }
 }

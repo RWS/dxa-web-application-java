@@ -121,6 +121,9 @@ public class DeserializationTest {
         assertTrue(link.getAndCast("content", RichTextData.class).getFragments().size() == 1);
 
         assertEquals("subheading2", cmds.get(1).get("subheading"));
+        ListWrapper.RichTextDataListWrapper rtd = cmds.get(1).getAndCast("content", ListWrapper.RichTextDataListWrapper.class);
+        assertEquals("fragment2", rtd.get(0).getFragments().get(0));
+        assertEquals("756", rtd.get(0).getAndCast(1, EntityModelData.class).getId());
 
         assertTrue(cmds.size() == 2);
         assertTrue(entity.getContent().size() == 3);

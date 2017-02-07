@@ -348,7 +348,7 @@ public class InitializationUtilsTest {
         InitializationUtils.loadActiveSpringProfiles(servletContext, applicationContext);
 
         //then
-        for (String profile : new String[]{"profile1", "profile2", "profile3", "profile4", "profile5"}) {
+        for (String profile : new String[]{"profile1", "profile2", "profile3", "profile4", "profile5", "profile-staging", "profile-cid"}) {
             verify(environment).addActiveProfile(eq(profile));
         }
     }

@@ -32,7 +32,6 @@ task help(type: MavenHelpTask)
 task buildFramework(type: MavenBuildTask) {
     configurations = [
             ["dxa-bom"],
-            ["dxa-bom-modules"],
             ["dxa-framework"],
             ["> dxa-webapp > clean archetype:create-from-project -Darchetype.properties=archetype.properties"]
     ]

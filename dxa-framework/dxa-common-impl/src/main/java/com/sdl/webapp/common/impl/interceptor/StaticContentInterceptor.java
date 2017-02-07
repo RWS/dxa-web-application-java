@@ -78,7 +78,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             String mimeType = MimeUtils.getMimeType(contentResource);
             res.getHeaders().setContentType(MediaType.parseMediaType(mimeType));
 
-            if (isToBeRefreshed(res, req.getHeaders().getIfNotModifiedSince(),
+            if (isToBeRefreshed(res, req.getHeaders().getIfModifiedSince(),
                     ManagementFactory.getRuntimeMXBean().getStartTime(), false)) {
                 try (final InputStream in = contentResource.openStream(); final OutputStream out = res.getBody()) {
                     IOUtils.copy(in, out);
@@ -100,9 +100,8 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             LOG.debug("Handling static content: {}", requestPath);
 
             final ServletServerHttpRequest req = new ServletServerHttpRequest(request);
-            final ServletServerHttpResponse res = new ServletServerHttpResponse(response);
 
-            try {
+            try (final ServletServerHttpResponse res = new ServletServerHttpResponse(response)) {
                 StaticContentItem staticContentItem = null;
 
                 try {
@@ -116,7 +115,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
                     res.getHeaders().setContentType(MediaType.parseMediaType(staticContentItem.getContentType()));
 
                     // http://stackoverflow.com/questions/1587667/should-http-304-not-modified-responses-contain-cache-control-headers
-                    if (isToBeRefreshed(res, req.getHeaders().getIfNotModifiedSince(),
+                    if (isToBeRefreshed(res, req.getHeaders().getIfModifiedSince(),
                             staticContentItem.getLastModified(), staticContentItem.isVersioned())) {
                         try (final InputStream in = staticContentItem.getContent(); final OutputStream out = res.getBody()) {
                             IOUtils.copy(in, out);
@@ -128,7 +127,6 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
                 throw new ServletException(e);
             }
 
-            res.close();
             return false;
         }
 

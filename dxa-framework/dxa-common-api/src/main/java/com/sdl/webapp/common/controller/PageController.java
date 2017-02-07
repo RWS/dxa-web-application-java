@@ -139,7 +139,7 @@ public class PageController extends BaseController {
         request.setAttribute(MEDIAHELPER, mediaHelper);
         request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
         request.setAttribute(SOCIALSHARE_URL, webRequestContext.getFullUrl());
-        request.setAttribute(CONTEXTENGINE, webRequestContext.getContextEngine());
+        request.setAttribute(CONTEXTENGINE, context);
 
         final MvcData mvcData = page.getMvcData();
         log.trace("Page MvcData: {}", mvcData);
@@ -249,7 +249,7 @@ public class PageController extends BaseController {
         request.setAttribute(MEDIAHELPER, mediaHelper);
         request.setAttribute(SCREEN_WIDTH, mediaHelper.getScreenWidth());
         request.setAttribute(SOCIALSHARE_URL, webRequestContext.getFullUrl());
-        request.setAttribute(CONTEXTENGINE, webRequestContext.getContextEngine());
+        request.setAttribute(CONTEXTENGINE, context);
 
         response.setStatus(SC_NOT_FOUND);
         return this.viewNameResolver.resolveView(pageModel.getMvcData(), "Page");

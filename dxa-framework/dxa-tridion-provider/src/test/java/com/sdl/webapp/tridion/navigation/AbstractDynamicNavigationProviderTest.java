@@ -75,6 +75,8 @@ import static org.mockito.Mockito.when;
  * pm    true     1 //shouldExpandAncestorsMultiPageDescendantsOne
  * pm    false    0 //shouldNotExpandAncestorsMultiPageDescendantsZero
  * pm    false    1 //shouldNotExpandAncestorsMultiPageDescendantsOne
+ *
+ * root  false    1 //shouldReturnEmptyList_NotExpandingAncestors_ForTaxonomyRoot   /subtree/t1
  * </pre>
  */
 public class AbstractDynamicNavigationProviderTest {
@@ -787,6 +789,19 @@ public class AbstractDynamicNavigationProviderTest {
 
         //then
         assertTrue(emptyList.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnEmptyList_NotExpandingAncestors_ForTaxonomyRoot() {
+        //given
+        NavigationFilter navigationFilter = getNavigationFilter(false, 1);
+        String sitemapItemId = "t1";
+
+        //when
+        Collection<SitemapItem> emptyList = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+
+        //then
+        assertTrue(emptyList.size() == 7);
     }
 
     @Test

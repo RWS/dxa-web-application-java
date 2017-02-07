@@ -6,13 +6,13 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
-import org.springframework.web.context.ConfigurableWebEnvironment;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
 public final class InitializationUtils {
@@ -196,8 +197,8 @@ public final class InitializationUtils {
     }
 
     private static void addActiveProfiles(ConfigurableWebApplicationContext servletAppContext, String activeProfiles) {
-        if (activeProfiles != null) {
-            ConfigurableWebEnvironment environment = servletAppContext.getEnvironment();
+        if (!isEmpty(activeProfiles)) {
+            ConfigurableEnvironment environment = servletAppContext.getEnvironment();
             for (String profile : activeProfiles.split(",")) {
                 environment.addActiveProfile(profile.trim());
             }

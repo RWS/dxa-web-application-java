@@ -2,7 +2,6 @@ package com.sdl.dxa.builder.configuration.parameters
 
 class Parameter {
     String description
-    String placeholder
     Property[] properties
     Closure<String> dynamicDefault
     Validator validator
@@ -15,11 +14,6 @@ class Parameter {
     //region Builder methods
     Parameter withDescription(String description) {
         this.description = description
-        this
-    }
-
-    Parameter withPlaceholder(String placeholder) {
-        this.placeholder = placeholder
         this
     }
 

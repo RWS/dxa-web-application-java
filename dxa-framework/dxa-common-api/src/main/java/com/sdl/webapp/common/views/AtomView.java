@@ -1,14 +1,12 @@
 package com.sdl.webapp.common.views;
 
+import com.rometools.rome.feed.atom.Content;
+import com.rometools.rome.feed.atom.Entry;
+import com.rometools.rome.feed.atom.Feed;
+import com.rometools.rome.feed.atom.Link;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formatters.DataFormatter;
 import com.sdl.webapp.common.api.model.PageModel;
-import com.sun.syndication.feed.atom.Content;
-import com.sun.syndication.feed.atom.Entry;
-import com.sun.syndication.feed.atom.Feed;
-import com.sun.syndication.feed.atom.Link;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.view.feed.AbstractAtomFeedView;
 
@@ -24,9 +22,10 @@ import java.util.UUID;
  * Feed view for Atom representation of page
  */
 public class AtomView extends AbstractAtomFeedView {
-    private static final Logger LOG = LoggerFactory.getLogger(AtomView.class);
+
     @Autowired
     private WebRequestContext context;
+
     private DataFormatter formatter;
 
     /**

@@ -4,7 +4,6 @@ class Property {
     List<String> files
     String name
     boolean append
-    String placeholder
     Map<String, String> valueMapping
 
     //region Builder methods
@@ -40,11 +39,6 @@ class Property {
 
     Property withName(String name) {
         this.name = name
-        this
-    }
-
-    Property withPlaceholder(String placeholder) {
-        this.placeholder = placeholder
         this
     }
     //endregion

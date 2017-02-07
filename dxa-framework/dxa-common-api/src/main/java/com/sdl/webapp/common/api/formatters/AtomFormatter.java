@@ -1,15 +1,16 @@
 package com.sdl.webapp.common.api.formatters;
 
 import com.google.common.collect.Lists;
+import com.rometools.rome.feed.atom.Content;
+import com.rometools.rome.feed.atom.Entry;
+import com.rometools.rome.feed.atom.Link;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
-import com.sun.syndication.feed.atom.Content;
-import com.sun.syndication.feed.atom.Entry;
-import com.sun.syndication.feed.atom.Link;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.UUID;
+
 
 /**
  * Produces the feed in ATOM format.

@@ -25,12 +25,6 @@
         </attribute>
     </tag>
 
-    <tag>
-        <name>csrf-token</name>
-        <tag-class>com.sdl.webapp.common.impl.taglib.dxa.CsrfTokenTag</tag-class>
-        <body-content>empty</body-content>
-    </tag>
-
     <!-- Include a specific region -->
     <tag>
         <name>region</name>

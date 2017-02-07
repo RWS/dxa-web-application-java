@@ -1,10 +1,10 @@
 package com.sdl.webapp.common.api.formatters;
 
+import com.rometools.rome.feed.atom.Entry;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.Link;
-import com.sun.syndication.feed.atom.Entry;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -61,7 +61,7 @@ public class AtomFormatterTest {
         assertNotNull(entryLinkHttp.getUpdated());
         assertEquals(now, entryLinkHttp.getPublished());
 
-        com.sun.syndication.feed.atom.Link linkHttp = (com.sun.syndication.feed.atom.Link) entryLinkHttp.getOtherLinks().get(0);
+        com.rometools.rome.feed.atom.Link linkHttp = entryLinkHttp.getOtherLinks().get(0);
         assertEquals("http://url", linkHttp.getHref());
 
         //when
@@ -69,7 +69,7 @@ public class AtomFormatterTest {
         Entry entryLinkNoHttp = (Entry) atomFormatter.getSyndicationItem(teaser);
 
         //then
-        com.sun.syndication.feed.atom.Link linkNoHttp = (com.sun.syndication.feed.atom.Link) entryLinkNoHttp.getOtherLinks().get(0);
+        com.rometools.rome.feed.atom.Link linkNoHttp = entryLinkNoHttp.getOtherLinks().get(0);
         assertEquals("base_url/url2", linkNoHttp.getHref());
 
     }

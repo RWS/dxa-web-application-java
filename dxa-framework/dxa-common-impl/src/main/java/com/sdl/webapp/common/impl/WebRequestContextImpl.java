@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Stack;
 
 /**
- * <p>This implementation gets information about the display width etc. from the Ambient Data Framework.</p>
+ * This implementation gets information about the display width etc. from the Ambient Data Framework.
  */
 @Slf4j
 @Primary
@@ -40,16 +40,23 @@ public class WebRequestContextImpl implements WebRequestContext {
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
-    @Autowired
-    private MediaHelper mediaHelper;
+    @Getter(lazy = true)
+    private final boolean include = include();
 
-    @Getter
-    @Autowired
-    private HttpServletRequest servletRequest;
+    @Getter(lazy = true)
+    private final String contextPath = contextPath();
 
-    @Getter
-    @Autowired
-    private ContextEngine contextEngine;
+    @Getter(lazy = true)
+    private final String requestPath = requestPath();
+
+    @Getter(lazy = true)
+    private final String baseUrl = baseUrl();
+
+    @Getter(lazy = true)
+    private final boolean developerMode = developerMode();
+
+    @Getter(lazy = true)
+    private final boolean contextCookiePresent = contextCookiePresent();
 
     @Getter(lazy = true)
     private final int displayWidth = displayWidth();
@@ -57,31 +64,26 @@ public class WebRequestContextImpl implements WebRequestContext {
     @Getter(lazy = true)
     private final double pixelRatio = pixelRatio();
 
+    @Getter(lazy = true)
+    private final Localization localization = localization();
+
+    @Getter(lazy = true)
+    private final Boolean noLocalization = noLocalization();
+
+    @Autowired
+    private MediaHelper mediaHelper;
+
+    @Autowired
+    private HttpServletRequest servletRequest;
+
+    @Autowired
+    private ContextEngine contextEngine;
+
     @Autowired
     private LocalizationResolver localizationResolver;
 
     @Autowired(required = false)
     private UnknownLocalizationHandler unknownLocalizationHandler;
-
-    private SettableField<Boolean> include = new SettableField<>();
-
-    private SettableField<String> contextPath = new SettableField<>();
-
-    private SettableField<String> requestPath = new SettableField<>();
-
-    private SettableField<String> baseUrl = new SettableField<>();
-
-    private SettableField<Boolean> developerMode = new SettableField<>();
-
-    private SettableField<Boolean> contextCookiePresent = new SettableField<>();
-
-    private SettableField<Localization> localization = new SettableField<>();
-
-    private SettableField<Boolean> noLocalization = new SettableField<>();
-
-    @Getter
-    @Setter
-    private String pageId;
 
     @Getter
     @Setter
@@ -92,96 +94,10 @@ public class WebRequestContextImpl implements WebRequestContext {
     private Stack<Integer> containerSizeStack = new Stack<>();
 
     @Override
-    public String getBaseUrl() {
-        if (this.baseUrl.isSet) {
-            return this.baseUrl.value;
-        }
-        String newValue = baseUrl();
-        setBaseUrl(newValue);
-        return newValue;
-    }
-
-    @Override
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl.value = baseUrl;
-        this.baseUrl.isSet = true;
-    }
-
-    @Override
-    public String getContextPath() {
-        if (contextPath.isSet) {
-            return contextPath.value;
-        }
-        String newValue = contextPath();
-        setContextPath(newValue);
-        return newValue;
-    }
-
-    @Override
-    public void setContextPath(String contextPath) {
-        this.contextPath.value = contextPath;
-        this.contextPath.isSet = true;
-    }
-
-    @Override
-    public String getRequestPath() {
-        if (requestPath.isSet) {
-            return requestPath.value;
-        }
-        String newValue = requestPath();
-        setRequestPath(newValue);
-        return newValue;
-    }
-
-    @Override
-    public void setRequestPath(String requestPath) {
-        this.requestPath.value = requestPath;
-        this.requestPath.isSet = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public String getFullUrl() {
         return getBaseUrl() + getContextPath() + getRequestPath();
     }
 
-    @Override
-    public boolean isContextCookiePresent() {
-        if (this.contextCookiePresent.isSet) {
-            return this.contextCookiePresent.value;
-        }
-        boolean value = contextCookiePresent();
-        setContextCookiePresent(value);
-        return value;
-    }
-
-    @Override
-    public void setContextCookiePresent(boolean present) {
-        this.contextCookiePresent.value = present;
-        this.contextCookiePresent.isSet = true;
-    }
-
-    @Override
-    public Localization getLocalization() {
-        if (localization.isSet) {
-            return localization.value;
-        }
-        Localization value = localization();
-        setLocalization(value);
-        return value;
-    }
-
-    @Override
-    public void setLocalization(Localization localization) {
-        this.localization.value = localization;
-        this.localization.isSet = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public boolean isPreview() {
         // Should return true if the request is from XPM (NOTE currently always true for staging as we cannot reliably
@@ -191,122 +107,68 @@ public class WebRequestContextImpl implements WebRequestContext {
 
     @Override
     public ScreenWidth getScreenWidth() {
-        return screenWidth();
+        int width = isContextCookiePresent() ? getDisplayWidth() : Width.MAX_WIDTH;
+
+        if (width < mediaHelper.getSmallScreenBreakpoint()) {
+            return ScreenWidth.EXTRA_SMALL;
+        }
+
+        if (width < mediaHelper.getMediumScreenBreakpoint()) {
+            return ScreenWidth.SMALL;
+        }
+
+        if (width < mediaHelper.getLargeScreenBreakpoint()) {
+            return ScreenWidth.MEDIUM;
+        }
+
+        return ScreenWidth.LARGE;
     }
 
     @Override
     public int getMaxMediaWidth() {
-        return maxMediaWidth();
+        return (int) Math.max(1.0, getPixelRatio()) * Math.min(getDisplayWidth(), Width.MAX_WIDTH);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public int getContainerSize() {
         return containerSizeStack.peek();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void pushContainerSize(int containerSize) {
+        int size = containerSize;
         if (containerSize == 0) {
-            containerSize = mediaHelper.getGridSize();
+            size = mediaHelper.getGridSize();
         }
         if (!containerSizeStack.isEmpty()) {
             int parentContainerSize = containerSizeStack.peek();
-            containerSize = containerSize * parentContainerSize / mediaHelper.getGridSize();
+            size = containerSize * parentContainerSize / mediaHelper.getGridSize();
         }
-        containerSizeStack.push(containerSize);
+        containerSizeStack.push(size);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void popContainerSize() {
         containerSizeStack.pop();
     }
 
     @Override
-    public boolean isNoLocalization() {
-        if (noLocalization.isSet) {
-            return noLocalization.value;
-        }
-        return getLocalization() == null;
-    }
-
-    @Override
-    public void setNoLocalization(boolean value) {
-        this.noLocalization.value = value;
-        this.noLocalization.isSet = true;
-    }
-
-    @Override
-    public boolean isDeveloperMode() {
-        if (developerMode.isSet) {
-            return developerMode.value;
-        }
-        boolean value = developerMode();
-        setDeveloperMode(value);
-        return value;
-    }
-
-    @Override
-    public void setDeveloperMode(boolean value) {
-        this.developerMode.value = value;
-        this.developerMode.isSet = true;
-    }
-
-    @Override
-    public boolean isInclude() {
-        if (include.isSet) {
-            return include.value;
-        }
-
-        boolean newValue = include();
-        setInclude(newValue);
-        return newValue;
-    }
-
-    @Override
-    public void setInclude(boolean value) {
-        include.value = value;
-        include.isSet = true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public RegionModel getParentRegion() {
         return parentRegionStack.isEmpty() ? null : parentRegionStack.peek();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void pushParentRegion(RegionModel parentRegion) {
         parentRegionStack.push(parentRegion);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void popParentRegion() {
         parentRegionStack.pop();
     }
 
     private String baseUrl() {
-        String baseUrl = servletRequest.getRequestURL().toString();
-        if (baseUrl.endsWith("/")) {
-            baseUrl = baseUrl.substring(0, baseUrl.length() - 1);
-        }
-        return baseUrl;
+        return servletRequest.getRequestURL().toString().replaceFirst(servletRequest.getRequestURI() + "$", "");
     }
 
     private String contextPath() {
@@ -314,7 +176,7 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     private String requestPath() {
-        return urlPathHelper.getOriginatingRequestUri(servletRequest);
+        return urlPathHelper.getPathWithinApplication(servletRequest);
     }
 
     private boolean developerMode() {
@@ -333,32 +195,35 @@ public class WebRequestContextImpl implements WebRequestContext {
         return false;
     }
 
+    private boolean noLocalization() {
+        return getLocalization() == null;
+    }
+
     private Localization localization() {
-        Localization localization = null;
+        Localization resolveLocalization = null;
         try {
-            localization = localizationResolver.getLocalization(getFullUrl());
+            resolveLocalization = localizationResolver.getLocalization(getFullUrl());
         } catch (LocalizationResolverException e) {
             if (unknownLocalizationHandler != null) {
                 log.info("Localization is not resolved for {}, Localization handler is set, trying to resolve using it", getFullUrl());
-                localization = unknownLocalizationHandler.handleUnknown(e, servletRequest);
-                if (localization == null) {
+                resolveLocalization = unknownLocalizationHandler.handleUnknown(e, servletRequest);
+                if (resolveLocalization == null) {
                     log.info("Unknown Localization handler is set but localization wasn't resolved with it, fallback");
-                    LocalizationNotResolvedException fallbackException =
-                            unknownLocalizationHandler.getFallbackException(e, servletRequest);
+                    LocalizationNotResolvedException fallbackException = unknownLocalizationHandler.getFallbackException(e, servletRequest);
                     if (fallbackException != null) {
                         throw fallbackException;
                     }
                     log.info("Fallback exception from Unknown Localization Handler is null, fallback to default handling");
                 }
             }
-            if (localization == null) {
+            if (resolveLocalization == null) {
                 throw new LocalizationNotFoundException("Localization not found", e);
             }
         }
         if (log.isTraceEnabled()) {
-            log.trace("Localization for {} is: [{}] {}", getFullUrl(), localization.getId(), localization.getPath());
+            log.trace("Localization for {} is: [{}] {}", getFullUrl(), resolveLocalization.getId(), resolveLocalization.getPath());
         }
-        return localization;
+        return resolveLocalization;
     }
 
     public boolean include() {
@@ -366,62 +231,43 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     private int displayWidth() {
-        Integer displayWidth = contextEngine.getClaims(BrowserClaims.class).getDisplayWidth();
-        if (displayWidth == null) {
-            return Width.defaultWidth;
+        BrowserClaims claims = contextEngine.getClaims(BrowserClaims.class);
+        if (claims == null) {
+            return Width.DEFAULT_WIDTH;
+        }
+
+        Integer resolveDisplayWidth = claims.getDisplayWidth();
+        if (resolveDisplayWidth == null) {
+            return Width.DEFAULT_WIDTH;
         }
 
         // NOTE: The context engine uses a default browser width of 800, which we override to 1024
-        if (displayWidth == 800 && contextCookiePresent()) {
-            return Width.defaultWidth;
+        if (resolveDisplayWidth == 800 && contextCookiePresent()) {
+            return Width.DEFAULT_WIDTH;
         }
 
-        return displayWidth;
-    }
-
-    private ScreenWidth screenWidth() {
-        int width = isContextCookiePresent() ? getDisplayWidth() : Width.maxWidth;
-
-        if (width < mediaHelper.getSmallScreenBreakpoint()) {
-            return ScreenWidth.EXTRA_SMALL;
-        }
-
-        if (width < mediaHelper.getMediumScreenBreakpoint()) {
-            return ScreenWidth.SMALL;
-        }
-
-        if (width < mediaHelper.getLargeScreenBreakpoint()) {
-            return ScreenWidth.MEDIUM;
-        }
-
-        return ScreenWidth.LARGE;
-    }
-
-    private int maxMediaWidth() {
-        return (int) Math.max(1.0, getPixelRatio()) * Math.min(getDisplayWidth(), Width.maxWidth);
+        return resolveDisplayWidth;
     }
 
     private double pixelRatio() {
-        Double pixelRatio = contextEngine.getClaims(DeviceClaims.class).getPixelRatio();
-        if (pixelRatio == null) {
-            pixelRatio = 1.0;
-            log.debug("Pixel ratio ADF claim not available - using default value: {}", pixelRatio);
+        DeviceClaims claims = contextEngine.getClaims(DeviceClaims.class);
+
+        Double resolvePixelRatio;
+        if (claims == null || (resolvePixelRatio = claims.getPixelRatio()) == null) {
+            resolvePixelRatio = 1.0;
+            log.debug("Pixel ratio ADF claim not available - using default value: {}", resolvePixelRatio);
         }
-        return pixelRatio;
+
+        return resolvePixelRatio;
     }
 
-    private interface Width {
+    private class Width {
 
-        int defaultWidth = 1024;
+        static final int DEFAULT_WIDTH = 1024;
 
-        int maxWidth = 1024;
-    }
+        static final int MAX_WIDTH = 1024;
 
-    //todo dxa2 replace with @Getter(lazy=true)
-    private static class SettableField<T> {
-
-        T value;
-
-        boolean isSet;
+        private Width() {
+        }
     }
 }

@@ -1,11 +1,13 @@
 package com.sdl.dxa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.sdl.dxa.api.model.data.util.PolymorphicObjectMixin;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
@@ -18,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.MutablePropertySources;
@@ -45,8 +46,6 @@ import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitializa
 @Configuration
 //todo dxa2 rename com.sdl.webapp to com.sdl.dxa
 @ComponentScan(basePackages = {"com.sdl.webapp", "com.sdl.dxa"})
-//TODO dxa2 remove resource auto-import
-@ImportResource("classpath*:/META-INF/spring-context.xml")
 @Slf4j
 //TODO dxa2 consider moving web-defaults (e.g. view resolvers) to a different configuration
 public class DxaSpringInitialization {
@@ -160,6 +159,8 @@ public class DxaSpringInitialization {
         objectMapper.setFilterProvider(jsonFilterProvider());
         objectMapper.setDateFormat(new StdDateFormat());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
+        objectMapper.addMixIn(Object.class, PolymorphicObjectMixin.class);
         traceBeanInitialization(objectMapper);
         return objectMapper;
     }

@@ -1,9 +1,9 @@
 package com.sdl.webapp.common.api.formatters;
 
+import com.rometools.rome.feed.rss.Description;
+import com.rometools.rome.feed.rss.Item;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
-import com.sun.syndication.feed.rss.Description;
-import com.sun.syndication.feed.rss.Item;
 
 import javax.servlet.http.HttpServletRequest;
 

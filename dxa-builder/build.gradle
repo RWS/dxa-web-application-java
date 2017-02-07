@@ -1,5 +1,5 @@
 group 'com.sdl.dxa'
-version '1.7.0'
+version version
 
 apply plugin: 'groovy'
 apply plugin: 'maven-publish'

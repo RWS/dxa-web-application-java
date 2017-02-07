@@ -82,10 +82,10 @@ public class DxaSpringInitializationTest {
         //given
         ObjectMapper objectMapper = new DxaSpringInitialization().objectMapper();
         long timestamp = 42000;
-        String example = "{\"date\" : \"1970-01-01T00:00:42.000+0000\", " +
-                "\"dateZ\" : \"1970-01-01T00:00:42.000Z\"," +
-                "\"dateTime\" : \"1970-01-01T00:00:42.000Z\"," +
-                "\"dateTimeFull\" : \"1970-01-01T00:00:42.000+0000\"}";
+        String example = "{\"Date\" : \"1970-01-01T00:00:42.000+0000\", " +
+                "\"DateZ\" : \"1970-01-01T00:00:42.000Z\"," +
+                "\"DateTime\" : \"1970-01-01T00:00:42.000Z\"," +
+                "\"DateTimeFull\" : \"1970-01-01T00:00:42.000+0000\"}";
 
         //when
         DateTest exampleDate = objectMapper.readValue(example, DateTest.class);

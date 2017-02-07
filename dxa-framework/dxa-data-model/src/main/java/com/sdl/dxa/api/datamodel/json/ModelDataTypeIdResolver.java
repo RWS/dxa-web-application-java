@@ -1,4 +1,4 @@
-package com.sdl.dxa.api.model.data.util;
+package com.sdl.dxa.api.datamodel.json;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.sdl.dxa.api.model.data.ViewModelData;
+import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;

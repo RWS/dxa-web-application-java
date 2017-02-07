@@ -1,4 +1,4 @@
-package com.sdl.dxa.api.model.data;
+package com.sdl.dxa.api.datamodel.model;
 
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

@@ -1,8 +1,8 @@
-package com.sdl.dxa.api.model.data;
+package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.sdl.dxa.api.model.data.util.CanGetAndCast;
-import com.sdl.dxa.api.model.data.util.DelegatesToList;
+import com.sdl.dxa.api.datamodel.model.util.CanGetAndCast;
+import com.sdl.dxa.api.datamodel.model.util.DelegatesToList;
 import lombok.Value;
 
 import java.util.List;

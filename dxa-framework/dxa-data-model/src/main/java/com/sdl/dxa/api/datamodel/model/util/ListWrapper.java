@@ -1,11 +1,11 @@
-package com.sdl.dxa.api.model.data.util;
+package com.sdl.dxa.api.datamodel.model.util;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.sdl.dxa.api.model.data.ContentModelData;
-import com.sdl.dxa.api.model.data.EntityModelData;
-import com.sdl.dxa.api.model.data.KeywordModelData;
-import com.sdl.dxa.api.model.data.RichTextData;
+import com.sdl.dxa.api.datamodel.model.ContentModelData;
+import com.sdl.dxa.api.datamodel.model.EntityModelData;
+import com.sdl.dxa.api.datamodel.model.KeywordModelData;
+import com.sdl.dxa.api.datamodel.model.RichTextData;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.sdl.dxa.api.model.data.util.PolymorphicObjectMixin;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
@@ -160,7 +159,6 @@ public class DxaSpringInitialization {
         objectMapper.setDateFormat(new StdDateFormat());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
-        objectMapper.addMixIn(Object.class, PolymorphicObjectMixin.class);
         traceBeanInitialization(objectMapper);
         return objectMapper;
     }

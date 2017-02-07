@@ -1,4 +1,4 @@
-package com.sdl.dxa.api.model.data;
+package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.EqualsAndHashCode;

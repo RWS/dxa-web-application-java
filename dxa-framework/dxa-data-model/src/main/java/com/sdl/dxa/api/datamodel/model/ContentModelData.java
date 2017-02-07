@@ -1,7 +1,7 @@
-package com.sdl.dxa.api.model.data;
+package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.sdl.dxa.api.model.data.util.CanGetAndCast;
+import com.sdl.dxa.api.datamodel.model.util.CanGetAndCast;
 
 import java.io.Serializable;
 import java.util.HashMap;

@@ -1,10 +1,17 @@
-package com.sdl.dxa.api.model.data;
+package com.sdl.dxa.api.datamodel;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.sdl.dxa.DxaSpringInitialization;
-import com.sdl.dxa.api.model.data.util.ListWrapper;
+import com.sdl.dxa.api.datamodel.model.BinaryContentData;
+import com.sdl.dxa.api.datamodel.model.ContentModelData;
+import com.sdl.dxa.api.datamodel.model.EntityModelData;
+import com.sdl.dxa.api.datamodel.model.ExternalContentData;
+import com.sdl.dxa.api.datamodel.model.KeywordModelData;
+import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.api.datamodel.model.RegionModelData;
+import com.sdl.dxa.api.datamodel.model.RichTextData;
+import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.Test;
@@ -38,7 +45,7 @@ public class DeserializationTest {
     @Test
     public void shouldDeserializePageModel() throws IOException {
         //given
-        File file = new ClassPathResource("./dxa20json/pageModel.json").getFile();
+        File file = new ClassPathResource("dxa20json/pageModel.json").getFile();
 
         //when
         PageModelData page = objectMapper.readValue(file, PageModelData.class);
@@ -204,7 +211,7 @@ public class DeserializationTest {
 
         @Bean
         public ObjectMapper objectMapper() {
-            return new DxaSpringInitialization().objectMapper();
+            return new SpringConfiguration().objectMapper();
         }
     }
 }

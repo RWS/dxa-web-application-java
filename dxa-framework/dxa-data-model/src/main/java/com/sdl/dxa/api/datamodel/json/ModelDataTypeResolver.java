@@ -1,4 +1,4 @@
-package com.sdl.dxa.api.model.data.util;
+package com.sdl.dxa.api.datamodel.json;
 
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JavaType;

@@ -24,6 +24,7 @@
         <module>dxa-tridion-provider</module>
         <module>dxa-web8-provider</module>
         <module>dxa-compatible</module>
+        <module>dxa-data-model</module>
     </modules>
 
     <scm>
@@ -100,6 +101,11 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
         </dependency>
 
         <!-- Testing dependencies -->

@@ -1,22 +1,21 @@
-package com.sdl.dxa.api.model.data;
+package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 import java.util.List;
-import java.util.Map;
 
 @Value
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeName
-public class PageModelData extends ViewModelData {
+public class RegionModelData extends ViewModelData {
 
-    private String id;
+    private String name;
 
-    private Map<String, String> meta;
+    private String includePageUrl;
 
-    private String title;
+    private List<EntityModelData> entities;
 
     private List<RegionModelData> regions;
 }

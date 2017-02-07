@@ -1,4 +1,4 @@
-package com.sdl.dxa.api.model.data.util;
+package com.sdl.dxa.api.datamodel.model.util;
 
 import java.util.List;
 

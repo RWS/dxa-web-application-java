@@ -45,7 +45,7 @@
     </developers>
 
     <properties>
-        <dd4t.version>2.1.4-DXA17</dd4t.version>
+        <dd4t.version>2.1.5-DXA18</dd4t.version>
         <cd-cil.version>10.0.0-SNAPSHOT</cd-cil.version>
 
         <!-- DXA versions -->

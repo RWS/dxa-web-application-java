@@ -117,10 +117,5 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-api</artifactId>
-        </dependency>
     </dependencies>
 </project>

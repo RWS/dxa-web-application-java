@@ -1,14 +1,17 @@
 package com.sdl.webapp.common.util;
 
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.dd4t.core.util.TCMURI;
-import org.dd4t.core.util.TCMURI.Namespace;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static org.dd4t.core.util.TCMURI.Namespace.TCM;
+import static com.sdl.webapp.common.util.TcmUtils.Namespace.TCM;
 
 /**
  * Simple utility functions to process TCM-URIs.
@@ -44,12 +47,16 @@ public final class TcmUtils {
     /**
      * Build a publication CM URI looking like <code>namespace:0-ID-1</code>.
      *
-     * @param namespace CM URI namespace
+     * @param namespace     CM URI namespace
      * @param publicationId publication ID
      * @return TCM URI for publication
      */
     public static String buildPublicationCmUri(Namespace namespace, int publicationId) {
         return buildPublicationCmUriInternal(namespace, String.valueOf(publicationId));
+    }
+
+    private static String buildPublicationCmUriInternal(Namespace namespace, String publicationId) {
+        return String.format(S_S_S_S, namespace.getValue(), 0, publicationId, PUBLICATION_ITEM_TYPE);
     }
 
     /**
@@ -65,16 +72,12 @@ public final class TcmUtils {
     /**
      * Build a publication CM URI looking like <code>namespace:0-ID-1</code>.
      *
-     * @param namespace CM URI namespace
+     * @param namespace     CM URI namespace
      * @param publicationId publication ID
      * @return TCM URI for publication
      */
     public static String buildPublicationCmUri(Namespace namespace, String publicationId) {
         return buildPublicationCmUriInternal(namespace, publicationId);
-    }
-
-    private static String buildPublicationCmUriInternal(Namespace namespace, String publicationId) {
-        return String.format(S_S_S_S, namespace.getValue(), 0, publicationId, PUBLICATION_ITEM_TYPE);
     }
 
     /**
@@ -91,7 +94,7 @@ public final class TcmUtils {
     /**
      * Build a template CM URI looking like <code>namespace:PUB_ID-ITEM_ID-32</code>.
      *
-     * @param namespace CM URI namespace
+     * @param namespace     CM URI namespace
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return TCM URI for template
@@ -114,7 +117,7 @@ public final class TcmUtils {
     /**
      * Build a template CM URI looking like <code>namespace:PUB_ID-ITEM_ID-32</code>.
      *
-     * @param namespace CM URI namespace
+     * @param namespace     CM URI namespace
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return TCM URI for page
@@ -137,13 +140,17 @@ public final class TcmUtils {
     /**
      * Build a short CM URI looking like <code>namespace:PUB_ID-ITEM_ID</code>.
      *
-     * @param namespace CM URI namespace
+     * @param namespace     CM URI namespace
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return short CM URI
      */
     public static String buildCmUri(Namespace namespace, String publicationId, String itemId) {
         return buildCmUriInternal(namespace, publicationId, itemId);
+    }
+
+    private static String buildCmUriInternal(Namespace namespace, String publicationId, String itemId) {
+        return String.format(S_S_S, namespace.getValue(), publicationId, itemId);
     }
 
     /**
@@ -160,17 +167,13 @@ public final class TcmUtils {
     /**
      * Build a short CM URI looking like <code>namespace:PUB_ID-ITEM_ID</code>.
      *
-     * @param namespace CM URI namespace
+     * @param namespace     CM URI namespace
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return short CM URI
      */
     public static String buildCmUri(Namespace namespace, int publicationId, int itemId) {
         return buildCmUriInternal(namespace, String.valueOf(publicationId), String.valueOf(itemId));
-    }
-
-    private static String buildCmUriInternal(Namespace namespace, String publicationId, String itemId) {
-        return String.format(S_S_S, namespace.getValue(), publicationId, itemId);
     }
 
     /**
@@ -188,7 +191,7 @@ public final class TcmUtils {
     /**
      * Build a CM URI looking like <code>namespace:PUB_ID-ITEM_ID-ITEM_TYPE</code>.
      *
-     * @param namespace CM URI namespace
+     * @param namespace     CM URI namespace
      * @param publicationId publication ID
      * @param itemId        item ID
      * @param itemType      item type
@@ -196,6 +199,10 @@ public final class TcmUtils {
      */
     public static String buildCmUri(Namespace namespace, String publicationId, String itemId, String itemType) {
         return buildCmUriInternal(namespace, publicationId, itemId, itemType);
+    }
+
+    public static String buildCmUriInternal(Namespace namespace, String publicationId, String itemId, String itemType) {
+        return String.format(S_S_S_S, namespace.getValue(), publicationId, itemId, itemType);
     }
 
     /**
@@ -213,7 +220,7 @@ public final class TcmUtils {
     /**
      * Build a CM URI looking like <code>namespace:PUB_ID-ITEM_ID-ITEM_TYPE</code>.
      *
-     * @param namespace CM URI namespace
+     * @param namespace     CM URI namespace
      * @param publicationId publication ID
      * @param itemId        item ID
      * @param itemType      item type
@@ -221,20 +228,6 @@ public final class TcmUtils {
      */
     public static String buildCmUri(Namespace namespace, int publicationId, int itemId, int itemType) {
         return buildCmUriInternal(namespace, String.valueOf(publicationId), String.valueOf(itemId), String.valueOf(itemType));
-    }
-
-    public static String buildCmUriInternal(Namespace namespace, String publicationId, String itemId, String itemType) {
-        return String.format(S_S_S_S, namespace.getValue(), publicationId, itemId, itemType);
-    }
-
-    /**
-     * Extracts item ID from a valid CM URI.
-     *
-     * @param cmUri cm uri to process
-     * @return item ID or <code>-1</code> if URI is not valid or null
-     */
-    public static int getItemId(String cmUri) {
-        return extractGroupFromCm(cmUri, 3);
     }
 
     /**
@@ -273,9 +266,9 @@ public final class TcmUtils {
      * Localizes given CM URI to current publication.
      * <p>E.g. <code>namespace:1-2-3</code> with publication URI <code>namespace:0-8-1</code> will look like <code>namespace:8-2-3</code>.</p>
      *
-     * @param namespace         CM URI namespace
-     * @param cmUri             cm uri of item to localize
-     * @param publicationCmUri  CM URI of publication
+     * @param namespace        CM URI namespace
+     * @param cmUri            cm uri of item to localize
+     * @param publicationCmUri CM URI of publication
      * @return localized CM URI of an item
      */
     public static String localizeCmUri(Namespace namespace, String cmUri, String publicationCmUri) {
@@ -284,15 +277,13 @@ public final class TcmUtils {
     }
 
     /**
-     * Localizes given TCM URI to current publication.
-     * <p>E.g. <code>tcm:1-2-3</code> with publication ID <code>8</code> will look like <code>tcm:8-2-3</code>.</p>
+     * Extracts item ID from a valid CM URI.
      *
-     * @param tcmUri        tcm uri of item to localize
-     * @param publicationId publication ID
-     * @return localized TCM URI of an item
+     * @param cmUri cm uri to process
+     * @return item ID or <code>-1</code> if URI is not valid or null
      */
-    public static String localizeTcmUri(String tcmUri, int publicationId) {
-        return localizeCmUri(TCM, tcmUri, publicationId);
+    public static int getItemId(String cmUri) {
+        return extractGroupFromCm(cmUri, 3);
     }
 
     /**
@@ -314,6 +305,41 @@ public final class TcmUtils {
         return itemType == null ? buildCmUri(namespace, publicationId, getItemId(cmUri)) :
                 buildCmUri(namespace, publicationId, getItemId(cmUri), Integer.parseInt(itemType));
 
+    }
+
+    /**
+     * Localizes given TCM URI to current publication.
+     * <p>E.g. <code>tcm:1-2-3</code> with publication ID <code>8</code> will look like <code>tcm:8-2-3</code>.</p>
+     *
+     * @param tcmUri        tcm uri of item to localize
+     * @param publicationId publication ID
+     * @return localized TCM URI of an item
+     */
+    public static String localizeTcmUri(String tcmUri, int publicationId) {
+        return localizeCmUri(TCM, tcmUri, publicationId);
+    }
+
+    @AllArgsConstructor
+    public enum Namespace {
+        TCM("tcm"),
+        ISH("ish");
+
+        private static final Map<String, Namespace> namespaces = Collections.unmodifiableMap(initialize());
+
+        @Getter
+        private String value;
+
+        private static Map<String, Namespace> initialize() {
+            Map<String, Namespace> result = new HashMap<>();
+            for (Namespace n : Namespace.values()) {
+                result.put(n.value, n);
+            }
+            return result;
+        }
+
+        public static Namespace getNamespaceFor(String value) {
+            return namespaces.get(value);
+        }
     }
 
     /**

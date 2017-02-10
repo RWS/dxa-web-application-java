@@ -29,6 +29,7 @@ public final class MimeUtils {
         MIME_TYPES.put("au", "audio/basic");
         MIME_TYPES.put("avi", "video/x-msvideo");
         MIME_TYPES.put("bin", "application/octet-stream");
+        MIME_TYPES.put("bmp", "image/bmp");
         MIME_TYPES.put("cab", "application/x-cabinet");
         MIME_TYPES.put("cdf", "application/x-netcdf");
         MIME_TYPES.put("class", "application/java-vm");

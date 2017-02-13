@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
+import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
@@ -33,6 +34,7 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
+@R2
 public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder {
 
     @Autowired

@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
+import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
@@ -27,6 +28,7 @@ import java.util.List;
  * @see PageModelBuilder
  */
 @Service
+@R2
 public class ModelBuilderPipeline {
 
     private final List<EntityModelBuilder> entityModelBuilders;

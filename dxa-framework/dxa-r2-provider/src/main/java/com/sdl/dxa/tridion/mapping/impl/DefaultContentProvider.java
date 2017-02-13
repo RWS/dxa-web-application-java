@@ -3,6 +3,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -26,6 +27,7 @@ import java.io.UnsupportedEncodingException;
 import static com.sdl.webapp.common.util.LocalizationUtils.findPageByPath;
 import static org.springframework.web.util.UriUtils.encodePath;
 
+@R2
 @Service("r2ContentProvider")
 public class DefaultContentProvider implements ContentProvider {
 

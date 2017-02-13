@@ -10,7 +10,6 @@ import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 
@@ -24,7 +23,6 @@ import java.util.List;
  */
 @org.springframework.stereotype.Component
 @Slf4j
-@Primary
 public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
 
     private List<PageBuilder> pageBuilderHandlers;

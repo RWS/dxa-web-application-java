@@ -37,7 +37,6 @@ import org.dd4t.core.factories.PageFactory;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -55,7 +54,6 @@ import static java.util.Collections.singletonList;
  */
 @Slf4j
 @Service
-@Primary
 public class DefaultContentProvider extends AbstractDefaultContentProvider {
 
     private static final Object LOCK = new Object();

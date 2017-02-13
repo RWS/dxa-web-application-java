@@ -1,0 +1,68 @@
+{
+  "Id": "640",
+  "Title": "Home",
+  "Meta": {
+    "sitemapKeyword": "000 Home"
+  },
+  "Regions": [
+    {
+      "Name": "Header",
+      "Regions": [
+        {
+          "Name": "Info",
+          "Entities": [
+            {
+              "Id": "4838",
+              "Content": {
+                "headline": "Headline"
+              },
+              "MvcData": {
+                "ViewName": "TestClassView"
+              },
+              "XpmMetadata": {
+                "ComponentID": "tcm:1082-4838",
+                "ComponentModified": "2014-08-05T11:28:17.34",
+                "ComponentTemplateID": "tcm:1082-2740-32",
+                "ComponentTemplateModified": "2014-07-31T16:32:47.183",
+                "IsRepositoryPublished": false
+              },
+              "SchemaId": "2737"
+            }
+          ],
+          "MvcData": {
+            "ViewName": "Info"
+          }
+        }
+      ],
+      "IncludePageUrl": "/system/include/header.html",
+      "MvcData": {
+        "ViewName": "Header"
+      },
+      "XpmMetadata": {
+        "IncludedFromPageId": "tcm:1082-1480-64",
+        "IncludedFromPageTitle": "Header",
+        "IncludedFromPageFileName": "header"
+      }
+    }
+  ],
+  "MvcData": {
+    "ViewName": "GeneralPage"
+  },
+  "XpmMetadata": {
+    "PageID": "tcm:1082-640-64",
+    "PageModified": "2016-08-31T11:20:41.867",
+    "PageTemplateID": "tcm:1082-131-128",
+    "PageTemplateModified": "2015-07-15T15:27:56.093"
+  },
+  "Metadata": {
+    "sitemapKeyword": {
+      "$type": "KeywordModelData",
+      "Id": "10021",
+      "Title": "000 Home",
+      "Description": "",
+      "Key": "",
+      "TaxonomyId": "2680"
+    }
+  },
+  "SchemaId": "10015"
+}

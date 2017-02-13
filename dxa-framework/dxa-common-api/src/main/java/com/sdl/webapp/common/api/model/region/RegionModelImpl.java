@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Objects;
 
 import static com.google.common.collect.FluentIterable.from;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.REGION;
 
 
 /**
@@ -101,7 +101,7 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     public RegionModelImpl(String name, String qualifiedViewName) throws DxaException {
         this(name);
         this.setMvcData(MvcDataCreator.creator()
-                .defaults(CORE_REGION)
+                .defaults(REGION)
                 .builder()
                 .regionName(qualifiedViewName)
                 .viewName(qualifiedViewName)

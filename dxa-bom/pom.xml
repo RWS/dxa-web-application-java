@@ -112,6 +112,11 @@
             <!--region DXA Framework dependencies-->
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-data-model</artifactId>
+                <version>${dxa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-common-api</artifactId>
                 <version>${dxa.version}</version>
             </dependency>
@@ -130,6 +135,11 @@
                 <artifactId>dxa-web8-provider</artifactId>
                 <version>${dxa.version}</version>
                 <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-dd4t-provider</artifactId>
+                <version>${dxa.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>

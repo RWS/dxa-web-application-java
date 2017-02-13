@@ -25,11 +25,11 @@ public abstract class ViewModelData {
 
     private String htmlClasses;
 
-    private Map<String, ?> xpmMetadata;
+    private Map<String, Object> xpmMetadata;
 
     private ContentModelData metadata;
 
-    private Map<String, ?> extensionData;
+    private Map<String, Object> extensionData;
 
-    private MvcData mvcData;
+    private MvcModelData mvcData;
 }

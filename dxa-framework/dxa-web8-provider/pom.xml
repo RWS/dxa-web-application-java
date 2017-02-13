@@ -37,6 +37,11 @@
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-common-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-tridion-provider</artifactId>
         </dependency>
 
@@ -80,22 +85,6 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-providers</artifactId>
         </dependency>
 
         <dependency>

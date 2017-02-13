@@ -13,9 +13,6 @@ import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
-import org.dd4t.core.caching.CacheElement;
-import org.dd4t.core.caching.impl.CacheElementImpl;
-import org.dd4t.providers.PayloadCacheProvider;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -24,7 +21,6 @@ import org.jetbrains.annotations.Nullable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -81,21 +77,17 @@ import static org.mockito.Mockito.when;
  */
 public class AbstractDynamicNavigationProviderTest {
 
-    private StaticNavigationProvider staticNavigationProvider = mock(StaticNavigationProvider.class);
+    private AbstractStaticNavigationProvider staticNavigationProvider = mock(AbstractStaticNavigationProvider.class);
 
     private Localization localization = mock(Localization.class);
 
     private LinkResolver linkResolver = mock(LinkResolver.class);
 
-    private PayloadCacheProvider payloadCacheProvider = mock(PayloadCacheProvider.class);
-
-    private CacheElement<Object> cacheElement = spy(new CacheElementImpl<>(null, true));
-
     private AbstractDynamicNavigationProvider defaultDynamicNavigationProvider = getTestProvider(false, getNavigationModel(), "taxonomyId");
 
     @NotNull
     private AbstractDynamicNavigationProvider getTestProvider(final boolean callRealNavigationModel, final SitemapItem model, final String taxonomyId) {
-        AbstractDynamicNavigationProvider provider = new AbstractDynamicNavigationProvider(staticNavigationProvider, linkResolver, payloadCacheProvider) {
+        AbstractDynamicNavigationProvider provider = new AbstractDynamicNavigationProvider(staticNavigationProvider, linkResolver) {
             @Override
             public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
                 return callRealNavigationModel ? super.getNavigationModel(localization) : createTaxonomyNode(taxonomyId, localization);
@@ -158,9 +150,6 @@ public class AbstractDynamicNavigationProviderTest {
                 return "resolved-" + invocation.getArguments()[0];
             }
         });
-
-        when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(cacheElement);
-
 
         doReturn(Collections.<SitemapItem>emptySet()).when(defaultDynamicNavigationProvider).expandDescendants(
                 any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
@@ -305,9 +294,6 @@ public class AbstractDynamicNavigationProviderTest {
 
         //then
         //TSI-2001
-        verify(cacheElement, never()).setPayload(Matchers.anyObject());
-        verify(cacheElement, never()).setExpired(anyBoolean());
-
         verify(staticNavigationProvider).getNavigationModel(eq(localization));
         verify(testProvider).getNavigationTaxonomyId(eq(localization));
         assertEquals("Static", sitemapItem.getTitle());
@@ -368,7 +354,7 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Test
     public void shouldFindTheIndexPageFromSitemaps() {
-        //given 
+        //given
         String url = "hello-world/index.html";
         String expected = "hello-world";
 
@@ -656,7 +642,7 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Test
     public void shouldCreateTaxonomyNodeFromKeyword() {
-        //given 
+        //given
         KeywordDTO.KeywordDTOBuilder builder = KeywordDTO.builder()
                 .keywordUri("1-2")
                 .taxonomyUri("3-4")
@@ -744,7 +730,7 @@ public class AbstractDynamicNavigationProviderTest {
 
     @Test
     public void shouldTryExpandAncestorsKeywordWithNullResult() {
-        //given 
+        //given
         NavigationFilter navigationFilter = getNavigationFilter(true, 1);
         String sitemapItemId = "t1-k2";
 
@@ -768,7 +754,7 @@ public class AbstractDynamicNavigationProviderTest {
         AbstractDynamicNavigationProvider testProvider = getTestProvider(false, getNavigationModel(), "t1");
 
         when(testProvider.collectAncestorsForPage(any(TaxonomySitemapItemUrisHolder.class), eq(navigationFilter), eq(localization)))
-                .thenReturn(Collections.<SitemapItem>emptyList());
+                .thenReturn(Collections.emptyList());
 
         //when
         Collection<SitemapItem> emptyList = testProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
@@ -921,7 +907,7 @@ public class AbstractDynamicNavigationProviderTest {
     @SuppressWarnings("ConstantConditions")
     @Test
     public void shouldExpandAncestorsPageDescendantsZero() {
-        //given 
+        //given
         NavigationFilter navigationFilter = getNavigationFilter(true, 0);
         String sitemapItemId = "t1-p220";
 

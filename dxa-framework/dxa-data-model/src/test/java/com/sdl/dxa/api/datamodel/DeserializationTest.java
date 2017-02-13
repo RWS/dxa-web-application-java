@@ -211,7 +211,7 @@ public class DeserializationTest {
 
         @Bean
         public ObjectMapper objectMapper() {
-            return new SpringConfiguration().objectMapper();
+            return new DataModelSpringConfiguration().dxaR2ObjectMapper();
         }
     }
 }

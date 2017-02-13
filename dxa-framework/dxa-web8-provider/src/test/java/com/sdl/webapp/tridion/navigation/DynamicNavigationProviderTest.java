@@ -13,8 +13,6 @@ import com.tridion.meta.PageMeta;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.filters.DepthFilter;
-import org.dd4t.core.caching.impl.CacheElementImpl;
-import org.dd4t.providers.PayloadCacheProvider;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.jetbrains.annotations.NotNull;
@@ -62,13 +60,10 @@ public class DynamicNavigationProviderTest {
     private TaxonomyRelationManager relationManager;
 
     @Mock
-    private StaticNavigationProvider staticNavigationProvider;
+    private AbstractStaticNavigationProvider staticNavigationProvider;
 
     @Mock
     private Localization localization;
-
-    @Mock
-    private PayloadCacheProvider payloadCacheProvider;
 
     @InjectMocks
     @Spy
@@ -97,7 +92,6 @@ public class DynamicNavigationProviderTest {
         ReflectionTestUtils.setField(dynamicNavigationProvider, "taxonomyNavigationMarker", "[Taxonomy]");
         ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypeTaxonomyNode", "TaxonomyNode");
         ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypeStructureGroup", "StructureGroup");
-        when(payloadCacheProvider.loadPayloadFromLocalCache(anyString())).thenReturn(new CacheElementImpl<>(null, true));
     }
 
     @Test

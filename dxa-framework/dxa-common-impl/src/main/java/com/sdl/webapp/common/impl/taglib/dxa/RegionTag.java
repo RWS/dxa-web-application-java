@@ -18,7 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.jsp.JspException;
 import java.io.IOException;
 
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.REGION;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -53,7 +53,7 @@ public class RegionTag extends AbstractMarkupTag {
             // Create a new Region Model which reflects the Page Model
             String regionName = page.getName().replace(" ", "-");
             MvcData mvcData = MvcDataCreator.creator()
-                    .defaults(CORE_REGION)
+                    .defaults(REGION)
                     .builder()
                     .regionName(regionName)
                     .viewName(regionName).build();
@@ -82,7 +82,7 @@ public class RegionTag extends AbstractMarkupTag {
             try {
                 placeholderRegion = new RegionModelImpl(name);
                 MvcData mvcData = MvcDataCreator.creator()
-                        .defaults(CORE_REGION)
+                        .defaults(REGION)
                         .builder()
                         .regionName(name)
                         .viewName(isEmpty(emptyViewName) ? name : emptyViewName)

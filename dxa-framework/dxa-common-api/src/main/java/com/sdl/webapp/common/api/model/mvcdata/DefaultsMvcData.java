@@ -8,11 +8,11 @@ import static com.sdl.webapp.common.util.InitializationUtils.getConfiguration;
 @Getter
 public enum DefaultsMvcData {
 
-    CORE_ENTITY(FRAMEWORK_CONTROLLER_MAPPING, getDefaultAreaName(), "Entity", "Entity"),
+    ENTITY(FRAMEWORK_CONTROLLER_MAPPING, getDefaultAreaName(), "Entity", "Entity"),
 
-    CORE_PAGE(FRAMEWORK_CONTROLLER_MAPPING, getDefaultAreaName(), "Page", "Page"),
+    PAGE(FRAMEWORK_CONTROLLER_MAPPING, getDefaultAreaName(), "Page", "Page"),
 
-    CORE_REGION(FRAMEWORK_CONTROLLER_MAPPING, getDefaultAreaName(), "Region", "Region"),
+    REGION(FRAMEWORK_CONTROLLER_MAPPING, getDefaultAreaName(), "Region", "Region"),
 
     ERROR_ENTITY("Shared", "Shared", "Error", "Entity");
 

@@ -20,18 +20,22 @@
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-common-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-data-model</artifactId>
+        </dependency>
 
+        <!--todo can we do it?-->
         <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-databind</artifactId>
+            <groupId>com.sdl.web</groupId>
+            <artifactId>cil</artifactId>
+            <scope>provided</scope>
+            <type>pom</type>
         </dependency>
 
         <!-- Spring Framework -->

@@ -132,7 +132,7 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-web8-provider</artifactId>
+                <artifactId>dxa-r2-provider</artifactId>
                 <version>${dxa.version}</version>
                 <scope>runtime</scope>
             </dependency>

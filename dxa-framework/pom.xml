@@ -22,7 +22,7 @@
         <module>dxa-common-api</module>
         <module>dxa-common-impl</module>
         <module>dxa-tridion-provider</module>
-        <module>dxa-web8-provider</module>
+        <module>dxa-r2-provider</module>
         <module>dxa-dd4t-provider</module>
         <module>dxa-compatible</module>
         <module>dxa-data-model</module>

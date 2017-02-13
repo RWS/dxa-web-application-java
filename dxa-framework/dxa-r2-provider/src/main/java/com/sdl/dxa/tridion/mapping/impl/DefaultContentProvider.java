@@ -26,8 +26,8 @@ import java.io.UnsupportedEncodingException;
 import static com.sdl.webapp.common.util.LocalizationUtils.findPageByPath;
 import static org.springframework.web.util.UriUtils.encodePath;
 
-@Service
-public class DefaultR2ContentProvider implements ContentProvider {
+@Service("r2ContentProvider")
+public class DefaultContentProvider implements ContentProvider {
 
     @Autowired
     private ModelBuilderPipeline builderPipeline;

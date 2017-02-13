@@ -12,7 +12,7 @@
     <artifactId>dxa-tridion-provider</artifactId>
 
     <name>DXA - Tridion provider</name>
-    <description>DXA Providers version-independent functionality</description>
+    <description>DXA Providers for Web8 that provides common functionality</description>
 
     <dependencies>
         <!-- SDL Digital Experience Accelerator -->
@@ -30,11 +30,9 @@
             <artifactId>dxa-data-model</artifactId>
         </dependency>
 
-        <!--todo can we do it?-->
         <dependency>
             <groupId>com.sdl.web</groupId>
             <artifactId>cil</artifactId>
-            <scope>provided</scope>
             <type>pom</type>
         </dependency>
 

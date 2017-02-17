@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -168,7 +169,7 @@ public class MvcDataImpl implements MvcData {
         }
 
         public MvcDataImplBuilder routeValues(Map<String, String> routeValues) {
-            this.routeValues = routeValues;
+            this.routeValues = routeValues == null ? Collections.emptyMap() : routeValues;
             return this;
         }
 

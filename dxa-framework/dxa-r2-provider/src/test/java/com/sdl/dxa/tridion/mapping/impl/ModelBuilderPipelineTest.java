@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
+import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -77,14 +78,14 @@ public class ModelBuilderPipelineTest {
         when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class), any(Localization.class)))
                 .thenReturn(secondPageModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), any(Localization.class)))
+        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), any(Localization.class)))
+        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
                 .thenReturn(secondEntityModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), any(Localization.class)))
+        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), any(Localization.class)))
+        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
                 .thenReturn(secondEntityModel);
 
         when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
@@ -113,8 +114,8 @@ public class ModelBuilderPipelineTest {
         EntityModel entityModel = pipeline.createEntityModel(entityModelData, localization);
 
         //then
-        verify(firstEntityModelBuilder).buildEntityModel(isNull(EntityModel.class), same(entityModelData), same(localization));
-        verify(secondEntityModelBuilder).buildEntityModel(same(firstEntityModel), same(entityModelData), same(localization));
+        verify(firstEntityModelBuilder).buildEntityModel(isNull(EntityModel.class), same(entityModelData), anyObject(), same(localization));
+        verify(secondEntityModelBuilder).buildEntityModel(same(firstEntityModel), same(entityModelData), anyObject(), same(localization));
         assertSame(secondEntityModel, entityModel);
     }
 
@@ -135,7 +136,7 @@ public class ModelBuilderPipelineTest {
     @Test
     public void shouldNotFail_IfListsOfBuildersNotSet() {
         //given 
-        ModelBuilderPipeline pipeline = new ModelBuilderPipeline(null, null);
+        ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
 
         //when
         PageModel pageModel = pipeline.createPageModel(pageModelData, PageInclusion.INCLUDE, localization);
@@ -149,7 +150,9 @@ public class ModelBuilderPipelineTest {
     @Test
     public void shouldNotFail_IfListsOfBuildersIsEmpty() {
         //given
-        ModelBuilderPipeline pipeline = new ModelBuilderPipeline(Collections.emptyList(), Collections.emptyList());
+        ModelBuilderPipelineImpl pipeline = new ModelBuilderPipelineImpl();
+        pipeline.setEntityModelBuilders(Collections.emptyList());
+        pipeline.setPageModelBuilders(Collections.emptyList());
 
         //when
         PageModel pageModel = pipeline.createPageModel(pageModelData, PageInclusion.INCLUDE, localization);
@@ -166,10 +169,10 @@ public class ModelBuilderPipelineTest {
 
         @Bean
         public ModelBuilderPipeline modelBuilderPipeline() {
-            return new ModelBuilderPipeline(
-                    Lists.newArrayList(firstEntityModelBuilder(), secondEntityModelBuilder()),
-                    Lists.newArrayList(firstPageModelBuilder(), secondPageModelBuilder())
-            );
+            ModelBuilderPipelineImpl pipeline = new ModelBuilderPipelineImpl();
+            pipeline.setEntityModelBuilders(Lists.newArrayList(firstEntityModelBuilder(), secondEntityModelBuilder()));
+            pipeline.setPageModelBuilders(Lists.newArrayList(firstPageModelBuilder(), secondPageModelBuilder()));
+            return pipeline;
         }
 
         @Bean

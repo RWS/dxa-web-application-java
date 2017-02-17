@@ -226,7 +226,7 @@ public class DefaultContentProviderTest {
                         .build())
                 .build();
 
-        when(spy.executeQuery(eq(query))).thenReturn(new ArrayList<ComponentMetadata>() {{
+        when(spy.executeMetadataQuery(eq(query))).thenReturn(new ArrayList<ComponentMetadata>() {{
             add(componentMetadata);
             add(componentMetadata);
         }});
@@ -288,7 +288,7 @@ public class DefaultContentProviderTest {
 
         //then
         verify(dynamicList).getQuery(any(Localization.class));
-        verify(spy).executeQuery(eq(query));
+        verify(spy).executeMetadataQuery(eq(query));
         verify(dynamicList).getEntityType();
         verify(dynamicList).setQueryResults(anyList(), anyBoolean());
     }
@@ -308,7 +308,7 @@ public class DefaultContentProviderTest {
                 }
 
                 @Override
-                protected List<ComponentMetadata> executeQuery(SimpleBrokerQuery query) {
+                protected List<ComponentMetadata> executeMetadataQuery(SimpleBrokerQuery query) {
                     return Collections.emptyList();
                 }
             };

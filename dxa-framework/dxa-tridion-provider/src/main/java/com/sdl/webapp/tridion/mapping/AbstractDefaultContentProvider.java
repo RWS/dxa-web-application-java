@@ -1,7 +1,5 @@
 package com.sdl.webapp.tridion.mapping;
 
-import com.sdl.web.api.broker.querying.BrokerQuery;
-import com.sdl.web.api.broker.querying.QueryImpl;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;
@@ -27,8 +25,10 @@ import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.LocalizationUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
+import com.tridion.broker.querying.Query;
 import com.tridion.broker.querying.criteria.Criteria;
 import com.tridion.broker.querying.criteria.content.ItemSchemaCriteria;
+import com.tridion.broker.querying.criteria.content.PageURLCriteria;
 import com.tridion.broker.querying.criteria.content.PublicationCriteria;
 import com.tridion.broker.querying.criteria.operators.AndCriteria;
 import com.tridion.broker.querying.criteria.taxonomy.TaxonomyKeywordCriteria;
@@ -54,12 +54,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.webapp.common.util.ImageUtils.writeToFile;
@@ -131,10 +133,10 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
             return;
         }
         SimpleBrokerQuery query = dynamicList.getQuery(localization);
-        dynamicList.setQueryResults(_requestEntities(dynamicList.getEntityType(), localization, query), query.isHasMore());
+        dynamicList.setQueryResults(_convertEntities(executeMetadataQuery(query), dynamicList.getEntityType(), localization), query.isHasMore());
     }
 
-    protected abstract <T extends EntityModel> List<T> _requestEntities(Class<T> entityClass, Localization localization, SimpleBrokerQuery query) throws ContentProviderException;
+    protected abstract <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws ContentProviderException;
 
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
@@ -253,15 +255,18 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         return false;
     }
 
-    /**
-     * Executes the given query on a specific version of Tridion and returns a list of metadata.
-     *
-     * @param simpleBrokerQuery query to execute
-     * @return a list of metadata, never returns <code>null</code>
-     */
-    @Contract("_ -> !null")
-    protected List<ComponentMetadata> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {
-        BrokerQuery query = new QueryImpl(buildCriteria(simpleBrokerQuery));
+    protected List<String> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {
+        Query query = buildQuery(simpleBrokerQuery);
+        try {
+            return Arrays.asList(query.executeQuery());
+        } catch (StorageException e) {
+            log.warn("Exception while execution of broker query", e);
+            return Collections.emptyList();
+        }
+    }
+
+    protected Query buildQuery(SimpleBrokerQuery simpleBrokerQuery) {
+        Query query = new Query(buildCriteria(simpleBrokerQuery));
 
         if (!isNullOrEmpty(simpleBrokerQuery.getSort()) &&
                 !Objects.equals(simpleBrokerQuery.getSort().toLowerCase(), "none")) {
@@ -279,27 +284,27 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
             query.setResultFilter(new PagingFilter(simpleBrokerQuery.getStartAt(), pageSize + 1));
         }
 
-        final String[] ids;
-        try {
-            ids = query.executeQuery();
-        } catch (StorageException e) {
-            log.warn("Exception while execution of broker query", e);
-            return Collections.emptyList();
-        }
+        return query;
+    }
+
+    /**
+     * Executes the given query on a specific version of Tridion and returns a list of metadata.
+     *
+     * @param simpleBrokerQuery query to execute
+     * @return a list of metadata, never returns <code>null</code>
+     */
+    @Contract("_ -> !null")
+    protected List<ComponentMetadata> executeMetadataQuery(SimpleBrokerQuery simpleBrokerQuery) {
+        List<String> ids = executeQuery(simpleBrokerQuery);
 
         final WebComponentMetaFactory cmf = new WebComponentMetaFactoryImpl(simpleBrokerQuery.getPublicationId());
-        final List<ComponentMetadata> results = new ArrayList<>();
+        simpleBrokerQuery.setHasMore(ids.size() > simpleBrokerQuery.getPageSize());
 
-        simpleBrokerQuery.setHasMore(ids.length > pageSize);
-
-        for (int i = 0; i < ids.length && i < pageSize; i++) {
-            final ComponentMeta componentMeta = cmf.getMeta(ids[i]);
-            if (componentMeta != null) {
-                results.add(convert(componentMeta));
-            }
-        }
-
-        return results;
+        return ids.stream()
+                .filter(id -> cmf.getMeta(id) != null)
+                .limit(simpleBrokerQuery.getPageSize())
+                .map(id -> convert(cmf.getMeta(id)))
+                .collect(Collectors.toList());
     }
 
     private Criteria buildCriteria(@NotNull SimpleBrokerQuery query) {
@@ -313,8 +318,14 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
             children.add(new PublicationCriteria(query.getPublicationId()));
         }
 
-        for (Map.Entry<String, String> entry : query.getKeywordFilters().entries()) {
-            children.add(new TaxonomyKeywordCriteria(entry.getKey(), entry.getValue(), true));
+        if (query.getPath() != null) {
+            children.add(new PageURLCriteria(query.getPath()));
+        }
+
+        if (query.getKeywordFilters() != null) {
+            query.getKeywordFilters().entries().forEach(entry -> {
+                children.add(new TaxonomyKeywordCriteria(entry.getKey(), entry.getValue(), true));
+            });
         }
 
         return new AndCriteria(children);

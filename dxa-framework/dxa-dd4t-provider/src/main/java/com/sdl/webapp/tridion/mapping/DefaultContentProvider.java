@@ -10,7 +10,6 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
-import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.LocalizationUtils.TryFindPage;
@@ -128,10 +127,8 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
 
     @NotNull
     @Override
-    protected <T extends EntityModel> List<T> _requestEntities(Class<T> entityClass, Localization localization, SimpleBrokerQuery query) throws ContentProviderException {
+    protected <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws ContentProviderException {
         List<T> result = new ArrayList<>();
-
-        List<ComponentMetadata> components = executeQuery(query);
         for (ComponentMetadata metadata : components) {
             @NotNull Component component = constructComponentFromMetadata(metadata);
             result.add(modelBuilderPipeline.createEntityModel(component, localization, entityClass));

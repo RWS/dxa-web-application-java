@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,6 +9,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticMappingIgnore;
 import com.sdl.webapp.common.api.model.AbstractViewModel;
 import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -17,6 +19,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
 
@@ -66,5 +69,18 @@ public abstract class AbstractEntityModel extends AbstractViewModel implements E
                                 " Alternatively, override method %s.toHtmlElement().",
                         getClass().getName(), getClass().getName())
         );
+    }
+
+    /**
+     * Gets the default View for this Entity Model (if any).
+     * <p>If this method is overridden in a subclass, it will be possible to render "embedded" Entity Models of that
+     * type using the EntityTag.</p>
+     *
+     * @return default MvcData if any of {@code null}
+     */
+    @JsonIgnore
+    @Nullable
+    public MvcData getDefaultMvcData() {
+        return null;
     }
 }

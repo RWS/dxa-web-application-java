@@ -56,7 +56,7 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
     }
 
     @Override
-    protected TryFindPage<PageModel> _loadPageCallback(Localization localization) {
+    protected TryFindPage<PageModel> _loadPageCallback() {
         return (path, publicationId) -> {
             try {
                 SimpleBrokerQuery simpleBrokerQuery = SimpleBrokerQuery.builder().path(path).publicationId(publicationId).build();
@@ -69,7 +69,7 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
                 if (result.length > 0) {
                     CharacterData pageContent = new PageContentFactory().getPageContent(publicationId, TcmUtils.getItemId(result[0]));
                     PageModelData modelData = objectMapper.readValue(pageContent.getString(), PageModelData.class);
-                    return builderPipeline.createPageModel(modelData, PageInclusion.EXCLUDE /*todo*/, localization);
+                    return builderPipeline.createPageModel(modelData, PageInclusion.EXCLUDE /*todo*/);
                 } else {
                     log.debug("Page not found, publication id {}, path {}", publicationId, path);
                     return null;
@@ -82,7 +82,10 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
     }
 
     @Override
-    protected EntityModel _getEntityModel(String tcmUri, Localization localization) throws ContentProviderException, DxaException {
+    protected EntityModel _getEntityModel(String tcmUri) throws ContentProviderException, DxaException {
+
+
+
         return null;
     }
 
@@ -91,7 +94,7 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
         return components.stream()
                 //todo finish
                 .map(metadata -> new EntityModelData(metadata.getId(), null, null, null, null))
-                .map(entityModelData -> builderPipeline.createEntityModel(entityModelData, entityClass, localization))
+                .map(entityModelData -> builderPipeline.createEntityModel(entityModelData, entityClass))
                 .collect(Collectors.toList());
     }
 

@@ -2,7 +2,6 @@ package com.sdl.dxa.tridion.mapping;
 
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.impl.ModelBuilderPipelineImpl;
-import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.PageModel;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +22,6 @@ public interface PageModelBuilder extends ModelBuilder {
      * @param includePageRegions indicates whether Include Page Regions should be included
      * @return the strongly typed Page Model
      */
-    @Contract("_, _, _, _ -> !null")
-    PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData, PageInclusion includePageRegions, Localization localization);
+    @Contract("_, _, _ -> !null")
+    PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData, PageInclusion includePageRegions);
 }

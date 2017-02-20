@@ -104,7 +104,7 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
     @SneakyThrows(UnsupportedEncodingException.class)
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
         String _path = UriUtils.encodePath(path, "UTF-8");
-        PageModel pageModel = LocalizationUtils.findPageByPath(_path, localization, _loadPageCallback(localization));
+        PageModel pageModel = LocalizationUtils.findPageByPath(_path, localization, _loadPageCallback());
 
         if (pageModel != null) {
             pageModel.setUrl(LocalizationUtils.stripDefaultExtension(_path));
@@ -113,18 +113,18 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         return pageModel;
     }
 
-    protected abstract LocalizationUtils.TryFindPage<PageModel> _loadPageCallback(Localization localization);
+    protected abstract LocalizationUtils.TryFindPage<PageModel> _loadPageCallback();
 
     @Override
     public EntityModel getEntityModel(String tcmUri, Localization localization) throws ContentProviderException, DxaException {
-        EntityModel entityModel = _getEntityModel(tcmUri, localization);
+        EntityModel entityModel = _getEntityModel(tcmUri);
         if (entityModel.getXpmMetadata() != null) {
             entityModel.getXpmMetadata().put("IsQueryBased", true);
         }
         return entityModel;
     }
 
-    protected abstract EntityModel _getEntityModel(String tcmUri, Localization localization) throws ContentProviderException, DxaException;
+    protected abstract EntityModel _getEntityModel(String tcmUri) throws ContentProviderException, DxaException;
 
     @Override
     public <T extends EntityModel> void populateDynamicList(DynamicList<T, SimpleBrokerQuery> dynamicList, Localization localization) throws ContentProviderException {

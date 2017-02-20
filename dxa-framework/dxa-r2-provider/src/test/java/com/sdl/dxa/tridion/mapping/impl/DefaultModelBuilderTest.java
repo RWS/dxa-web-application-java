@@ -6,6 +6,7 @@ import com.google.common.collect.Sets;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
@@ -67,7 +68,7 @@ public class DefaultModelBuilderTest {
         PageModelData pageModelData = objectMapper.readValue(new ClassPathResource("home_page_json_full.json").getFile(), PageModelData.class);
 
         //when
-        PageModel pageModel = modelBuilder.buildPageModel(null, pageModelData, PageInclusion.INCLUDE, localization);
+        PageModel pageModel = modelBuilder.buildPageModel(null, pageModelData, PageInclusion.INCLUDE);
 
         //then
         assertEqualsAndNotNull(pageModelData.getId(), pageModel.getId());
@@ -118,6 +119,13 @@ public class DefaultModelBuilderTest {
             return localization;
         }
 
+        @Bean
+        public WebRequestContext webRequestContext() {
+            WebRequestContext mock = mock(WebRequestContext.class);
+            when(mock.getLocalization()).thenReturn(localization());
+            return mock;
+        }
+        
         @Bean
         public ObjectMapper objectMapper() {
             return new DataModelSpringConfiguration().dxaR2ObjectMapper();

@@ -87,14 +87,13 @@ public class DefaultContentProviderTest {
     @Test
     public void shouldInjectIsQueryBasedParam() throws DxaException, ContentProviderException {
         //given
-        Localization localization = mock(Localization.class);
         EntityModel entity = mock(EntityModel.class);
         when(entity.getXpmMetadata()).thenReturn(new HashMap<String, Object>());
         when(modelBuilderPipeline.createEntityModel(Matchers.<ComponentPresentation>any(), Matchers.any()))
                 .thenReturn(entity);
 
         //when
-        EntityModel entityModel = defaultContentProvider.getEntityModel("1-1", localization);
+        EntityModel entityModel = defaultContentProvider.getEntityModel("1-1", null);
 
         //then
         assertEquals(entityModel.getXpmMetadata().get("IsQueryBased"), true);
@@ -316,7 +315,9 @@ public class DefaultContentProviderTest {
 
         @Bean
         public WebRequestContext webRequestContext() {
-            return mock(WebRequestContext.class);
+            WebRequestContext mock = mock(WebRequestContext.class);
+            when(mock.getLocalization()).thenReturn(mock(Localization.class));
+            return mock;
         }
 
         @Bean

@@ -10,6 +10,7 @@ import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
@@ -58,6 +59,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     @Autowired
     private ModelBuilderPipeline modelBuilderPipeline;
 
+    @Autowired
+    private WebRequestContext webRequestContext;
+
     @Override
     public int getOrder() {
         return HIGHEST_PRECEDENCE;
@@ -65,7 +69,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @Override
     public <T extends EntityModel> T buildEntityModel(@Nullable EntityModel originalEntityModel, EntityModelData modelData,
-                                                      @Nullable Class<T> expectedClass, Localization localization) {
+                                                      @Nullable Class<T> expectedClass) {
         MvcData mvcData = createMvcData(modelData.getMvcData(), DefaultsMvcData.ENTITY);
         T entityModel = null;
         try {
@@ -74,14 +78,15 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                 log.debug("Expected class is pre-set to {} for model {}", expectedClass, modelData);
                 // https://jira.sdl.com/browse/TSI-2273
                 // we currently ignore the base type because of the issue but don't ignore the fact that it's set
-                SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(modelData.getSchemaId()));
+                SemanticSchema semanticSchema = webRequestContext.getLocalization().getSemanticSchemas().get(Long.parseLong(modelData.getSchemaId()));
                 modelType = viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
             } else {
                 log.debug("Expected class is not set explicitly, trying to get it from MvcData");
                 modelType = viewModelRegistry.getViewModelType(mvcData);
             }
 
-            entityModel = (T) createViewModel(modelType, modelData, localization);
+            //noinspection unchecked
+            entityModel = (T) createViewModel(modelType, modelData);
             ((AbstractEntityModel) entityModel).setId(modelData.getId());
             entityModel.setMvcData(mvcData);
         } catch (DxaException | SemanticMappingException e) {
@@ -103,7 +108,8 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     @NotNull
-    private <T extends ViewModel> T createViewModel(Class<T> viewModelType, ViewModelData modelData, Localization localization) throws SemanticMappingException, DxaException {
+    private <T extends ViewModel> T createViewModel(Class<T> viewModelType, ViewModelData modelData) throws SemanticMappingException, DxaException {
+        Localization localization = webRequestContext.getLocalization();
         SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(modelData.getSchemaId()));
         try {
             return semanticMapper.createEntity(viewModelType, semanticSchema.getSemanticFields(), DefaultSemanticFieldDataProvider.getFor(modelData));
@@ -114,8 +120,8 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     @Override
-    public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData, PageInclusion includePageRegions, Localization localization) {
-        PageModel pageModel = instantiatePageModel(originalPageModel, modelData, localization);
+    public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData, PageInclusion includePageRegions) {
+        PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
 
         fillViewModel(pageModel, modelData);
         pageModel.setId(modelData.getId());
@@ -130,7 +136,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                             .collect(Collectors.toList());
 
             pageModel.getRegions().addAll(regions.stream()
-                    .map(regionModelData -> createRegionModel(regionModelData, localization))
+                    .map(this::createRegionModel)
                     .collect(Collectors.toSet()));
         }
 
@@ -138,7 +144,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     @SneakyThrows({InstantiationException.class, IllegalAccessException.class})
-    private PageModel instantiatePageModel(@Nullable PageModel originalPageModel, PageModelData modelData, Localization localization) {
+    private PageModel instantiatePageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
         MvcData mvcData = createMvcData(modelData.getMvcData(), DefaultsMvcData.PAGE);
         log.debug("MvcData '{}' for PageModel {}", mvcData, modelData);
 
@@ -153,7 +159,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                 if (modelData.getSchemaId() == null) { //schema ID is not set, can't do semantic mapping
                     pageModel = viewModelType == null ? new DefaultPageModel() : (PageModel) viewModelType.newInstance();
                 } else { // semantic mapping is possible, let's do it
-                    pageModel = (PageModel) createViewModel(viewModelType, modelData, localization);
+                    pageModel = (PageModel) createViewModel(viewModelType, modelData);
                 }
                 pageModel.setMvcData(mvcData);
             } catch (DxaException | SemanticMappingException e) {
@@ -170,7 +176,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         viewModel.setHtmlClasses(modelData.getHtmlClasses());
     }
 
-    private RegionModel createRegionModel(RegionModelData regionModelData, Localization localization) {
+    private RegionModel createRegionModel(RegionModelData regionModelData) {
         MvcData mvcData = createMvcData(regionModelData.getMvcData(), DefaultsMvcData.REGION);
         log.debug("MvcData '{}' for RegionModel {}", mvcData, regionModelData);
 
@@ -183,13 +189,13 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
             if (regionModelData.getRegions() != null) {
                 regionModelData.getRegions().stream()
-                        .map(modelData -> createRegionModel(modelData, localization))
+                        .map(this::createRegionModel)
                         .forEach(regionModel.getRegions()::add);
             }
 
             if (regionModelData.getEntities() != null) {
                 regionModelData.getEntities().stream()
-                        .map(entityModelData -> createEntityModel(entityModelData, regionModelData, localization))
+                        .map(entityModelData -> createEntityModel(entityModelData, regionModelData))
                         .forEach(regionModel::addEntity);
             }
 
@@ -203,12 +209,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         }
     }
 
-    private EntityModel createEntityModel(EntityModelData entityModelData, RegionModelData regionModelData, Localization localization) {
+    private EntityModel createEntityModel(EntityModelData entityModelData, RegionModelData regionModelData) {
         try {
-            EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData, localization);
-            if (entityModel == null) {
-                throw new DxaException("Cannot instantiate an Entity Model (no builders added?)");
-            }
+            EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData);
             entityModel.setMvcData(creator(entityModel.getMvcData()).builder().regionName(regionModelData.getName()).build());
             return entityModel;
         } catch (Exception e) {

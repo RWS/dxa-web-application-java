@@ -7,6 +7,7 @@ import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -25,7 +26,6 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
@@ -73,24 +73,24 @@ public class ModelBuilderPipelineTest {
 
     @Before
     public void initMocks() {
-        when(firstPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class), any(Localization.class)))
+        when(firstPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class)))
                 .thenReturn(firstPageModel);
-        when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class), any(Localization.class)))
+        when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class)))
                 .thenReturn(secondPageModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
+        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
+        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
                 .thenReturn(secondEntityModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
+        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
+        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
                 .thenReturn(secondEntityModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
+        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject(), any(Localization.class)))
+        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
                 .thenReturn(secondEntityModel);
     }
 
@@ -100,22 +100,22 @@ public class ModelBuilderPipelineTest {
         PageInclusion pageInclusion = PageInclusion.INCLUDE;
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, pageInclusion, localization);
+        PageModel pageModel = pipeline.createPageModel(pageModelData, pageInclusion);
 
         //then
-        verify(firstPageModelBuilder).buildPageModel(isNull(PageModel.class), same(pageModelData), eq(pageInclusion), same(localization));
-        verify(secondPageModelBuilder).buildPageModel(same(firstPageModel), same(pageModelData), eq(pageInclusion), same(localization));
+        verify(firstPageModelBuilder).buildPageModel(isNull(PageModel.class), same(pageModelData), eq(pageInclusion));
+        verify(secondPageModelBuilder).buildPageModel(same(firstPageModel), same(pageModelData), eq(pageInclusion));
         assertSame(secondPageModel, pageModel);
     }
 
     @Test
     public void shouldIterate_AllEntityModelBuilders() {
         //when
-        EntityModel entityModel = pipeline.createEntityModel(entityModelData, localization);
+        EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
         //then
-        verify(firstEntityModelBuilder).buildEntityModel(isNull(EntityModel.class), same(entityModelData), anyObject(), same(localization));
-        verify(secondEntityModelBuilder).buildEntityModel(same(firstEntityModel), same(entityModelData), anyObject(), same(localization));
+        verify(firstEntityModelBuilder).buildEntityModel(isNull(EntityModel.class), same(entityModelData), anyObject());
+        verify(secondEntityModelBuilder).buildEntityModel(same(firstEntityModel), same(entityModelData), anyObject());
         assertSame(secondEntityModel, entityModel);
     }
 
@@ -125,42 +125,40 @@ public class ModelBuilderPipelineTest {
         Class<EntityModel> expectedClass = EntityModel.class;
 
         //when
-        EntityModel entityModel = pipeline.createEntityModel(entityModelData, expectedClass, localization);
+        EntityModel entityModel = pipeline.createEntityModel(entityModelData, expectedClass);
 
         //then
-        verify(firstEntityModelBuilder).buildEntityModel(isNull(EntityModel.class), same(entityModelData), same(expectedClass), same(localization));
-        verify(secondEntityModelBuilder).buildEntityModel(same(firstEntityModel), same(entityModelData), same(expectedClass), same(localization));
+        verify(firstEntityModelBuilder).buildEntityModel(isNull(EntityModel.class), same(entityModelData), same(expectedClass));
+        verify(secondEntityModelBuilder).buildEntityModel(same(firstEntityModel), same(entityModelData), same(expectedClass));
         assertSame(secondEntityModel, entityModel);
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void shouldNotFail_IfListsOfBuildersNotSet() {
         //given 
         ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, PageInclusion.INCLUDE, localization);
-        EntityModel entityModel = pipeline.createEntityModel(entityModelData, localization);
+        PageModel pageModel = pipeline.createPageModel(pageModelData, PageInclusion.INCLUDE);
+        EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
         //then
-        assertNull(pageModel);
-        assertNull(entityModel);
+        //IAE
     }
 
-    @Test
-    public void shouldNotFail_IfListsOfBuildersIsEmpty() {
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldFail_IfListsOfBuildersIsEmpty() {
         //given
         ModelBuilderPipelineImpl pipeline = new ModelBuilderPipelineImpl();
         pipeline.setEntityModelBuilders(Collections.emptyList());
         pipeline.setPageModelBuilders(Collections.emptyList());
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, PageInclusion.INCLUDE, localization);
-        EntityModel entityModel = pipeline.createEntityModel(entityModelData, localization);
+        PageModel pageModel = pipeline.createPageModel(pageModelData, PageInclusion.INCLUDE);
+        EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
         //then
-        assertNull(pageModel);
-        assertNull(entityModel);
+        //IAE
     }
 
     @Configuration
@@ -177,24 +175,39 @@ public class ModelBuilderPipelineTest {
 
         @Bean
         public EntityModelBuilder firstEntityModelBuilder() {
-            return mock(EntityModelBuilder.class);
+            EntityModelBuilder mock = mock(EntityModelBuilder.class);
+            when(mock.getOrder()).thenReturn(1);
+            return mock;
         }
 
         @Bean
         public EntityModelBuilder secondEntityModelBuilder() {
-            return mock(EntityModelBuilder.class);
+            EntityModelBuilder mock = mock(EntityModelBuilder.class);
+            when(mock.getOrder()).thenReturn(2);
+            return mock;
         }
 
         @Bean
         public PageModelBuilder firstPageModelBuilder() {
-            return mock(PageModelBuilder.class);
+            PageModelBuilder mock = mock(PageModelBuilder.class);
+            when(mock.getOrder()).thenReturn(1);
+            return mock;
         }
 
         @Bean
         public PageModelBuilder secondPageModelBuilder() {
-            return mock(PageModelBuilder.class);
+            PageModelBuilder mock = mock(PageModelBuilder.class);
+            when(mock.getOrder()).thenReturn(2);
+            return mock;
         }
 
+        @Bean
+        public WebRequestContext webRequestContext() {
+            WebRequestContext mock = mock(WebRequestContext.class);
+            when(mock.getLocalization()).thenReturn(localization());
+            return mock;
+        }
+        
         @Bean
         public Localization localization() {
             return mock(Localization.class);

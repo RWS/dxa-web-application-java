@@ -8,14 +8,15 @@ import com.sdl.dxa.tridion.mapping.ModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
-import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,9 +31,9 @@ import java.util.List;
 @R2
 public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
 
-    private List<EntityModelBuilder> entityModelBuilders;
+    private List<EntityModelBuilder> entityModelBuilders = Collections.emptyList();
 
-    private List<PageModelBuilder> pageModelBuilders;
+    private List<PageModelBuilder> pageModelBuilders = Collections.emptyList();
 
     @Autowired
     public void setEntityModelBuilders(List<EntityModelBuilder> entityModelBuilders) {
@@ -45,30 +46,33 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
     }
 
     @Override
-    @Nullable
+    @NotNull
     public PageModel createPageModel(@NotNull PageModelData modelData,
-                                     @NotNull PageInclusion includePageRegions,
-                                     @NotNull Localization localization) {
+                                     @NotNull PageInclusion includePageRegions) {
         PageModel pageModel = null;
         for (PageModelBuilder builder : pageModelBuilders) {
-            pageModel = builder.buildPageModel(pageModel, modelData, includePageRegions, localization);
+            pageModel = builder.buildPageModel(pageModel, modelData, includePageRegions);
         }
-        return pageModel;
+        Assert.notNull(pageModel, "Page Model is null after model pipeline, model builder are not set?");
+        return pageModel; //NOSONAR
     }
 
     @Override
-    @Nullable
-    public EntityModel createEntityModel(@NotNull EntityModelData modelData, @NotNull Localization localization) {
-        return createEntityModel(modelData, null, localization);
+    @NotNull
+    public <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData) {
+        return createEntityModel(modelData, null);
     }
 
-    @Nullable
+    @NotNull
     @Override
-    public <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData, @Nullable Class<T> expectedClass, @NotNull Localization localization) {
+    public <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData, @Nullable Class<T> expectedClass) {
         T entityModel = null;
         for (EntityModelBuilder builder : entityModelBuilders) {
-            entityModel = builder.buildEntityModel(entityModel, modelData, expectedClass, localization);
+            entityModel = builder.buildEntityModel(entityModel, modelData, expectedClass);
         }
-        return entityModel;
+        Assert.notNull(entityModel, "Entity Model is null after model pipeline, model builder are not set?");
+        return entityModel; //NOSONAR
     }
+
+
 }

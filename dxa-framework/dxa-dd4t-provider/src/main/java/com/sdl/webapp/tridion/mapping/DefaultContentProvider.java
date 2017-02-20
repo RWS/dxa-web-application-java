@@ -63,6 +63,8 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
 
     private final ModelBuilderPipeline modelBuilderPipeline;
 
+    private final WebRequestContext webRequestContext;
+
     @Autowired
     public DefaultContentProvider(WebRequestContext webRequestContext,
                                   LinkResolver linkResolver,
@@ -73,13 +75,14 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
                                   ComponentPresentationFactory dd4tComponentPresentationFactory,
                                   ModelBuilderPipeline modelBuilderPipeline) {
         super(webRequestContext, linkResolver, webApplicationContext, dynamicMetaRetriever, binaryContentRetriever);
+        this.webRequestContext = webRequestContext;
         this.dd4tPageFactory = dd4tPageFactory;
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
         this.modelBuilderPipeline = modelBuilderPipeline;
     }
 
     @Override
-    protected TryFindPage<PageModel> _loadPageCallback(Localization localization) {
+    protected TryFindPage<PageModel> _loadPageCallback() {
         return (path, publicationId) -> {
             final org.dd4t.contentmodel.Page genericPage;
             try {
@@ -98,12 +101,13 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
                         "] " + path, e);
             }
 
-            return modelBuilderPipeline.createPageModel(genericPage, localization, DefaultContentProvider.this);
+            return modelBuilderPipeline.createPageModel(genericPage, webRequestContext.getLocalization(), DefaultContentProvider.this);
         };
     }
 
     @Override
-    protected EntityModel _getEntityModel(String tcmUri, Localization localization) throws ContentProviderException, DxaException {
+    protected EntityModel _getEntityModel(String tcmUri) throws ContentProviderException, DxaException {
+        Localization localization = webRequestContext.getLocalization();
         String[] idParts = tcmUri.split("-");
         if (idParts.length != 2) {
             throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", tcmUri));

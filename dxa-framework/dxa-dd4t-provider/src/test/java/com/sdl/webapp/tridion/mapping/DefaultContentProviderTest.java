@@ -13,7 +13,6 @@ import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
-import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import org.dd4t.contentmodel.Component;
@@ -85,7 +84,7 @@ public class DefaultContentProviderTest {
     private ModelBuilderPipeline modelBuilderPipeline;
 
     @Test
-    public void shouldInjectIsQueryBasedParam() throws DxaException, ContentProviderException {
+    public void shouldInjectIsQueryBasedParam() throws ContentProviderException {
         //given
         EntityModel entity = mock(EntityModel.class);
         when(entity.getXpmMetadata()).thenReturn(new HashMap<String, Object>());
@@ -100,7 +99,7 @@ public class DefaultContentProviderTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionIfIdIsWrong() throws DxaException, ContentProviderException {
+    public void shouldThrowExceptionIfIdIsWrong() throws ContentProviderException {
         //when
         defaultContentProvider.getEntityModel("1", null);
 
@@ -109,7 +108,7 @@ public class DefaultContentProviderTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionIfIdIsEmpty() throws DxaException, ContentProviderException {
+    public void shouldThrowExceptionIfIdIsEmpty() throws ContentProviderException {
         //when
         defaultContentProvider.getEntityModel("", null);
 
@@ -118,7 +117,7 @@ public class DefaultContentProviderTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void shouldThrowExceptionIfIdIsNull() throws DxaException, ContentProviderException {
+    public void shouldThrowExceptionIfIdIsNull() throws ContentProviderException {
         //when
         defaultContentProvider.getEntityModel(null, null);
 

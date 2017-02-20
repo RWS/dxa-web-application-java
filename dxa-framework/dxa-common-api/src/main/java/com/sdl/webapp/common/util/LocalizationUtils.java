@@ -152,7 +152,7 @@ public final class LocalizationUtils {
      * @return page if found
      * @throws ContentProviderException if page wasn't found
      */
-    public static <T> T findPageByPath(String path, Localization localization, TryFindPage<T> callback)
+    public static <T> T findPageByPath(@NotNull String path, Localization localization, TryFindPage<T> callback)
             throws ContentProviderException {
         String processedPath = normalizePathToDefaults(path);
         final int publicationId = Integer.parseInt(localization.getId());

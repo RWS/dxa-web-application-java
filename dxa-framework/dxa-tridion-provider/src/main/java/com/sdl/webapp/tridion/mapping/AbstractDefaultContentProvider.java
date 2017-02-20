@@ -19,10 +19,10 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
-import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.FileUtils;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.LocalizationUtils;
+import com.sdl.webapp.common.util.TcmUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
 import com.tridion.broker.querying.Query;
@@ -106,6 +106,7 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         String _path = UriUtils.encodePath(path, "UTF-8");
         PageModel pageModel = LocalizationUtils.findPageByPath(_path, localization, _loadPageCallback());
 
+
         if (pageModel != null) {
             pageModel.setUrl(LocalizationUtils.stripDefaultExtension(_path));
             webRequestContext.setPage(pageModel);
@@ -116,15 +117,25 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
     protected abstract LocalizationUtils.TryFindPage<PageModel> _loadPageCallback();
 
     @Override
-    public EntityModel getEntityModel(String tcmUri, Localization localization) throws ContentProviderException, DxaException {
-        EntityModel entityModel = _getEntityModel(tcmUri);
+    public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
+        Localization localization = webRequestContext.getLocalization();
+        String[] idParts = id.split("-");
+        if (idParts.length != 2) {
+            throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", id));
+        }
+
+        String componentUri = TcmUtils.buildTcmUri(localization.getId(), idParts[0]);
+        String templateUri = TcmUtils.buildTemplateTcmUri(localization.getId(), idParts[1]);
+
+        EntityModel entityModel = _getEntityModel(componentUri, templateUri);
         if (entityModel.getXpmMetadata() != null) {
             entityModel.getXpmMetadata().put("IsQueryBased", true);
         }
         return entityModel;
     }
 
-    protected abstract EntityModel _getEntityModel(String tcmUri) throws ContentProviderException, DxaException;
+    @NotNull
+    protected abstract EntityModel _getEntityModel(String componentUri, String templateUri) throws ContentProviderException;
 
     @Override
     public <T extends EntityModel> void populateDynamicList(DynamicList<T, SimpleBrokerQuery> dynamicList, Localization localization) throws ContentProviderException {

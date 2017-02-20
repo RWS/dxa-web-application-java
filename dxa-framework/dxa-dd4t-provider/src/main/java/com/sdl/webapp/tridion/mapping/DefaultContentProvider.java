@@ -10,7 +10,6 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
-import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.LocalizationUtils.TryFindPage;
 import com.sdl.webapp.common.util.TcmUtils;
@@ -105,17 +104,10 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
         };
     }
 
+    @NotNull
     @Override
-    protected EntityModel _getEntityModel(String tcmUri) throws ContentProviderException, DxaException {
+    protected EntityModel _getEntityModel(String componentUri, String templateUri) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
-        String[] idParts = tcmUri.split("-");
-        if (idParts.length != 2) {
-            throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", tcmUri));
-        }
-
-        String componentUri = TcmUtils.buildTcmUri(localization.getId(), idParts[0]);
-        String templateUri = TcmUtils.buildTemplateTcmUri(localization.getId(), idParts[1]);
-
         try {
             final ComponentPresentation componentPresentation;
             synchronized (LOCK) {
@@ -123,9 +115,7 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
             }
             return modelBuilderPipeline.createEntityModel(componentPresentation, localization);
         } catch (FactoryException e) {
-            throw new DxaItemNotFoundException(tcmUri, e);
-        } catch (ContentProviderException e) {
-            throw new DxaException("Problem building entity model", e);
+            throw new DxaItemNotFoundException(componentUri, e);
         }
     }
 

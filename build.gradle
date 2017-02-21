@@ -33,7 +33,7 @@ task buildFramework(type: MavenBuildTask) {
     configurations = [
             ["dxa-bom"],
             ["dxa-framework"],
-            ["> dxa-webapp > clean archetype:create-from-project -Darchetype.properties=archetype.properties"]
+            ["> dxa-webapp > clean org.apache.maven.plugins:maven-archetype-plugin:2.4:create-from-project -Darchetype.properties=archetype.properties"]
     ]
 }
 

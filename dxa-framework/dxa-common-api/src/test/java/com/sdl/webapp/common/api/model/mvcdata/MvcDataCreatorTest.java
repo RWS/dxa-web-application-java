@@ -28,15 +28,15 @@ public class MvcDataCreatorTest {
         //when
         MvcData mvcDataFull = creator()
                 .fromQualifiedName(fullName)
-                .defaults(DefaultsMvcData.CORE_ENTITY)
+                .defaults(DefaultsMvcData.ENTITY)
                 .create();
         MvcData mvcDataHalf = creator()
                 .fromQualifiedName(areaViewName)
-                .defaults(DefaultsMvcData.CORE_ENTITY)
+                .defaults(DefaultsMvcData.ENTITY)
                 .create();
         MvcData mvcDataShort = creator()
                 .fromQualifiedName(viewName)
-                .defaults(DefaultsMvcData.CORE_ENTITY)
+                .defaults(DefaultsMvcData.ENTITY)
                 .create();
 
         //then
@@ -61,9 +61,9 @@ public class MvcDataCreatorTest {
                 .viewName(viewName), mvcDataShort);
 
         //when
-        mvcDataFull = creator(mvcDataFull).defaults(DefaultsMvcData.CORE_ENTITY).create();
-        mvcDataHalf = creator(mvcDataHalf).defaults(DefaultsMvcData.CORE_ENTITY).create();
-        mvcDataShort = creator(mvcDataShort).defaults(DefaultsMvcData.CORE_ENTITY).create();
+        mvcDataFull = creator(mvcDataFull).defaults(DefaultsMvcData.ENTITY).create();
+        mvcDataHalf = creator(mvcDataHalf).defaults(DefaultsMvcData.ENTITY).create();
+        mvcDataShort = creator(mvcDataShort).defaults(DefaultsMvcData.ENTITY).create();
 
         //then
         assertPartsAreSet(new Parts()
@@ -140,7 +140,7 @@ public class MvcDataCreatorTest {
         MvcDataCreator creator = creator().fromQualifiedName(viewName);
 
         //when
-        MvcData mvcData = creator.defaults(DefaultsMvcData.CORE_ENTITY).create();
+        MvcData mvcData = creator.defaults(DefaultsMvcData.ENTITY).create();
 
         //then
         assertPartsAreSet(new Parts()
@@ -170,30 +170,27 @@ public class MvcDataCreatorTest {
 
         //when
         MvcData mvcData = MvcDataCreator.creator()
-                .defaults(DefaultsMvcData.CORE_ENTITY)
+                .defaults(DefaultsMvcData.ENTITY)
                 .builder()
                 .actionName("Test")
                 .controllerAreaName("Test2")
-                .controllerName("Test3")
                 .areaName("Test4")
                 .build();
 
         MvcData mvcData1 = creator(newBuilder()
                 .actionName("Test")
                 .controllerAreaName("Test2")
-                .controllerName("Test3")
                 .areaName("Test4")
         )
-                .defaults(DefaultsMvcData.CORE_ENTITY)
+                .defaults(DefaultsMvcData.ENTITY)
                 .create();
 
         MvcData mvcData2 = creator(new MvcDataImpl.MvcDataImplBuilder().build()
                 .setActionName("Test")
                 .setControllerAreaName("Test2")
-                .setControllerName("Test3")
                 .setAreaName("Test4")
         )
-                .defaults(DefaultsMvcData.CORE_ENTITY)
+                .defaults(DefaultsMvcData.ENTITY)
                 .create();
 
         //then

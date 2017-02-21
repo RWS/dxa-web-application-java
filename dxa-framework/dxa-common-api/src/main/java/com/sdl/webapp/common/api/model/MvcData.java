@@ -29,7 +29,9 @@ public interface MvcData {
      *
      * @return a {@link java.util.Map} object with metadata
      */
+    @Deprecated
     Map<String, Object> getMetadata();
 
+    @Deprecated
     void addMetadataValue(String key, Object obj);
 }

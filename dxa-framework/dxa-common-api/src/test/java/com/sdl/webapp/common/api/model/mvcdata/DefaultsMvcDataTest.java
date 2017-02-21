@@ -2,9 +2,9 @@ package com.sdl.webapp.common.api.model.mvcdata;
 
 import org.junit.Test;
 
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_ENTITY;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_PAGE;
-import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.CORE_REGION;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.ENTITY;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.PAGE;
+import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.REGION;
 import static org.junit.Assert.assertEquals;
 
 public class DefaultsMvcDataTest {
@@ -20,13 +20,13 @@ public class DefaultsMvcDataTest {
 
     @Test
     public void shouldSetDefaultForCoreEnums() {
-        assertEquals("AreaName", CORE_ENTITY.getAreaName());
-        assertEquals("Framework", CORE_ENTITY.getControllerAreaName());
+        assertEquals("AreaName", ENTITY.getAreaName());
+        assertEquals("Framework", ENTITY.getControllerAreaName());
 
-        assertEquals("AreaName", CORE_PAGE.getAreaName());
-        assertEquals("Framework", CORE_PAGE.getControllerAreaName());
+        assertEquals("AreaName", PAGE.getAreaName());
+        assertEquals("Framework", PAGE.getControllerAreaName());
 
-        assertEquals("AreaName", CORE_REGION.getAreaName());
-        assertEquals("Framework", CORE_REGION.getControllerAreaName());
+        assertEquals("AreaName", REGION.getAreaName());
+        assertEquals("Framework", REGION.getControllerAreaName());
     }
 }

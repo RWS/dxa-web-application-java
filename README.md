@@ -37,8 +37,9 @@ Repositories
 ------------
 The following repositories with source code are available:
 
- - https://github.com/sdl/dxa-content-management - Core Template Building Blocks
+ - https://github.com/sdl/dxa-content-management - CM-side framework (.NET Template Building Blocks)
  - https://github.com/sdl/dxa-html-design - Whitelabel HTML Design
+ - https://github.com/sdl/dxa-model-service - Model Service (Java)
  - https://github.com/sdl/dxa-modules - Modules (.NET and Java)
  - https://github.com/sdl/dxa-web-application-dotnet - ASP.NET MVC web application (incl. framework)
  - https://github.com/sdl/dxa-web-application-java - Java Spring MVC web application (incl. framework)
@@ -80,7 +81,7 @@ DXA publishes SNAPSHOT versions to Sonatype. If you want to use them, you have t
 
 License
 -------
-Copyright (c) 2014-2016 SDL Group.
+Copyright (c) 2014-2017 SDL Group.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

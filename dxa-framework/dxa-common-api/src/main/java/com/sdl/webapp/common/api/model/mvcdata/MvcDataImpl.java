@@ -59,6 +59,7 @@ public class MvcDataImpl implements MvcData {
 
     @JsonIgnore
     // todo dxa2 return a copy instead of real map
+    @Deprecated
     private Map<String, Object> metadata = new HashMap<>();
 
     protected MvcDataImpl(MvcData mvcData) {
@@ -115,6 +116,7 @@ public class MvcDataImpl implements MvcData {
 
         private Map<String, String> routeValues = new HashMap<>();
 
+        @Deprecated
         private Map<String, Object> metadata = new HashMap<>();
 
         protected static MvcDataImplBuilder toBuilder(MvcData mvcData) {
@@ -170,6 +172,7 @@ public class MvcDataImpl implements MvcData {
             return this;
         }
 
+        @Deprecated
         public MvcDataImplBuilder metadata(Map<String, Object> metadata) {
             this.metadata = metadata;
             return this;

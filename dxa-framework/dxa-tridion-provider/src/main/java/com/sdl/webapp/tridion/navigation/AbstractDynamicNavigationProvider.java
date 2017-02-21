@@ -20,14 +20,13 @@ import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.dd4t.core.caching.CacheElement;
-import org.dd4t.providers.PayloadCacheProvider;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -56,16 +55,14 @@ import static com.sdl.webapp.tridion.navigation.AbstractDynamicNavigationProvide
 
 /**
  * Navigation Provider implementation based on Taxonomies (Categories &amp; Keywords).
- * <p>Falls back to {@link StaticNavigationProvider} when dynamic navigation is not available.</p>
+ * <p>Falls back to {@link AbstractStaticNavigationProvider} when dynamic navigation is not available.</p>
  */
 @Slf4j
 public abstract class AbstractDynamicNavigationProvider implements NavigationProvider, OnDemandNavigationProvider {
 
-    private final StaticNavigationProvider staticNavigationProvider;
+    private final AbstractStaticNavigationProvider staticNavigationProvider;
 
     private final LinkResolver linkResolver;
-
-    private final PayloadCacheProvider cacheProvider;
 
     @Value("${dxa.tridion.navigation.taxonomy.marker}")
     protected String taxonomyNavigationMarker;
@@ -80,34 +77,21 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     protected String sitemapItemTypePage;
 
     @Autowired
-    public AbstractDynamicNavigationProvider(StaticNavigationProvider staticNavigationProvider, LinkResolver linkResolver, PayloadCacheProvider cacheProvider) {
+    public AbstractDynamicNavigationProvider(AbstractStaticNavigationProvider staticNavigationProvider, LinkResolver linkResolver) {
         this.staticNavigationProvider = staticNavigationProvider;
         this.linkResolver = linkResolver;
-        this.cacheProvider = cacheProvider;
     }
 
     @Override
+    @Cacheable(value = "tridion", key = "localization.id")
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
-        CacheElement<SitemapItem> navigationModel = cacheProvider.loadPayloadFromLocalCache(localization.getId());
-        if (navigationModel.isExpired()) {
-            //noinspection SynchronizationOnLocalVariableOrMethodParameter
-            synchronized (navigationModel) {
-                if (navigationModel.isExpired()) {
-                    String taxonomyId = getNavigationTaxonomyIdInternal(localization);
-                    if (isFallbackRequired(taxonomyId, localization)) {
-                        return staticNavigationProvider.getNavigationModel(localization);
-                    }
-
-                    navigationModel.setExpired(false);
-
-                    navigationModel.setPayload(createTaxonomyNode(taxonomyId, localization));
-                    log.debug("Put navigation model for taxonomy id {} for localization id {} in cache", taxonomyId, localization.getId());
-
-                }
-            }
+        String taxonomyId = getNavigationTaxonomyIdInternal(localization);
+        if (isFallbackRequired(taxonomyId, localization)) {
+            return staticNavigationProvider.getNavigationModel(localization);
         }
 
-        return navigationModel.getPayload();
+        log.debug("Put navigation model for taxonomy id {} for localization id {} in cache", taxonomyId, localization.getId());
+        return createTaxonomyNode(taxonomyId, localization);
     }
 
     @Override
@@ -136,7 +120,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
                     currentLevel = currentLevel.getParent();
                 }
 
-                return currentLevel == null ? Collections.<SitemapItem>emptyList() : currentLevel.getItems();
+                return currentLevel == null ? Collections.emptyList() : currentLevel.getItems();
             }
 
             @Override
@@ -153,7 +137,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
             public Collection<SitemapItem> processNavigation(SitemapItem navigationModel) {
                 SitemapItem currentLevel = navigationModel.findWithUrl(stripDefaultExtension(requestPath));
 
-                return currentLevel == null ? Collections.<SitemapItem>emptyList() : collectBreadcrumbsToLevel(currentLevel, localization);
+                return currentLevel == null ? Collections.emptyList() : collectBreadcrumbsToLevel(currentLevel, localization);
             }
 
             @Override

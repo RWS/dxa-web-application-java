@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.sdl.dxa.api.model.data.util.PolymorphicObjectMixin;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
@@ -20,6 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.MutablePropertySources;
@@ -152,6 +152,7 @@ public class DxaSpringInitialization {
     }
 
     @Bean
+    @Primary
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
@@ -160,7 +161,6 @@ public class DxaSpringInitialization {
         objectMapper.setDateFormat(new StdDateFormat());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
-        objectMapper.addMixIn(Object.class, PolymorphicObjectMixin.class);
         traceBeanInitialization(objectMapper);
         return objectMapper;
     }

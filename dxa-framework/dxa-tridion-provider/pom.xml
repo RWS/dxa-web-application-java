@@ -12,7 +12,7 @@
     <artifactId>dxa-tridion-provider</artifactId>
 
     <name>DXA - Tridion provider</name>
-    <description>DXA Providers version-independent functionality</description>
+    <description>DXA Providers for Web8 that provides common functionality</description>
 
     <dependencies>
         <!-- SDL Digital Experience Accelerator -->
@@ -20,18 +20,20 @@
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-common-impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-data-model</artifactId>
+        </dependency>
 
         <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-databind</artifactId>
+            <groupId>com.sdl.web</groupId>
+            <artifactId>cil</artifactId>
+            <type>pom</type>
         </dependency>
 
         <!-- Spring Framework -->

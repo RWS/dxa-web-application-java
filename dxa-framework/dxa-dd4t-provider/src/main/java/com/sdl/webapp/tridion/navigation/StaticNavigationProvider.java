@@ -39,7 +39,7 @@ public class StaticNavigationProvider extends AbstractStaticNavigationProvider {
                     pageContent = pageFactory.findSourcePageByUrl(path1, publicationId);
                 }
             } catch (ItemNotFoundException e) {
-                log.debug("Page not found: [{}] {}", publicationId, path1);
+                log.debug("Page not found: [{}] {}", publicationId, path1, e);
                 return null;
             } catch (FactoryException e) {
                 throw new ContentProviderException("Exception while getting page content for: [" + publicationId +

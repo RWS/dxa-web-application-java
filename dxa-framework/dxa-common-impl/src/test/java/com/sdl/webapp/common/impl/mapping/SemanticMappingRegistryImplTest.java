@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl.mapping;
 
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperties;
@@ -58,16 +59,16 @@ public class SemanticMappingRegistryImplTest {
     }
 
     @Test
-    public void shouldReturnEntityClassForFullName() {
+    public void shouldReturnEntityClassForFullName() throws SemanticMappingException {
         //given
         SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
         registry.registerEntity(TestEntity1.class);
 
         //when
-        Class<? extends EntityModel> sdlCore = registry.getEntityClassByFullyQualifiedName(SDL_CORE + ":TestEntity1");
-        Class<? extends EntityModel> sdlTest = registry.getEntityClassByFullyQualifiedName(SDL_TEST + ":TestOne");
-        Class<? extends EntityModel> sdlOne = registry.getEntityClassByFullyQualifiedName(SDL_CORE + ":CoreOne");
-        Class<? extends EntityModel> random = registry.getEntityClassByFullyQualifiedName(SDL_CORE + ":Random");
+        Class<? extends EntityModel> sdlCore = registry.getEntityClassByFullyQualifiedName(SDL_CORE + ":TestEntity1", null);
+        Class<? extends EntityModel> sdlTest = registry.getEntityClassByFullyQualifiedName(SDL_TEST + ":TestOne", null);
+        Class<? extends EntityModel> sdlOne = registry.getEntityClassByFullyQualifiedName(SDL_CORE + ":CoreOne", null);
+        Class<? extends EntityModel> random = registry.getEntityClassByFullyQualifiedName(SDL_CORE + ":Random", null);
 
         //then
         assertEquals(sdlCore, TestEntity1.class);

@@ -72,7 +72,8 @@ public interface SemanticMappingRegistry {
      *
      * @return entity class
      * @param entityName an entity name
+     * @param expectedClass an expected class or null if none
      */
-    Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName);
+    Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName, Class<? extends EntityModel> expectedClass) throws SemanticMappingException;
 
 }

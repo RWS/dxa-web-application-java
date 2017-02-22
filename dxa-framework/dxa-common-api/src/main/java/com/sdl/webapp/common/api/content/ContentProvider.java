@@ -31,7 +31,7 @@ public interface ContentProvider {
      * @throws DxaException             dxaException if an error occurred in DXA so that the content of the page could be retrieved
      * @throws IllegalArgumentException if tcmUri parameter is not well-formed
      */
-    EntityModel getEntityModel(String tcmUri, Localization localization) throws ContentProviderException, DxaException;
+    EntityModel getEntityModel(String tcmUri, Localization localization) throws DxaException;
 
     /**
      * Populates a dynamic list.

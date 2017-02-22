@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.mapping.semantic;
 
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.core.convert.TypeDescriptor;
 
 import java.util.Map;
@@ -21,6 +22,7 @@ public interface SemanticFieldDataProvider {
      * type that is compatible with the specified target type.
      * @throws com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException If an error occurs and the data for the field cannot be retrieved.
      */
+    @Nullable
     FieldData getFieldData(SemanticField semanticField, TypeDescriptor targetType) throws SemanticMappingException;
 
     /**

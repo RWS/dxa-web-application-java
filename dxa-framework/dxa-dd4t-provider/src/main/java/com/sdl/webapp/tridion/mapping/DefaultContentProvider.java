@@ -10,8 +10,6 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
-import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
-import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.LocalizationUtils.TryFindPage;
 import com.sdl.webapp.common.util.TcmUtils;
@@ -64,6 +62,8 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
 
     private final ModelBuilderPipeline modelBuilderPipeline;
 
+    private final WebRequestContext webRequestContext;
+
     @Autowired
     public DefaultContentProvider(WebRequestContext webRequestContext,
                                   LinkResolver linkResolver,
@@ -74,13 +74,14 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
                                   ComponentPresentationFactory dd4tComponentPresentationFactory,
                                   ModelBuilderPipeline modelBuilderPipeline) {
         super(webRequestContext, linkResolver, webApplicationContext, dynamicMetaRetriever, binaryContentRetriever);
+        this.webRequestContext = webRequestContext;
         this.dd4tPageFactory = dd4tPageFactory;
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
         this.modelBuilderPipeline = modelBuilderPipeline;
     }
 
     @Override
-    protected TryFindPage<PageModel> _loadPageCallback(Localization localization) {
+    protected TryFindPage<PageModel> _loadPageCallback() {
         return (path, publicationId) -> {
             final org.dd4t.contentmodel.Page genericPage;
             try {
@@ -99,20 +100,14 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
                         "] " + path, e);
             }
 
-            return modelBuilderPipeline.createPageModel(genericPage, localization, DefaultContentProvider.this);
+            return modelBuilderPipeline.createPageModel(genericPage, webRequestContext.getLocalization(), DefaultContentProvider.this);
         };
     }
 
+    @NotNull
     @Override
-    protected EntityModel _getEntityModel(String tcmUri, Localization localization) throws ContentProviderException, DxaException {
-        String[] idParts = tcmUri.split("-");
-        if (idParts.length != 2) {
-            throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", tcmUri));
-        }
-
-        String componentUri = TcmUtils.buildTcmUri(localization.getId(), idParts[0]);
-        String templateUri = TcmUtils.buildTemplateTcmUri(localization.getId(), idParts[1]);
-
+    protected EntityModel _getEntityModel(String componentUri, String templateUri) throws ContentProviderException {
+        Localization localization = webRequestContext.getLocalization();
         try {
             final ComponentPresentation componentPresentation;
             synchronized (LOCK) {
@@ -120,18 +115,14 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
             }
             return modelBuilderPipeline.createEntityModel(componentPresentation, localization);
         } catch (FactoryException e) {
-            throw new DxaItemNotFoundException(tcmUri, e);
-        } catch (ContentProviderException e) {
-            throw new DxaException("Problem building entity model", e);
+            throw new DxaItemNotFoundException(componentUri, e);
         }
     }
 
     @NotNull
     @Override
-    protected <T extends EntityModel> List<T> _requestEntities(Class<T> entityClass, Localization localization, SimpleBrokerQuery query) throws ContentProviderException {
+    protected <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws ContentProviderException {
         List<T> result = new ArrayList<>();
-
-        List<ComponentMetadata> components = executeQuery(query);
         for (ComponentMetadata metadata : components) {
             @NotNull Component component = constructComponentFromMetadata(metadata);
             result.add(modelBuilderPipeline.createEntityModel(component, localization, entityClass));

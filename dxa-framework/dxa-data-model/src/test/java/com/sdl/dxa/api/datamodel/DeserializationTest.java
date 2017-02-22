@@ -173,7 +173,7 @@ public class DeserializationTest {
                 Lists.newArrayList(new KeywordModelData("id", "desc", "key", "taxId", "title"))));
         rootCmd.put("cmd", innerCmd);
 
-        ExternalContentData ecd = new ExternalContentData("displayTypeId", "id", rootCmd);
+        ExternalContentData ecd = new ExternalContentData("displayTypeId", "id", "", rootCmd);
         DeserializeTrip trip = new DeserializeTrip(ecd, new DeserializeTrip(ecd, null, null), null);
 
         //when

@@ -17,7 +17,7 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 @EqualsAndHashCode
-public class Tag {
+public final class Tag {
 
     @JsonProperty("DisplayText")
     private String displayText;

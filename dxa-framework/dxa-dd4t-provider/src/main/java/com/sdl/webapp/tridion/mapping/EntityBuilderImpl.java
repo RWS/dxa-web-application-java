@@ -57,79 +57,6 @@ public final class EntityBuilderImpl implements EntityBuilder {
     @Autowired
     private ModelBuilderPipeline builder;
 
-    private static SemanticSchema getSemanticSchema(Component component, Localization localization) {
-        return localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
-    }
-
-    private static void fillItemWithExternalMetadata(EclItem eclItem, Map<String, FieldSet> extensionData) {
-        FieldSet externalEclFieldSet = extensionData.get("ECL-ExternalMetadata");
-        Map<String, Object> externalMetadata = new HashMap<>(externalEclFieldSet.getContent().size());
-        for (Map.Entry<String, Field> entry : externalEclFieldSet.getContent().entrySet()) {
-            final List<Object> values = entry.getValue().getValues();
-
-            if (!values.isEmpty()) {
-                externalMetadata.put(entry.getKey(), values.get(0));
-            }
-        }
-        eclItem.setExternalMetadata(externalMetadata);
-    }
-
-    private static void fillItemWithEclData(EclItem eclItem, Map<String, FieldSet> extensionData) {
-        FieldSet eclFieldSet = extensionData.get("ECL");
-        eclItem.setDisplayTypeId(getValueFromFieldSet(eclFieldSet, "DisplayTypeId"));
-        eclItem.setTemplateFragment(getValueFromFieldSet(eclFieldSet, "TemplateFragment"));
-        String fileName = getValueFromFieldSet(eclFieldSet, "FileName");
-        if (!isEmpty(fileName)) {
-            eclItem.setFileName(fileName);
-        }
-        String mimeType = getValueFromFieldSet(eclFieldSet, "MimeType");
-        if (!isEmpty(mimeType)) {
-            eclItem.setMimeType(mimeType);
-        }
-    }
-
-    private static String getValueFromFieldSet(FieldSet eclFieldSet, String fieldName) {
-        if (eclFieldSet != null) {
-            Map<String, Field> fieldSetContent = eclFieldSet.getContent();
-            if (fieldSetContent != null) {
-                Field field = fieldSetContent.get(fieldName);
-                if (field != null) {
-                    return Objects.toString(field.getValues().get(0));
-                }
-            }
-        }
-        return null;
-    }
-
-    private static void fillEntityData(EntityModel entity, ComponentPresentation componentPresentation) {
-        if (entity instanceof AbstractEntityModel) {
-            AbstractEntityModel abstractEntityModel = (AbstractEntityModel) entity;
-
-            abstractEntityModel.setXpmMetadata(createXpmMetadata(entity, componentPresentation));
-        }
-
-        entity.setMvcData(createMvcData(componentPresentation));
-        entity.setHtmlClasses(getHtmlClasses(componentPresentation));
-    }
-
-    private static String getHtmlClasses(ComponentPresentation componentPresentation) {
-        String htmlClasses = FieldUtils.getStringValue(componentPresentation.getComponentTemplate().getMetadata(), "htmlClasses");
-        return !isEmpty(htmlClasses) ? htmlClasses.replaceAll("[^\\w\\- ]", "") : null;
-    }
-
-    private static Map<String, Object> createXpmMetadata(EntityModel entity, ComponentPresentation componentPresentation) {
-        final Component component = componentPresentation.getComponent();
-        final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
-
-        Map<String, Object> xpmMetaData = new HashMap<>();
-        xpmMetaData.put("ComponentID", entity instanceof EclItem ? ((EclItem) entity).getUri() : component.getId());
-        xpmMetaData.put("ComponentModified", ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
-        xpmMetaData.put("ComponentTemplateID", componentTemplate.getId());
-        xpmMetaData.put("ComponentTemplateModified", ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
-        xpmMetaData.put("IsRepositoryPublished", componentPresentation.isDynamic());
-        return xpmMetaData;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -174,8 +101,12 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
         final SemanticSchema semanticSchema = getSemanticSchema(component, localization);
 
-        final Class<? extends AbstractEntityModel> entityClass =
-                (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
+        final Class<? extends AbstractEntityModel> entityClass;
+
+        entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
+        if (entityClass == null) {
+            throw new ContentProviderException("Cannot create entity for component " + component);
+        }
 
         return createEntity(component, localization, entityClass, semanticSchema);
     }
@@ -187,6 +118,25 @@ public final class EntityBuilderImpl implements EntityBuilder {
     public <T extends EntityModel> T createEntity(Component component, T originalEntityModel, Localization localization, Class<T> entityClass)
             throws ContentProviderException {
         return createEntity(component, localization, entityClass, getSemanticSchema(component, localization));
+    }
+
+    private Class<? extends AbstractEntityModel> getEntityClass(String viewName, String schemaRoot)
+            throws ContentProviderException {
+        Class<? extends AbstractEntityModel> entityClass;
+
+        try {
+            entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getViewEntityClass(viewName);
+        } catch (DxaException e) {
+            log.warn("Exception on getting view entity class", e);
+            entityClass = (Class<? extends AbstractEntityModel>) semanticMappingRegistry.getEntityClass(schemaRoot);
+        }
+
+        if (entityClass == null) {
+            log.error("Cannot determine entity type for view name: '{}'. Please make sure " +
+                    "that an entry is registered for this view name in the ViewModelRegistry.", viewName);
+        }
+
+        return entityClass;
     }
 
     private <T extends EntityModel> T createEntity(Component component, Localization localization, Class<T> entityClass, SemanticSchema semanticSchema) throws ContentProviderException {
@@ -209,23 +159,19 @@ public final class EntityBuilderImpl implements EntityBuilder {
         return entity;
     }
 
-    private Class<? extends AbstractEntityModel> getEntityClass(String viewName, String schemaRoot)
-            throws ContentProviderException {
-        Class<? extends AbstractEntityModel> entityClass;
+    private static SemanticSchema getSemanticSchema(Component component, Localization localization) {
+        return localization.getSemanticSchemas().get(Long.parseLong(component.getSchema().getId().split("-")[1]));
+    }
 
-        try {
-            entityClass = (Class<? extends AbstractEntityModel>) viewModelRegistry.getViewEntityClass(viewName);
-        } catch (DxaException e) {
-            log.warn("Exception on getting view entity class", e);
-            entityClass = (Class<? extends AbstractEntityModel>) semanticMappingRegistry.getEntityClass(schemaRoot);
+    private static void fillEntityData(EntityModel entity, ComponentPresentation componentPresentation) {
+        if (entity instanceof AbstractEntityModel) {
+            AbstractEntityModel abstractEntityModel = (AbstractEntityModel) entity;
+
+            abstractEntityModel.setXpmMetadata(createXpmMetadata(entity, componentPresentation));
         }
 
-        if (entityClass == null) {
-            log.error("Cannot determine entity type for view name: '{}'. Please make sure " +
-                    "that an entry is registered for this view name in the ViewModelRegistry.", viewName);
-        }
-
-        return entityClass;
+        entity.setMvcData(createMvcData(componentPresentation));
+        entity.setHtmlClasses(getHtmlClasses(componentPresentation));
     }
 
     private <T extends EntityModel> void processMediaItems(Component component, Localization localization, T entity) {
@@ -242,6 +188,24 @@ public final class EntityBuilderImpl implements EntityBuilder {
         }
     }
 
+    private static Map<String, Object> createXpmMetadata(EntityModel entity, ComponentPresentation componentPresentation) {
+        final Component component = componentPresentation.getComponent();
+        final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
+
+        Map<String, Object> xpmMetaData = new HashMap<>();
+        xpmMetaData.put("ComponentID", entity instanceof EclItem ? ((EclItem) entity).getUri() : component.getId());
+        xpmMetaData.put("ComponentModified", ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
+        xpmMetaData.put("ComponentTemplateID", componentTemplate.getId());
+        xpmMetaData.put("ComponentTemplateModified", ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
+        xpmMetaData.put("IsRepositoryPublished", componentPresentation.isDynamic());
+        return xpmMetaData;
+    }
+
+    private static String getHtmlClasses(ComponentPresentation componentPresentation) {
+        String htmlClasses = FieldUtils.getStringValue(componentPresentation.getComponentTemplate().getMetadata(), "htmlClasses");
+        return !isEmpty(htmlClasses) ? htmlClasses.replaceAll("[^\\w\\- ]", "") : null;
+    }
+
     private <T extends EntityModel> void processEclItems(Component component, Localization localization, T entity) {
         if (entity instanceof EclItem) {
             final EclItem eclItem = (EclItem) entity;
@@ -255,6 +219,46 @@ public final class EntityBuilderImpl implements EntityBuilder {
                 fillItemWithExternalMetadata(eclItem, extensionData);
             }
         }
+    }
+
+    private static void fillItemWithEclData(EclItem eclItem, Map<String, FieldSet> extensionData) {
+        FieldSet eclFieldSet = extensionData.get("ECL");
+        eclItem.setDisplayTypeId(getValueFromFieldSet(eclFieldSet, "DisplayTypeId"));
+        eclItem.setTemplateFragment(getValueFromFieldSet(eclFieldSet, "TemplateFragment"));
+        String fileName = getValueFromFieldSet(eclFieldSet, "FileName");
+        if (!isEmpty(fileName)) {
+            eclItem.setFileName(fileName);
+        }
+        String mimeType = getValueFromFieldSet(eclFieldSet, "MimeType");
+        if (!isEmpty(mimeType)) {
+            eclItem.setMimeType(mimeType);
+        }
+    }
+
+    private static void fillItemWithExternalMetadata(EclItem eclItem, Map<String, FieldSet> extensionData) {
+        FieldSet externalEclFieldSet = extensionData.get("ECL-ExternalMetadata");
+        Map<String, Object> externalMetadata = new HashMap<>(externalEclFieldSet.getContent().size());
+        for (Map.Entry<String, Field> entry : externalEclFieldSet.getContent().entrySet()) {
+            final List<Object> values = entry.getValue().getValues();
+
+            if (!values.isEmpty()) {
+                externalMetadata.put(entry.getKey(), values.get(0));
+            }
+        }
+        eclItem.setExternalMetadata(externalMetadata);
+    }
+
+    private static String getValueFromFieldSet(FieldSet eclFieldSet, String fieldName) {
+        if (eclFieldSet != null) {
+            Map<String, Field> fieldSetContent = eclFieldSet.getContent();
+            if (fieldSetContent != null) {
+                Field field = fieldSetContent.get(fieldName);
+                if (field != null) {
+                    return Objects.toString(field.getValues().get(0));
+                }
+            }
+        }
+        return null;
     }
 
     @Override

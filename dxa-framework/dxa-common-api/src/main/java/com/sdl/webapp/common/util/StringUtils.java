@@ -2,6 +2,8 @@ package com.sdl.webapp.common.util;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -43,17 +45,25 @@ public final class StringUtils {
      * @return list of strings
      */
     public static List<String> toStrings(List<?> list) {
-        return Lists.transform(list, new Function<Object, String>() {
-            @Override
-            public String apply(Object input) {
-                if (input == null) {
-                    return "";
-                }
-                if (input instanceof String) {
-                    return (String) input;
-                }
-                return input.toString();
+        return Lists.transform(list, (Function<Object, String>) input -> {
+            if (input == null) {
+                return "";
             }
+            if (input instanceof String) {
+                return (String) input;
+            }
+            return input.toString();
         });
+    }
+
+    /**
+     * Replaces spaces with dashes.
+     *
+     * @param string string to process
+     * @return string with spaces replaced or {@code null} is string is null
+     */
+    @Contract("null -> null; !null -> !null")
+    public static String dashify(@Nullable String string) {
+        return string == null ? null : string.replace(" ", "-");
     }
 }

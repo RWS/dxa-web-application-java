@@ -51,11 +51,7 @@ public class RegionModelSetImpl extends AbstractSet<RegionModel> implements Regi
         }
 
         modelMapByName.put(regionModel.getName(), regionModel);
-        Set<RegionModel> modelSet = modelMapByClass.get(regionModel.getClass());
-        if (modelSet == null) {
-            modelSet = new LinkedHashSet<>();
-            modelMapByClass.put(regionModel.getClass(), modelSet);
-        }
+        Set<RegionModel> modelSet = modelMapByClass.computeIfAbsent(regionModel.getClass(), k -> new LinkedHashSet<>());
         modelSet.add(regionModel);
         return true;
     }

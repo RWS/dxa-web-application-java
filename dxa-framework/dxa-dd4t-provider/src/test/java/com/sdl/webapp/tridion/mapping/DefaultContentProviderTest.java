@@ -13,7 +13,6 @@ import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
-import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import org.dd4t.contentmodel.Component;
@@ -85,23 +84,22 @@ public class DefaultContentProviderTest {
     private ModelBuilderPipeline modelBuilderPipeline;
 
     @Test
-    public void shouldInjectIsQueryBasedParam() throws DxaException, ContentProviderException {
+    public void shouldInjectIsQueryBasedParam() throws ContentProviderException {
         //given
-        Localization localization = mock(Localization.class);
         EntityModel entity = mock(EntityModel.class);
         when(entity.getXpmMetadata()).thenReturn(new HashMap<String, Object>());
         when(modelBuilderPipeline.createEntityModel(Matchers.<ComponentPresentation>any(), Matchers.any()))
                 .thenReturn(entity);
 
         //when
-        EntityModel entityModel = defaultContentProvider.getEntityModel("1-1", localization);
+        EntityModel entityModel = defaultContentProvider.getEntityModel("1-1", null);
 
         //then
         assertEquals(entityModel.getXpmMetadata().get("IsQueryBased"), true);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionIfIdIsWrong() throws DxaException, ContentProviderException {
+    public void shouldThrowExceptionIfIdIsWrong() throws ContentProviderException {
         //when
         defaultContentProvider.getEntityModel("1", null);
 
@@ -110,7 +108,7 @@ public class DefaultContentProviderTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldThrowExceptionIfIdIsEmpty() throws DxaException, ContentProviderException {
+    public void shouldThrowExceptionIfIdIsEmpty() throws ContentProviderException {
         //when
         defaultContentProvider.getEntityModel("", null);
 
@@ -118,8 +116,8 @@ public class DefaultContentProviderTest {
         //exception is thrown
     }
 
-    @Test(expected = NullPointerException.class)
-    public void shouldThrowExceptionIfIdIsNull() throws DxaException, ContentProviderException {
+    @Test(expected = IllegalArgumentException.class)
+    public void shouldThrowExceptionIfIdIsNull() throws ContentProviderException {
         //when
         defaultContentProvider.getEntityModel(null, null);
 
@@ -226,7 +224,7 @@ public class DefaultContentProviderTest {
                         .build())
                 .build();
 
-        when(spy.executeQuery(eq(query))).thenReturn(new ArrayList<ComponentMetadata>() {{
+        when(spy.executeMetadataQuery(eq(query))).thenReturn(new ArrayList<ComponentMetadata>() {{
             add(componentMetadata);
             add(componentMetadata);
         }});
@@ -288,7 +286,7 @@ public class DefaultContentProviderTest {
 
         //then
         verify(dynamicList).getQuery(any(Localization.class));
-        verify(spy).executeQuery(eq(query));
+        verify(spy).executeMetadataQuery(eq(query));
         verify(dynamicList).getEntityType();
         verify(dynamicList).setQueryResults(anyList(), anyBoolean());
     }
@@ -308,7 +306,7 @@ public class DefaultContentProviderTest {
                 }
 
                 @Override
-                protected List<ComponentMetadata> executeQuery(SimpleBrokerQuery query) {
+                protected List<ComponentMetadata> executeMetadataQuery(SimpleBrokerQuery query) {
                     return Collections.emptyList();
                 }
             };
@@ -316,7 +314,9 @@ public class DefaultContentProviderTest {
 
         @Bean
         public WebRequestContext webRequestContext() {
-            return mock(WebRequestContext.class);
+            WebRequestContext mock = mock(WebRequestContext.class);
+            when(mock.getLocalization()).thenReturn(mock(Localization.class));
+            return mock;
         }
 
         @Bean

@@ -1,11 +1,11 @@
 package com.sdl.dxa.tridion.mapping;
 
-import com.sdl.dxa.tridion.mapping.impl.ModelBuilderPipeline;
+import com.sdl.dxa.tridion.mapping.impl.ModelBuilderPipelineImpl;
 
 /**
  * Indicates whether Include Page Regions should be included.
  *
- * @see ModelBuilderPipeline
+ * @see ModelBuilderPipelineImpl
  * @see PageModelBuilder
  */
 public enum PageInclusion {

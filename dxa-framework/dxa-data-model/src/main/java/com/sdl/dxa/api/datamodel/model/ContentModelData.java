@@ -13,6 +13,8 @@ import java.util.Map;
 public class ContentModelData extends HashMap<String, Object>
         implements Map<String, Object>, CanGetAndCast<String> {
 
+    public static final ContentModelData EMPTY = new ContentModelData(0);
+
     //region Constructors matching super and copy-constructor
     public ContentModelData(int initialCapacity, float loadFactor) {
         super(initialCapacity, loadFactor);

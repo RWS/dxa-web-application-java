@@ -63,7 +63,7 @@ public abstract class MediaItem extends AbstractEntityModel {
 
     @SemanticProperty("s:contentSize")
     @JsonProperty("FileSize")
-    private int fileSize;
+    private long fileSize;
 
     @JsonProperty("MimeType")
     private String mimeType;

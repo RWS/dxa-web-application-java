@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Splitter;
 import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.util.StringUtils;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -13,7 +14,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,8 +29,9 @@ import static com.sdl.webapp.common.controller.ControllerUtils.FRAMEWORK_CONTROL
 @Accessors(chain = true)
 @ToString
 @EqualsAndHashCode(exclude = {"regionAreaName", "regionName"})
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class MvcDataImpl implements MvcData {
 
     protected static final List<String> INCLUDE_CONTROLLERS = Splitter.on(",").trimResults().splitToList("Entity, List, Navigation, Region");
@@ -153,7 +157,8 @@ public class MvcDataImpl implements MvcData {
         }
 
         public MvcDataImplBuilder viewName(String viewName) {
-            this.viewName = viewName;
+            this.viewName = StringUtils.dashify(viewName);
+            log.debug("Replaced spaces with dashes for a view name {} --> {}", viewName, this.viewName);
             return this;
         }
 
@@ -168,7 +173,7 @@ public class MvcDataImpl implements MvcData {
         }
 
         public MvcDataImplBuilder routeValues(Map<String, String> routeValues) {
-            this.routeValues = routeValues;
+            this.routeValues = routeValues == null ? Collections.emptyMap() : routeValues;
             return this;
         }
 

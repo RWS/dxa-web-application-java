@@ -12,6 +12,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,7 +73,7 @@ public class ModelBuilderPipelineTest {
     private ModelBuilderPipeline pipeline;
 
     @Before
-    public void initMocks() {
+    public void initMocks() throws DxaException {
         when(firstPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class)))
                 .thenReturn(firstPageModel);
         when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class)))
@@ -109,7 +110,7 @@ public class ModelBuilderPipelineTest {
     }
 
     @Test
-    public void shouldIterate_AllEntityModelBuilders() {
+    public void shouldIterate_AllEntityModelBuilders() throws DxaException {
         //when
         EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
@@ -120,7 +121,7 @@ public class ModelBuilderPipelineTest {
     }
 
     @Test
-    public void shouldIterate_AllEntityModelBuilders_WithClass() {
+    public void shouldIterate_AllEntityModelBuilders_WithClass() throws DxaException {
         //given
         Class<EntityModel> expectedClass = EntityModel.class;
 
@@ -134,7 +135,7 @@ public class ModelBuilderPipelineTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldNotFail_IfListsOfBuildersNotSet() {
+    public void shouldNotFail_IfListsOfBuildersNotSet() throws DxaException {
         //given 
         ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
 
@@ -147,7 +148,7 @@ public class ModelBuilderPipelineTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void shouldFail_IfListsOfBuildersIsEmpty() {
+    public void shouldFail_IfListsOfBuildersIsEmpty() throws DxaException {
         //given
         ModelBuilderPipelineImpl pipeline = new ModelBuilderPipelineImpl();
         pipeline.setEntityModelBuilders(Collections.emptyList());

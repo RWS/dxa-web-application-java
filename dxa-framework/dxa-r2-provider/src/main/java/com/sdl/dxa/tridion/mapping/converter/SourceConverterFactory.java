@@ -2,12 +2,14 @@ package com.sdl.dxa.tridion.mapping.converter;
 
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.entity.Link;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -42,12 +45,12 @@ public class SourceConverterFactory {
 
     @NotNull
     public Object convert(Object toConvert, TypeDescriptor targetType, SemanticField semanticField,
-                          DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
+                          ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
         Class<?> sourceType = toConvert.getClass();
 
         //typecast is safe which is guaranteed by the fact of a presence of a converter in a collection
         //noinspection unchecked
-        return getSourceConverter(sourceType).convert(toConvert, targetType, semanticField, dataProvider);
+        return getSourceConverter(sourceType).convert(toConvert, getTypeInformation(targetType), semanticField, pipeline, dataProvider);
     }
 
     @NotNull
@@ -61,7 +64,25 @@ public class SourceConverterFactory {
         return sourceConverter;
     }
 
-    public Object selfLink(Object toLink, TypeDescriptor targetType) throws UnsupportedTargetTypeException {
+    static TypeInformation getTypeInformation(TypeDescriptor targetType) {
+        Class<?> objectType = targetType.getObjectType();
+
+        Class<? extends Collection> collectionType = null;
+
+        if (Collection.class.isAssignableFrom(objectType)) {
+            //typecast is safe because of if statement
+            //noinspection unchecked
+            collectionType = (Class<? extends Collection>) objectType;
+            objectType = targetType.getElementTypeDescriptor().getObjectType();
+        }
+
+        return TypeInformation.builder()
+                .objectType(objectType)
+                .collectionType(collectionType)
+                .build();
+    }
+
+    public Object selfLink(Object toLink, TypeDescriptor targetType, ModelBuilderPipeline pipeline) throws DxaException {
         Class<?> objectType = getClassForSelfLinking(toLink, targetType);
 
         String itemId = toLink instanceof EntityModelData ? ((EntityModelData) toLink).getId() : ((PageModelData) toLink).getId();
@@ -72,26 +93,28 @@ public class SourceConverterFactory {
             Link link = new Link();
             link.setUrl(url);
             return link;
-        } else {
-            //todo may be page or entity, ok?
-            return null;
+        } else if (toLink instanceof EntityModelData && EntityModel.class.isAssignableFrom(objectType)) {
+            //type safety is guaranteed by if condition
+            //noinspection unchecked
+            return pipeline.createEntityModel((EntityModelData) toLink, (Class<EntityModel>) objectType);
         }
+        throw new UnsupportedTargetTypeException(objectType);
     }
 
     @NotNull
     private Class<?> getClassForSelfLinking(Object toLink, TypeDescriptor targetType) throws UnsupportedTargetTypeException {
         Class<?> objectType = targetType.getObjectType();
-        Class<?> toLinkClass = toLink.getClass();
+        Class<?> sourceType = toLink.getClass();
 
-        if (!PageModelData.class.isAssignableFrom(toLinkClass) || EntityModelData.class.isAssignableFrom(toLinkClass)) {
-            throw new UnsupportedOperationException("Self-linking is only supported for Entity and Page models");
+        if (!(PageModelData.class.isAssignableFrom(sourceType) || EntityModelData.class.isAssignableFrom(sourceType))) {
+            throw new UnsupportedOperationException("Self-linking is only supported for Entity and Page models, bug have " + sourceType);
         }
 
-        if (objectType != String.class || Link.class.isAssignableFrom(objectType) || EntityModel.class.isAssignableFrom(objectType)) {
+        if (!(objectType == String.class || EntityModel.class.isAssignableFrom(objectType))) {
             throw new UnsupportedTargetTypeException(objectType);
         }
 
-        if (PageModelData.class == toLinkClass && EntityModel.class.isAssignableFrom(objectType)) {
+        if (PageModelData.class == sourceType && EntityModel.class.isAssignableFrom(objectType)) {
             throw new UnsupportedTargetTypeException(objectType);
         }
 

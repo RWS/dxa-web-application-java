@@ -11,5 +11,7 @@ public class ExternalContentData {
 
     private String id;
 
+    private String templateFragment;
+
     private ContentModelData metadata;
 }

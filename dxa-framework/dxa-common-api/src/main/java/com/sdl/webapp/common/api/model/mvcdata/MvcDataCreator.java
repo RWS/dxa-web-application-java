@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.mvcdata;
 
 import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.util.StringUtils;
 
 import java.util.Map;
 
@@ -74,7 +75,7 @@ public final class MvcDataCreator {
      */
     public MvcDataCreator fromQualifiedName(String qualifiedViewName) {
         String[] parts = qualifiedViewName == null || qualifiedViewName.isEmpty() ? null :
-                qualifiedViewName.replace(' ', '-').split(":");
+                StringUtils.dashify(qualifiedViewName).split(":");
 
         if (parts == null || parts.length < 1 || parts.length > 3) {
             throw new IllegalArgumentException(
@@ -85,22 +86,17 @@ public final class MvcDataCreator {
 
         MvcDataImpl.MvcDataImplBuilder builder = MvcDataImpl.newBuilder();
 
-        switch (parts.length) {
-            case 1:
-                builder
-                        .viewName(parts[0]);
-                break;
-            case 2:
-                builder
-                        .areaName(parts[0])
-                        .viewName(parts[1]);
-                break;
-            case 3:
-                builder
-                        .areaName(parts[0])
-                        .controllerName(parts[1])
-                        .viewName(parts[2]);
-                break;
+        if (parts.length == 1) {
+            builder.viewName(parts[0]);
+
+        } else if (parts.length == 2) {
+            builder.areaName(parts[0])
+                    .viewName(parts[1]);
+
+        } else if (parts.length == 3) {
+            builder.areaName(parts[0])
+                    .controllerName(parts[1])
+                    .viewName(parts[2]);
         }
 
         this.mvcData = builder.build();

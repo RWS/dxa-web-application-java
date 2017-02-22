@@ -71,6 +71,11 @@ public abstract class AbstractEntityModel extends AbstractViewModel implements E
         );
     }
 
+    @Override
+    public MvcData getMvcData() {
+        return super.getMvcData() != null ? super.getMvcData() : getDefaultMvcData();
+    }
+
     /**
      * Gets the default View for this Entity Model (if any).
      * <p>If this method is overridden in a subclass, it will be possible to render "embedded" Entity Models of that

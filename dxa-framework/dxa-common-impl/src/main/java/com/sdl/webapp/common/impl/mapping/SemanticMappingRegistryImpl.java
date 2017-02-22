@@ -5,6 +5,7 @@ import com.google.common.collect.LinkedListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.SetMultimap;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
@@ -37,10 +38,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
@@ -53,25 +52,29 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
 
     private final SetMultimap<Field, SemanticPropertyInfo> semanticPropertyInfo = LinkedHashMultimap.create();
 
-    /**
-     * Get all declared fields. If concrete class is annotated as SemanticEntity, the whole inheritance structure is followed.
-     *
-     * @return list of class fields
-     */
-    private static List<Field> getDeclaredFields(Class<?> entityClass) {
+    @PostConstruct
+    public void init() {
+        log.debug("Auto registration of all static or top-level implementors of EntityModel class in packages");
 
-        boolean followInheritanceStructure = entityClass.getAnnotation(SemanticEntity.class) != null;
+        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AssignableTypeFilter(EntityModel.class));
 
-        List<Field> declaredFields = new ArrayList<>();
+        Set<String> packages = new HashSet<>();
 
-        while (!entityClass.equals(AbstractEntityModel.class) && !entityClass.equals(Object.class)) {
-            Collections.addAll(declaredFields, entityClass.getDeclaredFields());
-            if (!followInheritanceStructure) {
-                break;
+        for (String basePackage : Arrays.asList("com.sdl.dxa", "com.sdl.webapp")) {
+            log.debug("Scanning {} for EntityModels", basePackage);
+            for (BeanDefinition bd : scanner.findCandidateComponents(basePackage)) {
+                String packageName = bd.getBeanClassName().substring(0, bd.getBeanClassName().lastIndexOf('.'));
+
+                if (packages.add(packageName)) {
+                    log.debug("Added package {} while scanning base package {}", packageName, basePackage);
+                }
             }
-            entityClass = entityClass.getSuperclass();
         }
-        return declaredFields;
+
+        for (String packageName : packages) {
+            registerEntities(packageName);
+        }
     }
 
     /**
@@ -102,16 +105,25 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         return result;
     }
 
-    private static void addEntityInfo(SemanticEntity annotation, Map<String, SemanticEntityInfo> result, Class<? extends EntityModel> entityClass) {
-        if (annotation != null) {
-            final SemanticEntityInfo entityInfo = new SemanticEntityInfo(annotation, entityClass);
-            final String prefix = entityInfo.getPrefix();
-            if (result.containsKey(prefix)) {
-                throw new SemanticAnnotationException("The entity class " + entityClass.getName() +
-                        " has multiple @SemanticEntity annotations with the same prefix '" + prefix + "'.");
+    /**
+     * Get all declared fields. If concrete class is annotated as SemanticEntity, the whole inheritance structure is followed.
+     *
+     * @return list of class fields
+     */
+    private static List<Field> getDeclaredFields(Class<?> entityClass) {
+
+        boolean followInheritanceStructure = entityClass.getAnnotation(SemanticEntity.class) != null;
+
+        List<Field> declaredFields = new ArrayList<>();
+
+        while (!entityClass.equals(AbstractEntityModel.class) && !entityClass.equals(Object.class)) {
+            Collections.addAll(declaredFields, entityClass.getDeclaredFields());
+            if (!followInheritanceStructure) {
+                break;
             }
-            result.put(prefix, entityInfo);
+            entityClass = entityClass.getSuperclass();
         }
+        return declaredFields;
     }
 
     /**
@@ -148,35 +160,22 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         return result;
     }
 
+    private static void addEntityInfo(SemanticEntity annotation, Map<String, SemanticEntityInfo> result, Class<? extends EntityModel> entityClass) {
+        if (annotation != null) {
+            final SemanticEntityInfo entityInfo = new SemanticEntityInfo(annotation, entityClass);
+            final String prefix = entityInfo.getPrefix();
+            if (result.containsKey(prefix)) {
+                throw new SemanticAnnotationException("The entity class " + entityClass.getName() +
+                        " has multiple @SemanticEntity annotations with the same prefix '" + prefix + "'.");
+            }
+            result.put(prefix, entityInfo);
+        }
+    }
+
     private static void addPropertyInfo(SemanticProperty annotation, Multimap<String, SemanticPropertyInfo> result, Field field) {
         if (annotation != null) {
             final SemanticPropertyInfo propertyInfo = new SemanticPropertyInfo(annotation, field);
             result.put(propertyInfo.getPrefix(), propertyInfo);
-        }
-    }
-
-    @PostConstruct
-    public void init() {
-        log.debug("Auto registration of all static or top-level implementors of EntityModel class in packages");
-
-        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-        scanner.addIncludeFilter(new AssignableTypeFilter(EntityModel.class));
-
-        Set<String> packages = new HashSet<>();
-
-        for (String basePackage : Arrays.asList("com.sdl.dxa", "com.sdl.webapp")) {
-            log.debug("Scanning {} for EntityModels", basePackage);
-            for (BeanDefinition bd : scanner.findCandidateComponents(basePackage)) {
-                String packageName = bd.getBeanClassName().substring(0, bd.getBeanClassName().lastIndexOf('.'));
-
-                if (packages.add(packageName)) {
-                    log.debug("Added package {} while scanning base package {}", packageName, basePackage);
-                }
-            }
-        }
-
-        for (String packageName : packages) {
-            registerEntities(packageName);
         }
     }
 
@@ -185,7 +184,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
      */
     @Override
     public Set<FieldSemantics> getFieldSemantics(Field field) {
-        return fieldSemanticsMap.containsKey(field) ? fieldSemanticsMap.get(field) : Collections.<FieldSemantics>emptySet();
+        return fieldSemanticsMap.containsKey(field) ? fieldSemanticsMap.get(field) : Collections.emptySet();
     }
 
     /**
@@ -315,24 +314,28 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
      * {@inheritDoc}
      */
     @Override
-    public Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName) {
+    public Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String fullyQualifiedName, Class<? extends EntityModel> expectedClass) throws SemanticMappingException {
 
-        String entitySimpleName = entityName.substring(entityName.lastIndexOf(":") + 1);
-        Set<Class<? extends EntityModel>> possibleValues = new LinkedHashSet<>();
 
+        List<Class<? extends EntityModel>> possibleValues = new ArrayList<>();
         for (Map.Entry<Class<? extends EntityModel>, SemanticEntityInfo> entry : semanticEntityInfo.entries()) {
             SemanticEntityInfo entityInfo = entry.getValue();
-            if (entityName.startsWith(entityInfo.getVocabulary()) && entityName.endsWith(entityInfo.getEntityName())) {
 
-                Class<? extends EntityModel> aClass = entry.getKey();
-
-                if (Objects.equals(aClass.getSimpleName(), entitySimpleName)) {
-                    return aClass;
-                }
-                possibleValues.add(aClass);
+            if (String.format("%s:%s", entityInfo.getVocabulary(), entityInfo.getEntityName()).equals(fullyQualifiedName) &&
+                    (expectedClass == null || expectedClass.isAssignableFrom(entry.getKey()))) {
+                possibleValues.add(entry.getKey());
             }
         }
 
-        return possibleValues.isEmpty() ? null : possibleValues.iterator().next();
+        if (possibleValues.isEmpty()) {
+            log.trace("Cannot find any view model type for {}", fullyQualifiedName);
+            return null;
+        }
+
+        if (possibleValues.size() > 1) {
+            throw new SemanticMappingException("Ambiguous semantic mapping for " + fullyQualifiedName + ", found these mappings: " + possibleValues);
+        }
+
+        return possibleValues.get(0);
     }
 }

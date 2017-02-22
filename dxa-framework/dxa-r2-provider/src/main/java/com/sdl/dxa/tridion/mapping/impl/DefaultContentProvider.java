@@ -17,6 +17,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.LocalizationUtils.TryFindPage;
 import com.sdl.webapp.common.util.TcmUtils;
@@ -37,8 +38,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @R2
 @Service("r2ContentProvider")
@@ -104,21 +105,23 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
             EntityModelData entityModelData = objectMapper.readValue(componentPresentation.getContent(), EntityModelData.class);
             return builderPipeline.createEntityModel(entityModelData);
         } catch (IOException e) {
-            log.warn("Issue while deserializing entity content, componentUri {}, templateUri {}", componentUri, templateUri, e);
             throw new ContentProviderException("Issue while deserializing entity content for componentUri" + componentUri + ", templateUri", e);
+        } catch (DxaException e) {
+            throw new ContentProviderException("Cannot build the entity model for componentUri" + componentUri + ", templateUri", e);
         }
     }
 
     @Override
-    protected <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws ContentProviderException {
-        return components.stream()
-                .map(metadata -> EntityModelData.builder()
-                        .id(metadata.getId())
-                        .metadata(getContentModelData(metadata))
-                        .schemaId(metadata.getSchemaId())
-                        .build())
-                .map(entityModelData -> builderPipeline.createEntityModel(entityModelData, entityClass))
-                .collect(Collectors.toList());
+    protected <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException {
+        List<T> entities = new ArrayList<>();
+        for (ComponentMetadata metadata : components) {
+            entities.add(builderPipeline.createEntityModel(EntityModelData.builder()
+                    .id(metadata.getId())
+                    .metadata(getContentModelData(metadata))
+                    .schemaId(metadata.getSchemaId())
+                    .build(), entityClass));
+        }
+        return entities;
     }
 
     @NotNull

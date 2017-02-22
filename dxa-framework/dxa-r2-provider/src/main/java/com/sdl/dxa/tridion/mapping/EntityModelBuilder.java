@@ -4,6 +4,7 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.tridion.mapping.impl.ModelBuilderPipelineImpl;
 import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,5 +26,5 @@ public interface EntityModelBuilder extends ModelBuilder {
      */
     @Contract("_, _, _ -> !null")
     <T extends EntityModel> T buildEntityModel(@Nullable EntityModel originalEntityModel, EntityModelData modelData,
-                                               @Nullable Class<T> expectedClass);
+                                               @Nullable Class<T> expectedClass) throws DxaException;
 }

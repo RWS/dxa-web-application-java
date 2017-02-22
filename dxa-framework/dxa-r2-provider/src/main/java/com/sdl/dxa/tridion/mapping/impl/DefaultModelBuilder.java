@@ -1,7 +1,9 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
 import com.sdl.dxa.R2;
+import com.sdl.dxa.api.datamodel.model.BinaryContentData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
+import com.sdl.dxa.api.datamodel.model.ExternalContentData;
 import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
@@ -23,7 +25,9 @@ import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
+import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
+import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
@@ -40,6 +44,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
+import static com.sdl.webapp.common.util.StringUtils.dashify;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -69,18 +74,19 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @Override
     public <T extends EntityModel> T buildEntityModel(@Nullable EntityModel originalEntityModel, EntityModelData modelData,
-                                                      @Nullable Class<T> expectedClass) {
-        MvcData mvcData = createMvcData(modelData.getMvcData(), DefaultsMvcData.ENTITY);
-        T entityModel = null;
+                                                      @Nullable Class<T> expectedClass) throws DxaException {
+        T entityModel;
         try {
+            MvcData mvcData = null;
             Class<? extends ViewModel> modelType;
             if (expectedClass != null) {
                 log.debug("Expected class is pre-set to {} for model {}", expectedClass, modelData);
                 // https://jira.sdl.com/browse/TSI-2273
                 // we currently ignore the base type because of the issue but don't ignore the fact that it's set
                 SemanticSchema semanticSchema = webRequestContext.getLocalization().getSemanticSchemas().get(Long.parseLong(modelData.getSchemaId()));
-                modelType = viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames());
+                modelType = viewModelRegistry.getMappedModelTypes(semanticSchema.getFullyQualifiedNames(), expectedClass);
             } else {
+                mvcData = createMvcData(modelData.getMvcData(), DefaultsMvcData.ENTITY);
                 log.debug("Expected class is not set explicitly, trying to get it from MvcData");
                 modelType = viewModelRegistry.getViewModelType(mvcData);
             }
@@ -89,8 +95,10 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             entityModel = (T) createViewModel(modelType, modelData);
             ((AbstractEntityModel) entityModel).setId(modelData.getId());
             entityModel.setMvcData(mvcData);
-        } catch (DxaException | SemanticMappingException e) {
-            log.warn("Exception happened while creating a page model {}", modelData, e);
+
+            _processMediaItem(modelData, entityModel);
+        } catch (DxaException e) {
+            throw new DxaException("Exception happened while creating a entity model from: " + modelData, e);
         }
         return entityModel;
     }
@@ -108,7 +116,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     @NotNull
-    private <T extends ViewModel> T createViewModel(Class<T> viewModelType, ViewModelData modelData) throws SemanticMappingException, DxaException {
+    private <T extends ViewModel> T createViewModel(Class<T> viewModelType, ViewModelData modelData) throws DxaException {
         Localization localization = webRequestContext.getLocalization();
         SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(modelData.getSchemaId()));
         try {
@@ -116,6 +124,36 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         } catch (SemanticMappingException e) {
             log.warn("Cannot do a semantic mapping for class '{}', model data '{}', localization '{}'", viewModelType, modelData, localization);
             throw e;
+        }
+    }
+
+    private <T extends EntityModel> void _processMediaItem(EntityModelData modelData, T entityModel) throws DxaException {
+        if (entityModel instanceof MediaItem) {
+            MediaItem mediaItem = (MediaItem) entityModel;
+            BinaryContentData binaryContent = modelData.getBinaryContent();
+            if (binaryContent == null) {
+                throw new DxaException("Unable to create Media Item ('" + mediaItem.getClass() + "') " +
+                        "because the Data Model '" + mediaItem.getId() + "') \"' does not contain Binary Content Data.");
+            }
+            mediaItem.setUrl(binaryContent.getUrl());
+            mediaItem.setFileName(binaryContent.getFileName());
+            mediaItem.setMimeType(binaryContent.getMimeType());
+            mediaItem.setFileSize(binaryContent.getFileSize());
+
+            if (mediaItem instanceof EclItem) {
+                EclItem eclItem = (EclItem) mediaItem;
+
+                ExternalContentData externalContent = modelData.getExternalContent();
+                if (externalContent == null) {
+                    throw new DxaException("Unable to create ECL Item ('" + eclItem.getClass() + "') " +
+                            "because the Data Model '" + eclItem.getId() + "') \"' does not contain External Content Data.");
+                }
+
+                eclItem.setDisplayTypeId(externalContent.getDisplayTypeId());
+                eclItem.setTemplateFragment(externalContent.getTemplateFragment());
+                eclItem.setExternalMetadata(externalContent.getMetadata());
+                eclItem.setUri(externalContent.getId());
+            }
         }
     }
 
@@ -129,15 +167,12 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         pageModel.setTitle(modelData.getTitle());
 
         if (modelData.getRegions() != null) {
-            List<RegionModelData> regions = includePageRegions != PageInclusion.INCLUDE ?
-                    modelData.getRegions() :
-                    modelData.getRegions().stream()
-                            .filter(regionModelData -> isBlank(regionModelData.getIncludePageUrl()))
-                            .collect(Collectors.toList());
+            List<RegionModelData> regions = includePageRegions == PageInclusion.EXCLUDE ?
+                    filterRegionsByIncludePageUrl(modelData) : modelData.getRegions();
 
-            pageModel.getRegions().addAll(regions.stream()
+            regions.stream()
                     .map(this::createRegionModel)
-                    .collect(Collectors.toSet()));
+                    .forEach(pageModel.getRegions()::add);
         }
 
         return pageModel;
@@ -162,7 +197,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                     pageModel = (PageModel) createViewModel(viewModelType, modelData);
                 }
                 pageModel.setMvcData(mvcData);
-            } catch (DxaException | SemanticMappingException e) {
+            } catch (DxaException e) {
                 log.warn("Exception happened while creating a page model {}", modelData, e);
             }
         }
@@ -176,13 +211,20 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         viewModel.setHtmlClasses(modelData.getHtmlClasses());
     }
 
+    private List<RegionModelData> filterRegionsByIncludePageUrl(PageModelData modelData) {
+        return modelData.getRegions().stream()
+                .filter(regionModelData -> isBlank(regionModelData.getIncludePageUrl()))
+                .collect(Collectors.toList());
+    }
+
     private RegionModel createRegionModel(RegionModelData regionModelData) {
         MvcData mvcData = createMvcData(regionModelData.getMvcData(), DefaultsMvcData.REGION);
         log.debug("MvcData '{}' for RegionModel {}", mvcData, regionModelData);
 
         try {
             Class<? extends ViewModel> viewModelType = viewModelRegistry.getViewModelType(mvcData);
-            RegionModel regionModel = (RegionModel) viewModelType.getConstructor(String.class).newInstance(regionModelData.getName());
+            RegionModel regionModel = (RegionModel) viewModelType.getConstructor(String.class)
+                    .newInstance(dashify(regionModelData.getName()));
             fillViewModel(regionModel, regionModelData);
             regionModel.setMvcData(mvcData);
             ((AbstractViewModel) regionModel).setXpmMetadata(regionModel.getXpmMetadata());
@@ -195,7 +237,11 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
             if (regionModelData.getEntities() != null) {
                 regionModelData.getEntities().stream()
-                        .map(entityModelData -> createEntityModel(entityModelData, regionModelData))
+                        .map(entityModelData -> {
+                            EntityModel entityModel = createEntityModel(entityModelData);
+                            entityModel.setMvcData(creator(entityModel.getMvcData()).builder().regionName(regionModelData.getName()).build());
+                            return entityModel;
+                        })
                         .forEach(regionModel::addEntity);
             }
 
@@ -209,13 +255,11 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         }
     }
 
-    private EntityModel createEntityModel(EntityModelData entityModelData, RegionModelData regionModelData) {
+    private EntityModel createEntityModel(EntityModelData entityModelData) {
         try {
-            EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData);
-            entityModel.setMvcData(creator(entityModel.getMvcData()).builder().regionName(regionModelData.getName()).build());
-            return entityModel;
+            return modelBuilderPipeline.createEntityModel(entityModelData);
         } catch (Exception e) {
-            log.warn("Exception happened while building {}", entityModelData, e);
+            log.warn("Cannot create an entity model for model data {}", entityModelData, e);
             return new ExceptionEntity(e);
         }
     }

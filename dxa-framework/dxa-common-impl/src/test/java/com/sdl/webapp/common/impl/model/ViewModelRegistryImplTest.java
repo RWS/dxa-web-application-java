@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.impl.model;
 
 import com.google.common.collect.Sets;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
@@ -31,7 +32,7 @@ public class ViewModelRegistryImplTest {
     private ViewModelRegistry registry = new ViewModelRegistryImpl();
 
     @Before
-    public void init() {
+    public void init() throws SemanticMappingException {
         registry.registerViewModel(MvcDataCreator.creator()
                 .fromQualifiedName("Core:Entity:TestEntity")
                 .create(), TestEntity.class);
@@ -40,7 +41,7 @@ public class ViewModelRegistryImplTest {
                 .fromQualifiedName("Test:Entity:TestEntity2")
                 .create(), TestEntity2.class);
 
-        doReturn(TestEntity.class).when(semanticMappingRegistry).getEntityClassByFullyQualifiedName("registered");
+        doReturn(TestEntity.class).when(semanticMappingRegistry).getEntityClassByFullyQualifiedName("registered", null);
     }
 
     @Test
@@ -82,16 +83,16 @@ public class ViewModelRegistryImplTest {
     }
 
     @Test
-    public void shouldReturnViewModel_WhenRegistered() {
+    public void shouldReturnViewModel_WhenRegistered() throws DxaException {
         //when
-        Class<? extends ViewModel> registered = registry.getMappedModelTypes("registered");
+        Class<? extends ViewModel> registered = registry.getMappedModelTypes("registered", null);
 
         //then
         assertEquals(TestEntity.class, registered);
     }
 
     @Test
-    public void shouldViewModel_WhenRegistered_WithSet() {
+    public void shouldViewModel_WhenRegistered_WithSet() throws DxaException {
         //when
         Class<? extends ViewModel> registered = registry.getMappedModelTypes(Sets.newHashSet("not-registered", "registered"));
 
@@ -100,7 +101,7 @@ public class ViewModelRegistryImplTest {
     }
 
     @Test
-    public void shouldReturnNull_IfNothingIfSemanticRegistryFound() {
+    public void shouldReturnNull_IfNothingIfSemanticRegistryFound() throws DxaException {
         Class<? extends ViewModel> registered = registry.getMappedModelTypes(Sets.newHashSet("not-registered", "not-registered-2"));
 
         //then
@@ -108,18 +109,18 @@ public class ViewModelRegistryImplTest {
     }
 
     @Test
-    public void shouldResolveFromViewRegistry_IfSemanticRegistryFailed() {
+    public void shouldResolveFromViewRegistry_IfSemanticRegistryFailed() throws DxaException {
         //when
-        Class<? extends ViewModel> entityClass = registry.getMappedModelTypes("Test:Entity:TestEntity2");
+        Class<? extends ViewModel> entityClass = registry.getMappedModelTypes("Test:Entity:TestEntity2", null);
 
         //then
         assertEquals(TestEntity2.class, entityClass);
     }
 
     @Test
-    public void shouldResolveFromViewRegistry_IfSemanticRegistryFailed_WithNoArea() {
+    public void shouldResolveFromViewRegistry_IfSemanticRegistryFailed_WithNoArea() throws DxaException {
         //when
-        Class<? extends ViewModel> entityClass = registry.getMappedModelTypes("TestEntity2");
+        Class<? extends ViewModel> entityClass = registry.getMappedModelTypes("TestEntity2", null);
 
         //then
         assertEquals(TestEntity2.class, entityClass);

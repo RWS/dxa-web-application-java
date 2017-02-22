@@ -117,14 +117,6 @@ public abstract class BaseController {
      */
     protected ViewModel enrichModel(ViewModel model, HttpServletRequest httpServletRequest) throws Exception {
 
-        //Check if an exception was generated when creating the model, so now is the time to throw it
-        // TODO: shouldn't we just render the ExceptionEntity using an Exception View?
-        if (model.getClass().isAssignableFrom(ExceptionEntity.class)) {
-            ExceptionEntity exceptionEntity = (ExceptionEntity) model;
-            throw exceptionEntity.getException() != null ?
-                    exceptionEntity.getException() : new RuntimeException("Unknown exception while rendering");
-        }
-
         if (modelBindingRequired(model, httpServletRequest)) {
             log.trace("Model data [model id:{} <> request] binding is required", model);
             ServletRequestDataBinder dataBinder = new ServletRequestDataBinder(model);

@@ -1,6 +1,7 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
+import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
@@ -33,22 +34,26 @@ public class ListWrapperConverter implements SourceConverter<ListWrapper> {
     }
 
     @Override
-    public Object convert(ListWrapper toConvert, TypeDescriptor targetType, SemanticField semanticField, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
+    public Object convert(ListWrapper toConvert, TypeInformation targetType, SemanticField semanticField, ModelBuilderPipeline pipeline,
+                          DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
+        TypeDescriptor elementType = TypeDescriptor.valueOf(targetType.getObjectType());
+
         if (targetType.isCollection()) {
-            Collection<Object> result = targetType.getObjectType() == List.class ? new ArrayList<>() : new HashSet<>();
+            Collection<Object> result = targetType.getCollectionType() == List.class ? new ArrayList<>() : new HashSet<>();
 
             for (Object value : ((ListWrapper<?>) toConvert).getValues()) {
-                result.add(convertValue(value, targetType.getElementTypeDescriptor(), semanticField, dataProvider));
+                result.add(convertValue(value, elementType, semanticField, pipeline, dataProvider));
             }
 
             return result;
         } else {
-            return convertValue(toConvert.getValues().get(0), targetType, semanticField, dataProvider);
+            return convertValue(toConvert.getValues().get(0), elementType, semanticField, pipeline, dataProvider);
         }
     }
 
     @NotNull
-    private Object convertValue(Object toConvert, TypeDescriptor targetType, SemanticField semanticField, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
-        return sourceConverterFactory.convert(toConvert, targetType, semanticField, dataProvider.embedded(toConvert));
+    private Object convertValue(Object toConvert, TypeDescriptor targetType, SemanticField semanticField,
+                                ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
+        return sourceConverterFactory.convert(toConvert, targetType, semanticField, pipeline, dataProvider.embedded(toConvert));
     }
 }

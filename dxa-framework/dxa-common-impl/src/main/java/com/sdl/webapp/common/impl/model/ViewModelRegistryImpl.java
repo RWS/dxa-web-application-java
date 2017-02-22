@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl.model;
 
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -7,6 +8,8 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +26,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.getDefaultAreaName;
 
 @Component
+@Slf4j
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewModelRegistryImpl.class);
@@ -63,34 +67,57 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
-    public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames) {
-        Class<? extends ViewModel> entityClass = null;
+    public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException {
+        Class<? extends ViewModel> viewModelType;
         for (String fullyQualifiedName : semanticTypeNames) {
-            entityClass = getMappedModelTypes(fullyQualifiedName);
-            if (entityClass != null) {
-                break;
+            viewModelType = getMappedModelTypes(fullyQualifiedName, expectedClass);
+            if (viewModelType != null) {
+                return viewModelType;
             }
         }
-        if (entityClass == null) {
-            LOG.error("Cannot determine entity type for semantic schema names: '{}'. Please make sure " +
-                    "that an entry is registered for this view name in the ViewModelRegistry.", semanticTypeNames);
+        throw new DxaException("Cannot determine view model type for semantic schema names: '" + semanticTypeNames + "'. Please make sure " +
+                "that an entry is registered for this view name in the ViewModelRegistry.");
+    }
+
+    @Override
+    public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames) {
+        try {
+            return getMappedModelTypes(semanticTypeNames, null);
+        } catch (DxaException e) {
+            log.warn("Cannot get entity model type for {}", semanticTypeNames, e);
+            return null;
         }
-        return entityClass;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) {
+    public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException {
 
-        Class<? extends ViewModel> retval = this.semanticMappingRegistry.getEntityClassByFullyQualifiedName(semanticTypeName);
+        Class<? extends ViewModel> retval;
+        try {
+            retval = this.semanticMappingRegistry.getEntityClassByFullyQualifiedName(semanticTypeName, expectedClass);
+        } catch (SemanticMappingException e) {
+            throw new DxaException("Cannot get a view model tpe because of semantic mapping exception", e);
+        }
+
         if (retval != null) {
             return retval;
         }
         //Fallback
         MvcData mvcData = MvcDataCreator.creator().fromQualifiedName(semanticTypeName).create();
         return getViewModelType(mvcData);
+    }
+
+    @Override
+    public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) {
+        try {
+            return getMappedModelTypes(semanticTypeName, null);
+        } catch (DxaException e) {
+            log.warn("Cannot get entity model type for {}", semanticTypeName, e);
+            return null;
+        }
     }
 
     /**

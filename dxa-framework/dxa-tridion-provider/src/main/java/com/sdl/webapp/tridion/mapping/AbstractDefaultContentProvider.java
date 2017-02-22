@@ -19,6 +19,7 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.FileUtils;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.LocalizationUtils;
@@ -45,6 +46,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
 
@@ -118,6 +120,7 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
 
     @Override
     public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
+        Assert.notNull(id);
         Localization localization = webRequestContext.getLocalization();
         String[] idParts = id.split("-");
         if (idParts.length != 2) {
@@ -144,10 +147,14 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
             return;
         }
         SimpleBrokerQuery query = dynamicList.getQuery(localization);
-        dynamicList.setQueryResults(_convertEntities(executeMetadataQuery(query), dynamicList.getEntityType(), localization), query.isHasMore());
+        try {
+            dynamicList.setQueryResults(_convertEntities(executeMetadataQuery(query), dynamicList.getEntityType(), localization), query.isHasMore());
+        } catch (DxaException e) {
+            throw new ContentProviderException("Cannot populate a dynamic list " + dynamicList.getId() + " localization " + localization.getId(), e);
+        }
     }
 
-    protected abstract <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws ContentProviderException;
+    protected abstract <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException;
 
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)

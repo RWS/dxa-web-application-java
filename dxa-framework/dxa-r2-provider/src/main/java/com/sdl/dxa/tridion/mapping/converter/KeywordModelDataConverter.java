@@ -1,12 +1,12 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
 import com.sdl.dxa.api.datamodel.model.KeywordModelData;
+import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.converter.source.keyword.Converter;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -21,11 +21,13 @@ public class KeywordModelDataConverter implements SourceConverter<KeywordModelDa
     }
 
     @Override
-    public Object convert(KeywordModelData toConvert, TypeDescriptor targetType, SemanticField semanticField, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
+    public Object convert(KeywordModelData toConvert, TypeInformation targetType, SemanticField semanticField,
+                          ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
 
         Class<?> objectType = targetType.getObjectType();
 
-        return Converter.getConverter(objectType).convert(new KeywordModelDataWrapper(toConvert, dataProvider));
+        Object result = Converter.getConverter(objectType).convert(new KeywordModelDataWrapper(toConvert, dataProvider));
+        return wrapIfNeeded(result, targetType);
     }
 
     private static class KeywordModelDataWrapper implements Converter.KeywordWrapper {

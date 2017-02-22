@@ -116,7 +116,7 @@ public class DefaultContentProviderTest {
         //exception is thrown
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfIdIsNull() throws ContentProviderException {
         //when
         defaultContentProvider.getEntityModel(null, null);

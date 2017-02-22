@@ -4,6 +4,7 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +29,7 @@ public interface ModelBuilderPipeline {
      * @return Entity Model or {@code null} if no builders are registered
      */
     @NotNull
-    <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData);
+    <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData) throws DxaException;
 
     /**
      * See {@link EntityModelBuilder#buildEntityModel(EntityModel, EntityModelData, Class)}.
@@ -37,5 +38,5 @@ public interface ModelBuilderPipeline {
      * @throws IllegalArgumentException in case
      */
     @NotNull
-    <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData, @Nullable Class<T> expectedClass);
+    <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData, @Nullable Class<T> expectedClass) throws DxaException;
 }

@@ -13,19 +13,20 @@ import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
+import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -55,13 +56,10 @@ public class RichTextDataConverter implements SourceConverter<RichTextData> {
 
     private final WebRequestContext webRequestContext;
 
-    private final ModelBuilderPipeline modelBuilderPipeline;
-
     @Autowired
     public RichTextDataConverter(LinkResolver linkResolver, WebRequestContext webRequestContext, ModelBuilderPipeline modelBuilderPipeline) {
         this.linkResolver = linkResolver;
         this.webRequestContext = webRequestContext;
-        this.modelBuilderPipeline = modelBuilderPipeline;
     }
 
     @Override
@@ -70,32 +68,35 @@ public class RichTextDataConverter implements SourceConverter<RichTextData> {
     }
 
     @Override
-    public Object convert(RichTextData toConvert, TypeDescriptor targetType, SemanticField semanticField, DefaultSemanticFieldDataProvider dataProvider) {
+    public Object convert(RichTextData toConvert, TypeInformation targetType, SemanticField semanticField,
+                          ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
         Class<?> objectType = targetType.getObjectType();
 
         Set<String> linksNotResolved = new HashSet<>();
-        RichText richText = new RichText(toConvert.getValues().stream()
-                .map(fragment -> {
-                    if (fragment instanceof String) {
-                        String stringFragment = (String) fragment;
-                        stringFragment = processStartLinks(stringFragment, linksNotResolved);
-                        stringFragment = processEndLinks(stringFragment, linksNotResolved);
-                        return new RichTextFragmentImpl(stringFragment);
-                    } else {
-                        log.debug("Fragment {} is a not a string but perhaps EntityModelData, skipping link resolving");
-                        MediaItem mediaItem = modelBuilderPipeline.createEntityModel((EntityModelData) fragment,
-                                MediaItem.class);
-                        mediaItem.setEmbedded(true);
-                        if (mediaItem.getMvcData() == null) {
-                            mediaItem.setMvcData(mediaItem.getDefaultMvcData());
-                        }
-                        return mediaItem;
-                    }
-                })
-                .map(RichTextFragment.class::cast)
-                .collect(Collectors.toList()));
+        List<RichTextFragment> fragments = new ArrayList<>();
+        for (Object fragment : toConvert.getValues()) {
+            if (fragment instanceof String) {
+                String stringFragment = (String) fragment;
+                stringFragment = processStartLinks(stringFragment, linksNotResolved);
+                stringFragment = processEndLinks(stringFragment, linksNotResolved);
+                fragments.add(new RichTextFragmentImpl(stringFragment));
+            } else {
+                log.debug("Fragment {} is a not a string but perhaps EntityModelData, skipping link resolving");
+                MediaItem mediaItem;
+                EntityModelData entityModelData = (EntityModelData) fragment;
+                try {
+                    mediaItem = pipeline.createEntityModel(entityModelData, MediaItem.class);
+                } catch (DxaException e) {
+                    throw new FieldConverterException("Cannot create an instance of Media Item in RichText, model id " + entityModelData.getId(), e);
+                }
+                mediaItem.setEmbedded(true);
+                fragments.add(mediaItem);
+            }
+        }
 
-        return objectType == String.class ? richText.toString() : richText;
+        RichText richText = new RichText(fragments);
+
+        return wrapIfNeeded(objectType == String.class ? richText.toString() : richText, targetType);
     }
 
     @NotNull

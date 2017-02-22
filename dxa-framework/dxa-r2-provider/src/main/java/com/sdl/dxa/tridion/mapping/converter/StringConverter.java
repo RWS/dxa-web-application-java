@@ -1,10 +1,13 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
+import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.model.RichText;
+import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.core.convert.TypeDescriptor;
+import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -24,25 +27,31 @@ public class StringConverter implements SourceConverter<String> {
     }
 
     @Override
-    public Object convert(String toConvert, TypeDescriptor targetType, SemanticField semanticField, DefaultSemanticFieldDataProvider dataProvider) {
+    public Object convert(String toConvert, TypeInformation targetType, SemanticField semanticField,
+                          ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
         Class<?> objectType = targetType.getObjectType();
+        Object result;
         if (Date.class.isAssignableFrom(objectType)) {
             try {
-                return DateFormat.getInstance().parse(toConvert);
+                result = DateFormat.getInstance().parse(toConvert);
             } catch (ParseException e) {
-                log.warn("Cannot parse a date string {} to a date of class {}", toConvert, Date.class);
+                throw new FieldConverterException("Cannot parse a date string " + toConvert + " to a date of class Date");
             }
+        } else if (DateTime.class == objectType) {
+            result = DateTime.parse(toConvert);
+        } else if (Number.class.isAssignableFrom(objectType)) {
+            result = toNumber(toConvert, objectType);
+        } else if (Boolean.class == objectType) {
+            result = Boolean.parseBoolean(toConvert);
+        } else if (String.class == objectType) {
+            result = toConvert;
+        } else if (RichText.class.isAssignableFrom(objectType)) {
+            result = new RichText(toConvert);
+        } else {
+            throw new FieldConverterException("The type " + objectType + " is not supported by StringConverter");
         }
 
-        if (Number.class.isAssignableFrom(objectType)) {
-            return toNumber(toConvert, objectType);
-        }
-
-        if (Boolean.class == objectType) {
-            return Boolean.parseBoolean(toConvert);
-        }
-
-        return toConvert;
+        return wrapIfNeeded(result, targetType);
     }
 
     @NotNull

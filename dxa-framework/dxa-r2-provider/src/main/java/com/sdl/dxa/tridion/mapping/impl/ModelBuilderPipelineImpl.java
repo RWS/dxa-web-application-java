@@ -10,6 +10,8 @@ import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.exceptions.DxaException;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +31,7 @@ import java.util.List;
  */
 @Service("r2modelBuilder")
 @R2
+@Slf4j
 public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
 
     private List<EntityModelBuilder> entityModelBuilders = Collections.emptyList();
@@ -59,13 +62,13 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
 
     @Override
     @NotNull
-    public <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData) {
+    public <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData) throws DxaException {
         return createEntityModel(modelData, null);
     }
 
     @NotNull
     @Override
-    public <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData, @Nullable Class<T> expectedClass) {
+    public <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData, @Nullable Class<T> expectedClass) throws DxaException {
         T entityModel = null;
         for (EntityModelBuilder builder : entityModelBuilders) {
             entityModel = builder.buildEntityModel(entityModel, modelData, expectedClass);

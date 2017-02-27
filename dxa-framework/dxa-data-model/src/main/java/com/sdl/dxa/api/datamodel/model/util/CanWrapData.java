@@ -1,5 +1,6 @@
 package com.sdl.dxa.api.datamodel.model.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 
@@ -13,5 +14,6 @@ public interface CanWrapData {
     /**
      * Returns an instance of data wrapper for the current model.
      */
+    @JsonIgnore
     ModelDataWrapper getDataWrapper();
 }

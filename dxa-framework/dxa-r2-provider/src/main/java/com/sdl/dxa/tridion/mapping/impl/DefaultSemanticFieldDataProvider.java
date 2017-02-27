@@ -55,7 +55,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
                 if (model instanceof EntityModelData) {
                     return ((EntityModelData) model).getContent();
                 } else { // page or keyword
-                    return ContentModelData.EMPTY;
+                    return new ContentModelData(0);
                 }
             }
 

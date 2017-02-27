@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
-import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.RegionBuilder;
 import com.sdl.webapp.common.api.content.RegionBuilderCallback;
@@ -125,7 +124,7 @@ public class PageBuilderImplTest {
                 new DateFieldConverter(),
                 new EmbeddedFieldConverter(null),
                 new ExternalLinkFieldConverter(),
-                new KeywordFieldConverter(null, webRequestContext),
+                new KeywordFieldConverter(),
                 new MultiLineTextFieldConverter(),
                 new MultimediaFieldConverter(linkResolver, webRequestContext),
                 new NumberFieldConverter(),
@@ -190,7 +189,7 @@ public class PageBuilderImplTest {
     }
 
     @Test
-    public void shouldCreatePageAndSetAllMetadata() throws ContentProviderException, DxaException {
+    public void shouldCreatePageAndSetAllMetadata() throws DxaException {
         shouldCreatePageAndSetAllMetadata(
                 new TestDataPage().title("001 titleMeta"),
                 //page title is postfixed weirdly from localization, ok?
@@ -198,13 +197,13 @@ public class PageBuilderImplTest {
     }
 
     @Test
-    public void shouldCreatePageAndNotRemoveNumbersIfNotSequence() throws ContentProviderException, DxaException {
+    public void shouldCreatePageAndNotRemoveNumbersIfNotSequence() throws DxaException {
         shouldCreatePageAndSetAllMetadata(
                 new TestDataPage().title("TSI1234 Page Title"),
                 new TestDataPage().title("TSI1234 Page Title|!").ogTitle("TSI1234 Page Title"));
     }
 
-    public void shouldCreatePageAndSetAllMetadata(TestDataPage initial, TestDataPage expected) throws ContentProviderException, DxaException {
+    public void shouldCreatePageAndSetAllMetadata(TestDataPage initial, TestDataPage expected) throws DxaException {
         //given
         String pageId = "tcm:1-2-3";
         String pageName = "Title";

@@ -86,7 +86,7 @@ public class KeywordFieldConverterTest {
 
     @Before
     public void init() throws SemanticMappingException {
-        converter = new KeywordFieldConverter(semanticMapper, webRequestContext);
+        converter = new KeywordFieldConverter();
 
         doReturn(new KeywordModel()).when(semanticMapper).createEntity(eq(KeywordModel.class),
                 anyMapOf(FieldSemantics.class, SemanticField.class),

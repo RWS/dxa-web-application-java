@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
+import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -17,7 +19,9 @@ import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.mapping.views.AbstractInitializer;
 import com.sdl.webapp.common.api.mapping.views.RegisteredViewModel;
 import com.sdl.webapp.common.api.mapping.views.RegisteredViewModels;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
@@ -40,6 +44,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Map;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.junit.Assert.assertEquals;
@@ -61,6 +66,18 @@ public class DefaultModelBuilderTest {
     @Autowired
     private Localization localization;
 
+    public void assertInfoRegionXpmMetadata(EntityModelData entityModelData, EntityModel infoRegionEntities, String key) {
+        assertEqualsAndNotNull(entityModelData.getXpmMetadata().get(key), infoRegionEntities.getXpmMetadata().get(key));
+    }
+
+    public void assertHeaderRegionXpmMetadata(RegionModelData regionModelData, RegionModel headerRegion, String key) {
+        assertEqualsAndNotNull(regionModelData.getXpmMetadata().get(key), headerRegion.getXpmMetadata().get(key));
+    }
+
+    public void assertPageModelXpmMetadata(PageModelData pageModelData, PageModel pageModel, String key) {
+        assertEqualsAndNotNull(pageModelData.getXpmMetadata().get(key), pageModel.getXpmMetadata().get(key));
+    }
+
     @Test
     @Ignore
     public void shouldBuildPageModel_OutOfModelDataR2() throws IOException {
@@ -71,8 +88,92 @@ public class DefaultModelBuilderTest {
         PageModel pageModel = modelBuilder.buildPageModel(null, pageModelData, PageInclusion.INCLUDE);
 
         //then
+        // page.Id
         assertEqualsAndNotNull(pageModelData.getId(), pageModel.getId());
+
+        // page.Title
         assertEqualsAndNotNull(pageModelData.getTitle(), pageModel.getTitle());
+
+        // page.Meta
+        assertEqualsAndNotNull(pageModelData.getMeta().get("sitemapKeyword"), pageModel.getMeta().get("sitemapKeyword"));
+
+        // region (0).name
+        RegionModelData regionModelData = pageModelData.getRegions().get(0);
+        RegionModel headerRegion = pageModel.getRegions().get("Header");
+
+        assertEqualsAndNotNull(regionModelData.getName(), headerRegion.getName());
+
+        // region(0).region(0).name
+        RegionModelData subRegionModelData = regionModelData.getRegions().get(0);
+        RegionModel infoRegion = headerRegion.getRegions().get("Info");
+
+        assertEqualsAndNotNull(subRegionModelData.getName(), infoRegion.getName());
+
+        // region(0).region(0).entity(0).Id
+        EntityModelData entityModelData = subRegionModelData.getEntities().get(0);
+        EntityModel infoRegionEntities = infoRegion.getEntities().get(0);
+
+        assertEqualsAndNotNull(entityModelData.getId(), infoRegionEntities.getId());
+
+        // TODO
+        // region(0).region(0).entity(0).Content
+        //assertEqualsAndNotNull(entityModelData.getContent().get("headline"), ((EntityModel) infoRegionEntities).getContent().get("headline"));
+
+        // region(0).region(0).entity(0).MvcData
+        assertEqualsAndNotNull(entityModelData.getMvcData().getViewName(), infoRegionEntities.getMvcData().getViewName());
+
+        // region(0).region(0).entity(0).xpmMetadata
+        assertInfoRegionXpmMetadata(entityModelData, infoRegionEntities, "ComponentID");
+        assertInfoRegionXpmMetadata(entityModelData, infoRegionEntities, "ComponentModified");
+        assertInfoRegionXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateID");
+        assertInfoRegionXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateModified");
+        assertInfoRegionXpmMetadata(entityModelData, infoRegionEntities, "IsRepositoryPublished");
+
+        // TODO
+        // region(0).region(0).entity(0).schemaId
+        //assertEqualsAndNotNull(entityModelData.getSchemaId(), ((EntityModel) infoRegionEntities).getSchemaId());
+
+        // region(0).region(0).MvcData
+        assertEqualsAndNotNull(subRegionModelData.getMvcData().getViewName(), infoRegion.getMvcData().getViewName());
+
+        // TODO
+        // region(0).IncludePageUrl
+        //assertEqualsAndNotNull(regionModelData.getIncludePageUrl(), ((RegionModel) headerRegion).getIncludePageUrl());
+
+        // region(0).MvcData
+        assertEqualsAndNotNull(regionModelData.getMvcData().getViewName(), headerRegion.getMvcData().getViewName());
+
+        // region(0).XpmMetadata
+        assertHeaderRegionXpmMetadata(regionModelData, headerRegion, "IncludedFromPageId");
+        assertHeaderRegionXpmMetadata(regionModelData, headerRegion, "IncludedFromPageTitle");
+        assertHeaderRegionXpmMetadata(regionModelData, headerRegion, "IncludedFromPageFileName");
+
+        // page.getMvcData
+        assertEqualsAndNotNull(pageModelData.getMvcData().getViewName(), pageModel.getMvcData().getViewName());
+
+        // page.getXpmMetadata
+        assertPageModelXpmMetadata(pageModelData, pageModel, "PageID");
+        assertPageModelXpmMetadata(pageModelData, pageModel, "PageModified");
+        assertPageModelXpmMetadata(pageModelData, pageModel, "PageTemplateID");
+        assertPageModelXpmMetadata(pageModelData, pageModel, "PageTemplateModified");
+
+        // TODO
+        // page.Metadata
+        //noinspection unchecked
+        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("sitemapKeyword")).get("Id"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Id"));
+        //noinspection unchecked
+        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("sitemapKeyword")).get("Title"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Title"));
+        //noinspection unchecked
+        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("Description")).get("Id"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Description"));
+        //noinspection unchecked
+        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("Key")).get("Id"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Key"));
+        //noinspection unchecked
+        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("sitemapKeyword")).get("TaxonomyId"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("TaxonomyId"));
+
+        // TODO
+        // page.SchemaId
+        //assertEqualsAndNotNull(pageModelData.getSchemaId(), pageModel.getSchemaId());
+
 //        ((ItemList) pageModel.getRegions().get("Hero").getEntity("1472"))
     }
 

@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.ClassMetadata;
-import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
@@ -40,6 +39,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
@@ -221,16 +221,13 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         log.debug("Registering entity classes in package: {}", basePackage);
 
         try {
-            PackageUtils.doWithClasses(basePackage, new PackageUtils.ClassCallback() {
-                @Override
-                public void doWith(MetadataReader metadataReader) {
-                    final ClassMetadata classMetadata = metadataReader.getClassMetadata();
-                    if (!classMetadata.isInterface()) {
-                        final Class<?> class_ = ClassUtils.resolveClassName(classMetadata.getClassName(),
-                                ClassUtils.getDefaultClassLoader());
-                        if (EntityModel.class.isAssignableFrom(class_)) {
-                            registerEntity(class_.asSubclass(EntityModel.class));
-                        }
+            PackageUtils.doWithClasses(basePackage, metadataReader -> {
+                final ClassMetadata classMetadata = metadataReader.getClassMetadata();
+                if (!classMetadata.isInterface()) {
+                    final Class<?> _class = ClassUtils.resolveClassName(classMetadata.getClassName(),
+                            ClassUtils.getDefaultClassLoader());
+                    if (EntityModel.class.isAssignableFrom(_class)) {
+                        registerEntity(_class.asSubclass(EntityModel.class));
                     }
                 }
             });
@@ -316,13 +313,14 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     @Override
     public Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String fullyQualifiedName, Class<? extends EntityModel> expectedClass) throws SemanticMappingException {
 
-
+        String shortName = fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf(':') + 1);
         List<Class<? extends EntityModel>> possibleValues = new ArrayList<>();
         for (Map.Entry<Class<? extends EntityModel>, SemanticEntityInfo> entry : semanticEntityInfo.entries()) {
-            SemanticEntityInfo entityInfo = entry.getValue();
-
-            if (String.format("%s:%s", entityInfo.getVocabulary(), entityInfo.getEntityName()).equals(fullyQualifiedName) &&
-                    (expectedClass == null || expectedClass.isAssignableFrom(entry.getKey()))) {
+            if (isPossibleMappedClass(expectedClass, fullyQualifiedName, entry)) {
+                if (expectedClass == null && Objects.equals(entry.getKey().getSimpleName(), shortName)) {
+                    log.debug("Expected class is not provided, but found entity info with exact match of a class name {}, consider single match {}", shortName, entry.getKey());
+                    return entry.getKey();
+                }
                 possibleValues.add(entry.getKey());
             }
         }
@@ -337,5 +335,12 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         }
 
         return possibleValues.get(0);
+    }
+
+    private boolean isPossibleMappedClass(Class<? extends EntityModel> expectedClass, String fullyQualifiedName, Map.Entry<Class<? extends EntityModel>, SemanticEntityInfo> entry) {
+        SemanticEntityInfo entityInfo = entry.getValue();
+
+        return String.format("%s:%s", entityInfo.getVocabulary(), entityInfo.getEntityName()).equals(fullyQualifiedName) &&
+                (expectedClass == null || expectedClass.isAssignableFrom(entry.getKey()));
     }
 }

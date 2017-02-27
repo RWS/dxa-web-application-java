@@ -77,9 +77,34 @@ public class SemanticMappingRegistryImplTest {
         assertNull(random);
     }
 
+
+    @Test
+    public void shouldChooseOneOfTwo_ForLegacy_IfManyClassesFound_AccordinglyToExpectedClass() throws SemanticMappingException {
+        //given 
+        SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
+        registry.registerEntity(TestEntity1.class);
+        registry.registerEntity(TestEntity2.class);
+        String fullyQualifiedName = SDL_TEST + ":TestEntity2";
+
+        //when
+        Class<? extends EntityModel> type = registry.getEntityClassByFullyQualifiedName(fullyQualifiedName, null);
+
+        //when
+        Class<? extends EntityModel> type1 = registry.getEntityClassByFullyQualifiedName(fullyQualifiedName, TestEntity1.class);
+
+        //when
+        Class<? extends EntityModel> type2 = registry.getEntityClassByFullyQualifiedName(fullyQualifiedName, TestEntity2.class);
+
+        //then
+        assertEquals(TestEntity2.class, type);
+        assertEquals(TestEntity1.class, type1);
+        assertEquals(TestEntity2.class, type2);
+    }
+
     @SemanticEntities({
             @SemanticEntity(entityName = "TestOne", vocabulary = SDL_TEST, prefix = "t"),
-            @SemanticEntity(entityName = "CoreOne", vocabulary = SDL_CORE, prefix = "c")
+            @SemanticEntity(entityName = "CoreOne", vocabulary = SDL_CORE, prefix = "c"),
+            @SemanticEntity(entityName = "TestEntity2", vocabulary = SDL_TEST)
     })
     public static class TestEntity1 extends AbstractEntityModel {
 
@@ -91,5 +116,12 @@ public class SemanticMappingRegistryImplTest {
 
         @SemanticProperty("c:two")
         private int field2;
+    }
+
+    @SemanticEntities({
+            @SemanticEntity(entityName = "TestEntity2", vocabulary = SDL_TEST)
+    })
+    public static class TestEntity2 extends AbstractEntityModel {
+
     }
 }

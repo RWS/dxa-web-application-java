@@ -104,7 +104,7 @@ public class SemanticMappingRegistryImplTest {
     @SemanticEntities({
             @SemanticEntity(entityName = "TestOne", vocabulary = SDL_TEST, prefix = "t"),
             @SemanticEntity(entityName = "CoreOne", vocabulary = SDL_CORE, prefix = "c"),
-            @SemanticEntity(entityName = "TestEntity2", vocabulary = SDL_TEST)
+            @SemanticEntity(entityName = "TestEntity2", vocabulary = SDL_TEST, prefix = "t2")
     })
     public static class TestEntity1 extends AbstractEntityModel {
 

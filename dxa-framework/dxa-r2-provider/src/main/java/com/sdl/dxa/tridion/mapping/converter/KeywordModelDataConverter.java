@@ -67,8 +67,8 @@ public class KeywordModelDataConverter implements SourceConverter<KeywordModelDa
         }
 
         @Override
-        public String getExtensionData(String key, String contentKey) {
-            return "hello";//todo
+        public String getSchemaId() {
+            return toConvert.getSchemaId();
         }
 
         @Override

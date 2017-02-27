@@ -3,7 +3,9 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.api.datamodel.model.util.CanWrapData;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
+import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -34,7 +36,7 @@ import static com.sdl.webapp.common.util.ApplicationContextHolder.getContext;
 @Slf4j
 public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvider {
 
-    private ViewModelDataWrapper dataWrapper;
+    private ModelDataWrapper dataWrapper;
 
     private SourceConverterFactory sourceConverterFactory;
 
@@ -42,58 +44,32 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
 
     private int embeddingLevel = 0;
 
-    private DefaultSemanticFieldDataProvider(ViewModelDataWrapper dataWrapper) {
+    private DefaultSemanticFieldDataProvider(ModelDataWrapper dataWrapper) {
         this.dataWrapper = dataWrapper;
         this.sourceConverterFactory = getContext().getBean(SourceConverterFactory.class);
         this.pipeline = getContext().getBean(ModelBuilderPipeline.class);
     }
 
+    @Nullable
     public static DefaultSemanticFieldDataProvider getFor(ViewModelData model) {
-        return new DefaultSemanticFieldDataProvider(new ViewModelDataWrapper() {
-            @Override
-            public ContentModelData getContent() {
-                if (model instanceof EntityModelData) {
-                    return ((EntityModelData) model).getContent();
-                } else { // page or keyword
-                    return new ContentModelData(0);
-                }
-            }
-
-            @Override
-            public ContentModelData getMetadata() {
-                return model.getMetadata();
-            }
-
-            @Override
-            public Object getWrappedModel() {
-                return model;
-            }
-        });
+        return _getFor(model);
     }
 
-    public DefaultSemanticFieldDataProvider embedded(Object value) {
-        if (!(value instanceof ContentModelData)) {
-            log.debug("Type {} is not supported by embedded SemanticFieldDataProvider", value.getClass());
+    @Nullable
+    private static DefaultSemanticFieldDataProvider _getFor(@NotNull Object model) {
+        if (!(model instanceof CanWrapData)) {
+            log.debug("Type {} is not supported by embedded SemanticFieldDataProvider", model.getClass());
             return null;
         }
-        ContentModelData modelData = (ContentModelData) value;
-        DefaultSemanticFieldDataProvider provider = new DefaultSemanticFieldDataProvider(new ViewModelDataWrapper() {
-            @Override
-            public ContentModelData getContent() {
-                return modelData;
-            }
+        return new DefaultSemanticFieldDataProvider(((CanWrapData) model).getDataWrapper());
+    }
 
-            @Override
-            public ContentModelData getMetadata() {
-                return modelData;
-            }
-
-            @Override
-            public Object getWrappedModel() {
-                return modelData;
-            }
-        });
-        provider.embeddingLevel++;
+    @Nullable
+    public DefaultSemanticFieldDataProvider embedded(Object value) {
+        DefaultSemanticFieldDataProvider provider = _getFor(value);
+        if (provider != null) {
+            provider.embeddingLevel++;
+        }
         return provider;
     }
 
@@ -210,15 +186,5 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
             return Optional.ofNullable(field);
         }
     }
-
-    private interface ViewModelDataWrapper {
-
-        ContentModelData getContent();
-
-        ContentModelData getMetadata();
-
-        Object getWrappedModel();
-    }
-
 
 }

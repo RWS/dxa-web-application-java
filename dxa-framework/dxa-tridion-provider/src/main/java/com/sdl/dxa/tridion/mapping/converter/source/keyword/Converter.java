@@ -28,10 +28,6 @@ public abstract class Converter<T> {
         return isNullOrEmpty(keyword.getDescription()) ? keyword.getTitle() : keyword.getDescription();
     }
 
-    private static String getKeywordKey(KeywordWrapper keyword) {
-        return isNullOrEmpty(keyword.getKey()) ? keyword.getId() : keyword.getKey();
-    }
-
     public static Converter getConverter(Class<?> targetClass) throws UnsupportedTargetTypeException {
         Converter<?> converter;
         if (Tag.class == targetClass) {
@@ -64,12 +60,16 @@ public abstract class Converter<T> {
 
         String getTaxonomyId();
 
-        String getExtensionData(String key, String contentKey);
+        String getSchemaId();
 
         SemanticFieldDataProvider getDataProvider();
     }
 
     private static class TagConverter extends Converter<Tag> {
+
+        private String getKeywordKey(KeywordWrapper keyword) {
+            return isNullOrEmpty(keyword.getKey()) ? keyword.getId() : keyword.getKey();
+        }
 
         @Override
         public Tag convert(KeywordWrapper keyword) {
@@ -114,21 +114,21 @@ public abstract class Converter<T> {
             this.targetClass = targetClass;
         }
 
-        private String getMetadataSchemaId(KeywordWrapper keyword) {
-            return keyword.getExtensionData("DXA", "MetadataSchemaId");
+        private String getSchemaId(KeywordWrapper keyword) {
+            return keyword.getSchemaId();
         }
 
         @Override
         public KeywordModel convert(KeywordWrapper keyword) throws FieldConverterException {
             KeywordModel keywordModel;
-            String tcmUri = getMetadataSchemaId(keyword);
-            if (isNullOrEmpty(tcmUri)) {
+            String schemaId = getSchemaId(keyword);
+            if (isNullOrEmpty(schemaId)) {
                 keywordModel = new KeywordModel();
             } else {
                 try {
-                    SemanticSchema semanticSchema = localization.getSemanticSchemas().get((long) TcmUtils.getItemId(tcmUri));
+                    SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaId));
                     if (semanticSchema == null) {
-                        log.warn("Semantic schema with TCM URI {} is not found in localization, skipping semantic mapping", tcmUri, localization);
+                        log.warn("Semantic schema with schemaId {} is not found in localization, skipping semantic mapping", schemaId, localization);
                         throw new SemanticMappingException("Semantic schema not found");
                     }
                     Map<FieldSemantics, SemanticField> semanticFields = semanticSchema.getSemanticFields();

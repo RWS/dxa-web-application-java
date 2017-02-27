@@ -1,11 +1,10 @@
 package com.sdl.webapp.tridion.fields.converters;
 
 import com.sdl.dxa.tridion.mapping.converter.source.keyword.Converter;
-import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
-import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Tag;
+import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.mapping.ModelBuilderPipeline;
@@ -13,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.Keyword;
 import org.dd4t.contentmodel.impl.BaseField;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Component;
 
@@ -36,17 +34,6 @@ import static com.sdl.webapp.common.util.StringUtils.toStrings;
 public class KeywordFieldConverter implements FieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.KEYWORD};
-
-    private final SemanticMapper semanticMapper;
-
-    private final WebRequestContext webRequestContext;
-
-
-    @Autowired
-    public KeywordFieldConverter(SemanticMapper semanticMapper, WebRequestContext webRequestContext) {
-        this.semanticMapper = semanticMapper;
-        this.webRequestContext = webRequestContext;
-    }
 
     @Override
     public FieldType[] supportedFieldTypes() {
@@ -106,12 +93,14 @@ public class KeywordFieldConverter implements FieldConverter {
             }
 
             @Override
-            public String getExtensionData(String key, String contentKey) {
+            public String getSchemaId() {
+                String key = "DXA";
+                String contentKey = "MetadataSchemaId";
                 if (keyword.getExtensionData() == null || !keyword.getExtensionData().containsKey(key) ||
                         !keyword.getExtensionData().get(key).getContent().containsKey(contentKey)) {
                     return null;
                 }
-                return (String) keyword.getExtensionData().get(key).getContent().get(contentKey).getValues().get(0);
+                return String.valueOf(TcmUtils.getItemId((String) keyword.getExtensionData().get(key).getContent().get(contentKey).getValues().get(0)));
             }
 
             @Override

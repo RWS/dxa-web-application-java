@@ -164,7 +164,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         fillViewModel(pageModel, modelData);
         pageModel.setId(modelData.getId());
         pageModel.setMeta(modelData.getMeta()); //todo ResolveMetaLinks(pageModelData.Meta)
-        pageModel.setTitle(modelData.getTitle());
+        pageModel.setTitle(getPageTitle(modelData));
 
         if (modelData.getRegions() != null) {
             List<RegionModelData> regions = includePageRegions == PageInclusion.EXCLUDE ?
@@ -211,6 +211,14 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         viewModel.setHtmlClasses(modelData.getHtmlClasses());
     }
 
+    private String getPageTitle(PageModelData modelData) {
+        Localization localization = webRequestContext.getLocalization();
+        String separator = localization.getResource("core.pageTitleSeparator");
+        String postfix = localization.getResource("core.pageTitlePostfix");
+        log.trace("Model page title '{}', pageTitleSeparator '{}', postfix '{}'", modelData.getTitle(), separator, postfix);
+        return modelData.getTitle() + separator + postfix;
+    }
+
     private List<RegionModelData> filterRegionsByIncludePageUrl(PageModelData modelData) {
         return modelData.getRegions().stream()
                 .filter(regionModelData -> isBlank(regionModelData.getIncludePageUrl()))
@@ -223,6 +231,10 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
         try {
             Class<? extends ViewModel> viewModelType = viewModelRegistry.getViewModelType(mvcData);
+            if (viewModelType == null) {
+                throw new DxaException("Cannot find a view model type for " + mvcData);
+            }
+
             RegionModel regionModel = (RegionModel) viewModelType.getConstructor(String.class)
                     .newInstance(dashify(regionModelData.getName()));
             fillViewModel(regionModel, regionModelData);

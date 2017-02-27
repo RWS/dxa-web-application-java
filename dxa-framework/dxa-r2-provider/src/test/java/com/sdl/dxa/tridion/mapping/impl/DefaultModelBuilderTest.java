@@ -7,8 +7,13 @@ import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
+import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
+import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
+import com.sdl.dxa.tridion.mapping.converter.StringConverter;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
@@ -22,15 +27,18 @@ import com.sdl.webapp.common.api.mapping.views.RegisteredViewModels;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
+import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.impl.mapping.SemanticMapperImpl;
 import com.sdl.webapp.common.impl.mapping.SemanticMappingRegistryImpl;
 import com.sdl.webapp.common.impl.model.ViewModelRegistryImpl;
+import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,11 +52,11 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -66,20 +74,15 @@ public class DefaultModelBuilderTest {
     @Autowired
     private Localization localization;
 
-    public void assertInfoRegionXpmMetadata(EntityModelData entityModelData, EntityModel infoRegionEntities, String key) {
-        assertEqualsAndNotNull(entityModelData.getXpmMetadata().get(key), infoRegionEntities.getXpmMetadata().get(key));
-    }
+    @Autowired
+    private ViewModelRegistry viewModelRegistry;
 
-    public void assertHeaderRegionXpmMetadata(RegionModelData regionModelData, RegionModel headerRegion, String key) {
-        assertEqualsAndNotNull(regionModelData.getXpmMetadata().get(key), headerRegion.getXpmMetadata().get(key));
-    }
+    @Before
+    public void initMocks() {
 
-    public void assertPageModelXpmMetadata(PageModelData pageModelData, PageModel pageModel, String key) {
-        assertEqualsAndNotNull(pageModelData.getXpmMetadata().get(key), pageModel.getXpmMetadata().get(key));
     }
 
     @Test
-    @Ignore
     public void shouldBuildPageModel_OutOfModelDataR2() throws IOException {
         //given
         PageModelData pageModelData = objectMapper.readValue(new ClassPathResource("home_page_json_full.json").getFile(), PageModelData.class);
@@ -92,27 +95,24 @@ public class DefaultModelBuilderTest {
         assertEqualsAndNotNull(pageModelData.getId(), pageModel.getId());
 
         // page.Title
-        assertEqualsAndNotNull(pageModelData.getTitle(), pageModel.getTitle());
+        assertEqualsAndNotNull(pageModelData.getTitle() + "|My Site", pageModel.getTitle());
 
         // page.Meta
         assertEqualsAndNotNull(pageModelData.getMeta().get("sitemapKeyword"), pageModel.getMeta().get("sitemapKeyword"));
 
-        // region (0).name
+        // region (0). region (0) -> Header
         RegionModelData regionModelData = pageModelData.getRegions().get(0);
         RegionModel headerRegion = pageModel.getRegions().get("Header");
-
         assertEqualsAndNotNull(regionModelData.getName(), headerRegion.getName());
 
-        // region(0).region(0).name
+        // Header region (0) -> Info
         RegionModelData subRegionModelData = regionModelData.getRegions().get(0);
         RegionModel infoRegion = headerRegion.getRegions().get("Info");
-
         assertEqualsAndNotNull(subRegionModelData.getName(), infoRegion.getName());
 
-        // region(0).region(0).entity(0).Id
+        // Info .entity (0)
         EntityModelData entityModelData = subRegionModelData.getEntities().get(0);
         EntityModel infoRegionEntities = infoRegion.getEntities().get(0);
-
         assertEqualsAndNotNull(entityModelData.getId(), infoRegionEntities.getId());
 
         // TODO
@@ -122,12 +122,13 @@ public class DefaultModelBuilderTest {
         // region(0).region(0).entity(0).MvcData
         assertEqualsAndNotNull(entityModelData.getMvcData().getViewName(), infoRegionEntities.getMvcData().getViewName());
 
+        // TODO
         // region(0).region(0).entity(0).xpmMetadata
-        assertInfoRegionXpmMetadata(entityModelData, infoRegionEntities, "ComponentID");
-        assertInfoRegionXpmMetadata(entityModelData, infoRegionEntities, "ComponentModified");
-        assertInfoRegionXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateID");
-        assertInfoRegionXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateModified");
-        assertInfoRegionXpmMetadata(entityModelData, infoRegionEntities, "IsRepositoryPublished");
+//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentID");
+//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentModified");
+//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateID");
+//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateModified");
+//        assertXpmMetadata(entityModelData, infoRegionEntities, "IsRepositoryPublished");
 
         // TODO
         // region(0).region(0).entity(0).schemaId
@@ -143,19 +144,21 @@ public class DefaultModelBuilderTest {
         // region(0).MvcData
         assertEqualsAndNotNull(regionModelData.getMvcData().getViewName(), headerRegion.getMvcData().getViewName());
 
+        // TODO
         // region(0).XpmMetadata
-        assertHeaderRegionXpmMetadata(regionModelData, headerRegion, "IncludedFromPageId");
-        assertHeaderRegionXpmMetadata(regionModelData, headerRegion, "IncludedFromPageTitle");
-        assertHeaderRegionXpmMetadata(regionModelData, headerRegion, "IncludedFromPageFileName");
+//        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageId");
+//        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageTitle");
+//        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageFileName");
 
         // page.getMvcData
         assertEqualsAndNotNull(pageModelData.getMvcData().getViewName(), pageModel.getMvcData().getViewName());
 
+        // TODO
         // page.getXpmMetadata
-        assertPageModelXpmMetadata(pageModelData, pageModel, "PageID");
-        assertPageModelXpmMetadata(pageModelData, pageModel, "PageModified");
-        assertPageModelXpmMetadata(pageModelData, pageModel, "PageTemplateID");
-        assertPageModelXpmMetadata(pageModelData, pageModel, "PageTemplateModified");
+//        assertXpmMetadata(pageModelData, pageModel, "PageID");
+//        assertXpmMetadata(pageModelData, pageModel, "PageModified");
+//        assertXpmMetadata(pageModelData, pageModel, "PageTemplateID");
+//        assertXpmMetadata(pageModelData, pageModel, "PageTemplateModified");
 
         // TODO
         // page.Metadata
@@ -183,27 +186,40 @@ public class DefaultModelBuilderTest {
         assertEquals(expected, actual);
     }
 
+    public void assertXpmMetadata(ViewModelData modelData, ViewModel model, String key) {
+        assertEqualsAndNotNull(modelData.getXpmMetadata().get(key), model.getXpmMetadata().get(key));
+    }
+
     @Data
     @EqualsAndHashCode(callSuper = true)
-    private static class TestEntity extends AbstractEntityModel {
+    public static class TestEntity extends AbstractEntityModel {
 
         private String headline;
     }
 
     @RegisteredViewModels({
-            @RegisteredViewModel(modelClass = TestEntity.class),
-            @RegisteredViewModel(modelClass = DefaultPageModel.class, viewName = "GeneralPage")
+            @RegisteredViewModel(modelClass = TestEntity.class, viewName = "TestClassView"),
+            @RegisteredViewModel(modelClass = DefaultPageModel.class, viewName = "GeneralPage"),
+            @RegisteredViewModel(viewName = "Header", modelClass = RegionModelImpl.class),
+            @RegisteredViewModel(viewName = "Info", modelClass = RegionModelImpl.class)
     })
     private static class TestClassInitializer extends AbstractInitializer {
 
         @Override
         protected String getAreaName() {
-            return "TestClass";
+            return "Core";
         }
     }
 
     @Configuration
     public static class SpringConfigurationContext {
+
+        @Bean
+        public WebRequestContext webRequestContext() {
+            WebRequestContext mock = mock(WebRequestContext.class);
+            when(mock.getLocalization()).thenReturn(localization());
+            return mock;
+        }
 
         @Bean
         public Localization localization() {
@@ -217,16 +233,12 @@ public class DefaultModelBuilderTest {
                                     new SemanticField("headline", "/TestEntity/headline", false, Collections.emptyMap())
                             ))).build());
 
+            when(localization.getResource(eq("core.pageTitleSeparator"))).thenReturn("|");
+            when(localization.getResource(eq("core.pageTitlePostfix"))).thenReturn("My Site");
+
             return localization;
         }
 
-        @Bean
-        public WebRequestContext webRequestContext() {
-            WebRequestContext mock = mock(WebRequestContext.class);
-            when(mock.getLocalization()).thenReturn(localization());
-            return mock;
-        }
-        
         @Bean
         public ObjectMapper objectMapper() {
             return new DataModelSpringConfiguration().dxaR2ObjectMapper();
@@ -243,11 +255,6 @@ public class DefaultModelBuilderTest {
         }
 
         @Bean
-        public ViewModelRegistry viewModelRegistryImpl() {
-            return new ViewModelRegistryImpl();
-        }
-
-        @Bean
         public SemanticMapper semanticMapper() {
             return new SemanticMapperImpl(semanticMappingRegistry());
         }
@@ -255,6 +262,36 @@ public class DefaultModelBuilderTest {
         @Bean
         public SemanticMappingRegistry semanticMappingRegistry() {
             return new SemanticMappingRegistryImpl();
+        }
+
+        @Bean
+        public ApplicationContextHolder applicationContextHolder() {
+            return new ApplicationContextHolder();
+        }
+
+        @Bean
+        public SourceConverterFactory sourceConverterFactory() {
+            return new SourceConverterFactory();
+        }
+
+        @Bean
+        public LinkResolver linkResolver() {
+            return mock(LinkResolver.class);
+        }
+
+        @Bean
+        public StringConverter stringConverter() {
+            return new StringConverter();
+        }
+
+        @Bean
+        public ModelBuilderPipeline modelBuilderPipeline() {
+            return new ModelBuilderPipelineImpl();
+        }
+
+        @Bean
+        public ViewModelRegistry viewModelRegistryImpl() {
+            return new ViewModelRegistryImpl();
         }
     }
 

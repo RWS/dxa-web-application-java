@@ -9,7 +9,6 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +40,6 @@ public abstract class BaseController {
     protected ViewNameResolver viewNameResolver;
 
     @Autowired
-    protected ViewResolver viewResolver;
-
-    @Autowired
-    @Getter
     protected WebRequestContext context;
 
     @Autowired
@@ -86,24 +81,6 @@ public abstract class BaseController {
         log.error("Exception while processing request for: {}", request.getRequestURL(), exception);
 
         return ControllerUtils.SECTION_ERROR_VIEW;
-    }
-
-    /**
-     * @deprecated since 1.5, use {@link ViewNameResolver#resolveView(MvcData, String)}
-     */
-    //todo dxa2 remove
-    @Deprecated
-    protected String resolveView(MvcData mvcData, String type, HttpServletRequest request) {
-        return this.viewNameResolver.resolveView(mvcData, type);
-    }
-
-    /**
-     * @deprecated since 1.5, use {@link ViewNameResolver#resolveView(MvcData, String)}
-     */
-    //todo dxa2 remove
-    @Deprecated
-    protected String resolveView(String viewBaseDir, String view, MvcData mvcData, HttpServletRequest request) {
-        return this.viewResolver.resolveView(viewBaseDir, view, mvcData, request);
     }
 
     /**

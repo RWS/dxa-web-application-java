@@ -12,6 +12,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
@@ -34,6 +35,10 @@ public class RichTextDataConverterTest {
 
     @Before
     public void init() {
+        RichTextLinkResolver richTextLinkResolver = new RichTextLinkResolver(linkResolver, webRequestContext);
+
+        ReflectionTestUtils.setField(converter, "richTextLinkResolver", richTextLinkResolver);
+
         when(webRequestContext.getLocalization()).thenReturn(localization);
 
         when(localization.getId()).thenReturn("1");

@@ -10,6 +10,7 @@ import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
+import com.sdl.dxa.tridion.mapping.converter.RichTextLinkResolver;
 import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
 import com.sdl.dxa.tridion.mapping.converter.StringConverter;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -56,6 +57,7 @@ import java.util.Collections;
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -81,14 +83,18 @@ public class DefaultModelBuilderTest {
 
         //then
         // page.Id
-        assertEqualsAndNotNull(pageModelData.getId(), pageModel.getId());
+        assertEquals("640", pageModel.getId());
 
         // page.Title
-        assertEqualsAndNotNull(pageModelData.getTitle(), pageModel.getName());
-        assertEqualsAndNotNull(pageModelData.getTitle() + "|My Site", pageModel.getTitle());
+        assertEquals("Home", pageModel.getName());
+        assertEquals(pageModelData.getTitle() + "|My Site", pageModel.getTitle());
 
         // page.Meta
-        assertEqualsAndNotNull(pageModelData.getMeta().get("sitemapKeyword"), pageModel.getMeta().get("sitemapKeyword"));
+        assertEquals("000 Home", pageModel.getMeta().get("sitemapKeyword"));
+        assertEquals("resolved-link", pageModel.getMeta().get("tcmUri"));
+        assertEquals("", pageModel.getMeta().get("tcmUriNotResolve"));
+        assertEquals("<p>text<a href=\"resolved-link\">text</a></p>", pageModel.getMeta().get("richText"));
+        assertEquals("<p>texttext</p>", pageModel.getMeta().get("richTextNotResolve"));
 
         // region (0). region (0) -> Header
         RegionModelData regionModelData = pageModelData.getRegions().get(0);
@@ -218,6 +224,7 @@ public class DefaultModelBuilderTest {
                                     new SemanticField("headline", "/TestEntity/headline", false, Collections.emptyMap())
                             ))).build());
 
+            when(localization.getId()).thenReturn("1");
             when(localization.getResource(eq("core.pageTitleSeparator"))).thenReturn("|");
             when(localization.getResource(eq("core.pageTitlePostfix"))).thenReturn("My Site");
 
@@ -263,7 +270,17 @@ public class DefaultModelBuilderTest {
 
         @Bean
         public LinkResolver linkResolver() {
-            return mock(LinkResolver.class);
+            LinkResolver mock = mock(LinkResolver.class);
+            when(mock.resolveLink(eq("tcm:1-2"), eq("1"), anyBoolean())).thenReturn("resolved-link");
+            when(mock.resolveLink(eq("tcm:1-2"), eq("1"))).thenReturn("resolved-link");
+            when(mock.resolveLink(eq("tcm:1-3"), eq("1"), anyBoolean())).thenReturn(null);
+            when(mock.resolveLink(eq("tcm:1-3"), eq("1"))).thenReturn(null);
+            return mock;
+        }
+
+        @Bean
+        public RichTextLinkResolver richTextLinkResolver() {
+            return new RichTextLinkResolver(linkResolver(), webRequestContext());
         }
 
         @Bean

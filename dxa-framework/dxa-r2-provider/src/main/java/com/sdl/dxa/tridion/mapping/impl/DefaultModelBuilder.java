@@ -12,7 +12,9 @@ import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
+import com.sdl.dxa.tridion.mapping.converter.RichTextLinkResolver;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
@@ -32,6 +34,7 @@ import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.util.TcmUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -40,11 +43,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 import static com.sdl.webapp.common.util.StringUtils.dashify;
+import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -66,6 +72,12 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @Autowired
     private WebRequestContext webRequestContext;
+
+    @Autowired
+    private RichTextLinkResolver richTextLinkResolver;
+
+    @Autowired
+    private LinkResolver linkResolver;
 
     @Override
     public int getOrder() {
@@ -163,7 +175,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
         fillViewModel(pageModel, modelData);
         pageModel.setId(modelData.getId());
-        pageModel.setMeta(modelData.getMeta()); //todo ResolveMetaLinks(pageModelData.Meta)
+        pageModel.setMeta(resolveLinks(modelData.getMeta()));
         pageModel.setName(modelData.getTitle());
         pageModel.setTitle(getPageTitle(modelData));
 
@@ -210,6 +222,19 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             modelData.getExtensionData().forEach(viewModel::addExtensionData);
         }
         viewModel.setHtmlClasses(modelData.getHtmlClasses());
+    }
+
+    private Map<String, String> resolveLinks(Map<String, String> mapToResolve) {
+        if (mapToResolve == null) {
+            return Collections.emptyMap();
+        }
+
+        return mapToResolve.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, o ->
+                        TcmUtils.isTcmUri(o.getValue()) ?
+                                ofNullable(linkResolver.resolveLink(o.getValue(), webRequestContext.getLocalization().getId(), true))
+                                        .orElse("") :
+                                richTextLinkResolver.processFragment(o.getValue())));
     }
 
     private String getPageTitle(PageModelData modelData) {

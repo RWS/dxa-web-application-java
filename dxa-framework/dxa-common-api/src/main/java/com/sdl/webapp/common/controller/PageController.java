@@ -24,6 +24,7 @@ import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.Markup;
+import com.sdl.webapp.common.util.TcmUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -167,7 +168,7 @@ public class PageController extends BaseController {
         return dataFormatters.view(page);
     }
 
-    @RequestMapping(value = "/resolve/{itemId}")
+    @RequestMapping(value = {"/resolve/{itemId}", "/{locPath}/resolve/{itemId}"})
     public String handleResolve(@PathVariable String itemId, @RequestParam String localizationId,
                                 @RequestParam(required = false) String defaultPath,
                                 @RequestParam(required = false) String defaultItem) throws DxaException {
@@ -175,7 +176,9 @@ public class PageController extends BaseController {
             throw new DxaException(new IllegalArgumentException("Localization ID is null while it shouldn't be"));
         }
 
-        String url = linkResolver.resolveLink(itemId, localizationId);
+        String _itemId = TcmUtils.buildPageTcmUri(localizationId, itemId);
+
+        String url = linkResolver.resolveLink(_itemId, localizationId);
         if (StringUtils.isEmpty(url) && !StringUtils.isEmpty(defaultItem)) {
             url = linkResolver.resolveLink(defaultItem, localizationId);
         }
@@ -183,13 +186,6 @@ public class PageController extends BaseController {
             url = StringUtils.isEmpty(defaultPath) ? "/" : defaultPath;
         }
         return "redirect:" + url;
-    }
-
-    @RequestMapping(value = "/{locPath}/resolve/{itemId}")
-    public String handleResolveLoc(@PathVariable String itemId,
-                                   @RequestParam String localizationId, @RequestParam String defaultPath,
-                                   @RequestParam(required = false) String defaultItem) throws DxaException {
-        return handleResolve(itemId, localizationId, defaultPath, defaultItem);
     }
 
     /**

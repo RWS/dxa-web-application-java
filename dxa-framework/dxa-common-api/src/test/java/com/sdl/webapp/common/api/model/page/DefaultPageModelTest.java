@@ -1,6 +1,8 @@
 package com.sdl.webapp.common.api.model.page;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import com.sdl.dxa.DxaSpringInitialization;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModelSet;
@@ -13,9 +15,12 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.sdl.webapp.common.api.model.TestEntity.entity;
 import static com.sdl.webapp.common.api.model.TestEntity.feedItem;
@@ -212,15 +217,17 @@ public class DefaultPageModelTest {
     }
 
     @Test
-    public void shouldRemoveTcmPartFromPageId() {
-        //given 
+    public void shouldSerializePageIdAsInteger() throws IOException {
+        //given
         DefaultPageModel pageModel = new DefaultPageModel();
-        pageModel.setId("tcm:1-2-3");
+        pageModel.setId("1");
+        ObjectMapper objectMapper = new DxaSpringInitialization().objectMapper();
 
         //when
-        String pureId = pageModel.getIdWithoutTcm();
+        String asString = objectMapper.writeValueAsString(pageModel);
 
         //then
-        assertEquals("2", pureId);
+        Matcher matcher = Pattern.compile(".*\"Id\"[:\\s]*\"1\".*", Pattern.MULTILINE).matcher(asString.replace("\r\n", ""));
+        assertTrue(matcher.matches());
     }
 }

@@ -205,7 +205,8 @@ public class PageBuilderImplTest {
 
     public void shouldCreatePageAndSetAllMetadata(TestDataPage initial, TestDataPage expected) throws DxaException {
         //given
-        String pageId = "tcm:1-2-3";
+        String pageId = "2";
+        String pageIdTcm = "tcm:1-2-3";
         String pageName = "Title";
         String pageView = "Test:TestPage";
         String htmlClasses = "css1, css2 css3";
@@ -281,7 +282,7 @@ public class PageBuilderImplTest {
         }};
         when(genericPage.getMetadata()).thenReturn(pageMeta);
 
-        when(genericPage.getId()).thenReturn(pageId);
+        when(genericPage.getId()).thenReturn(pageIdTcm);
         when(genericPage.getTitle()).thenReturn(pageName);
         when(genericPage.getRevisionDate()).thenReturn(nowPage);
 
@@ -313,8 +314,8 @@ public class PageBuilderImplTest {
         };
         verify(viewModelRegistry).getViewModelType(argThat(mvcDataMatcher));
 
-        //TSI-2131
-        assertEquals("tcm:1-2-3", page.getId());
+        //TSI-2318
+        assertEquals(pageId, page.getId());
         // It's confusing, but what DD4T calls the "title" is what is called the "name" in the view model
         assertEquals(pageName, page.getName());
         assertThat("MvcData matches with that used for view resolving", page.getMvcData(), mvcDataMatcher);
@@ -359,7 +360,7 @@ public class PageBuilderImplTest {
 
         //region XPM Metadata asserts
         Map<String, Object> xpmMetadata = page.getXpmMetadata();
-        assertEquals(pageId, xpmMetadata.get("PageID"));
+        assertEquals(pageIdTcm, xpmMetadata.get("PageID"));
         assertEquals(nowPrinted, xpmMetadata.get("PageModified"));
         assertEquals(nowPageTemplatePrinted, xpmMetadata.get("PageTemplateModified"));
         assertEquals(pageTemplateId, xpmMetadata.get("PageTemplateID"));

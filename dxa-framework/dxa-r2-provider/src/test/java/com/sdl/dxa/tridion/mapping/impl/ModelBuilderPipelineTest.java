@@ -67,9 +67,6 @@ public class ModelBuilderPipelineTest {
     private EntityModelBuilder secondEntityModelBuilder;
 
     @Autowired
-    private Localization localization;
-
-    @Autowired
     private ModelBuilderPipeline pipeline;
 
     @Before

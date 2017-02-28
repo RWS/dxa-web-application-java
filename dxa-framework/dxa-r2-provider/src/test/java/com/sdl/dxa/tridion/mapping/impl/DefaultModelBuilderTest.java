@@ -38,12 +38,12 @@ import com.sdl.webapp.common.impl.model.ViewModelRegistryImpl;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
@@ -70,17 +70,6 @@ public class DefaultModelBuilderTest {
 
     @Autowired
     private DefaultModelBuilder modelBuilder;
-
-    @Autowired
-    private Localization localization;
-
-    @Autowired
-    private ViewModelRegistry viewModelRegistry;
-
-    @Before
-    public void initMocks() {
-
-    }
 
     @Test
     public void shouldBuildPageModel_OutOfModelDataR2() throws IOException {
@@ -213,17 +202,12 @@ public class DefaultModelBuilderTest {
     }
 
     @Configuration
+    @Profile("test")
     public static class SpringConfigurationContext {
 
         @Bean
         public WebRequestContext webRequestContext() {
-            WebRequestContext mock = mock(WebRequestContext.class);
-            when(mock.getLocalization()).thenReturn(localization());
-            return mock;
-        }
 
-        @Bean
-        public Localization localization() {
             Localization localization = mock(Localization.class);
             when(localization.getSemanticSchemas()).thenReturn(ImmutableMap.<Long, SemanticSchema>builder()
                     .put(10015L, new SemanticSchema(10015L, "NotImportant", Collections.emptySet(), Collections.emptyMap()))
@@ -237,7 +221,9 @@ public class DefaultModelBuilderTest {
             when(localization.getResource(eq("core.pageTitleSeparator"))).thenReturn("|");
             when(localization.getResource(eq("core.pageTitlePostfix"))).thenReturn("My Site");
 
-            return localization;
+            WebRequestContext mock = mock(WebRequestContext.class);
+            when(mock.getLocalization()).thenReturn(localization);
+            return mock;
         }
 
         @Bean

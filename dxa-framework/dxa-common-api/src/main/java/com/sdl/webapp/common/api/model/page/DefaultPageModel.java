@@ -9,7 +9,6 @@ import com.sdl.webapp.common.api.model.AbstractViewModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
-import com.sdl.webapp.common.util.TcmUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -33,7 +32,6 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
 
     private static final String XPM_PAGE_SCRIPT = "<script type=\"text/javascript\" language=\"javascript\" defer=\"defer\" src=\"%s/WebUI/Editors/SiteEdit/Views/Bootstrap/Bootstrap.aspx?mode=js\" id=\"tridion.siteedit\"></script>";
 
-    @JsonIgnore
     protected String id;
 
     @JsonIgnore
@@ -63,19 +61,6 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
         setHtmlClasses(pageModel.getHtmlClasses());
         setMvcData(pageModel.getMvcData());
         addXpmMetadata(pageModel.getXpmMetadata());
-    }
-
-    /**
-     * Returns an ID of a page without TCM parts. Used as a workaround fix for TSI-2221. Usage of this method is not recommended.
-     *
-     * @return ID of a page
-     * @since 1.7
-     * @deprecated since 1.7
-     */
-    @JsonProperty("Id")
-    @Deprecated
-    String getIdWithoutTcm() {
-        return String.valueOf(TcmUtils.getItemId(getId()));
     }
 
     /**

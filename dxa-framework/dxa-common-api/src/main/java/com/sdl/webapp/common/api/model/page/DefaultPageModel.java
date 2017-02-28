@@ -37,6 +37,7 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     protected String id;
 
     @JsonIgnore
+    //todo dxa2 do we need this field?
     protected String name;
 
     @JsonProperty("Title")

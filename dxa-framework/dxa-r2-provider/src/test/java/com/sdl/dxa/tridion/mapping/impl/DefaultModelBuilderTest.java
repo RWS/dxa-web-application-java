@@ -95,6 +95,7 @@ public class DefaultModelBuilderTest {
         assertEqualsAndNotNull(pageModelData.getId(), pageModel.getId());
 
         // page.Title
+        assertEqualsAndNotNull(pageModelData.getTitle(), pageModel.getName());
         assertEqualsAndNotNull(pageModelData.getTitle() + "|My Site", pageModel.getTitle());
 
         // page.Meta

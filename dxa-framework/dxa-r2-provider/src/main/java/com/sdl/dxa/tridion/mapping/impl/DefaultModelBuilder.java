@@ -164,6 +164,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         fillViewModel(pageModel, modelData);
         pageModel.setId(modelData.getId());
         pageModel.setMeta(modelData.getMeta()); //todo ResolveMetaLinks(pageModelData.Meta)
+        pageModel.setName(modelData.getTitle());
         pageModel.setTitle(getPageTitle(modelData));
 
         if (modelData.getRegions() != null) {

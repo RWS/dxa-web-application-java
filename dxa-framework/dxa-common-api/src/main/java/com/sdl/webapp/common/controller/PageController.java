@@ -203,7 +203,7 @@ public class PageController extends BaseController {
         return "";
     }
 
-    @RequestMapping(value = "/navigation.json", produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = {"/navigation.json", "/{path}/navigation.json"}, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public SitemapItem handleGetNavigationJson(HttpServletRequest request) throws NavigationProviderException, JsonProcessingException {
         log.trace("handleGetNavigationJson");

@@ -85,4 +85,28 @@ public class RichTextDataConverterTest {
         //then
         assertEquals("<p>Text <a href=\"resolved-link\">link text</a></p>", result);
     }
+
+    @Test
+    public void shouldResolveLinks_InFragmentWithLineBreaks() throws FieldConverterException {
+        RichTextData data = new RichTextData(Lists.newArrayList("<p>\nText <a href=\"tcm:1-11\">\nlink text</a><!--CompLink tcm:1-11-->\n</p>"));
+        TypeInformation typeInformation = TypeInformation.builder().objectType(String.class).build();
+
+        //when
+        Object result = converter.convert(data, typeInformation, null, null, null);
+
+        //then
+        assertEquals("<p>\nText <a href=\"resolved-link\">\nlink text</a>\n</p>", result);
+    }
+
+    @Test
+    public void shouldResolveLinks_WhenLinkHasManyAttrs() throws FieldConverterException {
+        RichTextData data = new RichTextData(Lists.newArrayList("<p>\nText <a data-first=\"1\" href=\"tcm:1-11\" data-second=\"2\">\nlink text</a><!--CompLink tcm:1-11-->\n</p>"));
+        TypeInformation typeInformation = TypeInformation.builder().objectType(String.class).build();
+
+        //when
+        Object result = converter.convert(data, typeInformation, null, null, null);
+
+        //then
+        assertEquals("<p>\nText <a data-first=\"1\" href=\"resolved-link\" data-second=\"2\">\nlink text</a>\n</p>", result);
+    }
 }

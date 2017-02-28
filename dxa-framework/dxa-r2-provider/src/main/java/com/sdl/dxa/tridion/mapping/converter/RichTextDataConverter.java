@@ -41,7 +41,7 @@ public class RichTextDataConverter implements SourceConverter<RichTextData> {
             // afterWithLink: " data2="2">link text</a><!--CompLink tcm:1-2--> after text</p>
             // after: link text</a><!--CompLink tcm:1-2--> after text</p>
             Pattern.compile("(?<beforeWithLink>(?<before>.*?)<a[^>]+href=\")(?<tcmUri>tcm:\\d+-\\d+)(?<afterWithLink>\"[^>]*>(?<after>.*))",
-                    Pattern.CASE_INSENSITIVE);
+                    Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
     private static final Pattern END_LINK =
             // <p>Text <a data="1" href="resolved-link" data2="2">link text</a><!--CompLink tcm:1-2--> after text</p>
@@ -50,7 +50,7 @@ public class RichTextDataConverter implements SourceConverter<RichTextData> {
             // tcmUri: tcm:1-2
             // after: after text</p>
             Pattern.compile("(?<beforeWithLink>(?<before>.*?)</a>)<!--CompLink\\s(?<tcmUri>tcm:\\d+-\\d+)-->(?<after>.*)",
-                    Pattern.CASE_INSENSITIVE);
+                    Pattern.CASE_INSENSITIVE | Pattern.MULTILINE | Pattern.DOTALL);
 
     private final LinkResolver linkResolver;
 

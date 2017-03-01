@@ -85,7 +85,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     @Override
-    public <T extends EntityModel> T buildEntityModel(@Nullable EntityModel originalEntityModel, EntityModelData modelData,
+    public <T extends EntityModel> T buildEntityModel(@Nullable T originalEntityModel, EntityModelData modelData,
                                                       @Nullable Class<T> expectedClass) throws DxaException {
         T entityModel;
         try {

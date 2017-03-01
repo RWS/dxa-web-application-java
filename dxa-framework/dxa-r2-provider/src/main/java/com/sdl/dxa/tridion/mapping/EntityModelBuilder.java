@@ -25,6 +25,6 @@ public interface EntityModelBuilder extends ModelBuilder {
      * @return the strongly typed Entity Model
      */
     @Contract("_, _, _ -> !null")
-    <T extends EntityModel> T buildEntityModel(@Nullable EntityModel originalEntityModel, EntityModelData modelData,
+    <T extends EntityModel> T buildEntityModel(@Nullable T originalEntityModel, EntityModelData modelData,
                                                @Nullable Class<T> expectedClass) throws DxaException;
 }

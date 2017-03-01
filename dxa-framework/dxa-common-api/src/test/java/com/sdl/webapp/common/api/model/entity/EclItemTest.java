@@ -127,53 +127,6 @@ public class EclItemTest {
         assertEquals("data-eclMimeType", eclItem.getMimeType());
     }
 
-    @Test
-    public void shouldReturnFromExternalMetadata() {
-        //given
-        EclItem eclItem = new EclItem() {
-            @Override
-            public Map<String, Object> getExternalMetadata() {
-                return ImmutableMap.of("Test1", "Test1_v", "Test2", "Test2_v");
-            }
-        };
-
-        //when
-        Object o1 = eclItem.getFromExternalMetadataOrAlternative("Test1", "Test1_alt");
-        Object o2 = eclItem.getFromExternalMetadataOrAlternative("Test2", "Test2_alt");
-        Object o3 = eclItem.getFromExternalMetadataOrAlternative("Test3", "Test3_alt");
-
-        //then
-        assertEquals("Test1_v", o1);
-        assertEquals("Test2_v", o2);
-        assertEquals("Test3_alt", o3);
-    }
-
-    @Test
-    public void shouldReturnFromNestedMapInExternalMetadata() {
-        //given
-        EclItem eclItem = new EclItem() {
-            @Override
-            public Map<String, Object> getExternalMetadata() {
-                return ImmutableMap.of("Test1", ImmutableMap.of("_Test1", "Value",
-                        "Test1_2", ImmutableMap.of("_Test1_2", "_Value")));
-            }
-        };
-
-        //when
-        Object o0 = eclItem.getFromExternalMetadataOrAlternative("Test1/_Test1", "Alt");
-        Object o1 = eclItem.getFromExternalMetadataOrAlternative("Test1/Test1_2/_Test1_2", "Alt");
-        Object o2 = eclItem.getFromExternalMetadataOrAlternative("Test1/_Test2", "Alt2");
-        Object o3 = eclItem.getFromExternalMetadataOrAlternative("Test2/_Test2", "Alt3");
-        Object o4 = eclItem.getFromExternalMetadataOrAlternative(null, "Alt4");
-
-        //then
-        assertEquals("Value", o0);
-        assertEquals("_Value", o1);
-        assertEquals("Alt2", o2);
-        assertEquals("Alt3", o3);
-        assertEquals("Alt4", o4);
-    }
-
     @org.springframework.context.annotation.Configuration
     @Profile("test")
     static class SpringContext {

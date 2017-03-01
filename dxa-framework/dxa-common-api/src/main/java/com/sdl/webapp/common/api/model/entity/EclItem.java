@@ -7,12 +7,9 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Node;
 
 import java.util.Map;
-import java.util.Optional;
-import java.util.StringTokenizer;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.div;
@@ -38,39 +35,6 @@ public abstract class EclItem extends MediaItem {
 
     @JsonProperty("EclExternalMetadata")
     private Map<String, Object> externalMetadata;
-
-    /**
-     * Gets data from external metadata, or returns a given alternative if nothing found.
-     *
-     * @param keyPath     key path to search looking like a set of keys separated by {@code /} symbol
-     * @param alternative alternative to return if no value for key is found
-     * @return a value or alternative if there is no value
-     */
-    protected Object getFromExternalMetadataOrAlternative(String keyPath, Object alternative) {
-        if (keyPath == null) {
-            return alternative;
-        }
-        StringTokenizer stringTokenizer = new StringTokenizer(keyPath, "/");
-
-        return Optional
-                .ofNullable(_getFromExternalMetadataOrAlternative(stringTokenizer, getExternalMetadata()))
-                .orElse(alternative);
-    }
-
-    @Nullable
-    private Object _getFromExternalMetadataOrAlternative(StringTokenizer key, @Nullable Map<String, Object> map) {
-        String token = key.nextToken();
-        if (map == null || !map.containsKey(token)) {
-            return null;
-        }
-        Object value = map.get(token);
-        if (!key.hasMoreTokens()) {
-            return value;
-        }
-
-        //noinspection unchecked
-        return value instanceof Map ? _getFromExternalMetadataOrAlternative(key, (Map<String, Object>) value) : null;
-    }
 
     /**
      * {@inheritDoc}

@@ -166,11 +166,11 @@
             </dependencies>
         </profile>
         <profile>
-            <id>audience-manager-web8-module</id>
+            <id>audience-manager-module</id>
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-audience-manager-web8</artifactId>
+                    <artifactId>dxa-module-audience-manager</artifactId>
                 </dependency>
             </dependencies>
         </profile>

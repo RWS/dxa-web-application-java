@@ -25,15 +25,16 @@ import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Multimedia;
+import org.dd4t.contentmodel.impl.EmbeddedField;
 import org.joda.time.format.ISODateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.sdl.webapp.util.dd4t.MvcDataHelper.createMvcData;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
@@ -237,15 +238,7 @@ public final class EntityBuilderImpl implements EntityBuilder {
 
     private static void fillItemWithExternalMetadata(EclItem eclItem, Map<String, FieldSet> extensionData) {
         FieldSet externalEclFieldSet = extensionData.get("ECL-ExternalMetadata");
-        Map<String, Object> externalMetadata = new HashMap<>(externalEclFieldSet.getContent().size());
-        for (Map.Entry<String, Field> entry : externalEclFieldSet.getContent().entrySet()) {
-            final List<Object> values = entry.getValue().getValues();
-
-            if (!values.isEmpty()) {
-                externalMetadata.put(entry.getKey(), values.get(0));
-            }
-        }
-        eclItem.setExternalMetadata(externalMetadata);
+        eclItem.setExternalMetadata(normalizeExtensionMetadata(externalEclFieldSet.getContent()));
     }
 
     private static String getValueFromFieldSet(FieldSet eclFieldSet, String fieldName) {
@@ -259,6 +252,19 @@ public final class EntityBuilderImpl implements EntityBuilder {
             }
         }
         return null;
+    }
+
+    private static Map<String, Object> normalizeExtensionMetadata(Map<String, Field> extensionData) {
+        return extensionData.entrySet().stream()
+                .filter(entry -> !entry.getValue().getValues().isEmpty())
+                .collect(Collectors.toMap(Map.Entry::getKey, o -> {
+                    Field field = o.getValue();
+                    Object value = field.getValues().get(0);
+                    if (field instanceof EmbeddedField) {
+                        return normalizeExtensionMetadata(((FieldSet) value).getContent());
+                    }
+                    return Objects.toString(value);
+                }));
     }
 
     @Override

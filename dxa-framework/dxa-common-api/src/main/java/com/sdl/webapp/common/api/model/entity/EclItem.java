@@ -5,13 +5,14 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.markup.html.HtmlElement;
-import com.sdl.webapp.common.util.ApplicationContextHolder;
-import com.sdl.webapp.common.util.Dd4tUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.jetbrains.annotations.Nullable;
 import org.w3c.dom.Node;
 
 import java.util.Map;
+import java.util.Optional;
+import java.util.StringTokenizer;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 import static com.sdl.webapp.common.markup.html.builders.HtmlBuilders.div;
@@ -41,29 +42,34 @@ public abstract class EclItem extends MediaItem {
     /**
      * Gets data from external metadata, or returns a given alternative if nothing found.
      *
-     * @param externalMetadata map with external metadata
-     * @param key              key to search
-     * @param alternative      alternative to return if no value for key is found
-     * @return a value or alternative if there is no value
-     * @deprecated since 1.5, use {@link #getFromExternalMetadataOrAlternative(String, Object)} instead
-     */
-    // todo dxa2 make private
-    @Deprecated
-    public static Object getFromExternalMetadataOrAlternative(Map<String, Object> externalMetadata, String key, Object alternative) {
-        Dd4tUtils dd4tUtils = ApplicationContextHolder.getContext().getBean(Dd4tUtils.class);
-        return dd4tUtils.getFromNestedMultiLevelMapOrAlternative(externalMetadata, key, alternative);
-
-    }
-
-    /**
-     * Gets data from external metadata, or returns a given alternative if nothing found.
-     *
-     * @param key         key to search
+     * @param keyPath     key path to search looking like a set of keys separated by {@code /} symbol
      * @param alternative alternative to return if no value for key is found
      * @return a value or alternative if there is no value
      */
-    protected Object getFromExternalMetadataOrAlternative(String key, Object alternative) {
-        return getFromExternalMetadataOrAlternative(getExternalMetadata(), key, alternative);
+    protected Object getFromExternalMetadataOrAlternative(String keyPath, Object alternative) {
+        if (keyPath == null) {
+            return alternative;
+        }
+        StringTokenizer stringTokenizer = new StringTokenizer(keyPath, "/");
+
+        return Optional
+                .ofNullable(_getFromExternalMetadataOrAlternative(stringTokenizer, getExternalMetadata()))
+                .orElse(alternative);
+    }
+
+    @Nullable
+    private Object _getFromExternalMetadataOrAlternative(StringTokenizer key, @Nullable Map<String, Object> map) {
+        String token = key.nextToken();
+        if (map == null || !map.containsKey(token)) {
+            return null;
+        }
+        Object value = map.get(token);
+        if (!key.hasMoreTokens()) {
+            return value;
+        }
+
+        //noinspection unchecked
+        return value instanceof Map ? _getFromExternalMetadataOrAlternative(key, (Map<String, Object>) value) : null;
     }
 
     /**

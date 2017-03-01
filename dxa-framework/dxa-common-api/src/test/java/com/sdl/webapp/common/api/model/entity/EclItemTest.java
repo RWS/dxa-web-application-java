@@ -7,13 +7,9 @@ import com.sdl.dxa.DxaSpringInitialization;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
-import com.sdl.webapp.common.util.Dd4tUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
@@ -32,8 +28,6 @@ import static com.sdl.webapp.common.api.model.entity.MediaItemTest.mockAttribute
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyMapOf;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -139,7 +133,7 @@ public class EclItemTest {
         EclItem eclItem = new EclItem() {
             @Override
             public Map<String, Object> getExternalMetadata() {
-                return ImmutableMap.<String, Object>of("Test1", "Test1_v", "Test2", "Test2_v");
+                return ImmutableMap.of("Test1", "Test1_v", "Test2", "Test2_v");
             }
         };
 
@@ -152,6 +146,32 @@ public class EclItemTest {
         assertEquals("Test1_v", o1);
         assertEquals("Test2_v", o2);
         assertEquals("Test3_alt", o3);
+    }
+
+    @Test
+    public void shouldReturnFromNestedMapInExternalMetadata() {
+        //given
+        EclItem eclItem = new EclItem() {
+            @Override
+            public Map<String, Object> getExternalMetadata() {
+                return ImmutableMap.of("Test1", ImmutableMap.of("_Test1", "Value",
+                        "Test1_2", ImmutableMap.of("_Test1_2", "_Value")));
+            }
+        };
+
+        //when
+        Object o0 = eclItem.getFromExternalMetadataOrAlternative("Test1/_Test1", "Alt");
+        Object o1 = eclItem.getFromExternalMetadataOrAlternative("Test1/Test1_2/_Test1_2", "Alt");
+        Object o2 = eclItem.getFromExternalMetadataOrAlternative("Test1/_Test2", "Alt2");
+        Object o3 = eclItem.getFromExternalMetadataOrAlternative("Test2/_Test2", "Alt3");
+        Object o4 = eclItem.getFromExternalMetadataOrAlternative(null, "Alt4");
+
+        //then
+        assertEquals("Value", o0);
+        assertEquals("_Value", o1);
+        assertEquals("Alt2", o2);
+        assertEquals("Alt3", o3);
+        assertEquals("Alt4", o4);
     }
 
     @org.springframework.context.annotation.Configuration
@@ -167,22 +187,6 @@ public class EclItemTest {
         @Bean
         public ObjectMapper objectMapper() {
             return new DxaSpringInitialization().objectMapper();
-        }
-
-        @Bean
-        public Dd4tUtils dd4tUtils() {
-            Dd4tUtils dd4tUtils = mock(Dd4tUtils.class);
-            when(dd4tUtils.getFromNestedMultiLevelMapOrAlternative(anyMapOf(String.class, Object.class), anyString(), Matchers.any()))
-                    .then(new Answer<Object>() {
-                        @Override
-                        public Object answer(InvocationOnMock invocation) throws Throwable {
-                            @SuppressWarnings("unchecked")
-                            Map<String, Object> map = (Map<String, Object>) invocation.getArguments()[0];
-                            String key = (String) invocation.getArguments()[1];
-                            return map.containsKey(key) ? map.get(key) : invocation.getArguments()[2];
-                        }
-                    });
-            return dd4tUtils;
         }
 
         @Bean

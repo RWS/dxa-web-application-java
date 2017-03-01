@@ -66,7 +66,7 @@ public class RichTextLinkResolver {
 
     /**
      * Processes a rich text fragment trying to resolve links from it. In case of non-resolvable link, puts it into buffer.
-     * <p>Reuse the same buffer if you have multiple fragments with possible links start/end parts in different fragments:
+     * <p>Reuse the same buffer if you have multiple fragments with possible links start/end parts in different fragments:</p>
      * <pre><code>
      *     RichTextLinkResolver resolver = new RichTextLinkResolver();
      *     Set&lt;String&gt; buffer = new HashSet&lt;&gt;();
@@ -78,7 +78,7 @@ public class RichTextLinkResolver {
      *     // here
      *     //   resolved = {"&lt;a href="resolved-link"&gt;text", "&lt;/a&gt;"};
      *     // or if link if unresolvable
-     *     //   resolved = {"text", ""};</code></pre></p>
+     *     //   resolved = {"text", ""};</code></pre>
      *
      * @param fragment          fragment of a rich text to process
      * @param notResolvedBuffer buffer to put non resolvable links to, make sure it's modifiable

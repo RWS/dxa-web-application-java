@@ -17,7 +17,7 @@
     <dependencies>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
-            <artifactId>dxa-common-api</artifactId>
+            <artifactId>dxa-common-impl</artifactId>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>

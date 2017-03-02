@@ -14,6 +14,7 @@ import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
 import com.sdl.dxa.tridion.mapping.converter.RichTextLinkResolver;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
@@ -78,6 +79,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @Autowired
     private LinkResolver linkResolver;
+
+    @Autowired
+    private List<ConditionalEntityEvaluator> entityEvaluators;
 
     @Override
     public int getOrder() {
@@ -280,6 +284,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                             entityModel.setMvcData(creator(entityModel.getMvcData()).builder().regionName(regionModelData.getName()).build());
                             return entityModel;
                         })
+                        .filter(entityModel -> entityEvaluators.stream().allMatch(evaluator -> evaluator.includeEntity(entityModel)))
                         .forEach(regionModel::addEntity);
             }
 

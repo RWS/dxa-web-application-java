@@ -2,6 +2,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
@@ -14,6 +15,7 @@ import com.sdl.dxa.tridion.mapping.converter.RichTextLinkResolver;
 import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
 import com.sdl.dxa.tridion.mapping.converter.StringConverter;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
@@ -53,10 +55,13 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -110,6 +115,8 @@ public class DefaultModelBuilderTest {
         EntityModelData entityModelData = subRegionModelData.getEntities().get(0);
         EntityModel infoRegionEntities = infoRegion.getEntities().get(0);
         assertEqualsAndNotNull(entityModelData.getId(), infoRegionEntities.getId());
+
+        assertTrue(infoRegion.getEntities().size() == 1);
 
         // TODO
         // region(0).region(0).entity(0).Content
@@ -212,28 +219,6 @@ public class DefaultModelBuilderTest {
     public static class SpringConfigurationContext {
 
         @Bean
-        public WebRequestContext webRequestContext() {
-
-            Localization localization = mock(Localization.class);
-            when(localization.getSemanticSchemas()).thenReturn(ImmutableMap.<Long, SemanticSchema>builder()
-                    .put(10015L, new SemanticSchema(10015L, "NotImportant", Collections.emptySet(), Collections.emptyMap()))
-                    .put(2737L, new SemanticSchema(2737L, "TestEntity",
-                            Sets.newHashSet(new EntitySemantics(SDL_CORE_VOCABULARY, "TestEntity")),
-                            ImmutableMap.of(
-                                    new FieldSemantics(SDL_CORE_VOCABULARY, "TestEntity", "headline"),
-                                    new SemanticField("headline", "/TestEntity/headline", false, Collections.emptyMap())
-                            ))).build());
-
-            when(localization.getId()).thenReturn("1");
-            when(localization.getResource(eq("core.pageTitleSeparator"))).thenReturn("|");
-            when(localization.getResource(eq("core.pageTitlePostfix"))).thenReturn("My Site");
-
-            WebRequestContext mock = mock(WebRequestContext.class);
-            when(mock.getLocalization()).thenReturn(localization);
-            return mock;
-        }
-
-        @Bean
         public ObjectMapper objectMapper() {
             return new DataModelSpringConfiguration().dxaR2ObjectMapper();
         }
@@ -269,6 +254,11 @@ public class DefaultModelBuilderTest {
         }
 
         @Bean
+        public RichTextLinkResolver richTextLinkResolver() {
+            return new RichTextLinkResolver(linkResolver(), webRequestContext());
+        }
+
+        @Bean
         public LinkResolver linkResolver() {
             LinkResolver mock = mock(LinkResolver.class);
             when(mock.resolveLink(eq("tcm:1-2"), eq("1"), anyBoolean())).thenReturn("resolved-link");
@@ -279,8 +269,25 @@ public class DefaultModelBuilderTest {
         }
 
         @Bean
-        public RichTextLinkResolver richTextLinkResolver() {
-            return new RichTextLinkResolver(linkResolver(), webRequestContext());
+        public WebRequestContext webRequestContext() {
+
+            Localization localization = mock(Localization.class);
+            when(localization.getSemanticSchemas()).thenReturn(ImmutableMap.<Long, SemanticSchema>builder()
+                    .put(10015L, new SemanticSchema(10015L, "NotImportant", Collections.emptySet(), Collections.emptyMap()))
+                    .put(2737L, new SemanticSchema(2737L, "TestEntity",
+                            Sets.newHashSet(new EntitySemantics(SDL_CORE_VOCABULARY, "TestEntity")),
+                            ImmutableMap.of(
+                                    new FieldSemantics(SDL_CORE_VOCABULARY, "TestEntity", "headline"),
+                                    new SemanticField("headline", "/TestEntity/headline", false, Collections.emptyMap())
+                            ))).build());
+
+            when(localization.getId()).thenReturn("1");
+            when(localization.getResource(eq("core.pageTitleSeparator"))).thenReturn("|");
+            when(localization.getResource(eq("core.pageTitlePostfix"))).thenReturn("My Site");
+
+            WebRequestContext mock = mock(WebRequestContext.class);
+            when(mock.getLocalization()).thenReturn(localization);
+            return mock;
         }
 
         @Bean
@@ -296,6 +303,11 @@ public class DefaultModelBuilderTest {
         @Bean
         public ViewModelRegistry viewModelRegistryImpl() {
             return new ViewModelRegistryImpl();
+        }
+
+        @Bean
+        public List<ConditionalEntityEvaluator> evaluatorList() {
+            return Lists.newArrayList((ConditionalEntityEvaluator) entity -> !Objects.equals(entity.getId(), "not include"));
         }
     }
 

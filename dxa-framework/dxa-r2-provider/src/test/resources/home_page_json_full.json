@@ -31,6 +31,14 @@
                 "IsRepositoryPublished": false
               },
               "SchemaId": "2737"
+            },
+            {
+              "Id": "not include",
+              "SchemaId": "2737",
+              "Content": {},
+              "MvcData": {
+                "ViewName": "TestClassView"
+              }
             }
           ],
           "MvcData": {

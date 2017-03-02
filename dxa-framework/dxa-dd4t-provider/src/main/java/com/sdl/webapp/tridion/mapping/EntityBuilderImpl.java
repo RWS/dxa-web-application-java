@@ -14,6 +14,7 @@ import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.util.XpmUtils;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl.ComponentEntity;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
@@ -26,12 +27,10 @@ import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Multimedia;
 import org.dd4t.contentmodel.impl.EmbeddedField;
-import org.joda.time.format.ISODateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -193,13 +192,13 @@ public final class EntityBuilderImpl implements EntityBuilder {
         final Component component = componentPresentation.getComponent();
         final ComponentTemplate componentTemplate = componentPresentation.getComponentTemplate();
 
-        Map<String, Object> xpmMetaData = new HashMap<>();
-        xpmMetaData.put("ComponentID", entity instanceof EclItem ? ((EclItem) entity).getUri() : component.getId());
-        xpmMetaData.put("ComponentModified", ISODateTimeFormat.dateHourMinuteSecond().print(component.getRevisionDate()));
-        xpmMetaData.put("ComponentTemplateID", componentTemplate.getId());
-        xpmMetaData.put("ComponentTemplateModified", ISODateTimeFormat.dateHourMinuteSecond().print(componentTemplate.getRevisionDate()));
-        xpmMetaData.put("IsRepositoryPublished", componentPresentation.isDynamic());
-        return xpmMetaData;
+        return new XpmUtils.EntityXpmBuilder()
+                .setComponentId(entity instanceof EclItem ? ((EclItem) entity).getUri() : component.getId())
+                .setComponentModified(component.getRevisionDate())
+                .setComponentTemplateID(componentTemplate.getId())
+                .setComponentTemplateModified(componentTemplate.getRevisionDate())
+                .setRepositoryPublished(componentPresentation.isDynamic())
+                .buildXpm();
     }
 
     private static String getHtmlClasses(ComponentPresentation componentPresentation) {

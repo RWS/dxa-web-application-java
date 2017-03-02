@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
 import com.google.common.base.Joiner;
-import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -25,6 +24,7 @@ import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.TcmUtils;
+import com.sdl.webapp.common.util.XpmUtils;
 import com.sdl.webapp.tridion.SemanticFieldDataProviderImpl;
 import com.sdl.webapp.tridion.fields.FieldConverterRegistry;
 import com.sdl.webapp.tridion.fields.converters.FieldConverter;
@@ -43,7 +43,6 @@ import org.dd4t.contentmodel.PageTemplate;
 import org.dd4t.contentmodel.Schema;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.dd4t.core.factories.ComponentPresentationFactory;
-import org.joda.time.format.ISODateTimeFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -110,14 +109,13 @@ public final class PageBuilderImpl implements PageBuilder {
             // ViewName is a RegionName for include regions
             RegionModelImpl region = new RegionModelImpl(regionMvcData.getViewName());
             region.setMvcData(regionMvcData);
-            ImmutableMap.Builder<String, Object> xpmMetaDataBuilder = ImmutableMap.builder();
-
-            xpmMetaDataBuilder.put(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY, page.getId());
-            xpmMetaDataBuilder.put(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY, page.getTitle());
-            xpmMetaDataBuilder.put(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY, includeFileName);
 
             region.setRegions(new RegionModelSetImpl());
-            region.setXpmMetadata(xpmMetaDataBuilder.build());
+            region.setXpmMetadata(new XpmUtils.RegionXpmBuilder()
+                    .setIncludedFromPageID(page.getId())
+                    .setIncludedFromPageTitle(page.getTitle())
+                    .setIncludedFromPageFileName(includeFileName)
+                    .buildXpm());
             return region;
 
         } catch (DxaException e) {
@@ -163,16 +161,13 @@ public final class PageBuilderImpl implements PageBuilder {
     private static Map<String, Object> createXpmMetaData(org.dd4t.contentmodel.Page page, Localization localization) {
         final PageTemplate pageTemplate = page.getPageTemplate();
 
-        ImmutableMap.Builder<String, Object> xpmMetaDataBuilder = ImmutableMap.builder();
-        xpmMetaDataBuilder.put("PageID", page.getId());
-        xpmMetaDataBuilder.put("PageModified", ISODateTimeFormat.dateHourMinuteSecond().print(page.getRevisionDate()));
-        xpmMetaDataBuilder.put("PageTemplateID", pageTemplate.getId());
-        xpmMetaDataBuilder.put("PageTemplateModified",
-                ISODateTimeFormat.dateHourMinuteSecond().print(pageTemplate.getRevisionDate()));
-
-        xpmMetaDataBuilder.put("CmsUrl", localization.getConfiguration("core.cmsurl"));
-
-        return xpmMetaDataBuilder.build();
+        return new XpmUtils.PageXpmBuilder()
+                .setPageID(page.getId())
+                .setPageModified(page.getRevisionDate())
+                .setPageTemplateID(pageTemplate.getId())
+                .setPageTemplateModified(pageTemplate.getRevisionDate())
+                .setCmsUrl(localization.getConfiguration("core.cmsurl"))
+                .buildXpm();
     }
 
     /**

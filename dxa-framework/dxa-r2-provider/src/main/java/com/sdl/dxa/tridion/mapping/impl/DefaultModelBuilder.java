@@ -109,8 +109,10 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
             //noinspection unchecked
             entityModel = (T) createViewModel(modelType, modelData);
-            ((AbstractEntityModel) entityModel).setId(modelData.getId());
             entityModel.setMvcData(mvcData);
+
+            ((AbstractEntityModel) entityModel).setId(modelData.getId());
+            fillViewModel(entityModel, modelData);
 
             _processMediaItem(modelData, entityModel);
         } catch (DxaException e) {
@@ -225,6 +227,11 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         if (modelData.getExtensionData() != null) {
             modelData.getExtensionData().forEach(viewModel::addExtensionData);
         }
+
+        if (viewModel instanceof AbstractViewModel && modelData.getXpmMetadata() != null) {
+            ((AbstractViewModel) viewModel).setXpmMetadata(modelData.getXpmMetadata());
+        }
+
         viewModel.setHtmlClasses(modelData.getHtmlClasses());
     }
 

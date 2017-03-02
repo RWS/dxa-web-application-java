@@ -11,7 +11,6 @@ import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.KeywordModel;
 import com.sdl.webapp.common.api.model.entity.Tag;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
-import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
 import lombok.extern.slf4j.Slf4j;
@@ -139,11 +138,11 @@ public abstract class Converter<T> {
                 }
             }
 
-            keywordModel.setId(String.valueOf(TcmUtils.getItemId(keyword.getId())));
+            keywordModel.setId(keyword.getId());
             keywordModel.setTitle(keyword.getTitle());
             keywordModel.setDescription(keyword.getDescription());
             keywordModel.setKey(keyword.getKey());
-            keywordModel.setTaxonomyId(String.valueOf(TcmUtils.getItemId(keyword.getTaxonomyId())));
+            keywordModel.setTaxonomyId(keyword.getTaxonomyId());
 
             return keywordModel;
         }

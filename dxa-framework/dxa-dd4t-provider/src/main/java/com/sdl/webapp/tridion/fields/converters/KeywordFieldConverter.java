@@ -84,12 +84,12 @@ public class KeywordFieldConverter implements FieldConverter {
 
             @Override
             public String getId() {
-                return keyword.getId();
+                return String.valueOf(TcmUtils.getItemId(keyword.getId()));
             }
 
             @Override
             public String getTaxonomyId() {
-                return keyword.getTaxonomyId();
+                return String.valueOf(TcmUtils.getItemId(keyword.getTaxonomyId()));
             }
 
             @Override

@@ -73,7 +73,7 @@ public class KeywordModelDataConverter implements SourceConverter<KeywordModelDa
 
         @Override
         public SemanticFieldDataProvider getDataProvider() {
-            return dataProvider.embedded(toConvert);
+            return DefaultSemanticFieldDataProvider.getFor(toConvert);
         }
     }
 

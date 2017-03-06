@@ -26,7 +26,7 @@ public class KeywordModelDataConverter implements SourceConverter<KeywordModelDa
 
         Class<?> objectType = targetType.getObjectType();
 
-        Object result = Converter.getConverter(objectType).convert(new KeywordModelDataWrapper(toConvert));
+        Object result = Converter.getConverter(objectType).convert(new KeywordModelDataWrapper(toConvert, dataProvider));
         return wrapIfNeeded(result, targetType);
     }
 
@@ -34,8 +34,11 @@ public class KeywordModelDataConverter implements SourceConverter<KeywordModelDa
 
         private KeywordModelData toConvert;
 
-        KeywordModelDataWrapper(KeywordModelData toConvert) {
+        private DefaultSemanticFieldDataProvider dataProvider;
+
+        KeywordModelDataWrapper(KeywordModelData toConvert, DefaultSemanticFieldDataProvider dataProvider) {
             this.toConvert = toConvert;
+            this.dataProvider = dataProvider;
         }
 
         @Override
@@ -70,7 +73,7 @@ public class KeywordModelDataConverter implements SourceConverter<KeywordModelDa
 
         @Override
         public SemanticFieldDataProvider getDataProvider() {
-            return DefaultSemanticFieldDataProvider.getFor(toConvert);
+            return DefaultSemanticFieldDataProvider.getFor(toConvert, dataProvider.getSemanticSchema());
         }
     }
 

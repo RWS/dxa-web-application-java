@@ -138,7 +138,8 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         Localization localization = webRequestContext.getLocalization();
         SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(modelData.getSchemaId()));
         try {
-            return semanticMapper.createEntity(viewModelType, semanticSchema.getSemanticFields(), DefaultSemanticFieldDataProvider.getFor(modelData));
+            return semanticMapper.createEntity(viewModelType, semanticSchema.getSemanticFields(),
+                    DefaultSemanticFieldDataProvider.getFor(modelData, semanticSchema));
         } catch (SemanticMappingException e) {
             log.warn("Cannot do a semantic mapping for class '{}', model data '{}', localization '{}'", viewModelType, modelData, localization);
             throw e;

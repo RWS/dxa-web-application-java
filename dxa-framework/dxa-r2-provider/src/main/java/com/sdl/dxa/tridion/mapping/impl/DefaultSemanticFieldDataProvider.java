@@ -14,12 +14,14 @@ import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldPath;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -38,35 +40,39 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
 
     private ModelDataWrapper dataWrapper;
 
+    @Getter
+    private SemanticSchema semanticSchema;
+
     private SourceConverterFactory sourceConverterFactory;
 
     private ModelBuilderPipeline pipeline;
 
     private int embeddingLevel = 0;
 
-    private DefaultSemanticFieldDataProvider(ModelDataWrapper dataWrapper) {
+    private DefaultSemanticFieldDataProvider(ModelDataWrapper dataWrapper, SemanticSchema semanticSchema) {
         this.dataWrapper = dataWrapper;
+        this.semanticSchema = semanticSchema;
         this.sourceConverterFactory = getContext().getBean(SourceConverterFactory.class);
         this.pipeline = getContext().getBean(ModelBuilderPipeline.class);
     }
 
     @Nullable
-    public static DefaultSemanticFieldDataProvider getFor(ViewModelData model) {
-        return _getFor(model);
+    public static DefaultSemanticFieldDataProvider getFor(ViewModelData model, SemanticSchema semanticSchema) {
+        return _getFor(model, semanticSchema);
     }
 
     @Nullable
-    private static DefaultSemanticFieldDataProvider _getFor(@NotNull Object model) {
+    private static DefaultSemanticFieldDataProvider _getFor(@NotNull Object model, SemanticSchema semanticSchema) {
         if (!(model instanceof CanWrapData)) {
             log.debug("Type {} is not supported by embedded SemanticFieldDataProvider", model.getClass());
             return null;
         }
-        return new DefaultSemanticFieldDataProvider(((CanWrapData) model).getDataWrapper());
+        return new DefaultSemanticFieldDataProvider(((CanWrapData) model).getDataWrapper(), semanticSchema);
     }
 
     @Nullable
     public DefaultSemanticFieldDataProvider embedded(Object value) {
-        DefaultSemanticFieldDataProvider provider = _getFor(value);
+        DefaultSemanticFieldDataProvider provider = _getFor(value, this.semanticSchema);
         if (provider != null) {
             provider.embeddingLevel++;
         }

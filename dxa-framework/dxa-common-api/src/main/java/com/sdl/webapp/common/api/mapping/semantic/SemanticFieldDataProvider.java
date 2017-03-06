@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.mapping.semantic;
 
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.convert.TypeDescriptor;
 
@@ -42,4 +43,13 @@ public interface SemanticFieldDataProvider {
      * @throws com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException If an error occurs and the data for the field cannot be retrieved.
      */
     Map<String, String> getAllFieldData() throws SemanticMappingException;
+
+    /**
+     * Get semantic schema for current data provider. Default implementation returns {@code null} and needed for compatibility.
+     *
+     * @return current semantic schema
+     */
+    default SemanticSchema getSemanticSchema() {
+        return null;
+    }
 }

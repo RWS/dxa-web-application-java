@@ -47,4 +47,14 @@ public final class SemanticSchema {
         }
         return result;
     }
+
+    /**
+     * Checks whether the current semantic schema has a given entity semantics.
+     *
+     * @param semantics entity semantics to test against
+     * @return whether the current schema has given semantics
+     */
+    public boolean hasSemantics(EntitySemantics semantics) {
+        return entitySemantics.contains(semantics);
+    }
 }

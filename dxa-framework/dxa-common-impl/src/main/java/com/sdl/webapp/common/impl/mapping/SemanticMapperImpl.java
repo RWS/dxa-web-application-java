@@ -50,6 +50,9 @@ public class SemanticMapperImpl implements SemanticMapper {
         if (LOG.isTraceEnabled()) {
             LOG.trace("entityClass: {}", entityClass.getName());
         }
+        if (entityClass == null) {
+            throw new SemanticMappingException("Cannot create entity because entity class is null, have you added all modules you need?");
+        }
         try {
             return entityClass.newInstance();
         } catch (InstantiationException | IllegalAccessException e) {

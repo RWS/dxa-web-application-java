@@ -183,8 +183,8 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
         Object field = data.get(fieldPath.getHead());
         if (fieldPath.hasTail()) {
             if (field instanceof ListWrapper) {
-                log.info("Field with path {} has multiple values {}", fieldPath, field);
                 field = ((ListWrapper) field).get(0);
+                log.debug("Field with path {} has multiple values, getting first {}", fieldPath, field);
             }
 
             return findField((ContentModelData) field, fieldPath.getTail());

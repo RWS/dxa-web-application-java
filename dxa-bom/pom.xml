@@ -134,12 +134,13 @@
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-r2-provider</artifactId>
                 <version>${dxa.version}</version>
-                <scope>runtime</scope>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-dd4t-provider</artifactId>
                 <version>${dxa.version}</version>
+                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
@@ -179,13 +180,7 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-smarttarget-abstract</artifactId>
-                <version>${dxa-module-smarttarget.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-smarttarget-web8</artifactId>
+                <artifactId>dxa-module-smarttarget</artifactId>
                 <version>${dxa-module-smarttarget.version}</version>
                 <scope>runtime</scope>
             </dependency>
@@ -197,13 +192,7 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-audience-manager-abstract</artifactId>
-                <version>${dxa-module-audience-manager.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-audience-manager-web8</artifactId>
+                <artifactId>dxa-module-audience-manager</artifactId>
                 <version>${dxa-module-audience-manager.version}</version>
                 <scope>runtime</scope>
             </dependency>

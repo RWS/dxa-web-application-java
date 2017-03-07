@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -16,6 +15,7 @@ import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
+import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.NodeListAdapter;
 import com.sdl.webapp.common.util.XMLUtils;
 import com.sdl.webapp.tridion.xpath.XPathResolver;
@@ -149,14 +149,14 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
 
             // Resolve links, images and YouTube videos
             return resolveRichText(document, localization);
-        } catch (SAXException | IOException | ContentProviderException | SemanticMappingException e) {
+        } catch (SAXException | IOException | DxaException e) {
             LOG.warn("Exception while parsing or processing XML content", e);
             return new RichText(xhtml);
         }
     }
 
     private RichText resolveRichText(Document doc, Localization localization)
-            throws ContentProviderException, SemanticMappingException {
+            throws DxaException {
         this.resolveLinks(doc);
         List<EntityModel> entityModels = this.resolveImages(doc, localization);
         Iterator<EntityModel> embeddedEntities = entityModels != null ?
@@ -193,7 +193,7 @@ public class DefaultRichTextProcessor implements RichTextProcessor {
         return new RichText(richTextFragments);
     }
 
-    private List<EntityModel> resolveImages(Document doc, Localization localization) throws ContentProviderException, SemanticMappingException {
+    private List<EntityModel> resolveImages(Document doc, Localization localization) throws DxaException {
         List<Node> entityElements;
         try {
             entityElements = new NodeListAdapter((NodeList) XPathResolver.XPATH_IMAGES.expr().get().evaluate(doc, NODESET));

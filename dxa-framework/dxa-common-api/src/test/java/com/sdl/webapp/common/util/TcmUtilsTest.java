@@ -3,6 +3,8 @@ package com.sdl.webapp.common.util;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class TcmUtilsTest {
 
@@ -182,6 +184,14 @@ public class TcmUtilsTest {
 
         //then
         assertEquals("t1-k2", identifier);
+    }
+
+    @Test
+    public void shouldDetectTcmUri() {
+        assertTrue(TcmUtils.isTcmUri("tcm:1-2-3"));
+        assertTrue(TcmUtils.isTcmUri("tcm:1-2"));
+        assertFalse(TcmUtils.isTcmUri("tcm:1"));
+        assertFalse(TcmUtils.isTcmUri("not"));
     }
 
 }

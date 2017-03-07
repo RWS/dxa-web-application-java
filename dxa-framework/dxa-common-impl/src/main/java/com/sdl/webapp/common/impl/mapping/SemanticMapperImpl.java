@@ -5,8 +5,10 @@ import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
+import com.sdl.webapp.common.api.mapping.semantic.config.EntitySemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
@@ -24,13 +26,12 @@ import java.util.Objects;
 import java.util.Set;
 
 @Component
-/**
- * <p>SemanticMapperImpl class.</p>
- */
 public class SemanticMapperImpl implements SemanticMapper {
+
     private static final Logger LOG = LoggerFactory.getLogger(SemanticMapperImpl.class);
 
     private static final String ALL_PROPERTY = "_all";
+
     private static final String SELF_PROPERTY = "_self";
 
     private final SemanticMappingRegistry registry;
@@ -159,7 +160,9 @@ public class SemanticMapperImpl implements SemanticMapper {
                 if (!foundMatch) {
                     for (FieldSemantics fieldSemantics : registrySemantics) {
                         final String propertyName = fieldSemantics.getPropertyName();
-                        if (propertyName.equals(SELF_PROPERTY)) {
+                        SemanticSchema semanticSchema = fieldDataProvider.getSemanticSchema();
+                        if (propertyName.equals(SELF_PROPERTY) && (semanticSchema == null ||
+                                semanticSchema.hasSemantics(new EntitySemantics(fieldSemantics.getVocabulary(), fieldSemantics.getEntityName())))) {
                             foundMatch = true;
                             Object fieldData = null;
                             try {

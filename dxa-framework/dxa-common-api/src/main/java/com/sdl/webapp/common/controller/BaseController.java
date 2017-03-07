@@ -9,7 +9,6 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,10 +40,6 @@ public abstract class BaseController {
     protected ViewNameResolver viewNameResolver;
 
     @Autowired
-    protected ViewResolver viewResolver;
-
-    @Autowired
-    @Getter
     protected WebRequestContext context;
 
     @Autowired
@@ -89,24 +84,6 @@ public abstract class BaseController {
     }
 
     /**
-     * @deprecated since 1.5, use {@link ViewNameResolver#resolveView(MvcData, String)}
-     */
-    //todo dxa2 remove
-    @Deprecated
-    protected String resolveView(MvcData mvcData, String type, HttpServletRequest request) {
-        return this.viewNameResolver.resolveView(mvcData, type);
-    }
-
-    /**
-     * @deprecated since 1.5, use {@link ViewNameResolver#resolveView(MvcData, String)}
-     */
-    //todo dxa2 remove
-    @Deprecated
-    protected String resolveView(String viewBaseDir, String view, MvcData mvcData, HttpServletRequest request) {
-        return this.viewResolver.resolveView(viewBaseDir, view, mvcData, request);
-    }
-
-    /**
      * This is the method to override if you need to add custom model population logic,
      * first calling the base class and then adding your own logic
      *
@@ -116,14 +93,6 @@ public abstract class BaseController {
      * @throws java.lang.Exception exception
      */
     protected ViewModel enrichModel(ViewModel model, HttpServletRequest httpServletRequest) throws Exception {
-
-        //Check if an exception was generated when creating the model, so now is the time to throw it
-        // TODO: shouldn't we just render the ExceptionEntity using an Exception View?
-        if (model.getClass().isAssignableFrom(ExceptionEntity.class)) {
-            ExceptionEntity exceptionEntity = (ExceptionEntity) model;
-            throw exceptionEntity.getException() != null ?
-                    exceptionEntity.getException() : new RuntimeException("Unknown exception while rendering");
-        }
 
         if (modelBindingRequired(model, httpServletRequest)) {
             log.trace("Model data [model id:{} <> request] binding is required", model);

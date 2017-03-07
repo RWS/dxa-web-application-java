@@ -52,6 +52,7 @@ public class EntityController extends BaseController {
         final EntityModel entity = enrichedEntity instanceof EntityModel ? (EntityModel) enrichedEntity : originalModel;
 
         request.setAttribute(ENTITY_MODEL, entity);
+        request.setAttribute("webRequestContext", context);
 
         if (enrichedEntity instanceof RedirectEntity) {
             LOG.debug("Redirect entity from enrichModel(), so doing a redirect {}", enrichedEntity);

@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
-import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.RegionBuilder;
 import com.sdl.webapp.common.api.content.RegionBuilderCallback;
@@ -125,7 +124,7 @@ public class PageBuilderImplTest {
                 new DateFieldConverter(),
                 new EmbeddedFieldConverter(null),
                 new ExternalLinkFieldConverter(),
-                new KeywordFieldConverter(null, webRequestContext),
+                new KeywordFieldConverter(),
                 new MultiLineTextFieldConverter(),
                 new MultimediaFieldConverter(linkResolver, webRequestContext),
                 new NumberFieldConverter(),
@@ -190,7 +189,7 @@ public class PageBuilderImplTest {
     }
 
     @Test
-    public void shouldCreatePageAndSetAllMetadata() throws ContentProviderException, DxaException {
+    public void shouldCreatePageAndSetAllMetadata() throws DxaException {
         shouldCreatePageAndSetAllMetadata(
                 new TestDataPage().title("001 titleMeta"),
                 //page title is postfixed weirdly from localization, ok?
@@ -198,15 +197,16 @@ public class PageBuilderImplTest {
     }
 
     @Test
-    public void shouldCreatePageAndNotRemoveNumbersIfNotSequence() throws ContentProviderException, DxaException {
+    public void shouldCreatePageAndNotRemoveNumbersIfNotSequence() throws DxaException {
         shouldCreatePageAndSetAllMetadata(
                 new TestDataPage().title("TSI1234 Page Title"),
                 new TestDataPage().title("TSI1234 Page Title|!").ogTitle("TSI1234 Page Title"));
     }
 
-    public void shouldCreatePageAndSetAllMetadata(TestDataPage initial, TestDataPage expected) throws ContentProviderException, DxaException {
+    public void shouldCreatePageAndSetAllMetadata(TestDataPage initial, TestDataPage expected) throws DxaException {
         //given
-        String pageId = "tcm:1-2-3";
+        String pageId = "2";
+        String pageIdTcm = "tcm:1-2-3";
         String pageName = "Title";
         String pageView = "Test:TestPage";
         String htmlClasses = "css1, css2 css3";
@@ -282,7 +282,7 @@ public class PageBuilderImplTest {
         }};
         when(genericPage.getMetadata()).thenReturn(pageMeta);
 
-        when(genericPage.getId()).thenReturn(pageId);
+        when(genericPage.getId()).thenReturn(pageIdTcm);
         when(genericPage.getTitle()).thenReturn(pageName);
         when(genericPage.getRevisionDate()).thenReturn(nowPage);
 
@@ -314,8 +314,8 @@ public class PageBuilderImplTest {
         };
         verify(viewModelRegistry).getViewModelType(argThat(mvcDataMatcher));
 
-        //TSI-2131
-        assertEquals("tcm:1-2-3", page.getId());
+        //TSI-2318
+        assertEquals(pageId, page.getId());
         // It's confusing, but what DD4T calls the "title" is what is called the "name" in the view model
         assertEquals(pageName, page.getName());
         assertThat("MvcData matches with that used for view resolving", page.getMvcData(), mvcDataMatcher);
@@ -360,7 +360,7 @@ public class PageBuilderImplTest {
 
         //region XPM Metadata asserts
         Map<String, Object> xpmMetadata = page.getXpmMetadata();
-        assertEquals(pageId, xpmMetadata.get("PageID"));
+        assertEquals(pageIdTcm, xpmMetadata.get("PageID"));
         assertEquals(nowPrinted, xpmMetadata.get("PageModified"));
         assertEquals(nowPageTemplatePrinted, xpmMetadata.get("PageTemplateModified"));
         assertEquals(pageTemplateId, xpmMetadata.get("PageTemplateID"));

@@ -86,7 +86,7 @@ public class KeywordFieldConverterTest {
 
     @Before
     public void init() throws SemanticMappingException {
-        converter = new KeywordFieldConverter(semanticMapper, webRequestContext);
+        converter = new KeywordFieldConverter();
 
         doReturn(new KeywordModel()).when(semanticMapper).createEntity(eq(KeywordModel.class),
                 anyMapOf(FieldSemantics.class, SemanticField.class),
@@ -105,8 +105,8 @@ public class KeywordFieldConverterTest {
         //given 
         BaseField baseField = mock(BaseField.class);
         doReturn(Lists.newArrayList(
-                mockKeyword("id", "cat", "title", null, null),
-                mockKeyword(null, "cat", null, "desc", "key"))).when(baseField).getKeywordValues();
+                mockKeyword("tcm:1-1", "tcm:1-2", "title", null, null),
+                mockKeyword(null, "tcm:1-3", null, "desc", "key"))).when(baseField).getKeywordValues();
 
         SemanticField semanticField = mockSemanticField(true);
 
@@ -119,13 +119,13 @@ public class KeywordFieldConverterTest {
         assertEquals(2, fieldValues.size());
         Tag tag = (Tag) fieldValues.get(0);
         assertEquals("title", tag.getDisplayText());
-        assertEquals("id", tag.getKey());
-        assertEquals("cat", tag.getTagCategory());
+        assertEquals("1", tag.getKey());
+        assertEquals("2", tag.getTagCategory());
 
         tag = (Tag) fieldValues.get(1);
         assertEquals("desc", tag.getDisplayText());
         assertEquals("key", tag.getKey());
-        assertEquals("cat", tag.getTagCategory());
+        assertEquals("3", tag.getTagCategory());
     }
 
     @Test

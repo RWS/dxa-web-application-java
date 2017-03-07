@@ -2,6 +2,7 @@ package com.sdl.webapp.common.util;
 
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -37,6 +38,10 @@ public final class TcmUtils {
         return buildPublicationTcmUriInternal(String.valueOf(publicationId));
     }
 
+    private static String buildPublicationTcmUriInternal(String publicationId) {
+        return String.format(TCM_S_S_S, 0, publicationId, PUBLICATION_ITEM_TYPE);
+    }
+
     /**
      * Build a publication TCM URI looking like <code>tcm:0-ID-1</code>.
      *
@@ -45,10 +50,6 @@ public final class TcmUtils {
      */
     public static String buildPublicationTcmUri(String publicationId) {
         return buildPublicationTcmUriInternal(publicationId);
-    }
-
-    private static String buildPublicationTcmUriInternal(String publicationId) {
-        return String.format(TCM_S_S_S, 0, publicationId, PUBLICATION_ITEM_TYPE);
     }
 
     /**
@@ -84,17 +85,6 @@ public final class TcmUtils {
         return buildTcmUriInternal(publicationId, itemId);
     }
 
-    /**
-     * Build a short TCM URI looking like <code>tcm:PUB_ID-ITEM_ID</code>.
-     *
-     * @param publicationId publication ID
-     * @param itemId        item ID
-     * @return short TCM URI
-     */
-    public static String buildTcmUri(int publicationId, int itemId) {
-        return buildTcmUriInternal(String.valueOf(publicationId), String.valueOf(itemId));
-    }
-
     private static String buildTcmUriInternal(String publicationId, String itemId) {
         return String.format(TCM_S_S, publicationId, itemId);
     }
@@ -111,30 +101,8 @@ public final class TcmUtils {
         return buildTcmUriInternal(publicationId, itemId, itemType);
     }
 
-    /**
-     * Build a TCM URI looking like <code>tcm:PUB_ID-ITEM_ID-ITEM_TYPE</code>.
-     *
-     * @param publicationId publication ID
-     * @param itemId        item ID
-     * @param itemType      item type
-     * @return a TCM URI
-     */
-    public static String buildTcmUri(int publicationId, int itemId, int itemType) {
-        return buildTcmUriInternal(String.valueOf(publicationId), String.valueOf(itemId), String.valueOf(itemType));
-    }
-
     public static String buildTcmUriInternal(String publicationId, String itemId, String itemType) {
         return String.format(TCM_S_S_S, publicationId, itemId, itemType);
-    }
-
-    /**
-     * Extracts item ID from a valid TCM URI.
-     *
-     * @param tcmUri tcm uri to process
-     * @return item ID or <code>-1</code> if URI is not valid or null
-     */
-    public static int getItemId(String tcmUri) {
-        return extractGroupFromTcm(tcmUri, 2);
     }
 
     /**
@@ -171,6 +139,16 @@ public final class TcmUtils {
     }
 
     /**
+     * Extracts item ID from a valid TCM URI.
+     *
+     * @param tcmUri tcm uri to process
+     * @return item ID or <code>-1</code> if URI is not valid or null
+     */
+    public static int getItemId(String tcmUri) {
+        return extractGroupFromTcm(tcmUri, 2);
+    }
+
+    /**
      * Localizes given TCM URI to current publication.
      * <p>E.g. <code>tcm:1-2-3</code> with publication ID <code>8</code> will look like <code>tcm:8-2-3</code>.</p>
      *
@@ -188,6 +166,39 @@ public final class TcmUtils {
         return itemType == null ? buildTcmUri(publicationId, getItemId(tcmUri)) :
                 buildTcmUri(publicationId, getItemId(tcmUri), Integer.parseInt(itemType));
 
+    }
+
+    /**
+     * Build a short TCM URI looking like <code>tcm:PUB_ID-ITEM_ID</code>.
+     *
+     * @param publicationId publication ID
+     * @param itemId        item ID
+     * @return short TCM URI
+     */
+    public static String buildTcmUri(int publicationId, int itemId) {
+        return buildTcmUriInternal(String.valueOf(publicationId), String.valueOf(itemId));
+    }
+
+    /**
+     * Build a TCM URI looking like <code>tcm:PUB_ID-ITEM_ID-ITEM_TYPE</code>.
+     *
+     * @param publicationId publication ID
+     * @param itemId        item ID
+     * @param itemType      item type
+     * @return a TCM URI
+     */
+    public static String buildTcmUri(int publicationId, int itemId, int itemType) {
+        return buildTcmUriInternal(String.valueOf(publicationId), String.valueOf(itemId), String.valueOf(itemType));
+    }
+
+    /**
+     * Returns if the passed string is TMC URI.
+     *
+     * @param tcmUri string to check
+     * @return whether the string is TCM URI
+     */
+    public static boolean isTcmUri(@Nullable String tcmUri) {
+        return tcmUri != null && PATTERN.matcher(tcmUri).matches();
     }
 
     /**

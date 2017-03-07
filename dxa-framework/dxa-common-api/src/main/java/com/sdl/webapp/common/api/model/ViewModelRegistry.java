@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model;
 
 import com.sdl.webapp.common.exceptions.DxaException;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import java.util.Set;
  * Registry that maps view names to view model object types.
  */
 public interface ViewModelRegistry {
+
     /**
      * Returns the entity type to use for a specified entity view.
      *
@@ -19,28 +21,31 @@ public interface ViewModelRegistry {
 
 
     /**
-     * <p>getMappedModelTypes.</p>
-     *
-     * @param semanticTypeNames a {@link java.util.Set} object.
-     * @return a {@link java.lang.Class} object.
+     * @param expectedClass     expected class of an {@link EntityModel}, or {@code null} if you don't have expectation or have anything but {@link EntityModel}
      */
+    Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException;
+
+    /**
+     * @deprecated since 2.0
+     */
+    @Deprecated
     Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames);
 
     /**
      * Returns the entity type to use for a specific semantic type
      *
      * @param semanticTypeName The name of the semantic type.
+     * @param expectedClass    expected class of an {@link EntityModel}, or {@code null} if you don't have expectation or have anything but {@link EntityModel}
      * @return The type of the entity that this semantic type needs.
      */
-    Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName);
+    Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException;
 
     /**
-     * <p>getViewModelType.</p>
-     *
-     * @param regionMvcData a {@link com.sdl.webapp.common.api.model.MvcData} object.
-     * @return a {@link java.lang.Class} object.
-     * @throws com.sdl.webapp.common.exceptions.DxaException if any.
+     * @deprecated since 2.0
      */
+    @Deprecated
+    Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName);
+
     Class<? extends ViewModel> getViewModelType(MvcData regionMvcData) throws DxaException;
 
     /**

@@ -94,7 +94,6 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         } else if (AbstractEntityModel.class.isAssignableFrom(targetClass)) {
             Localization localization = this.webRequestContext.getLocalization();
 
-
             try {
                 Object retval = builder.createEntityModel(component, localization);
                 if (targetClass.isAssignableFrom(retval.getClass())) {

@@ -2,7 +2,11 @@
   "Id": "640",
   "Title": "Home",
   "Meta": {
-    "sitemapKeyword": "000 Home"
+    "sitemapKeyword": "000 Home",
+    "tcmUri": "tcm:1-2",
+    "tcmUriNotResolve": "tcm:1-3",
+    "richText": "<p>text<a href=\"tcm:1-2\">text</a><!--CompLink tcm:1-2--></p>",
+    "richTextNotResolve": "<p>text<a href=\"tcm:1-3\">text</a><!--CompLink tcm:1-3--></p>"
   },
   "Regions": [
     {
@@ -27,6 +31,14 @@
                 "IsRepositoryPublished": false
               },
               "SchemaId": "2737"
+            },
+            {
+              "Id": "not include",
+              "SchemaId": "2737",
+              "Content": {},
+              "MvcData": {
+                "ViewName": "TestClassView"
+              }
             }
           ],
           "MvcData": {

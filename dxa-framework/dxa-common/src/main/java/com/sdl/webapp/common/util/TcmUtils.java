@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.util;
 
-import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
@@ -61,6 +60,13 @@ public final class TcmUtils {
      */
     public static String buildTemplateTcmUri(String publicationId, String itemId) {
         return String.format(TCM_S_S_S, publicationId, itemId, TEMPLATE_ITEM_TYPE);
+    }
+
+    /**
+     * See {@link #buildTemplateTcmUri(String, String)}.
+     */
+    public static String buildTemplateTcmUri(int publicationId, int itemId) {
+        return buildTemplateTcmUri(String.valueOf(publicationId), String.valueOf(itemId));
     }
 
     /**
@@ -218,7 +224,7 @@ public final class TcmUtils {
         }
 
         /**
-         * Type of a {@link SitemapItem} for taxonomy-based navigation.
+         * Type of item for taxonomy-based navigation.
          */
         public enum SitemapItemType {
             PAGE, KEYWORD

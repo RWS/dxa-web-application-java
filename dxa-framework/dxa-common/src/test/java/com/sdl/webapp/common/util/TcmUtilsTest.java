@@ -29,9 +29,11 @@ public class TcmUtilsTest {
 
         //when
         String result = TcmUtils.buildTemplateTcmUri("1", "2");
+        String result2 = TcmUtils.buildTemplateTcmUri(1, 2);
 
         //then
         assertEquals(expected, result);
+        assertEquals(expected, result2);
     }
 
     @Test

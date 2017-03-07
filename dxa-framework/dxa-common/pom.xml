@@ -13,5 +13,24 @@
     <name>DXA - Common</name>
     <description>DXA Common project contains framework common classes shared between all other artifacts</description>
 
+    <properties>
+        <dxa.version>${project.version}</dxa.version>
+    </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-bom</artifactId>
+                <version>${dxa.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+    </dependencies>
 </project>

@@ -117,6 +117,11 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-common</artifactId>
+                <version>${dxa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-common-api</artifactId>
                 <version>${dxa.version}</version>
             </dependency>

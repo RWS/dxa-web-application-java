@@ -1,39 +1,21 @@
 package com.sdl.webapp.common.util;
 
+import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.client.utils.URIBuilder;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.net.URISyntaxException;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.sdl.webapp.common.util.FileUtils.hasExtension;
-import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
-import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 /**
  * Localization utils class holds helper-methods for the logic related to CM and {@link Localization} operations.
  */
 @Slf4j
 public final class LocalizationUtils {
-
-    static final String DEFAULT_PAGE_NAME = "index";
-
-    static final String DEFAULT_PAGE_EXTENSION = ".html";
-
-    private static final Pattern PAGE_TITLE_SEQUENCE = Pattern.compile("^(?<sequence>\\d{3}\\s?)(?<pageName>(?<sequenceStop>[^\\d]).*)$");
-
-    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/(index(\\.html)?)?)$");
 
     /**
      * Retrieves the schema ID from the localization configuration by the schema key.
@@ -61,88 +43,6 @@ public final class LocalizationUtils {
     }
 
     /**
-     * Normalizes given path to have an explicit page name and extension.
-     * <p>Adds an explicit <code>index</code> page name if other page is not in a <code>path</code>.</p>
-     * <p>Adds an explicit <code>.html</code> extension if other extension is not in a <code>path</code>.</p>
-     * <pre>
-     * <code>&lt;empty&gt;    -&gt; index.html</code>
-     * <code>/          -&gt; /index.html</code>
-     * <code>test       -&gt; test.html</code>
-     * <code>/test/     -&gt; /test/index.html</code>
-     * <code>page.ext   -&gt; page.ext</code>
-     * </pre>
-     *
-     * @param path path to normalize
-     * @return a normalized path
-     */
-    public static String normalizePathToDefaults(String path) {
-        log.trace("normalizePathToDefaults({})", path);
-        String processingPath = path;
-
-        if (isEmpty(processingPath)) {
-            return DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
-        }
-
-        if (processingPath.endsWith("/")) {
-            processingPath = processingPath + DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION;
-        }
-
-        if (!hasExtension(processingPath)) {
-            processingPath = processingPath + DEFAULT_PAGE_EXTENSION;
-        }
-
-        log.trace("return {}", processingPath);
-        return processingPath;
-    }
-
-    /**
-     * Checks whether the given path ends with a default extension.
-     * Keep in mind that page without name is impossible, so passing '.html' would give {@code false}.
-     *
-     * @param path the path to check
-     * @return whether the path ends with the default extension '.html'
-     */
-    public static boolean hasDefaultExtension(@Nullable String path) {
-        return path != null && path.endsWith(DEFAULT_PAGE_EXTENSION) && path.length() > DEFAULT_PAGE_EXTENSION.length();
-    }
-
-    /**
-     * Strips the default page extension from the page path.
-     *
-     * @param path path to process
-     * @return path without a default extension
-     */
-    @Contract("null -> null; !null -> !null")
-    @Nullable
-    public static String stripDefaultExtension(@Nullable String path) {
-        if (path == null) {
-            return null;
-        }
-
-        if (path.endsWith(DEFAULT_PAGE_EXTENSION)) {
-            log.trace("Stripping default extension {} from path {}", DEFAULT_PAGE_EXTENSION, path);
-            return path.substring(0, path.lastIndexOf(DEFAULT_PAGE_EXTENSION));
-        }
-        return path;
-    }
-
-    /**
-     * Strips the index path from the page path.
-     *
-     * @param path path to process
-     * @return path without 'index' part if any
-     */
-    @Nullable
-    public static String stripIndexPath(@Nullable String path) {
-        if (path == null) {
-            return null;
-        }
-
-        Matcher matcher = INDEX_PATH_REGEXP.matcher(path);
-        return matcher.matches() ? defaultIfBlank(matcher.group("main"), "/") : path;
-    }
-
-    /**
      * Tries to find a page in localization using the logic from callback.
      *
      * @param path         path a page to find
@@ -154,15 +54,15 @@ public final class LocalizationUtils {
      */
     public static <T> T findPageByPath(@NotNull String path, Localization localization, TryFindPage<T> callback)
             throws ContentProviderException {
-        String processedPath = normalizePathToDefaults(path);
+        String processedPath = PathUtils.normalizePathToDefaults(path);
         final int publicationId = Integer.parseInt(localization.getId());
 
         log.debug("Try to find page: [{}] {}", publicationId, processedPath);
 
         T page = callback.tryFindPage(processedPath, publicationId);
 
-        if (page == null && !path.endsWith("/") && !hasExtension(path)) {
-            processedPath = normalizePathToDefaults(path + '/');
+        if (page == null && !path.endsWith("/") && !PathUtils.hasExtension(path)) {
+            processedPath = PathUtils.normalizePathToDefaults(path + '/');
             log.debug("Try to find page (second attempt): [{}] {}", publicationId, processedPath);
             page = callback.tryFindPage(processedPath, publicationId);
         }
@@ -174,116 +74,118 @@ public final class LocalizationUtils {
         return page;
     }
 
+    //region Deprecated methods, delegated to PathUtils
+
+    /**
+     * See {@link PathUtils#normalizePathToDefaults(String)}.
+     *
+     * @deprecated since 2.0, use {@link PathUtils#normalizePathToDefaults(String)} instead
+     */
+    @Deprecated
+    public static String normalizePathToDefaults(String path) {
+        return PathUtils.normalizePathToDefaults(path);
+    }
+
+    /**
+     * See {@link PathUtils#hasDefaultExtension(String)}}.
+     *
+     * @deprecated since 2.0, use {@link PathUtils#hasDefaultExtension(String)} instead
+     */
+    @Deprecated
+    public static boolean hasDefaultExtension(@Nullable String path) {
+        return PathUtils.hasDefaultExtension(path);
+    }
+
+    /**
+     * See {@link PathUtils#stripDefaultExtension(String)}}.
+     *
+     * @deprecated since 2.0, use {@link PathUtils#stripDefaultExtension(String)} instead
+     */
+    @Deprecated
+    @Contract("null -> null; !null -> !null")
+    @Nullable
+    public static String stripDefaultExtension(@Nullable String path) {
+        return PathUtils.stripDefaultExtension(path);
+    }
+
+    /**
+     * See {@link PathUtils#stripIndexPath(String)}}.
+     *
+     * @deprecated since 2.0, use {@link PathUtils#stripIndexPath(String)} instead
+     */
+    @Deprecated
+    @Nullable
+    public static String stripIndexPath(@Nullable String path) {
+        return PathUtils.stripIndexPath(path);
+    }
+
     /**
      * Extracts the current request URL from current request and replaces it with a given path.
      *
      * @param webRequestContext current {@link WebRequestContext}
      * @param newPath           path to replace the old path with
      * @return full URL of current request with given path appended
+     * @deprecated since 2.0, use {@link PathUtils#replaceContextPath(String, String)} instead
      */
     @Contract("_, _ -> !null")
-    @SneakyThrows(URISyntaxException.class)
+    @Deprecated
     public static String replaceRequestContextPath(@NotNull WebRequestContext webRequestContext, @NotNull String newPath) {
-        String pathToSet = new URIBuilder(newPath).getPath();
-        return new URIBuilder(webRequestContext.getBaseUrl())
-                .setPath(pathToSet.startsWith("/") ? pathToSet : ("/" + pathToSet))
-                .build().toString();
+        return PathUtils.replaceContextPath(webRequestContext.getBaseUrl(), newPath);
     }
 
     /**
-     * Removes sequence digits from the page title. Sequence number is always 3-digit.
-     * If no sequence number is found, then the string is not changed.
-     * <pre>
-     *     <code>001 Home</code> will be <code>"Home"</code>
-     *     <code>Home</code> will stay <code>"Home"</code>
-     * </pre>
+     * See {@link PathUtils#removeSequenceFromPageTitle(String)}}.
      *
-     * @param pageTitle page title which may contain a sequence number
-     * @return string without sequence number, null parameter returns null
+     * @deprecated since 2.0, use {@link PathUtils#removeSequenceFromPageTitle(String)} instead
      */
+    @Deprecated
     @Contract("null -> null; !null -> !null")
     public static String removeSequenceFromPageTitle(String pageTitle) {
-        if (pageTitle == null) {
-            return null;
-        }
-
-        Matcher matcher = PAGE_TITLE_SEQUENCE.matcher(pageTitle);
-        return matcher.matches() ? matcher.group("pageName").replaceFirst("^\\s", "") : pageTitle;
+        return PathUtils.removeSequenceFromPageTitle(pageTitle);
     }
 
     /**
-     * Returns whether the given page title contains sequence numbers.
+     * See {@link PathUtils#isWithSequenceDigits(String)}}.
      *
-     * @param pageTitle page title to check
-     * @return true if the page contains sequence number, false otherwise
+     * @deprecated since 2.0, use {@link PathUtils#isWithSequenceDigits(String)} instead
      */
+    @Deprecated
     public static boolean isWithSequenceDigits(String pageTitle) {
-        if (pageTitle == null) {
-            return false;
-        }
-        Matcher matcher = PAGE_TITLE_SEQUENCE.matcher(pageTitle);
-        return matcher.matches() && matcher.group("sequence") != null;
+        return PathUtils.isWithSequenceDigits(pageTitle);
     }
 
     /**
-     * Tests whether the given path is home (or root) path of the given localization.
+     * See {@link PathUtils#isHomePath(String, String)}}.
      *
-     * @param urlToCheck   url to test against
      * @param localization current localization
-     * @return whether the URL provided is home (or root)
+     * @deprecated since 2.0, use {@link PathUtils#isHomePath(String, String)} instead
      */
+    @Deprecated
     public static boolean isHomePath(@Nullable String urlToCheck, @NonNull Localization localization) {
-        String homePath = isNullOrEmpty(localization.getPath()) ? "/" : localization.getPath();
-
-        return urlToCheck != null && homePath.equalsIgnoreCase(urlToCheck);
+        return PathUtils.isHomePath(urlToCheck, localization.getPath());
     }
 
     /**
-     * Checks if the given path is an <code>index</code> path. Basically checks if the path ends with either 'index' or 'index.html'.
-     * Paths thath are finished with "/" and not with "index" are <strong>NOT</strong> index pages. Although they technically are.
-     * <pre>
-     *     /page/index =&gt; true
-     *     /page/index.html =&gt; true
-     * </pre>
+     * See {@link PathUtils#isIndexPath(String)}}.
      *
-     * @param urlToCheck url to check
-     * @return true if index path, false otherwise
+     * @deprecated since 2.0, use {@link PathUtils#isIndexPath(String)} instead
      */
+    @Deprecated
     public static boolean isIndexPath(@Nullable String urlToCheck) {
-        return urlToCheck != null && INDEX_PATH_REGEXP.matcher(urlToCheck.replaceFirst("/$", "")).matches();
+        return PathUtils.isIndexPath(urlToCheck);
     }
 
     /**
-     * Decides if the current request path is in a given context path. In other words decides whether requested {@code path}
-     * is in a context of current {@code request}.
-     * <pre>
-     *     request to {@code /page} is in context of path {@code /page}
-     *     request to {@code /page/child} is in context of path {@code /page} and {@code /page/child}
-     *            but definitely not in {@code /other} nor {@code /other/child}
-     * </pre>
-     * <p>There is a special treatment of {@code /} home requests. Home request is only in same context if path is
-     * <strong>exactly {@code /}</strong></p> because any request then is in context of home.
+     * See {@link PathUtils#isActiveContextPath(String, String, String)}}.
      *
-     * @param requestPath  current request path
      * @param localization current localization
-     * @param path         given path to test against
-     * @return whether we can say that request is under context of path
+     * @deprecated since 2.0, use {@link PathUtils#isActiveContextPath(String, String, String)}} instead
      */
+    @Deprecated
     public static boolean isActiveContextPath(@Nullable String requestPath, @NonNull Localization localization, @Nullable String path) {
-        String stripIndexPath = stripIndexPath(path);
-        String originatingRequestUri = stripIndexPath(requestPath);
-        if (stripIndexPath == null || originatingRequestUri == null) {
-            log.trace("Path or originating path is null, return false");
-            return false;
-        }
-
-
-        if (isHomePath(originatingRequestUri, localization) || isHomePath(stripIndexPath, localization)) {
-            return stripIndexPath.equalsIgnoreCase(originatingRequestUri);
-        }
-
-        return originatingRequestUri.startsWith(stripIndexPath);
+        return PathUtils.isActiveContextPath(requestPath, localization.getPath(), path);
     }
+    //endregion
 
     /**
      * Strategy interface for providing by caller logic to find a page.

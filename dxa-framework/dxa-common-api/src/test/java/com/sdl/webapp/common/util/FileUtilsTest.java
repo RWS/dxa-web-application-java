@@ -45,17 +45,6 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void shouldSayIfPathHasExtensionPart() {
-        //when
-        boolean hasNoExtension = FileUtils.hasExtension("http://url.com/test");
-        boolean hasExtension = FileUtils.hasExtension("http://url.com/test.html");
-
-        //then
-        assertTrue(hasExtension);
-        assertFalse(hasNoExtension);
-    }
-
-    @Test
     public void shouldReturnTrueIfFileDoesntExistAndCreateFolders() {
         //given
         File file = mock(File.class);

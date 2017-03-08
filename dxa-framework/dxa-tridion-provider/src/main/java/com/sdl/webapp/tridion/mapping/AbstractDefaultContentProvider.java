@@ -66,6 +66,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.sdl.dxa.common.util.PathUtils.stripDefaultExtension;
 import static com.sdl.webapp.common.util.ImageUtils.writeToFile;
 
 @Slf4j
@@ -108,9 +109,8 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         String _path = UriUtils.encodePath(path, "UTF-8");
         PageModel pageModel = LocalizationUtils.findPageByPath(_path, localization, _loadPageCallback());
 
-
         if (pageModel != null) {
-            pageModel.setUrl(LocalizationUtils.stripDefaultExtension(_path));
+            pageModel.setUrl(stripDefaultExtension(_path));
             webRequestContext.setPage(pageModel);
         }
         return pageModel;

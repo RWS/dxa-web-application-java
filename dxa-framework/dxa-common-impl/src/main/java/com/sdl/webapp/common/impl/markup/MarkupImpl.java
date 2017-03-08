@@ -2,6 +2,7 @@ package com.sdl.webapp.common.impl.markup;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
@@ -15,7 +16,6 @@ import com.sdl.webapp.common.markup.Markup;
 import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.SimpleElementBuilder;
-import com.sdl.webapp.common.util.LocalizationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
@@ -68,7 +68,7 @@ public class MarkupImpl implements Markup {
         if (item != null) {
             String url = nullToEmpty(item.getUrl());
             // don't process index paths, we treat them as a duplication of Parent group
-            if (LocalizationUtils.isIndexPath(url)) {
+            if (PathUtils.isIndexPath(url)) {
                 return null;
             }
 

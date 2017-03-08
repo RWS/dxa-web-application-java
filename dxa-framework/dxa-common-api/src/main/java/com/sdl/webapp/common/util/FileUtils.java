@@ -19,6 +19,10 @@ public final class FileUtils {
         return parentFile != null && (parentFile.exists() || createIfNot && parentFile.mkdirs());
     }
 
+    /**
+     * @deprecated since 2.0, use {@link com.sdl.dxa.common.util.PathUtils#hasExtension(String)} instead
+     */
+    @Deprecated
     public static boolean hasExtension(@NotNull String path) {
         return path.lastIndexOf('.') > path.lastIndexOf('/');
     }

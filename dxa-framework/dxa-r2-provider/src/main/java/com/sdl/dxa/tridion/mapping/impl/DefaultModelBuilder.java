@@ -185,6 +185,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         pageModel.setMeta(resolveLinks(modelData.getMeta()));
         pageModel.setName(modelData.getTitle());
         pageModel.setTitle(getPageTitle(modelData));
+        pageModel.setUrl(modelData.getUrlPath());
 
         if (modelData.getRegions() != null) {
             List<RegionModelData> regions = includePageRegions == PageInclusion.EXCLUDE ?

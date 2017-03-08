@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static com.sdl.dxa.common.util.PathUtils.stripDefaultExtension;
 import static java.util.Collections.singletonList;
 
 
@@ -100,7 +101,12 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
                         "] " + path, e);
             }
 
-            return modelBuilderPipeline.createPageModel(genericPage, webRequestContext.getLocalization(), DefaultContentProvider.this);
+            PageModel pageModel = modelBuilderPipeline.createPageModel(genericPage, webRequestContext.getLocalization(), DefaultContentProvider.this);
+            if (pageModel != null) {
+                pageModel.setUrl(stripDefaultExtension(path));
+                webRequestContext.setPage(pageModel);
+            }
+            return pageModel;
         };
     }
 

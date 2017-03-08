@@ -22,6 +22,8 @@ public class PageModelData extends ViewModelData implements CanWrapData {
 
     private List<RegionModelData> regions;
 
+    private String urlPath;
+
     @Override
     public ModelDataWrapper getDataWrapper() {
         return new ModelDataWrapper() {

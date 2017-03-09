@@ -82,7 +82,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     }
 
     @Override
-    @Cacheable(value = "tridion", key = "localization.id")
+    @Cacheable(value = "default")
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
         String taxonomyId = getNavigationTaxonomyIdInternal(localization);
         if (isFallbackRequired(taxonomyId, localization)) {

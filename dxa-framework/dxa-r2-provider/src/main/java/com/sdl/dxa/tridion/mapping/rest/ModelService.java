@@ -11,6 +11,7 @@ import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -34,6 +35,7 @@ public class ModelService {
     @Autowired
     private WebRequestContext webRequestContext;
 
+    @Cacheable(value = "default")
     public PageModelData loadPage(String pageUrl) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
 
@@ -60,6 +62,7 @@ public class ModelService {
         }
     }
 
+    @Cacheable(value = "default")
     public EntityModelData loadEntity(String entityId) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
         EntityModelData modelData = _processRequest(entityServiceUrl, EntityModelData.class, "tcm", localization.getId(), entityId);

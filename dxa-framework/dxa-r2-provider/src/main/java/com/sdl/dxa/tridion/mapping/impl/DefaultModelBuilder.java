@@ -187,6 +187,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         pageModel.setTitle(getPageTitle(modelData));
         pageModel.setUrl(modelData.getUrlPath());
 
+        //todo dxa2 refactor this, remove usage of deprecated method
+        webRequestContext.setPage(pageModel);
+
         if (modelData.getRegions() != null) {
             List<RegionModelData> regions = includePageRegions == PageInclusion.EXCLUDE ?
                     filterRegionsByIncludePageUrl(modelData) : modelData.getRegions();

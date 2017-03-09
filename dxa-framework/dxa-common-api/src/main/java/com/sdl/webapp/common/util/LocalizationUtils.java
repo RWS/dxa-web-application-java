@@ -51,7 +51,9 @@ public final class LocalizationUtils {
      * @param <T>          way to return the page
      * @return page if found
      * @throws ContentProviderException if page wasn't found
+     * @deprecated since 2.0, use R2 Model Service instead
      */
+    @Deprecated
     public static <T> T findPageByPath(@NotNull String path, Localization localization, TryFindPage<T> callback)
             throws ContentProviderException {
         String processedPath = PathUtils.normalizePathToDefaults(path);
@@ -74,7 +76,7 @@ public final class LocalizationUtils {
         return page;
     }
 
-    //region Deprecated methods, delegated to PathUtils
+    //region Deprecated methods delegated to PathUtils
 
     /**
      * See {@link PathUtils#normalizePathToDefaults(String)}.

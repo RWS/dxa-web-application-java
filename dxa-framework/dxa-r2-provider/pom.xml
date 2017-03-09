@@ -38,7 +38,6 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-impl</artifactId>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>

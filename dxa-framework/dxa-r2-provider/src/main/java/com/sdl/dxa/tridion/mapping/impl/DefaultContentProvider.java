@@ -6,7 +6,7 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageInclusion;
-import com.sdl.dxa.tridion.mapping.rest.ModelService;
+import com.sdl.dxa.tridion.rest.ModelService;
 import com.sdl.web.api.content.BinaryContentRetriever;
 import com.sdl.web.api.dynamic.DynamicMetaRetriever;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -49,14 +49,14 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
 
     @Override
     protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
-        PageModelData modelData = modelService.loadPage(path);
+        PageModelData modelData = modelService.loadPageModel(path);
         return builderPipeline.createPageModel(modelData, PageInclusion.INCLUDE);
     }
 
     @NotNull
     @Override
     protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
-        EntityModelData modelData = modelService.loadEntity(componentId);
+        EntityModelData modelData = modelService.loadEntityModel(componentId);
         try {
             return builderPipeline.createEntityModel(modelData);
         } catch (DxaException e) {

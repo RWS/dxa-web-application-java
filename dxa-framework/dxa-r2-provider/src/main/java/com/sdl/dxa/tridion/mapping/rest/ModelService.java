@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.rest;
 
+import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
@@ -19,6 +20,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 
+@R2
 @Slf4j
 @Service
 public class ModelService {

@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
+import com.sdl.dxa.R2;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+@R2
 @Component
 @Slf4j
 public class StringConverter implements SourceConverter<String> {

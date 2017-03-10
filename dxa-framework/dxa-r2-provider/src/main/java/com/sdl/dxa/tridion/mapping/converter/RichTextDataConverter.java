@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
+import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.RichTextData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
@@ -23,6 +24,7 @@ import java.util.Set;
 
 @Slf4j
 @Component
+@R2
 public class RichTextDataConverter implements SourceConverter<RichTextData> {
 
     private final RichTextLinkResolver richTextLinkResolver;

@@ -17,6 +17,7 @@ import com.sdl.webapp.common.api.xpm.XpmRegion;
 import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
+import com.sdl.webapp.common.util.XpmUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,22 +39,25 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.REGION;
 public class RegionModelImpl extends AbstractViewModel implements RegionModel {
 
     /**
-     * The XPM metadata key used for the ID of the (Include) Page from which the Region originates.
-     * Avoid using this in implementation code because it may change in a future release.
+     * @see XpmUtils.RegionXpmBuilder#INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY
+     * @deprecated since 2.0, use {@link XpmUtils.RegionXpmBuilder#INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY}
      */
-    public static final String INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY = "IncludedFromPageID";
+    @Deprecated
+    public static final String INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY = XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY;
 
     /**
-     * The XPM metadata key used for the title of the (Include) Page from which the Region originates.
-     * Avoid using this in implementation code because it may change in a future release.
+     * @see XpmUtils.RegionXpmBuilder#INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY
+     * @deprecated since 2.0, use {@link XpmUtils.RegionXpmBuilder#INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY}
      */
-    public static final String INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY = "IncludedFromPageTitle";
+    @Deprecated
+    public static final String INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY = XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY;
 
     /**
-     * The XPM metadata key used for the file name of the (Include) Page from which the Region originates.
-     * Avoid using this in implementation code because it may change in a future release.
+     * @see XpmUtils.RegionXpmBuilder#INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY
+     * @deprecated since 2.0, use {@link XpmUtils.RegionXpmBuilder#INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY}
      */
-    public static final String INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY = "IncludedFromPageFileName";
+    @Deprecated
+    public static final String INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY = XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY;
 
     private static final String XPM_REGION_MARKUP = "<!-- Start Region: {title: \"%s\", allowedComponentTypes: [%s], minOccurs: %s} -->";
 

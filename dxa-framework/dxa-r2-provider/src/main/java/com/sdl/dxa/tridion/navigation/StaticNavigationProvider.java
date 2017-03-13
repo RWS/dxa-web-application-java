@@ -1,6 +1,7 @@
 package com.sdl.dxa.tridion.navigation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.rest.ModelService;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -27,7 +28,7 @@ public class StaticNavigationProvider extends AbstractStaticNavigationProvider {
 
     @Override
     protected InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
-        String pageContent = modelService.loadPageSource(path);
+        String pageContent = modelService.loadPageContent(PageRequestDto.builder().path(path).build());
         // NOTE: This assumes page content is always in UTF-8 encoding
         return new ByteArrayInputStream(pageContent.getBytes(StandardCharsets.UTF_8));
     }

@@ -57,6 +57,9 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.sdl.webapp.common.util.XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY;
+import static com.sdl.webapp.common.util.XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY;
+import static com.sdl.webapp.common.util.XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY;
 import static com.sdl.webapp.util.dd4t.MvcDataHelper.createPageMvcData;
 import static com.sdl.webapp.util.dd4t.MvcDataHelper.createRegionMvcData;
 import static com.sdl.webapp.util.dd4t.MvcDataHelper.getRegionName;
@@ -221,9 +224,9 @@ public final class PageBuilderImpl implements PageBuilder {
 
                     Map<String, Object> xpmMetadata = existingRegion.getXpmMetadata();
                     if (xpmMetadata != null) {
-                        xpmMetadata.remove(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY);
-                        xpmMetadata.remove(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
-                        xpmMetadata.remove(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY);
+                        xpmMetadata.remove(INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY);
+                        xpmMetadata.remove(INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
+                        xpmMetadata.remove(INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY);
                     }
 
                     LOG.info("Merged Include Page [{}] into Region [{}]. " +

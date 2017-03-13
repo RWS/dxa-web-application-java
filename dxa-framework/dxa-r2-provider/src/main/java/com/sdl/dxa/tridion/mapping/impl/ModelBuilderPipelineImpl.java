@@ -3,7 +3,6 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
-import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
@@ -50,11 +49,10 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
 
     @Override
     @NotNull
-    public PageModel createPageModel(@NotNull PageModelData modelData,
-                                     @NotNull PageRequestDto.PageInclusion includePageRegions) {
+    public PageModel createPageModel(@NotNull PageModelData modelData) {
         PageModel pageModel = null;
         for (PageModelBuilder builder : pageModelBuilders) {
-            pageModel = builder.buildPageModel(pageModel, modelData, includePageRegions);
+            pageModel = builder.buildPageModel(pageModel, modelData);
         }
         Assert.notNull(pageModel, "Page Model is null after model pipeline, model builder are not set?");
         return pageModel; //NOSONAR

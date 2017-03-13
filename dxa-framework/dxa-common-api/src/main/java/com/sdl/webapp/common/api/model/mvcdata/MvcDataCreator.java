@@ -1,7 +1,8 @@
 package com.sdl.webapp.common.api.model.mvcdata;
 
+import com.sdl.dxa.api.datamodel.model.MvcModelData;
+import com.sdl.dxa.common.util.MvcUtils;
 import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.util.StringUtils;
 
 import java.util.Map;
 
@@ -74,30 +75,12 @@ public final class MvcDataCreator {
      * @return new instance of creator
      */
     public MvcDataCreator fromQualifiedName(String qualifiedViewName) {
-        String[] parts = qualifiedViewName == null || qualifiedViewName.isEmpty() ? null :
-                StringUtils.dashify(qualifiedViewName).split(":");
-
-        if (parts == null || parts.length < 1 || parts.length > 3) {
-            throw new IllegalArgumentException(
-                    String.format("Invalid format for Qualified View Name: '%s'. " +
-                            "Format must be 'ViewName' or 'AreaName:ViewName' " +
-                            "or 'AreaName:ControllerName:ViewName.'", qualifiedViewName));
-        }
+        MvcModelData mvcModelData = MvcUtils.parseMvcQualifiedViewName(qualifiedViewName);
 
         MvcDataImpl.MvcDataImplBuilder builder = MvcDataImpl.newBuilder();
-
-        if (parts.length == 1) {
-            builder.viewName(parts[0]);
-
-        } else if (parts.length == 2) {
-            builder.areaName(parts[0])
-                    .viewName(parts[1]);
-
-        } else if (parts.length == 3) {
-            builder.areaName(parts[0])
-                    .controllerName(parts[1])
-                    .viewName(parts[2]);
-        }
+        builder.viewName(mvcModelData.getViewName());
+        builder.areaName(mvcModelData.getAreaName());
+        builder.controllerName(mvcModelData.getControllerName());
 
         this.mvcData = builder.build();
         return this;

@@ -2,7 +2,6 @@ package com.sdl.dxa.tridion.mapping;
 
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
-import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -15,13 +14,12 @@ import org.jetbrains.annotations.Nullable;
 public interface ModelBuilderPipeline {
 
     /**
-     * See {@link PageModelBuilder#buildPageModel(PageModel, PageModelData, PageRequestDto.PageInclusion)}.
+     * See {@link PageModelBuilder#buildPageModel(PageModel, PageModelData)}.
      *
      * @return Page Model or {@code null} if no builders are registered
      */
     @NotNull
-    PageModel createPageModel(@NotNull PageModelData modelData,
-                              @NotNull PageRequestDto.PageInclusion includePageRegions);
+    PageModel createPageModel(@NotNull PageModelData modelData);
 
     /**
      * See {@link EntityModelBuilder#buildEntityModel(EntityModel, EntityModelData, Class)}.

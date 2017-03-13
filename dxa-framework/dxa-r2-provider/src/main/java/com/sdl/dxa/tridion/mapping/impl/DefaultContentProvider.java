@@ -28,6 +28,8 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
+
 @R2
 @Service("r2ContentProvider")
 @Slf4j
@@ -49,14 +51,17 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
 
     @Override
     protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
-        PageModelData modelData = modelService.loadPageModel(path);
-        return builderPipeline.createPageModel(modelData, PageRequestDto.PageInclusion.INCLUDE);
+        PageModelData modelData = modelService.loadPageModel(PageRequestDto.builder()
+                .path(path)
+                .includePages(INCLUDE)
+                .build());
+        return builderPipeline.createPageModel(modelData);
     }
 
     @NotNull
     @Override
     protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
-        EntityModelData modelData = modelService.loadEntityModel(componentId);
+        EntityModelData modelData = modelService.loadEntity(componentId);
         try {
             return builderPipeline.createEntityModel(modelData);
         } catch (DxaException e) {

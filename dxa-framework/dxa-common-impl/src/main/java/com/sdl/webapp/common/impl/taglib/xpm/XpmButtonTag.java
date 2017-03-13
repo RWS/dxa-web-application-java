@@ -2,12 +2,15 @@ package com.sdl.webapp.common.impl.taglib.xpm;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.RegionModel;
-import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.markup.html.HtmlMultiNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import lombok.Setter;
+
+import static com.sdl.webapp.common.util.XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY;
+import static com.sdl.webapp.common.util.XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY;
+import static com.sdl.webapp.common.util.XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY;
 
 @Setter
 public class XpmButtonTag extends XpmMarkupTag {
@@ -16,7 +19,7 @@ public class XpmButtonTag extends XpmMarkupTag {
     private String cssClass;
 
     private boolean isInclude() {
-        return this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY) == null;
+        return this.region.getXpmMetadata().get(INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY) == null;
     }
 
     /**
@@ -41,9 +44,9 @@ public class XpmButtonTag extends XpmMarkupTag {
                             .build())
                     .build();
         } else {
-            String title = "Edit " + this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
+            String title = "Edit " + this.region.getXpmMetadata().get(INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
             String editUrl = ApplicationContextHolder.getContext().getBean(WebRequestContext.class).getLocalization().localizePath(
-                    this.region.getXpmMetadata().get(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY).toString());
+                    this.region.getXpmMetadata().get(INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY).toString());
             return HtmlBuilders.div()
                     .withClass("xpm-button" + (cssClass == null ? "" : " " + cssClass))
                     .withNode(HtmlBuilders.a(editUrl)

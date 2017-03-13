@@ -30,7 +30,6 @@ import java.util.Collections;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
@@ -71,9 +70,9 @@ public class ModelBuilderPipelineTest {
 
     @Before
     public void initMocks() throws DxaException {
-        when(firstPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageRequestDto.PageInclusion.class)))
+        when(firstPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class)))
                 .thenReturn(firstPageModel);
-        when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageRequestDto.PageInclusion.class)))
+        when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class)))
                 .thenReturn(secondPageModel);
 
         when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
@@ -98,11 +97,11 @@ public class ModelBuilderPipelineTest {
         PageRequestDto.PageInclusion pageInclusion = PageRequestDto.PageInclusion.INCLUDE;
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, pageInclusion);
+        PageModel pageModel = pipeline.createPageModel(pageModelData);
 
         //then
-        verify(firstPageModelBuilder).buildPageModel(isNull(PageModel.class), same(pageModelData), eq(pageInclusion));
-        verify(secondPageModelBuilder).buildPageModel(same(firstPageModel), same(pageModelData), eq(pageInclusion));
+        verify(firstPageModelBuilder).buildPageModel(isNull(PageModel.class), same(pageModelData));
+        verify(secondPageModelBuilder).buildPageModel(same(firstPageModel), same(pageModelData));
         assertSame(secondPageModel, pageModel);
     }
 
@@ -137,7 +136,7 @@ public class ModelBuilderPipelineTest {
         ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, PageRequestDto.PageInclusion.INCLUDE);
+        PageModel pageModel = pipeline.createPageModel(pageModelData);
         EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
         //then
@@ -152,7 +151,7 @@ public class ModelBuilderPipelineTest {
         pipeline.setPageModelBuilders(Collections.emptyList());
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, PageRequestDto.PageInclusion.INCLUDE);
+        PageModel pageModel = pipeline.createPageModel(pageModelData);
         EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
         //then

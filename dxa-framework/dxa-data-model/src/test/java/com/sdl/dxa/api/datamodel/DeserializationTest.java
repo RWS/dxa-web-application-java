@@ -74,7 +74,7 @@ public class DeserializationTest {
         ListIterator<RegionModelData> iterator = regions.listIterator();
         RegionModelData region = iterator.next();
         assertEquals("Header", region.getName());
-        assertEquals("/system/include/header.html", region.getIncludePageUrl());
+        assertEquals("1234", region.getIncludePageId());
         assertEquals("Header", region.getMvcData().getViewName());
 
         assertTrue(region.getRegions().size() == 2);
@@ -85,7 +85,7 @@ public class DeserializationTest {
 
         region = iterator.next();
         assertEquals("Footer", region.getName());
-        assertEquals("/system/include/footer.html", region.getIncludePageUrl());
+        assertEquals("1235", region.getIncludePageId());
         assertEquals("Footer", region.getMvcData().getViewName());
 
         assertFalse(iterator.hasNext());

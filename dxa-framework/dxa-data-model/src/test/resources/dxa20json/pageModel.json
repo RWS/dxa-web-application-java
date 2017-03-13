@@ -11,7 +11,7 @@
   "Regions": [
     {
       "Name": "Header",
-      "IncludePageUrl": "/system/include/header.html",
+      "IncludePageId": "1234",
       "MvcData": {
         "ViewName": "Header"
       },
@@ -112,7 +112,7 @@
     },
     {
       "Name": "Footer",
-      "IncludePageUrl": "/system/include/footer.html",
+      "IncludePageId": "1235",
       "MvcData": {
         "ViewName": "Footer"
       }

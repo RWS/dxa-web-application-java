@@ -3,7 +3,6 @@ package com.sdl.webapp.common.impl.taglib.xpm;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.RegionModel;
-import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.junit.Test;
@@ -17,6 +16,9 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.HashMap;
 
+import static com.sdl.webapp.common.util.XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY;
+import static com.sdl.webapp.common.util.XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY;
+import static com.sdl.webapp.common.util.XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
@@ -34,9 +36,9 @@ public class XpmButtonTagTest {
         //given 
         RegionModel region = mock(RegionModel.class);
         doReturn(new HashMap<String, Object>() {{
-            put(RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY, "INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY");
-            put(RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY, "INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY");
-            put(RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY, "INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY");
+            put(INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY, "INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY");
+            put(INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY, "INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY");
+            put(INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY, "INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY");
         }}).when(region).getXpmMetadata();
 
         XpmButtonTag tag = new XpmButtonTag();

@@ -1,11 +1,13 @@
 package com.sdl.dxa.common.dto;
 
+import lombok.Builder;
 import lombok.Value;
 
 /**
  * Data transfer object (DTO) for page requests.
  */
-@Value(staticConstructor = "build")
+@Value
+@Builder
 public class EntityRequestDto {
 
     private int publicationId;
@@ -13,4 +15,9 @@ public class EntityRequestDto {
     private int componentId;
 
     private int templateId;
+
+    /**
+     * DXA format of entity ID contains component and template IDs separated with "{@code -}".
+     */
+    private String entityId;
 }

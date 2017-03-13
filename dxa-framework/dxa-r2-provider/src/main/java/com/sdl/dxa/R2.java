@@ -34,7 +34,7 @@ import java.lang.annotation.Target;
  * class Bean3_Special implements interface Interface {
  *      &#64;Autowired MoreConcreteInterface dependency;
  * }
- * </pre></code>
+ * </code></pre>
  *
  * @see Primary
  * @see Profile

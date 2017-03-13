@@ -21,6 +21,7 @@ import org.springframework.util.StreamUtils;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 
@@ -33,9 +34,6 @@ public class ModelService {
 
     @Value("#{'${dxa.model.service.url}' + '${dxa.model.service.url.page.model}'}")
     private String pageModelUrl;
-
-    @Value("#{'${dxa.model.service.url}' + '${dxa.model.service.url.page.source}'}")
-    private String pageSourceUrl;
 
     @Value("#{'${dxa.model.service.url}' + '${dxa.model.service.url.entity.model}'}")
     private String entityModelUrl;
@@ -93,7 +91,8 @@ public class ModelService {
 
     @Cacheable(value = "default", key = "'page' + #pageUrl")
     public String loadPageSource(String pageUrl) throws ContentProviderException {
-        return _loadPage(pageSourceUrl, pageUrl, response -> StreamUtils.copyToString(response.getBody(), defaultCharset()));
+        return _loadPage(UriComponentsBuilder.fromUriString(pageModelUrl).queryParam("raw").build().toUriString(),
+                pageUrl, response -> StreamUtils.copyToString(response.getBody(), defaultCharset()));
     }
 
 }

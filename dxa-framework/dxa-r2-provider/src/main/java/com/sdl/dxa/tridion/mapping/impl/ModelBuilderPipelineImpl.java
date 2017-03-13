@@ -3,10 +3,10 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -51,7 +51,7 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
     @Override
     @NotNull
     public PageModel createPageModel(@NotNull PageModelData modelData,
-                                     @NotNull PageInclusion includePageRegions) {
+                                     @NotNull PageRequestDto.PageInclusion includePageRegions) {
         PageModel pageModel = null;
         for (PageModelBuilder builder : pageModelBuilders) {
             pageModel = builder.buildPageModel(pageModel, modelData, includePageRegions);

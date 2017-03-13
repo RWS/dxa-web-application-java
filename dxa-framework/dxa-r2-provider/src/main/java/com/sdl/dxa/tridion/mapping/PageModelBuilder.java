@@ -1,6 +1,7 @@
 package com.sdl.dxa.tridion.mapping;
 
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.impl.ModelBuilderPipelineImpl;
 import com.sdl.webapp.common.api.model.PageModel;
 import org.jetbrains.annotations.Contract;
@@ -23,5 +24,5 @@ public interface PageModelBuilder extends ModelBuilder {
      * @return the strongly typed Page Model
      */
     @Contract("_, _, _ -> !null")
-    PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData, PageInclusion includePageRegions);
+    PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData, PageRequestDto.PageInclusion includePageRegions);
 }

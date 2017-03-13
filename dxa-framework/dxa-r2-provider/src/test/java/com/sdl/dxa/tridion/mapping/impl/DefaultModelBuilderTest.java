@@ -9,8 +9,8 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.converter.RichTextLinkResolver;
 import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
 import com.sdl.dxa.tridion.mapping.converter.StringConverter;
@@ -84,7 +84,7 @@ public class DefaultModelBuilderTest {
         PageModelData pageModelData = objectMapper.readValue(new ClassPathResource("home_page_json_full.json").getFile(), PageModelData.class);
 
         //when
-        PageModel pageModel = modelBuilder.buildPageModel(null, pageModelData, PageInclusion.INCLUDE);
+        PageModel pageModel = modelBuilder.buildPageModel(null, pageModelData, PageRequestDto.PageInclusion.INCLUDE);
 
         //then
         // page.Id

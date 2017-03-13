@@ -8,9 +8,9 @@ import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
 import com.sdl.dxa.tridion.mapping.converter.RichTextLinkResolver;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -177,7 +177,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     @Override
-    public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData, PageInclusion includePageRegions) {
+    public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData, PageRequestDto.PageInclusion includePageRegions) {
         PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
 
         fillViewModel(pageModel, modelData);
@@ -191,7 +191,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         webRequestContext.setPage(pageModel);
 
         if (modelData.getRegions() != null) {
-            List<RegionModelData> regions = includePageRegions == PageInclusion.EXCLUDE ?
+            List<RegionModelData> regions = includePageRegions == PageRequestDto.PageInclusion.EXCLUDE ?
                     filterRegionsByIncludePageUrl(modelData) : modelData.getRegions();
 
             regions.stream()

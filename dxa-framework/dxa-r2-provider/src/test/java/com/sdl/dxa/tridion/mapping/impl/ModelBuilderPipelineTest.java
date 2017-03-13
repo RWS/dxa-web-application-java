@@ -3,9 +3,9 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.google.common.collect.Lists;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -71,9 +71,9 @@ public class ModelBuilderPipelineTest {
 
     @Before
     public void initMocks() throws DxaException {
-        when(firstPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class)))
+        when(firstPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageRequestDto.PageInclusion.class)))
                 .thenReturn(firstPageModel);
-        when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class)))
+        when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageRequestDto.PageInclusion.class)))
                 .thenReturn(secondPageModel);
 
         when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
@@ -95,7 +95,7 @@ public class ModelBuilderPipelineTest {
     @Test
     public void shouldIterate_AllPageModelBuilders() {
         //given
-        PageInclusion pageInclusion = PageInclusion.INCLUDE;
+        PageRequestDto.PageInclusion pageInclusion = PageRequestDto.PageInclusion.INCLUDE;
 
         //when
         PageModel pageModel = pipeline.createPageModel(pageModelData, pageInclusion);
@@ -137,7 +137,7 @@ public class ModelBuilderPipelineTest {
         ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, PageInclusion.INCLUDE);
+        PageModel pageModel = pipeline.createPageModel(pageModelData, PageRequestDto.PageInclusion.INCLUDE);
         EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
         //then
@@ -152,7 +152,7 @@ public class ModelBuilderPipelineTest {
         pipeline.setPageModelBuilders(Collections.emptyList());
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, PageInclusion.INCLUDE);
+        PageModel pageModel = pipeline.createPageModel(pageModelData, PageRequestDto.PageInclusion.INCLUDE);
         EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
         //then

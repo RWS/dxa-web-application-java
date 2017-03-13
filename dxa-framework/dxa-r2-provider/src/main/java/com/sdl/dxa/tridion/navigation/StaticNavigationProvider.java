@@ -1,20 +1,20 @@
 package com.sdl.dxa.tridion.navigation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdl.dxa.R2;
 import com.sdl.dxa.tridion.rest.ModelService;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.tridion.navigation.AbstractStaticNavigationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-@R2
+@Profile("r2.provider")
 @Service("r2StaticNavigationProvider")
 public class StaticNavigationProvider extends AbstractStaticNavigationProvider {
 

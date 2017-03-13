@@ -36,7 +36,6 @@ import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
 
-@SuppressWarnings("Duplicates")
 @Service
 @Primary
 @Slf4j

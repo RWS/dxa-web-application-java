@@ -14,18 +14,16 @@ import java.lang.annotation.Target;
  * Marker annotation/shortcut for R2 pipeline profile. This annotation should be put on {@link Component}s and subclasses
  * to conditionally enable them in case of presence of {@code r2.provider} Spring profile.
  * <p><strong>Pay attention that this also makes a bean {@code @Primary}.</strong> This means that in case you have 2+
- * beans of the same time, this potentially won't work, solution is simple:</p>
- * <code><pre>
+ * beans of the same time, this potentially won't work, solution is simple (without double use of {@code @Primary}):</p>
+ * <pre><code>
  * interface Interface {}
  *
  * interface MoreConcreteInterface extends Interface {}
  *
- * <strike>@Primary</strike>
  * &#64;Profile("!special")
  * &#64;Service
  * class Bean1_NotSpecial implements MoreConcreteInterface { }
  *
- * <strike>@Primary</strike>
  * &#64;Profile("special")
  * &#64;Service
  * class Bean2_Special implements MoreConcreteInterface { }
@@ -36,7 +34,7 @@ import java.lang.annotation.Target;
  * class Bean3_Special implements interface Interface {
  *      &#64;Autowired MoreConcreteInterface dependency;
  * }
- * </code></pre>
+ * </pre></code>
  *
  * @see Primary
  * @see Profile

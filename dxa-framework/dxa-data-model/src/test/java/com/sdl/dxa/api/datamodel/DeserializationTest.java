@@ -53,6 +53,7 @@ public class DeserializationTest {
         //then
         assertEquals("640", page.getId());
         assertEquals("Home", page.getTitle());
+        assertEquals("/autotest-r2/index", page.getUrlPath());
 
         assertThat(page.getMeta(), hasEntry("twitter:card", "summary"));
         assertThat(page.getMeta(), hasEntry("og:title", "Home"));

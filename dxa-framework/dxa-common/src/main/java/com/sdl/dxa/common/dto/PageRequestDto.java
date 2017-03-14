@@ -43,4 +43,17 @@ public class PageRequestDto {
          */
         EXCLUDE
     }
+
+    /**
+     * Default values for builder.
+     */
+    @SuppressWarnings("unused")
+    public static class PageRequestDtoBuilder {
+
+        private String uriType = "tcm";
+
+        private PageInclusion includePages = PageInclusion.INCLUDE;
+
+        private ContentType contentType = ContentType.MODEL;
+    }
 }

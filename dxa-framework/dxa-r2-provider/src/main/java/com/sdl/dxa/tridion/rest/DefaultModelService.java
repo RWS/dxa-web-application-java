@@ -29,6 +29,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Arrays;
 
 import static java.nio.charset.Charset.defaultCharset;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @R2
 @Slf4j
@@ -59,17 +60,21 @@ public class DefaultModelService implements ModelService {
     @Override
     @Cacheable(value = "default")
     public PageModelData loadPageModel(PageRequestDto pageRequest) throws ContentProviderException {
-        return _loadPage(pageModelUrl, pageRequest.getPath(), _defaultExtractor(PageModelData.class));
+        return _loadPage(pageModelUrl, _defaultExtractor(PageModelData.class), pageRequest);
     }
 
-    private <T> T _loadPage(String serviceUrl, String pageUrl, ResponseExtractor<T> extractor) throws ContentProviderException {
+    private <T> T _loadPage(String serviceUrl, ResponseExtractor<T> extractor, PageRequestDto pageRequest) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
         try {
-            T page = _processRequest(serviceUrl, extractor, "tcm", localization.getId(), pageUrl);
-            log.trace("Loaded '{}' for localization '{}' and page url '{}'", page, localization, pageUrl);
+            T page = _processRequest(serviceUrl, extractor,
+                    pageRequest.getUriType(),
+                    pageRequest.getPublicationId() != 0 ? pageRequest.getPublicationId() : localization.getId(),
+                    pageRequest.getPath(),
+                    pageRequest.getIncludePages());
+            log.trace("Loaded '{}' for localization '{}' and pageRequest '{}'", page, localization, pageRequest);
             return page;
         } catch (DxaItemNotFoundException e) {
-            throw new PageNotFoundException("Cannot load page '" + pageUrl + "'", e);
+            throw new PageNotFoundException("Cannot load page '" + pageRequest + "'", e);
         }
     }
 
@@ -94,12 +99,13 @@ public class DefaultModelService implements ModelService {
     @Override
     @Cacheable(value = "default")
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
-        return _loadPage(UriComponentsBuilder.fromUriString(pageModelUrl).queryParam("raw").build().toUriString(),
-                pageRequest.getPath(), response -> StreamUtils.copyToString(response.getBody(), defaultCharset()));
+        String serviceUrl = UriComponentsBuilder.fromUriString(pageModelUrl).queryParam("raw").build().toUriString();
+        return _loadPage(serviceUrl, response -> StreamUtils.copyToString(response.getBody(), defaultCharset()), pageRequest);
     }
 
     @NotNull
     @Override
+    @Cacheable(value = "default", key = "'emd-entityId-' + #entityId")
     public EntityModelData loadEntity(@NotNull String entityId) throws ContentProviderException {
         return loadEntity(EntityRequestDto.builder().entityId(entityId).build());
     }
@@ -109,10 +115,13 @@ public class DefaultModelService implements ModelService {
     @Cacheable(value = "default")
     public EntityModelData loadEntity(EntityRequestDto entityRequest) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
+
         EntityModelData modelData = _processRequest(entityModelUrl, _defaultExtractor(EntityModelData.class),
-                "tcm", localization.getId(), entityRequest.getComponentId());
+                entityRequest.getUriType(),
+                entityRequest.getPublicationId() != 0 ? entityRequest.getPublicationId() : localization.getId(),
+                isBlank(entityRequest.getEntityId()) ?
+                        String.format("%s-%s", entityRequest.getComponentId(), entityRequest.getTemplateId()) : entityRequest.getEntityId());
         log.trace("Loaded '{}' for entityId '{}'", modelData, entityRequest.getComponentId());
         return modelData;
     }
-
 }

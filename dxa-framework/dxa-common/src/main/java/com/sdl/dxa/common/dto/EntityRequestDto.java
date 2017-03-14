@@ -20,4 +20,15 @@ public class EntityRequestDto {
      * DXA format of entity ID contains component and template IDs separated with "{@code -}".
      */
     private String entityId;
+
+    private String uriType;
+
+    /**
+     * Default valeus for builder.
+     */
+    @SuppressWarnings("unused")
+    public static class EntityRequestDtoBuilder {
+
+        private String uriType = "tcm";
+    }
 }

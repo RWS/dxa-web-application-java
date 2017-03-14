@@ -1,7 +1,7 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.sdl.dxa.api.datamodel.model.util.CanWrapData;
+import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -16,7 +16,7 @@ import java.util.Map;
 @ToString
 @NoArgsConstructor
 @Getter
-public class EntityModelData extends ViewModelData implements CanWrapData {
+public class EntityModelData extends ViewModelData implements CanWrapContentAndMetadata {
 
     private String id;
 

@@ -1,7 +1,7 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.sdl.dxa.api.datamodel.model.util.CanWrapData;
+import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -12,7 +12,7 @@ import java.util.Map;
 @Value
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeName
-public class PageModelData extends ViewModelData implements CanWrapData {
+public class PageModelData extends ViewModelData implements CanWrapContentAndMetadata {
 
     private String id;
 

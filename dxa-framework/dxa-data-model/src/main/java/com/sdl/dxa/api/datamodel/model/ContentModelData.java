@@ -2,7 +2,7 @@ package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sdl.dxa.api.datamodel.model.util.CanGetAndCast;
-import com.sdl.dxa.api.datamodel.model.util.CanWrapData;
+import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 
 import java.util.HashMap;
@@ -13,7 +13,7 @@ import java.util.Map;
  */
 @JsonTypeName
 public class ContentModelData extends HashMap<String, Object>
-        implements Map<String, Object>, CanGetAndCast<String>, CanWrapData {
+        implements Map<String, Object>, CanGetAndCast<String>, CanWrapContentAndMetadata {
 
     //region Constructors matching super and copy-constructor
     public ContentModelData(int initialCapacity, float loadFactor) {

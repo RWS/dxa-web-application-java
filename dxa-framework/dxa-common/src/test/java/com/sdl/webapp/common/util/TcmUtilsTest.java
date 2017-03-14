@@ -2,6 +2,7 @@ package com.sdl.webapp.common.util;
 
 import org.junit.Test;
 
+import static com.sdl.webapp.common.util.TcmUtils.buildKeywordTcmUri;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -194,6 +195,13 @@ public class TcmUtilsTest {
         assertTrue(TcmUtils.isTcmUri("tcm:1-2"));
         assertFalse(TcmUtils.isTcmUri("tcm:1"));
         assertFalse(TcmUtils.isTcmUri("not"));
+    }
+
+    @Test
+    public void shouldBuildKeywordTcmUri() {
+        //when
+        assertEquals("tcm:1-2-1024", buildKeywordTcmUri(1, 2));
+        assertEquals("tcm:1-2-1024", buildKeywordTcmUri("1", "2"));
     }
 
 }

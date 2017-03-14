@@ -1,10 +1,9 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.Map;
 
@@ -14,11 +13,10 @@ import java.util.Map;
  * the mapping logic os a server-side that made some sense in its original purpose but is not needed in DXA
  * since all the schemas and types are known out of the box.</p>
  */
-@ToString
-@EqualsAndHashCode
+@Data
+@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
 public abstract class ViewModelData {
 
     private String schemaId;

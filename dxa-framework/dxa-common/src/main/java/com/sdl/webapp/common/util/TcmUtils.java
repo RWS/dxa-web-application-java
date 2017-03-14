@@ -18,6 +18,8 @@ public final class TcmUtils {
 
     private static final int PAGE_ITEM_TYPE = 64;
 
+    private static final int KEYWORD_ITEM_TYPE = 1024;
+
     private static final String TCM_S_S = "tcm:%s-%s";
 
     private static final String TCM_S_S_S = "tcm:%s-%s-%s";
@@ -78,6 +80,24 @@ public final class TcmUtils {
      */
     public static String buildPageTcmUri(String publicationId, String itemId) {
         return String.format(TCM_S_S_S, publicationId, itemId, PAGE_ITEM_TYPE);
+    }
+
+    /**
+     * Build a template TCM URI looking like <code>tcm:PUB_ID-ITEM_ID-1024</code>.
+     *
+     * @param publicationId publication ID
+     * @param itemId        item ID
+     * @return TCM URI for keyword
+     */
+    public static String buildKeywordTcmUri(String publicationId, String itemId) {
+        return String.format(TCM_S_S_S, publicationId, itemId, KEYWORD_ITEM_TYPE);
+    }
+
+    /**
+     * See {@link #buildKeywordTcmUri(String, String)}.
+     */
+    public static String buildKeywordTcmUri(int publicationId, int itemId) {
+        return buildKeywordTcmUri(String.valueOf(publicationId), String.valueOf(itemId));
     }
 
     /**

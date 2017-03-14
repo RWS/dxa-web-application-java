@@ -4,17 +4,17 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.experimental.Accessors;
 
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeName
-@ToString
-@NoArgsConstructor
+@Data
 @AllArgsConstructor
-@Getter
+@NoArgsConstructor
+@Accessors(chain = true)
 public class KeywordModelData extends ViewModelData implements CanWrapContentAndMetadata {
 
     private String id;

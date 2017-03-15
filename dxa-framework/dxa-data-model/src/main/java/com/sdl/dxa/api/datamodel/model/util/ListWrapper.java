@@ -7,11 +7,11 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.KeywordModelData;
 import com.sdl.dxa.api.datamodel.model.RichTextData;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -36,12 +36,16 @@ import java.util.List;
  */
 @Setter(value = AccessLevel.NONE)
 @Data
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ListWrapper<T> implements DelegatesToList<T> {
 
     @JsonProperty("$values")
     private List<T> values;
+
+    public ListWrapper(List<T> values) {
+        this.values = new ArrayList<>();
+        values.forEach(this.values::add);
+    }
 
     /**
      * The concrete implementation of {@link ListWrapper} for {@link ContentModelData}.

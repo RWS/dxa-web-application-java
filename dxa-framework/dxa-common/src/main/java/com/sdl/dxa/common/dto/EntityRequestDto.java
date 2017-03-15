@@ -1,7 +1,12 @@
 package com.sdl.dxa.common.dto;
 
+import com.google.common.base.Splitter;
 import lombok.Builder;
 import lombok.Value;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * Data transfer object (DTO) for page requests.
@@ -30,5 +35,14 @@ public class EntityRequestDto {
     public static class EntityRequestDtoBuilder {
 
         private String uriType = "tcm";
+
+        public EntityRequestDtoBuilder entityId(@NotNull String entityId) {
+            Assert.isTrue(entityId.matches("\\d+-\\d+"), "Entity ID should be of format CompId-TemplateId");
+            this.entityId = entityId;
+            List<String> parts = Splitter.on("-").splitToList(entityId);
+            componentId(Integer.parseInt(parts.get(0)));
+            templateId(Integer.parseInt(parts.get(1)));
+            return this;
+        }
     }
 }

@@ -29,7 +29,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.util.Arrays;
 
 import static java.nio.charset.Charset.defaultCharset;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @R2
 @Slf4j
@@ -119,8 +118,8 @@ public class DefaultModelService implements ModelService {
         EntityModelData modelData = _processRequest(entityModelUrl, _defaultExtractor(EntityModelData.class),
                 entityRequest.getUriType(),
                 entityRequest.getPublicationId() != 0 ? entityRequest.getPublicationId() : localization.getId(),
-                isBlank(entityRequest.getEntityId()) ?
-                        String.format("%s-%s", entityRequest.getComponentId(), entityRequest.getTemplateId()) : entityRequest.getEntityId());
+                entityRequest.getComponentId(),
+                entityRequest.getTemplateId());
         log.trace("Loaded '{}' for entityId '{}'", modelData, entityRequest.getComponentId());
         return modelData;
     }

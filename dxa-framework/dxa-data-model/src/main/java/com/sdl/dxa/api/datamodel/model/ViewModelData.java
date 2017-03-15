@@ -1,5 +1,6 @@
 package com.sdl.dxa.api.datamodel.model;
 
+import com.sdl.dxa.api.datamodel.model.util.CanCopyValues;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +18,7 @@ import java.util.Map;
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class ViewModelData {
+public abstract class ViewModelData implements CanCopyValues<ViewModelData> {
 
     private String schemaId;
 
@@ -30,4 +31,15 @@ public abstract class ViewModelData {
     private Map<String, Object> extensionData;
 
     private MvcModelData mvcData;
+
+    @Override
+    public ViewModelData copyFrom(ViewModelData other) {
+        this.schemaId = other.schemaId;
+        this.htmlClasses = other.htmlClasses;
+        this.xpmMetadata = other.xpmMetadata;
+        this.metadata = other.metadata;
+        this.extensionData = other.extensionData;
+        this.mvcData = other.mvcData;
+        return this;
+    }
 }

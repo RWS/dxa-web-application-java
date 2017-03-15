@@ -66,4 +66,17 @@ public class EntityModelData extends ViewModelData implements CanWrapContentAndM
             }
         };
     }
+
+    @Override
+    public ViewModelData copyFrom(ViewModelData other) {
+        super.copyFrom(other);
+
+        EntityModelData emd = (EntityModelData) other;
+        this.id = emd.id;
+        this.linkUrl = emd.linkUrl;
+        this.content = emd.content;
+        this.binaryContent = emd.binaryContent;
+        this.externalContent = emd.externalContent;
+        return this;
+    }
 }

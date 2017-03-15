@@ -113,6 +113,16 @@ public class DeserializationTest {
         assertEquals("Heading", entity.getContent().get("Heading"));
         assertEquals("Ending", entity.getContent().get("Ending"));
 
+        //noinspection unchecked
+        ListWrapper<String> strings = (ListWrapper<String>) entity.getContent().get("Strings");
+        assertEquals("string_1", strings.get(0));
+        assertEquals("string_2", strings.get(1));
+
+        //noinspection unchecked
+        ListWrapper<Float> floats = (ListWrapper<Float>) entity.getContent().get("Floats");
+        assertEquals(666.666f, floats.get(0), 0.0f);
+        assertEquals(42f, floats.get(1), 0.0f);
+
         assertTrue(entity.getContent().get("itemListElement") instanceof ListWrapper.ContentModelDataListWrapper);
         List<ContentModelData> cmds = ((ListWrapper.ContentModelDataListWrapper) entity.getContent().get("itemListElement")).getValues();
         assertEquals("subheading", cmds.get(0).get("subheading"));
@@ -134,7 +144,7 @@ public class DeserializationTest {
         assertEquals("756", rtd.get(0).getAndCast(1, EntityModelData.class).getId());
 
         assertTrue(cmds.size() == 2);
-        assertTrue(entity.getContent().size() == 3);
+        assertTrue(entity.getContent().size() == 5);
 
         assertEquals("XpmValue1", entity.getXpmMetadata().get("XpmKey1"));
         assertEquals("XpmValue2", entity.getXpmMetadata().get("XpmKey2"));

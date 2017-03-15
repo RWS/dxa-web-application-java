@@ -43,6 +43,20 @@
           "Content": {
             "Heading": "Heading",
             "Ending": "Ending",
+            "Strings": {
+              "$type": "String[]",
+              "$values": [
+                "string_1",
+                "string_2"
+              ]
+            },
+            "Floats": {
+              "$type": "Float[]",
+              "$values": [
+                666.666,
+                42
+              ]
+            },
             "itemListElement": {
               "$type": "ContentModelData[]",
               "$values": [

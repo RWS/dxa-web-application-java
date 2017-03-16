@@ -1,7 +1,9 @@
 package com.sdl.dxa.common.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Value;
+import org.springframework.util.Assert;
 
 /**
  * Data transfer object (DTO) for page requests.
@@ -19,6 +21,18 @@ public class PageRequestDto {
     private PageInclusion includePages;
 
     private ContentType contentType;
+
+    private int expansionDepth;
+
+    private DepthCounter depthCounter;
+
+    public boolean depthIncreaseAndCheckIfSafe() {
+        return this.depthCounter.depthIncrease() > 0;
+    }
+
+    public void depthDecrease() {
+        this.depthCounter.depthDecrease();
+    }
 
     /**
      * Way you expect the content to be.
@@ -44,6 +58,20 @@ public class PageRequestDto {
         EXCLUDE
     }
 
+    @AllArgsConstructor
+    private static class DepthCounter {
+
+        private int counter;
+
+        private int depthIncrease() {
+            return --counter;
+        }
+
+        private void depthDecrease() {
+            counter++;
+        }
+    }
+
     /**
      * Default values for builder.
      */
@@ -55,5 +83,21 @@ public class PageRequestDto {
         private PageInclusion includePages = PageInclusion.INCLUDE;
 
         private ContentType contentType = ContentType.MODEL;
+
+        private int expansionDepth = 100;
+
+        private DepthCounter depthCounter = new DepthCounter(expansionDepth);
+
+        public PageRequestDtoBuilder expansionDepth(int expansionDepth) {
+            Assert.isTrue(expansionDepth > 0, "Expansion depth should be a positive number");
+            depthCounter(new DepthCounter(expansionDepth));
+            this.expansionDepth = expansionDepth;
+            return this;
+        }
+
+        private PageRequestDtoBuilder depthCounter(DepthCounter depthCounter) {
+            this.depthCounter = depthCounter;
+            return this;
+        }
     }
 }

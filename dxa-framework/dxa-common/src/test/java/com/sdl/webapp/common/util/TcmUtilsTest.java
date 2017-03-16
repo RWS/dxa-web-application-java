@@ -2,6 +2,17 @@ package com.sdl.webapp.common.util;
 
 import org.junit.Test;
 
+import static com.sdl.webapp.common.util.TcmUtils.CATEGORY_ITEM_TYPE;
+import static com.sdl.webapp.common.util.TcmUtils.COMPONENT_ITEM_TYPE;
+import static com.sdl.webapp.common.util.TcmUtils.COMPONENT_TEMPLATE_ITEM_TYPE;
+import static com.sdl.webapp.common.util.TcmUtils.FOLDER_ITEM_TYPE;
+import static com.sdl.webapp.common.util.TcmUtils.KEYWORD_ITEM_TYPE;
+import static com.sdl.webapp.common.util.TcmUtils.PAGE_ITEM_TYPE;
+import static com.sdl.webapp.common.util.TcmUtils.PAGE_TEMPLATE_ITEM_TYPE;
+import static com.sdl.webapp.common.util.TcmUtils.PUBLICATION_ITEM_TYPE;
+import static com.sdl.webapp.common.util.TcmUtils.SCHEMA_ITEM_TYPE;
+import static com.sdl.webapp.common.util.TcmUtils.STRUCTURE_GROUP_ITEM_TYPE;
+import static com.sdl.webapp.common.util.TcmUtils.TARGET_GROUP_ITEM_TYPE;
 import static com.sdl.webapp.common.util.TcmUtils.buildKeywordTcmUri;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -101,6 +112,24 @@ public class TcmUtilsTest {
         assertEquals(6, getPublicationId);
         assertEquals(6, getPublicationId2);
         assertEquals(42, getPublicationId42);
+    }
+
+    @Test
+    public void shouldGetItemType() {
+        assertEquals(PUBLICATION_ITEM_TYPE, TcmUtils.getItemType("tcm:6-1-1"));
+        assertEquals(FOLDER_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-2"));
+        assertEquals(STRUCTURE_GROUP_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-4"));
+        assertEquals(SCHEMA_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-8"));
+        assertEquals(COMPONENT_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-16"));
+        assertEquals(COMPONENT_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1"));
+        assertEquals(COMPONENT_TEMPLATE_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-32"));
+        assertEquals(PAGE_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-64"));
+        assertEquals(PAGE_TEMPLATE_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-128"));
+        assertEquals(TARGET_GROUP_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-256"));
+        assertEquals(CATEGORY_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-512"));
+        assertEquals(KEYWORD_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-1024"));
+
+        assertEquals(-1, TcmUtils.getItemType("tcm:42-"));
     }
 
     @Test

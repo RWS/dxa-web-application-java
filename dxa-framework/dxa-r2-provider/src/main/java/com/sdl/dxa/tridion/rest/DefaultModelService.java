@@ -6,6 +6,12 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
+import com.sdl.web.client.configuration.XMLConfigurationHolder;
+import com.sdl.web.client.configuration.XMLConfigurationReaderImpl;
+import com.sdl.web.client.configuration.api.ConfigurationException;
+import com.sdl.web.client.impl.DefaultDiscoveryClient;
+import com.sdl.web.discovery.datalayer.model.ContentServiceCapability;
+import com.sdl.web.discovery.datalayer.model.KeyValuePair;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
@@ -26,7 +32,10 @@ import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.Objects;
+import java.util.Properties;
 
 import static java.nio.charset.Charset.defaultCharset;
 
@@ -39,10 +48,19 @@ public class DefaultModelService implements ModelService {
 
     private final ObjectMapper objectMapper;
 
-    @Value("#{'${dxa.model.service.url}' + '${dxa.model.service.url.page.model}'}")
+    @Value("${cil.cd.client.conf}")
+    private String configurationFileName;
+
+    @Value("${dxa.model.service.key}")
+    private String modelServiceKey;
+
+    @Value("${dxa.model.service.url:#{null}}")
+    private String modelServiceUrl;
+
+    @Value("${dxa.model.service.url.page.model}")
     private String pageModelUrl;
 
-    @Value("#{'${dxa.model.service.url}' + '${dxa.model.service.url.entity.model}'}")
+    @Value("${dxa.model.service.url.entity.model}")
     private String entityModelUrl;
 
     @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
@@ -53,6 +71,32 @@ public class DefaultModelService implements ModelService {
     public DefaultModelService(RestTemplate restTemplate, @Qualifier("dxaR2ObjectMapper") ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+    }
+
+    @PostConstruct
+    public void initService() throws ConfigurationException {
+        if (modelServiceUrl != null) {
+            log.debug("Using model service URL from properties, don't ask Discovery, {}", modelServiceUrl);
+        } else {
+            XMLConfigurationHolder configuration = (new XMLConfigurationReaderImpl()).readConfiguration(configurationFileName);
+            String serviceUri = configuration.getConfiguration("/DiscoveryService").getValue("ServiceUri");
+
+            Properties properties = new Properties();
+            properties.put("ServiceUri", serviceUri);
+
+            modelServiceUrl = new DefaultDiscoveryClient(properties).getCapability(ContentServiceCapability.class)
+                    .orElseThrow(() -> new ConfigurationException("ContentServiceCapability is not available on Discovery " + serviceUri))
+                    .getExtensionProperties().stream()
+                    .filter(keyValuePair -> Objects.equals(keyValuePair.getKey(), modelServiceKey))
+                    .map(KeyValuePair::getValue)
+                    .findFirst()
+                    .orElseThrow(() -> new ConfigurationException("DXA Model Service URL is not available on Discovery"));
+
+            log.debug("Using model service from Discovery, {}", modelServiceUrl);
+        }
+
+        this.pageModelUrl = modelServiceUrl + pageModelUrl;
+        this.entityModelUrl = modelServiceUrl + entityModelUrl;
     }
 
     @NotNull

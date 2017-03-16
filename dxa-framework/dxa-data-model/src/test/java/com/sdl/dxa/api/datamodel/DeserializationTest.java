@@ -26,6 +26,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -123,6 +124,15 @@ public class DeserializationTest {
         assertEquals(666.666f, floats.get(0), 0.0f);
         assertEquals(42f, floats.get(1), 0.0f);
 
+        String dateTimeStr = "1970-12-16T11:34:56.000+0000";
+        //noinspection unchecked
+        ListWrapper<String> dates = (ListWrapper<String>) entity.getContent().get("Dates");
+        assertEquals(dateTimeStr, dates.get(0));
+
+        //noinspection unchecked
+        ListWrapper<String> dateTimes = (ListWrapper<String>) entity.getContent().get("DateTimes");
+        assertEquals(dateTimeStr, dateTimes.get(0));
+
         assertTrue(entity.getContent().get("itemListElement") instanceof ListWrapper.ContentModelDataListWrapper);
         List<ContentModelData> cmds = ((ListWrapper.ContentModelDataListWrapper) entity.getContent().get("itemListElement")).getValues();
         assertEquals("subheading", cmds.get(0).get("subheading"));
@@ -144,7 +154,7 @@ public class DeserializationTest {
         assertEquals("756", rtd.get(0).getAndCast(1, EntityModelData.class).getId());
 
         assertTrue(cmds.size() == 2);
-        assertTrue(entity.getContent().size() == 5);
+        assertTrue(entity.getContent().size() == 7);
 
         assertEquals("XpmValue1", entity.getXpmMetadata().get("XpmKey1"));
         assertEquals("XpmValue2", entity.getXpmMetadata().get("XpmKey2"));
@@ -184,8 +194,9 @@ public class DeserializationTest {
                 Lists.newArrayList(new KeywordModelData("id", "desc", "key", "taxId", "title"))));
         rootCmd.put("cmd", innerCmd);
 
+        Date date = new Date();
         ExternalContentData ecd = new ExternalContentData("displayTypeId", "id", "", rootCmd);
-        DeserializeTrip trip = new DeserializeTrip(ecd, new DeserializeTrip(ecd, null, null), null);
+        DeserializeTrip trip = new DeserializeTrip(ecd, date, new DeserializeTrip(ecd, null, null, null), null);
 
         //when
         String serialized = objectMapper.writeValueAsString(trip);
@@ -196,7 +207,7 @@ public class DeserializationTest {
 
         //when
         String serialized2 = objectMapper.writeValueAsString(deserialized);
-        DeserializeTrip deserialized2 = objectMapper.readValue(serialized, DeserializeTrip.class);
+        DeserializeTrip deserialized2 = objectMapper.readValue(serialized2, DeserializeTrip.class);
 
         //then
         assertEquals(serialized2, serialized);
@@ -211,6 +222,8 @@ public class DeserializationTest {
     private static class DeserializeTrip {
 
         public ExternalContentData externalContentData;
+
+        public Date date;
 
         public DeserializeTrip deserializeTrip;
 

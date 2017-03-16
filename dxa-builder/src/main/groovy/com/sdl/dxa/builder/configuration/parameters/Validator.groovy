@@ -106,6 +106,12 @@ class Validator {
                             || url?.matches(/^((https?|ftp):\/\/)?localhost(:\d+)?(\/[^\s]*)?$/))
         })
     }
+
+    static Validator emptyValue() {
+        new Validator(description: 'Should be empty value or null', validate: { String it ->
+            it == null || it.isEmpty()
+        })
+    }
     //endregion
 
     private static String removePath(String ipOrDomain) {

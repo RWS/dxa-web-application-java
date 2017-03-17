@@ -125,6 +125,7 @@ public class SourceConverterFactory {
 
     static String resolveLink(String itemId, WebRequestContext webRequestContext, LinkResolver linkResolver) {
         String publicationId = webRequestContext.getLocalization().getId();
-        return linkResolver.resolveLink(TcmUtils.buildTcmUri(publicationId, itemId), publicationId);
+        String url = TcmUtils.isTcmUri(itemId) ? itemId : TcmUtils.buildTcmUri(publicationId, itemId);
+        return linkResolver.resolveLink(url, publicationId);
     }
 }

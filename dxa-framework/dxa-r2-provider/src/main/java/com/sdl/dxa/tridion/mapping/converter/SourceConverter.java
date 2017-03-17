@@ -7,7 +7,9 @@ import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
+import org.jetbrains.annotations.NotNull;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -32,5 +34,30 @@ public interface SourceConverter<T> {
             }
         }
         return value;
+    }
+
+    @NotNull
+    default Number toSpecificNumber(Number number, Class<?> objectType) {
+        // conversion to string helps to prevent floating point accuracy issues
+        Number _number = new BigDecimal(String.valueOf(number));
+        if (Float.class == objectType) {
+            return _number.floatValue();
+        }
+        if (Double.class == objectType) {
+            return _number.doubleValue();
+        }
+        if (Integer.class == objectType) {
+            return _number.intValue();
+        }
+        if (Long.class == objectType) {
+            return _number.longValue();
+        }
+        if (Byte.class == objectType) {
+            return _number.byteValue();
+        }
+        if (Short.class == objectType) {
+            return _number.shortValue();
+        }
+        return _number;
     }
 }

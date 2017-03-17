@@ -291,7 +291,7 @@ public class DefaultModelBuilderTest {
 
         @Bean
         public StringConverter stringConverter() {
-            return new StringConverter();
+            return new StringConverter(null, null);
         }
 
         @Bean

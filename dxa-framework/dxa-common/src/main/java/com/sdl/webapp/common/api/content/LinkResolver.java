@@ -26,5 +26,7 @@ public interface LinkResolver {
      * @param localizationId The localization ID to use.
      * @return The translated URL.
      */
-    String resolveLink(String url, String localizationId);
+    default String resolveLink(String url, String localizationId) {
+        return resolveLink(url, localizationId, false);
+    }
 }

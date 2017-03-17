@@ -32,6 +32,14 @@ public final class PathUtils {
     private PathUtils() {
     }
 
+    public static String getDefaultPageName() {
+        return DEFAULT_PAGE_NAME;
+    }
+
+    public static String getDefaultPageExtension() {
+        return DEFAULT_PAGE_EXTENSION;
+    }
+
     /**
      * Normalizes given path to have an explicit page name and extension.
      * <p>Adds an explicit <code>index</code> page name if other page is not in a <code>path</code>.</p>

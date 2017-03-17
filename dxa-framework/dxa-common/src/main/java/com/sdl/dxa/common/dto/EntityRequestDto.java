@@ -28,8 +28,10 @@ public class EntityRequestDto {
 
     private String uriType;
 
+    private boolean resolveLink;
+
     /**
-     * Default valeus for builder.
+     * Default values for builder.
      */
     @SuppressWarnings("unused")
     public static class EntityRequestDtoBuilder {

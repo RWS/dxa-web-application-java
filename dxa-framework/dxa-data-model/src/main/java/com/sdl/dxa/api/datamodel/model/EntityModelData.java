@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.Map;
 
@@ -15,7 +16,8 @@ import java.util.Map;
 @JsonTypeName
 @ToString
 @NoArgsConstructor
-@Getter
+@Data
+@Accessors(chain = true)
 public class EntityModelData extends ViewModelData implements CanWrapContentAndMetadata {
 
     private String id;

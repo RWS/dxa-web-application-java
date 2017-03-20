@@ -7,7 +7,7 @@ import com.sdl.webapp.common.util.TcmUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
@@ -29,18 +29,18 @@ public abstract class AbstractLinkResolver implements LinkResolver {
     public static final String DEFAULT_PAGE_EXTENSION = PathUtils.getDefaultPageExtension();
 
     @Override
-    public String resolveLink(@Nullable String url, @NotNull String localizationId, boolean resolveToBinary) {
+    public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
 
         String resolvedUrl = _resolveLink(url, publicationId, resolveToBinary);
 
-        return PathUtils.stripIndexPath(resolvedUrl);
+        return PathUtils.stripDefaultExtension(PathUtils.stripIndexPath(resolvedUrl));
     }
 
-    @NotNull
+    @Contract("null, _, _ -> null; !null, _, _ -> !null")
     private String _resolveLink(String uri, int publicationId, boolean isBinary) {
         if (uri == null || !TcmUtils.isTcmUri(uri)) {
-            return "";
+            return uri;
         }
 
         Function<ResolvingData, Optional<String>> resolver;

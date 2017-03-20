@@ -1,8 +1,12 @@
 package com.sdl.webapp.common.api.content;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
+
 /**
  * Link resolver that resolves links to components.
  */
+@FunctionalInterface
 public interface LinkResolver {
 
     /**
@@ -15,7 +19,8 @@ public interface LinkResolver {
      * @param resolveToBinary whether the expected URL is an URL to a binary
      * @return The translated URL.
      */
-    String resolveLink(String url, String localizationId, boolean resolveToBinary);
+    @Contract("null, _, _ -> null; !null, _, _ -> !null")
+    String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary);
 
     /**
      * Resolves a link. This translates the input URL to a link that can be used on a web page. What the input URL
@@ -26,7 +31,8 @@ public interface LinkResolver {
      * @param localizationId The localization ID to use.
      * @return The translated URL.
      */
-    default String resolveLink(String url, String localizationId) {
+    @Contract("null, _ -> null; !null, _ -> !null")
+    default String resolveLink(@Nullable String url, @Nullable String localizationId) {
         return resolveLink(url, localizationId, false);
     }
 }

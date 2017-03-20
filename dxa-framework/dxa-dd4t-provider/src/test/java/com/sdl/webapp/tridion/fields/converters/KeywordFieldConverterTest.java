@@ -110,7 +110,7 @@ public class KeywordFieldConverterTest {
 
         SemanticField semanticField = mockSemanticField(true);
 
-        TypeDescriptor typeDescriptor = mockTypeDescriptor(false, Tag.class);
+        TypeDescriptor typeDescriptor = mockTypeDescriptor(true, Tag.class);
 
         //when
         List<?> fieldValues = (List<?>) converter.getFieldValue(semanticField, baseField, typeDescriptor, semanticFieldDataProviderImpl, modelBuilderPipeline);
@@ -130,7 +130,7 @@ public class KeywordFieldConverterTest {
 
     @Test
     public void shouldConvertKeywordToBoolean() throws FieldConverterException {
-        //given 
+        //given
         BaseField baseField = mock(BaseField.class);
         doReturn(Lists.newArrayList(
                 mockKeyword(null, null, "false", null, "true"),
@@ -138,7 +138,7 @@ public class KeywordFieldConverterTest {
 
         SemanticField semanticField = mockSemanticField(true);
 
-        TypeDescriptor typeDescriptor = mockTypeDescriptor(false, Boolean.class);
+        TypeDescriptor typeDescriptor = mockTypeDescriptor(true, Boolean.class);
 
         //when
         List<?> fieldValues = (List<?>) converter.getFieldValue(semanticField, baseField, typeDescriptor, semanticFieldDataProviderImpl, modelBuilderPipeline);
@@ -159,7 +159,7 @@ public class KeywordFieldConverterTest {
 
         SemanticField semanticField = mockSemanticField(true);
 
-        TypeDescriptor typeDescriptor = mockTypeDescriptor(false, String.class);
+        TypeDescriptor typeDescriptor = mockTypeDescriptor(true, String.class);
 
         //when
         List<?> fieldValues = (List<?>) converter.getFieldValue(semanticField, baseField, typeDescriptor, semanticFieldDataProviderImpl, modelBuilderPipeline);
@@ -182,7 +182,7 @@ public class KeywordFieldConverterTest {
 
         SemanticField semanticField = mockSemanticField(true);
 
-        TypeDescriptor typeDescriptor = mockTypeDescriptor(false, KeywordModel.class);
+        TypeDescriptor typeDescriptor = mockTypeDescriptor(true, KeywordModel.class);
 
         //when
         List<?> fieldValues = (List<?>) converter.getFieldValue(semanticField, baseField, typeDescriptor, semanticFieldDataProviderImpl, modelBuilderPipeline);
@@ -364,7 +364,7 @@ public class KeywordFieldConverterTest {
 
     @Test
     public void shouldMapKeywordModelSubClasses() throws SemanticMappingException {
-        //given 
+        //given
         SemanticField semanticField = mockSemanticField(false);
         TypeDescriptor typeDescriptor = mockTypeDescriptor(false, KeywordModelSubclass.class);
 
@@ -420,6 +420,9 @@ public class KeywordFieldConverterTest {
         TypeDescriptor mock = mock(TypeDescriptor.class);
         when(mock.isCollection()).thenReturn(isCollection);
         when(mock.getObjectType()).thenReturn(clazz);
+        TypeDescriptor elementTypeDescriptor = mock(TypeDescriptor.class);
+        when(elementTypeDescriptor.getObjectType()).thenReturn(clazz);
+        when(mock.getElementTypeDescriptor()).thenReturn(elementTypeDescriptor);
         return mock;
     }
 

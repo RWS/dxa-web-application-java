@@ -1,18 +1,23 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Value;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 import java.util.Map;
 
-@Value
-@EqualsAndHashCode(callSuper = true)
 @JsonTypeName
-public class PageModelData extends ViewModelData implements CanWrapContentAndMetadata {
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@Data
+@AllArgsConstructor
+@Accessors(chain = true)
+public class PageModelData extends ViewModelData {
 
     private String id;
 

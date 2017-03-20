@@ -1,6 +1,7 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -53,5 +54,20 @@ public class RegionModelData extends ViewModelData {
             regions = new ArrayList<>();
         }
         regions.add(regionModelData);
+    }
+
+    @Override
+    public ModelDataWrapper getDataWrapper() {
+        return new ModelDataWrapper() {
+            @Override
+            public ContentModelData getMetadata() {
+                return RegionModelData.this.getMetadata();
+            }
+
+            @Override
+            public Object getWrappedModel() {
+                return RegionModelData.this;
+            }
+        };
     }
 }

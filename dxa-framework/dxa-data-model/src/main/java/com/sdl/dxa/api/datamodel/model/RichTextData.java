@@ -3,12 +3,20 @@ package com.sdl.dxa.api.datamodel.model;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sdl.dxa.api.datamodel.model.util.CanGetAndCast;
 import com.sdl.dxa.api.datamodel.model.util.DelegatesToList;
-import lombok.Value;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
-@Value
 @JsonTypeName
+@ToString
+@NoArgsConstructor
+@Data
+@AllArgsConstructor
+@Accessors(chain = true)
 public class RichTextData implements DelegatesToList<Object>, CanGetAndCast<Integer> {
 
     private List<Object> fragments;

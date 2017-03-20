@@ -3,15 +3,12 @@ package com.sdl.dxa.tridion.mapping.converter;
 import com.sdl.dxa.R2;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
-import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -21,22 +18,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import static com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory.resolveLink;
-
 @R2
 @Component
 @Slf4j
 public class StringConverter implements SourceConverter<String> {
-
-    private final LinkResolver linkResolver;
-
-    private final WebRequestContext webRequestContext;
-
-    @Autowired
-    public StringConverter(LinkResolver linkResolver, WebRequestContext webRequestContext) {
-        this.linkResolver = linkResolver;
-        this.webRequestContext = webRequestContext;
-    }
 
     @Override
     public List<Class<? extends String>> getTypes() {
@@ -64,7 +49,7 @@ public class StringConverter implements SourceConverter<String> {
             result = toConvert;
         } else if (Link.class.isAssignableFrom(objectType)) {
             Link link = new Link();
-            link.setUrl(resolveLink(toConvert, webRequestContext, linkResolver));
+            link.setUrl(toConvert);
             result = link;
         } else if (RichText.class.isAssignableFrom(objectType)) {
             result = new RichText(toConvert);

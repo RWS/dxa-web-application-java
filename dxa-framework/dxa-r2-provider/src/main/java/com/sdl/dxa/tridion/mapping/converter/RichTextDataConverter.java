@@ -13,26 +13,16 @@ import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Slf4j
 @Component
 @R2
 public class RichTextDataConverter implements SourceConverter<RichTextData> {
-
-    private final RichTextLinkResolver richTextLinkResolver;
-
-    @Autowired
-    public RichTextDataConverter(RichTextLinkResolver richTextLinkResolver) {
-        this.richTextLinkResolver = richTextLinkResolver;
-    }
 
     @Override
     public List<Class<? extends RichTextData>> getTypes() {
@@ -44,12 +34,10 @@ public class RichTextDataConverter implements SourceConverter<RichTextData> {
                           ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
         Class<?> objectType = targetType.getObjectType();
 
-        Set<String> linksNotResolved = new HashSet<>();
         List<RichTextFragment> fragments = new ArrayList<>();
         for (Object fragment : toConvert.getValues()) {
             if (fragment instanceof String) {
-                String resolvedFragment = richTextLinkResolver.processFragment((String) fragment, linksNotResolved);
-                fragments.add(new RichTextFragmentImpl(resolvedFragment));
+                fragments.add(new RichTextFragmentImpl((String) fragment));
             } else {
                 log.debug("Fragment {} is a not a string but perhaps EntityModelData, skipping link resolving");
                 MediaItem mediaItem;

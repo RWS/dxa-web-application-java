@@ -10,7 +10,6 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.converter.RichTextLinkResolver;
 import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
 import com.sdl.dxa.tridion.mapping.converter.StringConverter;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -95,10 +94,7 @@ public class DefaultModelBuilderTest {
 
         // page.Meta
         assertEquals("000 Home", pageModel.getMeta().get("sitemapKeyword"));
-        assertEquals("resolved-link", pageModel.getMeta().get("tcmUri"));
-        assertEquals("", pageModel.getMeta().get("tcmUriNotResolve"));
         assertEquals("<p>text<a href=\"resolved-link\">text</a></p>", pageModel.getMeta().get("richText"));
-        assertEquals("<p>texttext</p>", pageModel.getMeta().get("richTextNotResolve"));
 
         // region (0). region (0) -> Header
         RegionModelData regionModelData = pageModelData.getRegions().get(0);
@@ -253,11 +249,6 @@ public class DefaultModelBuilderTest {
         }
 
         @Bean
-        public RichTextLinkResolver richTextLinkResolver() {
-            return new RichTextLinkResolver(linkResolver(), webRequestContext());
-        }
-
-        @Bean
         public LinkResolver linkResolver() {
             LinkResolver mock = mock(LinkResolver.class);
             when(mock.resolveLink(eq("tcm:1-2"), eq("1"), anyBoolean())).thenReturn("resolved-link");
@@ -291,7 +282,7 @@ public class DefaultModelBuilderTest {
 
         @Bean
         public StringConverter stringConverter() {
-            return new StringConverter(null, null);
+            return new StringConverter();
         }
 
         @Bean

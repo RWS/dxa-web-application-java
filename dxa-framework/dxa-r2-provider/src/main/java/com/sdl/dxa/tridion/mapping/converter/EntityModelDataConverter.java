@@ -35,6 +35,7 @@ public class EntityModelDataConverter implements SourceConverter<EntityModelData
             result = toConvert.getLinkUrl();
         } else if (Link.class.isAssignableFrom(objectType)) {
             Link link = new Link();
+            link.setId(toConvert.getId());
             link.setUrl(toConvert.getLinkUrl());
             result = link;
         } else {

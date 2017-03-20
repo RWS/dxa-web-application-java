@@ -40,7 +40,7 @@ public class EmbeddedFieldConverter implements FieldConverter {
                                 SemanticFieldDataProviderImpl semanticFieldDataProvider, ModelBuilderPipeline builder) throws FieldConverterException {
         final List<FieldSet> embeddedValues = field.getEmbeddedValues();
 
-        if (semanticField.isMultiValue()) {
+        if (semanticField.isMultiValue() && targetType.isCollection()) {
             final TypeDescriptor elementType = targetType.getElementTypeDescriptor();
 
             final List<Object> fieldValues = new ArrayList<>();

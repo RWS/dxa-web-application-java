@@ -38,6 +38,8 @@ public class EntityRequestDto {
 
         private String uriType = "tcm";
 
+        private boolean resolveLink = true;
+
         public EntityRequestDtoBuilder entityId(@NotNull String entityId) {
             Assert.isTrue(entityId.matches("\\d+-\\d+"), "Entity ID should be of format CompId-TemplateId");
             this.entityId = entityId;

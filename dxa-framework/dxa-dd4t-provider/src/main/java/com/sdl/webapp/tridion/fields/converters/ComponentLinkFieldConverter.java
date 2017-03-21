@@ -5,8 +5,10 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.Link;
+import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
 import com.sdl.webapp.tridion.mapping.ModelBuilderPipeline;
@@ -69,10 +71,11 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         String pageId = page.getId();
         final String url = linkResolver.resolveLink(pageId, null);
 
-        if (targetClass.isAssignableFrom(String.class)) {
+        if (targetClass == String.class) {
             return url;
-        } else if (targetClass.isAssignableFrom(Link.class)) {
+        } else if (Link.class.isAssignableFrom(targetClass)) {
             final Link link = new Link();
+            link.setId(String.valueOf(TcmUtils.getItemId(pageId)));
             link.setUrl(url);
             return link;
         } else {
@@ -85,18 +88,20 @@ public class ComponentLinkFieldConverter extends AbstractFieldConverter {
         String componentId = component.getId();
         final String url = linkResolver.resolveLink(componentId, null);
 
-        if (targetClass.isAssignableFrom(String.class)) {
+        if (String.class == targetClass) {
             return url;
-        } else if (targetClass.isAssignableFrom(Link.class)) {
+        } else if (Link.class.isAssignableFrom(targetClass)) {
             final Link link = new Link();
+            link.setId(String.valueOf(TcmUtils.getItemId(componentId)));
             link.setUrl(url);
             return link;
-        } else if (AbstractEntityModel.class.isAssignableFrom(targetClass)) {
+        } else if (EntityModel.class.isAssignableFrom(targetClass)) { //what we want should be assignable from what we want to have
             Localization localization = this.webRequestContext.getLocalization();
 
             try {
                 Object retval = builder.createEntityModel(component, localization);
-                if (targetClass.isAssignableFrom(retval.getClass())) {
+                // what we got should be assignable from what we expected
+                if (retval != null && targetClass.isAssignableFrom(retval.getClass())) {
                     return retval;
                 } else {
                     return null;

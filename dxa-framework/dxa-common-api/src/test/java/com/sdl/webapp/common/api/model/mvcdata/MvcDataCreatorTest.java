@@ -110,7 +110,7 @@ public class MvcDataCreatorTest {
 //        exception expected
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void shouldFailForWrongInitNameWhichIsNull() {
         //given
 

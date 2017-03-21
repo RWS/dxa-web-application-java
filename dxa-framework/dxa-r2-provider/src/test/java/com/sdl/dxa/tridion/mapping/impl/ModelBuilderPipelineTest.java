@@ -3,9 +3,9 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.google.common.collect.Lists;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -30,7 +30,6 @@ import java.util.Collections;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
@@ -42,7 +41,7 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 public class ModelBuilderPipelineTest {
 
-    private PageModelData pageModelData = new PageModelData("1", null, "title", null);
+    private PageModelData pageModelData = new PageModelData("1", null, "title", null, null);
 
     private EntityModelData entityModelData = new EntityModelData("1", "url", null, null, null);
 
@@ -71,9 +70,9 @@ public class ModelBuilderPipelineTest {
 
     @Before
     public void initMocks() throws DxaException {
-        when(firstPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class)))
+        when(firstPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class)))
                 .thenReturn(firstPageModel);
-        when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class), any(PageInclusion.class)))
+        when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class)))
                 .thenReturn(secondPageModel);
 
         when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
@@ -95,14 +94,14 @@ public class ModelBuilderPipelineTest {
     @Test
     public void shouldIterate_AllPageModelBuilders() {
         //given
-        PageInclusion pageInclusion = PageInclusion.INCLUDE;
+        PageRequestDto.PageInclusion pageInclusion = PageRequestDto.PageInclusion.INCLUDE;
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, pageInclusion);
+        PageModel pageModel = pipeline.createPageModel(pageModelData);
 
         //then
-        verify(firstPageModelBuilder).buildPageModel(isNull(PageModel.class), same(pageModelData), eq(pageInclusion));
-        verify(secondPageModelBuilder).buildPageModel(same(firstPageModel), same(pageModelData), eq(pageInclusion));
+        verify(firstPageModelBuilder).buildPageModel(isNull(PageModel.class), same(pageModelData));
+        verify(secondPageModelBuilder).buildPageModel(same(firstPageModel), same(pageModelData));
         assertSame(secondPageModel, pageModel);
     }
 
@@ -137,7 +136,7 @@ public class ModelBuilderPipelineTest {
         ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, PageInclusion.INCLUDE);
+        PageModel pageModel = pipeline.createPageModel(pageModelData);
         EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
         //then
@@ -152,7 +151,7 @@ public class ModelBuilderPipelineTest {
         pipeline.setPageModelBuilders(Collections.emptyList());
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData, PageInclusion.INCLUDE);
+        PageModel pageModel = pipeline.createPageModel(pageModelData);
         EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
         //then

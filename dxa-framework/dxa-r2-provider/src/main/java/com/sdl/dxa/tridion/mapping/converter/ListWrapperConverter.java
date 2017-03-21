@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
+import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
@@ -16,6 +17,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 
+@R2
 @Component
 public class ListWrapperConverter implements SourceConverter<ListWrapper> {
 

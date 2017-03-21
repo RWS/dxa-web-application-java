@@ -1,12 +1,13 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
+import com.sdl.dxa.R2;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.RichText;
+import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +18,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+@R2
 @Component
 @Slf4j
 public class StringConverter implements SourceConverter<String> {
@@ -40,11 +42,15 @@ public class StringConverter implements SourceConverter<String> {
         } else if (DateTime.class == objectType) {
             result = DateTime.parse(toConvert);
         } else if (Number.class.isAssignableFrom(objectType)) {
-            result = toNumber(toConvert, objectType);
+            result = toSpecificNumber(new BigDecimal(toConvert), objectType);
         } else if (Boolean.class == objectType) {
             result = Boolean.parseBoolean(toConvert);
         } else if (String.class == objectType) {
             result = toConvert;
+        } else if (Link.class.isAssignableFrom(objectType)) {
+            Link link = new Link();
+            link.setUrl(toConvert);
+            result = link;
         } else if (RichText.class.isAssignableFrom(objectType)) {
             result = new RichText(toConvert);
         } else {
@@ -52,29 +58,5 @@ public class StringConverter implements SourceConverter<String> {
         }
 
         return wrapIfNeeded(result, targetType);
-    }
-
-    @NotNull
-    private Number toNumber(String toConvert, Class<?> objectType) {
-        BigDecimal number = new BigDecimal(toConvert);
-        if (Float.class == objectType) {
-            return number.floatValue();
-        }
-        if (Double.class == objectType) {
-            return number.doubleValue();
-        }
-        if (Integer.class == objectType) {
-            return number.intValue();
-        }
-        if (Long.class == objectType) {
-            return number.longValue();
-        }
-        if (Byte.class == objectType) {
-            return number.byteValue();
-        }
-        if (Short.class == objectType) {
-            return number.shortValue();
-        }
-        return number;
     }
 }

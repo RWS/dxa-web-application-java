@@ -47,7 +47,7 @@ public class KeywordFieldConverter implements FieldConverter {
         Converter<?> converter = getConverter(targetClass);
 
         final List<Keyword> keywords = field.getKeywordValues();
-        return semanticField.isMultiValue() ?
+        return semanticField.isMultiValue() && targetType.isCollection() ?
                 collect(keywords, converter) :
                 keywords.isEmpty() ? null : converter.convert(toWrapper(keywords.get(0)));
     }

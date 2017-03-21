@@ -1,5 +1,7 @@
 package com.sdl.dxa.api.datamodel.model.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.List;
 
 /**
@@ -23,6 +25,7 @@ public interface DelegatesToList<T> {
      *
      * @return a wrapped list
      */
+    @JsonIgnore
     List<T> getValues();
 
     /**

@@ -14,13 +14,12 @@ import org.jetbrains.annotations.Nullable;
 public interface ModelBuilderPipeline {
 
     /**
-     * See {@link PageModelBuilder#buildPageModel(PageModel, PageModelData, PageInclusion)}.
+     * See {@link PageModelBuilder#buildPageModel(PageModel, PageModelData)}.
      *
      * @return Page Model or {@code null} if no builders are registered
      */
     @NotNull
-    PageModel createPageModel(@NotNull PageModelData modelData,
-                              @NotNull PageInclusion includePageRegions);
+    PageModel createPageModel(@NotNull PageModelData modelData);
 
     /**
      * See {@link EntityModelBuilder#buildEntityModel(EntityModel, EntityModelData, Class)}.

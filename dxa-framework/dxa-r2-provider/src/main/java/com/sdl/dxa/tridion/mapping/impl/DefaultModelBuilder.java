@@ -10,12 +10,9 @@ import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.PageInclusion;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
-import com.sdl.dxa.tridion.mapping.converter.RichTextLinkResolver;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
-import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
@@ -35,7 +32,6 @@ import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.util.TcmUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -44,14 +40,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 import static com.sdl.webapp.common.util.StringUtils.dashify;
-import static java.util.Optional.ofNullable;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
@@ -73,12 +66,6 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @Autowired
     private WebRequestContext webRequestContext;
-
-    @Autowired
-    private RichTextLinkResolver richTextLinkResolver;
-
-    @Autowired
-    private LinkResolver linkResolver;
 
     @Autowired
     private List<ConditionalEntityEvaluator> entityEvaluators;
@@ -177,20 +164,21 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     @Override
-    public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData, PageInclusion includePageRegions) {
+    public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
         PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
 
         fillViewModel(pageModel, modelData);
         pageModel.setId(modelData.getId());
-        pageModel.setMeta(resolveLinks(modelData.getMeta()));
+        pageModel.setMeta(modelData.getMeta());
         pageModel.setName(modelData.getTitle());
         pageModel.setTitle(getPageTitle(modelData));
+        pageModel.setUrl(modelData.getUrlPath());
+
+        //todo dxa2 refactor this, remove usage of deprecated method
+        webRequestContext.setPage(pageModel);
 
         if (modelData.getRegions() != null) {
-            List<RegionModelData> regions = includePageRegions == PageInclusion.EXCLUDE ?
-                    filterRegionsByIncludePageUrl(modelData) : modelData.getRegions();
-
-            regions.stream()
+            modelData.getRegions().stream()
                     .map(this::createRegionModel)
                     .forEach(pageModel.getRegions()::add);
         }
@@ -236,19 +224,6 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         viewModel.setHtmlClasses(modelData.getHtmlClasses());
     }
 
-    private Map<String, String> resolveLinks(Map<String, String> mapToResolve) {
-        if (mapToResolve == null) {
-            return Collections.emptyMap();
-        }
-
-        return mapToResolve.entrySet().stream()
-                .collect(Collectors.toMap(Map.Entry::getKey, o ->
-                        TcmUtils.isTcmUri(o.getValue()) ?
-                                ofNullable(linkResolver.resolveLink(o.getValue(), webRequestContext.getLocalization().getId(), true))
-                                        .orElse("") :
-                                richTextLinkResolver.processFragment(o.getValue())));
-    }
-
     private String getPageTitle(PageModelData modelData) {
         Localization localization = webRequestContext.getLocalization();
         String separator = localization.getResource("core.pageTitleSeparator");
@@ -259,7 +234,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     private List<RegionModelData> filterRegionsByIncludePageUrl(PageModelData modelData) {
         return modelData.getRegions().stream()
-                .filter(regionModelData -> isBlank(regionModelData.getIncludePageUrl()))
+                .filter(regionModelData -> isBlank(regionModelData.getIncludePageId()))
                 .collect(Collectors.toList());
     }
 

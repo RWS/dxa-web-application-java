@@ -2,7 +2,6 @@ package com.sdl.webapp.tridion.navigation;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -15,7 +14,6 @@ import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.api.navigation.OnDemandNavigationProvider;
 import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
-import com.sdl.webapp.common.util.LocalizationUtils;
 import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
 import lombok.NonNull;
@@ -42,11 +40,12 @@ import static com.google.common.collect.Collections2.filter;
 import static com.google.common.collect.Collections2.transform;
 import static com.google.common.collect.Sets.difference;
 import static com.google.common.collect.Sets.newHashSet;
+import static com.sdl.dxa.common.util.PathUtils.isHomePath;
+import static com.sdl.dxa.common.util.PathUtils.isIndexPath;
+import static com.sdl.dxa.common.util.PathUtils.isWithSequenceDigits;
+import static com.sdl.dxa.common.util.PathUtils.stripDefaultExtension;
+import static com.sdl.dxa.common.util.PathUtils.stripIndexPath;
 import static com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder.parse;
-import static com.sdl.webapp.common.util.LocalizationUtils.isHomePath;
-import static com.sdl.webapp.common.util.LocalizationUtils.isIndexPath;
-import static com.sdl.webapp.common.util.LocalizationUtils.stripDefaultExtension;
-import static com.sdl.webapp.common.util.LocalizationUtils.stripIndexPath;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.PAGE;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
@@ -83,7 +82,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     }
 
     @Override
-    @Cacheable(value = "tridion", key = "localization.id")
+    @Cacheable(value = "default")
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
         String taxonomyId = getNavigationTaxonomyIdInternal(localization);
         if (isFallbackRequired(taxonomyId, localization)) {
@@ -232,13 +231,11 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     protected abstract List<SitemapItem> collectAncestorsForPage(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization);
 
     String findIndexPageUrl(@NonNull List<SitemapItem> pageSitemapItems) {
-        //noinspection StaticPseudoFunctionalStyleMethod
-        SitemapItem index = Iterables.find(pageSitemapItems, new Predicate<SitemapItem>() {
-            @Override
-            public boolean apply(SitemapItem input) {
-                return isIndexPath(input.getUrl());
-            }
-        }, null);
+
+        SitemapItem index = pageSitemapItems.stream()
+                .filter(input -> isIndexPath(input.getUrl()))
+                .findFirst()
+                .orElse(null);
 
         log.trace("Index page is {} in {}", index, pageSitemapItems);
         return index != null ? stripIndexPath(index.getUrl()) : null;
@@ -275,7 +272,7 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     }
 
     private boolean isVisibleItem(String pageName, String pageUrl) {
-        return LocalizationUtils.isWithSequenceDigits(pageName) && !isNullOrEmpty(pageUrl);
+        return isWithSequenceDigits(pageName) && !isNullOrEmpty(pageUrl);
     }
 
     private NavigationLinks processNavigationLinks(String requestPath, Localization localization,
@@ -346,18 +343,16 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
         boolean hasHome = false;
         while (sitemapItem.getParent() != null) {
             breadcrumbs.add(sitemapItem);
-            hasHome = isHomePath(sitemapItem.getUrl(), localization);
+            hasHome = isHomePath(sitemapItem.getUrl(), localization.getPath());
             sitemapItem = sitemapItem.getParent();
         }
 
         // The Home TaxonomyNode/Keyword may be a top-level sibling instead of an ancestor
         if (!hasHome) {
-            SitemapItem item = Iterables.find(sitemapItem.getItems(), new Predicate<SitemapItem>() {
-                @Override
-                public boolean apply(SitemapItem input) {
-                    return isHomePath(input.getUrl(), localization);
-                }
-            }, null);
+            SitemapItem item = sitemapItem.getItems().stream()
+                    .filter(input -> isHomePath(input.getUrl(), localization.getPath()))
+                    .findFirst()
+                    .orElse(null);
             if (item != null) {
                 breadcrumbs.add(item);
             }
@@ -410,12 +405,10 @@ public abstract class AbstractDynamicNavigationProvider implements NavigationPro
     private void mergeSubtrees(@NonNull SitemapItem nodeToMerge, @NonNull SitemapItem mergedNode) {
 
         for (final SitemapItem childNode : nodeToMerge.getItems()) {
-            SitemapItem childKeywordToMergeInto = Iterables.find(mergedNode.getItems(), new Predicate<SitemapItem>() {
-                @Override
-                public boolean apply(SitemapItem input) {
-                    return Objects.equals(childNode.getId(), input.getId());
-                }
-            }, null);
+            SitemapItem childKeywordToMergeInto = mergedNode.getItems().stream()
+                    .filter(input -> Objects.equals(childNode.getId(), input.getId()))
+                    .findFirst().orElse(null);
+
             if (childKeywordToMergeInto == null) {
                 mergedNode.addItem(childNode);
             } else {

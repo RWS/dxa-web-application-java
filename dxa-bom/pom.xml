@@ -92,7 +92,7 @@
         <mockito-version>1.10.19</mockito-version>
 
         <!-- Spring -->
-        <spring.version>4.3.5.RELEASE</spring.version>
+        <spring.version>4.3.7.RELEASE</spring.version>
         <spring-security.version>4.1.4.RELEASE</spring-security.version>
 
         <jsoup.version>1.7.3</jsoup.version>
@@ -117,7 +117,17 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-common</artifactId>
+                <version>${dxa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-common-api</artifactId>
+                <version>${dxa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-compatible</artifactId>
                 <version>${dxa.version}</version>
             </dependency>
             <dependency>

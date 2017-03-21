@@ -1,6 +1,7 @@
 {
   "Id": "640",
   "Title": "Home",
+  "UrlPath": "/autotest-r2/index",
   "Meta": {
     "twitter:card": "summary",
     "og:title": "Home",
@@ -10,7 +11,7 @@
   "Regions": [
     {
       "Name": "Header",
-      "IncludePageUrl": "/system/include/header.html",
+      "IncludePageId": "1234",
       "MvcData": {
         "ViewName": "Header"
       },
@@ -42,6 +43,32 @@
           "Content": {
             "Heading": "Heading",
             "Ending": "Ending",
+            "Strings": {
+              "$type": "String[]",
+              "$values": [
+                "string_1",
+                "string_2"
+              ]
+            },
+            "Dates": {
+              "$type": "Date[]",
+              "$values": [
+                "1970-12-16T11:34:56.000+0000"
+              ]
+            },
+            "DateTimes": {
+              "$type": "DateTime[]",
+              "$values": [
+                "1970-12-16T11:34:56.000+0000"
+              ]
+            },
+            "Floats": {
+              "$type": "Float[]",
+              "$values": [
+                666.666,
+                42
+              ]
+            },
             "itemListElement": {
               "$type": "ContentModelData[]",
               "$values": [
@@ -111,7 +138,7 @@
     },
     {
       "Name": "Footer",
-      "IncludePageUrl": "/system/include/footer.html",
+      "IncludePageId": "1235",
       "MvcData": {
         "ViewName": "Footer"
       }

@@ -10,12 +10,15 @@ import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.type.TypeFactory.unknownType;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
@@ -41,13 +44,16 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
     private static final Map<String, JavaType> BASIC_MAPPING = new HashMap<>();
 
     static {
-        for (Class<?> aClass : new Class<?>[]{
-                Boolean.class, Character.class, Byte.class, Short.class,
-                Integer.class, Long.class, Float.class, Double.class, String.class
-        }) {
+        Stream.of(Boolean.class, Character.class, Byte.class, Short.class, Integer.class, Long.class, Float.class,
+                Double.class, String.class).forEach(aClass -> {
             addMapping(aClass.getSimpleName(), aClass);
             addMapping(aClass.getSimpleName() + LIST_MARKER, ListWrapper.class, aClass);
-        }
+        });
+
+        Stream.of(Date.class, DateTime.class).forEach(aClass -> {
+            addMapping(aClass.getSimpleName(), String.class);
+            addMapping(aClass.getSimpleName() + LIST_MARKER, ListWrapper.class, String.class);
+        });
 
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(JsonTypeName.class));
@@ -105,14 +111,19 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
         }
 
         if (value instanceof ListWrapper && !((ListWrapper) value).empty()) {
-            String id = ((ListWrapper) value).get(0).getClass().getSimpleName() + LIST_MARKER;
+            String simpleName = ((ListWrapper) value).get(0).getClass().getSimpleName();
+            String id = getMappingName(simpleName) + LIST_MARKER;
             log.trace("Value is instance of ListWrapper without an explicit implementation, value = '{}', id = '{}'", id);
             return id;
         }
 
-        String id = value.getClass().getSimpleName();
+        String id = getMappingName(value.getClass().getSimpleName());
         log.trace("Value is unknown class without annotation, value = '{}', id = '{}'", id);
         return id;
+    }
+
+    private String getMappingName(String simpleName) {
+        return BASIC_MAPPING.containsKey(simpleName) ? BASIC_MAPPING.get(simpleName).getRawClass().getSimpleName() : simpleName;
     }
 
     @Override

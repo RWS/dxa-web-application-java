@@ -2,6 +2,7 @@ package com.sdl.webapp.tridion.navigation;
 
 
 import com.google.common.base.Function;
+import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.web.api.taxonomies.TaxonomyRelationManager;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -9,7 +10,6 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
-import com.sdl.webapp.common.util.LocalizationUtils;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
 import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
@@ -36,7 +36,6 @@ import java.util.Set;
 
 import static com.google.common.collect.Collections2.transform;
 
-@SuppressWarnings("Duplicates")
 @Service
 @Primary
 @Slf4j
@@ -187,7 +186,7 @@ public class DynamicNavigationProvider extends AbstractDynamicNavigationProvider
         }
 
         for (SitemapItem child : children) {
-            child.setTitle(LocalizationUtils.removeSequenceFromPageTitle(child.getTitle()));
+            child.setTitle(PathUtils.removeSequenceFromPageTitle(child.getTitle()));
         }
 
         return createTaxonomyNodeFromKeyword(toDto(keyword), taxonomyId, taxonomyNodeUrl, new LinkedHashSet<>(children));

@@ -1,16 +1,14 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
+import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
-import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
 import lombok.extern.slf4j.Slf4j;
@@ -24,15 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+@R2
 @Service
 @Slf4j
 public class SourceConverterFactory {
-
-    @Autowired
-    private WebRequestContext webRequestContext;
-
-    @Autowired
-    private LinkResolver linkResolver;
 
     private Map<Class<?>, SourceConverter<?>> converters = new HashMap<>();
 
@@ -64,7 +57,7 @@ public class SourceConverterFactory {
         return sourceConverter;
     }
 
-    static TypeInformation getTypeInformation(TypeDescriptor targetType) {
+    private static TypeInformation getTypeInformation(TypeDescriptor targetType) {
         Class<?> objectType = targetType.getObjectType();
 
         Class<? extends Collection> collectionType = null;
@@ -85,8 +78,7 @@ public class SourceConverterFactory {
     public Object selfLink(Object toLink, TypeDescriptor targetType, ModelBuilderPipeline pipeline) throws DxaException {
         Class<?> objectType = getClassForSelfLinking(toLink, targetType);
 
-        String itemId = toLink instanceof EntityModelData ? ((EntityModelData) toLink).getId() : ((PageModelData) toLink).getId();
-        String url = resolveLink(itemId, webRequestContext, linkResolver);
+        String url = toLink instanceof EntityModelData ? ((EntityModelData) toLink).getLinkUrl() : ((PageModelData) toLink).getUrlPath();
         if (objectType == String.class) {
             return url;
         } else if (Link.class.isAssignableFrom(objectType)) {
@@ -119,10 +111,5 @@ public class SourceConverterFactory {
         }
 
         return objectType;
-    }
-
-    static String resolveLink(String itemId, WebRequestContext webRequestContext, LinkResolver linkResolver) {
-        String publicationId = webRequestContext.getLocalization().getId();
-        return linkResolver.resolveLink(TcmUtils.buildTcmUri(publicationId, itemId), publicationId);
     }
 }

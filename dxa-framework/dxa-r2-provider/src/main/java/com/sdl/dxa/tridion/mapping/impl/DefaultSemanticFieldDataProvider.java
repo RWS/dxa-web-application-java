@@ -3,7 +3,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
-import com.sdl.dxa.api.datamodel.model.util.CanWrapData;
+import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
@@ -63,11 +63,11 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
 
     @Nullable
     private static DefaultSemanticFieldDataProvider _getFor(@NotNull Object model, SemanticSchema semanticSchema) {
-        if (!(model instanceof CanWrapData)) {
+        if (!(model instanceof CanWrapContentAndMetadata)) {
             log.debug("Type {} is not supported by embedded SemanticFieldDataProvider", model.getClass());
             return null;
         }
-        return new DefaultSemanticFieldDataProvider(((CanWrapData) model).getDataWrapper(), semanticSchema);
+        return new DefaultSemanticFieldDataProvider(((CanWrapContentAndMetadata) model).getDataWrapper(), semanticSchema);
     }
 
     @Nullable
@@ -183,8 +183,8 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
         Object field = data.get(fieldPath.getHead());
         if (fieldPath.hasTail()) {
             if (field instanceof ListWrapper) {
-                log.info("Field with path {} has multiple values {}", fieldPath, field);
                 field = ((ListWrapper) field).get(0);
+                log.debug("Field with path {} has multiple values, getting first {}", fieldPath, field);
             }
 
             return findField((ContentModelData) field, fieldPath.getTail());

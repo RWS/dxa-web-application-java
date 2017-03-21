@@ -11,7 +11,7 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
-import com.sdl.webapp.common.util.LocalizationUtils.TryFindPage;
+import com.sdl.webapp.common.util.LocalizationUtils;
 import com.sdl.webapp.common.util.TcmUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.dd4t.contentmodel.Component;
@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static com.sdl.dxa.common.util.PathUtils.stripDefaultExtension;
 import static java.util.Collections.singletonList;
 
 
@@ -81,8 +82,8 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
     }
 
     @Override
-    protected TryFindPage<PageModel> _loadPageCallback() {
-        return (path, publicationId) -> {
+    protected PageModel _loadPage(String _path, Localization localization) throws ContentProviderException {
+        return LocalizationUtils.findPageByPath(_path, localization, (path, publicationId) -> {
             final org.dd4t.contentmodel.Page genericPage;
             try {
                 synchronized (LOCK) {
@@ -100,14 +101,27 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
                         "] " + path, e);
             }
 
-            return modelBuilderPipeline.createPageModel(genericPage, webRequestContext.getLocalization(), DefaultContentProvider.this);
-        };
+            PageModel pageModel = modelBuilderPipeline.createPageModel(genericPage, webRequestContext.getLocalization(), DefaultContentProvider.this);
+            if (pageModel != null) {
+                pageModel.setUrl(stripDefaultExtension(path));
+                webRequestContext.setPage(pageModel);
+            }
+            return pageModel;
+        });
     }
 
     @NotNull
     @Override
-    protected EntityModel _getEntityModel(String componentUri, String templateUri) throws ContentProviderException {
+    protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
+        String[] idParts = componentId.split("-");
+        if (idParts.length != 2) {
+            throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", componentId));
+        }
+
+        String componentUri = TcmUtils.buildTcmUri(localization.getId(), idParts[0]);
+        String templateUri = TcmUtils.buildTemplateTcmUri(localization.getId(), idParts[1]);
+
         try {
             final ComponentPresentation componentPresentation;
             synchronized (LOCK) {

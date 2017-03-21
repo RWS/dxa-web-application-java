@@ -1,13 +1,14 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.sdl.dxa.api.datamodel.model.util.CanWrapData;
+import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.Map;
 
@@ -15,8 +16,9 @@ import java.util.Map;
 @JsonTypeName
 @ToString
 @NoArgsConstructor
-@Getter
-public class EntityModelData extends ViewModelData implements CanWrapData {
+@Data
+@Accessors(chain = true)
+public class EntityModelData extends ViewModelData implements CanWrapContentAndMetadata {
 
     private String id;
 
@@ -65,5 +67,18 @@ public class EntityModelData extends ViewModelData implements CanWrapData {
                 return EntityModelData.this;
             }
         };
+    }
+
+    @Override
+    public ViewModelData copyFrom(ViewModelData other) {
+        super.copyFrom(other);
+
+        EntityModelData emd = (EntityModelData) other;
+        this.id = emd.id;
+        this.linkUrl = emd.linkUrl;
+        this.content = emd.content;
+        this.binaryContent = emd.binaryContent;
+        this.externalContent = emd.externalContent;
+        return this;
     }
 }

@@ -1,12 +1,12 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.PageInclusion;
+import com.sdl.dxa.tridion.rest.ModelService;
 import com.sdl.web.api.content.BinaryContentRetriever;
 import com.sdl.web.api.dynamic.DynamicMetaRetriever;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -16,30 +16,19 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
-import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
-import com.sdl.webapp.common.util.LocalizationUtils.TryFindPage;
-import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.mapping.AbstractDefaultContentProvider;
-import com.tridion.broker.StorageException;
-import com.tridion.broker.querying.Query;
-import com.tridion.broker.querying.sorting.SortParameter;
-import com.tridion.content.PageContentFactory;
-import com.tridion.data.CharacterData;
-import com.tridion.dcp.ComponentPresentation;
-import com.tridion.dcp.ComponentPresentationFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 
 @R2
 @Service("r2ContentProvider")
@@ -50,8 +39,7 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
     private ModelBuilderPipeline builderPipeline;
 
     @Autowired
-    @Qualifier("dxaR2ObjectMapper")
-    private ObjectMapper objectMapper;
+    private ModelService modelService;
 
     public DefaultContentProvider(WebRequestContext webRequestContext,
                                   LinkResolver linkResolver,
@@ -62,52 +50,22 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
     }
 
     @Override
-    protected TryFindPage<PageModel> _loadPageCallback() {
-        return (path, publicationId) -> {
-            try {
-                SimpleBrokerQuery simpleBrokerQuery = SimpleBrokerQuery.builder().path(path).publicationId(publicationId).build();
-                simpleBrokerQuery.setResultLimit(1);
-                Query query = buildQuery(simpleBrokerQuery);
-                query.addSorting(new SortParameter(SortParameter.ITEMS_URL, SortParameter.DESCENDING));
-                String[] result = query.executeQuery();
-
-                log.debug("Requesting publication {}, path {}, result is {}", publicationId, path, result);
-                switch (result.length) {
-                    case 1:
-                        CharacterData pageContent = new PageContentFactory().getPageContent(publicationId, TcmUtils.getItemId(result[0]));
-                        PageModelData modelData = objectMapper.readValue(pageContent.getString(), PageModelData.class);
-                        return builderPipeline.createPageModel(modelData, PageInclusion.INCLUDE);
-                    case 0:
-                        log.debug("Page not found, publication id {}, path {}", publicationId, path);
-                        return null;
-                    default:
-                        throw new ContentProviderException("Got " + result.length + " pages for path " + path);
-                }
-            } catch (StorageException | IOException e) {
-                log.warn("Issue while getting page content, publication id {}, path {}", publicationId, path, e);
-                throw new ContentProviderException("Issue while deserializing page content for publication id" + publicationId + ", path " + path, e);
-            }
-        };
+    protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
+        PageModelData modelData = modelService.loadPageModel(PageRequestDto.builder()
+                .path(path)
+                .includePages(INCLUDE)
+                .build());
+        return builderPipeline.createPageModel(modelData);
     }
 
     @NotNull
     @Override
-    protected EntityModel _getEntityModel(String componentUri, String templateUri) throws ContentProviderException {
+    protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
+        EntityModelData modelData = modelService.loadEntity(componentId);
         try {
-            ComponentPresentationFactory componentPresentationFactory = new ComponentPresentationFactory(componentUri);
-            ComponentPresentation componentPresentation = componentPresentationFactory.getComponentPresentation(componentUri, templateUri);
-
-            if (componentPresentation == null) {
-                String message = "Cannot find a CP for componentUri" + componentUri + ", templateUri" + templateUri;
-                log.warn(message);
-                throw new DxaItemNotFoundException(message);
-            }
-            EntityModelData entityModelData = objectMapper.readValue(componentPresentation.getContent(), EntityModelData.class);
-            return builderPipeline.createEntityModel(entityModelData);
-        } catch (IOException e) {
-            throw new ContentProviderException("Issue while deserializing entity content for componentUri" + componentUri + ", templateUri", e);
+            return builderPipeline.createEntityModel(modelData);
         } catch (DxaException e) {
-            throw new ContentProviderException("Cannot build the entity model for componentUri" + componentUri + ", templateUri", e);
+            throw new ContentProviderException("Cannot build the entity model for componentId" + componentId, e);
         }
     }
 

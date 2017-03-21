@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.util;
 
-import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
@@ -13,17 +12,33 @@ import java.util.regex.Pattern;
 @Slf4j
 public final class TcmUtils {
 
-    private static final int PUBLICATION_ITEM_TYPE = 1;
+    public static final int PUBLICATION_ITEM_TYPE = 1;
 
-    private static final int TEMPLATE_ITEM_TYPE = 32;
+    public static final int FOLDER_ITEM_TYPE = 2;
 
-    private static final int PAGE_ITEM_TYPE = 64;
+    public static final int STRUCTURE_GROUP_ITEM_TYPE = 4;
+
+    public static final int SCHEMA_ITEM_TYPE = 8;
+
+    public static final int COMPONENT_ITEM_TYPE = 16;
+
+    public static final int COMPONENT_TEMPLATE_ITEM_TYPE = 32;
+
+    public static final int PAGE_ITEM_TYPE = 64;
+
+    public static final int PAGE_TEMPLATE_ITEM_TYPE = 128;
+
+    public static final int TARGET_GROUP_ITEM_TYPE = 256;
+
+    public static final int CATEGORY_ITEM_TYPE = 512;
+
+    public static final int KEYWORD_ITEM_TYPE = 1024;
 
     private static final String TCM_S_S = "tcm:%s-%s";
 
     private static final String TCM_S_S_S = "tcm:%s-%s-%s";
 
-    private static final Pattern PATTERN = Pattern.compile("tcm:(\\d+)-(\\d+)(-(\\d+))?");
+    private static final Pattern PATTERN = Pattern.compile("tcm:(?<publicationId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?");
 
     private TcmUtils() {
     }
@@ -53,6 +68,13 @@ public final class TcmUtils {
     }
 
     /**
+     * See {@link #buildTemplateTcmUri(String, String)}.
+     */
+    public static String buildTemplateTcmUri(int publicationId, int itemId) {
+        return buildTemplateTcmUri(String.valueOf(publicationId), String.valueOf(itemId));
+    }
+
+    /**
      * Build a template TCM URI looking like <code>tcm:PUB_ID-ITEM_ID-32</code>.
      *
      * @param publicationId publication ID
@@ -60,7 +82,7 @@ public final class TcmUtils {
      * @return TCM URI for template
      */
     public static String buildTemplateTcmUri(String publicationId, String itemId) {
-        return String.format(TCM_S_S_S, publicationId, itemId, TEMPLATE_ITEM_TYPE);
+        return String.format(TCM_S_S_S, publicationId, itemId, COMPONENT_TEMPLATE_ITEM_TYPE);
     }
 
     /**
@@ -72,6 +94,24 @@ public final class TcmUtils {
      */
     public static String buildPageTcmUri(String publicationId, String itemId) {
         return String.format(TCM_S_S_S, publicationId, itemId, PAGE_ITEM_TYPE);
+    }
+
+    /**
+     * See {@link #buildKeywordTcmUri(String, String)}.
+     */
+    public static String buildKeywordTcmUri(int publicationId, int itemId) {
+        return buildKeywordTcmUri(String.valueOf(publicationId), String.valueOf(itemId));
+    }
+
+    /**
+     * Build a template TCM URI looking like <code>tcm:PUB_ID-ITEM_ID-1024</code>.
+     *
+     * @param publicationId publication ID
+     * @param itemId        item ID
+     * @return TCM URI for keyword
+     */
+    public static String buildKeywordTcmUri(String publicationId, String itemId) {
+        return String.format(TCM_S_S_S, publicationId, itemId, KEYWORD_ITEM_TYPE);
     }
 
     /**
@@ -106,23 +146,38 @@ public final class TcmUtils {
     }
 
     /**
-     * Extracts publication ID from a valid TCM URI.
+     * Extracts item type from a valid TCM URI.
      *
      * @param tcmUri tcm uri to process
-     * @return publication ID or <code>-1</code> if URI is not valid or null
+     * @return item type ID or <code>-1</code> if URI is not valid or null
      */
-    public static int getPublicationId(String tcmUri) {
-        return extractGroupFromTcm(tcmUri, 1);
+    public static int getItemType(String tcmUri) {
+        int itemType = extractGroupFromTcm(tcmUri, "itemType");
+        return itemType == -2 ? COMPONENT_ITEM_TYPE : itemType;
     }
 
-    private static int extractGroupFromTcm(String tcmUri, int group) {
+    private static int extractGroupFromTcm(String tcmUri, String group) {
         int failed = -1;
         if (tcmUri == null) {
             return failed;
         }
 
         Matcher matcher = PATTERN.matcher(tcmUri);
-        return matcher.matches() ? Integer.parseInt(matcher.group(group)) : failed;
+        if (matcher.matches()) {
+            String match = matcher.group(group);
+            return match != null ? Integer.parseInt(match) : -2;
+        }
+        return failed;
+    }
+
+    /**
+     * Extracts publication ID from a valid TCM URI.
+     *
+     * @param tcmUri tcm uri to process
+     * @return publication ID or <code>-1</code> if URI is not valid or null
+     */
+    public static int getPublicationId(String tcmUri) {
+        return extractGroupFromTcm(tcmUri, "publicationId");
     }
 
     /**
@@ -145,7 +200,7 @@ public final class TcmUtils {
      * @return item ID or <code>-1</code> if URI is not valid or null
      */
     public static int getItemId(String tcmUri) {
-        return extractGroupFromTcm(tcmUri, 2);
+        return extractGroupFromTcm(tcmUri, "itemId");
     }
 
     /**
@@ -194,11 +249,11 @@ public final class TcmUtils {
     /**
      * Returns if the passed string is TMC URI.
      *
-     * @param tcmUri string to check
+     * @param tcmUri object to check
      * @return whether the string is TCM URI
      */
-    public static boolean isTcmUri(@Nullable String tcmUri) {
-        return tcmUri != null && PATTERN.matcher(tcmUri).matches();
+    public static boolean isTcmUri(@Nullable Object tcmUri) {
+        return tcmUri != null && PATTERN.matcher(String.valueOf(tcmUri)).matches();
     }
 
     /**
@@ -218,7 +273,7 @@ public final class TcmUtils {
         }
 
         /**
-         * Type of a {@link SitemapItem} for taxonomy-based navigation.
+         * Type of item for taxonomy-based navigation.
          */
         public enum SitemapItemType {
             PAGE, KEYWORD

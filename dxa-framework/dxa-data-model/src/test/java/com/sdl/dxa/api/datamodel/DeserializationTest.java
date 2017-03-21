@@ -26,6 +26,7 @@ import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -53,6 +54,7 @@ public class DeserializationTest {
         //then
         assertEquals("640", page.getId());
         assertEquals("Home", page.getTitle());
+        assertEquals("/autotest-r2/index", page.getUrlPath());
 
         assertThat(page.getMeta(), hasEntry("twitter:card", "summary"));
         assertThat(page.getMeta(), hasEntry("og:title", "Home"));
@@ -73,7 +75,7 @@ public class DeserializationTest {
         ListIterator<RegionModelData> iterator = regions.listIterator();
         RegionModelData region = iterator.next();
         assertEquals("Header", region.getName());
-        assertEquals("/system/include/header.html", region.getIncludePageUrl());
+        assertEquals("1234", region.getIncludePageId());
         assertEquals("Header", region.getMvcData().getViewName());
 
         assertTrue(region.getRegions().size() == 2);
@@ -84,7 +86,7 @@ public class DeserializationTest {
 
         region = iterator.next();
         assertEquals("Footer", region.getName());
-        assertEquals("/system/include/footer.html", region.getIncludePageUrl());
+        assertEquals("1235", region.getIncludePageId());
         assertEquals("Footer", region.getMvcData().getViewName());
 
         assertFalse(iterator.hasNext());
@@ -112,6 +114,25 @@ public class DeserializationTest {
         assertEquals("Heading", entity.getContent().get("Heading"));
         assertEquals("Ending", entity.getContent().get("Ending"));
 
+        //noinspection unchecked
+        ListWrapper<String> strings = (ListWrapper<String>) entity.getContent().get("Strings");
+        assertEquals("string_1", strings.get(0));
+        assertEquals("string_2", strings.get(1));
+
+        //noinspection unchecked
+        ListWrapper<Float> floats = (ListWrapper<Float>) entity.getContent().get("Floats");
+        assertEquals(666.666f, floats.get(0), 0.0f);
+        assertEquals(42f, floats.get(1), 0.0f);
+
+        String dateTimeStr = "1970-12-16T11:34:56.000+0000";
+        //noinspection unchecked
+        ListWrapper<String> dates = (ListWrapper<String>) entity.getContent().get("Dates");
+        assertEquals(dateTimeStr, dates.get(0));
+
+        //noinspection unchecked
+        ListWrapper<String> dateTimes = (ListWrapper<String>) entity.getContent().get("DateTimes");
+        assertEquals(dateTimeStr, dateTimes.get(0));
+
         assertTrue(entity.getContent().get("itemListElement") instanceof ListWrapper.ContentModelDataListWrapper);
         List<ContentModelData> cmds = ((ListWrapper.ContentModelDataListWrapper) entity.getContent().get("itemListElement")).getValues();
         assertEquals("subheading", cmds.get(0).get("subheading"));
@@ -133,7 +154,7 @@ public class DeserializationTest {
         assertEquals("756", rtd.get(0).getAndCast(1, EntityModelData.class).getId());
 
         assertTrue(cmds.size() == 2);
-        assertTrue(entity.getContent().size() == 3);
+        assertTrue(entity.getContent().size() == 7);
 
         assertEquals("XpmValue1", entity.getXpmMetadata().get("XpmKey1"));
         assertEquals("XpmValue2", entity.getXpmMetadata().get("XpmKey2"));
@@ -173,8 +194,9 @@ public class DeserializationTest {
                 Lists.newArrayList(new KeywordModelData("id", "desc", "key", "taxId", "title"))));
         rootCmd.put("cmd", innerCmd);
 
+        Date date = new Date();
         ExternalContentData ecd = new ExternalContentData("displayTypeId", "id", "", rootCmd);
-        DeserializeTrip trip = new DeserializeTrip(ecd, new DeserializeTrip(ecd, null, null), null);
+        DeserializeTrip trip = new DeserializeTrip(ecd, date, new DeserializeTrip(ecd, null, null, null), null);
 
         //when
         String serialized = objectMapper.writeValueAsString(trip);
@@ -185,7 +207,7 @@ public class DeserializationTest {
 
         //when
         String serialized2 = objectMapper.writeValueAsString(deserialized);
-        DeserializeTrip deserialized2 = objectMapper.readValue(serialized, DeserializeTrip.class);
+        DeserializeTrip deserialized2 = objectMapper.readValue(serialized2, DeserializeTrip.class);
 
         //then
         assertEquals(serialized2, serialized);
@@ -200,6 +222,8 @@ public class DeserializationTest {
     private static class DeserializeTrip {
 
         public ExternalContentData externalContentData;
+
+        public Date date;
 
         public DeserializeTrip deserializeTrip;
 

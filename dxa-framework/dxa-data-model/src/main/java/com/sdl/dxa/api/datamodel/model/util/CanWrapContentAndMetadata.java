@@ -9,7 +9,7 @@ import com.sdl.dxa.api.datamodel.model.ViewModelData;
  * as an abstraction for {@link ContentModelData} and {@link ViewModelData} that hides a real {@code content} and {@code metadata} objects.
  */
 @FunctionalInterface
-public interface CanWrapData {
+public interface CanWrapContentAndMetadata {
 
     /**
      * Returns an instance of data wrapper for the current model.

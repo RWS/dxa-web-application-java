@@ -1,10 +1,11 @@
 package com.sdl.dxa.api.datamodel.model;
 
+import com.sdl.dxa.api.datamodel.model.util.CanCopyValues;
+import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.Map;
 
@@ -14,12 +15,11 @@ import java.util.Map;
  * the mapping logic os a server-side that made some sense in its original purpose but is not needed in DXA
  * since all the schemas and types are known out of the box.</p>
  */
-@ToString
-@EqualsAndHashCode
+@Data
+@Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-public abstract class ViewModelData {
+public abstract class ViewModelData implements CanCopyValues<ViewModelData>, CanWrapContentAndMetadata {
 
     private String schemaId;
 
@@ -32,4 +32,15 @@ public abstract class ViewModelData {
     private Map<String, Object> extensionData;
 
     private MvcModelData mvcData;
+
+    @Override
+    public ViewModelData copyFrom(ViewModelData other) {
+        this.schemaId = other.schemaId;
+        this.htmlClasses = other.htmlClasses;
+        this.xpmMetadata = other.xpmMetadata;
+        this.metadata = other.metadata;
+        this.extensionData = other.extensionData;
+        this.mvcData = other.mvcData;
+        return this;
+    }
 }

@@ -13,7 +13,12 @@ class Property {
         split.each {
             String[] ab = it.split('->')
             ab[0].split(',').each {
-                valueMapping.put it.trim(), ab[1].trim()
+                def key = it.trim()
+                def value = key == '$self$' ? key : ab[1].trim()
+                if (value == '$null$') {
+                    value = null
+                } // mapping to null value
+                valueMapping.put key, value
             }
         }
         this
@@ -44,6 +49,18 @@ class Property {
     //endregion
 
     String deriveValue(String value) {
-        this.valueMapping ? this.valueMapping.get(value) : value
+        if (value == null) {
+            return null
+        }
+        if (this.valueMapping) {
+            if (this.valueMapping.containsKey(value)) {
+                return this.valueMapping.get(value)
+            } else if (this.valueMapping.containsKey('$self$')) {
+                return value
+            }
+            throw new IllegalArgumentException("Cannot map $value for property $name")
+        } else {
+            return value
+        }
     }
 }

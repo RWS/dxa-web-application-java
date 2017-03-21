@@ -10,8 +10,6 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.PageInclusion;
-import com.sdl.dxa.tridion.mapping.converter.RichTextLinkResolver;
 import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
 import com.sdl.dxa.tridion.mapping.converter.StringConverter;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -84,7 +82,7 @@ public class DefaultModelBuilderTest {
         PageModelData pageModelData = objectMapper.readValue(new ClassPathResource("home_page_json_full.json").getFile(), PageModelData.class);
 
         //when
-        PageModel pageModel = modelBuilder.buildPageModel(null, pageModelData, PageInclusion.INCLUDE);
+        PageModel pageModel = modelBuilder.buildPageModel(null, pageModelData);
 
         //then
         // page.Id
@@ -96,10 +94,7 @@ public class DefaultModelBuilderTest {
 
         // page.Meta
         assertEquals("000 Home", pageModel.getMeta().get("sitemapKeyword"));
-        assertEquals("resolved-link", pageModel.getMeta().get("tcmUri"));
-        assertEquals("", pageModel.getMeta().get("tcmUriNotResolve"));
         assertEquals("<p>text<a href=\"resolved-link\">text</a></p>", pageModel.getMeta().get("richText"));
-        assertEquals("<p>texttext</p>", pageModel.getMeta().get("richTextNotResolve"));
 
         // region (0). region (0) -> Header
         RegionModelData regionModelData = pageModelData.getRegions().get(0);
@@ -142,7 +137,7 @@ public class DefaultModelBuilderTest {
 
         // TODO
         // region(0).IncludePageUrl
-        //assertEqualsAndNotNull(regionModelData.getIncludePageUrl(), ((RegionModel) headerRegion).getIncludePageUrl());
+        //assertEqualsAndNotNull(regionModelData.getIncludePageId(), ((RegionModel) headerRegion).getIncludePageId());
 
         // region(0).MvcData
         assertEqualsAndNotNull(regionModelData.getMvcData().getViewName(), headerRegion.getMvcData().getViewName());
@@ -251,11 +246,6 @@ public class DefaultModelBuilderTest {
         @Bean
         public SourceConverterFactory sourceConverterFactory() {
             return new SourceConverterFactory();
-        }
-
-        @Bean
-        public RichTextLinkResolver richTextLinkResolver() {
-            return new RichTextLinkResolver(linkResolver(), webRequestContext());
         }
 
         @Bean

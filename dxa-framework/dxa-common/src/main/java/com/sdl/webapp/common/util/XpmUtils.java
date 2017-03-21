@@ -8,10 +8,6 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.sdl.webapp.common.api.model.region.RegionModelImpl.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY;
-import static com.sdl.webapp.common.api.model.region.RegionModelImpl.INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY;
-import static com.sdl.webapp.common.api.model.region.RegionModelImpl.INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY;
-
 public final class XpmUtils {
 
     private XpmUtils() {
@@ -82,6 +78,24 @@ public final class XpmUtils {
     @Setter
     @Accessors(chain = true)
     public static final class RegionXpmBuilder implements XpmBuilder {
+
+        /**
+         * The XPM metadata key used for the ID of the (Include) Page from which the Region originates.
+         * Avoid using this in implementation code because it may change in a future release.
+         */
+        public static final String INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY = "IncludedFromPageID";
+
+        /**
+         * The XPM metadata key used for the title of the (Include) Page from which the Region originates.
+         * Avoid using this in implementation code because it may change in a future release.
+         */
+        public static final String INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY = "IncludedFromPageTitle";
+
+        /**
+         * The XPM metadata key used for the file name of the (Include) Page from which the Region originates.
+         * Avoid using this in implementation code because it may change in a future release.
+         */
+        public static final String INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY = "IncludedFromPageFileName";
 
         private String includedFromPageID;
 

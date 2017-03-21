@@ -5,10 +5,13 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
+import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.util.TcmUtils;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +29,12 @@ import java.util.Set;
 @Service
 @Slf4j
 public class SourceConverterFactory {
+
+    @Autowired
+    private WebRequestContext webRequestContext;
+
+    @Autowired
+    private LinkResolver linkResolver;
 
     private Map<Class<?>, SourceConverter<?>> converters = new HashMap<>();
 
@@ -78,7 +87,8 @@ public class SourceConverterFactory {
     public Object selfLink(Object toLink, TypeDescriptor targetType, ModelBuilderPipeline pipeline) throws DxaException {
         Class<?> objectType = getClassForSelfLinking(toLink, targetType);
 
-        String url = toLink instanceof EntityModelData ? ((EntityModelData) toLink).getLinkUrl() : ((PageModelData) toLink).getUrlPath();
+        String itemId = toLink instanceof EntityModelData ? ((EntityModelData) toLink).getId() : ((PageModelData) toLink).getId();
+        String url = resolveLink(itemId, webRequestContext, linkResolver);
         if (objectType == String.class) {
             return url;
         } else if (Link.class.isAssignableFrom(objectType)) {
@@ -111,5 +121,11 @@ public class SourceConverterFactory {
         }
 
         return objectType;
+    }
+
+    private static String resolveLink(String itemId, WebRequestContext webRequestContext, LinkResolver linkResolver) {
+        String publicationId = webRequestContext.getLocalization().getId();
+        String url = TcmUtils.isTcmUri(itemId) ? itemId : TcmUtils.buildTcmUri(publicationId, itemId);
+        return linkResolver.resolveLink(url, publicationId);
     }
 }

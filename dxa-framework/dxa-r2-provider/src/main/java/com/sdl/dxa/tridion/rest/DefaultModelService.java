@@ -17,6 +17,9 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
+import com.tridion.ambientdata.AmbientDataContext;
+import com.tridion.ambientdata.claimstore.ClaimStore;
+import com.tridion.ambientdata.web.WebClaims;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +36,14 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
+import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.function.Consumer;
 
 import static java.nio.charset.Charset.defaultCharset;
 
@@ -43,6 +51,12 @@ import static java.nio.charset.Charset.defaultCharset;
 @Slf4j
 @Service
 public class DefaultModelService implements ModelService {
+
+    private static final String X_PREVIEW_SESSION_TOKEN = "x-preview-session-token";
+
+    private static final String PREVIEW_SESSION_TOKEN = "preview-session-token";
+
+    private static final String COOKIE = "Cookie";
 
     private final RestTemplate restTemplate;
 
@@ -127,7 +141,23 @@ public class DefaultModelService implements ModelService {
 
     private <T> T _processRequest(String serviceUrl, ResponseExtractor<T> extractor, Object... params) throws ContentProviderException {
         try {
-            return restTemplate.execute(serviceUrl, HttpMethod.GET, null, extractor, params);
+            return restTemplate.execute(serviceUrl, HttpMethod.GET, request -> {
+                processClaimValue(WebClaims.REQUEST_HEADERS, X_PREVIEW_SESSION_TOKEN, claim -> {
+                    //noinspection unchecked
+                    List<String> list = (List<String>) claim;
+                    request.getHeaders().put(X_PREVIEW_SESSION_TOKEN, list);
+                });
+
+                processClaimValue(WebClaims.REQUEST_COOKIES, PREVIEW_SESSION_TOKEN, claim -> {
+                    String value = (String) claim;
+                    List<String> cookies = request.getHeaders().get(COOKIE);
+                    if (cookies == null) {
+                        cookies = new ArrayList<>();
+                    }
+                    cookies.add(value);
+                    request.getHeaders().put(COOKIE, cookies);
+                });
+            }, extractor, params);
         } catch (HttpStatusCodeException e) {
             HttpStatus statusCode = e.getStatusCode();
             log.info("Got response with a status code {}", statusCode);
@@ -135,6 +165,16 @@ public class DefaultModelService implements ModelService {
                 throw new DxaItemNotFoundException("Item not found requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'", e);
             }
             throw new ContentProviderException("Internal server error requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'", e);
+        }
+    }
+
+    private void processClaimValue(URI uri, String key, Consumer<Object> consumer) {
+        ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
+        if (claimStore != null) {
+            Map claims = claimStore.get(uri, Map.class);
+            if (claims != null && claims.containsKey(key)) {
+                consumer.accept(claims.get(key));
+            }
         }
     }
 

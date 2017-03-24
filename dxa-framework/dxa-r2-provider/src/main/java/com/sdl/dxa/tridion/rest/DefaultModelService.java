@@ -1,6 +1,5 @@
 package com.sdl.dxa.tridion.rest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
@@ -22,29 +21,27 @@ import com.tridion.ambientdata.web.WebClaims;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StreamUtils;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Properties;
-import java.util.function.Consumer;
-
-import static java.nio.charset.Charset.defaultCharset;
+import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -54,11 +51,7 @@ public class DefaultModelService implements ModelService {
 
     private static final String PREVIEW_SESSION_TOKEN = "preview-session-token";
 
-    private static final String COOKIE = "Cookie";
-
     private final RestTemplate restTemplate;
-
-    private final ObjectMapper objectMapper;
 
     @Value("${cil.cd.client.conf}")
     private String configurationFileName;
@@ -80,9 +73,8 @@ public class DefaultModelService implements ModelService {
     private WebRequestContext webRequestContext;
 
     @Autowired
-    public DefaultModelService(RestTemplate restTemplate, @Qualifier("dxaR2ObjectMapper") ObjectMapper objectMapper) {
+    public DefaultModelService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
-        this.objectMapper = objectMapper;
     }
 
     @PostConstruct
@@ -115,13 +107,13 @@ public class DefaultModelService implements ModelService {
     @Override
     @Cacheable(value = "default")
     public PageModelData loadPageModel(PageRequestDto pageRequest) throws ContentProviderException {
-        return _loadPage(pageModelUrl, _defaultExtractor(PageModelData.class), pageRequest);
+        return _loadPage(pageModelUrl, PageModelData.class, pageRequest);
     }
 
-    private <T> T _loadPage(String serviceUrl, ResponseExtractor<T> extractor, PageRequestDto pageRequest) throws ContentProviderException {
+    private <T> T _loadPage(String serviceUrl, Class<T> type, PageRequestDto pageRequest) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
         try {
-            T page = _processRequest(serviceUrl, extractor,
+            T page = _processRequest(serviceUrl, type,
                     pageRequest.getUriType(),
                     pageRequest.getPublicationId() != 0 ? pageRequest.getPublicationId() : localization.getId(),
                     pageRequest.getPath(),
@@ -133,29 +125,25 @@ public class DefaultModelService implements ModelService {
         }
     }
 
-    private <T> ResponseExtractor<T> _defaultExtractor(Class<T> type) {
-        return response -> objectMapper.readValue(response.getBody(), type);
-    }
-
-    private <T> T _processRequest(String serviceUrl, ResponseExtractor<T> extractor, Object... params) throws ContentProviderException {
+    private <T> T _processRequest(String serviceUrl, Class<T> type, Object... params) throws ContentProviderException {
         try {
-            return restTemplate.execute(serviceUrl, HttpMethod.GET, request -> {
-                processClaimValue(WebClaims.REQUEST_HEADERS, X_PREVIEW_SESSION_TOKEN, claim -> {
-                    //noinspection unchecked
-                    List<String> list = (List<String>) claim;
-                    request.getHeaders().put(X_PREVIEW_SESSION_TOKEN, list);
-                });
+            HttpHeaders headers = new HttpHeaders();
 
-                processClaimValue(WebClaims.REQUEST_COOKIES, PREVIEW_SESSION_TOKEN, claim -> {
-                    String value = (String) claim;
-                    List<String> cookies = request.getHeaders().get(COOKIE);
-                    if (cookies == null) {
-                        cookies = new ArrayList<>();
-                    }
-                    cookies.add(value);
-                    request.getHeaders().put(COOKIE, cookies);
-                });
-            }, extractor, params);
+            //noinspection unchecked
+            String previewToken = _getClaimValue(WebClaims.REQUEST_HEADERS, X_PREVIEW_SESSION_TOKEN,
+                    claim -> Optional.of(((List<String>) claim).get(0)))
+                    .orElseGet(() -> _getClaimValue(WebClaims.REQUEST_COOKIES, PREVIEW_SESSION_TOKEN,
+                            claim -> Optional.of(claim.toString()))
+                            .orElse(null));
+
+            if (previewToken != null) {
+                // commented because of bug in CIS https://jira.sdl.com/browse/CRQ-3935
+                // headers.add(X_PREVIEW_SESSION_TOKEN, previewToken);
+                headers.add(HttpHeaders.COOKIE, String.format("%s=%s", PREVIEW_SESSION_TOKEN, previewToken));
+            }
+
+            ResponseEntity<T> response = restTemplate.exchange(serviceUrl, HttpMethod.GET, new HttpEntity<>(headers), type, params);
+            return response.getBody();
         } catch (HttpStatusCodeException e) {
             HttpStatus statusCode = e.getStatusCode();
             log.info("Got response with a status code {}", statusCode);
@@ -166,14 +154,16 @@ public class DefaultModelService implements ModelService {
         }
     }
 
-    private void processClaimValue(URI uri, String key, Consumer<Object> consumer) {
+    @NotNull
+    private Optional<String> _getClaimValue(URI uri, String key, Function<Object, Optional<String>> deriveValue) {
         ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
         if (claimStore != null) {
             Map claims = claimStore.get(uri, Map.class);
             if (claims != null && claims.containsKey(key)) {
-                consumer.accept(claims.get(key));
+                return deriveValue.apply(claims.get(key));
             }
         }
+        return Optional.empty();
     }
 
     @NotNull
@@ -181,7 +171,7 @@ public class DefaultModelService implements ModelService {
     @Cacheable(value = "default")
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
         String serviceUrl = UriComponentsBuilder.fromUriString(pageModelUrl).queryParam("raw").build().toUriString();
-        return _loadPage(serviceUrl, response -> StreamUtils.copyToString(response.getBody(), defaultCharset()), pageRequest);
+        return _loadPage(serviceUrl, String.class, pageRequest);
     }
 
     @NotNull
@@ -197,7 +187,7 @@ public class DefaultModelService implements ModelService {
     public EntityModelData loadEntity(EntityRequestDto entityRequest) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
 
-        EntityModelData modelData = _processRequest(entityModelUrl, _defaultExtractor(EntityModelData.class),
+        EntityModelData modelData = _processRequest(entityModelUrl, EntityModelData.class,
                 entityRequest.getUriType(),
                 entityRequest.getPublicationId() != 0 ? entityRequest.getPublicationId() : localization.getId(),
                 entityRequest.getComponentId(),

@@ -1,7 +1,6 @@
 package com.sdl.dxa.tridion.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
@@ -47,7 +46,6 @@ import java.util.function.Consumer;
 
 import static java.nio.charset.Charset.defaultCharset;
 
-@R2
 @Slf4j
 @Service
 public class DefaultModelService implements ModelService {

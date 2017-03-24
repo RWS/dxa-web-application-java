@@ -1,6 +1,5 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
-import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.KeywordModelData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.converter.source.keyword.Converter;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 
-@R2
 @Component
 public class KeywordModelDataConverter implements SourceConverter<KeywordModelData> {
 

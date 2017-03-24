@@ -1,6 +1,5 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
-import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
@@ -30,7 +29,6 @@ import java.util.List;
 
 import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 
-@R2
 @Service("r2ContentProvider")
 @Slf4j
 public class DefaultContentProvider extends AbstractDefaultContentProvider {

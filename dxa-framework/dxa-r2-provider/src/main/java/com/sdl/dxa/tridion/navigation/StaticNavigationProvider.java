@@ -15,7 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-@Profile("r2.provider")
+@Profile("!legacy.provider")
 @Service("r2StaticNavigationProvider")
 public class StaticNavigationProvider extends AbstractStaticNavigationProvider {
 

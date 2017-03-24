@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion.fields.converters;
 
+import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
 import com.sdl.webapp.common.api.model.RichText;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import static com.sdl.webapp.common.util.StringUtils.toStrings;
 
+@Legacy
 @Component
 public class XhtmlFieldConverter extends AbstractFieldConverter {
 

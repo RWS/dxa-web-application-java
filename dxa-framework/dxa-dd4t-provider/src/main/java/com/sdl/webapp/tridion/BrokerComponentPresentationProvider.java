@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.sdl.web.api.broker.WebComponentPresentationFactoryImpl;
 import com.sdl.web.api.dynamic.WebComponentPresentationFactory;
+import com.sdl.webapp.Legacy;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
@@ -28,6 +29,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 @Slf4j
+@Legacy
 public class BrokerComponentPresentationProvider extends BaseBrokerProvider implements ComponentPresentationProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentPresentationProvider.class);

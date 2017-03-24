@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
+import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
@@ -40,6 +41,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Slf4j
 @Service
+@Legacy
 public final class EntityBuilderImpl implements EntityBuilder {
 
     @Autowired

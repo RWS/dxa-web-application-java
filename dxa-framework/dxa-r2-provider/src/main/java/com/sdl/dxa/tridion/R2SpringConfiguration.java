@@ -1,7 +1,6 @@
 package com.sdl.dxa.tridion;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sdl.dxa.R2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -11,17 +10,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-@R2
 @Slf4j
 @Configuration
 @EnableCaching
 public class R2SpringConfiguration {
 
-
     @Autowired
     @Qualifier("dxaR2ObjectMapper")
     private ObjectMapper objectMapper;
-    
+
     @Bean
     public RestTemplate modelServiceRestTemplate() {
         RestTemplate restTemplate = new RestTemplate();

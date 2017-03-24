@@ -1,6 +1,7 @@
 package com.sdl.webapp.tridion.fields.converters;
 
 import com.google.common.base.Strings;
+import com.sdl.webapp.Legacy;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.mapping.ModelBuilderPipeline;
 import org.dd4t.contentmodel.FieldType;
@@ -14,6 +15,7 @@ import java.util.List;
 import static com.sdl.webapp.common.util.StringUtils.toStrings;
 
 @Component
+@Legacy
 public class DateFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.DATE};

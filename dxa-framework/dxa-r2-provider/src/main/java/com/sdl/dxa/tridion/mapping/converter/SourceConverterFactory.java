@@ -1,6 +1,5 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
-import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
@@ -25,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-@R2
 @Service
 @Slf4j
 public class SourceConverterFactory {

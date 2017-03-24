@@ -1,6 +1,5 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
-import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import java.util.Collections;
 import java.util.List;
 
-@R2
 @Component
 @Slf4j
 public class EntityModelDataConverter implements SourceConverter<EntityModelData> {

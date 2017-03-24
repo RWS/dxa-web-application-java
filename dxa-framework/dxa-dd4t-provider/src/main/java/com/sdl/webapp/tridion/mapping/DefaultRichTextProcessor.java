@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
+import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
@@ -54,9 +55,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Component
-/**
- * <p>DefaultRichTextProcessor class.</p>
- */
+@Legacy
 public class DefaultRichTextProcessor implements RichTextProcessor {
 
     /**

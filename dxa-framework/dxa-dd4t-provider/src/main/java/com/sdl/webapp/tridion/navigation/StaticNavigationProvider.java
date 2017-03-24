@@ -19,7 +19,7 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @Slf4j
-@Profile("!r2.provider")
+@Profile("legacy.provider")
 public class StaticNavigationProvider extends AbstractStaticNavigationProvider {
 
     private static final Object $LOCK = new Object();

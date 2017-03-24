@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion.fields.converters;
 
+import com.sdl.webapp.Legacy;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
 import com.sdl.webapp.tridion.mapping.ModelBuilderPipeline;
@@ -12,6 +13,7 @@ import java.util.List;
 
 import static com.sdl.webapp.common.util.StringUtils.toStrings;
 
+@Legacy
 @Component
 public class NumberFieldConverter extends AbstractFieldConverter {
 

@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion.fields.converters;
 
-import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
@@ -13,7 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Legacy
 public class MultimediaFieldConverter extends ComponentLinkFieldConverter {
 
     @Autowired

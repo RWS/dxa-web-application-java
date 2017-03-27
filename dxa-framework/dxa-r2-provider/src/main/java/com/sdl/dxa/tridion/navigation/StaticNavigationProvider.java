@@ -8,14 +8,12 @@ import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.tridion.navigation.AbstractStaticNavigationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-@Profile("!legacy.provider")
 @Service("r2StaticNavigationProvider")
 public class StaticNavigationProvider extends AbstractStaticNavigationProvider {
 

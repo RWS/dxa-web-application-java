@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion.fields;
 
-import com.sdl.webapp.Legacy;
 import com.sdl.webapp.tridion.fields.converters.FieldConverter;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedFieldTypeException;
 import org.dd4t.contentmodel.FieldType;
@@ -12,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 
 @Component
-@Legacy
 public class FieldConverterRegistry {
 
     private final Map<FieldType, FieldConverter> fieldConverters = new HashMap<>();

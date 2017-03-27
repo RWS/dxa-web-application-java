@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion;
 
 import com.sdl.web.api.taxonomies.TaxonomyRelationManager;
-import com.sdl.webapp.Legacy;
 import com.tridion.taxonomies.TaxonomyFactory;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.dd4t.contentmodel.impl.ComponentImpl;
@@ -29,7 +28,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Legacy
 @ComponentScan("com.sdl.webapp.tridion")
 public class SpringContextConfiguration {
 
@@ -159,6 +157,7 @@ public class SpringContextConfiguration {
     @Configuration
     @Profile("dxa.no-cache")
     public static class NoCacheConfiguration {
+
         @Bean
         public PayloadCacheProvider cacheProvider() {
             return new NoCacheProvider();

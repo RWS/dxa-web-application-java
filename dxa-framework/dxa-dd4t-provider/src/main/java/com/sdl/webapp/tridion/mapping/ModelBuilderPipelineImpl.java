@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion.mapping;
 
-import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -24,7 +23,6 @@ import java.util.List;
  */
 @org.springframework.stereotype.Component
 @Slf4j
-@Legacy
 public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
 
     private List<PageBuilder> pageBuilderHandlers;

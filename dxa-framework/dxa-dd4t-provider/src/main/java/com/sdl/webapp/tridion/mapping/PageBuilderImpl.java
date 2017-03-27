@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
 import com.google.common.base.Joiner;
-import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -65,7 +64,6 @@ import static com.sdl.webapp.util.dd4t.MvcDataHelper.createPageMvcData;
 import static com.sdl.webapp.util.dd4t.MvcDataHelper.createRegionMvcData;
 import static com.sdl.webapp.util.dd4t.MvcDataHelper.getRegionName;
 
-@Legacy
 @Component
 public final class PageBuilderImpl implements PageBuilder {
 

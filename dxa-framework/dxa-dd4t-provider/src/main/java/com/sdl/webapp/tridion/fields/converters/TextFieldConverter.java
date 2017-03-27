@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion.fields.converters;
 
-import com.sdl.webapp.Legacy;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.mapping.ModelBuilderPipeline;
 import org.dd4t.contentmodel.FieldType;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 @Component
-@Legacy
 public class TextFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.TEXT};

@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion.mapping;
 
-import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.RichTextProcessor;
@@ -55,13 +54,13 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Component
-@Legacy
 public class DefaultRichTextProcessor implements RichTextProcessor {
 
     /**
      * Constant <code>EMBEDDED_ENTITY="EmbeddedEntity"</code>
      */
     public static final String EMBEDDED_ENTITY = "EmbeddedEntity";
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRichTextProcessor.class);
 
     @Autowired

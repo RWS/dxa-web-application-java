@@ -2,7 +2,6 @@ package com.sdl.webapp.tridion.mapping;
 
 import com.sdl.web.api.content.BinaryContentRetriever;
 import com.sdl.web.api.dynamic.DynamicMetaRetriever;
-import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -54,7 +53,6 @@ import static java.util.Collections.singletonList;
  */
 @Slf4j
 @Service
-@Legacy
 public class DefaultContentProvider extends AbstractDefaultContentProvider {
 
     private static final Object LOCK = new Object();

@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion.fields.converters;
 
-import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
@@ -20,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-@Legacy
 public class EmbeddedFieldConverter implements FieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.EMBEDDED};

@@ -1,6 +1,5 @@
 package com.sdl.webapp.tridion.fields.converters;
 
-import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -24,12 +23,12 @@ import java.util.List;
 import static com.sdl.webapp.common.util.StringUtils.toStrings;
 
 @Component
-@Legacy
 public class ComponentLinkFieldConverter extends AbstractFieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.COMPONENTLINK};
 
     private final LinkResolver linkResolver;
+
     private final WebRequestContext webRequestContext;
 
     @Autowired

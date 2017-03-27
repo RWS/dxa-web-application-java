@@ -183,6 +183,38 @@
                 </dependency>
             </dependencies>
         </profile>
+
+        <profile>
+            <!-- Profile name is for internal naming, use -Dlegacy instead for this profile -->
+            <id>internal-legacy</id>
+            <activation>
+                <property>
+                    <name>legacy</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa</groupId>
+                    <artifactId>dxa-dd4t-provider</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
+            <!-- Profile name is for internal naming -->
+            <id>internal-r2</id>
+            <activation>
+                <property>
+                    <name>!legacy</name>
+                </property>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa</groupId>
+                    <artifactId>dxa-r2-provider</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
     <dependencyManagement>
@@ -207,16 +239,6 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-impl</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sdl.dxa</groupId>
-            <artifactId>dxa-r2-provider</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>com.sdl.dxa</groupId>
-            <artifactId>dxa-dd4t-provider</artifactId>
         </dependency>
 
         <dependency>

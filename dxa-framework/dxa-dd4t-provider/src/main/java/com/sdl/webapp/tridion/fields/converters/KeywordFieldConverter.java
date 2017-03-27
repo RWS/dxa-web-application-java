@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion.fields.converters;
 
 import com.sdl.dxa.tridion.mapping.converter.source.keyword.Converter;
-import com.sdl.webapp.Legacy;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.entity.Tag;
@@ -32,7 +31,6 @@ import static com.sdl.webapp.common.util.StringUtils.toStrings;
  */
 @Component
 @Slf4j
-@Legacy
 public class KeywordFieldConverter implements FieldConverter {
 
     private static final FieldType[] SUPPORTED_FIELD_TYPES = {FieldType.KEYWORD};

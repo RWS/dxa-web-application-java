@@ -186,13 +186,31 @@
                 <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-context-expressions</artifactId>
                 <version>${dxa-module-context-expressions}</version>
-                <scope>compile</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-context-expressions-abstract</artifactId>
+                <version>${dxa-module-context-expressions}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-context-expressions-legacy</artifactId>
+                <version>${dxa-module-context-expressions}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-smarttarget</artifactId>
                 <version>${dxa-module-smarttarget.version}</version>
-                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-smarttarget-abstract</artifactId>
+                <version>${dxa-module-smarttarget.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-smarttarget-legacy</artifactId>
+                <version>${dxa-module-smarttarget.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>

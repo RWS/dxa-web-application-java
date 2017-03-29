@@ -1,7 +1,5 @@
 package com.sdl.webapp.tridion;
 
-import com.sdl.web.api.taxonomies.TaxonomyRelationManager;
-import com.tridion.taxonomies.TaxonomyFactory;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.dd4t.contentmodel.impl.ComponentImpl;
 import org.dd4t.core.factories.ComponentPresentationFactory;
@@ -30,16 +28,6 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @ComponentScan("com.sdl.webapp.tridion")
 public class SpringContextConfiguration {
-
-    @Bean
-    public TaxonomyFactory webTaxonomyFactory() {
-        return new TaxonomyFactory();
-    }
-
-    @Bean
-    public TaxonomyRelationManager taxonomyRelationManager() {
-        return new TaxonomyRelationManager();
-    }
 
     @Bean
     public BrokerLinkProvider linkProvider() {

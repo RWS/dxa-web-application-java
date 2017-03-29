@@ -4,12 +4,6 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
-import com.sdl.web.client.configuration.XMLConfigurationHolder;
-import com.sdl.web.client.configuration.XMLConfigurationReaderImpl;
-import com.sdl.web.client.configuration.api.ConfigurationException;
-import com.sdl.web.client.impl.DefaultDiscoveryClient;
-import com.sdl.web.discovery.datalayer.model.ContentServiceCapability;
-import com.sdl.web.discovery.datalayer.model.KeyValuePair;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
@@ -21,7 +15,6 @@ import com.tridion.ambientdata.web.WebClaims;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,14 +26,11 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.annotation.PostConstruct;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.function.Function;
 
 @Slf4j
@@ -53,61 +43,24 @@ public class DefaultModelService implements ModelService {
 
     private final RestTemplate restTemplate;
 
-    @Value("${cil.cd.client.conf}")
-    private String configurationFileName;
-
-    @Value("${dxa.model.service.key}")
-    private String modelServiceKey;
-
-    @Value("${dxa.model.service.url:#{null}}")
-    private String modelServiceUrl;
-
-    @Value("${dxa.model.service.url.page.model}")
-    private String pageModelUrl;
-
-    @Value("${dxa.model.service.url.entity.model}")
-    private String entityModelUrl;
+    private final ModelServiceConfiguration configuration;
 
     @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
     @Autowired
     private WebRequestContext webRequestContext;
 
     @Autowired
-    public DefaultModelService(RestTemplate restTemplate) {
+    public DefaultModelService(RestTemplate restTemplate,
+                               ModelServiceConfiguration configuration) {
         this.restTemplate = restTemplate;
-    }
-
-    @PostConstruct
-    public void initService() throws ConfigurationException {
-        if (modelServiceUrl != null) {
-            log.debug("Using model service URL from properties, don't ask Discovery, {}", modelServiceUrl);
-        } else {
-            XMLConfigurationHolder configuration = (new XMLConfigurationReaderImpl()).readConfiguration(configurationFileName);
-            String serviceUri = configuration.getConfiguration("/DiscoveryService").getValue("ServiceUri");
-
-            Properties properties = new Properties();
-            properties.put("ServiceUri", serviceUri);
-
-            modelServiceUrl = new DefaultDiscoveryClient(properties).getCapability(ContentServiceCapability.class)
-                    .orElseThrow(() -> new ConfigurationException("ContentServiceCapability is not available on Discovery " + serviceUri))
-                    .getExtensionProperties().stream()
-                    .filter(keyValuePair -> Objects.equals(keyValuePair.getKey(), modelServiceKey))
-                    .map(KeyValuePair::getValue)
-                    .findFirst()
-                    .orElseThrow(() -> new ConfigurationException("DXA Model Service URL is not available on Discovery"));
-
-            log.debug("Using model service from Discovery, {}", modelServiceUrl);
-        }
-
-        this.pageModelUrl = modelServiceUrl + pageModelUrl;
-        this.entityModelUrl = modelServiceUrl + entityModelUrl;
+        this.configuration = configuration;
     }
 
     @NotNull
     @Override
     @Cacheable(value = "default")
     public PageModelData loadPageModel(PageRequestDto pageRequest) throws ContentProviderException {
-        return _loadPage(pageModelUrl, PageModelData.class, pageRequest);
+        return _loadPage(configuration.getPageModelUrl(), PageModelData.class, pageRequest);
     }
 
     private <T> T _loadPage(String serviceUrl, Class<T> type, PageRequestDto pageRequest) throws ContentProviderException {
@@ -170,7 +123,7 @@ public class DefaultModelService implements ModelService {
     @Override
     @Cacheable(value = "default")
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
-        String serviceUrl = UriComponentsBuilder.fromUriString(pageModelUrl).queryParam("raw").build().toUriString();
+        String serviceUrl = UriComponentsBuilder.fromUriString(configuration.getPageModelUrl()).queryParam("raw").build().toUriString();
         return _loadPage(serviceUrl, String.class, pageRequest);
     }
 
@@ -187,7 +140,7 @@ public class DefaultModelService implements ModelService {
     public EntityModelData loadEntity(EntityRequestDto entityRequest) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
 
-        EntityModelData modelData = _processRequest(entityModelUrl, EntityModelData.class,
+        EntityModelData modelData = _processRequest(configuration.getEntityModelUrl(), EntityModelData.class,
                 entityRequest.getUriType(),
                 entityRequest.getPublicationId() != 0 ? entityRequest.getPublicationId() : localization.getId(),
                 entityRequest.getComponentId(),

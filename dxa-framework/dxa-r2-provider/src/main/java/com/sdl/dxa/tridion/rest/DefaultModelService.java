@@ -58,7 +58,7 @@ public class DefaultModelService implements ModelService {
 
     @NotNull
     @Override
-    @Cacheable(value = "default")
+//    @Cacheable(value = "default")
     public PageModelData loadPageModel(PageRequestDto pageRequest) throws ContentProviderException {
         return _loadPage(configuration.getPageModelUrl(), PageModelData.class, pageRequest);
     }
@@ -121,7 +121,7 @@ public class DefaultModelService implements ModelService {
 
     @NotNull
     @Override
-    @Cacheable(value = "default")
+//    @Cacheable(value = "default")
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
         String serviceUrl = UriComponentsBuilder.fromUriString(configuration.getPageModelUrl()).queryParam("raw").build().toUriString();
         return _loadPage(serviceUrl, String.class, pageRequest);
@@ -136,7 +136,7 @@ public class DefaultModelService implements ModelService {
 
     @NotNull
     @Override
-    @Cacheable(value = "default")
+//    @Cacheable(value = "default")
     public EntityModelData loadEntity(EntityRequestDto entityRequest) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
 

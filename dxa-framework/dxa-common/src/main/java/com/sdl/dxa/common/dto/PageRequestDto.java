@@ -2,6 +2,7 @@ package com.sdl.dxa.common.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 import org.springframework.util.Assert;
 
@@ -10,6 +11,7 @@ import org.springframework.util.Assert;
  */
 @Builder
 @Value
+@EqualsAndHashCode(exclude = "depthCounter")
 public class PageRequestDto {
 
     private int publicationId;

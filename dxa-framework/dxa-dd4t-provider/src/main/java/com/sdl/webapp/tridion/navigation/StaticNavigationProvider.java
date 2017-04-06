@@ -10,7 +10,6 @@ import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.factories.PageFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
@@ -19,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 
 @Service
 @Slf4j
-@Profile("!r2.provider")
 public class StaticNavigationProvider extends AbstractStaticNavigationProvider {
 
     private static final Object $LOCK = new Object();

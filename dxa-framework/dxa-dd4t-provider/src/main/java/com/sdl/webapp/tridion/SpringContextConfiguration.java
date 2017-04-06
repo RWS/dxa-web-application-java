@@ -1,13 +1,5 @@
 package com.sdl.webapp.tridion;
 
-import com.sdl.web.api.content.BinaryContentRetriever;
-import com.sdl.web.api.dynamic.BinaryContentRetrieverImpl;
-import com.sdl.web.api.dynamic.DynamicMappingsRetriever;
-import com.sdl.web.api.dynamic.DynamicMappingsRetrieverImpl;
-import com.sdl.web.api.dynamic.DynamicMetaRetriever;
-import com.sdl.web.api.dynamic.DynamicMetaRetrieverImpl;
-import com.sdl.web.api.taxonomies.TaxonomyRelationManager;
-import com.tridion.taxonomies.TaxonomyFactory;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.dd4t.contentmodel.impl.ComponentImpl;
 import org.dd4t.core.factories.ComponentPresentationFactory;
@@ -36,16 +28,6 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @ComponentScan("com.sdl.webapp.tridion")
 public class SpringContextConfiguration {
-
-    @Bean
-    public TaxonomyFactory webTaxonomyFactory() {
-        return new TaxonomyFactory();
-    }
-
-    @Bean
-    public TaxonomyRelationManager taxonomyRelationManager() {
-        return new TaxonomyRelationManager();
-    }
 
     @Bean
     public BrokerLinkProvider linkProvider() {
@@ -80,21 +62,6 @@ public class SpringContextConfiguration {
         componentPresentationProvider.setContentIsCompressed("false");
         componentPresentationProvider.setCacheProvider(cacheProvider());
         return componentPresentationProvider;
-    }
-
-    @Bean
-    public DynamicMetaRetriever dynamicMetaRetriever() {
-        return new DynamicMetaRetrieverImpl();
-    }
-
-    @Bean
-    public BinaryContentRetriever binaryContentRetriever() {
-        return new BinaryContentRetrieverImpl();
-    }
-
-    @Bean
-    public DynamicMappingsRetriever dynamicMappingsRetriever() {
-        return new DynamicMappingsRetrieverImpl();
     }
 
     @Bean
@@ -178,6 +145,7 @@ public class SpringContextConfiguration {
     @Configuration
     @Profile("dxa.no-cache")
     public static class NoCacheConfiguration {
+
         @Bean
         public PayloadCacheProvider cacheProvider() {
             return new NoCacheProvider();

@@ -1,6 +1,5 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
-import com.sdl.dxa.R2;
 import com.sdl.dxa.api.datamodel.model.BinaryContentData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.ExternalContentData;
@@ -52,7 +51,6 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
  */
 @Slf4j
 @Service
-@R2
 public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder {
 
     @Autowired

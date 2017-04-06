@@ -13,6 +13,7 @@ import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.LocalizationUtils;
 import com.sdl.webapp.common.util.TcmUtils;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
@@ -37,7 +38,9 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.UriUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -82,8 +85,9 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
     }
 
     @Override
+    @SneakyThrows(UnsupportedEncodingException.class)
     protected PageModel _loadPage(String _path, Localization localization) throws ContentProviderException {
-        return LocalizationUtils.findPageByPath(_path, localization, (path, publicationId) -> {
+        return LocalizationUtils.findPageByPath(UriUtils.encodePath(_path, "UTF-8"), localization, (path, publicationId) -> {
             final org.dd4t.contentmodel.Page genericPage;
             try {
                 synchronized (LOCK) {

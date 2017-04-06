@@ -54,15 +54,13 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Component
-/**
- * <p>DefaultRichTextProcessor class.</p>
- */
 public class DefaultRichTextProcessor implements RichTextProcessor {
 
     /**
      * Constant <code>EMBEDDED_ENTITY="EmbeddedEntity"</code>
      */
     public static final String EMBEDDED_ENTITY = "EmbeddedEntity";
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultRichTextProcessor.class);
 
     @Autowired

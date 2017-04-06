@@ -57,6 +57,7 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
 
         return getComponentPresentation(result.getContent());
     }
+
     /**
      * {@inheritDoc}
      */
@@ -75,7 +76,9 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
         return getDynamicComponentPresentationInternal(componentId, templateId, publicationId);
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<ComponentPresentation> getDynamicComponentPresentations(final String[] itemUris, final int templateId, final int publicationId)
             throws ItemNotFoundException, SerializationException {

@@ -45,8 +45,12 @@ public class XpmButtonTag extends XpmMarkupTag {
                     .build();
         } else {
             String title = "Edit " + this.region.getXpmMetadata().get(INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY);
-            String editUrl = ApplicationContextHolder.getContext().getBean(WebRequestContext.class).getLocalization().localizePath(
-                    this.region.getXpmMetadata().get(INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY).toString());
+            String urlOfInclude = this.region.getXpmMetadata().get(INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY).toString();
+            if (!urlOfInclude.matches("/?system/include.*")) {
+                urlOfInclude = String.format("system/include/%s", urlOfInclude.startsWith("/") ? urlOfInclude.substring(1) : urlOfInclude);
+            }
+            String editUrl = ApplicationContextHolder.getContext().getBean(WebRequestContext.class)
+                    .getLocalization().localizePath(urlOfInclude);
             return HtmlBuilders.div()
                     .withClass("xpm-button" + (cssClass == null ? "" : " " + cssClass))
                     .withNode(HtmlBuilders.a(editUrl)

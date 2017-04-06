@@ -101,9 +101,8 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
     }
 
     @Override
-    @SneakyThrows(UnsupportedEncodingException.class)
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
-        return _loadPage(UriUtils.encodePath(path, "UTF-8"), localization);
+        return _loadPage(path, localization);
     }
 
     protected abstract PageModel _loadPage(String path, Localization localization) throws ContentProviderException;

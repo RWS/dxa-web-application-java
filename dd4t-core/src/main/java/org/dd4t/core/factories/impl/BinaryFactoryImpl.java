@@ -83,6 +83,10 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
         } else {
             LOG.debug("Return binary with uri: {} from cache", tcmUri);
             binary = cacheElement.getPayload();
+            
+            if(binary == null){
+            	throw new ItemNotFoundException("Found nullreference for binary in cache.");
+            }
         }
 
         return binary;

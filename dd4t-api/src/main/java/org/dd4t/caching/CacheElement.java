@@ -32,6 +32,10 @@ public interface CacheElement<T> {
     boolean isExpired ();
 
     void setExpired (boolean update);
+    
+    boolean isNull();
+    
+    void setNull(boolean isnull);
 
     String getDependentKey ();
 

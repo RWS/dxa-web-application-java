@@ -17,9 +17,9 @@
 package org.dd4t.core.factories.impl;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dd4t.caching.CacheElement;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.contentmodel.impl.PageImpl;
-import org.dd4t.caching.CacheElement;
 import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -292,8 +292,8 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
 
                     if (StringUtils.isEmpty(pageSource)) {
                         cacheElement.setPayload(null);
+                        cacheElement.setNull(true);
                         cacheProvider.storeInItemCache(uri, cacheElement);
-                        cacheElement.setExpired(true);
                         throw new ItemNotFoundException("Unable to find page by id " + uri);
                     }
 
@@ -314,6 +314,11 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
             LOG.debug("Return page with uri: {} from cache", uri);
             page = cacheElement.getPayload();
         }
+
+        if(page == null){
+            throw new ItemNotFoundException("Found nullreference for page in cache. Please try again later.");
+        }
+
         executePostCacheProcessors(page, context);
         return (T) page;
 	}

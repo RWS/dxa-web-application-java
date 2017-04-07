@@ -16,14 +16,9 @@
 
 package org.dd4t.core.factories.impl;
 
-import java.text.ParseException;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.apache.commons.lang3.StringUtils;
-import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.caching.CacheElement;
+import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.exceptions.FactoryException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -36,6 +31,10 @@ import org.dd4t.providers.ComponentPresentationProvider;
 import org.dd4t.providers.ComponentPresentationResultItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.annotation.Resource;
+import java.text.ParseException;
+import java.util.List;
 
 public class ComponentPresentationFactoryImpl extends BaseFactory implements ComponentPresentationFactory {
 
@@ -132,10 +131,9 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
                     //rawComponentPresentation = componentPresentationProvider.getDynamicComponentPresentation(componentId, templateId, publicationId);
 
                     if (rawComponentPresentation == null) {
-
                         cacheElement.setPayload(null);
-                        cacheProvider.storeInItemCache(key, cacheElement);
-                        cacheElement.setExpired(true);
+                        cacheElement.setNull(true);
+                        cacheProvider.storeInItemCache(key, cacheElement);                        
                         throw new ItemNotFoundException(String.format("Could not find DCP with componentURI: %s and templateURI: %s", componentURI, templateURI));
                     }
 
@@ -170,6 +168,9 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
             } catch (ProcessorException e) {
                 LOG.error(e.getLocalizedMessage(), e);
             }
+        }
+        else{
+        	throw new ItemNotFoundException("Found nullreference in DCP cache. Try again later.");
         }
 
         LOG.debug("Exit getComponentPresentation");

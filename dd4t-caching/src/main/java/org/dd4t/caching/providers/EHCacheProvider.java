@@ -125,12 +125,7 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator {
                 }
             }
 
-            CacheElement<T> cacheElement = (CacheElement<T>) currentElement.getObjectValue();
-
-            if (cacheElement.getPayload() == null && !cacheElement.isExpired()) {
-                LOG.error("Detected null payload on unexpired element with key " + key + " - expiring it.");
-                setExpired(currentElement, 0);
-            }
+            CacheElement<T> cacheElement = (CacheElement<T>) currentElement.getObjectValue();           
 
             String dependencyKey = cacheElement.getDependentKey();
             if (dependencyKey != null) {
@@ -162,10 +157,12 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator {
             LOG.error("Cache configuration is invalid! NOT Caching. Check EH Cache configuration.");
             return;
         }
-
-        if (cacheElement.getPayload() == null) {
-            Exception exToLogToHaveStacktraceWhoCausedIt = new Exception();
-            LOG.error("Detected null payload on element with key " + key + " at insert time!", exToLogToHaveStacktraceWhoCausedIt);
+        
+        // detect undeclared nulls, complain, and set to null
+        if(!cacheElement.isNull() && cacheElement.getPayload() == null){
+         	Exception exToLogToHaveStacktraceWhoCausedIt = new Exception();
+        	LOG.error("Detected undeclared null payload on element with key "+key+" at insert time!", exToLogToHaveStacktraceWhoCausedIt);        	
+        	cacheElement.setNull(true);
         }
 
         cacheElement.setExpired(false);
@@ -206,6 +203,13 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator {
             return;
         }
 
+        // detect undeclared nulls, complain, and set to null
+        if(!cacheElement.isNull() && cacheElement.getPayload() == null){
+         	Exception exToLogToHaveStacktraceWhoCausedIt = new Exception();
+        	LOG.error("Detected undeclared null payload on element with key "+key+" at insert time!", exToLogToHaveStacktraceWhoCausedIt);        	
+        	cacheElement.setNull(true);
+        }
+        
         cacheElement.setExpired(false);
         Element element = cache.get(key);
         if (element == null) {

@@ -28,6 +28,7 @@ import org.dd4t.caching.CacheElement;
  */
 public class CacheElementImpl<T> implements CacheElement<T> {
     private boolean isExpired;
+    private boolean isNull;
     private T payload;
     private String dependentKey;
 
@@ -69,4 +70,14 @@ public class CacheElementImpl<T> implements CacheElement<T> {
     public void setDependentKey (String dependentKey) {
         this.dependentKey = dependentKey;
     }
+
+	@Override
+	public boolean isNull() {
+		return isNull;
+	}
+
+	@Override
+	public void setNull(boolean isnull) {	
+		this.isNull = isnull;
+	}
 }

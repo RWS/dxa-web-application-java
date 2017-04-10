@@ -5,13 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.sdl.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>1.0.3</version>
+        <groupId>com.sdl.dxa</groupId>
+        <artifactId>dxa-oss-parent</artifactId>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.sdl.dxa</groupId>
-    <version>2.0.0-SNAPSHOT</version>
     <artifactId>dxa-framework</artifactId>
     <packaging>pom</packaging>
 
@@ -29,57 +27,12 @@
         <module>dxa-data-model</module>
     </modules>
 
-    <scm>
-        <url>https://github.com/sdl/dxa-web-application-java</url>
-        <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
-        <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <developers>
-        <developer>
-            <id>rpannekoek</id>
-            <name>Rick Pannekoek</name>
-            <email>rpannekoek@sdl.com</email>
-            <timezone>+1</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-        <developer>
-            <id>azarakovskiy</id>
-            <name>Alexey Zarakovskiy</name>
-            <email>azarakovskiy@sdl.com</email>
-            <timezone>+1</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-    </developers>
-
     <repositories>
         <repository>
             <id>local-project-repo</id>
             <url>file:///${project.basedir}/../../local-project-repo</url>
         </repository>
     </repositories>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <dxa-bom.version>2.0.0-SNAPSHOT</dxa-bom.version>
-        <java-version>1.8</java-version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-bom</artifactId>
-                <version>${dxa-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
 
     <dependencies>
 
@@ -138,32 +91,6 @@
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
-                    <configuration>
-                        <source>${java-version}</source>
-                        <target>${java-version}</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-jar-plugin</artifactId>
-                    <version>2.5</version>
-                    <configuration>
-                        <archive>
-                            <manifest>
-                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
-                            </manifest>
-                        </archive>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

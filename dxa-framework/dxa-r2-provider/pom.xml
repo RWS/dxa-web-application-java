@@ -14,22 +14,6 @@
     <name>DXA - R2 Tridion provider</name>
     <description>DXA Providers functionality specific for DXA 2.0 (R2)</description>
 
-    <properties>
-        <java-version>1.8</java-version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-bom</artifactId>
-                <version>${dxa-bom.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
@@ -118,18 +102,5 @@
             <artifactId>joda-time</artifactId>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>${java-version}</source>
-                    <target>${java-version}</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

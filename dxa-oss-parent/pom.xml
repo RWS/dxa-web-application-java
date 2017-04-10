@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
@@ -11,40 +11,21 @@
     </parent>
 
     <groupId>com.sdl.dxa</groupId>
-    <artifactId>dxa-bom</artifactId>
+    <artifactId>dxa-oss-parent</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>DXA - Bill of Materials</name>
-    <description>Dependencies management for DXA projects</description>
+    <name>DXA - OSS Parent, BOM</name>
+    <description>Parent artifact for all DXA OSS projects with BOM</description>
 
-    <scm>
-        <url>https://github.com/sdl/dxa-web-application-java</url>
-        <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
-        <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <developers>
-        <developer>
-            <id>rpannekoek</id>
-            <name>Rick Pannekoek</name>
-            <email>rpannekoek@sdl.com</email>
-            <timezone>+1</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-        <developer>
-            <id>azarakovskiy</id>
-            <name>Alexey Zarakovskiy</name>
-            <email>azarakovskiy@sdl.com</email>
-            <timezone>+1</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-    </developers>
+    <url>http://www.sdl.com/cxc/digital-experience/web-experience-management/digital-experience-accelerator.html</url>
 
     <properties>
+        <java-version>1.8</java-version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
         <dd4t.version>2.2.0-DXA</dd4t.version>
         <cd-cil.version>8.5.0-1008</cd-cil.version>
 
@@ -66,6 +47,7 @@
         <commons-io-version>2.5</commons-io-version>
         <commons-lang3.version>3.5</commons-lang3.version>
         <commons-collections.version>3.2.2</commons-collections.version>
+        <commons-validator.version>1.5.1</commons-validator.version>
         <httpcomponents-client-version>4.5.2</httpcomponents-client-version>
 
         <guava-version>20.0</guava-version>
@@ -100,12 +82,41 @@
         <xalan-version>2.7.2</xalan-version>
 
         <dozer.version>5.5.1</dozer.version>
+        <device-detection.version>3.2.4.5</device-detection.version>
 
         <aspectj.version>1.8.9</aspectj.version>
         <findbugs.annotations.version>2.0.1</findbugs.annotations.version>
         <openpojo.version>0.8.4</openpojo.version>
         <jb-annotations.version>13.0</jb-annotations.version>
+        <jaxen.version>1.1.4</jaxen.version>
+        <jdom2.version>2.0.5</jdom2.version>
     </properties>
+
+    <scm>
+        <url>https://github.com/sdl/dxa-web-application-java</url>
+        <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
+        <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>rpannekoek</id>
+            <name>Rick Pannekoek</name>
+            <email>rpannekoek@sdl.com</email>
+            <timezone>+1</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+        <developer>
+            <id>azarakovskiy</id>
+            <name>Alexey Zarakovskiy</name>
+            <email>azarakovskiy@sdl.com</email>
+            <timezone>+1</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+    </developers>
 
     <dependencyManagement>
         <dependencies>
@@ -364,6 +375,12 @@
             </dependency>
 
             <dependency>
+                <groupId>com.51degrees</groupId>
+                <artifactId>device-detection-core</artifactId>
+                <version>${device-detection.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>net.sf.dozer</groupId>
                 <artifactId>dozer</artifactId>
                 <version>${dozer.version}</version>
@@ -572,6 +589,22 @@
                 <artifactId>commons-collections</artifactId>
                 <version>${commons-collections.version}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-validator</groupId>
+                <artifactId>commons-validator</artifactId>
+                <version>${commons-validator.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>jaxen</groupId>
+                <artifactId>jaxen</artifactId>
+                <version>${jaxen.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jdom</groupId>
+                <artifactId>jdom2</artifactId>
+                <version>${jdom2.version}</version>
+            </dependency>
 
             <!-- Apache HttpComponents -->
             <dependency>
@@ -663,5 +696,58 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.1</version>
+                    <configuration>
+                        <source>${java-version}</source>
+                        <target>${java-version}</target>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-jar-plugin</artifactId>
+                    <version>2.5</version>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>2.4</version>
+                    <configuration>
+                        <failOnMissingWebXml>false</failOnMissingWebXml>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                                <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

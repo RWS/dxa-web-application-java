@@ -18,6 +18,7 @@ package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
@@ -140,6 +141,12 @@ public class ComponentPresentationImpl implements ComponentPresentation {
 
     @Override
     public void setConditions (final List<Condition> conditions) {
+        this.conditions = conditions;
+    }
+
+    // DD4T 2.2 Templates
+    @JsonSetter ("TargetGroupConditions")
+    private void setTargetGroupConditions(final List<Condition> conditions) {
         this.conditions = conditions;
     }
 

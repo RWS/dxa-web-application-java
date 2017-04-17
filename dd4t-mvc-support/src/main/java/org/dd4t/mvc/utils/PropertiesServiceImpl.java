@@ -16,6 +16,7 @@
 
 package org.dd4t.mvc.utils;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Required;
@@ -39,8 +40,9 @@ public class PropertiesServiceImpl extends PropertiesServiceBase {
     @Override
     public void load (String propertiesFile) {
         LOG.debug("Loading file " + propertiesFile);
+        InputStream input = null;
         try {
-            InputStream input = PropertiesServiceImpl.class.getClassLoader().getResourceAsStream(propertiesFile);
+            input = PropertiesServiceImpl.class.getClassLoader().getResourceAsStream(propertiesFile);
             if (input == null) {
                 throw new IOException("Cannot find properties file '" + propertiesFile + "' in classpath");
             }
@@ -49,6 +51,8 @@ public class PropertiesServiceImpl extends PropertiesServiceBase {
             properties.load(input);
         } catch (IOException ioe) {
             LOG.error("Failed to load properties file " + propertiesFile, ioe);
+        } finally {
+            IOUtils.closeQuietly(input);
         }
     }
 

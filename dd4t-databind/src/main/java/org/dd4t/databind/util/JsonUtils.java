@@ -43,8 +43,16 @@ public class JsonUtils {
     }
 
     public static <T extends Field> T renderComponentField (JsonNode node, Class<T> concreteClass) throws IOException {
-        final JsonParser parser = node.traverse();
-        return JsonDataBinder.getGenericMapper().readValue(parser, concreteClass);
+        JsonParser parser = null;
+
+        try {
+            parser = node.traverse();
+            return JsonDataBinder.getGenericMapper().readValue(parser, concreteClass);
+        } finally {
+            if (parser != null) {
+                parser.close();
+            }
+        }
     }
 
     public static TCMURI getTcmUriFromField (String fieldName, JsonNode node) {

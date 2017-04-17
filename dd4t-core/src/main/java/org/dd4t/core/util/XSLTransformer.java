@@ -16,6 +16,8 @@
 
 package org.dd4t.core.util;
 
+import org.apache.commons.io.IOUtils;
+
 import javax.xml.transform.*;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -89,17 +91,22 @@ public class XSLTransformer {
             temp = CACHE.get(resource);
         } else {
 
-            InputStream stream = getClass().getResourceAsStream(resource);
-            if (null == stream) {
-                throw new TransformerConfigurationException("Resource '" + resource + "' could not be loaded. ");
+            InputStream stream = null;
+            try {
+                stream = getClass().getResourceAsStream(resource);
+                if (null == stream) {
+                    throw new TransformerConfigurationException("Resource '" + resource + "' could not be loaded. ");
+                }
+                StreamSource source = new StreamSource(stream);
+
+                // instantiate a transformer
+                TransformerFactory transformerFactory = TransformerFactory.newInstance();
+                temp = transformerFactory.newTemplates(source);
+
+                CACHE.put(resource, temp);
+            } finally {
+                IOUtils.closeQuietly(stream);
             }
-            StreamSource source = new StreamSource(stream);
-
-            // instantiate a transformer
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
-            temp = transformerFactory.newTemplates(source);
-
-            CACHE.put(resource, temp);
         }
 
         trans = temp.newTransformer();

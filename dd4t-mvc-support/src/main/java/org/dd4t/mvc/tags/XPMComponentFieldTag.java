@@ -1,5 +1,6 @@
 package org.dd4t.mvc.tags;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.mvc.utils.XPMRenderer;
@@ -56,11 +57,14 @@ public class XPMComponentFieldTag extends BodyTagSupport {
             out.append(content.getString());
         }
 
+        JspWriter writer = null;
         try {
-            JspWriter writer = content.getEnclosingWriter();
+            writer = content.getEnclosingWriter();
             writer.write(out.toString());
         } catch (IOException e) {
             throw new JspException("Failed to write body content", e);
+        } finally {
+            IOUtils.closeQuietly(writer);
         }
 
         return SKIP_BODY;

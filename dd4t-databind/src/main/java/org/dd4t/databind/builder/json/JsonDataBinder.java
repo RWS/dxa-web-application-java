@@ -25,6 +25,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
@@ -132,8 +133,13 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
     public <T extends Component> T buildComponent (final Object source, final Class<T> aClass) throws SerializationException {
         try {
             if (source instanceof JsonNode) {
-                final JsonParser parser = ((JsonNode) source).traverse();
-                return GENERIC_MAPPER.readValue(parser, aClass);
+                JsonParser parser = null;
+                try {
+                    parser = ((JsonNode) source).traverse();
+                    return GENERIC_MAPPER.readValue(parser, aClass);
+                } finally {
+                    IOUtils.closeQuietly(parser);
+                }
             } else if (source instanceof String) {
                 return GENERIC_MAPPER.readValue((String) source, aClass);
             } else {

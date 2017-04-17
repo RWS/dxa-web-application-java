@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
@@ -36,7 +37,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * test
@@ -83,12 +87,18 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
                 LOG.trace("Data is: {}", rawComponentData);
             } else if (key.equalsIgnoreCase(DataBindConstants.COMPONENT_TEMPLATE_NODE_NAME)) {
                 LOG.debug("Deserializing Component Template Data.");
-                final JsonParser parser = element.getValue().traverse();
-                final ComponentTemplate componentTemplate = JsonDataBinder.getGenericMapper().readValue(parser, this.concreteComponentTemplateClass);
-                if (componentPresentation != null) {
-                    componentPresentation.setComponentTemplate(componentTemplate);
+                JsonParser parser = null;
+                try {
+                    parser = element.getValue().traverse();
+                    final ComponentTemplate componentTemplate = JsonDataBinder.getGenericMapper().readValue(parser, this.concreteComponentTemplateClass);
+
+                    if (componentPresentation != null) {
+                        componentPresentation.setComponentTemplate(componentTemplate);
+                    }
+                    viewModelName = DataBindFactory.findComponentTemplateViewName(componentTemplate);
+                } finally {
+                    IOUtils.closeQuietly(parser);
                 }
-                viewModelName = DataBindFactory.findComponentTemplateViewName(componentTemplate);
                 LOG.debug("Found view model name: " + viewModelName);
             } else if (key.equalsIgnoreCase(DataBindConstants.IS_DYNAMIC_NODE)) {
                 final String isDynamic = element.getValue().asText().toLowerCase();

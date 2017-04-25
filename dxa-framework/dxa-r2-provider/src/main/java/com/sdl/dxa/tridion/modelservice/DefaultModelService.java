@@ -1,4 +1,4 @@
-package com.sdl.dxa.tridion.rest;
+package com.sdl.dxa.tridion.modelservice;
 
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
@@ -82,18 +82,8 @@ public class DefaultModelService implements ModelService {
         try {
             HttpHeaders headers = new HttpHeaders();
 
-            //noinspection unchecked
-            String previewToken = _getClaimValue(WebClaims.REQUEST_HEADERS, X_PREVIEW_SESSION_TOKEN,
-                    claim -> Optional.of(((List<String>) claim).get(0)))
-                    .orElseGet(() -> _getClaimValue(WebClaims.REQUEST_COOKIES, PREVIEW_SESSION_TOKEN,
-                            claim -> Optional.of(claim.toString()))
-                            .orElse(null));
-
-            if (previewToken != null) {
-                // commented because of bug in CIS https://jira.sdl.com/browse/CRQ-3935
-                // headers.add(X_PREVIEW_SESSION_TOKEN, previewToken);
-                headers.add(HttpHeaders.COOKIE, String.format("%s=%s", PREVIEW_SESSION_TOKEN, previewToken));
-            }
+            processPreviewToken(headers);
+            processAccessToken(headers);
 
             ResponseEntity<T> response = restTemplate.exchange(serviceUrl, HttpMethod.GET, new HttpEntity<>(headers), type, params);
             return response.getBody();
@@ -104,6 +94,28 @@ public class DefaultModelService implements ModelService {
                 throw new DxaItemNotFoundException("Item not found requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'", e);
             }
             throw new ContentProviderException("Internal server error requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'", e);
+        }
+    }
+
+    private void processPreviewToken(HttpHeaders headers) {
+        //noinspection unchecked
+        String previewToken = _getClaimValue(WebClaims.REQUEST_HEADERS, X_PREVIEW_SESSION_TOKEN,
+                claim -> Optional.of(((List<String>) claim).get(0)))
+                .orElseGet(() -> _getClaimValue(WebClaims.REQUEST_COOKIES, PREVIEW_SESSION_TOKEN,
+                        claim -> Optional.of(claim.toString()))
+                        .orElse(null));
+
+        if (previewToken != null) {
+            // commented because of bug in CIS https://jira.sdl.com/browse/CRQ-3935
+            // headers.add(X_PREVIEW_SESSION_TOKEN, previewToken);
+            headers.add(HttpHeaders.COOKIE, String.format("%s=%s", PREVIEW_SESSION_TOKEN, previewToken));
+        }
+    }
+
+    private void processAccessToken(HttpHeaders headers) {
+        if (configuration.getOAuthTokenProvider() != null) {
+            log.trace("Request is secured, adding security token");
+            headers.add("Authorization", "Bearer" + configuration.getOAuthTokenProvider().getToken());
         }
     }
 

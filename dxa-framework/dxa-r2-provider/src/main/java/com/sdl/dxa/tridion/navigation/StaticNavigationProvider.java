@@ -2,7 +2,7 @@ package com.sdl.dxa.tridion.navigation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.dxa.common.dto.PageRequestDto;
-import com.sdl.dxa.tridion.rest.ModelService;
+import com.sdl.dxa.tridion.modelservice.ModelService;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;

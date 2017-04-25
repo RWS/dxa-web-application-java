@@ -1,4 +1,4 @@
-package com.sdl.dxa.tridion.rest;
+package com.sdl.dxa.tridion.modelservice;
 
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;

@@ -34,6 +34,12 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
             @Value("${dxa.model.service.url.entity.model}") String entityModelUrl,
             @Value("${dxa.model.service.key:#{null}}") String modelServiceKey,
             @Value("${dxa.model.service.url:#{null}}") String modelServiceUrl) throws ConfigurationException {
+        if (isTokenConfigurationAvailable()) {
+            this.oAuthTokenProvider = new OAuthTokenProvider(getOauthTokenProviderConfiguration());
+            // try to get token to validate credentials
+            this.oAuthTokenProvider.getToken();
+        }
+
         if (modelServiceUrl != null) {
             log.debug("Using Model Service Url {} from properties", modelServiceUrl);
             this.serviceUrl = modelServiceUrl;
@@ -45,10 +51,6 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
 
         this.pageModelUrl = this.serviceUrl + pageModelUrl;
         this.entityModelUrl = this.serviceUrl + entityModelUrl;
-
-        if (isTokenConfigurationAvailable()) {
-            this.oAuthTokenProvider = new OAuthTokenProvider(getOauthTokenProviderConfiguration());
-        }
     }
 
     private String loadServiceUrlFromCapability(String modelServiceKey) throws ConfigurationException {

@@ -5,7 +5,7 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.rest.ModelService;
+import com.sdl.dxa.tridion.modelservice.ModelService;
 import com.sdl.web.api.content.BinaryContentRetriever;
 import com.sdl.web.api.dynamic.DynamicMetaRetriever;
 import com.sdl.webapp.common.api.WebRequestContext;

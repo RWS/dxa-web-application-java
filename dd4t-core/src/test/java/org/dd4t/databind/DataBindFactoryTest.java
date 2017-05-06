@@ -45,4 +45,14 @@ public class DataBindFactoryTest {
         Assert.notNull(componentPresentation,"DCP cannot be bound");
 
     }
+
+    @Test
+    public void testStaticDataBindFactory () throws SerializationException, URISyntaxException, IOException {
+
+
+        String page = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("test.json").toURI()));
+        Page deserializedPage = DataBindFactory.buildPage(CompressionUtils.decompressGZip(CompressionUtils.decodeBase64(page)), PageImpl.class);
+        Assert.notNull(deserializedPage, "page cannot be bound");
+        Assert.hasLength(deserializedPage.getTitle(), "page has no valid title");
+    }
 }

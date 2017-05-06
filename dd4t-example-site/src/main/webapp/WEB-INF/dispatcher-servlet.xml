@@ -111,8 +111,8 @@
     </bean>
 
     <!-- DD4T factories entry point  -->
-    <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="getInstance">
-        <property name="dataBinder" ref="dataBinder" />
+    <bean id="databindFactory" class="org.dd4t.databind.DataBindFactory" factory-method="createInstance">
+		<constructor-arg ref="dataBinder" />
     </bean>
 
 	<!-- Experience Manager -->

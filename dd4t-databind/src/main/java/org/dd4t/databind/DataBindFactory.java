@@ -25,66 +25,77 @@ import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.exceptions.SerializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Singleton entry point for all DD4T classes
+ * Singleton entry point for all DD4T classes.
+ *
+ * This Factory Class will be removed in future versions. Use Spring configuration instead.
  *
  * @author R. Kempees
  */
+
+@Deprecated
 public class DataBindFactory {
     private static final Logger LOG = LoggerFactory.getLogger(DataBindFactory.class);
-    private static final DataBindFactory INSTANCE = new DataBindFactory();
+    private static DataBindFactory INSTANCE = null;
 
-    @Resource
     private DataBinder dataBinder;
 
-    private DataBindFactory () {
-
+    private DataBindFactory(DataBinder binder) {
+        this.dataBinder = binder;
     }
 
-    public static DataBindFactory getInstance () {
-        if (null == INSTANCE) {
-            LOG.error("DataBindFactory not properly instantiated!");
-        }
+    public static DataBindFactory createInstance(DataBinder binder) {
+        INSTANCE = new DataBindFactory(binder);
         return INSTANCE;
     }
 
-    public static <T extends Page> T buildPage (final String source, final Class<T> aClass) throws SerializationException {
+    public static DataBindFactory getInstance() {
+        return INSTANCE;
+    }
+
+    public static <T extends Page> T buildPage(final String source, final Class<T> aClass) throws
+            SerializationException {
         return INSTANCE.dataBinder.buildPage(source, aClass);
     }
 
-    public static <T extends ComponentPresentation> T buildDynamicComponentPresentation (final String source, final Class<T> aClass) throws SerializationException {
+    public static <T extends ComponentPresentation> T buildDynamicComponentPresentation(final String source, final
+    Class<T> aClass) throws SerializationException {
         return INSTANCE.dataBinder.buildComponentPresentation(source, aClass);
     }
 
     @Deprecated
-    public static ComponentPresentation buildDynamicComponentPresentation (final ComponentPresentation componentPresentation, final Class<? extends Component> aClass) throws SerializationException {
+    public static ComponentPresentation buildDynamicComponentPresentation(final ComponentPresentation
+                                                                                      componentPresentation, final
+    Class<? extends Component> aClass) throws SerializationException {
         return INSTANCE.dataBinder.buildDynamicComponentPresentation(componentPresentation, aClass);
     }
 
-    public static <T extends Component> T buildComponent (final Object source, final Class<T> aClass) throws SerializationException {
+    public static <T extends Component> T buildComponent(final Object source, final Class<T> aClass) throws
+            SerializationException {
         return INSTANCE.dataBinder.buildComponent(source, aClass);
     }
 
-    public static Map<String, BaseViewModel> buildModels (final Object rawData, final Set<String> modelNames, final String currentTemplateUri) throws SerializationException {
+    public static Map<String, BaseViewModel> buildModels(final Object rawData, final Set<String> modelNames, final
+    String currentTemplateUri) throws SerializationException {
         return INSTANCE.dataBinder.buildModels(rawData, modelNames, currentTemplateUri);
     }
 
-    public static <T extends BaseViewModel> T buildModel (final Object rawData, final Class<T> model, final String currentTemplateUri) throws SerializationException {
+    public static <T extends BaseViewModel> T buildModel(final Object rawData, final Class<T> model, final String
+            currentTemplateUri) throws SerializationException {
         return INSTANCE.dataBinder.buildModel(rawData, model, currentTemplateUri);
     }
 
-    public static <T extends BaseViewModel> T buildModel (final Object rawData, final String modelName, final String currentTemplateUri) throws SerializationException {
+    public static <T extends BaseViewModel> T buildModel(final Object rawData, final String modelName, final String
+            currentTemplateUri) throws SerializationException {
         return INSTANCE.dataBinder.buildModel(rawData, modelName, currentTemplateUri);
     }
 
-    public static String findComponentTemplateViewName (ComponentTemplate template) {
+    public static String findComponentTemplateViewName(ComponentTemplate template) {
         try {
             return INSTANCE.dataBinder.findComponentTemplateViewName(template);
         } catch (IOException e) {
@@ -93,28 +104,25 @@ public class DataBindFactory {
         return null;
     }
 
-    public static String getRootElementName (Object componentNode) {
+    public static String getRootElementName(Object componentNode) {
         return INSTANCE.dataBinder.getRootElementName(componentNode);
     }
 
-    public static Class<? extends BaseViewModel> getModelClassesForInterfaceOrAbstractField (final String className, final String rootElementName) {
+    public static Class<? extends BaseViewModel> getModelClassesForInterfaceOrAbstractField(final String className,
+                                                                                            final String
+                                                                                                    rootElementName) {
         return INSTANCE.dataBinder.getConcreteModel(className, rootElementName);
     }
 
-    public static boolean classHasViewModelDerivatives (String className) {
+    public static boolean classHasViewModelDerivatives(String className) {
         return INSTANCE.dataBinder.classHasViewModelDerivatives(className);
     }
 
-    public static boolean renderGenericComponentsOnly () {
+    public static boolean renderGenericComponentsOnly() {
         return INSTANCE.dataBinder.renderDefaultComponentModelsOnly();
     }
 
-    public static boolean renderDefaultComponentsIfNoModelFound () {
+    public static boolean renderDefaultComponentsIfNoModelFound() {
         return INSTANCE.dataBinder.renderDefaultComponentsIfNoModelFound();
-    }
-
-    @Autowired
-    public void setDataBinder (DataBinder dataBinder) {
-        this.dataBinder = dataBinder;
     }
 }

@@ -120,5 +120,13 @@ public interface Localization {
      */
     List<String> getDataFormats();
 
+    /**
+     * Gets URI scheme used inside CM-URIs
+     *
+     * @return The URI scheme
+     */
+    default String getCmUriScheme() {
+        return "tcm";
+    }
 
 }

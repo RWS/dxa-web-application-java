@@ -131,6 +131,18 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         }
     }
 
+    private void fillViewModel(ViewModel viewModel, ViewModelData modelData) {
+        if (modelData.getExtensionData() != null) {
+            modelData.getExtensionData().forEach(viewModel::addExtensionData);
+        }
+
+        if (viewModel instanceof AbstractViewModel && modelData.getXpmMetadata() != null) {
+            ((AbstractViewModel) viewModel).setXpmMetadata(modelData.getXpmMetadata());
+        }
+
+        viewModel.setHtmlClasses(modelData.getHtmlClasses());
+    }
+
     private <T extends EntityModel> void _processMediaItem(EntityModelData modelData, T entityModel) throws DxaException {
         if (entityModel instanceof MediaItem) {
             MediaItem mediaItem = (MediaItem) entityModel;
@@ -165,6 +177,11 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
         PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
 
+        if (pageModel == null) {
+            log.info("Page Model is null, for model data id = {}", modelData.getId());
+            return null;
+        }
+
         fillViewModel(pageModel, modelData);
         pageModel.setId(modelData.getId());
         pageModel.setMeta(modelData.getMeta());
@@ -185,6 +202,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     @SneakyThrows({InstantiationException.class, IllegalAccessException.class})
+    @Nullable
     private PageModel instantiatePageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
         MvcData mvcData = createMvcData(modelData.getMvcData(), DefaultsMvcData.PAGE);
         log.debug("MvcData '{}' for PageModel {}", mvcData, modelData);
@@ -204,22 +222,10 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                 }
                 pageModel.setMvcData(mvcData);
             } catch (DxaException e) {
-                log.warn("Exception happened while creating a page model {}", modelData, e);
+                log.warn("Exception happened while creating a page model {}", modelData.getId(), e);
             }
         }
         return pageModel;
-    }
-
-    private void fillViewModel(ViewModel viewModel, ViewModelData modelData) {
-        if (modelData.getExtensionData() != null) {
-            modelData.getExtensionData().forEach(viewModel::addExtensionData);
-        }
-
-        if (viewModel instanceof AbstractViewModel && modelData.getXpmMetadata() != null) {
-            ((AbstractViewModel) viewModel).setXpmMetadata(modelData.getXpmMetadata());
-        }
-
-        viewModel.setHtmlClasses(modelData.getHtmlClasses());
     }
 
     private String getPageTitle(PageModelData modelData) {

@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import org.joda.time.DateTime;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Accessors(chain = true)
@@ -20,7 +20,7 @@ public class SitemapItemModelData {
 
     private boolean visible;
 
-    private List<SitemapItemModelData> items;
+    private Set<SitemapItemModelData> items;
 
     private DateTime publishedDate;
 }

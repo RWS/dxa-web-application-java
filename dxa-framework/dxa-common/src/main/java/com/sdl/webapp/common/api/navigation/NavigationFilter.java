@@ -3,7 +3,7 @@ package com.sdl.webapp.common.api.navigation;
 import lombok.Data;
 
 /**
- * Navigation filter that holds information about the requested navigation in {@link OnDemandNavigationProvider}.
+ * Navigation filter that holds information about the requested navigation.
  */
 @Data
 public class NavigationFilter {

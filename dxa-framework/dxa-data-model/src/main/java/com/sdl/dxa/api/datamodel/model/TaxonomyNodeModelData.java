@@ -9,6 +9,8 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class TaxonomyNodeModelData extends SitemapItemModelData {
 
+    private String key;
+
     private boolean withChildren;
 
     private String description;

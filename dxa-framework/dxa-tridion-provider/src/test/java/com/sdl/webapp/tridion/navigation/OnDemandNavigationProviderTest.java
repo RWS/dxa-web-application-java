@@ -11,8 +11,8 @@ import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.tridion.navigation.data.KeywordDTO;
-import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
+import com.tridion.meta.PageMeta;
+import com.tridion.taxonomies.Keyword;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
@@ -75,7 +75,7 @@ import static org.mockito.Mockito.when;
  * root  false    1 //shouldReturnEmptyList_NotExpandingAncestors_ForTaxonomyRoot   /subtree/t1
  * </pre>
  */
-public class AbstractDynamicNavigationProviderTest {
+public class OnDemandNavigationProviderTest {
 
     private AbstractStaticNavigationProvider staticNavigationProvider = mock(AbstractStaticNavigationProvider.class);
 
@@ -83,11 +83,11 @@ public class AbstractDynamicNavigationProviderTest {
 
     private LinkResolver linkResolver = mock(LinkResolver.class);
 
-    private AbstractDynamicNavigationProvider defaultDynamicNavigationProvider = getTestProvider(false, getNavigationModel(), "taxonomyId");
+    private DynamicNavigationProvider defaultDynamicNavigationProvider = getTestProvider(false, getNavigationModel(), "taxonomyId");
 
     @NotNull
-    private AbstractDynamicNavigationProvider getTestProvider(final boolean callRealNavigationModel, final SitemapItem model, final String taxonomyId) {
-        AbstractDynamicNavigationProvider provider = new AbstractDynamicNavigationProvider(staticNavigationProvider, linkResolver) {
+    private DynamicNavigationProvider getTestProvider(final boolean callRealNavigationModel, final SitemapItem model, final String taxonomyId) {
+        DynamicNavigationProvider provider = new DynamicNavigationProvider(staticNavigationProvider, linkResolver, null, null) {
             @Override
             public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
                 return callRealNavigationModel ? super.getNavigationModel(localization) : createTaxonomyNode(taxonomyId, localization);
@@ -131,7 +131,7 @@ public class AbstractDynamicNavigationProviderTest {
     }
 
     @Before
-    public void init() throws NavigationProviderException, DxaException {
+    public void init() throws DxaException {
         when(localization.getId()).thenReturn("1");
 
         SitemapItem staticSitemapItem = new SitemapItem();
@@ -274,9 +274,9 @@ public class AbstractDynamicNavigationProviderTest {
     }
 
     @Test
-    public void shouldGetNavigationModel() throws NavigationProviderException, DxaException {
+    public void shouldGetNavigationModel() throws DxaException {
         //when
-        AbstractDynamicNavigationProvider testProvider = getTestProvider(true, getNavigationModel(), "taxonomyId");
+        DynamicNavigationProvider testProvider = getTestProvider(true, getNavigationModel(), "taxonomyId");
         testProvider.getNavigationModel(localization);
 
         //then
@@ -285,9 +285,9 @@ public class AbstractDynamicNavigationProviderTest {
     }
 
     @Test
-    public void shouldFallbackToStaticIfTaxonomyIdIsNull() throws NavigationProviderException, DxaException {
+    public void shouldFallbackToStaticIfTaxonomyIdIsNull() throws DxaException {
         //given
-        AbstractDynamicNavigationProvider testProvider = getTestProvider(true, getNavigationModel(), null);
+        DynamicNavigationProvider testProvider = getTestProvider(true, getNavigationModel(), null);
 
         //when
         SitemapItem sitemapItem = testProvider.getNavigationModel(localization);
@@ -300,20 +300,20 @@ public class AbstractDynamicNavigationProviderTest {
     }
 
     @Test
-    public void shouldFallbackToStaticIfTaxonomyIsNotAvailable() throws NavigationProviderException, DxaException {
+    public void shouldFallbackToStaticIfTaxonomyIsNotAvailable() throws DxaException {
         //given
-        AbstractDynamicNavigationProvider testProvider = getTestProvider(false, new SitemapItem(), "taxonomyId");
+        DynamicNavigationProvider testProvider = getTestProvider(false, new SitemapItem(), "taxonomyId");
         verifyCallbackForNavigationLinksTests(testProvider);
     }
 
     @Test
-    public void shouldFallbackToStaticIfTaxonomyIsNull() throws NavigationProviderException, DxaException {
+    public void shouldFallbackToStaticIfTaxonomyIsNull() throws DxaException {
         //given
-        AbstractDynamicNavigationProvider testProvider = getTestProvider(false, null, "taxonomyId");
+        DynamicNavigationProvider testProvider = getTestProvider(false, null, "taxonomyId");
         verifyCallbackForNavigationLinksTests(testProvider);
     }
 
-    private void verifyCallbackForNavigationLinksTests(AbstractDynamicNavigationProvider testProvider) throws NavigationProviderException {
+    private void verifyCallbackForNavigationLinksTests(DynamicNavigationProvider testProvider) throws NavigationProviderException {
         //when
         NavigationLinks navigationLinks = testProvider.getTopNavigationLinks("1", localization);
 
@@ -617,10 +617,9 @@ public class AbstractDynamicNavigationProviderTest {
     @Test
     public void shouldCreateSiteMapItemFromPageMeta() {
         //given
-        PageMetaDTO.PageMetaDTOBuilder builder = PageMetaDTO.builder().id(13).title("000 title").url("url.html");
-        PageMetaDTO pageMeta = builder.build();
-        PageMetaDTO pageMetaNoSequence = builder.title("title").build();
-        PageMetaDTO pageMetaNoUrl = builder.url("").build();
+        PageMeta pageMeta = pageMeta(13, "000 title", "url.html");
+        PageMeta pageMetaNoSequence = pageMeta(13, "title", "url.html");
+        PageMeta pageMetaNoUrl = pageMeta(13, "000 title", "");
 
         //when
         SitemapItem sitemapItem = defaultDynamicNavigationProvider.createSitemapItemFromPage(pageMeta, "42");
@@ -640,25 +639,36 @@ public class AbstractDynamicNavigationProviderTest {
         assertFalse(sitemapItemNoUrl.isVisible());
     }
 
+    private PageMeta pageMeta(int id, String title, String url) {
+        PageMeta mock = mock(PageMeta.class);
+        when(mock.getId()).thenReturn(id);
+        when(mock.getTitle()).thenReturn(title);
+        when(mock.getURLPath()).thenReturn(url);
+        return mock;
+    }
+
+    private Keyword keyword(String keywordUri, String taxonomyUri, String name, String key, boolean withChildren, int referenceContentCount, String description, boolean isAbstract) {
+        Keyword mock = mock(Keyword.class);
+        when(mock.getKeywordURI()).thenReturn(keywordUri);
+        when(mock.getTaxonomyURI()).thenReturn(taxonomyUri);
+        when(mock.getKeywordName()).thenReturn(name);
+        when(mock.getKeywordKey()).thenReturn(key);
+        when(mock.hasKeywordChildren()).thenReturn(withChildren);
+        when(mock.getReferencedContentCount()).thenReturn(referenceContentCount);
+        when(mock.getKeywordDescription()).thenReturn(description);
+        when(mock.isKeywordAbstract()).thenReturn(isAbstract);
+        return mock;
+    }
+
     @Test
     public void shouldCreateTaxonomyNodeFromKeyword() {
         //given
-        KeywordDTO.KeywordDTOBuilder builder = KeywordDTO.builder()
-                .keywordUri("1-2")
-                .taxonomyUri("3-4")
-                .name("000 Root")
-                .key("key")
-                .withChildren(true)
-                .referenceContentCount(1)
-                .description("description")
-                .keywordAbstract(true);
+        Keyword keyword = keyword("1-2", "3-4", "000 Root", "key", true, 1, "description", true);
+        Keyword keywordRoot = keyword("1-2", "1-2", "000 Root", "key", true, 1, "description", true);
+        Keyword withoutChildren = keyword("1-2", "3-4", "000 Root", "key", false, 0, "description", true);
+        Keyword withChildren1 = keyword("1-2", "3-4", "000 Root", "key", true, 0, "description", true);
+        Keyword withChildren2 = keyword("1-2", "3-4", "000 Root", "key", false, 1, "description", true);
 
-        KeywordDTO keyword = builder.build();
-        KeywordDTO keywordRoot = builder.taxonomyUri("1-2").build();
-
-        KeywordDTO withoutChildren = builder.withChildren(false).referenceContentCount(0).build();
-        KeywordDTO withChildren1 = builder.withChildren(true).referenceContentCount(0).build();
-        KeywordDTO withChildren2 = builder.withChildren(false).referenceContentCount(1).build();
 
         String taxonomyId = "42";
         String taxonomyNodeUrl = "node-url.html";
@@ -751,7 +761,7 @@ public class AbstractDynamicNavigationProviderTest {
         NavigationFilter navigationFilter = getNavigationFilter(true, 0);
         String sitemapItemId = "t1-p1";
 
-        AbstractDynamicNavigationProvider testProvider = getTestProvider(false, getNavigationModel(), "t1");
+        DynamicNavigationProvider testProvider = getTestProvider(false, getNavigationModel(), "t1");
 
         when(testProvider.collectAncestorsForPage(any(TaxonomySitemapItemUrisHolder.class), eq(navigationFilter), eq(localization)))
                 .thenReturn(Collections.emptyList());

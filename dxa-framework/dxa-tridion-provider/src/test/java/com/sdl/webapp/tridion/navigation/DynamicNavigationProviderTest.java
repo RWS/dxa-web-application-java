@@ -8,8 +8,6 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.util.TcmUtils;
-import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
-import com.tridion.meta.PageMeta;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.filters.DepthFilter;
@@ -45,7 +43,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings("Duplicates")
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicNavigationProviderTest {
 
@@ -58,9 +55,6 @@ public class DynamicNavigationProviderTest {
 
     @Mock
     private TaxonomyRelationManager relationManager;
-
-    @Mock
-    private AbstractStaticNavigationProvider staticNavigationProvider;
 
     @Mock
     private Localization localization;
@@ -187,25 +181,6 @@ public class DynamicNavigationProviderTest {
         assertEquals("t2-k13", item1.getId());
         assertEquals("TaxonomyNode", item1.getType());
         assertEquals("child11", item1.getItems().iterator().next().getTitle());
-    }
-
-    @Test
-    public void shouldConvertToPageMetaDTO() {
-        //given 
-        PageMeta pageMeta = mock(PageMeta.class);
-        when(pageMeta.getId()).thenReturn(1);
-        when(pageMeta.getTitle()).thenReturn("title");
-        when(pageMeta.getURLPath()).thenReturn("url");
-
-        //when
-        Object toDto = ReflectionTestUtils.invokeMethod(dynamicNavigationProvider, "toDto", pageMeta);
-
-        //then
-        assertTrue(toDto instanceof PageMetaDTO);
-        PageMetaDTO dto = (PageMetaDTO) toDto;
-        assertEquals(1, dto.getId());
-        assertEquals("title", dto.getTitle());
-        assertEquals("url", dto.getUrl());
     }
 
     //TSI-1980

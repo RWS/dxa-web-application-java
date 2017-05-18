@@ -214,8 +214,10 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator {
         Element element = cache.get(key);
         if (element == null) {
             element = new Element(key, cacheElement);
-            cache.put(element);
         }
+
+        cache.put(element);
+
         element.setTimeToLive(cacheDependencyTTL);
 
         for (CacheDependency dep : dependencies) {

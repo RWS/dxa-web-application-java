@@ -1,12 +1,15 @@
 package org.dd4t.thymeleaf.dialect.processor.xpm;
 
-import java.util.logging.Logger;
+import java.util.List;
 
 import org.dd4t.core.services.PropertiesService;
 import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
 import org.dd4t.mvc.utils.XPMRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.context.ITemplateContext;
+import org.thymeleaf.engine.TemplateData;
 import org.thymeleaf.model.IModel;
 import org.thymeleaf.model.IModelFactory;
 import org.thymeleaf.model.IProcessableElementTag;
@@ -23,7 +26,7 @@ import org.thymeleaf.templatemode.TemplateMode;
  */
 
 public class XpmFieldProcessor extends AbstractElementTagProcessor {
-    private static final Logger LOG = Logger.getLogger(XpmFieldProcessor.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(XpmFieldProcessor.class.getName());
     private static final String TAG_NAME = "field";
     private static final String SRC_ATTR_NAME = "src";
     private static final String FIELD_ATTR_NAME = "fieldname";
@@ -58,12 +61,12 @@ public class XpmFieldProcessor extends AbstractElementTagProcessor {
         
         // check if there is a 'src' attribute on the current tag
         if (! tag.hasAttribute(SRC_ATTR_NAME)) {
-            LOG.warning("xpm:field is used without a src attribute");
+            LOG.warn("xpm:field is used without a src attribute");
             return;
         }
         // check if there is a 'field' attribute on the current tag
         if (! tag.hasAttribute(FIELD_ATTR_NAME)) {
-            LOG.warning("xpm:field is used without a fieldname attribute");
+            LOG.warn("xpm:field is used without a fieldname attribute");
             return;
         }
 
@@ -83,13 +86,31 @@ public class XpmFieldProcessor extends AbstractElementTagProcessor {
         
         // get an XPM renderer (part of DD4T) and generate the XPM comment for this page
         XPMRenderer renderer = XPMRenderer.getInstance();
-        String xpmMarkup = renderer.componentField(entity.getXPath(fieldName), entity.isMultiValued(fieldName), index);
-        
-        // create a model with the returned markup
-        final IModelFactory modelFactory = context.getModelFactory();
-        final IModel model = modelFactory.parse(context.getTemplateData(), xpmMarkup);
-
-        // instruct the engine to replace this entire element with the specified model
-        structureHandler.replaceWith(model, false);
+        try {
+	        String xpmMarkup = renderer.componentField(entity.getXPath(fieldName), entity.isMultiValued(fieldName), index);
+	        
+	        // create a model with the returned markup
+	        final IModelFactory modelFactory = context.getModelFactory();
+	        final IModel model = modelFactory.parse(context.getTemplateData(), xpmMarkup);
+	
+	        // instruct the engine to replace this entire element with the specified model
+	        structureHandler.replaceWith(model, false);
+        } 
+        catch(IllegalArgumentException ex) {
+        	LOG.debug(createMessage(context));
+        }
     }
+
+	private String createMessage(ITemplateContext context) {
+		StringBuilder message = new StringBuilder();
+		message.append("An IllegalArgumentException was thrown during template parsing ( template: ");
+		List<TemplateData> list = context.getTemplateStack();
+		if (list != null) {
+			for (TemplateData data : list) {
+				message.append(data.getTemplate()).append(" ");
+			}
+		}
+		message.append(")");
+		return message.toString();
+	}
 }

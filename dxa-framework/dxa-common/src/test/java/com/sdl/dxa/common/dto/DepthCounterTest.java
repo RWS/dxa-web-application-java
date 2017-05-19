@@ -10,10 +10,9 @@ import static org.junit.Assert.assertTrue;
 public class DepthCounterTest {
 
     @Test
-    public void shouldSayIfItIsTooDeep_SoZeroOrLess() {
+    public void shouldSayIfItIsTooDeep_IfZero() {
         assertTrue(new DepthCounter(1).isNotTooDeep());
         assertFalse(new DepthCounter(0).isNotTooDeep());
-        assertFalse(new DepthCounter(-1).isNotTooDeep());
     }
 
     @Test
@@ -22,7 +21,7 @@ public class DepthCounterTest {
         DepthCounter counter = new DepthCounter(1);
 
         assertTrue(counter.depthIncreaseAndCheckIfSafe());
-        assertEquals(0, counter.getDeep());
+        assertEquals(0, counter.getCounter());
         assertFalse(counter.depthIncreaseAndCheckIfSafe());
     }
 
@@ -30,7 +29,7 @@ public class DepthCounterTest {
     public void shouldDecreaseDepth() {
         DepthCounter counter = new DepthCounter(0);
         counter.depthDecrease();
-        assertEquals(1, counter.getDeep());
+        assertEquals(1, counter.getCounter());
     }
 
     @Test
@@ -38,9 +37,20 @@ public class DepthCounterTest {
         //given 
 
         //when
-        int deep = DepthCounter.UNLIMITED_DEPTH.getDeep();
+        int deep = DepthCounter.UNLIMITED_DEPTH.getCounter();
 
         //then
         assertEquals(MAX_VALUE, deep);
+    }
+
+    @Test
+    public void shouldConsiderNegativeValuesAsUnlimited() {
+        //given 
+
+        //when
+        DepthCounter counter = new DepthCounter(-1);
+
+        //then
+        assertEquals(DepthCounter.UNLIMITED_DEPTH, counter);
     }
 }

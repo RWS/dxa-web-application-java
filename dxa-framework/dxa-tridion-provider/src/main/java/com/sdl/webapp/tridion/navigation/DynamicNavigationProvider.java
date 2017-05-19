@@ -15,7 +15,7 @@ import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.api.navigation.OnDemandNavigationProvider;
-import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
+import com.sdl.webapp.common.api.navigation.TaxonomyUrisHolder;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.tridion.ItemTypes;
 import com.tridion.broker.StorageException;
@@ -57,7 +57,7 @@ import static com.sdl.dxa.common.util.PathUtils.isIndexPath;
 import static com.sdl.dxa.common.util.PathUtils.isWithSequenceDigits;
 import static com.sdl.dxa.common.util.PathUtils.stripDefaultExtension;
 import static com.sdl.dxa.common.util.PathUtils.stripIndexPath;
-import static com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder.parse;
+import static com.sdl.webapp.common.api.navigation.TaxonomyUrisHolder.parse;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.PAGE;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
@@ -179,7 +179,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
             return expandTaxonomyRoots(navigationFilter, localization);
         }
 
-        TaxonomySitemapItemUrisHolder info = parse(sitemapItemId, localization);
+        TaxonomyUrisHolder info = parse(sitemapItemId, localization.getId());
         if (info == null) {
             log.warn("SitemapID {} is wrong for Taxonomy navigation, return empty list of items", sitemapItemId);
             return Collections.emptyList();
@@ -238,7 +238,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
      * @return a set of descendants of item with passed URI
      */
     @Contract("_, _, _ -> !null")
-    protected Set<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+    protected Set<SitemapItem> expandDescendants(TaxonomyUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
         if (uris.isPage()) {
             log.debug("Page cannot have descendants, return emptyList, uris = ", uris);
             return Collections.emptySet();
@@ -277,69 +277,6 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         log.debug("Resolved Navigation Taxonomy: {}", root);
 
         return root.getTaxonomyURI();
-    }
-
-    /**
-     * One single ancestor for a given keyword. Although same keyword may be in few places, we don't expect it due to
-     * technical limitation in CME. So basically we ignore the fact that keyword may be in many places (like page) and
-     * expect only a single entry. Because of that we have only one taxonomy root for Keyword's ancestors.
-     *
-     * @param uris             URIs of your current context taxonomy node
-     * @param navigationFilter navigation filter
-     * @param localization     current localization
-     * @return root of a taxonomy
-     */
-    @Nullable
-    protected TaxonomyNode expandAncestorsForKeyword(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
-        if (!uris.isKeyword()) {
-            log.warn("Method for keywords was called for not a keyword! uris: {}, filter: {}, localization: {}", uris, navigationFilter, localization);
-            return null;
-        }
-
-        DepthFilter depthFilter = new DepthFilter(DepthFilter.UNLIMITED_DEPTH, DepthFilter.FILTER_UP);
-        Keyword taxonomyRoot = taxonomyFactory.getTaxonomyKeywords(uris.getTaxonomyUri(), depthFilter, uris.getKeywordUri());
-
-        if (taxonomyRoot == null) {
-            log.warn("Keyword {} in taxonomy {} wasn't found", uris.getKeywordUri(), uris.getTaxonomyUri());
-            return null;
-        }
-
-        return createTaxonomyNode(taxonomyRoot, -1, navigationFilter, localization);
-    }
-
-    /**
-     * Ancestors for a page is a list of same ROOT node with different children.
-     * Basically, these different ROOTs (with same ID, because we are still within one taxonomy) contain
-     * different children for different paths your page may be in.
-     * <p>Unless other methods for descendants, this method returns {@link List} because the root Taxonomies will be the same object
-     * even if page is in multiple places.</p>
-     *
-     * @param uris             URIs of your current context taxonomy node
-     * @param navigationFilter navigation filter
-     * @param localization     current localization
-     * @return a list of roots of taxonomy with different paths for items
-     */
-    @Contract("_, _, _ -> !null")
-    protected List<SitemapItem> collectAncestorsForPage(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
-        if (!uris.isPage()) {
-            log.warn("Method for page was called for not a page! uris: {}, filter: {}, localization: {}", uris, navigationFilter, localization);
-            return Collections.emptyList();
-        }
-
-        DepthFilter depthFilter = new DepthFilter(DepthFilter.UNLIMITED_DEPTH, DepthFilter.FILTER_UP);
-        Keyword[] keywords = relationManager.getTaxonomyKeywords(uris.getTaxonomyUri(), uris.getPageUri(), null, depthFilter, ItemTypes.PAGE);
-
-        if (keywords == null || keywords.length == 0) {
-            log.debug("Page {} is not classified in taxonomy {}", uris.getPageUri(), uris.getTaxonomyUri());
-            return Collections.emptyList();
-        }
-
-        List<SitemapItem> result = new ArrayList<>();
-        for (Keyword keyword : keywords) {
-            result.add(createTaxonomyNode(keyword, -1, navigationFilter, localization));
-        }
-
-        return result;
     }
 
     private TaxonomyNode createTaxonomyNode(@NotNull Keyword keyword, int expandLevels, NavigationFilter filter, @NotNull Localization localization) {
@@ -523,7 +460,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
     }
 
     @NonNull
-    private List<SitemapItem> expandAncestors(@NonNull TaxonomySitemapItemUrisHolder uris, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) {
+    private List<SitemapItem> expandAncestors(@NonNull TaxonomyUrisHolder uris, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) {
         if (!uris.isPage() && !uris.isKeyword()) {
             log.debug("URIs {} is not a page nor keyword, can't expand ancestors, filter {}, localization {}", uris, navigationFilter, localization);
             return Collections.emptyList();
@@ -545,8 +482,36 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         return Collections.emptyList();
     }
 
+    /**
+     * One single ancestor for a given keyword. Although same keyword may be in few places, we don't expect it due to
+     * technical limitation in CME. So basically we ignore the fact that keyword may be in many places (like page) and
+     * expect only a single entry. Because of that we have only one taxonomy root for Keyword's ancestors.
+     *
+     * @param uris             URIs of your current context taxonomy node
+     * @param navigationFilter navigation filter
+     * @param localization     current localization
+     * @return root of a taxonomy
+     */
     @Nullable
-    private SitemapItem expandAncestorsForPage(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+    protected TaxonomyNode expandAncestorsForKeyword(TaxonomyUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+        if (!uris.isKeyword()) {
+            log.warn("Method for keywords was called for not a keyword! uris: {}, filter: {}, localization: {}", uris, navigationFilter, localization);
+            return null;
+        }
+
+        DepthFilter depthFilter = new DepthFilter(DepthFilter.UNLIMITED_DEPTH, DepthFilter.FILTER_UP);
+        Keyword taxonomyRoot = taxonomyFactory.getTaxonomyKeywords(uris.getTaxonomyUri(), depthFilter, uris.getKeywordUri());
+
+        if (taxonomyRoot == null) {
+            log.warn("Keyword {} in taxonomy {} wasn't found", uris.getKeywordUri(), uris.getTaxonomyUri());
+            return null;
+        }
+
+        return createTaxonomyNode(taxonomyRoot, -1, navigationFilter, localization);
+    }
+
+    @Nullable
+    private SitemapItem expandAncestorsForPage(TaxonomyUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
         List<SitemapItem> nodes = collectAncestorsForPage(uris, navigationFilter, localization);
 
         if (nodes.isEmpty()) {
@@ -560,6 +525,41 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         }
 
         return mergedNode;
+    }
+
+    /**
+     * Ancestors for a page is a list of same ROOT node with different children.
+     * Basically, these different ROOTs (with same ID, because we are still within one taxonomy) contain
+     * different children for different paths your page may be in.
+     * <p>Unless other methods for descendants, this method returns {@link List} because the root Taxonomies will be the same object
+     * even if page is in multiple places.</p>
+     *
+     * @param uris             URIs of your current context taxonomy node
+     * @param navigationFilter navigation filter
+     * @param localization     current localization
+     * @return a list of roots of taxonomy with different paths for items
+     */
+    @Contract("_, _, _ -> !null")
+    protected List<SitemapItem> collectAncestorsForPage(TaxonomyUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+        if (!uris.isPage()) {
+            log.warn("Method for page was called for not a page! uris: {}, filter: {}, localization: {}", uris, navigationFilter, localization);
+            return Collections.emptyList();
+        }
+
+        DepthFilter depthFilter = new DepthFilter(DepthFilter.UNLIMITED_DEPTH, DepthFilter.FILTER_UP);
+        Keyword[] keywords = relationManager.getTaxonomyKeywords(uris.getTaxonomyUri(), uris.getPageUri(), null, depthFilter, ItemTypes.PAGE);
+
+        if (keywords == null || keywords.length == 0) {
+            log.debug("Page {} is not classified in taxonomy {}", uris.getPageUri(), uris.getTaxonomyUri());
+            return Collections.emptyList();
+        }
+
+        List<SitemapItem> result = new ArrayList<>();
+        for (Keyword keyword : keywords) {
+            result.add(createTaxonomyNode(keyword, -1, navigationFilter, localization));
+        }
+
+        return result;
     }
 
     private void mergeSubtrees(@NonNull SitemapItem nodeToMerge, @NonNull SitemapItem mergedNode) {
@@ -595,7 +595,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
             }
         }
 
-        Set<SitemapItem> additionalChildren = new LinkedHashSet<>(expandDescendants(parse(taxonomyNode.getId(), localization), navigationFilter, localization));
+        Set<SitemapItem> additionalChildren = new LinkedHashSet<>(expandDescendants(parse(taxonomyNode.getId(), localization.getId()), navigationFilter, localization));
 
         for (SitemapItem child : difference(additionalChildren, newHashSet(taxonomyNode.getItems()))) {
             taxonomyNode.addItem(child);

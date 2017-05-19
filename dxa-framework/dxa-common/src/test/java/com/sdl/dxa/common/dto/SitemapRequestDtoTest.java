@@ -15,6 +15,6 @@ public class SitemapRequestDtoTest {
         SitemapRequestDto actual = requestDto.nextExpandLevel();
 
         //then
-        assertEquals(41, actual.getExpandLevels().getDeep());
+        assertEquals(41, actual.getExpandLevels().getCounter());
     }
 }

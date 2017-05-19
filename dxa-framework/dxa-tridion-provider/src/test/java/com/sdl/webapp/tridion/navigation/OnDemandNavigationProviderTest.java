@@ -9,7 +9,7 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
-import com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder;
+import com.sdl.webapp.common.api.navigation.TaxonomyUrisHolder;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.tridion.meta.PageMeta;
 import com.tridion.taxonomies.Keyword;
@@ -35,7 +35,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder.parse;
+import static com.sdl.webapp.common.api.navigation.TaxonomyUrisHolder.parse;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEYWORD;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
 import static org.junit.Assert.assertEquals;
@@ -99,7 +99,7 @@ public class OnDemandNavigationProviderTest {
             }
 
             @Override
-            protected Set<SitemapItem> expandDescendants(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+            protected Set<SitemapItem> expandDescendants(TaxonomyUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
                 return null;
             }
 
@@ -115,12 +115,12 @@ public class OnDemandNavigationProviderTest {
 
             @Nullable
             @Override
-            protected TaxonomyNode expandAncestorsForKeyword(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+            protected TaxonomyNode expandAncestorsForKeyword(TaxonomyUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
                 return null;
             }
 
             @Override
-            protected List<SitemapItem> collectAncestorsForPage(TaxonomySitemapItemUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
+            protected List<SitemapItem> collectAncestorsForPage(TaxonomyUrisHolder uris, NavigationFilter navigationFilter, Localization localization) {
                 return null;
             }
         };
@@ -152,7 +152,7 @@ public class OnDemandNavigationProviderTest {
         });
 
         doReturn(Collections.<SitemapItem>emptySet()).when(defaultDynamicNavigationProvider).expandDescendants(
-                any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
+                any(TaxonomyUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
 
 
         mockSingleAncestorForKeyword("t1-k22", taxonomyNode("t1", "/", true, set(
@@ -163,7 +163,7 @@ public class OnDemandNavigationProviderTest {
 
         //region Descendants
         doReturn(Collections.<SitemapItem>emptySet()).when(defaultDynamicNavigationProvider).expandDescendants(
-                any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
+                any(TaxonomyUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
 
         mockDescendants("t1", set(
                 siteMapItem("t1-p1", true, "/index"),
@@ -732,8 +732,8 @@ public class OnDemandNavigationProviderTest {
         Collection<SitemapItem> list = defaultDynamicNavigationProvider.getNavigationSubtree("wrong id", filter, localization);
 
         //then
-        verify(defaultDynamicNavigationProvider, never()).collectAncestorsForPage(any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
-        verify(defaultDynamicNavigationProvider, never()).expandDescendants(any(TaxonomySitemapItemUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
+        verify(defaultDynamicNavigationProvider, never()).collectAncestorsForPage(any(TaxonomyUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
+        verify(defaultDynamicNavigationProvider, never()).expandDescendants(any(TaxonomyUrisHolder.class), any(NavigationFilter.class), any(Localization.class));
         verify(defaultDynamicNavigationProvider, never()).expandTaxonomyRoots(any(NavigationFilter.class), any(Localization.class));
         assertTrue(list.isEmpty());
     }
@@ -744,14 +744,14 @@ public class OnDemandNavigationProviderTest {
         NavigationFilter navigationFilter = getNavigationFilter(true, 1);
         String sitemapItemId = "t1-k2";
 
-        when(defaultDynamicNavigationProvider.expandAncestorsForKeyword(any(TaxonomySitemapItemUrisHolder.class), eq(navigationFilter), eq(localization)))
+        when(defaultDynamicNavigationProvider.expandAncestorsForKeyword(any(TaxonomyUrisHolder.class), eq(navigationFilter), eq(localization)))
                 .thenReturn(null);
 
         //when
         Collection<SitemapItem> emptyList = defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
-        verify(defaultDynamicNavigationProvider).expandAncestorsForKeyword(eq(parse(sitemapItemId, localization)), eq(navigationFilter), eq(localization));
+        verify(defaultDynamicNavigationProvider).expandAncestorsForKeyword(eq(parse(sitemapItemId, localization.getId())), eq(navigationFilter), eq(localization));
         assertTrue(emptyList.isEmpty());
     }
 
@@ -763,14 +763,14 @@ public class OnDemandNavigationProviderTest {
 
         DynamicNavigationProvider testProvider = getTestProvider(false, getNavigationModel(), "t1");
 
-        when(testProvider.collectAncestorsForPage(any(TaxonomySitemapItemUrisHolder.class), eq(navigationFilter), eq(localization)))
+        when(testProvider.collectAncestorsForPage(any(TaxonomyUrisHolder.class), eq(navigationFilter), eq(localization)))
                 .thenReturn(Collections.emptyList());
 
         //when
         Collection<SitemapItem> emptyList = testProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
-        verify(testProvider).collectAncestorsForPage(eq(parse(sitemapItemId, localization)), eq(navigationFilter), eq(localization));
+        verify(testProvider).collectAncestorsForPage(eq(parse(sitemapItemId, localization.getId())), eq(navigationFilter), eq(localization));
         assertTrue(emptyList.isEmpty());
     }
 
@@ -810,7 +810,7 @@ public class OnDemandNavigationProviderTest {
         defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
-        verify(defaultDynamicNavigationProvider).expandDescendants(eq(parse(sitemapItemId, localization)), eq(navigationFilter), eq(localization));
+        verify(defaultDynamicNavigationProvider).expandDescendants(eq(parse(sitemapItemId, localization.getId())), eq(navigationFilter), eq(localization));
     }
 
     @Test
@@ -823,7 +823,7 @@ public class OnDemandNavigationProviderTest {
         defaultDynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
-        verify(defaultDynamicNavigationProvider, never()).expandDescendants(eq(parse(sitemapItemId, localization)), eq(navigationFilter), eq(localization));
+        verify(defaultDynamicNavigationProvider, never()).expandDescendants(eq(parse(sitemapItemId, localization.getId())), eq(navigationFilter), eq(localization));
     }
 
     //region KEYWORDS
@@ -1088,29 +1088,29 @@ public class OnDemandNavigationProviderTest {
     //endregion
 
     private void mockDescendants(final String key, final Set<SitemapItem> items) {
-        BaseMatcher<TaxonomySitemapItemUrisHolder> keyMatcher = keyToItemsMatcher(key);
+        BaseMatcher<TaxonomyUrisHolder> keyMatcher = keyToItemsMatcher(key);
 
         doReturn(items).when(defaultDynamicNavigationProvider).expandDescendants(argThat(keyMatcher), any(NavigationFilter.class), any(Localization.class));
     }
 
     private void mockSingleAncestorForKeyword(final String key, final SitemapItem root) {
-        BaseMatcher<TaxonomySitemapItemUrisHolder> keyMatcher = keyToItemsMatcher(key);
+        BaseMatcher<TaxonomyUrisHolder> keyMatcher = keyToItemsMatcher(key);
 
         doReturn(root).when(defaultDynamicNavigationProvider).expandAncestorsForKeyword(argThat(keyMatcher), any(NavigationFilter.class), any(Localization.class));
     }
 
     private void mockAncestorsForPage(final String key, final List<SitemapItem> items) {
-        BaseMatcher<TaxonomySitemapItemUrisHolder> keyMatcher = keyToItemsMatcher(key);
+        BaseMatcher<TaxonomyUrisHolder> keyMatcher = keyToItemsMatcher(key);
 
         doReturn(items).when(defaultDynamicNavigationProvider).collectAncestorsForPage(argThat(keyMatcher), any(NavigationFilter.class), any(Localization.class));
     }
 
     @NotNull
-    private BaseMatcher<TaxonomySitemapItemUrisHolder> keyToItemsMatcher(final String key) {
-        return new BaseMatcher<TaxonomySitemapItemUrisHolder>() {
+    private BaseMatcher<TaxonomyUrisHolder> keyToItemsMatcher(final String key) {
+        return new BaseMatcher<TaxonomyUrisHolder>() {
             @Override
             public boolean matches(Object item) {
-                return Objects.equals(item, TaxonomySitemapItemUrisHolder.parse(key, localization));
+                return Objects.equals(item, TaxonomyUrisHolder.parse(key, localization.getId()));
             }
 
             @Override

@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder.parse;
+import static com.sdl.webapp.common.api.navigation.TaxonomyUrisHolder.parse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -188,7 +188,7 @@ public class DynamicNavigationProviderTest {
     public void shouldReturnEmptyListIfPageUrisPassed() {
         //given
         //when
-        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-p1", localization),
+        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-p1", localization.getId()),
                 NavigationFilter.DEFAULT, localization);
 
         //then
@@ -201,7 +201,7 @@ public class DynamicNavigationProviderTest {
         when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class))).thenReturn(null);
 
         //when
-        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-k1", localization),
+        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-k1", localization.getId()),
                 NavigationFilter.DEFAULT, localization);
 
         //then
@@ -212,7 +212,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldNotCollectAnythingIfNotPage() {
         //when
-        List<SitemapItem> items = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-k1", localization), new NavigationFilter(), localization);
+        List<SitemapItem> items = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-k1", localization.getId()), new NavigationFilter(), localization);
 
         //then
         assertTrue(items.size() == 0);
@@ -222,7 +222,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldNotCollectAnythingIfNotKeyword() {
         //when
-        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-p1", localization), new NavigationFilter(), localization);
+        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-p1", localization.getId()), new NavigationFilter(), localization);
 
         //then
         assertNull(taxonomyNode);
@@ -236,7 +236,7 @@ public class DynamicNavigationProviderTest {
                 .thenReturn(null);
 
         //when
-        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization), new NavigationFilter(), localization);
+        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization.getId()), new NavigationFilter(), localization);
 
         verify(relationManager).getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), argThat(FILTER_UP_MATCHER), anyInt());
 
@@ -250,7 +250,7 @@ public class DynamicNavigationProviderTest {
                 .thenReturn(null);
 
         //when
-        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-k1", localization), new NavigationFilter(), localization);
+        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-k1", localization.getId()), new NavigationFilter(), localization);
 
         //then
         verify(taxonomyFactory).getTaxonomyKeywords(anyString(), argThat(FILTER_UP_MATCHER), anyString());
@@ -264,7 +264,7 @@ public class DynamicNavigationProviderTest {
                 .thenReturn(new Keyword[]{});
 
         //when
-        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization), new NavigationFilter(), localization);
+        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization.getId()), new NavigationFilter(), localization);
 
         //then
         verify(relationManager).getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), argThat(FILTER_UP_MATCHER), anyInt());

@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import lombok.Builder;
 import lombok.Value;
 
+//todo should control its state (which fields are minimum set)
 @Value
 @Builder(toBuilder = true)
 public class SitemapRequestDto {
@@ -17,6 +18,6 @@ public class SitemapRequestDto {
     private NavigationFilter navigationFilter;
 
     public synchronized SitemapRequestDto nextExpandLevel() {
-        return this.toBuilder().expandLevels(new DepthCounter(expandLevels.getDeep() - 1)).build();
+        return this.toBuilder().expandLevels(new DepthCounter(expandLevels.getCounter() - 1)).build();
     }
 }

@@ -1,8 +1,10 @@
 package com.sdl.dxa.common.dto;
 
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@EqualsAndHashCode
 public final class DepthCounter {
 
     public static final DepthCounter UNLIMITED_DEPTH = new DepthCounter(Integer.MAX_VALUE);
@@ -10,8 +12,11 @@ public final class DepthCounter {
     private int counter;
 
     public DepthCounter(int counter) {
+        if (counter < 0) {
+            log.trace("Started a counter with value < 0, consider it unlimited");
+        }
         log.trace("Started counter with max depth = {}", counter);
-        this.counter = counter;
+        this.counter = counter >= 0 ? counter : Integer.MAX_VALUE;
     }
 
     public synchronized boolean isNotTooDeep() {
@@ -26,7 +31,7 @@ public final class DepthCounter {
         counter++;
     }
 
-    public synchronized int getDeep() {
+    public synchronized int getCounter() {
         return counter;
     }
 }

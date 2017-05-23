@@ -35,6 +35,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -313,7 +315,7 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
 
         children.forEach(child -> child.setTitle(removeSequenceFromPageTitle(child.getTitle())));
 
-        return createTaxonomyNodeFromKeyword(keyword, taxonomyId, taxonomyNodeUrl, new LinkedHashSet<>(children));
+        return createTaxonomyNodeFromKeyword(keyword, taxonomyId, taxonomyNodeUrl, new TreeSet<>(children));
     }
 
     private List<SitemapItemModelData> getChildrenPages(@NotNull Keyword keyword, @NotNull String taxonomyId, @NotNull SitemapRequestDto requestDto) {
@@ -353,9 +355,9 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
                 .setPublishedDate(new DateTime(page.getLastPublicationDate()));
     }
 
-    private TaxonomyNodeModelData createTaxonomyNodeFromKeyword(@NotNull Keyword keyword, String taxonomyId, String taxonomyNodeUrl, Set<SitemapItemModelData> children) {
+    private TaxonomyNodeModelData createTaxonomyNodeFromKeyword(@NotNull Keyword keyword, String taxonomyId, String taxonomyNodeUrl, SortedSet<SitemapItemModelData> children) {
         boolean isRoot = Objects.equals(keyword.getTaxonomyURI(), keyword.getKeywordURI());
-        String keywordId = String.valueOf(TcmUtils.getItemId(keyword.getTaxonomyURI()));
+        String keywordId = String.valueOf(TcmUtils.getItemId(keyword.getKeywordURI()));
 
         return (TaxonomyNodeModelData) new TaxonomyNodeModelData()
                 .setWithChildren(keyword.hasKeywordChildren() || keyword.getReferencedContentCount() > 0)

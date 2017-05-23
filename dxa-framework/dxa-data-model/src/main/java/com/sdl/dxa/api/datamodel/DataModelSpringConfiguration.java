@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.dxa.api.datamodel.json.PolymorphicObjectMixin;
+import com.sdl.dxa.api.datamodel.json.TaxonomiesMixin;
+import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +22,7 @@ public class DataModelSpringConfiguration {
     public ObjectMapper dxaR2ObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.addMixIn(Object.class, PolymorphicObjectMixin.class);
+        objectMapper.addMixIn(SitemapItemModelData.class, TaxonomiesMixin.class);
         objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
         objectMapper.registerModule(new JodaModule());
         objectMapper.setDateFormat(new StdDateFormat());

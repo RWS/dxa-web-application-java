@@ -28,10 +28,6 @@
 
         <dependency>
             <groupId>org.powermock</groupId>
-            <artifactId>powermock</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
         </dependency>
         <dependency>

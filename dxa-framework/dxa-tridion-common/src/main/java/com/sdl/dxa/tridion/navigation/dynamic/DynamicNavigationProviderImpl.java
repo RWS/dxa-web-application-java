@@ -96,44 +96,57 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
     @Override
     @NotNull
     public Collection<SitemapItemModelData> getNavigationSubtree(@NotNull SitemapRequestDto requestDto) {
-        log.trace("SitemapRequestDto {}", requestDto);
+        log.trace("Original sitemapRequestDto {}", requestDto);
 
-        if (isNullOrEmpty(requestDto.getSitemapId()) && requestDto.getNavigationFilter().getDescendantLevels() != 0) {
+        SitemapRequestDto request = requestDto.toBuilder()
+                .expandLevels(new DepthCounter(requestDto.getNavigationFilter().getDescendantLevels()))
+                .build();
+
+        log.debug("Overridden depth counter using value from descendants level: {}", request);
+
+        if (isNullOrEmpty(request.getSitemapId()) && request.getNavigationFilter().getDescendantLevels() != 0) {
             log.trace("Sitemap ID is empty, expanding all taxonomy roots");
 
-            return getTaxonomyRoots(requestDto, keyword -> true).stream()
-                    .map(keyword -> createTaxonomyNode(keyword, requestDto))
+            // normally expand level is equal to requested descendants level, but when we load categories (=roots) instead
+            // top-level keywords, we add extra level and need to decrease expand level then by one
+            SitemapRequestDto adaptedRequest = request.nextExpandLevel();
+
+            return getTaxonomyRoots(adaptedRequest, keyword -> true).stream()
+                    .map(keyword -> createTaxonomyNode(keyword, adaptedRequest))
                     .collect(Collectors.toList());
         }
 
-        TaxonomyUrisHolder info = parse(requestDto.getSitemapId(), requestDto.getLocalizationId());
+        TaxonomyUrisHolder info = parse(request.getSitemapId(), request.getLocalizationId());
         if (info == null) {
-            throw new BadRequestException(String.format("SitemapID %s is wrong for Taxonomy navigation", requestDto.getSitemapId()));
+            throw new BadRequestException(String.format("SitemapID %s is wrong for Taxonomy navigation", request.getSitemapId()));
         }
 
         log.debug("Sitemap ID is known: {}", info);
 
-        if (requestDto.getNavigationFilter().isWithAncestors()) {
+        if (request.getNavigationFilter().isWithAncestors()) {
             log.trace("Filter with ancestors, expanding ancestors");
-            Optional<SitemapItemModelData> taxonomy = taxonomyWithAncestors(info, requestDto);
+            Optional<SitemapItemModelData> taxonomy = taxonomyWithAncestors(info, request);
             if (taxonomy.isPresent()) {
-                log.debug("Found taxonomy {} for request {}", taxonomy.get(), requestDto);
+                log.debug("Found taxonomy {} for request {}", taxonomy.get(), request);
                 return Collections.singletonList(taxonomy.get());
             }
         }
 
-        if (requestDto.getNavigationFilter().getDescendantLevels() != 0 && !info.isPage()) {
+        if (request.getNavigationFilter().getDescendantLevels() != 0 && !info.isPage()) {
             log.trace("Filter with descendants, expanding descendants");
-            return expandDescendants(info, requestDto);
+            return expandDescendants(info, request);
         }
 
         log.trace("Filter is not specific, doing nothing");
-        throw new BadRequestException(String.format("Request %s is not specific, doing nothing", requestDto));
+        throw new BadRequestException(String.format("Request %s is not specific, doing nothing", request));
     }
 
     @NotNull
     private List<Keyword> getTaxonomyRoots(SitemapRequestDto requestDto, Predicate<Keyword> filter) {
         NavigationFilter navigationFilter = requestDto.getNavigationFilter();
+
+        // since we load categories here, we have to decrease depth by one because the first level is categories level
+        // and we want top-level keywords
         final int maximumDepth = navigationFilter.getDescendantLevels() > 0 ?
                 navigationFilter.getDescendantLevels() - 1 : navigationFilter.getDescendantLevels();
         DepthFilter depthFilter = new DepthFilter(maximumDepth, DepthFilter.FILTER_DOWN);

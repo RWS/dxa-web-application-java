@@ -102,42 +102,45 @@ public class DynamicNavigationProviderTest {
                .put("t2", new KeywordData("No Marker", 2, -1))
                .put("t3", new KeywordData("No Marker 2", 3, -1))
                .put("t1", new KeywordData("[Taxonomy]Root", 1, -1))
-                   .put("t1-p11", new PageData("011 p11", 11))
-                   .put("t1-k12", new KeywordData("012 k12", 1, 12))
-                       .put("t1-k21", new KeywordData("021 k21", 1, 21))
-                           .put("t1-p31", new PageData("031 p31", 31))
-                           .put("t1-p33", new PageData("033 p33", 33))
-                       .put("t1-p22", new PageData("022 p22", 22))
-                       .put("t1-p24", new PageData("024 p24", 24))
-                       .put("t1-k23", new KeywordData("023 k23", 1, 23))
-                           .put("t1-p32", new PageData("032 p32", 32))
-                   .put("t1-p13", new PageData("013 p13", 13))
-                   .put("t1-k14", new KeywordData("014 k14", 1, 14))
-// DUPLICATE!           .put("t1-p22", new PageData("022 p22", 22))
-                   .put("t1-p15", new PageData("Hidden", 15))
-//                        todo page(6, "")
-//                        todo page(null)
+                   .put("t1-k0", new KeywordData("011 k0", 1, 0))
+                       .put("t1-p11", new PageData("011 p11", 11))
+                       .put("t1-k12", new KeywordData("012 k12", 1, 12))
+                           .put("t1-k21", new KeywordData("021 k21", 1, 21))
+                               .put("t1-p31", new PageData("031 p31", 31))
+                               .put("t1-p33", new PageData("033 p33", 33))
+                           .put("t1-p22", new PageData("022 p22", 22))
+                           .put("t1-p24", new PageData("024 p24", 24))
+                           .put("t1-k23", new KeywordData("023 k23", 1, 23))
+                               .put("t1-p32", new PageData("032 p32", 32))
+                       .put("t1-p13", new PageData("013 p13", 13))
+                       .put("t1-k14", new KeywordData("014 k14", 1, 14))
+    // DUPLICATE!           .put("t1-p22", new PageData("022 p22", 22))
+                       .put("t1-p15", new PageData("Hidden", 15))
+    //                        todo page(6, "")
+    //                        todo page(null)
                 .build();
 //        @formatter:on
 
         Keyword fullNavigation = keywordInit("t1",
-                page("t1-p11"),
-                keywordInit("t1-k12",
-                        keywordInit("t1-k21",
-                                page("t1-p31"),
-                                page("t1-p33")
+                keywordInit("t1-k0",
+                        page("t1-p11"),
+                        keywordInit("t1-k12",
+                                keywordInit("t1-k21",
+                                        page("t1-p31"),
+                                        page("t1-p33")
+                                ),
+                                page("t1-p22"),
+                                page("t1-p24"),
+                                keywordInit("t1-k23",
+                                        page("t1-p32")
+                                )
                         ),
-                        page("t1-p22"),
-                        page("t1-p24"),
-                        keywordInit("t1-k23",
-                                page("t1-p32")
-                        )
-                ),
-                page("t1-p13"),
-                keywordInit("t1-k14",
-                        page("t1-p22")
-                ),
-                page("t1-p15")
+                        page("t1-p13"),
+                        keywordInit("t1-k14",
+                                page("t1-p22")
+                        ),
+                        page("t1-p15")
+                )
         );
 
         navigation = ImmutableMap.<String, Keyword>builder()
@@ -268,7 +271,11 @@ public class DynamicNavigationProviderTest {
         Keyword keyword = navigation.get(taxonomies[0]);
         assertEquals(keyword.getKeywordChildren().size() + keyword.getReferencedContentCount(), model.getItems().size());
 
-        Iterator<SitemapItemModelData> rootItems = model.getItems().iterator();
+        assertIdAndItemsSize(model, "t1", 1);
+
+        SitemapItemModelData t1k0 = model.getItems().first();
+        assertIdAndItemsSize(t1k0, "t1-k0", 5);
+        Iterator<SitemapItemModelData> rootItems = t1k0.getItems().iterator();
 
         SitemapItemModelData t1p11 = rootItems.next();
         assertIdAndItemsSize(t1p11, "t1-p11", 0);
@@ -317,11 +324,11 @@ public class DynamicNavigationProviderTest {
 //            * ----  ----     1 //shouldExpandTaxonomyRoots_DescendantsOne
 //            * ----  ----     0 //shouldExpandTaxonomyRoots_DescendantsZero
 
-
     @Test
     public void shouldExpandTaxonomyRoots_DescendantsTwo() throws StorageException {
         //given
         prepareDownstream("tcm:42-1-512");
+        doReturn(new PageMeta[]{page("t1-p11")}).when(pageMetaFactory).getTaxonomyPages(same(knownKeywords.get("tcm:42-0-1024")), anyBoolean());
 
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
                 .navigationFilter(new NavigationFilter().setDescendantLevels(2))
@@ -333,10 +340,10 @@ public class DynamicNavigationProviderTest {
         //then
         assertTrue(subtree.size() == 3);
         SitemapItemModelData root = get(subtree, 0);
-        assertIdAndItemsSize(root, "t1", 5);
+        assertIdAndItemsSize(root, "t1", 1);
 
-        SitemapItemModelData t1k12 = get(root.getItems(), 1);
-        assertIdAndItemsSize(t1k12, "t1-k12", 0);
+        SitemapItemModelData t1k0 = get(root.getItems(), 0);
+        assertIdAndItemsSize(t1k0, "t1-k0", 0);
 
         verifyFiltering(DepthFilter.FILTER_DOWN, true);
         verifyFiltering(DepthFilter.FILTER_UP, false);
@@ -439,10 +446,8 @@ public class DynamicNavigationProviderTest {
         Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
 
         //then
-        assertTrue(subtree.size() == 5);
-        for (SitemapItemModelData item : subtree) {
-            assertTrue(item.getItems().size() == 0);
-        }
+        assertTrue(subtree.size() == 1);
+        assertTrue(get(subtree, 0).getItems().size() == 0);
     }
 
     @Test
@@ -482,17 +487,21 @@ public class DynamicNavigationProviderTest {
         //given
         prepareUpstreamForPage("tcm:42-22-64",
                 keyword("t1",
-                        keyword("t1-k12",
-                                page("t1-p22")
+                        keyword("t1-k0",
+                                keyword("t1-k12",
+                                        page("t1-p22")
+                                )
                         )
                 ),
                 keyword("t1",
-                        keyword("t1-k14",
-                                page("t1-p22")
+                        keyword("t1-k0",
+                                keyword("t1-k14",
+                                        page("t1-p22")
+                                )
                         )
                 )
         );
-        prepareDownstream("tcm:42-14-1024", "tcm:42-12-1024", "tcm:42-1-512");
+        prepareDownstream("tcm:42-14-1024", "tcm:42-12-1024", "tcm:42-0-1024", "tcm:42-1-512");
 
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
                 .sitemapId("t1-p22")
@@ -505,15 +514,18 @@ public class DynamicNavigationProviderTest {
         //then
         assertTrue(subtree.size() == 1);
         SitemapItemModelData t1 = get(subtree, 0);
-        assertIdAndItemsSize(t1, "t1", 5);
+        assertIdAndItemsSize(t1, "t1", 1);
 
-        SitemapItemModelData t1k12 = get(t1.getItems(), 1);
+        SitemapItemModelData t1k0 = get(t1.getItems(), 0);
+        assertIdAndItemsSize(t1k0, "t1-k0", 5);
+
+        SitemapItemModelData t1k12 = get(t1k0.getItems(), 1);
         assertIdAndItemsSize(t1k12, "t1-k12", 4);
 
         SitemapItemModelData t1k21 = get(t1k12.getItems(), 0);
         assertIdAndItemsSize(t1k21, "t1-k21", 0);
 
-        SitemapItemModelData t1k14 = get(t1.getItems(), 3);
+        SitemapItemModelData t1k14 = get(t1k0.getItems(), 3);
         assertIdAndItemsSize(t1k14, "t1-k14", 1);
 
         verifyFiltering(DepthFilter.FILTER_DOWN, true);
@@ -525,13 +537,17 @@ public class DynamicNavigationProviderTest {
         //given
         prepareUpstreamForPage("tcm:42-22-64",
                 keyword("t1",
-                        keyword("t1-k12",
-                                page("t1-p22")
+                        keyword("t1-k0",
+                                keyword("t1-k12",
+                                        page("t1-p22")
+                                )
                         )
                 ),
                 keyword("t1",
-                        keyword("t1-k14",
-                                page("t1-p22")
+                        keyword("t1-k0",
+                                keyword("t1-k14",
+                                        page("t1-p22")
+                                )
                         )
                 )
         );
@@ -547,12 +563,15 @@ public class DynamicNavigationProviderTest {
         //then
         assertTrue(subtree.size() == 1);
         SitemapItemModelData t1 = get(subtree, 0);
-        assertIdAndItemsSize(t1, "t1", 2);
+        assertIdAndItemsSize(t1, "t1", 1);
 
-        SitemapItemModelData t1k12 = get(t1.getItems(), 0);
+        SitemapItemModelData t1k0 = get(t1.getItems(), 0);
+        assertIdAndItemsSize(t1k0, "t1-k0", 2);
+
+        SitemapItemModelData t1k12 = get(t1k0.getItems(), 0);
         assertIdAndItemsSize(t1k12, "t1-k12", 0);
 
-        SitemapItemModelData t1k14 = get(t1.getItems(), 1);
+        SitemapItemModelData t1k14 = get(t1k0.getItems(), 1);
         assertIdAndItemsSize(t1k14, "t1-k14", 0);
 
         verifyFiltering(DepthFilter.FILTER_DOWN, false);
@@ -598,12 +617,15 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldExpandAncestors_Page_DescendantsOne() throws StorageException {
         //given
-        prepareUpstreamForPage("tcm:42-24-64", keyword("t1",
-                keyword("t1-k12",
-                        page("t1-p24")
-                )
-        ));
-        prepareDownstream("tcm:42-12-1024", "tcm:42-1-512");
+        prepareUpstreamForPage("tcm:42-24-64",
+                keyword("t1",
+                        keyword("t1-k0",
+                                keyword("t1-k12",
+                                        page("t1-p24")
+                                )
+                        )
+                ));
+        prepareDownstream("tcm:42-12-1024", "tcm:42-0-1024", "tcm:42-1-512");
 
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
                 .sitemapId("t1-p24")
@@ -616,9 +638,12 @@ public class DynamicNavigationProviderTest {
         //then
         assertTrue(subtree.size() == 1);
         SitemapItemModelData t1 = get(subtree, 0);
-        assertIdAndItemsSize(t1, "t1", 5);
+        assertIdAndItemsSize(t1, "t1", 1);
 
-        SitemapItemModelData t1k12 = get(t1.getItems(), 1);
+        SitemapItemModelData t1k0 = get(t1.getItems(), 0);
+        assertIdAndItemsSize(t1k0, "t1-k0", 5);
+
+        SitemapItemModelData t1k12 = get(t1k0.getItems(), 1);
         assertIdAndItemsSize(t1k12, "t1-k12", 4);
 
         SitemapItemModelData t1k21 = get(t1k12.getItems(), 0);
@@ -634,11 +659,14 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldExpandAncestors_Page_DescendantsZero() throws StorageException {
         //given
-        prepareUpstreamForPage("tcm:42-24-64", keyword("t1",
-                keyword("t1-k12",
-                        page("t1-p24")
-                )
-        ));
+        prepareUpstreamForPage("tcm:42-24-64",
+                keyword("t1",
+                        keyword("t1-k0",
+                                keyword("t1-k12",
+                                        page("t1-p24")
+                                )
+                        )
+                ));
 
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
                 .sitemapId("t1-p24")
@@ -653,7 +681,10 @@ public class DynamicNavigationProviderTest {
         SitemapItemModelData t1 = get(subtree, 0);
         assertIdAndItemsSize(t1, "t1", 1);
 
-        SitemapItemModelData t1k12 = get(t1.getItems(), 0);
+        SitemapItemModelData t1k0 = get(t1.getItems(), 0);
+        assertIdAndItemsSize(t1k0, "t1-k0", 1);
+
+        SitemapItemModelData t1k12 = get(t1k0.getItems(), 0);
         assertIdAndItemsSize(t1k12, "t1-k12", 0);
 
         verifyFiltering(DepthFilter.FILTER_DOWN, false);
@@ -703,12 +734,14 @@ public class DynamicNavigationProviderTest {
     public void shouldExpandAncestors_Keyword_DescendantsOne() throws StorageException {
         //given
         prepareUpstreamForKeyword(keyword("t1",
-                keyword("t1-k12",
-                        keyword("t1-k21")
+                keyword("t1-k0",
+                        keyword("t1-k12",
+                                keyword("t1-k21")
+                        )
                 )
         ), "tcm:42-21-1024");
 
-        prepareDownstream("tcm:42-21-1024", "tcm:42-12-1024", "tcm:42-1-512");
+        prepareDownstream("tcm:42-21-1024", "tcm:42-12-1024", "tcm:42-0-1024", "tcm:42-1-512");
 
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
                 .sitemapId("t1-k21")
@@ -723,12 +756,18 @@ public class DynamicNavigationProviderTest {
         assertTrue(subtree.size() == 1);
 
         SitemapItemModelData root = get(subtree, 0);
-        assertIdAndItemsSize(root, "t1", 5);
+        assertIdAndItemsSize(root, "t1", 1);
 
-        SitemapItemModelData t1k14 = get(root.getItems(), 3);
+        SitemapItemModelData t1k0 = get(root.getItems(), 0);
+        assertIdAndItemsSize(t1k0, "t1-k0", 5);
+
+        SitemapItemModelData t1k2 = get(t1k0.getItems(), 0);
+        assertIdAndItemsSize(t1k2, "t1-p11", 0);
+
+        SitemapItemModelData t1k14 = get(t1k0.getItems(), 3);
         assertIdAndItemsSize(t1k14, "t1-k14", 0);
 
-        SitemapItemModelData t1k12 = get(root.getItems(), 1);
+        SitemapItemModelData t1k12 = get(t1k0.getItems(), 1);
         assertIdAndItemsSize(t1k12, "t1-k12", 4);
 
         SitemapItemModelData t1k21 = get(t1k12.getItems(), 0);
@@ -745,8 +784,10 @@ public class DynamicNavigationProviderTest {
     public void shouldExpandAncestors_Keyword_DescendantsZero() throws StorageException {
         //given
         prepareUpstreamForKeyword(keyword("t1",
-                keyword("t1-k12",
-                        keyword("t1-k21")
+                keyword("t1-k0",
+                        keyword("t1-k12",
+                                keyword("t1-k21")
+                        )
                 )
         ), "tcm:42-21-1024");
 
@@ -765,15 +806,19 @@ public class DynamicNavigationProviderTest {
         SitemapItemModelData root = get(subtree, 0);
         assertIdAndItemsSize(root, "t1", 1);
 
-        SitemapItemModelData t1k2 = get(root.getItems(), 0);
-        assertIdAndItemsSize(t1k2, "t1-k12", 1);
+        SitemapItemModelData t1k0 = get(root.getItems(), 0);
+        assertIdAndItemsSize(t1k0, "t1-k0", 1);
 
-        SitemapItemModelData t1k3 = get(t1k2.getItems(), 0);
-        assertIdAndItemsSize(t1k3, "t1-k21", 0);
+        SitemapItemModelData t1k12 = get(t1k0.getItems(), 0);
+        assertIdAndItemsSize(t1k12, "t1-k12", 1);
+
+        SitemapItemModelData t1k21 = get(t1k12.getItems(), 0);
+        assertIdAndItemsSize(t1k21, "t1-k21", 0);
 
         verifyFiltering(DepthFilter.FILTER_DOWN, false);
         verifyFiltering(DepthFilter.FILTER_UP, true);
     }
+
 
     //endregion
 

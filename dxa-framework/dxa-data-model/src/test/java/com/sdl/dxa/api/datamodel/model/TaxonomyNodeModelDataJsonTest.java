@@ -69,4 +69,30 @@ public class TaxonomyNodeModelDataJsonTest {
         }
         assertFalse(jsonNode.has("OriginalTitle"));
     }
+
+    @Test
+    public void shouldReturnEmptyItemsInsteadOfNull_IfNotSet() throws IOException, ParseException {
+        //given
+        SitemapItemModelData data = new TaxonomyNodeModelData().setItems(null);
+
+        //when
+        String content = objectMapper.writeValueAsString(data);
+        JsonNode jsonNode = objectMapper.readTree(content);
+
+        //then
+        assertTrue(jsonNode.get("Items").getNodeType() == JsonNodeType.ARRAY);
+    }
+
+    @Test
+    public void shouldSuppressValueInJSON_IfItemsSetToNull() throws IOException, ParseException {
+        //given
+        SitemapItemModelData data = new TaxonomyNodeModelData().setItems(null);
+
+        //when
+        String content = objectMapper.writeValueAsString(data);
+        JsonNode jsonNode = objectMapper.readTree(content);
+
+        //then
+        assertFalse(jsonNode.has("Items"));
+    }
 }

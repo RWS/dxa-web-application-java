@@ -161,7 +161,7 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
     @NonNull
     private Optional<SitemapItemModelData> taxonomyWithAncestors(@NonNull TaxonomyUrisHolder uris, @NotNull SitemapRequestDto requestDto) {
         if (uris.isTaxonomyOnly()) {
-            throw new IllegalArgumentException(String.format("URIs %s is not a page nor keyword, can't expand ancestors, request %s", uris, requestDto));
+            throw new BadRequestException(String.format("URIs %s is not a page nor keyword, can't expand ancestors, request %s", uris, requestDto));
         }
 
         Optional<SitemapItemModelData> taxonomy = uris.isPage() ?

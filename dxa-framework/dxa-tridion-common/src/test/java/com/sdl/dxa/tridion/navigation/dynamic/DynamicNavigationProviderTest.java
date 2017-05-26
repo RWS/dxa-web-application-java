@@ -395,7 +395,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), IllegalArgumentException.class, () -> {
+        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class, () -> {
             verifyFiltering(DepthFilter.FILTER_DOWN, false);
             verifyFiltering(DepthFilter.FILTER_UP, false);
         });

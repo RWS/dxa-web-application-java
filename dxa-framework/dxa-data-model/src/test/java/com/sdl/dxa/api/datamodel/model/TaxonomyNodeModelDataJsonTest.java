@@ -73,7 +73,7 @@ public class TaxonomyNodeModelDataJsonTest {
     @Test
     public void shouldReturnEmptyItemsInsteadOfNull_IfNotSet() throws IOException, ParseException {
         //given
-        SitemapItemModelData data = new TaxonomyNodeModelData().setItems(null);
+        SitemapItemModelData data = new TaxonomyNodeModelData();
 
         //when
         String content = objectMapper.writeValueAsString(data);

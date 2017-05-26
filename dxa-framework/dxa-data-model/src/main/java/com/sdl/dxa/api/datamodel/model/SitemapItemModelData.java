@@ -28,7 +28,7 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
 
     private boolean visible;
 
-    private SortedSet<SitemapItemModelData> items;
+    private SortedSet<SitemapItemModelData> items = new TreeSet<>();
 
     private DateTime publishedDate;
 

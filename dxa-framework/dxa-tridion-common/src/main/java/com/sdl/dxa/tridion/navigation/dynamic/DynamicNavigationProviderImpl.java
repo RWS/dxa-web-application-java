@@ -98,7 +98,7 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
     public Collection<SitemapItemModelData> getNavigationSubtree(@NotNull SitemapRequestDto requestDto) {
         log.trace("SitemapRequestDto {}", requestDto);
 
-        if (isNullOrEmpty(requestDto.getSitemapId())) {
+        if (isNullOrEmpty(requestDto.getSitemapId()) && requestDto.getNavigationFilter().getDescendantLevels() != 0) {
             log.trace("Sitemap ID is empty, expanding all taxonomy roots");
 
             return getTaxonomyRoots(requestDto, keyword -> true).stream()

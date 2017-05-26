@@ -7,7 +7,9 @@ import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.web.api.dynamic.taxonomies.WebTaxonomyFactory;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
+import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.util.TcmUtils;
+import com.tridion.ItemTypes;
 import com.tridion.broker.StorageException;
 import com.tridion.meta.PageMeta;
 import com.tridion.meta.PageMetaFactory;
@@ -15,13 +17,16 @@ import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyRelationManager;
 import com.tridion.taxonomies.filters.DepthFilter;
 import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.verification.VerificationMode;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -29,12 +34,15 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -43,14 +51,18 @@ import java.util.stream.Stream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.same;
+import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(DynamicNavigationProviderImpl.class)
@@ -72,11 +84,7 @@ public class DynamicNavigationProviderTest {
 
     private Map<String, Keyword> knownKeywords = new HashMap<>();
 
-    private Map<Integer, PageMeta> knownPages = new HashMap<>();
-
     private ImmutableMap<Object, Object> navigationModel;
-
-    private Keyword fullNavigation;
 
     private String[] taxonomies;
 
@@ -98,7 +106,9 @@ public class DynamicNavigationProviderTest {
                    .put("t1-k12", new KeywordData("012 k12", 1, 12))
                        .put("t1-k21", new KeywordData("021 k21", 1, 21))
                            .put("t1-p31", new PageData("031 p31", 31))
+                           .put("t1-p33", new PageData("033 p33", 33))
                        .put("t1-p22", new PageData("022 p22", 22))
+                       .put("t1-p24", new PageData("024 p24", 24))
                        .put("t1-k23", new KeywordData("023 k23", 1, 23))
                            .put("t1-p32", new PageData("032 p32", 32))
                    .put("t1-p13", new PageData("013 p13", 13))
@@ -110,22 +120,24 @@ public class DynamicNavigationProviderTest {
                 .build();
 //        @formatter:on
 
-        fullNavigation = keywordInit("t1",
-                pageInit("t1-p11"),
+        Keyword fullNavigation = keywordInit("t1",
+                page("t1-p11"),
                 keywordInit("t1-k12",
                         keywordInit("t1-k21",
-                                pageInit("t1-p31")
+                                page("t1-p31"),
+                                page("t1-p33")
                         ),
-                        pageInit("t1-p22"),
+                        page("t1-p22"),
+                        page("t1-p24"),
                         keywordInit("t1-k23",
-                                pageInit("t1-p32")
+                                page("t1-p32")
                         )
                 ),
-                pageInit("t1-p13"),
+                page("t1-p13"),
                 keywordInit("t1-k14",
-                        pageInit("t1-p22")
+                        page("t1-p22")
                 ),
-                pageInit("t1-p15")
+                page("t1-p15")
         );
 
         navigation = ImmutableMap.<String, Keyword>builder()
@@ -148,25 +160,70 @@ public class DynamicNavigationProviderTest {
     }
 
     private void prepareDownstream(String... tcmUris) throws StorageException {
-        for (String uri : tcmUris) {
-            Keyword keyword = knownKeywords.get(uri);
-            prepareFactory(keyword, keyword.getKeywordURI(), DepthFilter.FILTER_DOWN);
+
+        // all the downstream is prepared, upstream needs to be prepared just before tests
+        for (Map.Entry<String, Keyword> entry : knownKeywords.entrySet()) {
+            prepareTaxonomyFactory(entry.getValue(), entry.getValue().getKeywordURI(), DepthFilter.FILTER_DOWN);
+        }
+
+        Set<String> uris = new HashSet<>(Arrays.asList(tcmUris));
+
+        for (Map.Entry<String, Keyword> entry : knownKeywords.entrySet()) {
+            if (!uris.contains(entry.getKey())) {
+                Keyword keyword = entry.getValue();
+                doReturn(Collections.emptyList()).when(keyword).getKeywordChildren();
+                doReturn(new PageMeta[0]).when(pageMetaFactory).getTaxonomyPages(same(keyword), anyBoolean());
+            }
         }
     }
 
-    private void prepareUpstream(Keyword keyword, String keywordUri) throws StorageException {
-        prepareFactory(keyword, keywordUri, DepthFilter.FILTER_UP);
+    private void prepareUpstreamForKeyword(Keyword keyword, String keywordUri) throws StorageException {
+        prepareTaxonomyFactory(keyword, keywordUri, DepthFilter.FILTER_UP);
     }
 
-    private void prepareFactory(Keyword keyword, String keywordUri, int direction) throws StorageException {
-        Pattern pattern = Pattern.compile("[^\\d]+\\((?<depth>-?\\d+),(?<direction>\\d)\\)");
-        doReturn(keyword).when(taxonomyFactory).getTaxonomyKeywords(anyString(), argThat(new ArgumentMatcher<DepthFilter>() {
+    private void prepareUpstreamForPage(String pageUri, Keyword... keyword) throws StorageException {
+        assertTrue(TcmUtils.getItemType(pageUri) == TcmUtils.PAGE_ITEM_TYPE);
+        prepareRelationManager(pageUri, keyword);
+    }
+
+    private void prepareTaxonomyFactory(Keyword keyword, String keywordUri, int direction) throws StorageException {
+        assertTrue(TcmUtils.getItemType(keywordUri) == TcmUtils.KEYWORD_ITEM_TYPE || TcmUtils.getItemType(keywordUri) == TcmUtils.CATEGORY_ITEM_TYPE);
+        doReturn(keyword).when(taxonomyFactory).getTaxonomyKeywords(anyString(), argThat(depthFilterMatcher(direction)), eq(keywordUri));
+    }
+
+    private void prepareRelationManager(String pageUri, Keyword... keyword) throws StorageException {
+        doReturn(keyword).when(relationManager).getTaxonomyKeywords(anyString(), eq(pageUri), any(Keyword[].class),
+                argThat(depthFilterMatcher(DepthFilter.FILTER_UP)), eq(ItemTypes.PAGE));
+    }
+
+    @NotNull
+    private ArgumentMatcher<DepthFilter> depthFilterMatcher(int direction) {
+        return new ArgumentMatcher<DepthFilter>() {
             @Override
             public boolean matches(Object argument) {
+                Pattern pattern = Pattern.compile("[^\\d]+\\((?<depth>-?\\d+),(?<direction>\\d)\\)");
                 Matcher matcher = pattern.matcher(((DepthFilter) argument).toTaxonomyFilterUriRepresentation());
                 return matcher.matches() && matcher.group("direction").equals(String.valueOf(direction));
             }
-        }), eq(keywordUri));
+        };
+    }
+
+    private void verifyFiltering(int direction, boolean wasCalled) {
+        assertTrue(direction == DepthFilter.FILTER_UP || direction == DepthFilter.FILTER_DOWN);
+
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+
+        // https://stackoverflow.com/a/32829162/740771
+        VerificationMode verificationMode = wasCalled ? atLeast(0) : never();
+
+        verify(taxonomyFactory, verificationMode).getTaxonomyKeywords(captor.capture(), argThat(depthFilterMatcher(direction)));
+        verify(taxonomyFactory, verificationMode).getTaxonomyKeywords(captor.capture(), argThat(depthFilterMatcher(direction)), anyString());
+        verify(relationManager, verificationMode).getTaxonomyKeywords(captor.capture(), anyString(), any(Keyword[].class),
+                argThat(depthFilterMatcher(direction)), eq(ItemTypes.PAGE));
+
+        if (wasCalled) {
+            assertTrue("At least one of filtering methods with direction " + direction + "expected to be called at least once", !captor.getAllValues().isEmpty());
+        }
     }
 
     @Test
@@ -219,11 +276,13 @@ public class DynamicNavigationProviderTest {
         assertEquals("011 p11", t1p11.getOriginalTitle());
 
         SitemapItemModelData t1k12 = rootItems.next();
-        assertIdAndItemsSize(t1k12, "t1-k12", 3);
+        assertIdAndItemsSize(t1k12, "t1-k12", 4);
         SitemapItemModelData t1k21 = t1k12.getItems().first();
-        assertIdAndItemsSize(t1k21, "t1-k21", 1);
+        assertIdAndItemsSize(t1k21, "t1-k21", 2);
         SitemapItemModelData t1p31 = t1k21.getItems().first();
         assertIdAndItemsSize(t1p31, "t1-p31", 0);
+        SitemapItemModelData t1p33 = t1k21.getItems().last();
+        assertIdAndItemsSize(t1p33, "t1-p33", 0);
 
         assertIdAndItemsSize(rootItems.next(), "t1-p13", 0);
         assertIdAndItemsSize(rootItems.next(), "t1-k14", 1);
@@ -237,28 +296,419 @@ public class DynamicNavigationProviderTest {
 //            * Type  Ancest.  Desc.   Name of test
 //            * k     true     0 //shouldExpandAncestors_Keyword_DescendantsZero
 //            * k     true     1 //shouldExpandAncestors_Keyword_DescendantsOne
-//            * k     false    0 //shouldNotExpandAncestorsKeywordDescendantsZero
-//            * k     false    1 //shouldNotExpandAncestorsKeywordDescendantsOne
-//            * p     true     0 //shouldExpandAncestorsPageDescendantsZero
-//            * p     true     1 //shouldExpandAncestorsPageDescendantsOne
-//            * p     false    0 //shouldNotExpandAncestorsPageDescendantsZero
-//            * p     false    1 //shouldNotExpandAncestorsPageDescendantsOne
-//            * pm    true     0 //shouldExpandAncestorsMultiPageDescendantsZero
-//            * pm    true     1 //shouldExpandAncestorsMultiPageDescendantsOne
-//            * pm    false    0 //shouldNotExpandAncestorsMultiPageDescendantsZero
+//            * k     false    0 //shouldNotExpandAncestors_Keyword_DescendantsZero
+//            * k     false    1 //shouldNotExpandAncestors_Keyword_DescendantsOne
+//            * p     true     0 //shouldExpandAncestors_Page_DescendantsZero
+//            * p     true     1 //shouldExpandAncestors_Page_DescendantsOne
+//            * p     false    0 //shouldNotExpandAncestors_Page_DescendantsZero
+//            * p     false    1 //shouldNotExpandAncestors_Page_DescendantsOne
+//            * pm    true     0 //shouldExpandAncestors_MultiPage_DescendantsZero
+//            * pm    true     1 //shouldExpandAncestors_MultiPage_DescendantsOne
+//            * pm    false    0 //shouldNotExpandAncestors_MultiPage_DescendantsZero
 //            * pm    false    1 //shouldNotExpandAncestorsMultiPageDescendantsOne
 //            *
-//            * root  false    1 //shouldReturnEmptyList_NotExpandingAncestors_ForTaxonomyRoot   /subtree/t1
+//            * root  false    1 //shouldNotExpandAncestors_Root_DescendantsOne
+//            * root  true     1 //shouldExpandAncestors_Root_DescendantsOne
+//            * root  false    0 //shouldNotExpandAncestors_Root_DescendantsZero
+//            * root  true     0 //shouldExpandAncestors_Root_DescendantsZero
+//
+//    NB! For some special reason Taxonomy Roots expanding does [.getDescendantLevels() - 1], so descendantLevels =- 1, but pages are still in-/excluded with normal value
+//            * ----  ----     2 //shouldExpandTaxonomyRoots_DescendantsTwo
+//            * ----  ----     1 //shouldExpandTaxonomyRoots_DescendantsOne
+//            * ----  ----     0 //shouldExpandTaxonomyRoots_DescendantsZero
+
+
+    @Test
+    public void shouldExpandTaxonomyRoots_DescendantsTwo() throws StorageException {
+        //given
+        prepareDownstream("tcm:42-1-512");
+
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .navigationFilter(new NavigationFilter().setDescendantLevels(2))
+                .build();
+
+        //when
+        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+
+        //then
+        assertTrue(subtree.size() == 3);
+        SitemapItemModelData root = get(subtree, 0);
+        assertIdAndItemsSize(root, "t1", 5);
+
+        SitemapItemModelData t1k12 = get(root.getItems(), 1);
+        assertIdAndItemsSize(t1k12, "t1-k12", 0);
+
+        verifyFiltering(DepthFilter.FILTER_DOWN, true);
+        verifyFiltering(DepthFilter.FILTER_UP, false);
+    }
+
+    @Test
+    public void shouldExpandTaxonomyRoots_DescendantsOne() throws StorageException {
+        prepareDownstream();
+
+        //given
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .navigationFilter(new NavigationFilter().setDescendantLevels(1))
+                .build();
+
+        //when
+        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+
+        //then
+        assertTrue(subtree.size() == 3);
+        SitemapItemModelData root = get(subtree, 0);
+        assertIdAndItemsSize(root, "t1", 0);
+
+        verifyFiltering(DepthFilter.FILTER_DOWN, true);
+        verifyFiltering(DepthFilter.FILTER_UP, false);
+    }
+
+    @Test
+    public void shouldExpandTaxonomyRoots_DescendantsZero() throws StorageException {
+        //given
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .navigationFilter(new NavigationFilter().setDescendantLevels(0))
+                .build();
+
+        //when
+        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+                () -> {
+                    verifyFiltering(DepthFilter.FILTER_DOWN, false);
+                    verifyFiltering(DepthFilter.FILTER_UP, false);
+                });
+    }
+
+    @Test
+    public void shouldExpandAncestors_Root_DescendantsZero() throws StorageException {
+        //given
+        prepareDownstream("tcm:42-1-512");
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1")
+                .navigationFilter(new NavigationFilter().setWithAncestors(true).setDescendantLevels(0))
+                .build();
+
+        //when
+        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), IllegalArgumentException.class, () -> {
+            verifyFiltering(DepthFilter.FILTER_DOWN, false);
+            verifyFiltering(DepthFilter.FILTER_UP, false);
+        });
+    }
+
+    @Test
+    public void shouldNotExpandAncestors_Root_DescendantsZero() throws StorageException {
+        //given
+        prepareDownstream("tcm:42-1-512");
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1")
+                .navigationFilter(new NavigationFilter().setWithAncestors(false).setDescendantLevels(0))
+                .build();
+
+        //when
+        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class, () -> {
+            verifyFiltering(DepthFilter.FILTER_DOWN, false);
+            verifyFiltering(DepthFilter.FILTER_UP, false);
+        });
+    }
+
+    @Test
+    public void shouldExpandAncestors_Root_DescendantsOne() throws StorageException {
+        //given
+        prepareDownstream("tcm:42-1-512");
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1")
+                .navigationFilter(new NavigationFilter().setWithAncestors(true).setDescendantLevels(1))
+                .build();
+
+        //when
+        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), IllegalArgumentException.class, () -> {
+            verifyFiltering(DepthFilter.FILTER_DOWN, false);
+            verifyFiltering(DepthFilter.FILTER_UP, false);
+        });
+    }
+
+    @Test
+    public void shouldNotExpandAncestors_Root_DescendantsOne() throws StorageException {
+        //given
+        prepareDownstream("tcm:42-1-512");
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1")
+                .navigationFilter(new NavigationFilter().setWithAncestors(false).setDescendantLevels(1))
+                .build();
+
+        //when
+        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+
+        //then
+        assertTrue(subtree.size() == 5);
+        for (SitemapItemModelData item : subtree) {
+            assertTrue(item.getItems().size() == 0);
+        }
+    }
+
+    @Test
+    public void shouldNotExpandAncestors_MultiPage_DescendantsOne() throws StorageException {
+        //given
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1-p22")
+                .navigationFilter(new NavigationFilter().setWithAncestors(false).setDescendantLevels(1))
+                .build();
+
+        //when
+        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+                () -> {
+                    verifyFiltering(DepthFilter.FILTER_DOWN, false);
+                    verifyFiltering(DepthFilter.FILTER_UP, false);
+                });
+    }
+
+    @Test
+    public void shouldNotExpandAncestors_MultiPage_DescendantsZero() throws StorageException {
+        //given
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1-p22")
+                .navigationFilter(new NavigationFilter().setWithAncestors(false).setDescendantLevels(0))
+                .build();
+
+        //when
+        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+                () -> {
+                    verifyFiltering(DepthFilter.FILTER_DOWN, false);
+                    verifyFiltering(DepthFilter.FILTER_UP, false);
+                });
+    }
+
+    @Test
+    public void shouldExpandAncestors_MultiPage_DescendantsOne() throws StorageException {
+        //given
+        prepareUpstreamForPage("tcm:42-22-64",
+                keyword("t1",
+                        keyword("t1-k12",
+                                page("t1-p22")
+                        )
+                ),
+                keyword("t1",
+                        keyword("t1-k14",
+                                page("t1-p22")
+                        )
+                )
+        );
+        prepareDownstream("tcm:42-14-1024", "tcm:42-12-1024", "tcm:42-1-512");
+
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1-p22")
+                .navigationFilter(new NavigationFilter().setWithAncestors(true).setDescendantLevels(1))
+                .build();
+
+        //when
+        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+
+        //then
+        assertTrue(subtree.size() == 1);
+        SitemapItemModelData t1 = get(subtree, 0);
+        assertIdAndItemsSize(t1, "t1", 5);
+
+        SitemapItemModelData t1k12 = get(t1.getItems(), 1);
+        assertIdAndItemsSize(t1k12, "t1-k12", 4);
+
+        SitemapItemModelData t1k21 = get(t1k12.getItems(), 0);
+        assertIdAndItemsSize(t1k21, "t1-k21", 0);
+
+        SitemapItemModelData t1k14 = get(t1.getItems(), 3);
+        assertIdAndItemsSize(t1k14, "t1-k14", 1);
+
+        verifyFiltering(DepthFilter.FILTER_DOWN, true);
+        verifyFiltering(DepthFilter.FILTER_UP, true);
+    }
+
+    @Test
+    public void shouldExpandAncestors_MultiPage_DescendantsZero() throws StorageException {
+        //given
+        prepareUpstreamForPage("tcm:42-22-64",
+                keyword("t1",
+                        keyword("t1-k12",
+                                page("t1-p22")
+                        )
+                ),
+                keyword("t1",
+                        keyword("t1-k14",
+                                page("t1-p22")
+                        )
+                )
+        );
+
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1-p22")
+                .navigationFilter(new NavigationFilter().setWithAncestors(true).setDescendantLevels(0))
+                .build();
+
+        //when
+        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+
+        //then
+        assertTrue(subtree.size() == 1);
+        SitemapItemModelData t1 = get(subtree, 0);
+        assertIdAndItemsSize(t1, "t1", 2);
+
+        SitemapItemModelData t1k12 = get(t1.getItems(), 0);
+        assertIdAndItemsSize(t1k12, "t1-k12", 0);
+
+        SitemapItemModelData t1k14 = get(t1.getItems(), 1);
+        assertIdAndItemsSize(t1k14, "t1-k14", 0);
+
+        verifyFiltering(DepthFilter.FILTER_DOWN, false);
+        verifyFiltering(DepthFilter.FILTER_UP, true);
+    }
+
+    @Test
+    public void shouldNotExpandAncestors_Page_DescendantsOne() throws StorageException {
+        //given
+        prepareDownstream("tcm:42-12-1024", "tcm:42-1-512");
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1-p24")
+                .navigationFilter(new NavigationFilter().setWithAncestors(false).setDescendantLevels(1))
+                .build();
+
+        //when
+        //then
+        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+                () -> {
+                    verifyFiltering(DepthFilter.FILTER_DOWN, false);
+                    verifyFiltering(DepthFilter.FILTER_UP, false);
+                });
+    }
+
+    @Test
+    public void shouldNotExpandAncestors_Page_DescendantsZero() throws StorageException {
+        //given
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1-p24")
+                .navigationFilter(new NavigationFilter().setWithAncestors(false).setDescendantLevels(0))
+                .build();
+
+        //when
+        //then
+        //exception
+        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+                () -> {
+                    verifyFiltering(DepthFilter.FILTER_DOWN, false);
+                    verifyFiltering(DepthFilter.FILTER_UP, false);
+                });
+    }
+
+    @Test
+    public void shouldExpandAncestors_Page_DescendantsOne() throws StorageException {
+        //given
+        prepareUpstreamForPage("tcm:42-24-64", keyword("t1",
+                keyword("t1-k12",
+                        page("t1-p24")
+                )
+        ));
+        prepareDownstream("tcm:42-12-1024", "tcm:42-1-512");
+
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1-p24")
+                .navigationFilter(new NavigationFilter().setWithAncestors(true).setDescendantLevels(1))
+                .build();
+
+        //when
+        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+
+        //then
+        assertTrue(subtree.size() == 1);
+        SitemapItemModelData t1 = get(subtree, 0);
+        assertIdAndItemsSize(t1, "t1", 5);
+
+        SitemapItemModelData t1k12 = get(t1.getItems(), 1);
+        assertIdAndItemsSize(t1k12, "t1-k12", 4);
+
+        SitemapItemModelData t1k21 = get(t1k12.getItems(), 0);
+        assertIdAndItemsSize(t1k21, "t1-k21", 0);
+
+        SitemapItemModelData t1p24 = get(t1k12.getItems(), 3);
+        assertIdAndItemsSize(t1p24, "t1-p24", 0);
+
+        verifyFiltering(DepthFilter.FILTER_DOWN, true);
+        verifyFiltering(DepthFilter.FILTER_UP, true);
+    }
+
+    @Test
+    public void shouldExpandAncestors_Page_DescendantsZero() throws StorageException {
+        //given
+        prepareUpstreamForPage("tcm:42-24-64", keyword("t1",
+                keyword("t1-k12",
+                        page("t1-p24")
+                )
+        ));
+
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1-p24")
+                .navigationFilter(new NavigationFilter().setWithAncestors(true).setDescendantLevels(0))
+                .build();
+
+        //when
+        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+
+        //then
+        assertTrue(subtree.size() == 1);
+        SitemapItemModelData t1 = get(subtree, 0);
+        assertIdAndItemsSize(t1, "t1", 1);
+
+        SitemapItemModelData t1k12 = get(t1.getItems(), 0);
+        assertIdAndItemsSize(t1k12, "t1-k12", 0);
+
+        verifyFiltering(DepthFilter.FILTER_DOWN, false);
+        verifyFiltering(DepthFilter.FILTER_UP, true);
+    }
+
+    @Test
+    public void shouldNotExpandAncestors_Keyword_DescendantsOne() throws StorageException {
+        //given
+        prepareDownstream("tcm:42-21-1024", "tcm:42-12-1024", "tcm:42-1-512");
+
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1-k21")
+                .navigationFilter(new NavigationFilter().setWithAncestors(false).setDescendantLevels(1))
+                .build();
+
+        //when
+        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+
+        //then
+        assertTrue(subtree.size() == 2);
+        assertIdAndItemsSize(get(subtree, 0), "t1-p31", 0);
+
+        verifyFiltering(DepthFilter.FILTER_DOWN, true);
+        verifyFiltering(DepthFilter.FILTER_UP, false);
+    }
+
+    @Test
+    public void shouldNotExpandAncestors_Keyword_DescendantsZero() {
+        //given 
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
+                .sitemapId("t1-k21")
+                .navigationFilter(new NavigationFilter().setWithAncestors(false).setDescendantLevels(0))
+                .build();
+
+        //when
+        //then
+        //exception
+        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+                () -> {
+                    verifyFiltering(DepthFilter.FILTER_DOWN, false);
+                    verifyFiltering(DepthFilter.FILTER_UP, false);
+                });
+    }
 
     @Test
     public void shouldExpandAncestors_Keyword_DescendantsOne() throws StorageException {
         //given
-        prepareUpstream(keyword("t1",
+        prepareUpstreamForKeyword(keyword("t1",
                 keyword("t1-k12",
                         keyword("t1-k21")
                 )
         ), "tcm:42-21-1024");
-        prepareDownstream("tcm:42-1-512", "tcm:42-12-1024", "tcm:42-21-1024");
+
+        prepareDownstream("tcm:42-21-1024", "tcm:42-12-1024", "tcm:42-1-512");
 
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
                 .sitemapId("t1-k21")
@@ -275,22 +725,30 @@ public class DynamicNavigationProviderTest {
         SitemapItemModelData root = get(subtree, 0);
         assertIdAndItemsSize(root, "t1", 5);
 
+        SitemapItemModelData t1k14 = get(root.getItems(), 3);
+        assertIdAndItemsSize(t1k14, "t1-k14", 0);
+
         SitemapItemModelData t1k12 = get(root.getItems(), 1);
-        assertIdAndItemsSize(t1k12, "t1-k12", 3);
+        assertIdAndItemsSize(t1k12, "t1-k12", 4);
 
         SitemapItemModelData t1k21 = get(t1k12.getItems(), 0);
-        assertIdAndItemsSize(t1k21, "t1-k21", 1);
+        assertIdAndItemsSize(t1k21, "t1-k21", 2);
 
         assertIdAndItemsSize(get(t1k21.getItems(), 0), "t1-p31", 0);
+        assertIdAndItemsSize(get(t1k21.getItems(), 1), "t1-p33", 0);
+
+        verifyFiltering(DepthFilter.FILTER_DOWN, true);
+        verifyFiltering(DepthFilter.FILTER_UP, true);
     }
 
     @Test
     public void shouldExpandAncestors_Keyword_DescendantsZero() throws StorageException {
         //given
-        prepareUpstream(keyword("t1",
+        prepareUpstreamForKeyword(keyword("t1",
                 keyword("t1-k12",
                         keyword("t1-k21")
-                )), "tcm:42-21-1024");
+                )
+        ), "tcm:42-21-1024");
 
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
                 .sitemapId("t1-k21")
@@ -312,8 +770,10 @@ public class DynamicNavigationProviderTest {
 
         SitemapItemModelData t1k3 = get(t1k2.getItems(), 0);
         assertIdAndItemsSize(t1k3, "t1-k21", 0);
-    }
 
+        verifyFiltering(DepthFilter.FILTER_DOWN, false);
+        verifyFiltering(DepthFilter.FILTER_UP, true);
+    }
 
     //endregion
 
@@ -366,12 +826,6 @@ public class DynamicNavigationProviderTest {
         return keyword;
     }
 
-    private PageMeta pageInit(String pageId) {
-        PageMeta page = page(pageId);
-        knownPages.put(page.getId(), page);
-        return page;
-    }
-
     private PageMeta page(String pageId) {
         PageData pageData = (PageData) navigationModel.get(pageId);
 
@@ -388,6 +842,22 @@ public class DynamicNavigationProviderTest {
     private void assertSitemapItem(SitemapItemModelData data, String id, String title) {
         assertEquals(id, data.getId());
         assertEquals(title, data.getTitle());
+    }
+
+    private void assertThrows(Action shouldThrow, Class<? extends Exception> exception, Action assertsAfter) {
+        try {
+            shouldThrow.perform();
+            fail("Exception " + exception + "was expected");
+        } catch (Exception ex) {
+            assertEquals(ex.getClass(), exception);
+            assertsAfter.perform();
+        }
+    }
+
+    @FunctionalInterface
+    private interface Action {
+
+        void perform();
     }
 
     @AllArgsConstructor

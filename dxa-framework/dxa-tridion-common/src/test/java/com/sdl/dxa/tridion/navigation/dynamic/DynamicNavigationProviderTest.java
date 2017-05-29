@@ -335,7 +335,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+        Collection<SitemapItemModelData> subtree = getOptionalSubtree(requestDto);
 
         //then
         assertTrue(subtree.size() == 3);
@@ -359,7 +359,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+        Collection<SitemapItemModelData> subtree = getOptionalSubtree(requestDto);
 
         //then
         assertTrue(subtree.size() == 3);
@@ -443,7 +443,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+        Collection<SitemapItemModelData> subtree = getOptionalSubtree(requestDto);
 
         //then
         assertTrue(subtree.size() == 1);
@@ -509,7 +509,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+        Collection<SitemapItemModelData> subtree = getOptionalSubtree(requestDto);
 
         //then
         assertTrue(subtree.size() == 1);
@@ -558,7 +558,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+        Collection<SitemapItemModelData> subtree = getOptionalSubtree(requestDto);
 
         //then
         assertTrue(subtree.size() == 1);
@@ -633,7 +633,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+        Collection<SitemapItemModelData> subtree = getOptionalSubtree(requestDto);
 
         //then
         assertTrue(subtree.size() == 1);
@@ -674,7 +674,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+        Collection<SitemapItemModelData> subtree = getOptionalSubtree(requestDto);
 
         //then
         assertTrue(subtree.size() == 1);
@@ -702,7 +702,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+        Collection<SitemapItemModelData> subtree = getOptionalSubtree(requestDto);
 
         //then
         assertTrue(subtree.size() == 2);
@@ -710,6 +710,13 @@ public class DynamicNavigationProviderTest {
 
         verifyFiltering(DepthFilter.FILTER_DOWN, true);
         verifyFiltering(DepthFilter.FILTER_UP, false);
+    }
+
+    @NotNull
+    private Collection<SitemapItemModelData> getOptionalSubtree(SitemapRequestDto requestDto) {
+        Optional<Collection<SitemapItemModelData>> optional = navigationProvider.getNavigationSubtree(requestDto);
+        assertTrue(optional.isPresent());
+        return optional.get();
     }
 
     @Test
@@ -749,7 +756,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+        Collection<SitemapItemModelData> subtree = getOptionalSubtree(requestDto);
 
         //then
         //only root, because of ancestors true
@@ -797,7 +804,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        Collection<SitemapItemModelData> subtree = navigationProvider.getNavigationSubtree(requestDto);
+        Collection<SitemapItemModelData> subtree = getOptionalSubtree(requestDto);
 
         //then
         //only root, because of ancestors true
@@ -817,6 +824,71 @@ public class DynamicNavigationProviderTest {
 
         verifyFiltering(DepthFilter.FILTER_DOWN, false);
         verifyFiltering(DepthFilter.FILTER_UP, true);
+    }
+
+    @Test
+    public void shouldReturnEmptyList_IfRootsNotFound_BecauseOfInvalidLocalizationId() {
+        //when
+        Optional<Collection<SitemapItemModelData>> subtree = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(404).build());
+
+        //then
+        assertTrue(subtree.isPresent());
+        assertTrue(subtree.get().isEmpty());
+    }
+
+    @Test
+    public void shouldReturnEmptyList_IfRootsNotFound() {
+        //when
+        Optional<Collection<SitemapItemModelData>> subtree = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(404).build());
+
+        //then
+        assertTrue(subtree.isPresent());
+        assertTrue(subtree.get().isEmpty());
+    }
+
+    @Test
+    public void shouldReturnEmptyOptional_WhenRequestNonExistingNode() throws StorageException {
+        //given
+
+        //when
+        Optional<Collection<SitemapItemModelData>> t2 = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2").build());
+        Optional<Collection<SitemapItemModelData>> t2k404 = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2-k404")
+                .navigationFilter(new NavigationFilter().setWithAncestors(true)).build());
+        Optional<Collection<SitemapItemModelData>> t2k404_2 = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2-k404")
+                .navigationFilter(new NavigationFilter().setWithAncestors(false)).build());
+        Optional<Collection<SitemapItemModelData>> t2p404 = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2-p404")
+                .navigationFilter(new NavigationFilter().setWithAncestors(true)).build());
+
+
+        assertFalse(t2.isPresent());
+        assertFalse(t2k404.isPresent());
+        assertFalse(t2k404_2.isPresent());
+        assertFalse(t2p404.isPresent());
+    }
+
+    @Test
+    public void shouldThrowException_WhenRequestForPage_Descendants() {
+        //given
+
+        //when
+        assertThrows(() -> navigationProvider.getNavigationSubtree(
+                SitemapRequestDto.builder(42).sitemapId("t1-p24").navigationFilter(new NavigationFilter().setWithAncestors(false)).build()),
+                BadRequestException.class,
+                () -> {
+                    verifyFiltering(DepthFilter.FILTER_DOWN, false);
+                    verifyFiltering(DepthFilter.FILTER_UP, false);
+                });
+    }
+
+    @Test
+    public void shouldThrowException_IfUriIsWrongFormat() {
+        //when
+        assertThrows(() -> navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("hello world").build()),
+                BadRequestException.class,
+                () -> {
+                    verifyFiltering(DepthFilter.FILTER_DOWN, false);
+                    verifyFiltering(DepthFilter.FILTER_UP, false);
+                });
     }
 
 

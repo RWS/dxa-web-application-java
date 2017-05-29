@@ -95,7 +95,7 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
 
     @Override
     @NotNull
-    public Collection<SitemapItemModelData> getNavigationSubtree(@NotNull SitemapRequestDto requestDto) {
+    public Optional<Collection<SitemapItemModelData>> getNavigationSubtree(@NotNull SitemapRequestDto requestDto) {
         log.trace("Original sitemapRequestDto {}", requestDto);
 
         SitemapRequestDto request = requestDto.toBuilder()
@@ -111,9 +111,9 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
             // top-level keywords, we add extra level and need to decrease expand level then by one
             SitemapRequestDto adaptedRequest = request.nextExpandLevel();
 
-            return getTaxonomyRoots(adaptedRequest, keyword -> true).stream()
+            return Optional.of(getTaxonomyRoots(adaptedRequest, keyword -> true).stream()
                     .map(keyword -> createTaxonomyNode(keyword, adaptedRequest))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toList()));
         }
 
         TaxonomyUrisHolder info = parse(request.getSitemapId(), request.getLocalizationId());
@@ -126,10 +126,7 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
         if (request.getNavigationFilter().isWithAncestors()) {
             log.trace("Filter with ancestors, expanding ancestors");
             Optional<SitemapItemModelData> taxonomy = taxonomyWithAncestors(info, request);
-            if (taxonomy.isPresent()) {
-                log.debug("Found taxonomy {} for request {}", taxonomy.get(), request);
-                return Collections.singletonList(taxonomy.get());
-            }
+            return taxonomy.map(Collections::singletonList);
         }
 
         if (request.getNavigationFilter().getDescendantLevels() != 0 && !info.isPage()) {
@@ -161,7 +158,9 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
     @NonNull
     private Optional<SitemapItemModelData> taxonomyWithAncestors(@NonNull TaxonomyUrisHolder uris, @NotNull SitemapRequestDto requestDto) {
         if (uris.isTaxonomyOnly()) {
-            throw new BadRequestException(String.format("URIs %s is not a page nor keyword, can't expand ancestors, request %s", uris, requestDto));
+            String message = String.format("URIs %s is not a page nor keyword, can't expand ancestors, request %s", uris, requestDto);
+            log.warn(message);
+            throw new BadRequestException(message);
         }
 
         Optional<SitemapItemModelData> taxonomy = uris.isPage() ?
@@ -184,10 +183,10 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
                 .filter(TaxonomyNodeModelData.class::isInstance)
                 .forEach(child -> addDescendantsToTaxonomy(child, requestDto));
 
-        Set<SitemapItemModelData> additionalChildren = new LinkedHashSet<>(
-                expandDescendants(parse(taxonomy.getId(), requestDto.getLocalizationId()), requestDto));
+        TaxonomyUrisHolder uris = parse(taxonomy.getId(), requestDto.getLocalizationId());
+        Set<SitemapItemModelData> children = new LinkedHashSet<>(expandDescendants(uris, requestDto).orElse(Collections.emptyList()));
 
-        for (SitemapItemModelData child : difference(additionalChildren, newHashSet(taxonomy.getItems()))) {
+        for (SitemapItemModelData child : difference(children, newHashSet(taxonomy.getItems()))) {
             taxonomy.addItem(child);
         }
     }
@@ -201,10 +200,11 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
      * @return a set of descendants of item with passed URI
      */
     @NotNull
-    private Set<SitemapItemModelData> expandDescendants(TaxonomyUrisHolder uris, @NotNull SitemapRequestDto requestDto) {
+    private Optional<Collection<SitemapItemModelData>> expandDescendants(TaxonomyUrisHolder uris, @NotNull SitemapRequestDto requestDto) {
         if (uris.isPage()) {
-            log.debug("Page cannot have descendants, return emptyList, uris = ", uris);
-            return Collections.emptySet();
+            String message = "Page cannot have descendants, uris = " + uris;
+            log.warn(message);
+            throw new BadRequestException(message);
         }
 
         Keyword keyword = taxonomyFactory.getTaxonomyKeywords(uris.getTaxonomyUri(),
@@ -212,10 +212,10 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
 
         if (keyword == null) {
             log.warn("Keyword '{}' in Taxonomy '{}' was not found.", uris.getKeywordUri(), uris.getTaxonomyUri());
-            return Collections.emptySet();
+            return Optional.empty();
         }
 
-        return createTaxonomyNode(keyword, requestDto).getItems();
+        return Optional.of(createTaxonomyNode(keyword, requestDto).getItems());
     }
 
     @NotNull

@@ -91,6 +91,7 @@
         <jaxen.version>1.1.4</jaxen.version>
         <jdom2.version>2.0.5</jdom2.version>
         <powermock.version>1.6.6</powermock.version>
+        <odata_client.version>2.3.4</odata_client.version>
     </properties>
 
     <scm>
@@ -262,7 +263,16 @@
                         <groupId>com.sdl.web</groupId>
                         <artifactId>web-ambient-engine</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>com.sdl</groupId>
+                        <artifactId>odata_client</artifactId>
+                    </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl</groupId>
+                <artifactId>odata_client</artifactId>
+                <version>${odata_client.version}</version>
             </dependency>
 
             <!-- DD4T -->

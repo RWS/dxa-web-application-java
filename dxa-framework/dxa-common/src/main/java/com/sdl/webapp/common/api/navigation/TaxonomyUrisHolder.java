@@ -1,10 +1,8 @@
 package com.sdl.webapp.common.api.navigation;
 
-import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.util.TcmUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NonNull;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -20,7 +18,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @Slf4j
 @EqualsAndHashCode
 @ToString
-public class TaxonomySitemapItemUrisHolder {
+public class TaxonomyUrisHolder {
 
     private static final Pattern PATTERN = Pattern.compile("t(?<taxonomyId>\\d+)(-(?<type>[kp])(?<itemId>\\d+))?$");
 
@@ -41,7 +39,7 @@ public class TaxonomySitemapItemUrisHolder {
     @Getter(lazy = true)
     private final String pageUri = pageUri();
 
-    private TaxonomySitemapItemUrisHolder(String taxonomyId, String pageOrKeywordId, boolean page, String localizationId) {
+    private TaxonomyUrisHolder(String taxonomyId, String pageOrKeywordId, boolean page, String localizationId) {
         this.page = page;
         this.taxonomyId = taxonomyId;
         this.pageOrKeywordId = pageOrKeywordId;
@@ -51,13 +49,25 @@ public class TaxonomySitemapItemUrisHolder {
     /**
      * Parse a sitemapItem ID and returns a wrapper that can return URIs for all parts of id.
      *
-     * @param sitemapItemId id to parse
-     * @param localization  context localization
+     * @param sitemapItemId  id to parse
+     * @param localizationId context localization id
      * @return an URIs wrapper or null if ID format is wrong
      */
     @Nullable
-    public static TaxonomySitemapItemUrisHolder parse(String sitemapItemId, @NonNull Localization localization) {
-        log.trace("Parsing sitemapItemId {} for localization {}", sitemapItemId, localization.getId());
+    public static TaxonomyUrisHolder parse(String sitemapItemId, int localizationId) {
+        return parse(sitemapItemId, String.valueOf(localizationId));
+    }
+
+    /**
+     * Parse a sitemapItem ID and returns a wrapper that can return URIs for all parts of id.
+     *
+     * @param sitemapItemId  id to parse
+     * @param localizationId context localization id
+     * @return an URIs wrapper or null if ID format is wrong
+     */
+    @Nullable
+    public static TaxonomyUrisHolder parse(String sitemapItemId, String localizationId) {
+        log.trace("Parsing sitemapItemId {} for localization {}", sitemapItemId, localizationId);
 
         if (isNullOrEmpty(sitemapItemId)) {
             return null;
@@ -65,7 +75,7 @@ public class TaxonomySitemapItemUrisHolder {
         Matcher matcher = PATTERN.matcher(sitemapItemId);
 
         return !matcher.matches() ? null :
-                new TaxonomySitemapItemUrisHolder(matcher.group("taxonomyId"), matcher.group("itemId"), "p".equals(matcher.group("type")), localization.getId());
+                new TaxonomyUrisHolder(matcher.group("taxonomyId"), matcher.group("itemId"), "p".equals(matcher.group("type")), localizationId);
     }
 
     public boolean isKeyword() {

@@ -8,8 +8,6 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.util.TcmUtils;
-import com.sdl.webapp.tridion.navigation.data.PageMetaDTO;
-import com.tridion.meta.PageMeta;
 import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.filters.DepthFilter;
@@ -30,7 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import static com.sdl.webapp.common.api.navigation.TaxonomySitemapItemUrisHolder.parse;
+import static com.sdl.webapp.common.api.navigation.TaxonomyUrisHolder.parse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -45,7 +43,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings("Duplicates")
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicNavigationProviderTest {
 
@@ -58,9 +55,6 @@ public class DynamicNavigationProviderTest {
 
     @Mock
     private TaxonomyRelationManager relationManager;
-
-    @Mock
-    private AbstractStaticNavigationProvider staticNavigationProvider;
 
     @Mock
     private Localization localization;
@@ -189,31 +183,12 @@ public class DynamicNavigationProviderTest {
         assertEquals("child11", item1.getItems().iterator().next().getTitle());
     }
 
-    @Test
-    public void shouldConvertToPageMetaDTO() {
-        //given 
-        PageMeta pageMeta = mock(PageMeta.class);
-        when(pageMeta.getId()).thenReturn(1);
-        when(pageMeta.getTitle()).thenReturn("title");
-        when(pageMeta.getURLPath()).thenReturn("url");
-
-        //when
-        Object toDto = ReflectionTestUtils.invokeMethod(dynamicNavigationProvider, "toDto", pageMeta);
-
-        //then
-        assertTrue(toDto instanceof PageMetaDTO);
-        PageMetaDTO dto = (PageMetaDTO) toDto;
-        assertEquals(1, dto.getId());
-        assertEquals("title", dto.getTitle());
-        assertEquals("url", dto.getUrl());
-    }
-
     //TSI-1980
     @Test
     public void shouldReturnEmptyListIfPageUrisPassed() {
         //given
         //when
-        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-p1", localization),
+        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-p1", localization.getId()),
                 NavigationFilter.DEFAULT, localization);
 
         //then
@@ -226,7 +201,7 @@ public class DynamicNavigationProviderTest {
         when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class))).thenReturn(null);
 
         //when
-        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-k1", localization),
+        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-k1", localization.getId()),
                 NavigationFilter.DEFAULT, localization);
 
         //then
@@ -237,7 +212,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldNotCollectAnythingIfNotPage() {
         //when
-        List<SitemapItem> items = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-k1", localization), new NavigationFilter(), localization);
+        List<SitemapItem> items = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-k1", localization.getId()), new NavigationFilter(), localization);
 
         //then
         assertTrue(items.size() == 0);
@@ -247,7 +222,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldNotCollectAnythingIfNotKeyword() {
         //when
-        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-p1", localization), new NavigationFilter(), localization);
+        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-p1", localization.getId()), new NavigationFilter(), localization);
 
         //then
         assertNull(taxonomyNode);
@@ -261,7 +236,7 @@ public class DynamicNavigationProviderTest {
                 .thenReturn(null);
 
         //when
-        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization), new NavigationFilter(), localization);
+        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization.getId()), new NavigationFilter(), localization);
 
         verify(relationManager).getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), argThat(FILTER_UP_MATCHER), anyInt());
 
@@ -275,7 +250,7 @@ public class DynamicNavigationProviderTest {
                 .thenReturn(null);
 
         //when
-        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-k1", localization), new NavigationFilter(), localization);
+        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-k1", localization.getId()), new NavigationFilter(), localization);
 
         //then
         verify(taxonomyFactory).getTaxonomyKeywords(anyString(), argThat(FILTER_UP_MATCHER), anyString());
@@ -289,7 +264,7 @@ public class DynamicNavigationProviderTest {
                 .thenReturn(new Keyword[]{});
 
         //when
-        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization), new NavigationFilter(), localization);
+        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization.getId()), new NavigationFilter(), localization);
 
         //then
         verify(relationManager).getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), argThat(FILTER_UP_MATCHER), anyInt());

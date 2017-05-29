@@ -18,7 +18,7 @@ public class PageRequestDtoTest {
                 .path("/").build();
 
         //when
-        dto2.depthIncreaseAndCheckIfSafe();
+        dto2.getDepthCounter().depthIncreaseAndCheckIfSafe();
 
         //then
         assertEquals(dto2, dto1);

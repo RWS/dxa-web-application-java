@@ -25,6 +25,7 @@
         <module>dxa-dd4t-provider</module>
         <module>dxa-compatible</module>
         <module>dxa-data-model</module>
+        <module>dxa-tridion-common</module>
     </modules>
 
     <repositories>

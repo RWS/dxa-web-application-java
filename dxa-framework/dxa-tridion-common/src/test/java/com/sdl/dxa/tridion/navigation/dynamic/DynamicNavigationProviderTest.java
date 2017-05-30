@@ -59,6 +59,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -201,12 +202,17 @@ public class DynamicNavigationProviderTest {
 
     @NotNull
     private ArgumentMatcher<DepthFilter> depthFilterMatcher(int direction) {
+        return depthFilterMatcher(direction, 666);
+    }
+
+    private ArgumentMatcher<DepthFilter> depthFilterMatcher(int direction, int depth) {
         return new ArgumentMatcher<DepthFilter>() {
             @Override
             public boolean matches(Object argument) {
                 Pattern pattern = Pattern.compile("[^\\d]+\\((?<depth>-?\\d+),(?<direction>\\d)\\)");
                 Matcher matcher = pattern.matcher(((DepthFilter) argument).toTaxonomyFilterUriRepresentation());
-                return matcher.matches() && matcher.group("direction").equals(String.valueOf(direction));
+                return matcher.matches() && matcher.group("direction").equals(String.valueOf(direction))
+                        && (depth == 666 || matcher.group("depth").equals(String.valueOf(depth)));
             }
         };
     }
@@ -256,7 +262,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldReturnNavigationModel_AndCreateTaxonomyModelOutOfIt() {
         //given
-        SitemapRequestDto requestDto = SitemapRequestDto.builder(42).build();
+        SitemapRequestDto requestDto = SitemapRequestDto.builder(42).navigationFilter(new NavigationFilter().setDescendantLevels(-1)).build();
 
         //when
         Optional<SitemapItemModelData> optional = navigationProvider.getNavigationModel(requestDto);
@@ -294,6 +300,8 @@ public class DynamicNavigationProviderTest {
         assertIdAndItemsSize(rootItems.next(), "t1-p13", 0);
         assertIdAndItemsSize(rootItems.next(), "t1-k14", 1);
         assertIdAndItemsSize(rootItems.next(), "t1-p15", 0);
+
+        verify(taxonomyFactory, atLeastOnce()).getTaxonomyKeywords(eq("tcm:42-1-512"), argThat(depthFilterMatcher(DepthFilter.FILTER_DOWN, -1)));
     }
 
 //    ==============================================================

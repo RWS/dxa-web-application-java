@@ -2,13 +2,18 @@ package com.sdl.webapp.tridion.navigation;
 
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
+import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
+import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
+import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
+import com.sdl.webapp.common.controller.exception.BadRequestException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,13 +23,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -32,6 +46,9 @@ public class DynamicNavigationProviderTest {
 
     @Mock
     private NavigationModelProvider navigationModelProvider;
+
+    @Mock
+    private OnDemandNavigationModelProvider onDemandNavigationModelProvider;
 
     @Mock
     private AbstractStaticNavigationProvider staticNavigationProvider;
@@ -77,6 +94,7 @@ public class DynamicNavigationProviderTest {
         when(staticNavigationProvider.getBreadcrumbNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
     }
 
+    //region Dynamic Navigation
     @Test
     public void shouldConvertR2Model_ToEntityModel() throws NavigationProviderException {
         //given
@@ -198,6 +216,96 @@ public class DynamicNavigationProviderTest {
         assertEquals("t1-p1", links.getItems().get(0).getId());
         assertEquals("t1-k3", links.getItems().get(1).getId());
     }
+    //endregion
+
+    //region On-demand API
+
+    @Test
+    public void shouldReturnEmptyList_IfNothingFound() {
+        //given
+        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
+
+        //when
+        Collection<SitemapItem> items = dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
+
+        //then
+        assertTrue(items.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnEmptyList_IfBadRequest() {
+        //given
+        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenThrow(new BadRequestException());
+
+        //when
+        Collection<SitemapItem> items = dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
+
+        //then
+        assertTrue(items.isEmpty());
+    }
+
+    @Test
+    public void shouldPassTheRequest_ToTheService() {
+        //given
+        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
+        NavigationFilter navigationFilter = new NavigationFilter().setDescendantLevels(666).setWithAncestors(true);
+        String sitemapItemId = "sitemap";
+
+        //when
+        dynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+
+        //then
+        verify(onDemandNavigationModelProvider).getNavigationSubtree(argThat(new ArgumentMatcher<SitemapRequestDto>() {
+            @Override
+            public boolean matches(Object argument) {
+                SitemapRequestDto dto = (SitemapRequestDto) argument;
+                assertEquals(localization.getId(), String.valueOf(dto.getLocalizationId()));
+                assertEquals(new DepthCounter(666), dto.getExpandLevels());
+                assertEquals(navigationFilter, dto.getNavigationFilter());
+                assertEquals(sitemapItemId, dto.getSitemapId());
+                return true;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldConvertServiceResponse_AndReturnTheResult() {
+        //given
+        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Collections.singletonList(navigationModel)));
+
+        //when
+        Collection<SitemapItem> subtree = dynamicNavigationProvider.getNavigationSubtree("whatever", NavigationFilter.DEFAULT, localization);
+
+        //then
+        assertEquals(1, subtree.size());
+        SitemapItem root = subtree.iterator().next();
+        assertEquals("t1", root.getId());
+        assertTrue(root instanceof TaxonomyNode);
+        Set<SitemapItem> items = root.getItems();
+        assertEquals(7, items.size());
+        SitemapItem t1p0 = items.iterator().next();
+        assertEquals("t1-p0", t1p0.getId());
+        assertFalse(t1p0 instanceof TaxonomyNode);
+    }
+
+    @Test
+    public void shouldHandleMultipleItems_AndReturnTheResult() {
+        //given
+        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Arrays.asList(
+                new SitemapItemModelData().setId("t1-p1").setVisible(true).setUrl("/index").setTitle("001 Index"),
+                new SitemapItemModelData().setId("t1-p2").setVisible(true).setUrl("/index2").setTitle("002 Index 2"))));
+
+        //when
+        Collection<SitemapItem> subtree = dynamicNavigationProvider.getNavigationSubtree("whatever", NavigationFilter.DEFAULT, localization);
+
+        //then
+        assertEquals(2, subtree.size());
+        Iterator<SitemapItem> iterator = subtree.iterator();
+        assertEquals("t1-p1", iterator.next().getId());
+        assertEquals("t1-p2", iterator.next().getId());
+    }
+
+    //endregion
 
     @NotNull
     private ArgumentMatcher<SitemapRequestDto> getMatcher() {

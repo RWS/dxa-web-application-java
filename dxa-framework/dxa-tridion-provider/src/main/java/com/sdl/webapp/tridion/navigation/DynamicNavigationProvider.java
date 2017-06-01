@@ -2,9 +2,11 @@ package com.sdl.webapp.tridion.navigation;
 
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
+import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
+import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.NavigationLinks;
@@ -14,6 +16,7 @@ import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.api.navigation.OnDemandNavigationProvider;
+import com.sdl.webapp.common.controller.exception.BadRequestException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -48,15 +51,19 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
 
     private final NavigationModelProvider navigationModelProvider;
 
+    private final OnDemandNavigationModelProvider onDemandNavigationModelProvider;
+
     private final LinkResolver linkResolver;
 
     @Autowired
     public DynamicNavigationProvider(AbstractStaticNavigationProvider staticNavigationProvider,
                                      LinkResolver linkResolver,
-                                     NavigationModelProvider navigationModelProvider) {
+                                     NavigationModelProvider navigationModelProvider,
+                                     OnDemandNavigationModelProvider onDemandNavigationModelProvider) {
         this.staticNavigationProvider = staticNavigationProvider;
         this.linkResolver = linkResolver;
         this.navigationModelProvider = navigationModelProvider;
+        this.onDemandNavigationModelProvider = onDemandNavigationModelProvider;
     }
 
     @Override
@@ -114,12 +121,33 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
 
     @Override
     public Collection<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) {
+        Optional<Collection<SitemapItemModelData>> subtree;
+        SitemapRequestDto requestDto = SitemapRequestDto
+                .builder(Integer.parseInt(localization.getId()))
+                .navigationFilter(navigationFilter)
+                .expandLevels(new DepthCounter(navigationFilter.getDescendantLevels()))
+                .sitemapId(sitemapItemId)
+                .build();
+        try {
+            subtree = onDemandNavigationModelProvider.getNavigationSubtree(requestDto);
+        } catch (BadRequestException e) {
+            log.warn("Error requesting on-demand navigation API", e);
+            return Collections.emptyList();
+        }
 
-        return Collections.emptyList();
+        if (!subtree.isPresent()) {
+            log.debug("Nothing found for the given request {}", requestDto);
+            return Collections.emptyList();
+        }
+
+        return subtree.get().stream()
+                .map(this::_convert)
+                .collect(Collectors.toList());
     }
 
     @NotNull
-    private NavigationLinks _toNavigationLinks(Collection<SitemapItemModelData> items, boolean onlyVisible, Localization localization) {
+    private NavigationLinks _toNavigationLinks(Collection<SitemapItemModelData> items,
+                                               boolean onlyVisible, Localization localization) {
         return items.stream()
                 .filter(model -> !onlyVisible || (model.isVisible() && !isNullOrEmpty(model.getUrl())))
                 .map(this::_convert)
@@ -128,7 +156,8 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
     }
 
     @NotNull
-    private List<SitemapItemModelData> _collectBreadcrumbsToLevel(SitemapItemModelData currentLevel, final Localization localization) {
+    private List<SitemapItemModelData> _collectBreadcrumbsToLevel(SitemapItemModelData currentLevel,
+                                                                  final Localization localization) {
         List<SitemapItemModelData> breadcrumbs = new LinkedList<>();
 
         SitemapItemModelData model = currentLevel;

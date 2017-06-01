@@ -22,7 +22,7 @@ public interface OnDemandNavigationModelProvider {
      *
      * @param requestDto current request
      * @return optional collection with requested navigation nodes,
-     * optional is not present only if the request was correct but nothing wss found
+     * optional is not present only if the request was correct but nothing was found
      */
     @NotNull
     Optional<Collection<SitemapItemModelData>> getNavigationSubtree(@NotNull SitemapRequestDto requestDto);

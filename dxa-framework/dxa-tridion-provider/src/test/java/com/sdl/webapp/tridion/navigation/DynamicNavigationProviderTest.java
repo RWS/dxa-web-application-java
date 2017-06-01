@@ -1,285 +1,212 @@
 package com.sdl.webapp.tridion.navigation;
 
-import com.google.common.collect.Lists;
-import com.sdl.web.api.dynamic.taxonomies.filters.WebTaxonomyFilter;
-import com.sdl.web.api.taxonomies.TaxonomyRelationManager;
+import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
+import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
+import com.sdl.dxa.common.dto.SitemapRequestDto;
+import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
-import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
-import com.sdl.webapp.common.api.navigation.NavigationFilter;
-import com.sdl.webapp.common.util.TcmUtils;
-import com.tridion.taxonomies.Keyword;
-import com.tridion.taxonomies.TaxonomyFactory;
-import com.tridion.taxonomies.filters.DepthFilter;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
+import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
-import static com.sdl.webapp.common.api.navigation.TaxonomyUrisHolder.parse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.atLeastOnce;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DynamicNavigationProviderTest {
 
-    private static final BaseMatcher<DepthFilter> FILTER_UP_MATCHER = getDepthFilterMatcher(DepthFilter.FILTER_UP);
-
-    private static final BaseMatcher<DepthFilter> FILTER_DOWN_MATCHER = getDepthFilterMatcher(DepthFilter.FILTER_DOWN);
+    @Mock
+    private NavigationModelProvider navigationModelProvider;
 
     @Mock
-    private TaxonomyFactory taxonomyFactory;
-
-    @Mock
-    private TaxonomyRelationManager relationManager;
+    private AbstractStaticNavigationProvider staticNavigationProvider;
 
     @Mock
     private Localization localization;
 
+    @Mock
+    private LinkResolver linkResolver;
+
     @InjectMocks
-    @Spy
     private DynamicNavigationProvider dynamicNavigationProvider;
 
-    @NotNull
-    private static BaseMatcher<DepthFilter> getDepthFilterMatcher(int direction) {
-        return new BaseMatcher<DepthFilter>() {
-            @Override
-            public boolean matches(Object item) {
-
-                return ((Integer) ReflectionTestUtils.getField(
-                        ReflectionTestUtils.getField(item, "depthFilter"), "depthDirection")) == direction;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Direction should be " + direction);
-            }
-        };
-    }
+    private TaxonomyNodeModelData navigationModel = new TaxonomyNodeModelData();
 
     @Before
-    public void init() {
-        when(localization.getId()).thenReturn("1");
-        ReflectionTestUtils.setField(dynamicNavigationProvider, "taxonomyNavigationMarker", "[Taxonomy]");
-        ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypeTaxonomyNode", "TaxonomyNode");
-        ReflectionTestUtils.setField(dynamicNavigationProvider, "sitemapItemTypeStructureGroup", "StructureGroup");
+    public void init() throws NavigationProviderException {
+        when(localization.getId()).thenReturn("42");
+
+        when(linkResolver.resolveLink(eq("/t1k1"), anyString())).thenReturn("resolved");
+
+        navigationModel.setId("t1")
+                .addItem(new SitemapItemModelData().setId("t1-p0").setVisible(true).setUrl("/index").setTitle("000 Index"))
+                .addItem(new TaxonomyNodeModelData().setId("t1-k1").setVisible(true).setUrl("/t1k1").setTitle("001 t1k1")
+                        .addItem(new SitemapItemModelData().setId("t1-p21").setVisible(true).setUrl("/t1p21").setTitle("010 t1p21"))
+                        .addItem(new SitemapItemModelData().setId("t1-p22").setVisible(true).setUrl("/t1p22").setTitle("011 t1p22"))
+                        .addItem(new SitemapItemModelData().setId("t1-p23").setVisible(false).setUrl("/t1p23").setTitle("012 t1p23")))
+                .addItem(new TaxonomyNodeModelData().setId("t1-k2").setVisible(true).setUrl("/t1k2").setTitle("002 t1k2"))
+                .addItem(new SitemapItemModelData().setId("t1-p1").setVisible(true).setUrl("/t1p1").setTitle("003 t1p1"))
+                .addItem(new TaxonomyNodeModelData().setId("t1-k3").setVisible(false).setUrl("/t1k3").setTitle("004 t1k3")
+                        .addItem(new SitemapItemModelData().setId("t1-p24").setVisible(true).setUrl("/t1p24").setTitle("010 t1p24")))
+                .addItem(new SitemapItemModelData().setId("t1-p3").setVisible(true).setUrl("").setTitle("005 t1p3"))
+                .addItem(new SitemapItemModelData().setId("t1-p4").setVisible(true).setUrl(null).setTitle("006 t1p4"));
+
+        SitemapItem staticModel = new SitemapItem();
+        staticModel.setTitle("Static");
+        when(staticNavigationProvider.getNavigationModel(eq(localization))).thenReturn(staticModel);
+
+        NavigationLinks staticNavigationLinks = new NavigationLinks();
+        staticNavigationLinks.setId("Static");
+        when(staticNavigationProvider.getTopNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
+        when(staticNavigationProvider.getContextNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
+        when(staticNavigationProvider.getBreadcrumbNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
     }
 
     @Test
-    public void shouldReturnNullOfNoRoot() {
+    public void shouldConvertR2Model_ToEntityModel() throws NavigationProviderException {
         //given
-        when(taxonomyFactory.getTaxonomies(anyString())).thenReturn(new String[]{});
+        SitemapItemModelData model = new TaxonomyNodeModelData().setId("t1");
+        doReturn(Optional.of(model)).when(navigationModelProvider).getNavigationModel(argThat(getMatcher()));
 
         //when
-        String taxonomyId = dynamicNavigationProvider.getNavigationTaxonomyId(localization);
+        SitemapItem navigationModel = dynamicNavigationProvider.getNavigationModel(localization);
 
         //then
-        verify(taxonomyFactory).getTaxonomies(eq(TcmUtils.buildPublicationTcmUri("1")));
-        assertNull(taxonomyId);
+        assertEquals(model.getId(), navigationModel.getId());
+        assertEquals(model.getUrl(), navigationModel.getUrl());
+        assertEquals(model.isVisible(), navigationModel.isVisible());
     }
 
     @Test
-    public void shouldReturnNullIfNoRootInArray() {
+    public void shouldFallback_IfModelProviderReturnedEmptyOptional() throws NavigationProviderException {
         //given
-        when(taxonomyFactory.getTaxonomies(anyString())).thenReturn(new String[]{"withoutMarker", "withoutMarker"});
-        Keyword keyword = mockKeyword("taxonomyId", "Name");
-        when(taxonomyFactory.getTaxonomyKeyword(anyString())).thenReturn(keyword);
-
+        doReturn(Optional.empty()).when(navigationModelProvider).getNavigationModel(argThat(getMatcher()));
 
         //when
-        String taxonomyId = dynamicNavigationProvider.getNavigationTaxonomyId(localization);
+        SitemapItem navigationModel = dynamicNavigationProvider.getNavigationModel(localization);
+        NavigationLinks top = dynamicNavigationProvider.getTopNavigationLinks("path", localization);
+        NavigationLinks contextNavigationLinks = dynamicNavigationProvider.getContextNavigationLinks("path", localization);
+        NavigationLinks bread = dynamicNavigationProvider.getBreadcrumbNavigationLinks("path", localization);
 
         //then
-        verify(taxonomyFactory).getTaxonomies(eq(TcmUtils.buildPublicationTcmUri("1")));
-        assertNull(taxonomyId);
+        assertEquals("Static", navigationModel.getTitle());
+        assertEquals("Static", top.getId());
+        assertEquals("Static", contextNavigationLinks.getId());
+        assertEquals("Static", bread.getId());
     }
 
     @Test
-    public void shouldFindTaxonomyRoot() {
-        //given 
-        when(taxonomyFactory.getTaxonomies(anyString())).thenReturn(new String[]{"withoutMarker", "withMarker"});
-        Keyword keyword = mockKeyword("taxonomyId", "Name");
-        Keyword keywordRoot = mockKeyword("taxonomyId", "[Taxonomy]Name");
-        when(taxonomyFactory.getTaxonomyKeyword(anyString())).thenReturn(keyword);
-        when(taxonomyFactory.getTaxonomyKeyword(eq("withMarker"))).thenReturn(keywordRoot);
-
-        //when
-        String taxonomyId = dynamicNavigationProvider.getNavigationTaxonomyId(localization);
-
-        //then
-        verify(taxonomyFactory).getTaxonomies(eq(TcmUtils.buildPublicationTcmUri("1")));
-        assertEquals("taxonomyId", taxonomyId);
-    }
-
-    @Test
-    public void shouldCreateTaxonomyNode() {
+    public void shouldProcessNavigationLinks_ForTopNavigation_FilteringHidden() throws NavigationProviderException {
         //given
-        //[Taxonomy]Root
-        //  010 child1
-        //      child11
-        //  000 child2
-        Keyword keyword = mockKeyword("10-20", "[Taxonomy]Root");
-        when(taxonomyFactory.getTaxonomyKeywords(eq("rootId"), any(DepthFilter.class))).thenReturn(keyword);
-        Keyword child1 = mockKeyword("1-2", "010 child1");
-        when(child1.getKeywordURI()).thenReturn("12-13");
-        Keyword child11 = mockKeyword("5-6", "child11");
-        when(child1.getKeywordChildren()).thenReturn(Collections.singletonList(child11));
-        Keyword child2 = mockKeyword("3-4", "000 child2");
-        when(keyword.getKeywordChildren()).thenReturn(Lists.newArrayList(child1, child2));
+        when(navigationModelProvider.getNavigationModel(argThat(getMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
-        SitemapItem item = dynamicNavigationProvider.createTaxonomyNode("rootId", localization);
-
+        NavigationLinks links = dynamicNavigationProvider.getTopNavigationLinks(null, localization);
 
         //then
-        verify(taxonomyFactory).getTaxonomyKeywords(eq("rootId"), any(DepthFilter.class));
-        verify(keyword).getKeywordChildren();
-        verify(keyword, atLeastOnce()).getReferencedContentCount();
-        verify(child1).getKeywordChildren();
-        verify(child2).getKeywordChildren();
-        verify(child11).getKeywordChildren();
-
-        assertTrue(item instanceof TaxonomyNode);
-        TaxonomyNode node = (TaxonomyNode) item;
-        assertEquals("t20", node.getId());
-        assertEquals("TaxonomyNode", node.getType());
-        assertEquals("[Taxonomy]Root", node.getTitle());
-        assertEquals("keywordKey", node.getKey());
-        assertEquals("keywordDesc", node.getDescription());
-        assertTrue(node.isTaxonomyAbstract());
-        assertEquals(0, node.getClassifiedItemsCount());
-
-        Iterator<SitemapItem> items = node.getItems().iterator();
-        //child2 goes first because of sequence prefix
-        //although it's stripped
-        assertEquals("child2", items.next().getTitle());
-        SitemapItem item1 = items.next();
-        assertEquals("child1", item1.getTitle());
-        assertEquals("t2-k13", item1.getId());
-        assertEquals("TaxonomyNode", item1.getType());
-        assertEquals("child11", item1.getItems().iterator().next().getTitle());
+        assertEquals(4, links.getItems().size());
+        assertEquals("t1-p0", links.getItems().get(0).getId());
+        assertEquals("t1-k1", links.getItems().get(1).getId());
+        assertEquals("resolved", links.getItems().get(1).getUrl());
+        assertEquals("t1-k2", links.getItems().get(2).getId());
+        assertEquals("t1-p1", links.getItems().get(3).getId());
     }
 
-    //TSI-1980
     @Test
-    public void shouldReturnEmptyListIfPageUrisPassed() {
+    public void shouldProcessNavigationLinks_ForContextNavigation_FilteringHidden() throws NavigationProviderException {
         //given
+        when(navigationModelProvider.getNavigationModel(argThat(getMatcher()))).thenReturn(Optional.of(navigationModel));
+
         //when
-        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-p1", localization.getId()),
-                NavigationFilter.DEFAULT, localization);
+        NavigationLinks links = dynamicNavigationProvider.getContextNavigationLinks("/t1p22", localization);
+        NavigationLinks linksKeyword = dynamicNavigationProvider.getContextNavigationLinks("/t1k1", localization);
 
         //then
-        assertTrue(items.isEmpty());
+        assertEquals(2, links.getItems().size());
+        assertEquals("t1-p21", links.getItems().get(0).getId());
+        assertEquals("t1-p22", links.getItems().get(1).getId());
+
+        assertEquals(2, linksKeyword.getItems().size());
+        assertEquals("t1-p21", linksKeyword.getItems().get(0).getId());
+        assertEquals("t1-p22", linksKeyword.getItems().get(1).getId());
     }
 
     @Test
-    public void shouldReturnEmptyListIfKeywordIsNull() {
+    public void shouldReturnEmptyList_ForCurrentContext_IfNothingFound() throws NavigationProviderException {
         //given
-        when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class))).thenReturn(null);
+        when(navigationModelProvider.getNavigationModel(argThat(getMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
-        Set<SitemapItem> items = dynamicNavigationProvider.expandDescendants(parse("t1-k1", localization.getId()),
-                NavigationFilter.DEFAULT, localization);
+        NavigationLinks links = dynamicNavigationProvider.getContextNavigationLinks("/unknown", localization);
 
         //then
-        assertTrue(items.isEmpty());
-        verify(taxonomyFactory).getTaxonomyKeywords(eq("tcm:1-1-512"), argThat(FILTER_DOWN_MATCHER), eq("tcm:1-1-1024"));
+        assertEquals(0, links.getItems().size());
     }
 
-    @Test
-    public void shouldNotCollectAnythingIfNotPage() {
-        //when
-        List<SitemapItem> items = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-k1", localization.getId()), new NavigationFilter(), localization);
-
-        //then
-        assertTrue(items.size() == 0);
-        verify(relationManager, never()).getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), any(DepthFilter.class), anyInt());
-    }
 
     @Test
-    public void shouldNotCollectAnythingIfNotKeyword() {
-        //when
-        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-p1", localization.getId()), new NavigationFilter(), localization);
-
-        //then
-        assertNull(taxonomyNode);
-        verify(taxonomyFactory, never()).getTaxonomyKeywords(anyString(), any(DepthFilter.class), anyString());
-    }
-
-    @Test
-    public void shouldReturnEmptyListIfRootIsNull() {
+    public void shouldCollectBreadcrumbs_EvenForHiddenItems() throws NavigationProviderException {
         //given
-        when(relationManager.getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), any(WebTaxonomyFilter.class), anyInt()))
-                .thenReturn(null);
+        when(navigationModelProvider.getNavigationModel(argThat(getMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
-        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization.getId()), new NavigationFilter(), localization);
-
-        verify(relationManager).getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), argThat(FILTER_UP_MATCHER), anyInt());
-
-        assertTrue(sitemapItems.isEmpty());
-    }
-
-    @Test
-    public void shouldReturnNullIfKeywordIsNull() {
-        //given 
-        when(taxonomyFactory.getTaxonomyKeywords(anyString(), any(DepthFilter.class), anyString()))
-                .thenReturn(null);
-
-        //when
-        TaxonomyNode taxonomyNode = dynamicNavigationProvider.expandAncestorsForKeyword(parse("t1-k1", localization.getId()), new NavigationFilter(), localization);
+        NavigationLinks links = dynamicNavigationProvider.getBreadcrumbNavigationLinks("/t1p24", localization);
+        // TSI-1958
+        NavigationLinks linksHidden = dynamicNavigationProvider.getBreadcrumbNavigationLinks("/t1p23", localization);
+        // TSI-1956
+        NavigationLinks linksSlash = dynamicNavigationProvider.getBreadcrumbNavigationLinks("/t1p24/", localization);
 
         //then
-        verify(taxonomyFactory).getTaxonomyKeywords(anyString(), argThat(FILTER_UP_MATCHER), anyString());
-        assertNull(taxonomyNode);
+        assertEquals(linksSlash, links);
+        assertEquals(2, links.getItems().size());
+        assertEquals("t1-k3", links.getItems().get(0).getId());
+        assertEquals("t1-p24", links.getItems().get(1).getId());
+
+        assertEquals(2, linksHidden.getItems().size());
+        // todo assert some magic about home paths
     }
 
+    //todo test current context when keywords have index pages
+
+
     @Test
-    public void shouldReturnEmptyListIfRootIsEmpty() {
+    public void shouldFindHome_AsSiblingPage() throws NavigationProviderException {
         //given
-        when(relationManager.getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), any(WebTaxonomyFilter.class), anyInt()))
-                .thenReturn(new Keyword[]{});
+        when(localization.getPath()).thenReturn("/t1p1");
+        when(navigationModelProvider.getNavigationModel(argThat(getMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
-        List<SitemapItem> sitemapItems = dynamicNavigationProvider.collectAncestorsForPage(parse("t1-p1", localization.getId()), new NavigationFilter(), localization);
+        NavigationLinks links = dynamicNavigationProvider.getBreadcrumbNavigationLinks("/t1k3", localization);
 
         //then
-        verify(relationManager).getTaxonomyKeywords(anyString(), anyString(), any(Keyword[].class), argThat(FILTER_UP_MATCHER), anyInt());
-        assertTrue(sitemapItems.isEmpty());
+        assertEquals(2, links.getItems().size());
+        assertEquals("t1-p1", links.getItems().get(0).getId());
+        assertEquals("t1-k3", links.getItems().get(1).getId());
     }
 
-    private Keyword mockKeyword(String taxonomyURI, String name) {
-        Keyword keyword = mock(Keyword.class);
-        when(keyword.getTaxonomyURI()).thenReturn(taxonomyURI);
-        when(keyword.getKeywordName()).thenReturn(name);
-        when(keyword.getKeywordURI()).thenReturn(taxonomyURI);
-        when(keyword.getKeywordKey()).thenReturn("keywordKey");
-        when(keyword.getKeywordDescription()).thenReturn("keywordDesc");
-        when(keyword.isKeywordAbstract()).thenReturn(true);
-        return keyword;
+    @NotNull
+    private ArgumentMatcher<SitemapRequestDto> getMatcher() {
+        return new ArgumentMatcher<SitemapRequestDto>() {
+            @Override
+            public boolean matches(Object argument) {
+                return ((SitemapRequestDto) argument).getLocalizationId() == 42;
+            }
+        };
     }
 
 }

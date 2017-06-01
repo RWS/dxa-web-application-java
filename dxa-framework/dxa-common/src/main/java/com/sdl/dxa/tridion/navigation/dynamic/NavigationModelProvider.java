@@ -7,15 +7,18 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 /**
- * Dynamic navigation provider provides access to the navigation based on keywords and pages relations.
+ * Navigation provider provides access to the navigation model of the publication.
+ * Data model from {@code dxa-data-model} aka {@code R2} is used.
+ *
+ * @since 2.0
  */
 @FunctionalInterface
-public interface DynamicNavigationProvider {
+public interface NavigationModelProvider {
 
     /**
      * Loads full navigation model based on a request. Returns an optional in case model is not available but the request is valid.
      *
-     * @param requestDto current request
+     * @param requestDto current request with mandatory localization ID
      * @return optional with root navigation model
      */
     Optional<SitemapItemModelData> getNavigationModel(@NotNull SitemapRequestDto requestDto);

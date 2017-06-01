@@ -46,4 +46,7 @@ public interface TaxonomiesMixin {
 
     @JsonProperty("PublishedDate")
     DateTime getPublishedDate();
+
+    @JsonIgnore
+    Object getParent();
 }

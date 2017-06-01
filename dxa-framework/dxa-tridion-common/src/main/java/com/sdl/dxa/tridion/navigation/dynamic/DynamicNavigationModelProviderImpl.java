@@ -24,6 +24,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,7 +55,7 @@ import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapI
 
 @Slf4j
 @Service
-public class DynamicNavigationProviderImpl implements DynamicNavigationProvider, OnDemandNavigationProvider {
+public class DynamicNavigationModelProviderImpl implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
     private final WebTaxonomyFactory taxonomyFactory;
 
@@ -73,13 +74,15 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
     protected String sitemapItemTypePage;
 
     @Autowired
-    public DynamicNavigationProviderImpl(WebTaxonomyFactory taxonomyFactory, TaxonomyRelationManager relationManager) {
+    public DynamicNavigationModelProviderImpl(WebTaxonomyFactory taxonomyFactory, TaxonomyRelationManager relationManager) {
         this.taxonomyFactory = taxonomyFactory;
         this.relationManager = relationManager;
     }
 
     @Override
     public Optional<SitemapItemModelData> getNavigationModel(@NotNull SitemapRequestDto requestDto) {
+        Assert.notNull(requestDto.getLocalizationId(), "Localization ID is required to load dynamic navigation");
+
         List<Keyword> roots = getTaxonomyRoots(requestDto, keyword -> keyword.getKeywordName().contains(taxonomyNavigationMarker));
         if (roots.isEmpty()) {
             log.error("No Navigation Taxonomy Found in Localization [{}]. Ensure a Taxonomy with '{}' in its title is published",
@@ -138,8 +141,18 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
         throw new BadRequestException(String.format("Request %s is not specific, doing nothing", request));
     }
 
+    /**
+     * Expands root Taxonomies.
+     *
+     * @param requestDto current request with mandatory localization ID and navigation filter
+     * @param filter     way to filter roots, pass empty predicate always returning true {@code () -> true}
+     * @return a list of root Taxonomies
+     */
     @NotNull
-    private List<Keyword> getTaxonomyRoots(SitemapRequestDto requestDto, Predicate<Keyword> filter) {
+    private List<Keyword> getTaxonomyRoots(@NotNull SitemapRequestDto requestDto, @NotNull() Predicate<Keyword> filter) {
+        Assert.notNull(requestDto.getLocalizationId(), "Localization ID is required to load taxonomy roots");
+        Assert.notNull(requestDto.getNavigationFilter(), "Navigation Filter is required to load taxonomy roots");
+
         NavigationFilter navigationFilter = requestDto.getNavigationFilter();
 
         // since we load categories here, we have to decrease depth by one because the first level is categories level
@@ -155,6 +168,19 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Loads taxonomy with ancestors expanded for a given taxonomy URI and basing on a current request.
+     * <p>For Keywords: one single ancestor for a given keyword. Although same keyword may be in few places, we don't expect it due to
+     * technical limitation in CME. So basically we ignore the fact that keyword may be in many places (like page) and
+     * expect only a single entry. Because of that we have only one taxonomy root for Keyword's ancestors.</p>
+     * <p>For Pages: multiple ancestors are allowed for a page in case page is associated with multiple keywords.
+     * Basically, these different ROOTs (with same ID, because we are still within one taxonomy) contain
+     * different children for different paths your page may be in. Those subtrees are merged into one though, so we only have single node as a result.</p>
+     *
+     * @param uris       URIs of your current context taxonomy node
+     * @param requestDto navigation filter
+     * @return root of a taxonomy
+     */
     @NonNull
     private Optional<SitemapItemModelData> taxonomyWithAncestors(@NonNull TaxonomyUrisHolder uris, @NotNull SitemapRequestDto requestDto) {
         if (uris.isTaxonomyOnly()) {
@@ -192,12 +218,11 @@ public class DynamicNavigationProviderImpl implements DynamicNavigationProvider,
     }
 
     /**
-     * Expands descendants for a given {@link SitemapItemModelData}.
-     * We don't expect two equals items at the same level, so the method returns {@link Set}.
+     * Loads taxonomy and expands descendants for a given taxonomy URI and basing on a current request.
      *
      * @param uris       information about URI of current item
      * @param requestDto current request data
-     * @return a set of descendants of item with passed URI
+     * @return an optional collection of descendants of item with passed URI
      */
     @NotNull
     private Optional<Collection<SitemapItemModelData>> expandDescendants(TaxonomyUrisHolder uris, @NotNull SitemapRequestDto requestDto) {

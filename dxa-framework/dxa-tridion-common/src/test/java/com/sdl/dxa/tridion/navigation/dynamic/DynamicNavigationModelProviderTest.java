@@ -17,6 +17,7 @@ import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyRelationManager;
 import com.tridion.taxonomies.filters.DepthFilter;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,8 +67,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(DynamicNavigationProviderImpl.class)
-public class DynamicNavigationProviderTest {
+@PrepareForTest(DynamicNavigationModelProviderImpl.class)
+public class DynamicNavigationModelProviderTest {
 
     @Mock
     private PageMetaFactory pageMetaFactory;
@@ -79,7 +80,7 @@ public class DynamicNavigationProviderTest {
     private TaxonomyRelationManager relationManager;
 
     @InjectMocks
-    private DynamicNavigationProviderImpl navigationProvider;
+    private DynamicNavigationModelProviderImpl navigationModelProvider;
 
     private ImmutableMap<String, Keyword> navigation;
 
@@ -91,10 +92,10 @@ public class DynamicNavigationProviderTest {
 
     @Before
     public void init() throws Exception {
-        ReflectionTestUtils.setField(navigationProvider, "taxonomyNavigationMarker", "[Taxonomy]");
-        ReflectionTestUtils.setField(navigationProvider, "sitemapItemTypePage", "Page");
-        ReflectionTestUtils.setField(navigationProvider, "sitemapItemTypeTaxonomyNode", "TaxonomyNode");
-        ReflectionTestUtils.setField(navigationProvider, "sitemapItemTypeStructureGroup", "StructureGroup");
+        ReflectionTestUtils.setField(navigationModelProvider, "taxonomyNavigationMarker", "[Taxonomy]");
+        ReflectionTestUtils.setField(navigationModelProvider, "sitemapItemTypePage", "Page");
+        ReflectionTestUtils.setField(navigationModelProvider, "sitemapItemTypeTaxonomyNode", "TaxonomyNode");
+        ReflectionTestUtils.setField(navigationModelProvider, "sitemapItemTypeStructureGroup", "StructureGroup");
 
         taxonomies = new String[]{"tcm:42-1-512", "tcm:42-22-512", "tcm:42-33-512"};
 
@@ -107,7 +108,7 @@ public class DynamicNavigationProviderTest {
                        .put("t1-p11", new PageData("011 p11", 11))
                        .put("t1-k12", new KeywordData("012 k12", 1, 12))
                            .put("t1-k21", new KeywordData("021 k21", 1, 21))
-                               .put("t1-p31", new PageData("031 p31", 31))
+                               .put("t1-p31", new PageData("031 p31", 31,"/p31/index"))
                                .put("t1-p33", new PageData("033 p33", 33))
                            .put("t1-p22", new PageData("022 p22", 22))
                            .put("t1-p24", new PageData("024 p24", 24))
@@ -241,7 +242,7 @@ public class DynamicNavigationProviderTest {
         SitemapRequestDto requestDto = SitemapRequestDto.builder(100).build();
 
         //when
-        Optional<SitemapItemModelData> model = navigationProvider.getNavigationModel(requestDto);
+        Optional<SitemapItemModelData> model = navigationModelProvider.getNavigationModel(requestDto);
 
         //then
         assertFalse(model.isPresent());
@@ -253,7 +254,7 @@ public class DynamicNavigationProviderTest {
         SitemapRequestDto requestDto = SitemapRequestDto.builder(666).build();
 
         //when
-        Optional<SitemapItemModelData> model = navigationProvider.getNavigationModel(requestDto);
+        Optional<SitemapItemModelData> model = navigationModelProvider.getNavigationModel(requestDto);
 
         //then
         assertFalse(model.isPresent());
@@ -265,7 +266,7 @@ public class DynamicNavigationProviderTest {
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42).navigationFilter(new NavigationFilter().setDescendantLevels(-1)).build();
 
         //when
-        Optional<SitemapItemModelData> optional = navigationProvider.getNavigationModel(requestDto);
+        Optional<SitemapItemModelData> optional = navigationModelProvider.getNavigationModel(requestDto);
 
         //then
         assertTrue(optional.isPresent());
@@ -273,7 +274,8 @@ public class DynamicNavigationProviderTest {
         assertTrue(sitemapItemModelData instanceof TaxonomyNodeModelData);
         TaxonomyNodeModelData model = (TaxonomyNodeModelData) sitemapItemModelData;
 
-        assertSitemapItem(model, "t1", "[Taxonomy]Root");
+        assertEquals("t1", model.getId());
+        assertEquals("[Taxonomy]Root", model.getTitle());
         Keyword keyword = navigation.get(taxonomies[0]);
         assertEquals(keyword.getKeywordChildren().size() + keyword.getReferencedContentCount(), model.getItems().size());
 
@@ -305,7 +307,7 @@ public class DynamicNavigationProviderTest {
     }
 
 //    ==============================================================
-//region OnDemandNavigationProvider tests
+//region OnDemandNavigationModelProvider tests
 //    ==============================================================
 
 //            * Type  Ancest.  Desc.   Name of test
@@ -386,7 +388,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(requestDto), BadRequestException.class,
                 () -> {
                     verifyFiltering(DepthFilter.FILTER_DOWN, false);
                     verifyFiltering(DepthFilter.FILTER_UP, false);
@@ -403,7 +405,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class, () -> {
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(requestDto), BadRequestException.class, () -> {
             verifyFiltering(DepthFilter.FILTER_DOWN, false);
             verifyFiltering(DepthFilter.FILTER_UP, false);
         });
@@ -419,7 +421,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class, () -> {
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(requestDto), BadRequestException.class, () -> {
             verifyFiltering(DepthFilter.FILTER_DOWN, false);
             verifyFiltering(DepthFilter.FILTER_UP, false);
         });
@@ -435,7 +437,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class, () -> {
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(requestDto), BadRequestException.class, () -> {
             verifyFiltering(DepthFilter.FILTER_DOWN, false);
             verifyFiltering(DepthFilter.FILTER_UP, false);
         });
@@ -467,7 +469,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(requestDto), BadRequestException.class,
                 () -> {
                     verifyFiltering(DepthFilter.FILTER_DOWN, false);
                     verifyFiltering(DepthFilter.FILTER_UP, false);
@@ -483,7 +485,7 @@ public class DynamicNavigationProviderTest {
                 .build();
 
         //when
-        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(requestDto), BadRequestException.class,
                 () -> {
                     verifyFiltering(DepthFilter.FILTER_DOWN, false);
                     verifyFiltering(DepthFilter.FILTER_UP, false);
@@ -597,7 +599,7 @@ public class DynamicNavigationProviderTest {
 
         //when
         //then
-        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(requestDto), BadRequestException.class,
                 () -> {
                     verifyFiltering(DepthFilter.FILTER_DOWN, false);
                     verifyFiltering(DepthFilter.FILTER_UP, false);
@@ -615,7 +617,7 @@ public class DynamicNavigationProviderTest {
         //when
         //then
         //exception
-        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(requestDto), BadRequestException.class,
                 () -> {
                     verifyFiltering(DepthFilter.FILTER_DOWN, false);
                     verifyFiltering(DepthFilter.FILTER_UP, false);
@@ -722,7 +724,7 @@ public class DynamicNavigationProviderTest {
 
     @NotNull
     private Collection<SitemapItemModelData> getOptionalSubtree(SitemapRequestDto requestDto) {
-        Optional<Collection<SitemapItemModelData>> optional = navigationProvider.getNavigationSubtree(requestDto);
+        Optional<Collection<SitemapItemModelData>> optional = navigationModelProvider.getNavigationSubtree(requestDto);
         assertTrue(optional.isPresent());
         return optional.get();
     }
@@ -738,7 +740,7 @@ public class DynamicNavigationProviderTest {
         //when
         //then
         //exception
-        assertThrows(() -> navigationProvider.getNavigationSubtree(requestDto), BadRequestException.class,
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(requestDto), BadRequestException.class,
                 () -> {
                     verifyFiltering(DepthFilter.FILTER_DOWN, false);
                     verifyFiltering(DepthFilter.FILTER_UP, false);
@@ -751,7 +753,10 @@ public class DynamicNavigationProviderTest {
         prepareUpstreamForKeyword(keyword("t1",
                 keyword("t1-k0",
                         keyword("t1-k12",
-                                keyword("t1-k21")
+                                keyword("t1-k21",
+                                        page("t1-p31"), // to verify how we find index page in keyword and set this url to keyword
+                                        page("t1-p33")
+                                )
                         )
                 )
         ), "tcm:42-21-1024");
@@ -787,6 +792,8 @@ public class DynamicNavigationProviderTest {
 
         SitemapItemModelData t1k21 = get(t1k12.getItems(), 0);
         assertIdAndItemsSize(t1k21, "t1-k21", 2);
+        //should find index page and put its url to keyword
+        assertEquals("/p31", t1k21.getUrl());
 
         assertIdAndItemsSize(get(t1k21.getItems(), 0), "t1-p31", 0);
         assertIdAndItemsSize(get(t1k21.getItems(), 1), "t1-p33", 0);
@@ -837,7 +844,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldReturnEmptyList_IfRootsNotFound_BecauseOfInvalidLocalizationId() {
         //when
-        Optional<Collection<SitemapItemModelData>> subtree = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(404).build());
+        Optional<Collection<SitemapItemModelData>> subtree = navigationModelProvider.getNavigationSubtree(SitemapRequestDto.builder(404).build());
 
         //then
         assertTrue(subtree.isPresent());
@@ -847,7 +854,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldReturnEmptyList_IfRootsNotFound() {
         //when
-        Optional<Collection<SitemapItemModelData>> subtree = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(404).build());
+        Optional<Collection<SitemapItemModelData>> subtree = navigationModelProvider.getNavigationSubtree(SitemapRequestDto.builder(404).build());
 
         //then
         assertTrue(subtree.isPresent());
@@ -859,12 +866,12 @@ public class DynamicNavigationProviderTest {
         //given
 
         //when
-        Optional<Collection<SitemapItemModelData>> t2 = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2").build());
-        Optional<Collection<SitemapItemModelData>> t2k404 = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2-k404")
+        Optional<Collection<SitemapItemModelData>> t2 = navigationModelProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2").build());
+        Optional<Collection<SitemapItemModelData>> t2k404 = navigationModelProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2-k404")
                 .navigationFilter(new NavigationFilter().setWithAncestors(true)).build());
-        Optional<Collection<SitemapItemModelData>> t2k404_2 = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2-k404")
+        Optional<Collection<SitemapItemModelData>> t2k404_2 = navigationModelProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2-k404")
                 .navigationFilter(new NavigationFilter().setWithAncestors(false)).build());
-        Optional<Collection<SitemapItemModelData>> t2p404 = navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2-p404")
+        Optional<Collection<SitemapItemModelData>> t2p404 = navigationModelProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t2-p404")
                 .navigationFilter(new NavigationFilter().setWithAncestors(true)).build());
 
 
@@ -879,7 +886,7 @@ public class DynamicNavigationProviderTest {
         //given
 
         //when
-        assertThrows(() -> navigationProvider.getNavigationSubtree(
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(
                 SitemapRequestDto.builder(42).sitemapId("t1-p24").navigationFilter(new NavigationFilter().setWithAncestors(false)).build()),
                 BadRequestException.class,
                 () -> {
@@ -891,14 +898,13 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldThrowException_IfUriIsWrongFormat() {
         //when
-        assertThrows(() -> navigationProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("hello world").build()),
+        assertThrows(() -> navigationModelProvider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("hello world").build()),
                 BadRequestException.class,
                 () -> {
                     verifyFiltering(DepthFilter.FILTER_DOWN, false);
                     verifyFiltering(DepthFilter.FILTER_UP, false);
                 });
     }
-
 
     //endregion
 
@@ -958,15 +964,10 @@ public class DynamicNavigationProviderTest {
         doReturn(pageData.pageId).when(pageMeta).getId();
         doReturn(pageData.title).when(pageMeta).getTitle();
         // page urls are derived from titles by removing sequence number, replacing spaces with single slash, and making it lower case
-        doReturn("/" + PathUtils.removeSequenceFromPageTitle(pageData.title).replaceAll(" +", "/").toLowerCase()).when(pageMeta).getURLPath();
+        doReturn(pageData.url == null ? "/" + PathUtils.removeSequenceFromPageTitle(pageData.title).replaceAll(" +", "/").toLowerCase() : pageData.url).when(pageMeta).getURLPath();
         doReturn(new Date()).when(pageMeta).getLastPublicationDate();
 
         return pageMeta;
-    }
-
-    private void assertSitemapItem(SitemapItemModelData data, String id, String title) {
-        assertEquals(id, data.getId());
-        assertEquals(title, data.getTitle());
     }
 
     private void assertThrows(Action shouldThrow, Class<? extends Exception> exception, Action assertsAfter) {
@@ -986,11 +987,14 @@ public class DynamicNavigationProviderTest {
     }
 
     @AllArgsConstructor
+    @RequiredArgsConstructor
     private static class PageData {
 
-        String title;
+        final String title;
 
-        int pageId;
+        final int pageId;
+
+        String url;
     }
 
     @AllArgsConstructor

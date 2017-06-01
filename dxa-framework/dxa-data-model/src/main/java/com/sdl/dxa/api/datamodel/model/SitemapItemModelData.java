@@ -3,15 +3,20 @@ package com.sdl.dxa.api.datamodel.model;
 import com.google.common.collect.ComparisonChain;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 @Data
+@ToString(exclude = "parent")
+@EqualsAndHashCode(exclude = "parent")
 @Accessors(chain = true)
 public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
 
@@ -32,6 +37,8 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
 
     private DateTime publishedDate;
 
+    private SitemapItemModelData parent;
+
     /**
      * Adds an item to a collection of items and initializes it if needed.
      *
@@ -43,16 +50,29 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
         if (this.items == null) {
             this.items = new TreeSet<>();
         }
+        item.parent = this;
         this.items.add(item);
+        return this;
+    }
+
+    public SitemapItemModelData setItems(SortedSet<SitemapItemModelData> items) {
+        if (items == null) {
+            this.items = null;
+        } else {
+            items.forEach(this::addItem);
+        }
         return this;
     }
 
     @Override
     public int compareTo(@NotNull SitemapItemModelData o) {
-        return ComparisonChain.start()
-                .compare(this.getOriginalTitle(), o.getOriginalTitle())
-                .compare(this.getId(), o.getId())
-                .result();
+        ComparisonChain chain = ComparisonChain.start();
+        if (this.getOriginalTitle() == null || o.getOriginalTitle() == null) {
+            chain = chain.compareFalseFirst(this.getOriginalTitle() == null, o.getOriginalTitle() == null);
+        } else {
+            chain = chain.compare(this.getOriginalTitle(), o.getOriginalTitle());
+        }
+        return chain.compare(this.getId(), o.getId()).result();
     }
 
     /**
@@ -67,4 +87,27 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
         }
         return this;
     }
+
+    /**
+     * Finds a SitemapItemModelData with a given URL path in the Sitemap subtree rooted by this {@link SitemapItemModelData}.
+     *
+     * @param urlToFind The URL path to search for
+     * @return a {@link SitemapItemModelData} with the given URL path or <code>null</code> if no such item is found
+     */
+    @Nullable
+    public SitemapItemModelData findWithUrl(String urlToFind) {
+        if (getUrl() != null && urlToFind.matches(getUrl() + "/?")) {
+            return this;
+        }
+
+        for (SitemapItemModelData item : getItems()) {
+            SitemapItemModelData withUrl = item.findWithUrl(urlToFind);
+            if (withUrl != null) {
+                return withUrl;
+            }
+        }
+
+        return null;
+    }
+
 }

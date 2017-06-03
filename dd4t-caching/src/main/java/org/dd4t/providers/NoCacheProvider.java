@@ -4,6 +4,7 @@ import org.dd4t.caching.Cachable;
 import org.dd4t.caching.CacheDependency;
 import org.dd4t.caching.CacheElement;
 import org.dd4t.caching.CacheInvalidator;
+import org.dd4t.caching.impl.CacheElementImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +68,7 @@ public class NoCacheProvider implements PayloadCacheProvider, CacheInvalidator, 
     @Override
     public <T> CacheElement<T> loadPayloadFromLocalCache (final String key) {
         LOG.debug("Nothing to load by design.");
-        return null;
+        return new CacheElementImpl<T>(null, true);
     }
 
     @Override

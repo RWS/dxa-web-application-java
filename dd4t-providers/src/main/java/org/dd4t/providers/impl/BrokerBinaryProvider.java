@@ -23,6 +23,7 @@ import com.tridion.storage.StorageManagerFactory;
 import com.tridion.storage.StorageTypeMapping;
 import com.tridion.storage.dao.BinaryContentDAO;
 import com.tridion.storage.dao.BinaryVariantDAO;
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.contentmodel.impl.BinaryDataImpl;
 import org.dd4t.contentmodel.impl.BinaryImpl;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Provides access to Binaries stored in the Content Delivery database. It uses JPA DAOs to retrieve raw binary content
@@ -162,13 +164,32 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
      * @return BinaryVariant the binary identified by id and publication
      * @throws ItemNotFoundException if the item identified by id and publication was not found
      */
-
     public BinaryVariant getBinaryVariantById (int id, int publication) throws ItemNotFoundException {
+        return getBinaryVariantById(id, publication, null);
+    }
+
+    /**
+     * @param id          int representing the item id
+     * @param publication int representing the publication id
+     * @param variantId String representing the variant Id.
+     * @return BinaryVariant the binary identified by id, publication and variant Id (if not empty)
+     * @throws ItemNotFoundException if the item identified by id and publication was not found
+     */
+    public BinaryVariant getBinaryVariantById (int id, int publication, String variantId) throws ItemNotFoundException {
 
         BinaryVariant variant = null;
         try {
             BinaryVariantDAO variantDAO = (BinaryVariantDAO) StorageManagerFactory.getDAO(publication, StorageTypeMapping.BINARY_VARIANT);
-            variant = variantDAO.findByPrimaryKey(publication, id, null);
+
+            if (StringUtils.isEmpty(variantId)) {
+                List<BinaryVariant> variants = variantDAO.findByPrimaryKey(publication, id);
+                if (variants != null && !variants.isEmpty()) {
+                    // TODO: fix this.
+                    variant = variants.get(0);
+                }
+            } else {
+                variant = variantDAO.findByPrimaryKey(publication, id, variantId);
+            }
         } catch (StorageException e) {
             LOG.error(e.getMessage(), e);
         }

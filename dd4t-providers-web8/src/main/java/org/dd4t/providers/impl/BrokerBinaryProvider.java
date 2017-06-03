@@ -25,6 +25,7 @@ import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.tridion.data.BinaryData;
 import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
+import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.contentmodel.impl.BinaryDataImpl;
 import org.dd4t.contentmodel.impl.BinaryImpl;
@@ -129,15 +130,32 @@ public class BrokerBinaryProvider extends BaseBrokerProvider implements BinaryPr
         return getBinaryContentById((int) binaryMeta.getId(), binaryMeta.getPublicationId());
     }
 
+
     /**
      * @param id          int representing the item id
      * @param publication int representing the publication id
      * @return BinaryData the binary identified by id and publication
      * @throws ItemNotFoundException if the item identified by id and publication was not found
      */
-
     public BinaryData getBinaryDataById (int id, int publication) throws ItemNotFoundException {
-        final BinaryData binaryData = BINARY_CONTENT_RETRIEVER.getBinary(publication, id);
+        return getBinaryDataById(id, publication, null);
+    }
+
+    /**
+     * @param id          int representing the item id
+     * @param publication int representing the publication id
+     * @param variantId String representing the variant Id
+     * @return BinaryData the binary identified by id, publication and variantId
+     * @throws ItemNotFoundException if the item identified by id, publication and variantId was not found
+     */
+    public BinaryData getBinaryDataById (int id, int publication, String variantId) throws ItemNotFoundException {
+        final BinaryData binaryData;
+
+        if (StringUtils.isEmpty(variantId)) {
+            binaryData = BINARY_CONTENT_RETRIEVER.getBinary(publication, id);
+        } else {
+            binaryData = BINARY_CONTENT_RETRIEVER.getBinary(publication, id, variantId);
+        }
         if (binaryData == null) {
             throw new ItemNotFoundException("Unable to find binary by id '" + id + "' and publication '" + publication + "'.");
         }

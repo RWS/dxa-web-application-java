@@ -203,7 +203,7 @@ public class DefaultLinkResolver implements LinkResolver {
     }
 
     private String replacePlaceholders (String resolvedUrl, String placeholder, String replacementText) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         if (!StringUtils.isEmpty(replacementText)) {
             if (getEncodeUrl()) {
                 try {
@@ -217,10 +217,14 @@ public class DefaultLinkResolver implements LinkResolver {
             Pattern p = Pattern.compile(placeholder);
             Matcher m = p.matcher(resolvedUrl);
 
-            while (m.find()) {
-                m.appendReplacement(sb, replacementText);
+
+            int pos = 0;
+            while(m.find()) {
+                sb.append(resolvedUrl, pos, m.start());
+                pos = m.end();
+                sb.append(replacementText);
             }
-            m.appendTail(sb);
+            sb.append(resolvedUrl, pos, resolvedUrl.length());
         }
         return sb.toString();
     }

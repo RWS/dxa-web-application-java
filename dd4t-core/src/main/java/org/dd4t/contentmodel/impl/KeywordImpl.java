@@ -32,6 +32,12 @@ import java.util.Map;
 @JsonIdentityInfo (generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
 public class KeywordImpl extends BaseItem implements Keyword {
 
+    @JsonProperty("IsRoot")
+    private boolean isRootKeyword;
+
+    @JsonProperty("IsAbstract")
+    private boolean isAbstractKeyword;
+
     @JsonProperty ("ChildKeywords")
     @JsonDeserialize (contentAs = KeywordImpl.class)
     private List<Keyword> childKeywords;
@@ -65,6 +71,26 @@ public class KeywordImpl extends BaseItem implements Keyword {
 	@Attribute(name = "taxonomyId")
     @JsonProperty ("TaxonomyId")
     private String taxonomyId;
+
+    @Override
+    public boolean isRoot() {
+        return this.isRootKeyword;
+    }
+
+    @Override
+    public void setIsRoot(boolean isRoot) {
+        this.isRootKeyword = isRoot;
+    }
+
+    @Override
+    public boolean isAbstract() {
+        return this.isAbstractKeyword;
+    }
+
+    @Override
+    public void setIsAbstract(boolean isAbstract) {
+        this.isAbstractKeyword = isAbstract;
+    }
 
     @Override
     public String getDescription () {

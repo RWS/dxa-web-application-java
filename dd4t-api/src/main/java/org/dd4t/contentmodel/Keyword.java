@@ -27,6 +27,14 @@ import java.util.List;
  */
 public interface Keyword extends Item, HasMetadata {
 
+    boolean isRoot();
+
+    void setIsRoot(boolean isRoot);
+
+    boolean isAbstract();
+
+    void setIsAbstract(boolean isAbstract);
+
     String getDescription ();
 
     String getKey ();

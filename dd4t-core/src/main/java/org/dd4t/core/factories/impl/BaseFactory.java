@@ -66,6 +66,7 @@ public abstract class BaseFactory {
      * @param item The DD4T Item
      * @throws org.dd4t.core.exceptions.ProcessorException
      */
+
     public void executeProcessors (Item item, RunPhase runPhase, RequestContext context) throws ProcessorException {
         if (item != null) {
             for (Processor processor : getProcessors()) {

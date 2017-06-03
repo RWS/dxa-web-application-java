@@ -16,12 +16,16 @@
 
 package org.dd4t.core.factories;
 
+import org.dd4t.contentmodel.Item;
 import org.dd4t.contentmodel.Page;
 import org.dd4t.core.exceptions.FactoryException;
+import org.dd4t.core.processors.RunPhase;
 import org.dd4t.core.request.RequestContext;
 import org.dd4t.core.util.TCMURI;
 
 public interface PageFactory extends Factory {
+
+    void executeProcessors(Item item, RunPhase runPhase, RequestContext context) throws FactoryException;
 
     /**
      * Get a page by its URI. No security available; the method will fail if a
@@ -33,13 +37,13 @@ public interface PageFactory extends Factory {
      */
     Page getPage (String uri) throws FactoryException;
 
-    
+
     /**
      * Get a page by its URI. No security available; the method will fail if a
      * SecurityFilter is configured on the factory.
      *
      * @param uri of the page
-     * @param requestContext describing the current request to be passed on to processors
+     * @param context describing the current request to be passed on to processors
      * @return a Page Object
      * @throws FactoryException
      */
@@ -78,7 +82,7 @@ public interface PageFactory extends Factory {
      * @throws org.dd4t.core.exceptions.FactoryException
      */
     Page findPageByUrl (String url, int publicationId) throws FactoryException;
-    
+
     /**
      * Find page by its URL. The url and publication id are specified. No
      * security available; the method will fail if a SecurityFilter is

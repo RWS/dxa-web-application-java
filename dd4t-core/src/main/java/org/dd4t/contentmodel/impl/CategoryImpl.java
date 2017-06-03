@@ -24,10 +24,14 @@ import org.dd4t.contentmodel.Category;
 import org.dd4t.contentmodel.Keyword;
 import org.simpleframework.xml.ElementList;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CategoryImpl extends BaseItem implements Category {
+public class CategoryImpl extends BaseItem implements Category, Serializable {
+
+    private static final long serialVersionUID = 4141821829912175584L;
+
 	@ElementList(name = "keywords", required = false, type = KeywordImpl.class)
     @JsonProperty ("Keywords")
     @JsonDeserialize (contentAs = KeywordImpl.class)

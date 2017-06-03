@@ -32,6 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,9 +40,11 @@ import java.util.Map;
  * Embedded fields basically are an array of
  * ambiguous and unknown keynames, with multiple Fields in them
  */
-public class FieldSetImpl implements FieldSet {
+public class FieldSetImpl implements FieldSet, Serializable {
 
     private static final Logger LOG = LoggerFactory.getLogger(FieldSetImpl.class);
+
+    private static final long serialVersionUID = -2184588044467613932L;
 
     private final Map<String, Object> rawContent = new HashMap<>();
     

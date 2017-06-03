@@ -24,10 +24,14 @@ import org.dd4t.contentmodel.*;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ComponentImpl extends BaseComponent implements GenericComponent, HasContent, HasMetadata, HasMultimedia {
+public class ComponentImpl extends BaseComponent implements GenericComponent, HasContent, HasMetadata, HasMultimedia, Serializable {
+
+    private static final long serialVersionUID = -6643617039360444651L;
+
 	@Element(name = "componentType", required = false)
     @JsonProperty ("ComponentType")
     @JsonDeserialize (as = ComponentImpl.ComponentType.class)

@@ -29,6 +29,7 @@ import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.core.databind.BaseViewModel;
 import org.simpleframework.xml.Element;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +40,10 @@ import java.util.Map;
  *
  * @author bjornl, rai, sdl
  */
-public class ComponentPresentationImpl implements ComponentPresentation {
+public class ComponentPresentationImpl implements ComponentPresentation, Serializable {
+
+    private static final long serialVersionUID = -7971393961257030293L;
+
 	@Element(name = "component", required = false)
     @JsonProperty ("Component")
     @JsonDeserialize (as = ComponentImpl.class)

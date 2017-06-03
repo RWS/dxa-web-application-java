@@ -23,14 +23,14 @@ import org.dd4t.contentmodel.*;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * TODO: Region support. Or are we just sticking the region on the CP?
- */
-public class PageImpl extends BasePage implements GenericPage, HasMetadata {
-	@Element(name = "fileName")
+public class PageImpl extends BasePage implements GenericPage, HasMetadata, Serializable {
+
+    private static final long serialVersionUID = 4393211269602154657L;
+    @Element(name = "fileName")
     @JsonProperty ("Filename")
     protected String fileName;
 
@@ -53,8 +53,8 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata {
     public PageTemplate getPageTemplate () {
         return pageTemplate;
     }
-    
-    protected String url;    
+
+    protected String url;
 
     public String getUrl() {
 		return url;

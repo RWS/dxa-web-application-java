@@ -24,10 +24,13 @@ import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.Schema;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class EmbeddedField extends BaseField implements Field, Embedded {
+public class EmbeddedField extends BaseField implements Field, Embedded, Serializable {
+
+    private static final long serialVersionUID = 3993512514972222517L;
 
     @JsonProperty ("EmbeddedSchema")
     @JsonDeserialize (as = SchemaImpl.class)

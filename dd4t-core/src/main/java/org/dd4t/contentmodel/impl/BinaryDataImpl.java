@@ -20,11 +20,11 @@ import org.dd4t.contentmodel.BinaryData;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.Serializable;
 
-/**
- * Created by rai on 02/06/14.
- */
-public class BinaryDataImpl implements BinaryData {
+public class BinaryDataImpl implements BinaryData, Serializable {
+
+    private static final long serialVersionUID = 1267561342466889726L;
 
     private byte[] bytes;
 

@@ -21,7 +21,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.dd4t.contentmodel.Schema;
 import org.simpleframework.xml.Element;
 
-public class SchemaImpl extends BaseRepositoryLocalItem implements Schema {
+import java.io.Serializable;
+
+public class SchemaImpl extends BaseRepositoryLocalItem implements Schema, Serializable {
+
+    private static final long serialVersionUID = 6906233835226254898L;
+
     @Element(name = "rootElement", required = false)
     @JsonProperty ("RootElementName")
     private String rootElement;

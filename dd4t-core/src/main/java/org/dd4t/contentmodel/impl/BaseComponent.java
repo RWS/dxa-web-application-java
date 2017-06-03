@@ -16,6 +16,9 @@
 
 package org.dd4t.contentmodel.impl;
 
-public class BaseComponent extends BaseRepositoryLocalItem {
+import java.io.Serializable;
 
+public class BaseComponent extends BaseRepositoryLocalItem implements Serializable {
+
+    private static final long serialVersionUID = 2569847608745170385L;
 }

@@ -20,10 +20,13 @@ import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.core.util.DateUtils;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class DateField extends BaseField implements Field {
+public class DateField extends BaseField implements Field, Serializable {
+
+    private static final long serialVersionUID = -2126891073926927474L;
 
     public DateField () {
         setFieldType(FieldType.DATE);

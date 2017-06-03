@@ -21,7 +21,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.simpleframework.xml.Element;
 
-public class ComponentTemplateImpl extends BaseRepositoryLocalItem implements ComponentTemplate {
+import java.io.Serializable;
+
+public class ComponentTemplateImpl extends BaseRepositoryLocalItem implements ComponentTemplate, Serializable {
+
+    private static final long serialVersionUID = -5298380361943500591L;
+
 	@Element(name = "outputFormat", required = false)
     @JsonProperty ("OutputFormat")
     private String outputFormat;

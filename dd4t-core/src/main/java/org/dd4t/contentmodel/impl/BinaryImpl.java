@@ -19,7 +19,11 @@ package org.dd4t.contentmodel.impl;
 import org.dd4t.contentmodel.Binary;
 import org.dd4t.contentmodel.BinaryData;
 
-public class BinaryImpl extends BaseRepositoryLocalItem implements Binary {
+import java.io.Serializable;
+
+public class BinaryImpl extends BaseRepositoryLocalItem implements Binary, Serializable {
+
+    private static final long serialVersionUID = -8146902623407924554L;
 
     private BinaryData binaryData;
     private String mimeType;

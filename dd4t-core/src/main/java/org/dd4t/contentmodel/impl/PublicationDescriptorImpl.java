@@ -18,12 +18,17 @@ package org.dd4t.contentmodel.impl;
 
 import org.dd4t.contentmodel.PublicationDescriptor;
 
+import java.io.Serializable;
+
 /**
  * dd4t-2
  *
  * @author Q. Slings, R. Kempees
  */
-public class PublicationDescriptorImpl implements PublicationDescriptor {
+public class PublicationDescriptorImpl implements PublicationDescriptor, Serializable {
+
+    private static final long serialVersionUID = 2510439538856123282L;
+
     private int id;
     private String key;
     private String title;

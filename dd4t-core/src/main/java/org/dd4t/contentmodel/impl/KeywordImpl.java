@@ -26,17 +26,18 @@ import org.dd4t.contentmodel.Keyword;
 import org.dd4t.core.util.TCMURI;
 import org.simpleframework.xml.Attribute;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
 @JsonIdentityInfo (generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
-public class KeywordImpl extends BaseItem implements Keyword {
+public class KeywordImpl extends BaseItem implements Keyword, Serializable {
 
-    @Attribute (name = "IsRoot", required = false)
+    private static final long serialVersionUID = 8833174360196363889L;
+
     @JsonProperty("IsRoot")
     private boolean isRootKeyword;
 
-    @Attribute (name = "IsAbstract", required = false)
     @JsonProperty("IsAbstract")
     private boolean isAbstractKeyword;
 

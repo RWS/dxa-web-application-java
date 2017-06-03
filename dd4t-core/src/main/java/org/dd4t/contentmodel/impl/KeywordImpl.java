@@ -32,9 +32,11 @@ import java.util.Map;
 @JsonIdentityInfo (generator = ObjectIdGenerators.IntSequenceGenerator.class, property = "@id")
 public class KeywordImpl extends BaseItem implements Keyword {
 
+    @Attribute (name = "IsRoot", required = false)
     @JsonProperty("IsRoot")
     private boolean isRootKeyword;
 
+    @Attribute (name = "IsAbstract", required = false)
     @JsonProperty("IsAbstract")
     private boolean isAbstractKeyword;
 

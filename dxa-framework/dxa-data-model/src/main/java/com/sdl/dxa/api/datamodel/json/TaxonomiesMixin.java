@@ -6,7 +6,7 @@ import org.joda.time.DateTime;
 
 import java.util.Set;
 
-public interface TaxonomiesMixin {
+public interface TaxonomiesMixin extends PolymorphicObjectMixin {
 
     @JsonProperty("Key")
     String getKey();

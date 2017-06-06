@@ -1,6 +1,6 @@
 package com.sdl.dxa.tridion.navigation.dynamic;
 
-import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
+import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,5 +21,5 @@ public interface NavigationModelProvider {
      * @param requestDto current request with mandatory localization ID
      * @return optional with root navigation model
      */
-    Optional<SitemapItemModelData> getNavigationModel(@NotNull SitemapRequestDto requestDto);
+    Optional<TaxonomyNodeModelData> getNavigationModel(@NotNull SitemapRequestDto requestDto);
 }

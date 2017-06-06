@@ -80,7 +80,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
     }
 
     @Override
-    public Optional<SitemapItemModelData> getNavigationModel(@NotNull SitemapRequestDto requestDto) {
+    public Optional<TaxonomyNodeModelData> getNavigationModel(@NotNull SitemapRequestDto requestDto) {
         Assert.notNull(requestDto.getLocalizationId(), "Localization ID is required to load dynamic navigation");
 
         List<Keyword> roots = getTaxonomyRoots(requestDto, keyword -> keyword.getKeywordName().contains(taxonomyNavigationMarker));

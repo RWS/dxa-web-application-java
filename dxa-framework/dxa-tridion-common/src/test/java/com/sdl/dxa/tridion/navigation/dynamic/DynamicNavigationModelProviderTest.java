@@ -242,7 +242,7 @@ public class DynamicNavigationModelProviderTest {
         SitemapRequestDto requestDto = SitemapRequestDto.builder(100).build();
 
         //when
-        Optional<SitemapItemModelData> model = navigationModelProvider.getNavigationModel(requestDto);
+        Optional<TaxonomyNodeModelData> model = navigationModelProvider.getNavigationModel(requestDto);
 
         //then
         assertFalse(model.isPresent());
@@ -254,7 +254,7 @@ public class DynamicNavigationModelProviderTest {
         SitemapRequestDto requestDto = SitemapRequestDto.builder(666).build();
 
         //when
-        Optional<SitemapItemModelData> model = navigationModelProvider.getNavigationModel(requestDto);
+        Optional<TaxonomyNodeModelData> model = navigationModelProvider.getNavigationModel(requestDto);
 
         //then
         assertFalse(model.isPresent());
@@ -266,7 +266,7 @@ public class DynamicNavigationModelProviderTest {
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42).navigationFilter(new NavigationFilter().setDescendantLevels(-1)).build();
 
         //when
-        Optional<SitemapItemModelData> optional = navigationModelProvider.getNavigationModel(requestDto);
+        Optional<TaxonomyNodeModelData> optional = navigationModelProvider.getNavigationModel(requestDto);
 
         //then
         assertTrue(optional.isPresent());

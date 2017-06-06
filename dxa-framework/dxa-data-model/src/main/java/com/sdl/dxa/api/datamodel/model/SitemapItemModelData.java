@@ -1,5 +1,6 @@
 package com.sdl.dxa.api.datamodel.model;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ComparisonChain;
 import lombok.AccessLevel;
 import lombok.Data;
@@ -18,6 +19,7 @@ import java.util.TreeSet;
 @ToString(exclude = "parent")
 @EqualsAndHashCode(exclude = "parent")
 @Accessors(chain = true)
+@JsonTypeName
 public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
 
     private String id;

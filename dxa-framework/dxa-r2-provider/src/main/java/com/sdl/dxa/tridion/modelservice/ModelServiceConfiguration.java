@@ -20,18 +20,24 @@ import java.util.Optional;
 @Component
 public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
 
+    private final String pageModelUrl;
+
+    private final String entityModelUrl;
+
+    private final String navigationApiUrl;
+
+    private final String onDemandApiUrl;
+
     private OAuthTokenProvider oAuthTokenProvider;
 
     @Getter(AccessLevel.PROTECTED)
     private String serviceUrl;
 
-    private String pageModelUrl;
-
-    private String entityModelUrl;
-
     public ModelServiceConfiguration(
             @Value("${dxa.model.service.url.page.model}") String pageModelUrl,
             @Value("${dxa.model.service.url.entity.model}") String entityModelUrl,
+            @Value("${dxa.model.service.url.api.navigation}") String navigationApiUrl,
+            @Value("${dxa.model.service.url.api.navigation.subtree}") String onDemandApiUrl,
             @Value("${dxa.model.service.key:#{null}}") String modelServiceKey,
             @Value("${dxa.model.service.url:#{null}}") String modelServiceUrl) throws ConfigurationException {
         if (isTokenConfigurationAvailable()) {
@@ -51,6 +57,8 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
 
         this.pageModelUrl = this.serviceUrl + pageModelUrl;
         this.entityModelUrl = this.serviceUrl + entityModelUrl;
+        this.navigationApiUrl = this.serviceUrl + navigationApiUrl;
+        this.onDemandApiUrl = this.serviceUrl + onDemandApiUrl;
     }
 
     private String loadServiceUrlFromCapability(String modelServiceKey) throws ConfigurationException {

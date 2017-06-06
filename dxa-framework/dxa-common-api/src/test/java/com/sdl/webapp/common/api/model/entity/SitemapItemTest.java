@@ -40,6 +40,7 @@ public class SitemapItemTest {
         //given
         SitemapItem item = new SitemapItem();
         item.setUrl("url");
+        item.setId("id");
         item.setTitle("title");
 
         //when
@@ -48,6 +49,7 @@ public class SitemapItemTest {
         //then
         verify(linkResolver).resolveLink(eq("url"), eq("1"));
         assertEquals("resolved", link.getUrl());
+        assertEquals("id", link.getId());
         assertEquals("title", link.getLinkText());
     }
 
@@ -59,6 +61,19 @@ public class SitemapItemTest {
 
         //when
         sitemapItem.setItems(new LinkedHashSet<>(Lists.newArrayList(child, null)));
+
+        //then
+        assertEquals(sitemapItem, child.getParent());
+    }
+
+    @Test
+    public void shouldSetParentForAddOneItem() {
+        //given
+        SitemapItem sitemapItem = new SitemapItem();
+        SitemapItem child = new SitemapItem();
+
+        //when
+        sitemapItem.addItem(child);
 
         //then
         assertEquals(sitemapItem, child.getParent());

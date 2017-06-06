@@ -25,14 +25,13 @@ public class DefaultModelService implements ModelService {
 
     private final ModelServiceClient modelServiceClient;
 
-    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
-    @Autowired
-    private WebRequestContext webRequestContext;
+    private final WebRequestContext webRequestContext;
 
     @Autowired
-    public DefaultModelService(ModelServiceConfiguration configuration, ModelServiceClient modelServiceClient) {
+    public DefaultModelService(ModelServiceConfiguration configuration, ModelServiceClient modelServiceClient, WebRequestContext webRequestContext) {
         this.configuration = configuration;
         this.modelServiceClient = modelServiceClient;
+        this.webRequestContext = webRequestContext;
     }
 
     @NotNull

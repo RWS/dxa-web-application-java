@@ -150,6 +150,11 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
+                <artifactId>dxa-tridion-common</artifactId>
+                <version>${dxa.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-tridion-provider</artifactId>
                 <version>${dxa.version}</version>
             </dependency>

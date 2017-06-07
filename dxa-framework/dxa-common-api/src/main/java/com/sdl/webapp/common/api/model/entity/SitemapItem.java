@@ -120,6 +120,7 @@ public class SitemapItem extends AbstractEntityModel {
         if (this.items == null) {
             this.items = wrapItems(new LinkedHashSet<>());
         }
+        item.setParent(this);
         this.items.add(item);
         return this;
     }
@@ -165,29 +166,9 @@ public class SitemapItem extends AbstractEntityModel {
     @Contract("_, _ -> !null")
     public Link createLink(@NonNull LinkResolver linkResolver, @NonNull Localization localization) {
         Link link = new Link();
+        link.setId(getId());
         link.setUrl(isEmpty(getUrl()) ? getUrl() : linkResolver.resolveLink(getUrl(), localization.getId()));
         link.setLinkText(getTitle());
         return link;
-    }
-
-    /**
-     * Finds a SitemapItem with a given URL path in the Navigation subtree rooted by this {@link SitemapItem}.
-     *
-     * @param urlToFind The URL path to search for
-     * @return a {@link SitemapItem} with the given URL path or <code>null</code> if no such item is found
-     */
-    @Nullable
-    public SitemapItem findWithUrl(@NonNull String urlToFind) {
-        if (getUrl() != null && urlToFind.matches(getUrl() + "/?")) {
-            return this;
-        }
-
-        for (SitemapItem item : getItems()) {
-            SitemapItem sub = item.findWithUrl(urlToFind);
-            if (sub != null) {
-                return sub;
-            }
-        }
-        return null;
     }
 }

@@ -67,7 +67,7 @@ public class TaxonomyNodeModelDataJsonTest {
 
             assertEquals(value, actual.toString());
         }
-        assertFalse(jsonNode.has("OriginalTitle"));
+        assertTrue(jsonNode.has("OriginalTitle"));
     }
 
     @Test

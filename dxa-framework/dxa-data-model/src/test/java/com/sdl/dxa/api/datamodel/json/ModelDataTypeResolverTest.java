@@ -39,12 +39,12 @@ public class ModelDataTypeResolverTest {
         doReturn(null).when(deserializationConfig).findMixInClassFor(any());
         doReturn(DummyInterface.class).when(deserializationConfig).findMixInClassFor(eq(ModelDataTypeResolver.class));
         doReturn(PolymorphicObjectMixin.class).when(deserializationConfig).findMixInClassFor(eq(Object.class));
-        doReturn(TaxonomiesMixin.class).when(deserializationConfig).findMixInClassFor(eq(SitemapItemModelData.class));
+        doReturn(PolymorphicObjectMixin.class).when(deserializationConfig).findMixInClassFor(eq(SitemapItemModelData.class));
 
         doReturn(null).when(serializationConfig).findMixInClassFor(any());
         doReturn(DummyInterface.class).when(serializationConfig).findMixInClassFor(eq(ModelDataTypeResolver.class));
         doReturn(PolymorphicObjectMixin.class).when(serializationConfig).findMixInClassFor(eq(Object.class));
-        doReturn(TaxonomiesMixin.class).when(serializationConfig).findMixInClassFor(eq(SitemapItemModelData.class));
+        doReturn(PolymorphicObjectMixin.class).when(serializationConfig).findMixInClassFor(eq(SitemapItemModelData.class));
 
         resolver.inclusion(JsonTypeInfo.As.PROPERTY).init(JsonTypeInfo.Id.CUSTOM, new ModelDataTypeIdResolver());
     }

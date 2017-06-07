@@ -1,5 +1,7 @@
 package com.sdl.dxa.api.datamodel.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ComparisonChain;
 import lombok.AccessLevel;
@@ -22,23 +24,32 @@ import java.util.TreeSet;
 @JsonTypeName
 public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
 
+    @JsonProperty("Id")
     private String id;
 
+    @JsonProperty("Type")
     private String type;
 
+    @JsonProperty("Title")
     private String title;
 
     @Setter(value = AccessLevel.PRIVATE)
+    @JsonProperty("OriginalTitle")
     private String originalTitle;
 
+    @JsonProperty("Url")
     private String url;
 
+    @JsonProperty("Visible")
     private boolean visible;
 
+    @JsonProperty("Items")
     private SortedSet<SitemapItemModelData> items = new TreeSet<>();
 
+    @JsonProperty("PublishedDate")
     private DateTime publishedDate;
 
+    @JsonIgnore
     private SitemapItemModelData parent;
 
     /**

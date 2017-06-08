@@ -99,7 +99,7 @@ public class DynamicNavigationProviderTest {
     public void shouldConvertR2Model_ToEntityModel() throws NavigationProviderException {
         //given
         SitemapItemModelData model = new TaxonomyNodeModelData().setId("t1");
-        doReturn(Optional.of(model)).when(navigationModelProvider).getNavigationModel(argThat(getMatcher()));
+        doReturn(Optional.of(model)).when(navigationModelProvider).getNavigationModel(argThat(getDefaultMatcher()));
 
         //when
         SitemapItem navigationModel = dynamicNavigationProvider.getNavigationModel(localization);
@@ -113,7 +113,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldFallback_IfModelProviderReturnedEmptyOptional() throws NavigationProviderException {
         //given
-        doReturn(Optional.empty()).when(navigationModelProvider).getNavigationModel(argThat(getMatcher()));
+        doReturn(Optional.empty()).when(navigationModelProvider).getNavigationModel(argThat(getDefaultMatcher()));
 
         //when
         SitemapItem navigationModel = dynamicNavigationProvider.getNavigationModel(localization);
@@ -131,7 +131,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldProcessNavigationLinks_ForTopNavigation_FilteringHidden() throws NavigationProviderException {
         //given
-        when(navigationModelProvider.getNavigationModel(argThat(getMatcher()))).thenReturn(Optional.of(navigationModel));
+        when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
         NavigationLinks links = dynamicNavigationProvider.getTopNavigationLinks(null, localization);
@@ -148,7 +148,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldProcessNavigationLinks_ForContextNavigation_FilteringHidden() throws NavigationProviderException {
         //given
-        when(navigationModelProvider.getNavigationModel(argThat(getMatcher()))).thenReturn(Optional.of(navigationModel));
+        when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
         NavigationLinks links = dynamicNavigationProvider.getContextNavigationLinks("/t1p22", localization);
@@ -167,7 +167,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldReturnEmptyList_ForCurrentContext_IfNothingFound() throws NavigationProviderException {
         //given
-        when(navigationModelProvider.getNavigationModel(argThat(getMatcher()))).thenReturn(Optional.of(navigationModel));
+        when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
         NavigationLinks links = dynamicNavigationProvider.getContextNavigationLinks("/unknown", localization);
@@ -180,7 +180,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldCollectBreadcrumbs_EvenForHiddenItems() throws NavigationProviderException {
         //given
-        when(navigationModelProvider.getNavigationModel(argThat(getMatcher()))).thenReturn(Optional.of(navigationModel));
+        when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
         NavigationLinks links = dynamicNavigationProvider.getBreadcrumbNavigationLinks("/t1p24", localization);
@@ -206,7 +206,7 @@ public class DynamicNavigationProviderTest {
     public void shouldFindHome_AsSiblingPage() throws NavigationProviderException {
         //given
         when(localization.getPath()).thenReturn("/t1p1");
-        when(navigationModelProvider.getNavigationModel(argThat(getMatcher()))).thenReturn(Optional.of(navigationModel));
+        when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
         NavigationLinks links = dynamicNavigationProvider.getBreadcrumbNavigationLinks("/t1k3", localization);
@@ -307,8 +307,28 @@ public class DynamicNavigationProviderTest {
 
     //endregion
 
+    //TSI-2514
+    @Test
+    public void shouldRequestTheWholeTree_ForNormalNavigation() throws NavigationProviderException {
+        //given
+        doReturn(Optional.empty()).when(navigationModelProvider).getNavigationModel(argThat(getDefaultMatcher()));
+
+        //when
+        dynamicNavigationProvider.getNavigationModel(localization);
+
+        //then
+        verify(navigationModelProvider).getNavigationModel(argThat(new ArgumentMatcher<SitemapRequestDto>() {
+            @Override
+            public boolean matches(Object argument) {
+                SitemapRequestDto dto = (SitemapRequestDto) argument;
+                return dto.getLocalizationId() == 42 && dto.getExpandLevels().equals(DepthCounter.UNLIMITED_DEPTH)
+                        && dto.getNavigationFilter().equals(new NavigationFilter().setDescendantLevels(-1));
+            }
+        }));
+    }
+
     @NotNull
-    private ArgumentMatcher<SitemapRequestDto> getMatcher() {
+    private ArgumentMatcher<SitemapRequestDto> getDefaultMatcher() {
         return new ArgumentMatcher<SitemapRequestDto>() {
             @Override
             public boolean matches(Object argument) {

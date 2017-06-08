@@ -186,7 +186,8 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
 
     @NotNull
     private Optional<SitemapItemModelData> _getNavigationModel(Localization localization) {
-        Optional<TaxonomyNodeModelData> navigationModel = navigationModelProvider.getNavigationModel(SitemapRequestDto.builder(Integer.parseInt(localization.getId())).build());
+        SitemapRequestDto requestDto = SitemapRequestDto.wholeTree(Integer.parseInt(localization.getId())).build();
+        Optional<TaxonomyNodeModelData> navigationModel = navigationModelProvider.getNavigationModel(requestDto);
         if (!navigationModel.isPresent()) {
             log.warn("Taxonomy navigation is not available, fallback to static navigation is required, localizationId {}", localization.getId());
             return Optional.empty();

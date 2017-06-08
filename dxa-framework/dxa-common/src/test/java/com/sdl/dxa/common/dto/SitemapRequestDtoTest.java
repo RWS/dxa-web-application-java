@@ -1,5 +1,6 @@
 package com.sdl.dxa.common.dto;
 
+import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import org.junit.Test;
 
 import static com.sdl.dxa.common.dto.DepthCounter.UNLIMITED_DEPTH;
@@ -33,5 +34,18 @@ public class SitemapRequestDtoTest {
         assertEquals(42, dto.getLocalizationId());
         assertEquals(DEFAULT, dto.getNavigationFilter());
         assertNull(dto.getSitemapId());
+    }
+
+    @Test
+    public void shouldReturnWholeTreeRequest() {
+        //given 
+
+        //when
+        SitemapRequestDto dto = SitemapRequestDto.wholeTree(1).build();
+
+        //then
+        assertEquals(1, dto.getLocalizationId());
+        assertEquals(UNLIMITED_DEPTH, dto.getExpandLevels());
+        assertEquals(new NavigationFilter().setDescendantLevels(-1), dto.getNavigationFilter());
     }
 }

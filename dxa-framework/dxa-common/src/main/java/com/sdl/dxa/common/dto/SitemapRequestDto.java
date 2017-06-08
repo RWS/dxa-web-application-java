@@ -16,12 +16,18 @@ public class SitemapRequestDto {
 
     private NavigationFilter navigationFilter;
 
+    public static SitemapRequestDtoBuilder wholeTree(int localizationId) {
+        return builder(localizationId)
+                .navigationFilter(new NavigationFilter().setDescendantLevels(-1))
+                .expandLevels(DepthCounter.UNLIMITED_DEPTH);
+    }
+
     public static SitemapRequestDtoBuilder builder(int localizationId) {
         return hiddenBuilder().localizationId(localizationId);
     }
 
     private static SitemapRequestDtoBuilder hiddenBuilder() {
-        return new SitemapRequestDto.SitemapRequestDtoBuilder();
+        return new SitemapRequestDtoBuilder();
     }
 
     public synchronized SitemapRequestDto nextExpandLevel() {

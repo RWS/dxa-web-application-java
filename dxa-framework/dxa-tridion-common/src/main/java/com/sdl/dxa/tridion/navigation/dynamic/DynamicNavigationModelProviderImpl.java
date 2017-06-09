@@ -23,6 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -80,6 +81,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
     }
 
     @Override
+    @Cacheable(value = "sitemaps", key = "{ #root.methodName, #requestDto }")
     public Optional<TaxonomyNodeModelData> getNavigationModel(@NotNull SitemapRequestDto requestDto) {
         Assert.notNull(requestDto.getLocalizationId(), "Localization ID is required to load dynamic navigation");
 
@@ -98,6 +100,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
 
     @Override
     @NotNull
+    @Cacheable(value = "sitemaps", key = "{ #root.methodName, #requestDto }")
     public Optional<Collection<SitemapItemModelData>> getNavigationSubtree(@NotNull SitemapRequestDto requestDto) {
         log.trace("Original sitemapRequestDto {}", requestDto);
 

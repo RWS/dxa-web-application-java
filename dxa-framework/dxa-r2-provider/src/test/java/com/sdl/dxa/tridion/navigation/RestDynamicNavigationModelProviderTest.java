@@ -7,6 +7,8 @@ import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
 import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
+import com.sdl.webapp.common.controller.exception.BadRequestException;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,9 +58,9 @@ public class RestDynamicNavigationModelProviderTest {
     }
 
     @Test
-    public void shouldReturnOptionalEmpty_WhenException_ForNavigationModel() throws ContentProviderException {
+    public void shouldReturnOptionalEmpty_When404Exception_ForNavigationModel() throws ContentProviderException {
         //given
-        when(serviceClient.getForType(eq("/nav"), eq(TaxonomyNodeModelData.class), eq(42))).thenThrow(new ContentProviderException());
+        when(serviceClient.getForType(eq("/nav"), eq(TaxonomyNodeModelData.class), eq(42))).thenThrow(new DxaItemNotFoundException());
 
         //when
         Optional<TaxonomyNodeModelData> data = provider.getNavigationModel(SitemapRequestDto.builder(42).build());
@@ -88,10 +90,10 @@ public class RestDynamicNavigationModelProviderTest {
     }
 
     @Test
-    public void shouldReturnOptionalEmpty_WhenException_ForNavigationSubtree() throws ContentProviderException {
+    public void shouldReturnOptionalEmpty_When404Exception_ForNavigationSubtree() throws ContentProviderException {
         //given
         when(serviceClient.getForType(eq("/od"), eq(SitemapItemModelData[].class), eq(42), eq("t1"), any(), any()))
-                .thenThrow(new ContentProviderException());
+                .thenThrow(new DxaItemNotFoundException());
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
                 .sitemapId("t1")
                 .build();
@@ -101,5 +103,28 @@ public class RestDynamicNavigationModelProviderTest {
 
         //then
         assertFalse(data.isPresent());
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void shouldProceed_WithException_WhenRequestIsBad_NavModel() throws DxaItemNotFoundException {
+        //given
+        when(serviceClient.getForType(eq("/nav"), eq(TaxonomyNodeModelData.class), eq(42))).thenThrow(new BadRequestException());
+
+        //when
+        provider.getNavigationModel(SitemapRequestDto.builder(42).build());
+
+        //then
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void shouldProceed_WithException_WhenRequestIsBad_Subtree() throws DxaItemNotFoundException {
+        //given
+        when(serviceClient.getForType(eq("/od"), eq(SitemapItemModelData[].class), eq(42), eq("t1"), any(), any()))
+                .thenThrow(new BadRequestException());
+
+        //when
+        provider.getNavigationSubtree(SitemapRequestDto.builder(42).sitemapId("t1").build());
+
+        //then
     }
 }

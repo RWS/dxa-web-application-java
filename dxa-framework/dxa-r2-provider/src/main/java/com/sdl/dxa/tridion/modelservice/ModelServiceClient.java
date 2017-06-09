@@ -1,6 +1,6 @@
 package com.sdl.dxa.tridion.modelservice;
 
-import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.tridion.ambientdata.AmbientDataContext;
@@ -44,7 +44,7 @@ public class ModelServiceClient {
         this.configuration = configuration;
     }
 
-    public <T> T getForType(String serviceUrl, Class<T> type, Object... params) throws ContentProviderException {
+    public <T> T getForType(String serviceUrl, Class<T> type, Object... params) throws DxaItemNotFoundException {
         try {
             HttpHeaders headers = new HttpHeaders();
 
@@ -56,12 +56,21 @@ public class ModelServiceClient {
         } catch (HttpStatusCodeException e) {
             HttpStatus statusCode = e.getStatusCode();
             log.info("Got response with a status code {}", statusCode);
-            if (statusCode == HttpStatus.NOT_FOUND) {
-                throw new DxaItemNotFoundException("Item not found requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'", e);
-            } else if (statusCode.is4xxClientError()) {
-                throw new ContentProviderException("Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase());
+
+            if (statusCode.is4xxClientError()) {
+                if (statusCode == HttpStatus.NOT_FOUND) {
+                    String message = "Item not found requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
+                    log.info(message);
+                    throw new DxaItemNotFoundException(message, e);
+                } else {
+                    String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase();
+                    log.info(message);
+                    throw new BadRequestException(message, e);
+                }
             }
-            throw new InternalServerErrorException("Internal server error requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'", e);
+            String message = "Internal server error requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
+            log.warn(message);
+            throw new InternalServerErrorException(message, e);
         }
     }
 

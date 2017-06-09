@@ -16,7 +16,6 @@ import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.api.navigation.OnDemandNavigationProvider;
-import com.sdl.webapp.common.controller.exception.BadRequestException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -128,12 +127,8 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
                 .expandLevels(new DepthCounter(navigationFilter.getDescendantLevels()))
                 .sitemapId(sitemapItemId)
                 .build();
-        try {
-            subtree = onDemandNavigationModelProvider.getNavigationSubtree(requestDto);
-        } catch (BadRequestException e) {
-            log.warn("Error requesting on-demand navigation API", e);
-            return Collections.emptyList();
-        }
+
+        subtree = onDemandNavigationModelProvider.getNavigationSubtree(requestDto);
 
         if (!subtree.isPresent()) {
             log.debug("Nothing found for the given request {}", requestDto);

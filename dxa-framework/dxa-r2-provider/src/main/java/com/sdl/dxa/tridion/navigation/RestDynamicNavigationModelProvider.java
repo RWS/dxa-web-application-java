@@ -7,7 +7,7 @@ import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
 import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
-import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class RestDynamicNavigationModelProvider implements NavigationModelProvid
         try {
             return Optional.of(modelServiceClient.getForType(configuration.getNavigationApiUrl(),
                     TaxonomyNodeModelData.class, requestDto.getLocalizationId()));
-        } catch (ContentProviderException e) {
+        } catch (DxaItemNotFoundException e) {
             log.warn("Cannot find a dynamic navigation in the MS for the request {}", requestDto, e);
             return Optional.empty();
         }
@@ -57,8 +57,8 @@ public class RestDynamicNavigationModelProvider implements NavigationModelProvid
                     requestDto.getNavigationFilter().getDescendantLevels()));
 
             return Optional.of(models);
-        } catch (ContentProviderException e) {
-            log.warn("Error while requesting on-demand dynamic navigation from the MS for the request {}", requestDto, e);
+        } catch (DxaItemNotFoundException e) {
+            log.warn("Cannot find items for on-demand dynamic navigation from the MS for the request {}", requestDto, e);
             return Optional.empty();
         }
     }

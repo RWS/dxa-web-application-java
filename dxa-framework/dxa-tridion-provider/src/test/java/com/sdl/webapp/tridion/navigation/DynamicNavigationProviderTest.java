@@ -232,16 +232,15 @@ public class DynamicNavigationProviderTest {
         assertTrue(items.isEmpty());
     }
 
-    @Test
-    public void shouldReturnEmptyList_IfBadRequest() {
+    @Test(expected = BadRequestException.class)
+    public void shouldProceedWithException_IfBadRequest() {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenThrow(new BadRequestException());
 
         //when
-        Collection<SitemapItem> items = dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
+        dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
 
         //then
-        assertTrue(items.isEmpty());
     }
 
     @Test

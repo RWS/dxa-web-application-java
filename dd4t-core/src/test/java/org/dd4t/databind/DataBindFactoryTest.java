@@ -17,6 +17,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
+import static org.junit.Assert.assertNotNull;
+
 public class DataBindFactoryTest {
 	protected ApplicationContext context;
 	
@@ -54,5 +56,12 @@ public class DataBindFactoryTest {
         Page deserializedPage = DataBindFactory.buildPage(CompressionUtils.decompressGZip(CompressionUtils.decodeBase64(page)), PageImpl.class);
         Assert.notNull(deserializedPage, "page cannot be bound");
         Assert.hasLength(deserializedPage.getTitle(), "page has no valid title");
+    }
+
+    @Test
+    public void testJsonDataBinder() {
+        DataBinder dataBinder = context.getBean(DataBinder.class);
+        assertNotNull(dataBinder);
+
     }
 }

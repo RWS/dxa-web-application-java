@@ -70,8 +70,8 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 
     }
 
-    private JsonDataBinder () {
-        LoggerFactory.getLogger(JsonDataBinder.class).info("Creating a JsonDataBinder instance.");
+    public JsonDataBinder () {
+        LOG.info("Creating a JsonDataBinder instance.");
     }
 
     @Override
@@ -224,7 +224,7 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 
     @PostConstruct
     @Override
-    protected void init () {
+    public void init () {
 
         this.configureMapper();
         this.checkViewModelConfiguration();

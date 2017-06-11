@@ -70,6 +70,9 @@ public class JsonDataBinder extends BaseDataBinder implements DataBinder {
 
     }
 
+    /**
+     * Note: this class needs to be initialized by Spring!
+     */
     public JsonDataBinder () {
         LOG.info("Creating a JsonDataBinder instance.");
     }

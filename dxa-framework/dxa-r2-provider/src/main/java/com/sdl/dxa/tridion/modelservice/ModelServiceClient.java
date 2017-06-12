@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.modelservice;
 
+import com.sdl.web.client.impl.OAuthTokenProvider;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
@@ -45,11 +46,15 @@ public class ModelServiceClient {
     }
 
     public <T> T getForType(String serviceUrl, Class<T> type, Object... params) throws DxaItemNotFoundException {
+        return _makeRequest(serviceUrl, type, false, params);
+    }
+
+    private <T> T _makeRequest(String serviceUrl, Class<T> type, boolean isRetry, Object... params) throws DxaItemNotFoundException {
         try {
             HttpHeaders headers = new HttpHeaders();
 
             processPreviewToken(headers);
-            processAccessToken(headers);
+            processAccessToken(headers, isRetry);
 
             ResponseEntity<T> response = restTemplate.exchange(serviceUrl, HttpMethod.GET, new HttpEntity<>(headers), type, params);
             return response.getBody();
@@ -62,6 +67,9 @@ public class ModelServiceClient {
                     String message = "Item not found requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
                     log.info(message);
                     throw new DxaItemNotFoundException(message, e);
+                } else if (statusCode == HttpStatus.UNAUTHORIZED && !isRetry) {
+                    log.info("Got 401 status code, reason: {}, check if token is expired and retry if so", statusCode.getReasonPhrase());
+                    return _makeRequest(serviceUrl, type, true, params);
                 } else {
                     String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase();
                     log.info(message);
@@ -89,10 +97,11 @@ public class ModelServiceClient {
         }
     }
 
-    private void processAccessToken(HttpHeaders headers) {
-        if (configuration.getOAuthTokenProvider() != null) {
-            log.trace("Request is secured, adding security token");
-            headers.add("Authorization", "Bearer" + configuration.getOAuthTokenProvider().getToken());
+    private void processAccessToken(HttpHeaders headers, boolean isRetry) {
+        OAuthTokenProvider authTokenProvider = configuration.getOAuthTokenProvider();
+        if (authTokenProvider != null) {
+            log.trace("Request is secured, adding security token, it is retry: {}", isRetry);
+            headers.add("Authorization", "Bearer" + authTokenProvider.getToken());
         }
     }
 

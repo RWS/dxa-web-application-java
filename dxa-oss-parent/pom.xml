@@ -92,6 +92,8 @@
         <jdom2.version>2.0.5</jdom2.version>
         <powermock.version>1.6.6</powermock.version>
         <odata_client.version>2.3.4</odata_client.version>
+        <ehcache.version>3.1.3</ehcache.version>
+        <cache-api.version>1.0.0</cache-api.version>
     </properties>
 
     <scm>
@@ -694,6 +696,17 @@
                 <artifactId>woodstox-core-asl</artifactId>
                 <version>${woodstox-version}</version>
                 <scope>runtime</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>${ehcache.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.cache</groupId>
+                <artifactId>cache-api</artifactId>
+                <version>${cache-api.version}</version>
             </dependency>
 
             <dependency>

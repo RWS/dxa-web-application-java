@@ -7,14 +7,17 @@
         <expiry>
             <ttl unit="seconds">3600</ttl>
         </expiry>
-        <heap unit="entries">10000</heap>
+        <resources>
+            <heap unit="entries">10000</heap>
+            <!--<offheap unit="MB">100</offheap>-->
+        </resources>
     </cache-template>
 
     <cache alias="sitemaps" uses-template="default"/>
 
-    <cache alias="pageModels" uses-template="default"/>
+    <cache alias="pages" uses-template="default"/>
 
-    <cache alias="entityModels" uses-template="default"/>
+    <cache alias="entities" uses-template="default"/>
 
     <cache alias="defaultCache" uses-template="default"/>
 </config>

@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <dd4t.version>2.2.0-DXA</dd4t.version>
+        <dd4t.version>2.2.1-DXA</dd4t.version>
         <cd-cil.version>8.5.0-1008</cd-cil.version>
 
         <!-- DXA versions -->
@@ -551,6 +551,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>

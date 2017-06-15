@@ -17,8 +17,6 @@ import org.springframework.context.annotation.Profile;
 
 import javax.annotation.PostConstruct;
 import javax.cache.Caching;
-import javax.cache.spi.CachingProvider;
-import java.net.URI;
 import java.net.URISyntaxException;
 
 @ComponentScan({"com.sdl.webapp.tridion", "com.sdl.dxa.tridion"})
@@ -62,9 +60,8 @@ public class TridionSpringConfiguration {
 
         @Bean
         public javax.cache.CacheManager jsr107cacheManager() throws URISyntaxException {
-            CachingProvider cachingProvider = Caching.getCachingProvider(); //NOSONAR
-            URI uri = getClass().getResource(cacheConfigFile).toURI();
-            return cachingProvider.getCacheManager(uri, getClass().getClassLoader());
+            return Caching.getCachingProvider() //NOSONAR
+                    .getCacheManager(getClass().getResource(cacheConfigFile).toURI(), getClass().getClassLoader());
         }
     }
 }

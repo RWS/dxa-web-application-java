@@ -94,6 +94,7 @@
         <odata_client.version>2.3.4</odata_client.version>
         <ehcache.version>3.1.3</ehcache.version>
         <cache-api.version>1.0.0</cache-api.version>
+        <cloning.version>1.9.4</cloning.version>
     </properties>
 
     <scm>
@@ -718,6 +719,12 @@
                 <groupId>com.rometools</groupId>
                 <artifactId>rome</artifactId>
                 <version>${rome.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>uk.com.robust-it</groupId>
+                <artifactId>cloning</artifactId>
+                <version>${cloning.version}</version>
             </dependency>
 
             <dependency>

@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Region model is an interface representing one region on a page. Should be implemented by different types of regions.
  */
-public interface RegionModel extends ViewModel, FeedItemsProvider {
+public interface RegionModel extends ViewModel, FeedItemsProvider, CanFilterEntities {
 
     String getName();
 

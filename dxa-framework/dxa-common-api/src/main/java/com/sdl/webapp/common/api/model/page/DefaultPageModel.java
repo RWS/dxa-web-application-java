@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.page;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.AbstractViewModel;
@@ -13,6 +14,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,6 +71,11 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     @Override
     public boolean containsRegion(String regionName) {
         return !isEmpty(this.regions) && this.regions.containsName(regionName);
+    }
+
+    @Override
+    public void filterConditionalEntities(Collection<ConditionalEntityEvaluator> evaluators) {
+        this.regions.forEach(regionModel -> regionModel.filterConditionalEntities(evaluators));
     }
 
     /**

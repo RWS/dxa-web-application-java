@@ -8,10 +8,14 @@
             <ttl unit="seconds">3600</ttl>
         </expiry>
         <resources>
-            <heap unit="entries">10000</heap>
+            <heap unit="entries">1000</heap>
             <!--<offheap unit="MB">100</offheap>-->
         </resources>
     </cache-template>
+
+    <cache alias="failures" uses-template="default"/>
+
+    <cache alias="model-service" uses-template="default"/>
 
     <cache alias="sitemaps" uses-template="default"/>
 

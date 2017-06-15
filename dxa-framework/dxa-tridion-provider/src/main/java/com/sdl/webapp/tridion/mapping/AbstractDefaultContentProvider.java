@@ -8,6 +8,7 @@ import com.sdl.web.api.dynamic.DynamicMetaRetriever;
 import com.sdl.web.api.meta.WebComponentMetaFactory;
 import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -44,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
@@ -87,6 +89,8 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
 
     private final BinaryContentRetriever binaryContentRetriever;
 
+    private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
+
     @Autowired
     public AbstractDefaultContentProvider(WebRequestContext webRequestContext,
                                           LinkResolver linkResolver,
@@ -100,14 +104,39 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         this.binaryContentRetriever = binaryContentRetriever;
     }
 
-    @Override
-    public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
-        return _loadPage(path, localization);
+    private static String removeVersionNumber(String path) {
+        return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 
-    protected abstract PageModel _loadPage(String path, Localization localization) throws ContentProviderException;
+    static boolean isToBeRefreshed(File file, long time) throws ContentProviderException {
+        if (FileUtils.isFileOlderThan(file, time)) {
+            if (!FileUtils.parentFolderExists(file, true)) {
+                throw new ContentProviderException("Failed to create parent directory for file: " + file);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Autowired(required = false)
+    public void setEntityEvaluators(List<ConditionalEntityEvaluator> entityEvaluators) {
+        this.entityEvaluators = entityEvaluators;
+    }
 
     @Override
+    public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
+        PageModel pageModel = _loadPage(path, localization);
+
+        pageModel.filterConditionalEntities(entityEvaluators);
+
+        return pageModel;
+    }
+
+    /**
+     * If you need copying cache for dynamic logic, use {@link com.sdl.dxa.tridion.caching.CopyingCache}.
+     */
+    @Override
+    @Cacheable(value = "entities", key = "{#id, #_localization.id}")
     public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
         Assert.notNull(id);
         EntityModel entityModel = _getEntityModel(id);
@@ -116,9 +145,6 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         }
         return entityModel;
     }
-
-    @NotNull
-    protected abstract EntityModel _getEntityModel(String componentId) throws ContentProviderException;
 
     @Override
     public <T extends EntityModel> void populateDynamicList(DynamicList<T, SimpleBrokerQuery> dynamicList, Localization localization) throws ContentProviderException {
@@ -133,8 +159,6 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
             throw new ContentProviderException("Cannot populate a dynamic list " + dynamicList.getId() + " localization " + localization.getId(), e);
         }
     }
-
-    protected abstract <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException;
 
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
@@ -177,9 +201,12 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         };
     }
 
-    private static String removeVersionNumber(String path) {
-        return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
-    }
+    protected abstract PageModel _loadPage(String path, Localization localization) throws ContentProviderException;
+
+    @NotNull
+    protected abstract EntityModel _getEntityModel(String componentId) throws ContentProviderException;
+
+    protected abstract <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException;
 
     private StaticContentFile getStaticContentFile(String path, String localizationId)
             throws ContentProviderException {
@@ -241,16 +268,6 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
             return path;
         }
         return UriUtils.encodePath(baseUrl + path, "UTF-8");
-    }
-
-    static boolean isToBeRefreshed(File file, long time) throws ContentProviderException {
-        if (FileUtils.isFileOlderThan(file, time)) {
-            if (!FileUtils.parentFolderExists(file, true)) {
-                throw new ContentProviderException("Failed to create parent directory for file: " + file);
-            }
-            return true;
-        }
-        return false;
     }
 
     protected List<String> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {

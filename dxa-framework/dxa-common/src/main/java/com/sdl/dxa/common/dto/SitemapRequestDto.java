@@ -2,10 +2,12 @@ package com.sdl.dxa.common.dto;
 
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Value;
 
 @Value
 @Builder(toBuilder = true, builderMethodName = "hiddenBuilder")
+@EqualsAndHashCode(exclude = "expandLevels")
 public class SitemapRequestDto {
 
     private String sitemapId;

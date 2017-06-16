@@ -1,5 +1,7 @@
 package com.sdl.dxa.tridion.caching;
 
+import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.localization.Localization;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
@@ -13,14 +15,20 @@ import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguratio
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class CopyingCacheTest {
 
 
     @Test
     public void shouldReturnItemFromCache_IfExists_CopyItem() {
-        //given 
-        TestingCache testingCache = new TestingCache();
+        //given
+        WebRequestContext webRequestContext = mock(WebRequestContext.class);
+        Localization localization = mock(Localization.class);
+        when(localization.getId()).thenReturn("1");
+        when(webRequestContext.getLocalization()).thenReturn(localization);
+        TestingCache testingCache = new TestingCache(new LocalizationAwareKeyGenerator(webRequestContext));
         TestingValue initial = new TestingValue(1);
 
         //when
@@ -39,7 +47,7 @@ public class CopyingCacheTest {
     @Test
     public void shouldReturnValue_IfCachingDisabled() {
         //given
-        CopyingCache<TestingValue> cache = new CopyingCache<TestingValue>() {
+        CopyingCache<TestingValue> cache = new CopyingCache<TestingValue>(mock(LocalizationAwareKeyGenerator.class)) {
             @Override
             public Cache<Object, TestingValue> getCache() {
                 return null;
@@ -62,6 +70,10 @@ public class CopyingCacheTest {
                 .createCache("test", fromEhcacheCacheConfiguration(
                         newCacheConfigurationBuilder(Object.class, TestingValue.class,
                                 ResourcePoolsBuilder.heap(10)).build()));
+
+        TestingCache(LocalizationAwareKeyGenerator keyGenerator) {
+            super(keyGenerator);
+        }
 
         @Override
         public Cache<Object, TestingValue> getCache() {

@@ -20,7 +20,7 @@ public class PagesCopyingCacheTest {
         when(pagesCache.getCache()).thenReturn(cache);
 
         //when
-        Cache<Object, PageModel> actual = new PagesCopyingCache(pagesCache).getCache();
+        Cache<Object, PageModel> actual = new PagesCopyingCache(mock(LocalizationAwareKeyGenerator.class), pagesCache).getCache();
 
         //then
         assertSame(cache, actual);

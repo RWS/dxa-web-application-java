@@ -22,7 +22,7 @@ public class PagesCacheTest {
         doReturn(cache).when(cacheManager).getCache(eq("pages"));
 
         //when
-        PagesCache pagesCache = new PagesCache();
+        PagesCache pagesCache = new PagesCache(mock(LocalizationAwareKeyGenerator.class));
         ReflectionTestUtils.setField(pagesCache, "cacheManager", cacheManager);
         pagesCache.init();
         Cache<Object, PageModel> actual = pagesCache.getCache();

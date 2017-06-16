@@ -12,7 +12,8 @@ public class PagesCopyingCache extends CopyingCache<PageModel> {
     private final PagesCache pageCache;
 
     @Autowired
-    public PagesCopyingCache(PagesCache pageCache) {
+    public PagesCopyingCache(LocalizationAwareKeyGenerator keyGenerator, PagesCache pageCache) {
+        super(keyGenerator);
         this.pageCache = pageCache;
     }
 

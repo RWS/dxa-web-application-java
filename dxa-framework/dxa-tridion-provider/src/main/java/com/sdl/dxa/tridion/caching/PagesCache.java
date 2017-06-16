@@ -9,9 +9,9 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 
 @Component
-public class PagesCache implements SimpleCacheWrapper<String, PageModel> {
+public class PagesCache implements SimpleCacheWrapper<PageModel> {
 
-    private Cache<String, PageModel> pages;
+    private Cache<Object, PageModel> pages;
 
     @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
     @Autowired(required = false)
@@ -23,7 +23,7 @@ public class PagesCache implements SimpleCacheWrapper<String, PageModel> {
     }
 
     @Override
-    public Cache<String, PageModel> getCache() {
+    public Cache<Object, PageModel> getCache() {
         return pages;
     }
 }

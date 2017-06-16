@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 import javax.cache.Cache;
 
 @Component
-public class PagesCopyingCache implements CopyingCache<String, PageModel> {
+public class PagesCopyingCache extends CopyingCache<PageModel> {
 
     private final PagesCache pageCache;
 
@@ -17,7 +17,7 @@ public class PagesCopyingCache implements CopyingCache<String, PageModel> {
     }
 
     @Override
-    public Cache<String, PageModel> getCache() {
+    public Cache<Object, PageModel> getCache() {
         return pageCache.getCache();
     }
 }

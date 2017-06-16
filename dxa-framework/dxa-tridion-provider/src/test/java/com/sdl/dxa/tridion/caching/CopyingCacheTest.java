@@ -24,8 +24,8 @@ public class CopyingCacheTest {
         TestingValue initial = new TestingValue(1);
 
         //when
-        TestingValue added = testingCache.getOrAdd("key", () -> initial);
-        TestingValue fromCache = testingCache.getOrAdd("key", () -> new TestingValue(2));
+        TestingValue added = testingCache.getOrAdd(() -> initial, "key");
+        TestingValue fromCache = testingCache.getOrAdd(() -> new TestingValue(2), "key");
 
         //then
         assertEquals(initial, added);
@@ -39,27 +39,32 @@ public class CopyingCacheTest {
     @Test
     public void shouldReturnValue_IfCachingDisabled() {
         //given
-        CopyingCache<String, TestingValue> cache = () -> null;
+        CopyingCache<TestingValue> cache = new CopyingCache<TestingValue>() {
+            @Override
+            public Cache<Object, TestingValue> getCache() {
+                return null;
+            }
+        };
         TestingValue value = new TestingValue(1);
 
         //when
-        TestingValue first = cache.getOrAdd("key", () -> value);
-        TestingValue second = cache.getOrAdd("key", () -> value);
+        TestingValue first = cache.getOrAdd(() -> value, "key");
+        TestingValue second = cache.getOrAdd(() -> value, "key");
 
         //then
         assertSame(second, value);
         assertSame(second, first);
     }
 
-    private static class TestingCache implements CopyingCache<String, TestingValue> {
+    private static class TestingCache extends CopyingCache<TestingValue> {
 
-        private final static Cache<String, TestingValue> cache = getCachingProvider().getCacheManager()
+        private final static Cache<Object, TestingValue> cache = getCachingProvider().getCacheManager()
                 .createCache("test", fromEhcacheCacheConfiguration(
-                        newCacheConfigurationBuilder(String.class, TestingValue.class,
+                        newCacheConfigurationBuilder(Object.class, TestingValue.class,
                                 ResourcePoolsBuilder.heap(10)).build()));
 
         @Override
-        public Cache<String, TestingValue> getCache() {
+        public Cache<Object, TestingValue> getCache() {
             return cache;
         }
     }

@@ -172,7 +172,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @Override
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
-        return pagesCopyingCache.getOrAdd(modelData.getUrlPath(), () -> {
+        return pagesCopyingCache.getOrAdd(() -> {
             PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
 
             if (pageModel == null) {
@@ -197,7 +197,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             }
 
             return pageModel;
-        });
+        }, modelData.getUrlPath());
     }
 
     @SneakyThrows({InstantiationException.class, IllegalAccessException.class})

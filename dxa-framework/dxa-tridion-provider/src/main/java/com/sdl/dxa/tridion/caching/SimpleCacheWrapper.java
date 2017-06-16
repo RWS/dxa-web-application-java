@@ -5,18 +5,17 @@ import javax.cache.Cache;
 /**
  * Wrapper on {@link Cache}.
  *
- * @param <K> key type of the cache
  * @param <V> value type of the cache
  */
 @FunctionalInterface
-public interface SimpleCacheWrapper<K, V> {
+public interface SimpleCacheWrapper<V> {
 
     /**
      * Returns current cache instance.
      *
      * @return current cache for model
      */
-    Cache<K, V> getCache();
+    Cache<Object, V> getCache();
 
     /**
      * Reports if caching is enabled.

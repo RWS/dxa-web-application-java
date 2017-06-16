@@ -35,7 +35,7 @@ public abstract class CopyingCache<V> //NOSONAR
         Object key = SimpleKeyGenerator.generateKey(keyParams);
         if (cache.containsKey(key)) {
             value = cache.get(key);
-            log.trace("Cache entry for key '{}' found in cache '{}'", key, cache.getName());
+            log.trace("Cache entry for key '{}' found in copying cache '{}'", key, cache.getName());
         } else {
             value = valueSupplier.get();
             cache.put(key, value);

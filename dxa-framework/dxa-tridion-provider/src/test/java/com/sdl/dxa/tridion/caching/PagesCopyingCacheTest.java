@@ -16,11 +16,11 @@ public class PagesCopyingCacheTest {
         //given 
         PagesCache pagesCache = mock(PagesCache.class);
         //noinspection unchecked
-        Cache<String, PageModel> cache = mock(Cache.class);
+        Cache<Object, PageModel> cache = mock(Cache.class);
         when(pagesCache.getCache()).thenReturn(cache);
 
         //when
-        Cache<String, PageModel> actual = new PagesCopyingCache(pagesCache).getCache();
+        Cache<Object, PageModel> actual = new PagesCopyingCache(pagesCache).getCache();
 
         //then
         assertSame(cache, actual);

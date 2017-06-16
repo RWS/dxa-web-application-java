@@ -25,7 +25,7 @@ public class PagesCacheTest {
         PagesCache pagesCache = new PagesCache();
         ReflectionTestUtils.setField(pagesCache, "cacheManager", cacheManager);
         pagesCache.init();
-        Cache<String, PageModel> actual = pagesCache.getCache();
+        Cache<Object, PageModel> actual = pagesCache.getCache();
 
         //then
         assertSame(actual, cache);

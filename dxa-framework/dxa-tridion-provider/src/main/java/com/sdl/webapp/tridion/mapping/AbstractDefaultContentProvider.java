@@ -128,6 +128,8 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         PageModel pageModel = _loadPage(path, localization);
 
         pageModel.filterConditionalEntities(entityEvaluators);
+        //todo dxa2 refactor this, remove usage of deprecated method
+        webRequestContext.setPage(pageModel);
 
         return pageModel;
     }

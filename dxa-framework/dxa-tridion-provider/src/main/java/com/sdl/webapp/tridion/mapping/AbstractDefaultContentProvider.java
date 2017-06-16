@@ -138,7 +138,7 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
      * If you need copying cache for dynamic logic, use {@link com.sdl.dxa.tridion.caching.CopyingCache}.
      */
     @Override
-    @Cacheable(value = "entities", key = "@localizationAwareKeyGenerator(#id, #_localization.id)")
+    @Cacheable(value = "entities", key = "@localizationAwareKeyGenerator.generate(#id, #_localization.id)")
     public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
         Assert.notNull(id);
         EntityModel entityModel = _getEntityModel(id);

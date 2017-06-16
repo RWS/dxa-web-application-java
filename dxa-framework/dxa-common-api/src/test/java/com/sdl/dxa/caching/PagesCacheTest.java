@@ -1,4 +1,4 @@
-package com.sdl.dxa.tridion.caching;
+package com.sdl.dxa.caching;
 
 import com.sdl.webapp.common.api.model.PageModel;
 import org.junit.Test;

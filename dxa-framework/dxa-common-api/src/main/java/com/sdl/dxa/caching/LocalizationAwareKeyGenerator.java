@@ -1,4 +1,4 @@
-package com.sdl.dxa.tridion.caching;
+package com.sdl.dxa.caching;
 
 import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.WebRequestContext;

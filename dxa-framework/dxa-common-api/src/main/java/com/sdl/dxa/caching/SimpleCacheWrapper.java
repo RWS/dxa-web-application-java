@@ -1,4 +1,4 @@
-package com.sdl.dxa.tridion.caching;
+package com.sdl.dxa.caching;
 
 import lombok.extern.slf4j.Slf4j;
 

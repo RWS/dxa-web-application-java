@@ -1,4 +1,4 @@
-package com.sdl.dxa.tridion.caching;
+package com.sdl.dxa.caching;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;

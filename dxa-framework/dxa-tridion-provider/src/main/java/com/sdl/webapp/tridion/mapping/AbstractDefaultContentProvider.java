@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
+import com.sdl.dxa.caching.CopyingCache;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;
@@ -135,7 +136,7 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
     }
 
     /**
-     * If you need copying cache for dynamic logic, use {@link com.sdl.dxa.tridion.caching.CopyingCache}.
+     * If you need copying cache for dynamic logic, use {@link CopyingCache}.
      */
     @Override
     @Cacheable(value = "entities", key = "@localizationAwareKeyGenerator.generate(#id, #_localization.id)")

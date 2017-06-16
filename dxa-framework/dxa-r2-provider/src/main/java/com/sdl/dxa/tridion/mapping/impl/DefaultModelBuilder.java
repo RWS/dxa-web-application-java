@@ -7,7 +7,7 @@ import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
-import com.sdl.dxa.tridion.caching.PagesCopyingCache;
+import com.sdl.dxa.caching.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;

@@ -7,11 +7,11 @@ import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.caching.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
@@ -39,12 +39,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 import static com.sdl.webapp.common.util.StringUtils.dashify;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  * Default implementation of {@link EntityModelBuilder} and {@link PageModelBuilder}.
@@ -66,7 +63,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     private WebRequestContext webRequestContext;
 
     @Autowired
-    private List<ConditionalEntityEvaluator> entityEvaluators;
+    private PagesCopyingCache pagesCopyingCache;
 
     @Override
     public int getOrder() {
@@ -175,30 +172,29 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @Override
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
-        PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
+        return pagesCopyingCache.getOrAdd(() -> {
+            PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
 
-        if (pageModel == null) {
-            log.info("Page Model is null, for model data id = {}", modelData.getId());
-            return null;
-        }
+            if (pageModel == null) {
+                log.info("Page Model is null, for model data id = {}", modelData.getId());
+                return null;
+            }
 
-        fillViewModel(pageModel, modelData);
-        pageModel.setId(modelData.getId());
-        pageModel.setMeta(modelData.getMeta());
-        pageModel.setName(modelData.getTitle());
-        pageModel.setTitle(getPageTitle(modelData));
-        pageModel.setUrl(modelData.getUrlPath());
+            fillViewModel(pageModel, modelData);
+            pageModel.setId(modelData.getId());
+            pageModel.setMeta(modelData.getMeta());
+            pageModel.setName(modelData.getTitle());
+            pageModel.setTitle(getPageTitle(modelData));
+            pageModel.setUrl(modelData.getUrlPath());
 
-        //todo dxa2 refactor this, remove usage of deprecated method
-        webRequestContext.setPage(pageModel);
+            if (modelData.getRegions() != null) {
+                modelData.getRegions().stream()
+                        .map(this::createRegionModel)
+                        .forEach(pageModel.getRegions()::add);
+            }
 
-        if (modelData.getRegions() != null) {
-            modelData.getRegions().stream()
-                    .map(this::createRegionModel)
-                    .forEach(pageModel.getRegions()::add);
-        }
-
-        return pageModel;
+            return pageModel;
+        }, modelData.getUrlPath());
     }
 
     @SneakyThrows({InstantiationException.class, IllegalAccessException.class})
@@ -236,12 +232,6 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         return modelData.getTitle() + separator + postfix;
     }
 
-    private List<RegionModelData> filterRegionsByIncludePageUrl(PageModelData modelData) {
-        return modelData.getRegions().stream()
-                .filter(regionModelData -> isBlank(regionModelData.getIncludePageId()))
-                .collect(Collectors.toList());
-    }
-
     private RegionModel createRegionModel(RegionModelData regionModelData) {
         MvcData mvcData = createMvcData(regionModelData.getMvcData(), DefaultsMvcData.REGION);
         log.debug("MvcData '{}' for RegionModel {}", mvcData, regionModelData);
@@ -270,9 +260,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                             EntityModel entityModel = createEntityModel(entityModelData);
                             entityModel.setMvcData(creator(entityModel.getMvcData()).builder().regionName(regionModelData.getName()).build());
                             return entityModel;
-                        })
-                        .filter(entityModel -> entityEvaluators.stream().allMatch(evaluator -> evaluator.includeEntity(entityModel)))
-                        .forEach(regionModel::addEntity);
+                        }).forEach(regionModel::addEntity);
             }
 
             return regionModel;

@@ -5,7 +5,7 @@ import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-public interface PageModel extends ViewModel, FeedItemsProvider {
+public interface PageModel extends ViewModel, FeedItemsProvider, CanFilterEntities {
 
     String getId();
 

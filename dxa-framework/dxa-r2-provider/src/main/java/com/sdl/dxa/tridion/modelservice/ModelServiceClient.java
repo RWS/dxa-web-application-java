@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
+import javax.cache.annotation.CacheResult;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
@@ -45,6 +46,11 @@ public class ModelServiceClient {
         this.configuration = configuration;
     }
 
+    @CacheResult(cacheName = "model-service",
+            exceptionCacheName = "failures", cachedExceptions = {
+            DxaItemNotFoundException.class,
+            BadRequestException.class
+    })
     public <T> T getForType(String serviceUrl, Class<T> type, Object... params) throws DxaItemNotFoundException {
         return _makeRequest(serviceUrl, type, false, params);
     }

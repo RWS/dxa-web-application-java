@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.region;
 
 import com.google.common.collect.Lists;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -22,7 +23,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,13 +37,17 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("test")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = RegionModelImplTest.RegionModelImplTestContextConfiguration.class)
 public class RegionModelImplTest {
 
     @Test
@@ -189,9 +193,43 @@ public class RegionModelImplTest {
         assertNull(regions);
     }
 
+    @Test
+    public void shouldTrigger_AllRegionsAndEntities_ToFilterEntities() throws DxaException {
+        //given 
+        RegionModelImpl region = new RegionModelImpl("name");
+
+        EntityModel entity1 = mock(EntityModel.class);
+        region.addEntity(entity1);
+
+        EntityModel entity2 = mock(EntityModel.class);
+        region.addEntity(entity2);
+
+        RegionModelSetImpl regions = new RegionModelSetImpl();
+        region.setRegions(regions);
+        RegionModelImpl regionModel1 = spy(new RegionModelImpl("1"));
+        regions.add(regionModel1);
+        RegionModelImpl regionModel2 = spy(new RegionModelImpl("2"));
+        regions.add(regionModel2);
+
+        ConditionalEntityEvaluator evaluator = mock(ConditionalEntityEvaluator.class);
+        List<ConditionalEntityEvaluator> evaluators = Collections.singletonList(evaluator);
+
+        when(evaluator.includeEntity(same(entity1))).thenReturn(true);
+        when(evaluator.includeEntity(same(entity2))).thenReturn(false);
+
+        //when
+        assertEquals(2, region.getEntities().size());
+        region.filterConditionalEntities(evaluators);
+
+        //then
+        verify(regionModel1).filterConditionalEntities(eq(evaluators));
+        verify(regionModel2).filterConditionalEntities(eq(evaluators));
+        assertEquals(1, region.getEntities().size());
+    }
+
     @Profile("test")
     @Configuration
-    public static class SpringContext {
+    public static class RegionModelImplTestContextConfiguration {
 
         @Bean
         public ApplicationContextHolder applicationContextHolder() {

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -64,6 +65,7 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
 
     @NotNull
     @Override
+    @Cacheable(value = "entities", key = "@localizationAwareKeyGenerator.generate(#modelData.id, #modelData.schemaId, #expectedClass)")
     public <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData, @Nullable Class<T> expectedClass) throws DxaException {
         T entityModel = null;
         for (EntityModelBuilder builder : entityModelBuilders) {
@@ -72,6 +74,4 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
         Assert.notNull(entityModel, "Entity Model is null after model pipeline, model builder are not set?");
         return entityModel; //NOSONAR
     }
-
-
 }

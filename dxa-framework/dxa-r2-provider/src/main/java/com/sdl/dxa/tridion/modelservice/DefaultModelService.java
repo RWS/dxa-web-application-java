@@ -13,7 +13,6 @@ import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -36,14 +35,12 @@ public class DefaultModelService implements ModelService {
 
     @NotNull
     @Override
-//    @Cacheable(value = "default")
     public PageModelData loadPageModel(PageRequestDto pageRequest) throws ContentProviderException {
         return _loadPage(configuration.getPageModelUrl(), PageModelData.class, pageRequest);
     }
 
     @NotNull
     @Override
-//    @Cacheable(value = "default")
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
         String serviceUrl = UriComponentsBuilder.fromUriString(configuration.getPageModelUrl()).queryParam("raw").build().toUriString();
         return _loadPage(serviceUrl, String.class, pageRequest);
@@ -68,14 +65,12 @@ public class DefaultModelService implements ModelService {
 
     @NotNull
     @Override
-    @Cacheable(value = "default", key = "'emd-entityId-' + #entityId")
     public EntityModelData loadEntity(@NotNull String entityId) throws ContentProviderException {
         return loadEntity(EntityRequestDto.builder().entityId(entityId).build());
     }
 
     @NotNull
     @Override
-//    @Cacheable(value = "default")
     public EntityModelData loadEntity(EntityRequestDto entityRequest) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
 

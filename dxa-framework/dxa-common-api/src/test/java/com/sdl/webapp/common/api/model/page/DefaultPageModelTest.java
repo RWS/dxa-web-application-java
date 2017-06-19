@@ -3,8 +3,10 @@ package com.sdl.webapp.common.api.model.page;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.sdl.dxa.DxaSpringInitialization;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
@@ -16,6 +18,7 @@ import org.joda.time.Days;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -33,6 +36,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -229,5 +233,28 @@ public class DefaultPageModelTest {
         //then
         Matcher matcher = Pattern.compile(".*\"Id\"[:\\s]*\"1\".*", Pattern.MULTILINE).matcher(asString.replace("\r\n", ""));
         assertTrue(matcher.matches());
+    }
+
+    @Test
+    public void shouldRequestRegionsToFilterEntities() throws DxaException {
+        //given
+        DefaultPageModel page = new DefaultPageModel();
+
+        RegionModelSetImpl regions = new RegionModelSetImpl();
+        page.setRegions(regions);
+        RegionModel regionModel = spy(new RegionModelImpl("1"));
+        regions.add(regionModel);
+        RegionModel regionModel2 = spy(new RegionModelImpl("2"));
+        regions.add(regionModel2);
+
+        ConditionalEntityEvaluator evaluator = mock(ConditionalEntityEvaluator.class);
+        List<ConditionalEntityEvaluator> evaluators = Collections.singletonList(evaluator);
+
+        //when
+        page.filterConditionalEntities(evaluators);
+
+        //then
+        verify(regionModel).filterConditionalEntities(eq(evaluators));
+        verify(regionModel2).filterConditionalEntities(eq(evaluators));
     }
 }

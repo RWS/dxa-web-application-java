@@ -1,5 +1,6 @@
-package com.sdl.dxa.caching;
+package com.sdl.dxa.caching.wrapper;
 
+import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.AllArgsConstructor;

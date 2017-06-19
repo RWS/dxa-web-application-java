@@ -1,6 +1,7 @@
-package com.sdl.dxa.caching;
+package com.sdl.dxa.caching.wrapper;
 
 import com.rits.cloning.Cloner;
+import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Supplier;

@@ -1,5 +1,6 @@
-package com.sdl.dxa.caching;
+package com.sdl.dxa.caching.wrapper;
 
+import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.webapp.common.api.model.PageModel;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;

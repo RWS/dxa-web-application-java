@@ -1,6 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
-import com.sdl.dxa.caching.CopyingCache;
+import com.sdl.dxa.caching.wrapper.CopyingCache;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;

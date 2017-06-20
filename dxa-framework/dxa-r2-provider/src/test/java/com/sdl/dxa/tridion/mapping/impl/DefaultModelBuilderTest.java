@@ -183,7 +183,7 @@ public class DefaultModelBuilderTest {
 
 //        ((ItemList) pageModel.getRegions().get("Hero").getEntity("1472"))
 
-        verify(pagesCopyingCache).containsKey(eq(pagesCopyingCache.getKey("/url")));
+        verify(pagesCopyingCache).containsKey(eq(pagesCopyingCache.getKey(pageModelData)));
     }
 
     private void assertEqualsAndNotNull(Object expected, Object actual) {

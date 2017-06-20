@@ -1,5 +1,6 @@
 package com.sdl.dxa.caching.wrapper;
 
+import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.webapp.common.api.model.EntityModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,9 @@ public class EntitiesCache extends SimpleCacheWrapper<EntityModel> {
     @Override
     public Cache<Object, EntityModel> getCache() {
         return this.cache;
+    }
+
+    public Object getKey(EntityModelData entityModelData) {
+        return getKey(entityModelData.getId(), entityModelData.getSchemaId(), entityModelData.getMvcData());
     }
 }

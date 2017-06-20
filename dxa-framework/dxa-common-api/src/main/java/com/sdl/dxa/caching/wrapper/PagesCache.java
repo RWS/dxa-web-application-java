@@ -1,5 +1,6 @@
 package com.sdl.dxa.caching.wrapper;
 
+import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.webapp.common.api.model.PageModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,10 @@ public class PagesCache extends SimpleCacheWrapper<PageModel> {
     @PostConstruct
     public void init() {
         pages = cacheManager == null ? null : cacheManager.getCache("pages");
+    }
+
+    public Object getKey(PageModelData pageModelData) {
+        return getKey(pageModelData.getUrlPath(), pageModelData.getMvcData());
     }
 
     @Override

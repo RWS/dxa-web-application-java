@@ -94,7 +94,7 @@ public abstract class SimpleCacheWrapper<V> {
      * @param keyParams set of params to form the key
      * @return the cache key
      */
-    public Object getKey(Object... keyParams) {
+    protected Object getKey(Object... keyParams) {
         return this.keyGenerator.generate(keyParams);
     }
 

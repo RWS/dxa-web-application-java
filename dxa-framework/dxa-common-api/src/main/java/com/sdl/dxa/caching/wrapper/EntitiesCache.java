@@ -1,6 +1,7 @@
-package com.sdl.dxa.caching;
+package com.sdl.dxa.caching.wrapper;
 
-import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
+import com.sdl.webapp.common.api.model.EntityModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -9,14 +10,13 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 
 @Component
-public class PagesCache extends SimpleCacheWrapper<PageModel> {
+public class EntitiesCache extends SimpleCacheWrapper<EntityModel> {
 
-    private Cache<Object, PageModel> pages;
+    private Cache<Object, EntityModel> cache;
 
     private CacheManager cacheManager;
 
-    @Autowired
-    public PagesCache(LocalizationAwareKeyGenerator keyGenerator) {
+    public EntitiesCache(LocalizationAwareKeyGenerator keyGenerator) {
         super(keyGenerator);
     }
 
@@ -27,11 +27,11 @@ public class PagesCache extends SimpleCacheWrapper<PageModel> {
 
     @PostConstruct
     public void init() {
-        pages = cacheManager == null ? null : cacheManager.getCache("pages");
+        cache = cacheManager == null ? null : cacheManager.getCache("entities");
     }
 
     @Override
-    public Cache<Object, PageModel> getCache() {
-        return pages;
+    public Cache<Object, EntityModel> getCache() {
+        return this.cache;
     }
 }

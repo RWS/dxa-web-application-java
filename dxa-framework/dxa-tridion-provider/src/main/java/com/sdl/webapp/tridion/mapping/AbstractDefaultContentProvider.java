@@ -1,6 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
-import com.sdl.dxa.caching.CopyingCache;
+import com.sdl.dxa.caching.wrapper.CopyingCache;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;
@@ -46,7 +46,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
@@ -139,7 +138,6 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
      * If you need copying cache for dynamic logic, use {@link CopyingCache}.
      */
     @Override
-    @Cacheable(value = "entities", key = "@localizationAwareKeyGenerator.generate(#id, #_localization.id)")
     public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
         Assert.notNull(id);
         EntityModel entityModel = _getEntityModel(id);

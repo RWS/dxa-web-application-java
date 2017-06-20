@@ -1,9 +1,9 @@
-package com.sdl.dxa.caching;
+package com.sdl.dxa.caching.wrapper;
 
 import com.rits.cloning.Cloner;
+import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Cache wrapper abstract class that always returns a deep clone of the value from cache.
@@ -22,8 +22,17 @@ public abstract class CopyingCache<V> extends SimpleCacheWrapper<V> {
      * <p>Returns deep copy of the instance from cache.</p>
      */
     @Override
-    public V getOrAdd(Supplier<V> valueSupplier, Object... keyParams) {
-        V value = super.getOrAdd(valueSupplier, keyParams);
+    public V addAndGet(Object key, V value) {
+        return _clone(super.addAndGet(key, value));
+    }
+
+    @Nullable
+    @Override
+    public V get(Object key) {
+        return _clone(super.get(key));
+    }
+
+    private V _clone(V value) {
         return isCachingEnabled() ? new Cloner().deepClone(value) : value;
     }
 }

@@ -7,6 +7,10 @@ import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.caching.NeverCached;
+import com.sdl.dxa.caching.wrapper.ConditionalKey;
+import com.sdl.dxa.caching.wrapper.ConditionalKey.ConditionalKeyBuilder;
+import com.sdl.dxa.caching.wrapper.EntitiesCache;
 import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
@@ -65,6 +69,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     @Autowired
     private PagesCopyingCache pagesCopyingCache;
 
+    @Autowired
+    private EntitiesCache entitiesCache;
+
     @Override
     public int getOrder() {
         return HIGHEST_PRECEDENCE;
@@ -89,6 +96,14 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                 modelType = viewModelRegistry.getViewModelType(mvcData);
             }
 
+            Object key = entitiesCache.getKey(modelData.getId(), modelData.getSchemaId(), modelType);
+            synchronized (this) {
+                if (entitiesCache.containsKey(key)) {
+                    //noinspection unchecked
+                    return (T) entitiesCache.get(key);
+                }
+            }
+
             //noinspection unchecked
             entityModel = (T) createViewModel(modelType, modelData);
             entityModel.setMvcData(mvcData);
@@ -97,6 +112,8 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             fillViewModel(entityModel, modelData);
 
             _processMediaItem(modelData, entityModel);
+
+            entitiesCache.addAndGet(key, entityModel);
         } catch (DxaException e) {
             throw new DxaException("Exception happened while creating a entity model from: " + modelData, e);
         }
@@ -172,29 +189,35 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @Override
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
-        return pagesCopyingCache.getOrAdd(() -> {
-            PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
-
-            if (pageModel == null) {
-                log.info("Page Model is null, for model data id = {}", modelData.getId());
-                return null;
+        Object cacheKey = pagesCopyingCache.getKey(modelData.getUrlPath());
+        synchronized (this) {
+            if (pagesCopyingCache.containsKey(cacheKey)) {
+                return pagesCopyingCache.get(cacheKey);
             }
+        }
 
-            fillViewModel(pageModel, modelData);
-            pageModel.setId(modelData.getId());
-            pageModel.setMeta(modelData.getMeta());
-            pageModel.setName(modelData.getTitle());
-            pageModel.setTitle(getPageTitle(modelData));
-            pageModel.setUrl(modelData.getUrlPath());
+        ConditionalKeyBuilder keyBuilder = ConditionalKey.builder().key(cacheKey);
+        PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
 
-            if (modelData.getRegions() != null) {
-                modelData.getRegions().stream()
-                        .map(this::createRegionModel)
-                        .forEach(pageModel.getRegions()::add);
-            }
+        if (pageModel == null) {
+            log.info("Page Model is null, for model data id = {}", modelData.getId());
+            return null;
+        }
 
-            return pageModel;
-        }, modelData.getUrlPath());
+        fillViewModel(pageModel, modelData);
+        pageModel.setId(modelData.getId());
+        pageModel.setMeta(modelData.getMeta());
+        pageModel.setName(modelData.getTitle());
+        pageModel.setTitle(getPageTitle(modelData));
+        pageModel.setUrl(modelData.getUrlPath());
+
+        if (modelData.getRegions() != null) {
+            modelData.getRegions().stream()
+                    .map(regionModelData -> createRegionModel(regionModelData, keyBuilder))
+                    .forEach(pageModel.getRegions()::add);
+        }
+
+        return pagesCopyingCache.addAndGet(keyBuilder.build(), pageModel);
     }
 
     @SneakyThrows({InstantiationException.class, IllegalAccessException.class})
@@ -232,7 +255,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         return modelData.getTitle() + separator + postfix;
     }
 
-    private RegionModel createRegionModel(RegionModelData regionModelData) {
+    private RegionModel createRegionModel(RegionModelData regionModelData, ConditionalKeyBuilder keyBuilder) {
         MvcData mvcData = createMvcData(regionModelData.getMvcData(), DefaultsMvcData.REGION);
         log.debug("MvcData '{}' for RegionModel {}", mvcData, regionModelData);
 
@@ -247,17 +270,20 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             fillViewModel(regionModel, regionModelData);
             regionModel.setMvcData(mvcData);
             ((AbstractViewModel) regionModel).setXpmMetadata(regionModel.getXpmMetadata());
+            if (regionModel.getClass().isAnnotationPresent(NeverCached.class)) {
+                keyBuilder.skipCaching(true);
+            }
 
             if (regionModelData.getRegions() != null) {
                 regionModelData.getRegions().stream()
-                        .map(this::createRegionModel)
+                        .map(regionModelData1 -> createRegionModel(regionModelData1, keyBuilder))
                         .forEach(regionModel.getRegions()::add);
             }
 
             if (regionModelData.getEntities() != null) {
                 regionModelData.getEntities().stream()
                         .map(entityModelData -> {
-                            EntityModel entityModel = createEntityModel(entityModelData);
+                            EntityModel entityModel = createEntityModel(entityModelData, keyBuilder);
                             entityModel.setMvcData(creator(entityModel.getMvcData()).builder().regionName(regionModelData.getName()).build());
                             return entityModel;
                         }).forEach(regionModel::addEntity);
@@ -273,9 +299,13 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         }
     }
 
-    private EntityModel createEntityModel(EntityModelData entityModelData) {
+    private EntityModel createEntityModel(EntityModelData entityModelData, ConditionalKeyBuilder cacheRequest) {
         try {
-            return modelBuilderPipeline.createEntityModel(entityModelData);
+            EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData);
+            if (entityModel.getClass().isAnnotationPresent(NeverCached.class)) {
+                cacheRequest.skipCaching(true);
+            }
+            return entityModel;
         } catch (Exception e) {
             log.warn("Cannot create an entity model for model data {}", entityModelData, e);
             return new ExceptionEntity(e);

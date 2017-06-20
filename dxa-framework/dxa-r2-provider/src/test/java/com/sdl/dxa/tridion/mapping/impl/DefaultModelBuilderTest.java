@@ -9,6 +9,7 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
+import com.sdl.dxa.caching.wrapper.EntitiesCache;
 import com.sdl.dxa.caching.wrapper.PagesCache;
 import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
@@ -60,6 +61,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -72,6 +75,12 @@ public class DefaultModelBuilderTest {
 
     @Autowired
     private DefaultModelBuilder modelBuilder;
+
+    @Autowired
+    private PagesCopyingCache pagesCopyingCache;
+
+    @Autowired
+    private EntitiesCache entitiesCache;
 
     @Test
     public void shouldBuildPageModel_OutOfModelDataR2() throws IOException {
@@ -173,6 +182,8 @@ public class DefaultModelBuilderTest {
         //assertEqualsAndNotNull(pageModelData.getSchemaId(), pageModel.getSchemaId());
 
 //        ((ItemList) pageModel.getRegions().get("Hero").getEntity("1472"))
+
+        verify(pagesCopyingCache).containsKey(eq(pagesCopyingCache.getKey("/url")));
     }
 
     private void assertEqualsAndNotNull(Object expected, Object actual) {
@@ -211,11 +222,22 @@ public class DefaultModelBuilderTest {
     public static class SpringConfigurationContext {
 
         @Bean
-        public PagesCopyingCache pagesCopyingCache() {
-            LocalizationAwareKeyGenerator keyGenerator = mock(LocalizationAwareKeyGenerator.class);
-            return new PagesCopyingCache(keyGenerator, new PagesCache(keyGenerator));
+        public LocalizationAwareKeyGenerator localizationAwareKeyGenerator() {
+            return mock(LocalizationAwareKeyGenerator.class);
         }
-        
+
+        @Bean
+        public PagesCopyingCache pagesCopyingCache() {
+            LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
+            return spy(new PagesCopyingCache(keyGenerator, new PagesCache(keyGenerator)));
+        }
+
+        @Bean
+        public EntitiesCache entitiesCache() {
+            LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
+            return new EntitiesCache(keyGenerator);
+        }
+
         @Bean
         public ObjectMapper objectMapper() {
             return new DataModelSpringConfiguration().dxaR2ObjectMapper();

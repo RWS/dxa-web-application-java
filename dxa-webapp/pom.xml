@@ -17,6 +17,7 @@
     <description>Example web application for DXA</description>
 
     <properties>
+        <java-version>1.8</java-version>
         <dxa-release-branch>release/2.0</dxa-release-branch>
     </properties>
 

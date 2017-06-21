@@ -5,19 +5,14 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 
-@Component
 public class LocalizationAwareKeyGenerator implements KeyGenerator {
 
-    private final WebRequestContext webRequestContext;
-
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
     @Autowired
-    public LocalizationAwareKeyGenerator(WebRequestContext webRequestContext) {
-        this.webRequestContext = webRequestContext;
-    }
+    private WebRequestContext webRequestContext;
 
     @Override
     public Object generate(Object target, Method method, Object... params) {

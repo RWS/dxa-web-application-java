@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cache.interceptor.SimpleKey;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.cache.Cache;
 
@@ -42,7 +43,9 @@ public class CopyingCacheTest {
         when(localization.getId()).thenReturn("42");
         when(webRequestContext.getLocalization()).thenReturn(localization);
 
-        testingCache = new TestingCache(new LocalizationAwareKeyGenerator(webRequestContext));
+        LocalizationAwareKeyGenerator keyGenerator = new LocalizationAwareKeyGenerator();
+        ReflectionTestUtils.setField(keyGenerator, "webRequestContext", webRequestContext);
+        testingCache = new TestingCache(keyGenerator);
     }
 
     @Test

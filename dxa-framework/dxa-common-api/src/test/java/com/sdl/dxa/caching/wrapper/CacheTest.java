@@ -39,7 +39,8 @@ public class CacheTest {
     public void init() {
         when(localization.getId()).thenReturn("42");
         when(webRequestContext.getLocalization()).thenReturn(localization);
-        keyGenerator = new LocalizationAwareKeyGenerator(webRequestContext);
+        keyGenerator = new LocalizationAwareKeyGenerator();
+        ReflectionTestUtils.setField(keyGenerator, "webRequestContext", webRequestContext);
     }
 
     @Test

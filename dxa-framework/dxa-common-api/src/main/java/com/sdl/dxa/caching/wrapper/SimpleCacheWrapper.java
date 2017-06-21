@@ -126,6 +126,6 @@ public abstract class SimpleCacheWrapper<V> {
     }
 
     private void _logMiss(Object key, String cacheName) {
-        log.trace("No cache entry for key '{}' in cache '{}', the value is now put in cache", key, cacheName);
+        log.trace("No cache entry for key '{}' in cache '{}'", key, cacheName);
     }
 }

@@ -1,9 +1,11 @@
 package com.sdl.webapp.common.impl.taglib.dxa;
 
+import com.sdl.dxa.caching.wrapper.CompositeOutputCacheKey;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.controller.ControllerUtils;
@@ -15,8 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.util.WebUtils;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import java.io.IOException;
+import java.util.Optional;
 
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.REGION;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
@@ -24,12 +28,21 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 
 @Setter
 public class RegionTag extends AbstractMarkupTag {
+
     private static final Logger LOG = LoggerFactory.getLogger(RegionTag.class);
 
     private String name;
+
     private boolean placeholder;
+
     private String emptyViewName;
+
     private int containerSize;
+
+    @Override
+    protected Optional<CompositeOutputCacheKey> getCacheKey(String include, ViewModel model) {
+        return Optional.of(new CompositeOutputCacheKey(name, include, model.getMvcData(), (HttpServletRequest) pageContext.getRequest()));
+    }
 
     /**
      * {@inheritDoc}

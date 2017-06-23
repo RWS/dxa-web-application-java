@@ -1,8 +1,9 @@
 package com.sdl.webapp.common.impl.taglib.dxa;
 
+import com.sdl.dxa.caching.wrapper.CompositeOutputCacheKey;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import lombok.Setter;
@@ -10,8 +11,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 import java.io.IOException;
+import java.util.Optional;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
@@ -25,6 +28,11 @@ public class EntityTag extends AbstractMarkupTag {
     private int containerSize;
 
     private String viewName;
+
+    @Override
+    protected Optional<CompositeOutputCacheKey> getCacheKey(String include, ViewModel model) {
+        return Optional.of(new CompositeOutputCacheKey(entity.getId(), include, model.getMvcData(), ((HttpServletRequest) pageContext.getRequest())));
+    }
 
     /**
      * <p>Setter for the field <code>viewName</code>.</p>

@@ -19,7 +19,7 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    @Autowired
+    @Autowired(required = false)
     private CacheManager cacheManager;
 
     /**
@@ -29,7 +29,9 @@ public class AdminController {
      */
     @RequestMapping(method = RequestMethod.GET, value = {"/admin/refresh", "/*/admin/refresh"})
     public String handleRefresh() {
-        cacheManager.getCacheNames().forEach(name -> cacheManager.getCache(name).clear());
+        if (cacheManager != null) {
+            cacheManager.getCacheNames().forEach(name -> cacheManager.getCache(name).clear());
+        }
         return "redirect:" + adminService.refreshLocalization();
     }
 }

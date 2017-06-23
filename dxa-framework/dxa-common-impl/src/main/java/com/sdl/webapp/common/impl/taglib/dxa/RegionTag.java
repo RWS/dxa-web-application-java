@@ -41,7 +41,13 @@ public class RegionTag extends AbstractMarkupTag {
 
     @Override
     protected Optional<CompositeOutputCacheKey> getCacheKey(String include, ViewModel model) {
-        return Optional.of(new CompositeOutputCacheKey(name, include, model.getMvcData(), (HttpServletRequest) pageContext.getRequest()));
+
+        final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
+        if (page == null || !page.isCacheable()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(new CompositeOutputCacheKey(page.getId(), name, include, model.getMvcData(), (HttpServletRequest) pageContext.getRequest()));
     }
 
     /**

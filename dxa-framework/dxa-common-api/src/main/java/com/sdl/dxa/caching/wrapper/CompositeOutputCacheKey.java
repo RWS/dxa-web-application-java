@@ -11,7 +11,9 @@ import javax.servlet.http.HttpServletRequest;
 @Value
 public class CompositeOutputCacheKey {
 
-    private String id;
+    private String pageId;
+
+    private String name;
 
     private String include;
 

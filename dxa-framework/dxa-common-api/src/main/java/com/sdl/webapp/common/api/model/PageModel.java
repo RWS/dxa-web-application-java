@@ -1,11 +1,12 @@
 package com.sdl.webapp.common.api.model;
 
+import com.sdl.dxa.caching.wrapper.VolatileModel;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
-public interface PageModel extends ViewModel, FeedItemsProvider, CanFilterEntities {
+public interface PageModel extends ViewModel, FeedItemsProvider, CanFilterEntities, VolatileModel {
 
     String getId();
 

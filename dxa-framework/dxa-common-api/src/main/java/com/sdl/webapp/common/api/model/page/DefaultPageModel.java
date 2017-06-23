@@ -52,6 +52,9 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     @JsonProperty("Regions")
     protected RegionModelSet regions = new RegionModelSetImpl();
 
+    @JsonIgnore
+    private boolean staticModel;
+
     public DefaultPageModel(PageModel pageModel) {
         this.id = pageModel.getId();
         this.name = pageModel.getName();

@@ -216,8 +216,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                     .map(regionModelData -> createRegionModel(regionModelData, keyBuilder))
                     .forEach(pageModel.getRegions()::add);
         }
-
-        return pagesCopyingCache.addAndGet(keyBuilder.build(), pageModel);
+        ConditionalKey conditionalKey = keyBuilder.build();
+        pageModel.setStaticModel(!conditionalKey.isSkipCaching());
+        return pagesCopyingCache.addAndGet(conditionalKey, pageModel);
     }
 
     @SneakyThrows({InstantiationException.class, IllegalAccessException.class})

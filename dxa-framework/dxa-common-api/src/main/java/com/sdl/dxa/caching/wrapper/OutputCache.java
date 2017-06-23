@@ -23,7 +23,8 @@ public class OutputCache extends SimpleCacheWrapper<CompositeOutputCacheKey, Htm
     @Override
     public Object getSpecificKey(CompositeOutputCacheKey keyBase, Object... keyParams) {
         HttpServletRequest request = keyBase.getRequest();
-        return getKey(keyBase.getId(),
+        return getKey(keyBase.getPageId(),
+                keyBase.getName(),
                 keyBase.getMvcData(),
                 keyBase.getInclude(),
                 request == null ? "" : request.getHeader(USER_AGENT_HEADER));

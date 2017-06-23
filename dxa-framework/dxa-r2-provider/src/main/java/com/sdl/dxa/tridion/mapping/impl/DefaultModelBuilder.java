@@ -96,7 +96,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                 modelType = viewModelRegistry.getViewModelType(mvcData);
             }
 
-            Object key = entitiesCache.getKey(modelData);
+            Object key = entitiesCache.getSpecificKey(modelData);
             synchronized (this) {
                 if (entitiesCache.containsKey(key)) {
                     //noinspection unchecked
@@ -189,7 +189,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @Override
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
-        Object cacheKey = pagesCopyingCache.getKey(modelData);
+        Object cacheKey = pagesCopyingCache.getSpecificKey(modelData);
         synchronized (this) {
             if (pagesCopyingCache.containsKey(cacheKey)) {
                 return pagesCopyingCache.get(cacheKey);

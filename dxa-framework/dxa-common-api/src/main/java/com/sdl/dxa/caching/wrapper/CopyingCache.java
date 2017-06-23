@@ -1,7 +1,6 @@
 package com.sdl.dxa.caching.wrapper;
 
 import com.rits.cloning.Cloner;
-import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,11 +10,7 @@ import org.jetbrains.annotations.Nullable;
  * @param <V> value type of the cache
  */
 @Slf4j
-public abstract class CopyingCache<V> extends SimpleCacheWrapper<V> {
-
-    CopyingCache(LocalizationAwareKeyGenerator keyGenerator) {
-        super(keyGenerator);
-    }
+public abstract class CopyingCache<K, V> extends SimpleCacheWrapper<K, V> {
 
     /**
      * {@inheritDoc}

@@ -45,17 +45,20 @@ public class CacheTest {
 
     @Test
     public void shouldReturnCache() {
-        shouldReturnNeededCache(() -> new PagesCache(keyGenerator), "pages");
+        shouldReturnNeededCache(PagesCache::new, "pages");
 
-        shouldReturnNeededCache(() -> new EntitiesCache(keyGenerator), "entities");
+        shouldReturnNeededCache(EntitiesCache::new, "entities");
     }
 
     @Test
     public void shouldDelegateKeyCalculationToConcreteCaches() {
         //given
-        PagesCache pagesCache = new PagesCache(keyGenerator);
-        PagesCopyingCache pagesCopyingCache = new PagesCopyingCache(keyGenerator, pagesCache);
-        EntitiesCache entitiesCache = new EntitiesCache(keyGenerator);
+        PagesCache pagesCache = new PagesCache();
+        PagesCopyingCache pagesCopyingCache = new PagesCopyingCache(pagesCache);
+        EntitiesCache entitiesCache = new EntitiesCache();
+        pagesCache.setKeyGenerator(keyGenerator);
+        pagesCopyingCache.setKeyGenerator(keyGenerator);
+        entitiesCache.setKeyGenerator(keyGenerator);
         MvcModelData mvcData = new MvcModelData("a", "a", "a", "c", "v", null);
         PageModelData pageData = (PageModelData) new PageModelData("1", null, null, null, "/url")
                 .setMvcData(mvcData);
@@ -63,9 +66,9 @@ public class CacheTest {
                 .setMvcData(mvcData);
 
         //when
-        Object pagesCacheKey = pagesCache.getKey(pageData);
-        Object pagesCopyingCacheKey = pagesCopyingCache.getKey(pageData);
-        Object entitiesCacheKey = entitiesCache.getKey(entityMvcData);
+        Object pagesCacheKey = pagesCache.getSpecificKey(pageData);
+        Object pagesCopyingCacheKey = pagesCopyingCache.getSpecificKey(pageData);
+        Object entitiesCacheKey = entitiesCache.getSpecificKey(entityMvcData);
 
         //then
         assertEquals(pagesCopyingCacheKey, pagesCacheKey);
@@ -73,14 +76,13 @@ public class CacheTest {
         assertEquals(keyGenerator.generate("1", "2", mvcData), entitiesCacheKey);
     }
 
-    private void shouldReturnNeededCache(Supplier<SimpleCacheWrapper<?>> supplier, String cacheName) {
+    private void shouldReturnNeededCache(Supplier<SimpleCacheWrapper<?, ?>> supplier, String cacheName) {
         CacheManager cacheManager = mock(CacheManager.class);
         Cache cache = mock(Cache.class);
         doReturn(cache).when(cacheManager).getCache(eq(cacheName));
 
-        SimpleCacheWrapper<?> objectCache = supplier.get();
-        ReflectionTestUtils.setField(objectCache, "cacheManager", cacheManager);
-        ReflectionTestUtils.invokeMethod(objectCache, "init");
+        SimpleCacheWrapper<?, ?> objectCache = supplier.get();
+        objectCache.setCacheManager(cacheManager);
 
         Cache<Object, ?> actual = objectCache.getCache();
         assertSame(cache, actual);

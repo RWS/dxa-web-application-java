@@ -183,7 +183,7 @@ public class DefaultModelBuilderTest {
 
 //        ((ItemList) pageModel.getRegions().get("Hero").getEntity("1472"))
 
-        verify(pagesCopyingCache).containsKey(eq(pagesCopyingCache.getKey(pageModelData)));
+        verify(pagesCopyingCache).containsKey(eq(pagesCopyingCache.getSpecificKey(pageModelData)));
     }
 
     private void assertEqualsAndNotNull(Object expected, Object actual) {
@@ -229,13 +229,19 @@ public class DefaultModelBuilderTest {
         @Bean
         public PagesCopyingCache pagesCopyingCache() {
             LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
-            return spy(new PagesCopyingCache(keyGenerator, new PagesCache(keyGenerator)));
+            PagesCache pageCache = new PagesCache();
+            PagesCopyingCache copyingCache = new PagesCopyingCache(pageCache);
+            pageCache.setKeyGenerator(keyGenerator);
+            copyingCache.setKeyGenerator(keyGenerator);
+            return spy(copyingCache);
         }
 
         @Bean
         public EntitiesCache entitiesCache() {
             LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
-            return new EntitiesCache(keyGenerator);
+            EntitiesCache entitiesCache = new EntitiesCache();
+            entitiesCache.setKeyGenerator(keyGenerator);
+            return entitiesCache;
         }
 
         @Bean

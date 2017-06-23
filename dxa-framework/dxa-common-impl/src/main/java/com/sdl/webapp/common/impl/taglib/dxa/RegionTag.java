@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl.taglib.dxa;
 
+import com.sdl.dxa.caching.NeverCached;
 import com.sdl.dxa.caching.wrapper.CompositeOutputCacheKey;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -42,7 +43,7 @@ public class RegionTag extends AbstractMarkupTag {
     @Override
     protected Optional<CompositeOutputCacheKey> getCacheKey(String include, ViewModel model) {
         final PageModel page = (PageModel) pageContext.getRequest().getAttribute(PAGE_MODEL);
-        if (page == null || !page.isCacheable() || !getOutputCache().isCachingEnabled()) {
+        if (page == null || !page.isCacheable() || !getOutputCache().isCachingEnabled() || model.getClass().isAnnotationPresent(NeverCached.class)) {
             return Optional.empty();
         }
         return Optional.of(new CompositeOutputCacheKey(page.getId(), name, include, model.getMvcData(), (HttpServletRequest) pageContext.getRequest()));

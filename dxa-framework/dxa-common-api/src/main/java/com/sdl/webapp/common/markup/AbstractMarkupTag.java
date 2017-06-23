@@ -75,7 +75,7 @@ public class AbstractMarkupTag extends TagSupport {
                 .getBean(WebRequestContext.class);
     }
 
-    private OutputCache getOutputCache() {
+    protected OutputCache getOutputCache() {
         return ApplicationContextHolder.getContext().getBean(OutputCache.class);
     }
 

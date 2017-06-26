@@ -21,11 +21,7 @@ public class PagesCopyingCacheTest {
         Cache<Object, Object> cache = mock(Cache.class);
         when(cacheManager.getCache(eq("pages"))).thenReturn(cache);
 
-        PagesCache pagesCache = mock(PagesCache.class);
-        when(pagesCache.getCacheName()).thenCallRealMethod();
-        pagesCache.setCacheManager(cacheManager);
-
-        PagesCopyingCache pagesCopyingCache = new PagesCopyingCache(pagesCache);
+        PagesCopyingCache pagesCopyingCache = new PagesCopyingCache();
         pagesCopyingCache.setCacheManager(cacheManager);
 
         //when

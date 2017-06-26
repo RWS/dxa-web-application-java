@@ -12,7 +12,7 @@ public interface VolatileModel {
      *
      * @return whether the model never may be cached
      */
-    default boolean isCacheable() {
+    default boolean canBeCached() {
         return !this.getClass().isAnnotationPresent(NeverCached.class) && isStaticModel();
     }
 

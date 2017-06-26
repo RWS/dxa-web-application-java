@@ -10,7 +10,6 @@ import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.dxa.caching.wrapper.EntitiesCache;
-import com.sdl.dxa.caching.wrapper.PagesCache;
 import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
@@ -229,9 +228,7 @@ public class DefaultModelBuilderTest {
         @Bean
         public PagesCopyingCache pagesCopyingCache() {
             LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
-            PagesCache pageCache = new PagesCache();
-            PagesCopyingCache copyingCache = new PagesCopyingCache(pageCache);
-            pageCache.setKeyGenerator(keyGenerator);
+            PagesCopyingCache copyingCache = new PagesCopyingCache();
             copyingCache.setKeyGenerator(keyGenerator);
             return spy(copyingCache);
         }

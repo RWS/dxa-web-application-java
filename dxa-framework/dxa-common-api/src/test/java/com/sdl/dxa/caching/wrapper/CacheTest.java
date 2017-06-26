@@ -45,7 +45,7 @@ public class CacheTest {
 
     @Test
     public void shouldReturnCache() {
-        shouldReturnNeededCache(PagesCache::new, "pages");
+        shouldReturnNeededCache(PagesCopyingCache::new, "pages");
 
         shouldReturnNeededCache(EntitiesCache::new, "entities");
     }
@@ -53,10 +53,9 @@ public class CacheTest {
     @Test
     public void shouldDelegateKeyCalculationToConcreteCaches() {
         //given
-        PagesCache pagesCache = new PagesCache();
-        PagesCopyingCache pagesCopyingCache = new PagesCopyingCache(pagesCache);
+        PagesCopyingCache pagesCopyingCache = new PagesCopyingCache();
         EntitiesCache entitiesCache = new EntitiesCache();
-        pagesCache.setKeyGenerator(keyGenerator);
+        pagesCopyingCache.setKeyGenerator(keyGenerator);
         pagesCopyingCache.setKeyGenerator(keyGenerator);
         entitiesCache.setKeyGenerator(keyGenerator);
         MvcModelData mvcData = new MvcModelData("a", "a", "a", "c", "v", null);
@@ -66,13 +65,11 @@ public class CacheTest {
                 .setMvcData(mvcData);
 
         //when
-        Object pagesCacheKey = pagesCache.getSpecificKey(pageData);
         Object pagesCopyingCacheKey = pagesCopyingCache.getSpecificKey(pageData);
         Object entitiesCacheKey = entitiesCache.getSpecificKey(entityMvcData);
 
         //then
-        assertEquals(pagesCopyingCacheKey, pagesCacheKey);
-        assertEquals(keyGenerator.generate("/url", mvcData), pagesCacheKey);
+        assertEquals(keyGenerator.generate("/url", mvcData), pagesCopyingCacheKey);
         assertEquals(keyGenerator.generate("1", "2", mvcData), entitiesCacheKey);
     }
 

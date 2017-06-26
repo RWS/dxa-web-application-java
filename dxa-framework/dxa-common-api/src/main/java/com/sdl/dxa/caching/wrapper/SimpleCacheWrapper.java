@@ -5,8 +5,10 @@ import com.sdl.dxa.caching.NeverCached;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.cache.Cache;
+import javax.cache.CacheManager;
 
 /**
  * Wrapper on {@link Cache}.
@@ -14,20 +16,37 @@ import javax.cache.Cache;
  * @param <V> value type of the cache
  */
 @Slf4j
-public abstract class SimpleCacheWrapper<V> {
+public abstract class SimpleCacheWrapper<K, V> {
 
-    private final LocalizationAwareKeyGenerator keyGenerator;
+    private LocalizationAwareKeyGenerator keyGenerator;
 
-    SimpleCacheWrapper(LocalizationAwareKeyGenerator keyGenerator) {
+    private Cache<Object, V> cache;
+
+    @Autowired
+    public void setKeyGenerator(LocalizationAwareKeyGenerator keyGenerator) {
         this.keyGenerator = keyGenerator;
     }
+
+    @Autowired(required = false) // cannot autowire in constructor because CacheManager may not exist
+    public void setCacheManager(CacheManager cacheManager) {
+        cache = cacheManager == null ? null : cacheManager.getCache(getCacheName());
+    }
+
+    /**
+     * Returns current cache name.
+     *
+     * @return cache name
+     */
+    public abstract String getCacheName();
 
     /**
      * Returns current cache instance.
      *
      * @return current cache for model
      */
-    public abstract Cache<Object, V> getCache();
+    public Cache<Object, V> getCache() {
+        return this.cache;
+    }
 
     /**
      * Reports if caching is enabled.
@@ -41,12 +60,12 @@ public abstract class SimpleCacheWrapper<V> {
     /**
      * Checks if conditional key doesn't prevent caching and procedd wth {@link #addAndGet(Object, Object)}.
      *
-     * @param key   conditional key with a key formed by {@link #getKey(Object...)} and a flag whether this needs to be cached
+     * @param key   conditional key with a key formed by {@link #getSpecificKey(Object, Object...)} and a flag whether this needs to be cached
      * @param value value to cache
      * @return value put in cache
      */
     public V addAndGet(@NotNull ConditionalKey key, V value) {
-        if (key.isSkipCaching()) {
+        if (key.isSkipCaching() || (value instanceof VolatileModel && !((VolatileModel) value).canBeCached())) {
             log.trace("Value for key {} is not cached", key);
             return value;
         }
@@ -58,7 +77,7 @@ public abstract class SimpleCacheWrapper<V> {
      * Puts the given value into cache unless the value class is annotated with {@link NeverCached}.
      *
      * @param value value to cache
-     * @param key   key formed by {@link #getKey(Object...)}
+     * @param key   key formed by {@link #getSpecificKey(Object, Object...)}
      * @return value put in cache
      */
     public V addAndGet(Object key, V value) {
@@ -71,16 +90,15 @@ public abstract class SimpleCacheWrapper<V> {
             return value;
         }
 
-        Cache<Object, V> cache = getCache();
-        cache.put(key, value);
-        _logPut(key, cache.getName());
+        getCache().put(key, value);
+        _logPut(key, getCache().getName());
         return value;
     }
 
     /**
      * Gets a value from cache if found or {@code null} otherwise.
      *
-     * @param key key formed by {@link #getKey(Object...)}
+     * @param key key formed by {@link #getSpecificKey(Object, Object...)}
      * @return value from cache of {@code null} if not found
      */
     @Nullable
@@ -91,17 +109,16 @@ public abstract class SimpleCacheWrapper<V> {
     /**
      * Constructs the key value used in this cache.
      *
+     * @param keyBase   base required object to construct specific key
      * @param keyParams set of params to form the key
      * @return the cache key
      */
-    protected Object getKey(Object... keyParams) {
-        return this.keyGenerator.generate(keyParams);
-    }
+    public abstract Object getSpecificKey(K keyBase, Object... keyParams);
 
     /**
      * Returns whether caching is enabled and the key based on list of params is cached.
      *
-     * @param key key formed by {@link #getKey(Object...)}
+     * @param key key formed by {@link #getSpecificKey(Object, Object...)}
      * @return whether key is in cache
      */
     public boolean containsKey(Object key) {
@@ -115,6 +132,10 @@ public abstract class SimpleCacheWrapper<V> {
             _logMiss(key, getCache().getName());
         }
         return contains;
+    }
+
+    protected Object getKey(Object... keyParams) {
+        return this.keyGenerator.generate(keyParams);
     }
 
     private void _logPut(Object key, String cacheName) {

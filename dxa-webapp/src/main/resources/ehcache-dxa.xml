@@ -24,4 +24,6 @@
     <cache alias="entities" uses-template="default"/>
 
     <cache alias="defaultCache" uses-template="default"/>
+
+    <cache alias="output" uses-template="default"/>
 </config>

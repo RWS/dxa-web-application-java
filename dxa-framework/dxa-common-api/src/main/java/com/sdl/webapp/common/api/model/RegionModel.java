@@ -39,4 +39,6 @@ public interface RegionModel extends ViewModel, FeedItemsProvider, CanFilterEnti
      * @param entity an entity to add
      */
     void addEntity(EntityModel entity);
+
+    RegionModel deepCopy();
 }

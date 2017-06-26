@@ -84,6 +84,17 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     @Setter
     private RegionModelSet regions = new RegionModelSetImpl();
 
+    public RegionModelImpl(RegionModel other) {
+        super(other);
+        this.name = other.getName();
+        if (other.getEntities() != null) {
+            this.entities.addAll(other.getEntities());
+        }
+        if (other.getRegions() != null) {
+            this.regions.addAll(other.getRegions());
+        }
+    }
+
     /**
      * <p>Constructor for RegionModelImpl.</p>
      *
@@ -152,6 +163,11 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
             log.warn("Add entity with id null, this might lead to errors! Entity: {}", entity);
         }
         this.entities.add(entity);
+    }
+
+    @Override
+    public RegionModel deepCopy() {
+        return new RegionModelImpl(this);
     }
 
     @Override

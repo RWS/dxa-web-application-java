@@ -10,7 +10,6 @@ import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.dxa.caching.wrapper.EntitiesCache;
-import com.sdl.dxa.caching.wrapper.PagesCache;
 import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
@@ -183,7 +182,7 @@ public class DefaultModelBuilderTest {
 
 //        ((ItemList) pageModel.getRegions().get("Hero").getEntity("1472"))
 
-        verify(pagesCopyingCache).containsKey(eq(pagesCopyingCache.getKey(pageModelData)));
+        verify(pagesCopyingCache).containsKey(eq(pagesCopyingCache.getSpecificKey(pageModelData)));
     }
 
     private void assertEqualsAndNotNull(Object expected, Object actual) {
@@ -229,13 +228,17 @@ public class DefaultModelBuilderTest {
         @Bean
         public PagesCopyingCache pagesCopyingCache() {
             LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
-            return spy(new PagesCopyingCache(keyGenerator, new PagesCache(keyGenerator)));
+            PagesCopyingCache copyingCache = new PagesCopyingCache();
+            copyingCache.setKeyGenerator(keyGenerator);
+            return spy(copyingCache);
         }
 
         @Bean
         public EntitiesCache entitiesCache() {
             LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
-            return new EntitiesCache(keyGenerator);
+            EntitiesCache entitiesCache = new EntitiesCache();
+            entitiesCache.setKeyGenerator(keyGenerator);
+            return entitiesCache;
         }
 
         @Bean

@@ -15,6 +15,7 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -66,16 +67,20 @@ public class MvcDataImpl implements MvcData {
     @Deprecated
     private Map<String, Object> metadata = new HashMap<>();
 
-    protected MvcDataImpl(MvcData mvcData) {
-        this.controllerAreaName = mvcData.getControllerAreaName();
-        this.controllerName = mvcData.getControllerName();
-        this.actionName = mvcData.getActionName();
-        this.areaName = mvcData.getAreaName();
-        this.viewName = mvcData.getViewName();
-        this.regionAreaName = mvcData.getRegionAreaName();
-        this.regionName = mvcData.getRegionName();
-        this.routeValues = mvcData.getRouteValues();
-        this.metadata = mvcData.getMetadata();
+    public MvcDataImpl(@NotNull MvcData other) {
+        this.controllerAreaName = other.getControllerAreaName();
+        this.controllerName = other.getControllerName();
+        this.actionName = other.getActionName();
+        this.areaName = other.getAreaName();
+        this.viewName = other.getViewName();
+        this.regionAreaName = other.getRegionAreaName();
+        this.regionName = other.getRegionName();
+        if (other.getRouteValues() != null) {
+            this.routeValues.putAll(other.getRouteValues());
+        }
+        if (other.getMetadata() != null) {
+            this.metadata.putAll(other.getRouteValues());
+        }
     }
 
     public static MvcDataImplBuilder newBuilder() {
@@ -93,6 +98,11 @@ public class MvcDataImpl implements MvcData {
     @Override
     public String getControllerAreaName() {
         return INCLUDE_CONTROLLERS.contains(getControllerName()) ? FRAMEWORK_CONTROLLER_MAPPING : controllerAreaName;
+    }
+
+    @Override
+    public MvcData deepCopy() {
+        return new MvcDataImpl(this);
     }
 
     public void addMetadataValue(String key, Object obj) {

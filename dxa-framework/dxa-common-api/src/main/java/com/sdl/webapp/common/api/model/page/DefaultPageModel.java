@@ -52,17 +52,23 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     @JsonProperty("Regions")
     protected RegionModelSet regions = new RegionModelSetImpl();
 
-    public DefaultPageModel(PageModel pageModel) {
-        this.id = pageModel.getId();
-        this.name = pageModel.getName();
-        this.title = pageModel.getTitle();
-        this.url = pageModel.getUrl();
-        this.regions.addAll(pageModel.getRegions());
-        this.meta.putAll(pageModel.getMeta());
+    @JsonIgnore
+    private boolean staticModel;
 
-        setHtmlClasses(pageModel.getHtmlClasses());
-        setMvcData(pageModel.getMvcData());
-        addXpmMetadata(pageModel.getXpmMetadata());
+    public DefaultPageModel(PageModel other) {
+        super(other);
+        this.id = other.getId();
+        this.name = other.getName();
+        this.title = other.getTitle();
+        this.url = other.getUrl();
+        if (other.getMeta() != null) {
+            this.meta.putAll(other.getMeta());
+        }
+        if (other.getRegions() != null) {
+            this.regions = new RegionModelSetImpl();
+            this.regions.addAll(other.getRegions());
+        }
+        this.staticModel = other.isStaticModel();
     }
 
     /**
@@ -71,6 +77,11 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     @Override
     public boolean containsRegion(String regionName) {
         return !isEmpty(this.regions) && this.regions.containsName(regionName);
+    }
+
+    @Override
+    public PageModel deepCopy() {
+        return new DefaultPageModel(this);
     }
 
     @Override

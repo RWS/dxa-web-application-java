@@ -216,10 +216,14 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                     .map(regionModelData -> createRegionModel(regionModelData, keyBuilder))
                     .forEach(pageModel.getRegions()::add);
         }
+        if (isNeverCached(pageModel)) {
+            keyBuilder.skipCaching(true);
+        }
         ConditionalKey conditionalKey = keyBuilder.build();
         pageModel.setStaticModel(!conditionalKey.isSkipCaching());
         return pagesCopyingCache.addAndGet(conditionalKey, pageModel);
     }
+
 
     @SneakyThrows({InstantiationException.class, IllegalAccessException.class})
     @Nullable
@@ -271,7 +275,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             fillViewModel(regionModel, regionModelData);
             regionModel.setMvcData(mvcData);
             ((AbstractViewModel) regionModel).setXpmMetadata(regionModel.getXpmMetadata());
-            if (regionModel.getClass().isAnnotationPresent(NeverCached.class)) {
+            if (isNeverCached(regionModel)) {
                 keyBuilder.skipCaching(true);
             }
 
@@ -303,7 +307,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     private EntityModel createEntityModel(EntityModelData entityModelData, ConditionalKeyBuilder cacheRequest) {
         try {
             EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData);
-            if (entityModel.getClass().isAnnotationPresent(NeverCached.class)) {
+            if (isNeverCached(entityModel)) {
                 cacheRequest.skipCaching(true);
             }
             return entityModel;
@@ -311,5 +315,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             log.warn("Cannot create an entity model for model data {}", entityModelData, e);
             return new ExceptionEntity(e);
         }
+    }
+
+    private boolean isNeverCached(@NotNull Object object) {
+        return object.getClass().isAnnotationPresent(NeverCached.class);
     }
 }

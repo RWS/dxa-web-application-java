@@ -36,6 +36,8 @@ public interface PageModel extends ViewModel, FeedItemsProvider, CanFilterEntiti
 
     void setXpmMetadata(Map<String, Object> xpmMetaData);
 
+    PageModel deepCopy();
+
     /**
      * <p>Implementors of this interface may want to save some data in a servlet response.</p>
      * <p>It is a workaround that might be removed in a future in case the better solution is found. So preferably

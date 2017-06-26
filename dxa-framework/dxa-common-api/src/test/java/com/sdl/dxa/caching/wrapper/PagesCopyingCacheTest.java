@@ -1,11 +1,14 @@
 package com.sdl.dxa.caching.wrapper;
 
 import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import org.junit.Test;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -29,5 +32,25 @@ public class PagesCopyingCacheTest {
 
         //then
         assertSame(cache, actual);
+    }
+
+    @Test
+    public void shouldCreateItsCopy() {
+        //given 
+        DefaultPageModel pageModel = new DefaultPageModel();
+        pageModel.setId("id");
+        pageModel.setName("name");
+        pageModel.setUrl("url");
+        DefaultPageModel expectedCopy = new DefaultPageModel(pageModel);
+
+        //when
+        PageModel actualCopy = new PagesCopyingCache().copy(pageModel);
+
+        //then
+        assertNotSame(pageModel, expectedCopy);
+        assertNotSame(actualCopy, expectedCopy);
+        assertNotSame(actualCopy, pageModel);
+        assertEquals(expectedCopy, pageModel);
+        assertEquals(actualCopy, pageModel);
     }
 }

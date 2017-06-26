@@ -23,6 +23,8 @@ public interface MvcData {
 
     Map<String, String> getRouteValues();
 
+    MvcData deepCopy();
+
     /**
      * <p>Returns a map of metadata for current MvcData.</p>
      * todo dxa2 will return a copy

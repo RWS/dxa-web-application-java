@@ -1,6 +1,5 @@
 package com.sdl.dxa.caching.wrapper;
 
-import com.rits.cloning.Cloner;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,16 +17,19 @@ public abstract class CopyingCache<K, V> extends SimpleCacheWrapper<K, V> {
      */
     @Override
     public V addAndGet(Object key, V value) {
-        return _clone(super.addAndGet(key, value));
+        return _checkAndCopy(super.addAndGet(key, value));
     }
 
     @Nullable
     @Override
     public V get(Object key) {
-        return _clone(super.get(key));
+        return _checkAndCopy(super.get(key));
     }
 
-    private V _clone(V value) {
-        return isCachingEnabled() ? new Cloner().deepClone(value) : value;
+    protected abstract V copy(V value);
+
+    private V _checkAndCopy(V value) {
+        return isCachingEnabled() ? copy(value) : value;
     }
+
 }

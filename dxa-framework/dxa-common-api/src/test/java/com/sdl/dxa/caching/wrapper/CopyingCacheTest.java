@@ -71,14 +71,19 @@ public class CopyingCacheTest {
     @Test
     public void shouldReturnValue_IfCachingDisabled() {
         //given
-        CopyingCache<Object, TestingValue> cache = new CopyingCache<Object, TestingValue>() {
+        CopyingCache<Object, Object> cache = new CopyingCache<Object, Object>() {
+            @Override
+            protected Object copy(Object value) {
+                return new TestingValue(((TestingValue) value).field);
+            }
+
             @Override
             public String getCacheName() {
                 return "test";
             }
 
             @Override
-            public Cache<Object, TestingValue> getCache() {
+            public Cache<Object, Object> getCache() {
                 return null;
             }
 
@@ -90,7 +95,7 @@ public class CopyingCacheTest {
         TestingValue value = new TestingValue(1);
 
         //when
-        TestingValue first = cache.addAndGet("key", value);
+        Object first = cache.addAndGet("key", value);
 
         //then
         assertFalse(cache.containsKey("key"));
@@ -142,6 +147,11 @@ public class CopyingCacheTest {
         public Object getSpecificKey(Object keyBase, Object... keyParams) {
             return super.getKey(keyBase);
         }
+
+        @Override
+        protected Object copy(Object value) {
+            return new TestingValue(((TestingValue) value).field);
+        }
     }
 
     @AllArgsConstructor
@@ -151,11 +161,14 @@ public class CopyingCacheTest {
         int field;
     }
 
-    @AllArgsConstructor
-    @EqualsAndHashCode
+    @EqualsAndHashCode(callSuper = true)
     @NeverCached(qualifier = "name")
-    private static class NeverCachedValue {
+    private static class NeverCachedValue extends TestingValue {
 
         int field;
+
+        public NeverCachedValue(int field) {
+            super(field);
+        }
     }
 }

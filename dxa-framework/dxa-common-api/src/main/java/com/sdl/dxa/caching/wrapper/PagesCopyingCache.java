@@ -16,4 +16,9 @@ public class PagesCopyingCache extends CopyingCache<PageModelData, PageModel> {
     public Object getSpecificKey(PageModelData pageModelData, Object... keyParams) {
         return getKey(pageModelData.getUrlPath(), pageModelData.getMvcData());
     }
+
+    @Override
+    protected PageModel copy(PageModel value) {
+        return value.deepCopy();
+    }
 }

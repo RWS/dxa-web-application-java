@@ -73,11 +73,6 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>uk.com.robust-it</groupId>
-            <artifactId>cloning</artifactId>
-        </dependency>
-
         <!-- Joda Time -->
         <dependency>
             <groupId>joda-time</groupId>

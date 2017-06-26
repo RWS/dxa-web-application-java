@@ -201,6 +201,11 @@ public class RegionModelSetImplTest {
         }
 
         @Override
+        public RegionModel deepCopy() {
+            return null;
+        }
+
+        @Override
         public String getXpmMarkup(Localization localization) {
             return null;
         }

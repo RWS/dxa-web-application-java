@@ -1,10 +1,11 @@
 package com.sdl.webapp.common.api.content;
 
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
+
 /**
  * Thrown when a static content provider cannot find the requested static content.
  */
-//todo dxa2 move to appropriate package
-public class StaticContentNotFoundException extends ContentProviderException {
+public class StaticContentNotFoundException extends DxaItemNotFoundException {
 
     public StaticContentNotFoundException() {
     }

@@ -1,11 +1,14 @@
 package com.sdl.dxa.builder.configuration.parameters
 
+import org.jdom2.Namespace
+
 class XmlProperty extends Property {
 
     private Map<String, String> xmlAddNodesMap = [:]
     private Map<String, String> xmlAddAttributesMap = [:]
     private String[] xmlModifyArray = []
 
+    Namespace namespace
     boolean canBeEmpty
     Map<String, Tuple2<String, String>> addNodesMap = [:]
     Map<String, Tuple2<String, String>> addAttributesMap = [:]
@@ -23,6 +26,12 @@ class XmlProperty extends Property {
 
     XmlProperty thatModifiesXml(String... xmlModifyNodes) {
         this.xmlModifyArray = xmlModifyNodes
+        this
+    }
+
+    XmlProperty thatModifiesXml(Namespace namespace, String... xmlModifyNodes) {
+        this.xmlModifyArray = xmlModifyNodes
+        this.namespace = namespace
         this
     }
 

@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.FluentIterable;
+import com.sdl.dxa.caching.NeverCached;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
+@NeverCached(qualifier = "DynamicList")
 public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery> extends AbstractEntityModel implements FeedItemsProvider {
 
     @JsonProperty("Start")

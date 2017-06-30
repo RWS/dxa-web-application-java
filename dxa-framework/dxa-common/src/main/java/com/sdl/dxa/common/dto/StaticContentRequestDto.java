@@ -34,6 +34,6 @@ public class StaticContentRequestDto {
 
     public static class StaticContentRequestDtoBuilder {
 
-        private String baseUrl = "http://";
+        private String baseUrl = "http://localhost/";
     }
 }

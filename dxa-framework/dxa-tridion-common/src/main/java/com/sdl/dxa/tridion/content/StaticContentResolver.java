@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -168,7 +169,7 @@ public class StaticContentResolver {
 
             @Override
             public InputStream getContent() throws IOException {
-                return new FileInputStream(file);
+                return new BufferedInputStream(new FileInputStream(file));
             }
 
             @Override

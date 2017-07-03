@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
-import com.sdl.web.api.content.BinaryContentRetriever;
-import com.sdl.web.api.dynamic.DynamicMetaRetriever;
+import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -37,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -71,13 +69,11 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
     @Autowired
     public DefaultContentProvider(WebRequestContext webRequestContext,
                                   LinkResolver linkResolver,
-                                  WebApplicationContext webApplicationContext,
-                                  DynamicMetaRetriever dynamicMetaRetriever,
-                                  BinaryContentRetriever binaryContentRetriever,
+                                  StaticContentResolver staticContentResolver,
                                   PageFactory dd4tPageFactory,
                                   ComponentPresentationFactory dd4tComponentPresentationFactory,
                                   ModelBuilderPipeline modelBuilderPipeline) {
-        super(webRequestContext, linkResolver, webApplicationContext, dynamicMetaRetriever, binaryContentRetriever);
+        super(webRequestContext, linkResolver, staticContentResolver);
         this.webRequestContext = webRequestContext;
         this.dd4tPageFactory = dd4tPageFactory;
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;

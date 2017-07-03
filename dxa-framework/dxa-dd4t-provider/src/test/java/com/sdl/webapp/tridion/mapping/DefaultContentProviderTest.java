@@ -2,7 +2,7 @@ package com.sdl.webapp.tridion.mapping;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import com.sdl.web.api.content.BinaryContentRetriever;
+import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -13,8 +13,6 @@ import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata.MetaEntry;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
-import com.sdl.webapp.common.util.ImageUtils;
-import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.Field;
@@ -41,10 +39,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.context.WebApplicationContext;
 
-import java.io.File;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,7 +50,6 @@ import java.util.Map;
 
 import static com.sdl.webapp.common.util.TcmUtils.buildTcmUri;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -64,7 +58,6 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -122,80 +115,6 @@ public class DefaultContentProviderTest {
 
         //then
         //exception is thrown
-    }
-
-    @Test
-    public void shouldCreateAllFoldersForNonExisting() throws ContentProviderException {
-        //given
-        File file = mock(File.class);
-        when(file.exists()).thenReturn(false);
-
-        File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(parent.exists()).thenReturn(true);
-
-        //when
-        //file.exists = false, parent.exists = true
-        boolean notExist = AbstractDefaultContentProvider.isToBeRefreshed(file, 1000L);
-
-        //then
-        assertTrue(notExist);
-    }
-
-    @Test
-    public void shouldSayFalseForFreshFile() throws ContentProviderException {
-        //given
-        File file = mock(File.class);
-        when(file.exists()).thenReturn(true);
-        when(file.lastModified()).thenReturn(1000L);
-        File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(parent.exists()).thenReturn(false);
-        when(parent.mkdirs()).thenReturn(true);
-
-        //when
-        //file.exists = false, parent.exists = false, parent.mkdirs = true
-        boolean newFile = AbstractDefaultContentProvider.isToBeRefreshed(file, 500L);
-
-        //then
-        assertFalse(newFile);
-    }
-
-    @Test(expected = ContentProviderException.class)
-    public void shouldFailForProblemsWithDirs() throws ContentProviderException {
-        //given
-        File file = mock(File.class);
-        when(file.exists()).thenReturn(false);
-        when(file.lastModified()).thenReturn(1000L);
-        File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(parent.exists()).thenReturn(false);
-        when(parent.mkdirs()).thenReturn(false);
-
-        //when
-        //file.exists = false, parent.exists = false, parent.mkdirs = false
-        AbstractDefaultContentProvider.isToBeRefreshed(file, 500L);
-        //then
-        //exception
-    }
-
-    @Test
-    public void shouldFindTheOldFileForRefreshFolderAction() throws ContentProviderException {
-        //given
-        File file = mock(File.class);
-        when(file.exists()).thenReturn(true);
-        when(file.lastModified()).thenReturn(1000L);
-        File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(parent.exists()).thenReturn(true);
-
-        //when
-        //file.exists = true, parent.exists = true
-        boolean oldFile = AbstractDefaultContentProvider.isToBeRefreshed(file, 1500L);
-
-        //then
-        verify(parent, never()).mkdirs();
-        assertTrue(oldFile);
     }
 
     @SuppressWarnings("unchecked")
@@ -296,14 +215,8 @@ public class DefaultContentProviderTest {
 
         @Bean
         public DefaultContentProvider defaultProvider() {
-            return new DefaultContentProvider(webRequestContext(), linkResolver(), webApplicationContext(),
-                    dynamicMetaRetriever(), binaryContentRetriever(),
+            return new DefaultContentProvider(webRequestContext(), linkResolver(), staticContentResolver(),
                     dd4tPageFactory(), componentPresentationFactory(), modelBuilderPipeline()) {
-                @Override
-                protected StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException {
-                    return mock(AbstractDefaultContentProvider.StaticContentFile.class);
-                }
-
                 @Override
                 protected List<ComponentMetadata> executeMetadataQuery(SimpleBrokerQuery query) {
                     return Collections.emptyList();
@@ -319,23 +232,12 @@ public class DefaultContentProviderTest {
         }
 
         @Bean
+        public StaticContentResolver staticContentResolver() {
+            return mock(StaticContentResolver.class);
+        }
+        @Bean
         public LinkResolver linkResolver() {
             return mock(LinkResolver.class);
-        }
-
-        @Bean
-        public WebApplicationContext webApplicationContext() {
-            return mock(WebApplicationContext.class);
-        }
-
-        @Bean
-        public DynamicMetaRetriever dynamicMetaRetriever() {
-            return mock(DynamicMetaRetriever.class);
-        }
-
-        @Bean
-        public BinaryContentRetriever binaryContentRetriever() {
-            return mock(BinaryContentRetriever.class);
         }
 
         @Bean

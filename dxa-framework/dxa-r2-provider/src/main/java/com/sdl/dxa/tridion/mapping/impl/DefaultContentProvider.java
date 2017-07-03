@@ -4,10 +4,9 @@ import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.PageRequestDto;
+import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.modelservice.ModelService;
-import com.sdl.web.api.content.BinaryContentRetriever;
-import com.sdl.web.api.dynamic.DynamicMetaRetriever;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -22,7 +21,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,11 +38,9 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
     private ModelService modelService;
 
     public DefaultContentProvider(WebRequestContext webRequestContext,
-                                  LinkResolver linkResolver,
-                                  WebApplicationContext webApplicationContext,
-                                  DynamicMetaRetriever dynamicMetaRetriever,
-                                  BinaryContentRetriever binaryContentRetriever) {
-        super(webRequestContext, linkResolver, webApplicationContext, dynamicMetaRetriever, binaryContentRetriever);
+                                  StaticContentResolver staticContentResolver,
+                                  LinkResolver linkResolver) {
+        super(webRequestContext, linkResolver, staticContentResolver);
     }
 
     @Override

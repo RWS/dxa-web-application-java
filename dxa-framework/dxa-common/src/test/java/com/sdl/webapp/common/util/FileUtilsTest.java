@@ -133,4 +133,79 @@ public class FileUtilsTest {
         assertTrue(created);
         assertFalse(notCreated);
     }
+
+    @Test
+    public void shouldCreateAllFoldersForNonExisting() throws ContentProviderException {
+        //given
+        File file = mock(File.class);
+        when(file.exists()).thenReturn(false);
+
+        File parent = mock(File.class);
+        when(file.getParentFile()).thenReturn(parent);
+        when(parent.exists()).thenReturn(true);
+
+        //when
+        //file.exists = false, parent.exists = true
+        boolean notExist = FileUtils.isToBeRefreshed(file, 1000L);
+
+        //then
+        assertTrue(notExist);
+    }
+
+    @Test
+    public void shouldSayFalseForFreshFile() throws ContentProviderException {
+        //given
+        File file = mock(File.class);
+        when(file.exists()).thenReturn(true);
+        when(file.lastModified()).thenReturn(1000L);
+        File parent = mock(File.class);
+        when(file.getParentFile()).thenReturn(parent);
+        when(parent.exists()).thenReturn(false);
+        when(parent.mkdirs()).thenReturn(true);
+
+        //when
+        //file.exists = false, parent.exists = false, parent.mkdirs = true
+        boolean newFile = FileUtils.isToBeRefreshed(file, 500L);
+
+        //then
+        assertFalse(newFile);
+    }
+
+    @Test(expected = ContentProviderException.class)
+    public void shouldFailForProblemsWithDirs() throws ContentProviderException {
+        //given
+        File file = mock(File.class);
+        when(file.exists()).thenReturn(false);
+        when(file.lastModified()).thenReturn(1000L);
+        File parent = mock(File.class);
+        when(file.getParentFile()).thenReturn(parent);
+        when(parent.exists()).thenReturn(false);
+        when(parent.mkdirs()).thenReturn(false);
+
+        //when
+        //file.exists = false, parent.exists = false, parent.mkdirs = false
+        FileUtils.isToBeRefreshed(file, 500L);
+        //then
+        //exception
+    }
+
+    @Test
+    public void shouldFindTheOldFileForRefreshFolderAction() throws ContentProviderException {
+        //given
+        File file = mock(File.class);
+        when(file.exists()).thenReturn(true);
+        when(file.lastModified()).thenReturn(1000L);
+        File parent = mock(File.class);
+        when(file.getParentFile()).thenReturn(parent);
+        when(parent.exists()).thenReturn(true);
+
+        //when
+        //file.exists = true, parent.exists = true
+        boolean oldFile = FileUtils.isToBeRefreshed(file, 1500L);
+
+        //then
+        verify(parent, never()).mkdirs();
+        assertTrue(oldFile);
+    }
+
 }

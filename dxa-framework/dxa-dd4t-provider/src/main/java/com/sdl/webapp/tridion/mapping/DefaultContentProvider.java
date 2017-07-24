@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion.mapping;
 
-import com.sdl.web.api.content.BinaryContentRetriever;
-import com.sdl.web.api.dynamic.DynamicMetaRetriever;
+import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -37,7 +36,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
 
 import java.io.UnsupportedEncodingException;
@@ -71,81 +69,15 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
     @Autowired
     public DefaultContentProvider(WebRequestContext webRequestContext,
                                   LinkResolver linkResolver,
-                                  WebApplicationContext webApplicationContext,
-                                  DynamicMetaRetriever dynamicMetaRetriever,
-                                  BinaryContentRetriever binaryContentRetriever,
+                                  StaticContentResolver staticContentResolver,
                                   PageFactory dd4tPageFactory,
                                   ComponentPresentationFactory dd4tComponentPresentationFactory,
                                   ModelBuilderPipeline modelBuilderPipeline) {
-        super(webRequestContext, linkResolver, webApplicationContext, dynamicMetaRetriever, binaryContentRetriever);
+        super(webRequestContext, linkResolver, staticContentResolver);
         this.webRequestContext = webRequestContext;
         this.dd4tPageFactory = dd4tPageFactory;
         this.dd4tComponentPresentationFactory = dd4tComponentPresentationFactory;
         this.modelBuilderPipeline = modelBuilderPipeline;
-    }
-
-    @Override
-    @SneakyThrows(UnsupportedEncodingException.class)
-    protected PageModel _loadPage(String _path, Localization localization) throws ContentProviderException {
-        return LocalizationUtils.findPageByPath(UriUtils.encodePath(_path, "UTF-8"), localization, (path, publicationId) -> {
-            final org.dd4t.contentmodel.Page genericPage;
-            try {
-                synchronized (LOCK) {
-                    if (dd4tPageFactory.isPagePublished(path, publicationId)) {
-                        genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
-                    } else {
-                        return null;
-                    }
-                }
-            } catch (ItemNotFoundException e) {
-                log.debug("Page not found: [{}] {}", publicationId, path, e);
-                return null;
-            } catch (FactoryException e) {
-                throw new ContentProviderException("Exception while getting page model for: [" + publicationId +
-                        "] " + path, e);
-            }
-
-            PageModel pageModel = modelBuilderPipeline.createPageModel(genericPage, webRequestContext.getLocalization(), DefaultContentProvider.this);
-            if (pageModel != null) {
-                pageModel.setUrl(stripDefaultExtension(path));
-                webRequestContext.setPage(pageModel);
-            }
-            return pageModel;
-        });
-    }
-
-    @NotNull
-    @Override
-    protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
-        Localization localization = webRequestContext.getLocalization();
-        String[] idParts = componentId.split("-");
-        if (idParts.length != 2) {
-            throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", componentId));
-        }
-
-        String componentUri = TcmUtils.buildTcmUri(localization.getId(), idParts[0]);
-        String templateUri = TcmUtils.buildTemplateTcmUri(localization.getId(), idParts[1]);
-
-        try {
-            final ComponentPresentation componentPresentation;
-            synchronized (LOCK) {
-                componentPresentation = this.dd4tComponentPresentationFactory.getComponentPresentation(componentUri, templateUri);
-            }
-            return modelBuilderPipeline.createEntityModel(componentPresentation, localization);
-        } catch (FactoryException e) {
-            throw new DxaItemNotFoundException(componentUri, e);
-        }
-    }
-
-    @NotNull
-    @Override
-    protected <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws ContentProviderException {
-        List<T> result = new ArrayList<>();
-        for (ComponentMetadata metadata : components) {
-            @NotNull Component component = constructComponentFromMetadata(metadata);
-            result.add(modelBuilderPipeline.createEntityModel(component, localization, entityClass));
-        }
-        return result;
     }
 
     @NotNull
@@ -236,5 +168,68 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
         embeddedField.setEmbeddedValues(embeddedValues);
 
         return embeddedField;
+    }
+
+    @Override
+    @SneakyThrows(UnsupportedEncodingException.class)
+    protected PageModel _loadPage(String _path, Localization localization) throws ContentProviderException {
+        return LocalizationUtils.findPageByPath(UriUtils.encodePath(_path, "UTF-8"), localization, (path, publicationId) -> {
+            final org.dd4t.contentmodel.Page genericPage;
+            try {
+                synchronized (LOCK) {
+                    if (dd4tPageFactory.isPagePublished(path, publicationId)) {
+                        genericPage = dd4tPageFactory.findPageByUrl(path, publicationId);
+                    } else {
+                        return null;
+                    }
+                }
+            } catch (ItemNotFoundException e) {
+                log.debug("Page not found: [{}] {}", publicationId, path, e);
+                return null;
+            } catch (FactoryException e) {
+                throw new ContentProviderException("Exception while getting page model for: [" + publicationId +
+                        "] " + path, e);
+            }
+
+            PageModel pageModel = modelBuilderPipeline.createPageModel(genericPage, webRequestContext.getLocalization(), DefaultContentProvider.this);
+            if (pageModel != null) {
+                pageModel.setUrl(stripDefaultExtension(path));
+            }
+            return pageModel;
+        });
+    }
+
+    @NotNull
+    @Override
+    protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
+        Localization localization = webRequestContext.getLocalization();
+        String[] idParts = componentId.split("-");
+        if (idParts.length != 2) {
+            throw new IllegalArgumentException(String.format("Invalid Entity Identifier '%s'. Must be in format ComponentID-TemplateID.", componentId));
+        }
+
+        String componentUri = TcmUtils.buildTcmUri(localization.getId(), idParts[0]);
+        String templateUri = TcmUtils.buildTemplateTcmUri(localization.getId(), idParts[1]);
+
+        try {
+            final ComponentPresentation componentPresentation;
+            synchronized (LOCK) {
+                componentPresentation = this.dd4tComponentPresentationFactory.getComponentPresentation(componentUri, templateUri);
+            }
+            return modelBuilderPipeline.createEntityModel(componentPresentation, localization);
+        } catch (FactoryException e) {
+            throw new DxaItemNotFoundException(componentUri, e);
+        }
+    }
+
+    @NotNull
+    @Override
+    protected <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws ContentProviderException {
+        List<T> result = new ArrayList<>();
+        for (ComponentMetadata metadata : components) {
+            @NotNull Component component = constructComponentFromMetadata(metadata);
+            result.add(modelBuilderPipeline.createEntityModel(component, localization, entityClass));
+        }
+        return result;
     }
 }

@@ -2,18 +2,19 @@ package com.sdl.dxa.tridion.mapping.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
+import com.sdl.dxa.caching.wrapper.EntitiesCache;
+import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
 import com.sdl.dxa.tridion.mapping.converter.StringConverter;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
@@ -49,24 +50,22 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = DefaultModelBuilderTest.SpringConfigurationContext.class)
 @ActiveProfiles("test")
 public class DefaultModelBuilderTest {
 
@@ -75,6 +74,12 @@ public class DefaultModelBuilderTest {
 
     @Autowired
     private DefaultModelBuilder modelBuilder;
+
+    @Autowired
+    private PagesCopyingCache pagesCopyingCache;
+
+    @Autowired
+    private EntitiesCache entitiesCache;
 
     @Test
     public void shouldBuildPageModel_OutOfModelDataR2() throws IOException {
@@ -111,7 +116,7 @@ public class DefaultModelBuilderTest {
         EntityModel infoRegionEntities = infoRegion.getEntities().get(0);
         assertEqualsAndNotNull(entityModelData.getId(), infoRegionEntities.getId());
 
-        assertTrue(infoRegion.getEntities().size() == 1);
+        assertEquals(2, infoRegion.getEntities().size());
 
         // TODO
         // region(0).region(0).entity(0).Content
@@ -176,6 +181,8 @@ public class DefaultModelBuilderTest {
         //assertEqualsAndNotNull(pageModelData.getSchemaId(), pageModel.getSchemaId());
 
 //        ((ItemList) pageModel.getRegions().get("Hero").getEntity("1472"))
+
+        verify(pagesCopyingCache).containsKey(eq(pagesCopyingCache.getSpecificKey(pageModelData)));
     }
 
     private void assertEqualsAndNotNull(Object expected, Object actual) {
@@ -212,6 +219,27 @@ public class DefaultModelBuilderTest {
     @Configuration
     @Profile("test")
     public static class SpringConfigurationContext {
+
+        @Bean
+        public LocalizationAwareKeyGenerator localizationAwareKeyGenerator() {
+            return mock(LocalizationAwareKeyGenerator.class);
+        }
+
+        @Bean
+        public PagesCopyingCache pagesCopyingCache() {
+            LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
+            PagesCopyingCache copyingCache = new PagesCopyingCache();
+            copyingCache.setKeyGenerator(keyGenerator);
+            return spy(copyingCache);
+        }
+
+        @Bean
+        public EntitiesCache entitiesCache() {
+            LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
+            EntitiesCache entitiesCache = new EntitiesCache();
+            entitiesCache.setKeyGenerator(keyGenerator);
+            return entitiesCache;
+        }
 
         @Bean
         public ObjectMapper objectMapper() {
@@ -293,11 +321,6 @@ public class DefaultModelBuilderTest {
         @Bean
         public ViewModelRegistry viewModelRegistryImpl() {
             return new ViewModelRegistryImpl();
-        }
-
-        @Bean
-        public List<ConditionalEntityEvaluator> evaluatorList() {
-            return Lists.newArrayList((ConditionalEntityEvaluator) entity -> !Objects.equals(entity.getId(), "not include"));
         }
     }
 

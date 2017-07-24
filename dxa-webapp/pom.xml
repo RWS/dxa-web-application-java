@@ -5,50 +5,21 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.sdl.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>1.0.3</version>
+        <groupId>com.sdl.dxa</groupId>
+        <artifactId>dxa-oss-parent</artifactId>
+        <version>2.0.0-CTP2</version>
     </parent>
 
-    <version>2.0.0-SNAPSHOT</version>
-    <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-webapp</artifactId>
     <packaging>war</packaging>
+
     <name>DXA - Webapp</name>
     <description>Example web application for DXA</description>
-    <url>http://www.sdl.com/cxc/digital-experience/web-experience-management/digital-experience-accelerator.html</url>
 
     <properties>
-        <dxa-bom.version>2.0.0-SNAPSHOT</dxa-bom.version>
-        <dxa-release-branch>release/2.0</dxa-release-branch>
         <java-version>1.8</java-version>
+        <dxa-release-branch>release/2.0</dxa-release-branch>
     </properties>
-
-    <scm>
-        <url>https://github.com/sdl/dxa-web-application-java</url>
-        <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
-        <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
-
-    <developers>
-        <developer>
-            <id>rpannekoek</id>
-            <name>Rick Pannekoek</name>
-            <email>rpannekoek@sdl.com</email>
-            <timezone>+1</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-        <developer>
-            <id>azarakovskiy</id>
-            <name>Alexey Zarakovskiy</name>
-            <email>azarakovskiy@sdl.com</email>
-            <timezone>+1</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-    </developers>
 
     <repositories>
         <repository>
@@ -237,12 +208,13 @@
         </profile>
     </profiles>
 
+    <!-- Needed here because archetype comes without parent tag -->
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-bom</artifactId>
-                <version>${dxa-bom.version}</version>
+                <artifactId>dxa-oss-parent</artifactId>
+                <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

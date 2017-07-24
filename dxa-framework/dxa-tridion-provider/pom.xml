@@ -6,7 +6,7 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>2.0.0-SNAPSHOT</version>
+        <version>2.0.0-CTP2</version>
     </parent>
 
     <artifactId>dxa-tridion-provider</artifactId>
@@ -25,11 +25,19 @@
             <artifactId>dxa-common-impl</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-tridion-common</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.sdl.web</groupId>
             <artifactId>cil</artifactId>
             <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl</groupId>
+            <artifactId>odata_client</artifactId>
         </dependency>
 
         <!-- Spring Framework -->
@@ -44,6 +52,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -66,6 +78,16 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.cache</groupId>
+            <artifactId>cache-api</artifactId>
         </dependency>
 
         <dependency>

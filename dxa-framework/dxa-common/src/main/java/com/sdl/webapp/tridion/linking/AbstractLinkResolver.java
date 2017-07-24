@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -29,6 +30,7 @@ public abstract class AbstractLinkResolver implements LinkResolver {
     public static final String DEFAULT_PAGE_EXTENSION = PathUtils.getDefaultPageExtension();
 
     @Override
+    @Cacheable(value = "defaultCache", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary }")
     public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
 

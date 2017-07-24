@@ -2,6 +2,7 @@ package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
@@ -12,6 +13,7 @@ import java.util.Map;
 @ToString
 @NoArgsConstructor
 @Getter
+@EqualsAndHashCode
 public class MvcModelData {
 
     private String actionName;

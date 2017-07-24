@@ -72,6 +72,4 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
         Assert.notNull(entityModel, "Entity Model is null after model pipeline, model builder are not set?");
         return entityModel; //NOSONAR
     }
-
-
 }

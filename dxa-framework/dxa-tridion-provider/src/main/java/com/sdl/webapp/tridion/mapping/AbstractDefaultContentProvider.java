@@ -1,18 +1,19 @@
 package com.sdl.webapp.tridion.mapping;
 
+import com.sdl.dxa.caching.wrapper.CopyingCache;
+import com.sdl.dxa.common.dto.StaticContentRequestDto;
+import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;
-import com.sdl.web.api.content.BinaryContentRetriever;
-import com.sdl.web.api.dynamic.DynamicMetaRetriever;
 import com.sdl.web.api.meta.WebComponentMetaFactory;
 import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.StaticContentItem;
-import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -20,8 +21,6 @@ import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.util.FileUtils;
-import com.sdl.webapp.common.util.ImageUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
 import com.tridion.broker.querying.Query;
@@ -34,25 +33,14 @@ import com.tridion.broker.querying.criteria.taxonomy.TaxonomyKeywordCriteria;
 import com.tridion.broker.querying.filter.LimitFilter;
 import com.tridion.broker.querying.filter.PagingFilter;
 import com.tridion.broker.querying.sorting.SortDirection;
-import com.tridion.data.BinaryData;
-import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.NameValuePair;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.Assert;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.util.UriUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -60,53 +48,49 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static com.sdl.webapp.common.util.ImageUtils.writeToFile;
 
 @Slf4j
 public abstract class AbstractDefaultContentProvider implements ContentProvider {
-
-    private static final Object LOCK = new Object();
-
-    private static final String STATIC_FILES_DIR = "BinaryData";
-
-    private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
-
-    private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
     private final WebRequestContext webRequestContext;
 
     private final LinkResolver linkResolver;
 
-    private final WebApplicationContext webApplicationContext;
+    private final StaticContentResolver staticContentResolver;
 
-    private final DynamicMetaRetriever dynamicMetaRetriever;
-
-    private final BinaryContentRetriever binaryContentRetriever;
+    private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
     @Autowired
     public AbstractDefaultContentProvider(WebRequestContext webRequestContext,
                                           LinkResolver linkResolver,
-                                          WebApplicationContext webApplicationContext,
-                                          DynamicMetaRetriever dynamicMetaRetriever,
-                                          BinaryContentRetriever binaryContentRetriever) {
+                                          StaticContentResolver staticContentResolver) {
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
-        this.webApplicationContext = webApplicationContext;
-        this.dynamicMetaRetriever = dynamicMetaRetriever;
-        this.binaryContentRetriever = binaryContentRetriever;
+        this.staticContentResolver = staticContentResolver;
+    }
+
+    @Autowired(required = false)
+    public void setEntityEvaluators(List<ConditionalEntityEvaluator> entityEvaluators) {
+        this.entityEvaluators = entityEvaluators;
     }
 
     @Override
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
-        return _loadPage(path, localization);
+        PageModel pageModel = _loadPage(path, localization);
+
+        pageModel.filterConditionalEntities(entityEvaluators);
+        //todo dxa2 refactor this, remove usage of deprecated method
+        webRequestContext.setPage(pageModel);
+
+        return pageModel;
     }
 
-    protected abstract PageModel _loadPage(String path, Localization localization) throws ContentProviderException;
-
+    /**
+     * If you need copying cache for dynamic logic, use {@link CopyingCache}.
+     */
     @Override
     public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
         Assert.notNull(id);
@@ -116,9 +100,6 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         }
         return entityModel;
     }
-
-    @NotNull
-    protected abstract EntityModel _getEntityModel(String componentId) throws ContentProviderException;
 
     @Override
     public <T extends EntityModel> void populateDynamicList(DynamicList<T, SimpleBrokerQuery> dynamicList, Localization localization) throws ContentProviderException {
@@ -134,124 +115,22 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         }
     }
 
-    protected abstract <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException;
-
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
-        if (log.isTraceEnabled()) {
-            log.trace("getStaticContent: {} [{}] {}", path, localizationId, localizationPath);
-        }
-
-        final String contentPath;
-        if (localizationPath.length() > 1) {
-            contentPath = localizationPath + removeVersionNumber(path.startsWith(localizationPath) ?
-                    path.substring(localizationPath.length()) : path);
-        } else {
-            contentPath = removeVersionNumber(path);
-        }
-
-        final StaticContentFile staticContentFile = getStaticContentFile(contentPath, localizationId);
-
-        //noinspection ReturnOfInnerClass
-        return new StaticContentItem() {
-            @Override
-            public long getLastModified() {
-                return staticContentFile.getFile().lastModified();
-            }
-
-            @Override
-            public String getContentType() {
-                return staticContentFile.getContentType();
-            }
-
-            @Override
-            public InputStream getContent() throws IOException {
-                return new FileInputStream(staticContentFile.getFile());
-            }
-
-            @Override
-            public boolean isVersioned() {
-                return path.contains("/system/");
-            }
-        };
+        return staticContentResolver.getStaticContent(
+                StaticContentRequestDto.builder(path, localizationId)
+                        .localizationPath(localizationPath)
+                        .baseUrl(webRequestContext.getBaseUrl())
+                        .build());
     }
 
-    private static String removeVersionNumber(String path) {
-        return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
-    }
+    protected abstract PageModel _loadPage(String path, Localization localization) throws ContentProviderException;
 
-    private StaticContentFile getStaticContentFile(String path, String localizationId)
-            throws ContentProviderException {
-        String parentPath = StringUtils.join(new String[]{
-                webApplicationContext.getServletContext().getRealPath("/"), STATIC_FILES_DIR, localizationId
-        }, File.separator);
+    @NotNull
+    protected abstract EntityModel _getEntityModel(String componentId) throws ContentProviderException;
 
-        final File file = new File(parentPath, path);
-        log.trace("getStaticContentFile: {}", file);
-
-        final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
-
-        final int publicationId = Integer.parseInt(localizationId);
-        try {
-            return getStaticContentFile(file, pathInfo, publicationId);
-        } catch (IOException e) {
-            throw new ContentProviderException("Exception while getting static content for: [" + publicationId + "] "
-                    + path, e);
-        }
-    }
-
-    protected StaticContentFile getStaticContentFile(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId) throws ContentProviderException, IOException {
-        BinaryMeta binaryMeta;
-        WebComponentMetaFactory factory = new WebComponentMetaFactoryImpl(publicationId);
-        ComponentMeta componentMeta;
-        int itemId;
-
-        synchronized (LOCK) {
-            binaryMeta = dynamicMetaRetriever.getBinaryMetaByURL(prependFullUrlIfNeeded(pathInfo.getFileName()));
-            if (binaryMeta == null) {
-                throw new StaticContentNotFoundException("No binary meta found for: [" + publicationId + "] " +
-                        pathInfo.getFileName());
-            }
-            itemId = (int) binaryMeta.getURI().getItemId();
-            componentMeta = factory.getMeta(itemId);
-            if (componentMeta == null) {
-                throw new StaticContentNotFoundException("No meta meta found for: [" + publicationId + "] " +
-                        pathInfo.getFileName());
-            }
-        }
-
-        long componentTime = componentMeta.getLastPublicationDate().getTime();
-        if (isToBeRefreshed(file, componentTime)) {
-            BinaryData binaryData = binaryContentRetriever.getBinary(publicationId, itemId, binaryMeta.getVariantId());
-
-            log.debug("Writing binary content to file: {}", file);
-            writeToFile(file, pathInfo, binaryData.getBytes());
-        } else {
-            log.debug("File does not need to be refreshed: {}", file);
-        }
-
-        return new StaticContentFile(file, binaryMeta.getType());
-    }
-
-    @SneakyThrows(UnsupportedEncodingException.class)
-    private String prependFullUrlIfNeeded(String path) {
-        String baseUrl = webRequestContext.getBaseUrl();
-        if (path.contains(baseUrl)) {
-            return path;
-        }
-        return UriUtils.encodePath(baseUrl + path, "UTF-8");
-    }
-
-    static boolean isToBeRefreshed(File file, long time) throws ContentProviderException {
-        if (FileUtils.isFileOlderThan(file, time)) {
-            if (!FileUtils.parentFolderExists(file, true)) {
-                throw new ContentProviderException("Failed to create parent directory for file: " + file);
-            }
-            return true;
-        }
-        return false;
-    }
+    protected abstract <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException;
 
     protected List<String> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {
         Query query = buildQuery(simpleBrokerQuery);
@@ -386,26 +265,6 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
             default:
                 // Default is to assume that its a custom metadata date field
                 return new CustomMetaKeyColumn(simpleBrokerQuery.getSort(), MetadataType.DATE);
-        }
-    }
-
-    protected static final class StaticContentFile {
-
-        private final File file;
-
-        private final String contentType;
-
-        StaticContentFile(File file, String contentType) {
-            this.file = file;
-            this.contentType = StringUtils.isEmpty(contentType) ? DEFAULT_CONTENT_TYPE : contentType;
-        }
-
-        public File getFile() {
-            return file;
-        }
-
-        public String getContentType() {
-            return contentType;
         }
     }
 

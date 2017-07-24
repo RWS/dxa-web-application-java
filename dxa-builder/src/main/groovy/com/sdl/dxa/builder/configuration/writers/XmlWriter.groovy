@@ -3,6 +3,7 @@ package com.sdl.dxa.builder.configuration.writers
 import com.sdl.dxa.builder.configuration.parameters.XmlProperty
 import org.jdom2.Document
 import org.jdom2.Element
+import org.jdom2.filter.Filters
 import org.jdom2.input.SAXBuilder
 import org.jdom2.output.Format
 import org.jdom2.output.XMLOutputter
@@ -53,15 +54,15 @@ class XmlWriter {
         this
     }
 
-    XmlWriter addAttributes(Map<String, Tuple2<String, String>> mapToAdd) {
-        bulkEdit mapToAdd, { nodes, Tuple2<String, String> value ->
+    XmlWriter addAttributes(Map<String, Tuple2<String, String>> mapToAdd, XmlProperty xmlProperty) {
+        bulkEdit mapToAdd, xmlProperty, { nodes, Tuple2<String, String> value ->
             nodes*.setAttribute(value.first, value.second)
         }
         this
     }
 
-    XmlWriter addNodesAfter(Map<String, Tuple2<String, String>> mapToAdd) {
-        bulkEdit mapToAdd, { nodes, Tuple2<String, String> value ->
+    XmlWriter addNodesAfter(Map<String, Tuple2<String, String>> mapToAdd, XmlProperty xmlProperty) {
+        bulkEdit mapToAdd, xmlProperty, { nodes, Tuple2<String, String> value ->
             def tagName = value.first
             def tagValue = value.second
 
@@ -73,22 +74,41 @@ class XmlWriter {
         this
     }
 
-    XmlWriter modifyByXPath(Map<String, String> mapToModify) {
-        bulkEdit mapToModify, { nodes, value ->
+    XmlWriter modifyByXPath(Map<String, String> mapToModify, XmlProperty xmlProperty) {
+        bulkEdit mapToModify, xmlProperty, { nodes, value ->
             nodes*.value = value
         }
         this
     }
 
-    XmlWriter modify(XmlProperty xmlProperty) {
-        addNodesAfter(xmlProperty.addNodesMap)
-        addAttributes(xmlProperty.addAttributesMap)
-        modifyByXPath(xmlProperty.modifyMap)
+
+    XmlWriter addAttributes(Map<String, Tuple2<String, String>> mapToAdd) {
+        addAttributes mapToAdd, null
     }
 
-    private bulkEdit(Map<String, ?> map, Closure callback) {
+    XmlWriter addNodesAfter(Map<String, Tuple2<String, String>> mapToAdd) {
+        addNodesAfter mapToAdd, null
+    }
+
+    XmlWriter modifyByXPath(Map<String, String> mapToModify) {
+        modifyByXPath mapToModify, null
+    }
+
+    XmlWriter modify(XmlProperty xmlProperty) {
+        addNodesAfter(xmlProperty.addNodesMap, xmlProperty)
+        addAttributes(xmlProperty.addAttributesMap, xmlProperty)
+        modifyByXPath(xmlProperty.modifyMap, xmlProperty)
+    }
+
+    private bulkEdit(Map<String, ?> map, XmlProperty xmlProperty, Closure callback) {
         map?.each {
-            callback xPathFactory.compile(it.key).evaluate(document), it.value
+            if (xmlProperty != null && xmlProperty.namespace != null) {
+                return callback(xPathFactory.compile(it.key, Filters.fpassthrough(), null,
+                        xmlProperty.namespace).evaluate(document), it.value)
+            } else {
+                return callback(xPathFactory.compile(it.key).evaluate(document), it.value)
+            }
+
         }
     }
 }

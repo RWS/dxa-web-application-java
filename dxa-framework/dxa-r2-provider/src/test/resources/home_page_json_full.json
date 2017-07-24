@@ -1,6 +1,7 @@
 {
   "Id": "640",
   "Title": "Home",
+  "UrlPath": "/url",
   "Meta": {
     "sitemapKeyword": "000 Home",
     "richText": "<p>text<a href=\"resolved-link\">text</a></p>"

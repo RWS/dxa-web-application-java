@@ -10,6 +10,33 @@ targetCompatibility = '1.8'
 
 def isRelease = !version.endsWith("-SNAPSHOT") && project.hasProperty('release')
 
+gradle.taskGraph.whenReady { taskGraph ->
+    if (taskGraph.allTasks.any { it instanceof Sign }) {
+        if (isRelease && !(project.hasProperty('signing.keyId') &&
+                project.hasProperty('signing.secretKeyRingFile') &&
+                project.hasProperty('signing.password'))) {
+            def reader = System.in.newReader()
+            println "\n\nWe have to sign some things in this build." +
+                    "\n\nPlease enter your signing details."
+
+            println "PGP Key Id: "
+            def id = reader.readLine()
+
+            println "PGP Secret Key Ring File (absolute path): "
+            def file = reader.readLine()
+
+            println "PGP Private Key Password: "
+            def password = reader.readLine()
+
+            allprojects { ext."signing.keyId" = id }
+            allprojects { ext."signing.secretKeyRingFile" = file }
+            allprojects { ext."signing.password" = password }
+
+            reader.printf "\nThanks.\n\n"
+        }
+    }
+}
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.9'
     distributionUrl = "https://services.gradle.org/distributions/gradle-$gradleVersion-all.zip"

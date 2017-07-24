@@ -9,14 +9,11 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -43,6 +40,7 @@ public class SitemapItemTest {
         //given
         SitemapItem item = new SitemapItem();
         item.setUrl("url");
+        item.setId("id");
         item.setTitle("title");
 
         //when
@@ -51,47 +49,8 @@ public class SitemapItemTest {
         //then
         verify(linkResolver).resolveLink(eq("url"), eq("1"));
         assertEquals("resolved", link.getUrl());
+        assertEquals("id", link.getId());
         assertEquals("title", link.getLinkText());
-    }
-
-    @Test
-    public void shouldFindSubItemWithUrl() {
-        //given 
-        SitemapItem sitemapItem = new SitemapItem();
-        sitemapItem.setUrl("url");
-
-        SitemapItem itemToFind = new SitemapItem();
-        itemToFind.setUrl("path");
-        itemToFind.setTitle("title");
-
-        SitemapItem parent = new SitemapItem();
-        parent.setUrl("parent");
-        parent.setItems(new LinkedHashSet<>(Lists.newArrayList(itemToFind)));
-
-        sitemapItem.setItems(new LinkedHashSet<>(Lists.newArrayList(parent)));
-
-        //when
-        SitemapItem found = sitemapItem.findWithUrl("path");
-        //TSI-1956
-        SitemapItem foundWithSlash = sitemapItem.findWithUrl("path/");
-
-        //then
-        assertNotNull(found);
-        assertEquals(itemToFind, found);
-        assertEquals(itemToFind, foundWithSlash);
-    }
-
-    @Test
-    public void shouldReturnNullIfNoSubItemFound() {
-        //given
-        SitemapItem sitemapItem = new SitemapItem();
-        sitemapItem.setItems(Collections.<SitemapItem>emptySet());
-
-        //when
-        SitemapItem found = sitemapItem.findWithUrl("path");
-
-        //then
-        assertNull(found);
     }
 
     @Test
@@ -102,6 +61,19 @@ public class SitemapItemTest {
 
         //when
         sitemapItem.setItems(new LinkedHashSet<>(Lists.newArrayList(child, null)));
+
+        //then
+        assertEquals(sitemapItem, child.getParent());
+    }
+
+    @Test
+    public void shouldSetParentForAddOneItem() {
+        //given
+        SitemapItem sitemapItem = new SitemapItem();
+        SitemapItem child = new SitemapItem();
+
+        //when
+        sitemapItem.addItem(child);
 
         //then
         assertEquals(sitemapItem, child.getParent());

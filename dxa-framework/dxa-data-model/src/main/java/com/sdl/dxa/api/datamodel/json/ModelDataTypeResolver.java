@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.SerializationConfig;
+import com.fasterxml.jackson.databind.introspect.ClassIntrospector;
 import com.fasterxml.jackson.databind.jsontype.NamedType;
 import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
@@ -25,7 +26,7 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
 
     @Override
     public TypeSerializer buildTypeSerializer(SerializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
-        return useForType(baseType) ?
+        return useForType(baseType, config) ?
                 (_includeAs == JsonTypeInfo.As.PROPERTY ?
                         _buildModelDataTypeSerializer(config, baseType, subtypes) :
                         super.buildTypeSerializer(config, baseType, subtypes)) :
@@ -34,11 +35,12 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
 
     @Override
     public TypeDeserializer buildTypeDeserializer(DeserializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
-        return useForType(baseType) ? super.buildTypeDeserializer(config, baseType, subtypes) : null;
+        return useForType(baseType, config) ? super.buildTypeDeserializer(config, baseType, subtypes) : null;
     }
 
-    private boolean useForType(JavaType t) {
-        return t.isJavaLangObject();
+    private boolean useForType(JavaType t, ClassIntrospector.MixInResolver mixInResolver) {
+        Class<?> mixin = mixInResolver.findMixInClassFor(t.getRawClass());
+        return mixin != null && PolymorphicObjectMixin.class.isAssignableFrom(mixin);
     }
 
     private TypeSerializer _buildModelDataTypeSerializer(SerializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {

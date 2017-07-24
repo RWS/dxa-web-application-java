@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
+import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
 import lombok.Data;
@@ -43,11 +44,13 @@ public abstract class AbstractViewModel implements ViewModel {
     @JsonProperty("MvcData")
     private MvcData mvcData;
 
-    public AbstractViewModel(AbstractViewModel other) {
-        this.extensionData = other.extensionData;
-        this.htmlClasses = other.htmlClasses;
-        this.xpmMetadata = other.xpmMetadata;
-        this.mvcData = other.mvcData;
+    public AbstractViewModel(ViewModel other) {
+        this.extensionData = other.getExtensionData();
+        this.htmlClasses = other.getHtmlClasses();
+        if (other.getXpmMetadata() != null) {
+            this.xpmMetadata.putAll(other.getXpmMetadata());
+        }
+        this.mvcData = other.getMvcData() != null ? new MvcDataImpl(other.getMvcData()) : null;
     }
 
     @Override

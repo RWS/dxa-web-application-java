@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.region;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -24,6 +25,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
@@ -81,6 +83,17 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     @Getter
     @Setter
     private RegionModelSet regions = new RegionModelSetImpl();
+
+    public RegionModelImpl(RegionModel other) {
+        super(other);
+        this.name = other.getName();
+        if (other.getEntities() != null) {
+            this.entities.addAll(other.getEntities());
+        }
+        if (other.getRegions() != null) {
+            this.regions.addAll(other.getRegions());
+        }
+    }
 
     /**
      * <p>Constructor for RegionModelImpl.</p>
@@ -150,6 +163,18 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
             log.warn("Add entity with id null, this might lead to errors! Entity: {}", entity);
         }
         this.entities.add(entity);
+    }
+
+    @Override
+    public RegionModel deepCopy() {
+        return new RegionModelImpl(this);
+    }
+
+    @Override
+    public void filterConditionalEntities(Collection<ConditionalEntityEvaluator> evaluators) {
+        regions.forEach(regionModel -> regionModel.filterConditionalEntities(evaluators));
+
+        entities.removeIf(entityModel -> !evaluators.stream().allMatch(evaluator -> evaluator.includeEntity(entityModel)));
     }
 
     /**

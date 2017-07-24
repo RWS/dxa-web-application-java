@@ -1,6 +1,5 @@
 package com.sdl.dxa.common.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Value;
@@ -28,14 +27,6 @@ public class PageRequestDto {
 
     private DepthCounter depthCounter;
 
-    public boolean depthIncreaseAndCheckIfSafe() {
-        return this.depthCounter.depthIncrease() > 0;
-    }
-
-    public void depthDecrease() {
-        this.depthCounter.depthDecrease();
-    }
-
     /**
      * Way you expect the content to be.
      * Handy to have it in DTO to support key generation for caching even if you do not override methods, but use different names,
@@ -58,20 +49,6 @@ public class PageRequestDto {
          * Page regions should be excluded.
          */
         EXCLUDE
-    }
-
-    @AllArgsConstructor
-    private static class DepthCounter {
-
-        private int counter;
-
-        private int depthIncrease() {
-            return --counter;
-        }
-
-        private void depthDecrease() {
-            counter++;
-        }
     }
 
     /**

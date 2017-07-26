@@ -23,6 +23,8 @@ public class PageRequestDto {
 
     private ContentType contentType;
 
+    private DataModelType dataModelType;
+
     private int expansionDepth;
 
     private DepthCounter depthCounter;
@@ -34,6 +36,10 @@ public class PageRequestDto {
      */
     public enum ContentType {
         RAW, MODEL
+    }
+
+    public enum DataModelType {
+        R2, DD4T
     }
 
     /**
@@ -62,6 +68,8 @@ public class PageRequestDto {
         private PageInclusion includePages = PageInclusion.INCLUDE;
 
         private ContentType contentType = ContentType.MODEL;
+
+        private DataModelType dataModelType = DataModelType.R2;
 
         private int expansionDepth = 100;
 

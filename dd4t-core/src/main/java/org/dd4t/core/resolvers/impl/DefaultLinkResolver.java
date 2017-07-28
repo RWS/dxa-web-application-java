@@ -100,7 +100,7 @@ public class DefaultLinkResolver implements LinkResolver {
             }
 
             if (StringUtils.isEmpty(resolvedUrl)) {
-                LOG.warn("Not possible to resolve url for component: " + component.getId());
+                LOG.debug("Not possible to resolve url for component: " + component.getId());
             }
         } else {
             resolvedUrl = replacePlaceholders(resolvedUrl, "%COMPONENTURI%", component.getId());

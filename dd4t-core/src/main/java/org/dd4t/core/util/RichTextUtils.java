@@ -92,7 +92,7 @@ public class RichTextUtils {
                 if (StringUtils.isNotEmpty(resolvedLink)) {
                     link.attr(XLINK_HREF, contextPathToUse + resolvedLink);
                 } else {
-                    if (link.hasAttr("href") == true) {
+                    if (link.hasAttr("href")) {
                         link.removeAttr(XLINK_HREF);
                     } else {
                         link.attr(XLINK_HREF, "");

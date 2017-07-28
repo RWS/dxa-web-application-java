@@ -189,7 +189,7 @@ public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator {
     public <T> void storeInItemCache (String key, CacheElement<T> cacheElement, int dependingPublicationId, int dependingItemId) {
 
         CacheDependency dependency = new CacheDependencyImpl(dependingPublicationId, dependingItemId);
-        List<CacheDependency> dependencies = new ArrayList<CacheDependency>();
+        List<CacheDependency> dependencies = new ArrayList<>();
         dependencies.add(dependency);
         storeInItemCache(key, cacheElement, dependencies);
 

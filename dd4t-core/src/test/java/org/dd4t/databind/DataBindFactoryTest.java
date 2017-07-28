@@ -64,4 +64,14 @@ public class DataBindFactoryTest {
         assertNotNull(dataBinder);
 
     }
+
+    @Test
+    public void testDcp() throws URISyntaxException, IOException, SerializationException {
+        String dcp = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("newitem.json").toURI()));
+        DataBinder dataBinder = context.getBean(DataBinder.class);
+
+        ComponentPresentation componentPresentation = dataBinder.buildComponentPresentation(dcp, ComponentPresentation.class);
+
+        assertNotNull(componentPresentation);
+    }
 }

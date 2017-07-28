@@ -16,3 +16,5 @@ pom.xml.versionsBackup
 test.txt
 dd4t-test-spring-web/src/main/resources/8.1.0-inproc/WEB-INF/classes/cd_*.xml
 dd4t221json.json
+.DS_Store
+~/logs

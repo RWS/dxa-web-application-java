@@ -16,14 +16,6 @@
 
 package org.dd4t.databind.serializers.json;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.annotation.Resource;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -36,7 +28,6 @@ import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
 import org.dd4t.core.databind.BaseViewModel;
-import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.core.exceptions.SerializationException;
 import org.dd4t.databind.builder.json.JsonDataBinder;
@@ -49,12 +40,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * test
@@ -167,6 +152,8 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 
         final Map<String, BaseViewModel> models = dataBinder.buildModels(rawComponentData, modelNames, componentPresentation.getComponentTemplate().getId());
 
+
+        // TODO: error in here
         if (models == null || models.isEmpty()) {
             if (dataBinder.renderDefaultComponentsIfNoModelFound()) {
                 componentPresentation.setComponent(dataBinder.buildComponent(rawComponentData, this.concreteComponentClass));
@@ -180,6 +167,8 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
 
                     if (((TridionViewModel)model).setGenericComponentOnComponentPresentation()) {
                         LOG.debug("Also setting a Component object on the CP.");
+
+                        // TODO: error in here..
                         componentPresentation.setComponent(dataBinder.buildComponent(rawComponentData, this.concreteComponentClass));
                     }
                     if (componentPresentation.isDynamic()) {

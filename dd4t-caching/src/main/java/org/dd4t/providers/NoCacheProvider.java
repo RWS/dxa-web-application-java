@@ -16,6 +16,7 @@ import java.util.List;
  * TODO: merge with org.dd4t.providers.NoCacheProvider
  * @author R. Kempees
  */
+@Deprecated
 public class NoCacheProvider implements PayloadCacheProvider, CacheInvalidator, CacheProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(NoCacheProvider.class);

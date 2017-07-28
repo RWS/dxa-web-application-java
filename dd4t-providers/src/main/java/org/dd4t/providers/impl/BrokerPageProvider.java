@@ -16,11 +16,23 @@
 
 package org.dd4t.providers.impl;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-
+import com.tridion.broker.StorageException;
+import com.tridion.broker.querying.Query;
+import com.tridion.broker.querying.criteria.content.PageURLCriteria;
+import com.tridion.broker.querying.criteria.content.PublicationCriteria;
+import com.tridion.broker.querying.criteria.operators.AndCriteria;
+import com.tridion.broker.querying.filter.LimitFilter;
+import com.tridion.broker.querying.sorting.SortDirection;
+import com.tridion.broker.querying.sorting.SortParameter;
+import com.tridion.data.CharacterData;
+import com.tridion.meta.PageMetaFactory;
+import com.tridion.storage.ItemMeta;
+import com.tridion.storage.PageMeta;
+import com.tridion.storage.StorageManagerFactory;
+import com.tridion.storage.StorageTypeMapping;
+import com.tridion.storage.dao.ItemDAO;
+import com.tridion.storage.dao.ItemTypeSelector;
+import com.tridion.storage.dao.PageDAO;
 import org.dd4t.caching.CacheElement;
 import org.dd4t.caching.CacheType;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -35,22 +47,12 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.tridion.broker.StorageException;
-import com.tridion.broker.querying.Query;
-import com.tridion.broker.querying.criteria.content.PageURLCriteria;
-import com.tridion.broker.querying.criteria.content.PublicationCriteria;
-import com.tridion.broker.querying.criteria.operators.AndCriteria;
-import com.tridion.broker.querying.filter.LimitFilter;
-import com.tridion.broker.querying.sorting.SortDirection;
-import com.tridion.broker.querying.sorting.SortParameter;
-import com.tridion.data.CharacterData;
-import com.tridion.storage.ItemMeta;
-import com.tridion.storage.PageMeta;
-import com.tridion.storage.StorageManagerFactory;
-import com.tridion.storage.StorageTypeMapping;
-import com.tridion.storage.dao.ItemDAO;
-import com.tridion.storage.dao.ItemTypeSelector;
-import com.tridion.storage.dao.PageDAO;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Provides access to Page content and metadata from Content Delivery database. Access to page content is not cached,
@@ -59,6 +61,7 @@ import com.tridion.storage.dao.PageDAO;
 public class BrokerPageProvider extends BaseBrokerProvider implements PageProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(BrokerPageProvider.class);
+    private static final Map<Integer, PageMetaFactory> WEB_PAGE_META_FACTORIES = new ConcurrentHashMap<>();
 
     @Override
     public PageProviderResultItem<String> getPageById (final int id, final int publication) throws IOException, ItemNotFoundException, SerializationException {
@@ -153,6 +156,7 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
      * @throws ItemNotFoundException if the requested page does not exist
      */
     public PageMeta getPageMetaById (int id, int publication) throws ItemNotFoundException {
+
 
         PageMeta meta = null;
         try {
@@ -290,5 +294,15 @@ public class BrokerPageProvider extends BaseBrokerProvider implements PageProvid
         PageMeta pageMeta = getPageMetaByURL(url, publication);
         Date lpd = pageMeta.getLastPublishDate();
         return lpd != null ? new DateTime(pageMeta.getLastPublishDate()) : Constants.THE_YEAR_ZERO;
+    }
+
+    protected static PageMetaFactory getPageMetaFactory(final int publication) {
+        PageMetaFactory pageMetaFactory = WEB_PAGE_META_FACTORIES.get(publication);
+
+        if (pageMetaFactory == null) {
+            pageMetaFactory = new PageMetaFactory(publication);
+            WEB_PAGE_META_FACTORIES.put(publication,pageMetaFactory);
+        }
+        return pageMetaFactory;
     }
 }

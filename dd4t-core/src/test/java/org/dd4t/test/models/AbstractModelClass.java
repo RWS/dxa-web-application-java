@@ -8,4 +8,5 @@ import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
  * @author R. Kempees
  */
 public abstract class AbstractModelClass extends TridionViewModelBase {
+
 }

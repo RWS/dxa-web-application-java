@@ -211,9 +211,11 @@ public abstract class BaseDataBinder {
     protected void scanAndLoadModels () {
         LOG.info("Init: scanning view models.");
 
-        final ScanResult scanResult = new FastClasspathScanner(this.viewModelPackageRoot).scan();
+        final FastClasspathScanner scanner = new FastClasspathScanner(this.viewModelPackageRoot);
+        final ScanResult scanResult = scanner.scan();
 
         for (Map.Entry<String, ClassInfo> classInfoEntry : scanResult.getClassNameToClassInfo().entrySet()) {
+            LOG.info(classInfoEntry.getValue().getClassName());
             processClass(classInfoEntry.getValue());
         }
         LOG.info("Init: Done scanning view models.");
@@ -289,7 +291,7 @@ public abstract class BaseDataBinder {
             LOG.debug("Loading class: " + clazz.getCanonicalName());
 
 
-            final ViewModel viewModelParameters = (ViewModel) clazz.getAnnotation(ViewModel.class);
+            final ViewModel viewModelParameters = clazz.getAnnotation(ViewModel.class);
 
             if (hasProperModelInformation(viewModelParameters, clazz)) {
                 LOG.debug("Parameters: Viewmodel name(s):{}, Root Element name(s){}, Set Component: {}, Set raw: {} ", new Object[]{viewModelParameters.viewModelNames(), viewModelParameters.rootElementNames(), viewModelParameters.setComponentObject(), viewModelParameters.setRawData()});

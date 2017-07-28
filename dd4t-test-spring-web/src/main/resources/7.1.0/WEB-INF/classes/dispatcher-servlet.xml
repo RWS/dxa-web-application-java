@@ -31,6 +31,7 @@
         <property name="pageViewPath" value="pages/"/>
         <property name="publicationResolver" ref="publicationResolver" />
         <property name="pageFactory" ref="pageFactory"/>
+        <property name="removeContextPath" value="true" />
     </bean>
 
     <bean id="componentPresentationController" class="org.dd4t.test.web.controller.SpringComponentPresentationController">
@@ -120,6 +121,11 @@
                 <ref bean="linkResolverProcessor" />
             </list>
         </property>
+        <property name="dataBinders">
+            <list>
+                <ref bean="dataBinder" />
+            </list>
+        </property>
     </bean>
 
     <bean id="binaryFactory" class="org.dd4t.core.factories.impl.BinaryFactoryImpl" factory-method="getInstance">
@@ -143,7 +149,7 @@
 
     <!-- Databind stuff.-->
     <bean id="modelConverter" class="org.dd4t.databind.builder.json.JsonModelConverter" />
-    <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder" factory-method="getInstance">
+    <bean id="dataBinder" class="org.dd4t.databind.builder.json.JsonDataBinder"  factory-method="getInstance">
         <!-- Set this value to your own models package root -->
         <property name="viewModelPackageRoot" value="${databind.viewmodels.rootpackage}" />
         <property name="viewModelMetaKeyName" value="${databind.viewmodels.ct.metadata.viewnamekey}" />

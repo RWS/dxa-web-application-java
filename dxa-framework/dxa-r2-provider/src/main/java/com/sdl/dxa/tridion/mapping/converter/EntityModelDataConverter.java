@@ -16,12 +16,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class EntityModelDataConverter implements SourceConverter<EntityModelData> {
-
-    @Override
-    public List<Class<? extends EntityModelData>> getTypes() {
-        return Collections.singletonList(EntityModelData.class);
-    }
+public class EntityModelDataConverter implements SemanticModelConverter<EntityModelData> {
 
     @Override
     public Object convert(EntityModelData toConvert, TypeInformation targetType, SemanticField semanticField,
@@ -49,6 +44,11 @@ public class EntityModelDataConverter implements SourceConverter<EntityModelData
             }
         }
 
-        return wrapIfNeeded(result, targetType);
+        return convertToCollectionIfNeeded(result, targetType);
+    }
+
+    @Override
+    public List<Class<? extends EntityModelData>> getTypes() {
+        return Collections.singletonList(EntityModelData.class);
     }
 }

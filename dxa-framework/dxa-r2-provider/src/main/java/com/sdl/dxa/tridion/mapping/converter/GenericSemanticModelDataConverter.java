@@ -19,14 +19,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import static com.sdl.dxa.tridion.mapping.converter.SemanticModelConverter.getTypeInformation;
+
+/**
+ * Implementation capable to convert R2 data model to a semantic entity class fulfilling needs of {@link ModelBuilderPipeline}.
+ * Selects specific converter out of set of {@link SemanticModelConverter}s and delegates conversion to it.
+ * Uses semantic information and a builder pipeline for conversion.
+ */
 @Service
 @Slf4j
-public class SourceConverterFactory {
+public class GenericSemanticModelDataConverter {
 
     @Autowired
     private WebRequestContext webRequestContext;
@@ -34,11 +40,17 @@ public class SourceConverterFactory {
     @Autowired
     private LinkResolver linkResolver;
 
-    private Map<Class<?>, SourceConverter<?>> converters = new HashMap<>();
+    private Map<Class<?>, SemanticModelConverter<?>> converters = new HashMap<>();
+
+    private static String resolveLink(String itemId, WebRequestContext webRequestContext, LinkResolver linkResolver) {
+        String publicationId = webRequestContext.getLocalization().getId();
+        String url = TcmUtils.isTcmUri(itemId) ? itemId : TcmUtils.buildTcmUri(publicationId, itemId);
+        return linkResolver.resolveLink(url, publicationId);
+    }
 
     @Autowired
-    public void setConverters(Set<SourceConverter<?>> sourceConverters) {
-        sourceConverters.forEach(sourceConverter ->
+    public void setConverters(Set<SemanticModelConverter<?>> semanticModelConverters) {
+        semanticModelConverters.forEach(sourceConverter ->
                 sourceConverter.getTypes().forEach(aClass ->
                         converters.put(aClass, sourceConverter)));
     }
@@ -54,32 +66,14 @@ public class SourceConverterFactory {
     }
 
     @NotNull
-    private SourceConverter getSourceConverter(Class<?> sourceType) throws UnsupportedTargetTypeException {
-        SourceConverter sourceConverter = converters.get(sourceType);
+    private SemanticModelConverter getSourceConverter(Class<?> sourceType) throws UnsupportedTargetTypeException {
+        SemanticModelConverter semanticModelConverter = converters.get(sourceType);
 
-        if (sourceConverter == null) {
+        if (semanticModelConverter == null) {
             log.warn("Cannot get a source converter for {}", sourceType);
             throw new UnsupportedTargetTypeException(sourceType);
         }
-        return sourceConverter;
-    }
-
-    private static TypeInformation getTypeInformation(TypeDescriptor targetType) {
-        Class<?> objectType = targetType.getObjectType();
-
-        Class<? extends Collection> collectionType = null;
-
-        if (Collection.class.isAssignableFrom(objectType)) {
-            //typecast is safe because of if statement
-            //noinspection unchecked
-            collectionType = (Class<? extends Collection>) objectType;
-            objectType = targetType.getElementTypeDescriptor().getObjectType();
-        }
-
-        return TypeInformation.builder()
-                .objectType(objectType)
-                .collectionType(collectionType)
-                .build();
+        return semanticModelConverter;
     }
 
     public Object selfLink(Object toLink, TypeDescriptor targetType, ModelBuilderPipeline pipeline) throws DxaException {
@@ -119,11 +113,5 @@ public class SourceConverterFactory {
         }
 
         return objectType;
-    }
-
-    private static String resolveLink(String itemId, WebRequestContext webRequestContext, LinkResolver linkResolver) {
-        String publicationId = webRequestContext.getLocalization().getId();
-        String url = TcmUtils.isTcmUri(itemId) ? itemId : TcmUtils.buildTcmUri(publicationId, itemId);
-        return linkResolver.resolveLink(url, publicationId);
     }
 }

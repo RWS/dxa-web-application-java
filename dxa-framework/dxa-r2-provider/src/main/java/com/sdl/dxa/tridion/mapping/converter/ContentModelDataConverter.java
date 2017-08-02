@@ -18,18 +18,13 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class ContentModelDataConverter implements SourceConverter<ContentModelData> {
+public class ContentModelDataConverter implements SemanticModelConverter<ContentModelData> {
 
     private final SemanticMapper semanticMapper;
 
     @Autowired
     public ContentModelDataConverter(SemanticMapper semanticMapper) {
         this.semanticMapper = semanticMapper;
-    }
-
-    @Override
-    public List<Class<? extends ContentModelData>> getTypes() {
-        return Collections.singletonList(ContentModelData.class);
     }
 
     @Override
@@ -41,11 +36,16 @@ public class ContentModelDataConverter implements SourceConverter<ContentModelDa
             ViewModel entity = semanticMapper.createEntity(objectType.asSubclass(EntityModel.class),
                     semanticField.getEmbeddedFields(), dataProvider.embedded(toConvert));
 
-            return wrapIfNeeded(entity, targetType);
+            return convertToCollectionIfNeeded(entity, targetType);
         } catch (SemanticMappingException e) {
             throw new FieldConverterException("Cannot perform conversion for embedded entity, objectType " + objectType + ", " +
                     "semantic field " + semanticField + ", value to convert " + toConvert, e);
         }
+    }
+
+    @Override
+    public List<Class<? extends ContentModelData>> getTypes() {
+        return Collections.singletonList(ContentModelData.class);
     }
 
 }

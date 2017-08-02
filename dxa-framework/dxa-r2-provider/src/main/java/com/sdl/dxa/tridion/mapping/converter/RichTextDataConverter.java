@@ -20,12 +20,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-public class RichTextDataConverter implements SourceConverter<RichTextData> {
-
-    @Override
-    public List<Class<? extends RichTextData>> getTypes() {
-        return Collections.singletonList(RichTextData.class);
-    }
+public class RichTextDataConverter implements SemanticModelConverter<RichTextData> {
 
     @Override
     public Object convert(RichTextData toConvert, TypeInformation targetType, SemanticField semanticField,
@@ -52,6 +47,11 @@ public class RichTextDataConverter implements SourceConverter<RichTextData> {
 
         RichText richText = new RichText(fragments);
 
-        return wrapIfNeeded(objectType == String.class ? richText.toString() : richText, targetType);
+        return convertToCollectionIfNeeded(objectType == String.class ? richText.toString() : richText, targetType);
+    }
+
+    @Override
+    public List<Class<? extends RichTextData>> getTypes() {
+        return Collections.singletonList(RichTextData.class);
     }
 }

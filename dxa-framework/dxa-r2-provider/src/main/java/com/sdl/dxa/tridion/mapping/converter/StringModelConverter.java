@@ -19,12 +19,7 @@ import java.util.List;
 
 @Component
 @Slf4j
-public class StringConverter implements SourceConverter<String> {
-
-    @Override
-    public List<Class<? extends String>> getTypes() {
-        return Collections.singletonList(String.class);
-    }
+public class StringModelConverter implements SemanticModelConverter<String> {
 
     @Override
     public Object convert(String toConvert, TypeInformation targetType, SemanticField semanticField,
@@ -52,9 +47,14 @@ public class StringConverter implements SourceConverter<String> {
         } else if (RichText.class.isAssignableFrom(objectType)) {
             result = new RichText(toConvert);
         } else {
-            throw new FieldConverterException("The type " + objectType + " is not supported by StringConverter");
+            throw new FieldConverterException("The type " + objectType + " is not supported by String Converter");
         }
 
-        return wrapIfNeeded(result, targetType);
+        return convertToCollectionIfNeeded(result, targetType);
+    }
+
+    @Override
+    public List<Class<? extends String>> getTypes() {
+        return Collections.singletonList(String.class);
     }
 }

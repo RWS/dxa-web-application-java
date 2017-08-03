@@ -16,11 +16,11 @@
 
 package org.dd4t.contentmodel.impl;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.Keyword;
 import org.dd4t.core.util.TCMURI;
@@ -76,6 +76,7 @@ public class KeywordImpl extends BaseItem implements Keyword, Serializable {
     private String taxonomyId;
 
     @Override
+    @JsonGetter("IsRoot")
     public boolean isRoot() {
         return this.isRootKeyword;
     }
@@ -86,6 +87,7 @@ public class KeywordImpl extends BaseItem implements Keyword, Serializable {
     }
 
     @Override
+    @JsonGetter("IsAbstract")
     public boolean isAbstract() {
         return this.isAbstractKeyword;
     }

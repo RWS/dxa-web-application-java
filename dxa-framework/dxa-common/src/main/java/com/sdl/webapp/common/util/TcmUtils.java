@@ -92,7 +92,7 @@ public final class TcmUtils {
      * @param itemId        item ID
      * @return TCM URI for page
      */
-    public static String buildPageTcmUri(String publicationId, String itemId) {
+    public static String buildPageTcmUri(Object publicationId, Object itemId) {
         return String.format(TCM_S_S_S, publicationId, itemId, PAGE_ITEM_TYPE);
     }
 
@@ -125,6 +125,17 @@ public final class TcmUtils {
         return buildTcmUriInternal(publicationId, itemId);
     }
 
+    /**
+     * Build a short TCM URI looking like <code>tcm:PUB_ID-ITEM_ID</code>.
+     *
+     * @param publicationId publication ID
+     * @param itemId        item ID
+     * @return short TCM URI
+     */
+    public static String buildTcmUri(Object publicationId, Object itemId) {
+        return buildTcmUriInternal(String.valueOf(publicationId), String.valueOf(itemId));
+    }
+
     private static String buildTcmUriInternal(String publicationId, String itemId) {
         return String.format(TCM_S_S, publicationId, itemId);
     }
@@ -140,6 +151,18 @@ public final class TcmUtils {
     public static String buildTcmUri(String publicationId, String itemId, String itemType) {
         return buildTcmUriInternal(publicationId, itemId, itemType);
     }
+
+    /**
+     * Build a short TCM URI looking like <code>tcm:PUB_ID-ITEM_ID</code>.
+     *
+     * @param publicationId publication ID
+     * @param itemId        item ID
+     * @return short TCM URI
+     */
+    public static String buildTcmUri(Object publicationId, Object itemId, int itemType) {
+        return buildTcmUriInternal(String.valueOf(publicationId), String.valueOf(itemId), String.valueOf(itemType));
+    }
+
 
     public static String buildTcmUriInternal(String publicationId, String itemId, String itemType) {
         return String.format(TCM_S_S_S, publicationId, itemId, itemType);

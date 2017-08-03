@@ -23,6 +23,8 @@ public class PageModelData extends ViewModelData {
 
     private Map<String, String> meta;
 
+    private PageTemplateData pageTemplate;
+
     private String title;
 
     private List<RegionModelData> regions;

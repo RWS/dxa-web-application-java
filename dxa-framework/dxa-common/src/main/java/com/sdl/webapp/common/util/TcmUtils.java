@@ -223,6 +223,7 @@ public final class TcmUtils {
      * @return item ID or <code>-1</code> if URI is not valid or null
      */
     public static int getItemId(String tcmUri) {
+
         return extractGroupFromTcm(tcmUri, "itemId");
     }
 

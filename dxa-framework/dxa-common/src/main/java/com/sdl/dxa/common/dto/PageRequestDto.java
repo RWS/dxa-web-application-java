@@ -8,7 +8,7 @@ import org.springframework.util.Assert;
 /**
  * Data transfer object (DTO) for page requests.
  */
-@Builder
+@Builder(toBuilder = true)
 @Value
 @EqualsAndHashCode(exclude = "depthCounter")
 public class PageRequestDto {

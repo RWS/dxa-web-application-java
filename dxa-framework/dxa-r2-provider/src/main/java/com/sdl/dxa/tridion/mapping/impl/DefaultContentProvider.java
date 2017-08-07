@@ -6,7 +6,7 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.modelservice.ModelService;
+import com.sdl.dxa.tridion.modelservice.DefaultModelService;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -35,7 +35,7 @@ public class DefaultContentProvider extends AbstractDefaultContentProvider {
     private ModelBuilderPipeline builderPipeline;
 
     @Autowired
-    private ModelService modelService;
+    private DefaultModelService modelService;
 
     public DefaultContentProvider(WebRequestContext webRequestContext,
                                   StaticContentResolver staticContentResolver,

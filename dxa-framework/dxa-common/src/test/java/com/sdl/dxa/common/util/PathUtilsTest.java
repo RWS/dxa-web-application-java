@@ -189,6 +189,22 @@ public class PathUtilsTest {
 
 
     @Test
+    public void shouldGetFileName_FromFullFilename() {
+        //when
+        assertEquals("filename", PathUtils.getFileName("/filename.html"));
+        assertEquals("filename", PathUtils.getFileName("filename.html"));
+        assertEquals("filename", PathUtils.getFileName("/test/filename.html"));
+    }
+
+    @Test
+    public void shouldGetExtension_FromFullFilename() {
+        //when
+        assertEquals("html", PathUtils.getExtension("/filename.html"));
+        assertEquals("html", PathUtils.getExtension("filename.html"));
+        assertEquals("html", PathUtils.getExtension("/test/filename.html"));
+    }
+
+    @Test
     public void shouldSayIfPathHasExtensionPart() {
         //when
         boolean hasNoExtension = PathUtils.hasExtension("http://url.com/test");

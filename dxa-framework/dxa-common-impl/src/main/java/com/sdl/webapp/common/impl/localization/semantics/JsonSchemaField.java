@@ -10,8 +10,14 @@ import java.util.List;
 @Getter
 public class JsonSchemaField {
 
+    @JsonProperty("Id")
+    private String id;
+
     @JsonProperty("Name")
     private String name;
+
+    @JsonProperty("Title")
+    private String title;
 
     @JsonProperty("Path")
     private String path;
@@ -24,4 +30,10 @@ public class JsonSchemaField {
 
     @JsonProperty("Fields")
     private List<JsonSchemaField> fields;
+
+    @JsonProperty("FieldType")
+    private JsonSchemaFieldType fieldType;
+
+    @JsonProperty("RootElementName")
+    private String rootElementName;
 }

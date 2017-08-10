@@ -22,7 +22,7 @@ public class EntityModelData extends ViewModelData implements CanWrapContentAndM
 
     private String id;
 
-    private String componentTemplateId;
+    private ComponentTemplateData componentTemplate;
 
     private String linkUrl;
 

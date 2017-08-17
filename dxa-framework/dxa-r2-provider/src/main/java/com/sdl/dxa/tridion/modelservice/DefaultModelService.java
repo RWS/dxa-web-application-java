@@ -51,7 +51,7 @@ public class DefaultModelService implements PageModelService, EntityModelService
      */
     @NotNull
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
-        String serviceUrl = UriComponentsBuilder.fromUriString(configuration.getPageModelUrl()).queryParam("raw").build().toUriString();
+        String serviceUrl = UriComponentsBuilder.fromUriString(configuration.getPageModelUrl()).queryParam("raw", "true").build().toUriString();
         return _loadPage(serviceUrl, String.class, pageRequest);
     }
 

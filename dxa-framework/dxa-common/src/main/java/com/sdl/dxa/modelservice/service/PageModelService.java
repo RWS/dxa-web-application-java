@@ -5,6 +5,7 @@ import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import org.jetbrains.annotations.NotNull;
 
+@FunctionalInterface
 public interface PageModelService {
 
     /**

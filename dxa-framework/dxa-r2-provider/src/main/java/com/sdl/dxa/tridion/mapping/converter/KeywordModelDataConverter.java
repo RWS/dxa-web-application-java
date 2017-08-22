@@ -13,12 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Component
-public class KeywordModelDataConverter implements SourceConverter<KeywordModelData> {
-
-    @Override
-    public List<Class<? extends KeywordModelData>> getTypes() {
-        return Collections.singletonList(KeywordModelData.class);
-    }
+public class KeywordModelDataConverter implements SemanticModelConverter<KeywordModelData> {
 
     @Override
     public Object convert(KeywordModelData toConvert, TypeInformation targetType, SemanticField semanticField,
@@ -27,7 +22,12 @@ public class KeywordModelDataConverter implements SourceConverter<KeywordModelDa
         Class<?> objectType = targetType.getObjectType();
 
         Object result = Converter.getConverter(objectType).convert(new KeywordModelDataWrapper(toConvert, dataProvider));
-        return wrapIfNeeded(result, targetType);
+        return convertToCollectionIfNeeded(result, targetType);
+    }
+
+    @Override
+    public List<Class<? extends KeywordModelData>> getTypes() {
+        return Collections.singletonList(KeywordModelData.class);
     }
 
     private static class KeywordModelDataWrapper implements Converter.KeywordWrapper {

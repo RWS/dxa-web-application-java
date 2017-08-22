@@ -7,6 +7,7 @@ import org.joda.time.format.ISODateTimeFormat;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public final class XpmUtils {
 
@@ -45,6 +46,7 @@ public final class XpmUtils {
             map.put("ComponentTemplateID", componentTemplateID);
             map.put("ComponentTemplateModified", printDate(componentTemplateModified));
             map.put("IsRepositoryPublished", isRepositoryPublished);
+            map.values().removeIf(Objects::isNull);
             return map;
         }
     }
@@ -71,6 +73,7 @@ public final class XpmUtils {
             map.put("PageTemplateID", pageTemplateID);
             map.put("PageTemplateModified", printDate(pageTemplateModified));
             map.put("CmsUrl", cmsUrl);
+            map.values().removeIf(Objects::isNull);
             return map;
         }
     }
@@ -109,6 +112,7 @@ public final class XpmUtils {
             map.put(INCLUDED_FROM_PAGE_ID_XPM_METADATA_KEY, includedFromPageID);
             map.put(INCLUDED_FROM_PAGE_TITLE_XPM_METADATA_KEY, includedFromPageTitle);
             map.put(INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY, includedFromPageFileName);
+            map.values().removeIf(Objects::isNull);
             return map;
         }
     }

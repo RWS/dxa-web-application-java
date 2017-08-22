@@ -3,10 +3,11 @@ package com.sdl.dxa.api.datamodel.model;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.Builder;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,8 @@ import java.util.Map;
 
 @ToString
 @NoArgsConstructor
-@Getter
+@Data
+@Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeName
 public class RegionModelData extends ViewModelData {

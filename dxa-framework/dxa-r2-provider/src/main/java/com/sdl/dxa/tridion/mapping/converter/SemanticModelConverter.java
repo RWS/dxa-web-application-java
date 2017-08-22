@@ -8,6 +8,7 @@ import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.core.convert.TypeDescriptor;
 
 import java.math.BigDecimal;
 import java.util.Collection;
@@ -17,14 +18,32 @@ import java.util.Set;
 /**
  * Interface used for converting complex values  while doing a semantic mapping with {@link SemanticFieldDataProvider}.
  */
-public interface SourceConverter<T> {
+public interface SemanticModelConverter<T> {
 
-    List<Class<? extends T>> getTypes();
+    static TypeInformation getTypeInformation(TypeDescriptor targetType) {
+        Class<?> objectType = targetType.getObjectType();
+
+        Class<? extends Collection> collectionType = null;
+
+        if (Collection.class.isAssignableFrom(objectType)) {
+            //typecast is safe because of if statement
+            //noinspection unchecked
+            collectionType = (Class<? extends Collection>) objectType;
+            objectType = targetType.getElementTypeDescriptor().getObjectType();
+        }
+
+        return TypeInformation.builder()
+                .objectType(objectType)
+                .collectionType(collectionType)
+                .build();
+    }
 
     Object convert(T toConvert, TypeInformation targetType, SemanticField semanticField,
                    ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException;
 
-    default Object wrapIfNeeded(Object value, TypeInformation typeInformation) {
+    List<Class<? extends T>> getTypes();
+
+    default Object convertToCollectionIfNeeded(Object value, TypeInformation typeInformation) {
         Class<? extends Collection> collectionType = typeInformation.getCollectionType();
         if (collectionType != null) {
             if (Set.class.isAssignableFrom(collectionType)) {

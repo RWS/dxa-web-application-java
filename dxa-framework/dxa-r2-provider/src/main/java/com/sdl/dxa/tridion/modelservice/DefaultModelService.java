@@ -4,6 +4,8 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
+import com.sdl.dxa.modelservice.service.EntityModelService;
+import com.sdl.dxa.modelservice.service.PageModelService;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
@@ -18,7 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Service
-public class DefaultModelService implements ModelService {
+public class DefaultModelService implements PageModelService, EntityModelService {
 
     private final ModelServiceConfiguration configuration;
 
@@ -39,10 +41,17 @@ public class DefaultModelService implements ModelService {
         return _loadPage(configuration.getPageModelUrl(), PageModelData.class, pageRequest);
     }
 
+    /**
+     * Loads a page from CD without any processing as it's stored in a database.
+     *
+     * @param pageRequest page request data
+     * @return a page model data, never null
+     * @throws PageNotFoundException    if the page doesn't exist
+     * @throws ContentProviderException if couldn't load or parse the page content
+     */
     @NotNull
-    @Override
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
-        String serviceUrl = UriComponentsBuilder.fromUriString(configuration.getPageModelUrl()).queryParam("raw").build().toUriString();
+        String serviceUrl = UriComponentsBuilder.fromUriString(configuration.getPageModelUrl()).queryParam("raw", "true").build().toUriString();
         return _loadPage(serviceUrl, String.class, pageRequest);
     }
 
@@ -63,8 +72,12 @@ public class DefaultModelService implements ModelService {
         }
     }
 
+    /**
+     * Shortcut method for {@link #loadEntity(EntityRequestDto)}.
+     *
+     * @param entityId entity ID in a format of {@code componentId-templateId}
+     */
     @NotNull
-    @Override
     public EntityModelData loadEntity(@NotNull String entityId) throws ContentProviderException {
         return loadEntity(EntityRequestDto.builder().entityId(entityId).build());
     }

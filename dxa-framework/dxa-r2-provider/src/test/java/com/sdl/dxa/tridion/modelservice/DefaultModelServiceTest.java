@@ -73,7 +73,7 @@ public class DefaultModelServiceTest {
         PageRequestDto pageRequest = PageRequestDto.builder()
                 .uriType("tcm").path("/path").includePages(PageRequestDto.PageInclusion.INCLUDE)
                 .build();
-        when(modelServiceClient.getForType(eq("/model-service/page?raw"), eq(String.class), eq("tcm"), eq("666"),
+        when(modelServiceClient.getForType(eq("/model-service/page?raw=true"), eq(String.class), eq("tcm"), eq("666"),
                 eq("/path"), eq(PageRequestDto.PageInclusion.INCLUDE))).thenReturn("hello");
 
         //when

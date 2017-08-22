@@ -21,7 +21,11 @@ public class PageModelData extends ViewModelData {
 
     private String id;
 
+    private String structureGroupId;
+
     private Map<String, String> meta;
+
+    private PageTemplateData pageTemplate;
 
     private String title;
 

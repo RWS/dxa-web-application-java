@@ -12,8 +12,8 @@ import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.dxa.caching.wrapper.EntitiesCache;
 import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
-import com.sdl.dxa.tridion.mapping.converter.StringConverter;
+import com.sdl.dxa.tridion.mapping.converter.GenericSemanticModelDataConverter;
+import com.sdl.dxa.tridion.mapping.converter.StringModelConverter;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -272,8 +272,8 @@ public class DefaultModelBuilderTest {
         }
 
         @Bean
-        public SourceConverterFactory sourceConverterFactory() {
-            return new SourceConverterFactory();
+        public GenericSemanticModelDataConverter sourceConverterFactory() {
+            return new GenericSemanticModelDataConverter();
         }
 
         @Bean
@@ -309,8 +309,8 @@ public class DefaultModelBuilderTest {
         }
 
         @Bean
-        public StringConverter stringConverter() {
-            return new StringConverter();
+        public StringModelConverter stringConverter() {
+            return new StringModelConverter();
         }
 
         @Bean

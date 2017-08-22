@@ -7,7 +7,7 @@ import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.mapping.converter.SourceConverterFactory;
+import com.sdl.dxa.tridion.mapping.converter.GenericSemanticModelDataConverter;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.mapping.semantic.FieldData;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticFieldDataProvider;
@@ -43,7 +43,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
     @Getter
     private SemanticSchema semanticSchema;
 
-    private SourceConverterFactory sourceConverterFactory;
+    private GenericSemanticModelDataConverter genericSemanticModelDataConverter;
 
     private ModelBuilderPipeline pipeline;
 
@@ -52,7 +52,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
     private DefaultSemanticFieldDataProvider(ModelDataWrapper dataWrapper, SemanticSchema semanticSchema) {
         this.dataWrapper = dataWrapper;
         this.semanticSchema = semanticSchema;
-        this.sourceConverterFactory = getContext().getBean(SourceConverterFactory.class);
+        this.genericSemanticModelDataConverter = getContext().getBean(GenericSemanticModelDataConverter.class);
         this.pipeline = getContext().getBean(ModelBuilderPipeline.class);
     }
 
@@ -97,7 +97,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
             return null;
         }
 
-        Object value = sourceConverterFactory.convert(field.get(), targetType, semanticField, pipeline, this);
+        Object value = genericSemanticModelDataConverter.convert(field.get(), targetType, semanticField, pipeline, this);
 
         return new FieldData(value, semanticField.getXPath(null));
     }
@@ -107,7 +107,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
         Class<?> objectType = targetType.getObjectType();
         if (MediaItem.class.isAssignableFrom(objectType) || Link.class.isAssignableFrom(objectType) || String.class.isAssignableFrom(objectType)) {
             try {
-                return sourceConverterFactory.selfLink(dataWrapper.getWrappedModel(), targetType, pipeline);
+                return genericSemanticModelDataConverter.selfLink(dataWrapper.getWrappedModel(), targetType, pipeline);
             } catch (DxaException e) {
                 throw new SemanticMappingException("Failed self-linking " + targetType, e);
             }
@@ -143,7 +143,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
         if (!fieldData.containsKey(entry.getKey()) && value != null) {
             Optional<String> emdTcmUri = getEntityModelDataTcmUriOrNull(value);
             fieldData.put(entry.getKey(), emdTcmUri.orElse(
-                    (String) sourceConverterFactory.convert(value, TypeDescriptor.valueOf(String.class), null,
+                    (String) genericSemanticModelDataConverter.convert(value, TypeDescriptor.valueOf(String.class), null,
                             pipeline, this)));
         }
     }

@@ -17,21 +17,12 @@ import java.util.HashSet;
 import java.util.List;
 
 @Component
-public class ListWrapperConverter implements SourceConverter<ListWrapper> {
+public class ListWrapperConverter implements SemanticModelConverter<ListWrapper> {
 
     // can't be in a constructor because of circular dependency
     @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
     @Autowired
-    private SourceConverterFactory sourceConverterFactory;
-
-    @Override
-    public List<Class<? extends ListWrapper>> getTypes() {
-        return Arrays.asList(ListWrapper.class,
-                ListWrapper.ContentModelDataListWrapper.class,
-                ListWrapper.KeywordModelDataListWrapper.class,
-                ListWrapper.EntityModelDataListWrapper.class,
-                ListWrapper.RichTextDataListWrapper.class);
-    }
+    private GenericSemanticModelDataConverter genericSemanticModelDataConverter;
 
     @Override
     public Object convert(ListWrapper toConvert, TypeInformation targetType, SemanticField semanticField, ModelBuilderPipeline pipeline,
@@ -51,9 +42,18 @@ public class ListWrapperConverter implements SourceConverter<ListWrapper> {
         }
     }
 
+    @Override
+    public List<Class<? extends ListWrapper>> getTypes() {
+        return Arrays.asList(ListWrapper.class,
+                ListWrapper.ContentModelDataListWrapper.class,
+                ListWrapper.KeywordModelDataListWrapper.class,
+                ListWrapper.EntityModelDataListWrapper.class,
+                ListWrapper.RichTextDataListWrapper.class);
+    }
+
     @NotNull
     private Object convertValue(Object toConvert, TypeDescriptor targetType, SemanticField semanticField,
                                 ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
-        return sourceConverterFactory.convert(toConvert, targetType, semanticField, pipeline, dataProvider.embedded(toConvert));
+        return genericSemanticModelDataConverter.convert(toConvert, targetType, semanticField, pipeline, dataProvider.embedded(toConvert));
     }
 }

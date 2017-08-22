@@ -62,6 +62,11 @@ public class DCPDataBinderWrapper implements DataBinder {
         return this.dataBinder.buildPage(s, aClass);
     }
 
+    @Override
+    public <T extends ComponentPresentation> T buildComponentPresentation(String source, Class<T> componentPresentationClass) throws SerializationException {
+        return this.dataBinder.buildComponentPresentation(source, componentPresentationClass);
+    }
+
     /** {@inheritDoc} */
     @Override
     public ComponentPresentation buildDynamicComponentPresentation(ComponentPresentation componentPresentation, Class<? extends Component> aClass) throws SerializationException {
@@ -80,6 +85,18 @@ public class DCPDataBinderWrapper implements DataBinder {
         return this.dataBinder.getRootElementName(o);
     }
 
+    @Override
+    public boolean classHasViewModelDerivatives(String className) {
+        return this.dataBinder.classHasViewModelDerivatives(className);
+    }
+
+    @Override
+    public Class<? extends BaseViewModel> getConcreteModel(String className, String rootElementName) {
+        // Check if we have a model class for the root element name
+        // Check if it matches the interface or abstract class
+        return this.dataBinder.getConcreteModel(className, rootElementName);
+    }
+
     /** {@inheritDoc} */
     @Override
     public boolean renderDefaultComponentModelsOnly() {
@@ -90,5 +107,10 @@ public class DCPDataBinderWrapper implements DataBinder {
     @Override
     public boolean renderDefaultComponentsIfNoModelFound() {
         return this.dataBinder.renderDefaultComponentsIfNoModelFound();
+    }
+
+    @Override
+    public boolean canDeserialize(String source) {
+        return source.startsWith("{\"");
     }
 }

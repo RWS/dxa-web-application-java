@@ -2,17 +2,19 @@ package com.sdl.webapp.tridion;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.sdl.web.api.broker.WebComponentPresentationFactoryImpl;
 import com.sdl.web.api.dynamic.WebComponentPresentationFactory;
+import com.tridion.dcp.ComponentPresentationFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.impl.ComponentPresentationImpl;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.core.providers.BaseBrokerProvider;
+import org.dd4t.providers.AbstractComponentPresentationProvider;
 import org.dd4t.databind.builder.json.JsonDataBinder;
 import org.dd4t.providers.ComponentPresentationProvider;
+import org.dd4t.providers.ComponentPresentationResultItem;
+import org.dd4t.providers.ComponentPresentationResultItemImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,21 +30,21 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Service
 @Slf4j
-public class BrokerComponentPresentationProvider extends BaseBrokerProvider implements ComponentPresentationProvider {
+public class BrokerComponentPresentationProvider extends AbstractComponentPresentationProvider implements ComponentPresentationProvider {
 
     private static final Logger LOG = LoggerFactory.getLogger(BrokerComponentPresentationProvider.class);
 
-    private static final Map<Integer, WebComponentPresentationFactory> FACTORY_CACHE = new ConcurrentHashMap<>();
+    private static final Map<Integer, ComponentPresentationFactory> FACTORY_CACHE = new ConcurrentHashMap<>();
 
     private static final String ERROR_MESSAGE = "Component Presentation not found for componentId: %d, templateId: %d and publicationId: %d";
 
     /**
      * {@inheritDoc}
      */
-    protected ComponentPresentation getDynamicComponentPresentationInternal(int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
-        WebComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);
+    protected String getDynamicComponentPresentationInternal(int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException {
+        ComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);
         if (factory == null) {
-            factory = new WebComponentPresentationFactoryImpl(publicationId);
+            factory = new ComponentPresentationFactory(publicationId);
             FACTORY_CACHE.put(publicationId, factory);
         }
 
@@ -55,14 +57,15 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
             throw new ItemNotFoundException(String.format(ERROR_MESSAGE, componentId, templateId, publicationId));
         }
 
-        return getComponentPresentation(result.getContent());
+        return result.getContent();
+//        return getComponentPresentation(result.getContent());
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public ComponentPresentation getDynamicComponentPresentation(int componentId, int publicationId)
+    public String getDynamicComponentPresentation(int componentId, int publicationId)
             throws ItemNotFoundException, SerializationException {
         return getDynamicComponentPresentation(componentId, 0, publicationId);
     }
@@ -71,16 +74,61 @@ public class BrokerComponentPresentationProvider extends BaseBrokerProvider impl
      * {@inheritDoc}
      */
     @Override
-    public ComponentPresentation getDynamicComponentPresentation(int componentId, int templateId, int publicationId)
+    public String getDynamicComponentPresentation(int componentId, int templateId, int publicationId)
             throws ItemNotFoundException, SerializationException {
         return getDynamicComponentPresentationInternal(componentId, templateId, publicationId);
+    }
+
+    @Override
+    public ComponentPresentationResultItem<String> getDynamicComponentPresentationItem (int componentId, int publicationId) throws ItemNotFoundException, SerializationException{
+        return getDynamicComponentPresentationItem(componentId, 0, publicationId);
+    }
+
+    @Override
+    public ComponentPresentationResultItem<String> getDynamicComponentPresentationItem (int componentId, int templateId, int publicationId) throws ItemNotFoundException, SerializationException{
+        ComponentPresentationFactory factory = FACTORY_CACHE.get(publicationId);
+
+        if (factory == null) {
+            factory = new ComponentPresentationFactory(publicationId);
+            FACTORY_CACHE.put(publicationId, factory);
+        }
+
+        com.tridion.dcp.ComponentPresentation result;
+        String resultString;
+        ComponentPresentationResultItemImpl resultmodel;
+
+        if (templateId != 0) {
+            result = factory.getComponentPresentation(componentId, templateId);
+        } else {
+            result = factory.getComponentPresentationWithHighestPriority(componentId);
+        }
+
+        if(result != null){
+            resultmodel = new ComponentPresentationResultItemImpl(result.getPublicationId(), result.getComponentId(), result.getComponentTemplateId());
+
+            assertQueryResultNotNull(result,componentId,templateId,publicationId);
+            resultString = result.getContent();
+
+            if (!StringUtils.isEmpty(resultString)) {
+                resultmodel.setContentSource(decodeAndDecompressContent(resultString));
+            }
+            else{
+                resultmodel.setContentSource(resultString);
+            }
+        }
+        else{
+            resultmodel = new ComponentPresentationResultItemImpl(0, 0, 0);
+        }
+
+        return resultmodel;
+
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public List<ComponentPresentation> getDynamicComponentPresentations(final String[] itemUris, final int templateId, final int publicationId)
+    public List<String> getDynamicComponentPresentations(final String[] itemUris, final int templateId, final int publicationId)
             throws ItemNotFoundException, SerializationException {
         return Collections.emptyList();
     }

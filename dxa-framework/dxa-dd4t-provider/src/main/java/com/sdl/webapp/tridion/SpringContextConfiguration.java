@@ -7,7 +7,7 @@ import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
 import org.dd4t.core.factories.impl.TaxonomyFactoryImpl;
 import org.dd4t.core.processors.impl.RichTextWithLinksResolver;
-import org.dd4t.core.providers.EHCacheProvider;
+import org.dd4t.caching.providers.EHCacheProvider;
 import org.dd4t.core.resolvers.impl.DefaultLinkResolver;
 import org.dd4t.core.serializers.impl.SerializerFactory;
 import org.dd4t.core.serializers.impl.json.JSONSerializer;
@@ -19,7 +19,7 @@ import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.impl.BrokerLinkProvider;
 import org.dd4t.providers.impl.BrokerPageProvider;
 import org.dd4t.providers.impl.BrokerTaxonomyProvider;
-import org.dd4t.providers.impl.NoCacheProvider;
+import org.dd4t.providers.NoCacheProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -50,7 +50,7 @@ public class SpringContextConfiguration {
 
     @Bean
     public ComponentPresentationFactory componentPresentationFactory() {
-        ComponentPresentationFactoryImpl presentationFactory = ComponentPresentationFactoryImpl.getInstance();
+        ComponentPresentationFactoryImpl presentationFactory = new ComponentPresentationFactoryImpl();
         presentationFactory.setComponentPresentationProvider(componentPresentationProvider());
         presentationFactory.setCacheProvider(cacheProvider());
         return presentationFactory;
@@ -73,7 +73,7 @@ public class SpringContextConfiguration {
 
     @Bean
     public TaxonomyFactoryImpl taxonomyFactory() {
-        TaxonomyFactoryImpl taxonomyFactory = TaxonomyFactoryImpl.getInstance();
+        TaxonomyFactoryImpl taxonomyFactory = new TaxonomyFactoryImpl();
         taxonomyFactory.setCacheProvider(cacheProvider());
         taxonomyFactory.setTaxonomyProvider(taxonomyProvider());
         return taxonomyFactory;
@@ -81,7 +81,7 @@ public class SpringContextConfiguration {
 
     @Bean
     public PageFactoryImpl pageFactory() {
-        PageFactoryImpl pageFactory = PageFactoryImpl.getInstance();
+        PageFactoryImpl pageFactory = new PageFactoryImpl();
         pageFactory.setCacheProvider(cacheProvider());
         pageFactory.setPageProvider(pageProvider());
         return pageFactory;
@@ -119,7 +119,7 @@ public class SpringContextConfiguration {
 
     @Bean
     public JsonDataBinder dataBinder() {
-        JsonDataBinder dataBinder = JsonDataBinder.getInstance();
+        JsonDataBinder dataBinder = new JsonDataBinder();
         dataBinder.setRenderDefaultComponentModelsOnly(true);
         dataBinder.setRenderDefaultComponentsIfNoModelFound(true);
         dataBinder.setConverter(modelConverter());
@@ -137,8 +137,7 @@ public class SpringContextConfiguration {
 
     @Bean
     public DataBindFactory databindFactory() {
-        DataBindFactory bindFactory = DataBindFactory.getInstance();
-        bindFactory.setDataBinder(dcpDataBinderWrapper());
+        DataBindFactory bindFactory = DataBindFactory.createInstance(dcpDataBinderWrapper());
         return bindFactory;
     }
 

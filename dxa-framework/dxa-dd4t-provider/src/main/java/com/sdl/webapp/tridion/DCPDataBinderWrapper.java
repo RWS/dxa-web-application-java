@@ -69,6 +69,7 @@ public class DCPDataBinderWrapper implements DataBinder {
 
     /** {@inheritDoc} */
     @Override
+    @Deprecated
     public ComponentPresentation buildDynamicComponentPresentation(ComponentPresentation componentPresentation, Class<? extends Component> aClass) throws SerializationException {
         return componentPresentation;
     }
@@ -92,8 +93,6 @@ public class DCPDataBinderWrapper implements DataBinder {
 
     @Override
     public Class<? extends BaseViewModel> getConcreteModel(String className, String rootElementName) {
-        // Check if we have a model class for the root element name
-        // Check if it matches the interface or abstract class
         return this.dataBinder.getConcreteModel(className, rootElementName);
     }
 

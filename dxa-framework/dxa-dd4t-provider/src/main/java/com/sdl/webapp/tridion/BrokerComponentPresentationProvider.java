@@ -2,7 +2,6 @@ package com.sdl.webapp.tridion;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.sdl.web.api.dynamic.WebComponentPresentationFactory;
 import com.tridion.dcp.ComponentPresentationFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,8 +9,8 @@ import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.impl.ComponentPresentationImpl;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.dd4t.providers.AbstractComponentPresentationProvider;
 import org.dd4t.databind.builder.json.JsonDataBinder;
+import org.dd4t.providers.AbstractComponentPresentationProvider;
 import org.dd4t.providers.ComponentPresentationProvider;
 import org.dd4t.providers.ComponentPresentationResultItem;
 import org.dd4t.providers.ComponentPresentationResultItemImpl;
@@ -58,7 +57,6 @@ public class BrokerComponentPresentationProvider extends AbstractComponentPresen
         }
 
         return result.getContent();
-//        return getComponentPresentation(result.getContent());
     }
 
     /**

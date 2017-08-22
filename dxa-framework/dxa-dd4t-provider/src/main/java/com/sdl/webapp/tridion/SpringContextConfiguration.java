@@ -1,25 +1,26 @@
 package com.sdl.webapp.tridion;
 
+import org.dd4t.caching.providers.EHCacheProvider;
 import org.dd4t.contentmodel.impl.BaseField;
 import org.dd4t.contentmodel.impl.ComponentImpl;
+import org.dd4t.contentmodel.impl.ComponentPresentationImpl;
+import org.dd4t.contentmodel.impl.ComponentTemplateImpl;
 import org.dd4t.core.factories.ComponentPresentationFactory;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
 import org.dd4t.core.factories.impl.TaxonomyFactoryImpl;
 import org.dd4t.core.processors.impl.RichTextWithLinksResolver;
-import org.dd4t.caching.providers.EHCacheProvider;
 import org.dd4t.core.resolvers.impl.DefaultLinkResolver;
-import org.dd4t.core.serializers.impl.SerializerFactory;
 import org.dd4t.core.serializers.impl.json.JSONSerializer;
 import org.dd4t.databind.DataBindFactory;
 import org.dd4t.databind.builder.json.JsonDataBinder;
 import org.dd4t.databind.builder.json.JsonModelConverter;
 import org.dd4t.providers.ComponentPresentationProvider;
+import org.dd4t.providers.NoCacheProvider;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.impl.BrokerLinkProvider;
 import org.dd4t.providers.impl.BrokerPageProvider;
 import org.dd4t.providers.impl.BrokerTaxonomyProvider;
-import org.dd4t.providers.NoCacheProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -107,10 +108,10 @@ public class SpringContextConfiguration {
         return new JSONSerializer();
     }
 
-    @Bean
-    public SerializerFactory serializerFactory() {
-        return new SerializerFactory(serializer());
-    }
+//    @Bean
+//    public SerializerFactory serializerFactory() {
+//        return new SerializerFactory(serializer());
+//    }
 
     @Bean
     public JsonModelConverter modelConverter() {
@@ -124,6 +125,8 @@ public class SpringContextConfiguration {
         dataBinder.setRenderDefaultComponentsIfNoModelFound(true);
         dataBinder.setConverter(modelConverter());
         dataBinder.setConcreteComponentImpl(ComponentImpl.class);
+        dataBinder.setConcreteComponentPresentationImpl(ComponentPresentationImpl.class);
+        dataBinder.setConcreteComponentTemplateImpl(ComponentTemplateImpl.class);
         dataBinder.setConcreteFieldImpl(BaseField.class);
         return dataBinder;
     }

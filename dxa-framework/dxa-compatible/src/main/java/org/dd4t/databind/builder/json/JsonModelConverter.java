@@ -35,6 +35,7 @@ import org.dd4t.databind.util.TypeUtils;
 import org.dd4t.databind.viewmodel.base.ModelFieldMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -53,19 +54,98 @@ import java.util.Map;
  * @since 19/11/14.
  */
 public class JsonModelConverter extends AbstractModelConverter implements ModelConverter {
+
     private static final Logger LOG = LoggerFactory.getLogger(JsonModelConverter.class);
+
+    @Resource
+    @Lazy
+    protected JsonDataBinder databinder;
 
     private Class<? extends org.dd4t.contentmodel.Field> concreteFieldImpl;
 
-    @Resource
-    protected JsonDataBinder databinder;
-
-    public JsonModelConverter () {
+    public JsonModelConverter() {
 
     }
 
+    /**
+     * Searches for the Json node to set on the model field in the Json data.
+     *
+     * @param entityFieldName The annotated model property. Used to search the Json node
+     * @param rawJsonData     The Json data representing a node inside a child node of a component. Used for
+     *                        embedded fields and component link fields
+     * @param isRootComponent A flag to check whether the current Json node is the component node. If it is
+     *                        the case, then a choice is made whether to fetch the metadata or the normal content
+     *                        node.
+     * @param contentFields   The content node
+     * @param metadataFields  The metadata node
+     * @param m               The current model field that is parsing at the moment
+     * @return the Json node found under the entityFieldName key or null
+     */
+    private static JsonNode getJsonNodeToParse(final String entityFieldName, final JsonNode rawJsonData, final boolean isRootComponent, final boolean isEmbeddable, final JsonNode contentFields, final JsonNode metadataFields, final ModelFieldMapping m) {
+
+        final JsonNode currentNode;
+        if (isRootComponent) {
+            if (m.getViewModelProperty().isMetadata()) {
+                currentNode = metadataFields;
+            } else {
+                currentNode = contentFields;
+            }
+        } else {
+            currentNode = rawJsonData;
+        }
+
+        if (currentNode != null) {
+            if (isRootComponent || isEmbeddable) {
+                return currentNode.get(entityFieldName);
+            }
+            return currentNode;
+        }
+        return null;
+    }
+
+    private static void handleEmbeddedContent(final JsonNode currentField, final List<JsonNode> nodeList) {
+        final JsonNode embeddedNode = currentField.get(DataBindConstants.EMBEDDED_VALUES_NODE);
+        // This is a fix for when we are already in an embedded node. The Json unfortunately
+        // keeps sibling nodes in this child, which has FieldType embedded, while we're actually already in
+        // that node's Values
+
+        final JsonNode schemaNode = currentField.get(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME);
+        if (embeddedNode != null) {
+            final Iterator<JsonNode> embeddedIterator = embeddedNode.elements();
+            while (embeddedIterator.hasNext()) {
+                addEmbeddedNodeAndSchemaInfo(nodeList, schemaNode, embeddedIterator);
+            }
+        } else {
+            final Iterator<JsonNode> currentFieldElements = currentField.elements();
+            while (currentFieldElements.hasNext()) {
+
+                addEmbeddedNodeAndSchemaInfo(nodeList, schemaNode, currentFieldElements);
+            }
+        }
+    }
+
+    private static void addEmbeddedNodeAndSchemaInfo(final List<JsonNode> nodeList, final JsonNode schemaNode, final Iterator<JsonNode> embeddedIterator) {
+        ObjectNode embeddedValue = (ObjectNode) embeddedIterator.next();
+
+        if (schemaNode != null && !embeddedValue.has(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME)) {
+            embeddedValue.set(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME, schemaNode);
+        }
+        nodeList.add(embeddedValue);
+    }
+
+    private static void fillLinkedComponentValues(final JsonNode currentField, final List<JsonNode> nodeList) {
+        // Get the actual values from the values
+        // if the Model's field is List, grab all embedded values
+        // if it's a normal class (ComponentImpl or similar), just get the first
+
+        final Iterator<JsonNode> nodes = currentField.get(DataBindConstants.LINKED_COMPONENT_VALUES_NODE).elements();
+        while (nodes.hasNext()) {
+            nodeList.add(nodes.next());
+        }
+    }
+
     @Override
-    public <T extends BaseViewModel> T convertSource (final Object data, final T model) throws SerializationException {
+    public <T extends BaseViewModel> T convertSource(final Object data, final T model) throws SerializationException {
 
         if (!JsonUtils.isValidJsonNode(data)) {
             LOG.debug("No data or not a JsonNode - nothing to do.");
@@ -113,7 +193,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         return model;
     }
 
-    private <T extends BaseViewModel> void buildModelProperties (final T model, final JsonNode rawJsonData, final boolean isRootComponent, final JsonNode contentFields, final JsonNode metadataFields, final Component.ComponentType componentType) throws SerializationException {
+    private <T extends BaseViewModel> void buildModelProperties(final T model, final JsonNode rawJsonData, final boolean isRootComponent, final JsonNode contentFields, final JsonNode metadataFields, final Component.ComponentType componentType) throws SerializationException {
         // TODO: mandatory but missing fields need their XPath set as well..
         final Map<String, Object> modelProperties = model.getModelProperties();
 
@@ -152,45 +232,9 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         }
     }
 
-    /**
-     * Searches for the Json node to set on the model field in the Json data.
-     *
-     * @param entityFieldName The annotated model property. Used to search the Json node
-     * @param rawJsonData     The Json data representing a node inside a child node of a component. Used for
-     *                        embedded fields and component link fields
-     * @param isRootComponent A flag to check whether the current Json node is the component node. If it is
-     *                        the case, then a choice is made whether to fetch the metadata or the normal content
-     *                        node.
-     * @param contentFields   The content node
-     * @param metadataFields  The metadata node
-     * @param m               The current model field that is parsing at the moment
-     * @return the Json node found under the entityFieldName key or null
-     */
-    private static JsonNode getJsonNodeToParse (final String entityFieldName, final JsonNode rawJsonData, final boolean isRootComponent, final boolean isEmbeddable, final JsonNode contentFields, final JsonNode metadataFields, final ModelFieldMapping m) {
-
-        final JsonNode currentNode;
-        if (isRootComponent) {
-            if (m.getViewModelProperty().isMetadata()) {
-                currentNode = metadataFields;
-            } else {
-                currentNode = contentFields;
-            }
-        } else {
-            currentNode = rawJsonData;
-        }
-
-        if (currentNode != null) {
-            if (isRootComponent || isEmbeddable) {
-                return currentNode.get(entityFieldName);
-            }
-            return currentNode;
-        }
-        return null;
-    }
-
     // TODO: we shouldnt need to have a separate method for this. The Json should be
     // constructed in such a way that it's 1:1 mappable, meaning a FieldType has to be there
-    private <T extends BaseViewModel> void buildMultimediaField (final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping modelFieldMapping) throws IllegalAccessException {
+    private <T extends BaseViewModel> void buildMultimediaField(final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping modelFieldMapping) throws IllegalAccessException {
         final Field modelField = modelFieldMapping.getField();
         modelField.setAccessible(true);
         setXPathForXpm(model, fieldName, currentField, modelField);
@@ -206,7 +250,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         }
     }
 
-    private <T extends BaseViewModel> void buildField (final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping modelFieldMapping) throws IllegalAccessException, SerializationException, IOException {
+    private <T extends BaseViewModel> void buildField(final T model, final String fieldName, final JsonNode currentField, final ModelFieldMapping modelFieldMapping) throws IllegalAccessException, SerializationException, IOException {
 
         final Field modelField = modelFieldMapping.getField();
         modelField.setAccessible(true);
@@ -254,7 +298,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         deserializeAndBuildModels(model, fieldName, modelField, tridionDataFieldType, nodeList);
     }
 
-    private <T extends BaseViewModel> void setXPathForXpm (final T model, final String fieldName, final JsonNode currentField, final Field modelField) {
+    private <T extends BaseViewModel> void setXPathForXpm(final T model, final String fieldName, final JsonNode currentField, final Field modelField) {
         if (model instanceof TridionViewModel && currentField != null && currentField.has(DataBindConstants.XPATH)) {
             boolean isMultiValued = false;
             if (modelField.getType().equals(List.class)) {
@@ -266,7 +310,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         }
     }
 
-    private <T extends BaseViewModel> void deserializeAndBuildModels (final T model, final String fieldName, final Field modelField, final FieldType tridionDataFieldType, final List<JsonNode> nodeList) throws SerializationException, IllegalAccessException, IOException {
+    private <T extends BaseViewModel> void deserializeAndBuildModels(final T model, final String fieldName, final Field modelField, final FieldType tridionDataFieldType, final List<JsonNode> nodeList) throws SerializationException, IllegalAccessException, IOException {
         if (modelField.getType().equals(List.class)) {
             final Type parametrizedType = TypeUtils.getRuntimeTypeOfTypeParameter(modelField.getGenericType());
             LOG.debug("Interface check: " + TypeUtils.classIsViewModel((Class<?>) parametrizedType));
@@ -300,47 +344,6 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         }
     }
 
-    private static void handleEmbeddedContent (final JsonNode currentField, final List<JsonNode> nodeList) {
-        final JsonNode embeddedNode = currentField.get(DataBindConstants.EMBEDDED_VALUES_NODE);
-        // This is a fix for when we are already in an embedded node. The Json unfortunately
-        // keeps sibling nodes in this child, which has FieldType embedded, while we're actually already in
-        // that node's Values
-
-        final JsonNode schemaNode = currentField.get(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME);
-        if (embeddedNode != null) {
-            final Iterator<JsonNode> embeddedIterator = embeddedNode.elements();
-            while (embeddedIterator.hasNext()) {
-                addEmbeddedNodeAndSchemaInfo(nodeList, schemaNode, embeddedIterator);
-            }
-        } else {
-            final Iterator<JsonNode> currentFieldElements = currentField.elements();
-            while (currentFieldElements.hasNext()) {
-
-                addEmbeddedNodeAndSchemaInfo(nodeList, schemaNode, currentFieldElements);
-            }
-        }
-    }
-
-    private static void addEmbeddedNodeAndSchemaInfo (final List<JsonNode> nodeList, final JsonNode schemaNode, final Iterator<JsonNode> embeddedIterator) {
-        ObjectNode embeddedValue = (ObjectNode) embeddedIterator.next();
-
-        if (schemaNode != null && !embeddedValue.has(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME)) {
-            embeddedValue.set(DataBindConstants.EMBEDDED_SCHEMA_FIELD_NAME, schemaNode);
-        }
-        nodeList.add(embeddedValue);
-    }
-
-    private static void fillLinkedComponentValues (final JsonNode currentField, final List<JsonNode> nodeList) {
-        // Get the actual values from the values
-        // if the Model's field is List, grab all embedded values
-        // if it's a normal class (ComponentImpl or similar), just get the first
-
-        final Iterator<JsonNode> nodes = currentField.get(DataBindConstants.LINKED_COMPONENT_VALUES_NODE).elements();
-        while (nodes.hasNext()) {
-            nodeList.add(nodes.next());
-        }
-    }
-
     /**
      * Deserializes in a Strongly Typed Model.
      *
@@ -353,7 +356,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
      * @throws SerializationException serialization issues
      * @throws IllegalAccessException Class instantiation issues
      */
-    private <T extends BaseViewModel> void checkTypeAndBuildModel (final T model, final String fieldName, final JsonNode currentField, final Field modelField, final Class<T> modelClassToUse) throws SerializationException, IllegalAccessException {
+    private <T extends BaseViewModel> void checkTypeAndBuildModel(final T model, final String fieldName, final JsonNode currentField, final Field modelField, final Class<T> modelClassToUse) throws SerializationException, IllegalAccessException {
         if (!model.getClass().equals(modelField.getType())) {
             LOG.debug("Building a model or Component for field:{}, type: {}", fieldName, modelField.getType().getName());
             final BaseViewModel strongModel = buildModelForField(currentField, modelClassToUse);
@@ -368,7 +371,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         }
     }
 
-    private <T extends BaseViewModel> BaseViewModel buildModelForField (final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {
+    private <T extends BaseViewModel> BaseViewModel buildModelForField(final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {
 
         final BaseViewModel strongModel = databinder.buildModel(currentField, modelClassToUse, "");
         if (Modifier.isAbstract(modelClassToUse.getModifiers()) || Modifier.isInterface(modelClassToUse.getModifiers())) {
@@ -396,7 +399,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         }
     }
 
-    private String getRootElementNameFromComponentOrEmbeddedField (final JsonNode currentField) {
+    private String getRootElementNameFromComponentOrEmbeddedField(final JsonNode currentField) {
         final String rootElementName = databinder.getRootElementName(currentField);
 
         if (StringUtils.isNotEmpty(rootElementName)) {
@@ -415,7 +418,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         return null;
     }
 
-    private  <T extends BaseViewModel> BaseViewModel getBaseViewModel (final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {
+    private <T extends BaseViewModel> BaseViewModel getBaseViewModel(final JsonNode currentField, final Class<T> modelClassToUse) throws SerializationException {
         final BaseViewModel strongModel = databinder.buildModel(currentField, modelClassToUse, "");
         final ViewModel viewModelParameters = modelClassToUse.getAnnotation(ViewModel.class);
         if (viewModelParameters.setRawData()) {
@@ -424,7 +427,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         return strongModel;
     }
 
-    private <T extends BaseViewModel> void deserializeGeneric (final T model, final JsonNode currentField, final Field f, final FieldType fieldType) throws IOException, IllegalAccessException, SerializationException {
+    private <T extends BaseViewModel> void deserializeGeneric(final T model, final JsonNode currentField, final Field f, final FieldType fieldType) throws IOException, IllegalAccessException, SerializationException {
         LOG.debug("Field Type: " + f.getType().getCanonicalName());
 
         if (currentField.has(DataBindConstants.COMPONENT_TYPE)) {
@@ -439,7 +442,7 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
         }
     }
 
-    private void setTridionProperties (final TridionViewModel model, final JsonNode rawComponent) {
+    private void setTridionProperties(final TridionViewModel model, final JsonNode rawComponent) {
         model.setLastPublishDate(JsonUtils.getDateFromField(DataBindConstants.LAST_PUBLISHED_DATE, rawComponent));
         model.setLastModified(JsonUtils.getDateFromField(DataBindConstants.LAST_MODIFIED_DATE, rawComponent));
         model.setTcmUri(JsonUtils.getTcmUriFromField(DataBindConstants.ID, rawComponent));
@@ -447,10 +450,10 @@ public class JsonModelConverter extends AbstractModelConverter implements ModelC
 
 
     public JsonDataBinder getDatabinder() {
-		return databinder;
-	}
+        return databinder;
+    }
 
-	public void setDatabinder(JsonDataBinder databinder) {
-		this.databinder = databinder;
-	}
+    public void setDatabinder(JsonDataBinder databinder) {
+        this.databinder = databinder;
+    }
 }

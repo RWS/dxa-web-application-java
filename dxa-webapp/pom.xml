@@ -21,19 +21,6 @@
         <dxa-release-branch>release/2.0</dxa-release-branch>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>github-project-repo</id>
-            <url>
-                https://raw.githubusercontent.com/sdl/dxa-web-application-java/${dxa-release-branch}/local-project-repo
-            </url>
-        </repository>
-        <repository>
-            <id>local-project-repo</id>
-            <url>file:///${project.basedir}/../local-project-repo</url>
-        </repository>
-    </repositories>
-
     <build>
         <finalName>${project.artifactId}</finalName>
         <plugins>

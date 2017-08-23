@@ -26,7 +26,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <dd4t.version>2.2.1-DXA</dd4t.version>
         <cd-cil.version>8.5.0-1008</cd-cil.version>
 
         <!-- DXA versions -->
@@ -42,6 +41,7 @@
         <dxa-module-51degrees.version>${dxa.version}</dxa-module-51degrees.version>
         <dxa-module-audience-manager.version>${dxa.version}</dxa-module-audience-manager.version>
         <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
+        <!-- /DXA Versions -->
 
         <!-- Apache -->
         <commons-io-version>2.5</commons-io-version>
@@ -49,6 +49,7 @@
         <commons-collections.version>3.2.2</commons-collections.version>
         <commons-validator.version>1.5.1</commons-validator.version>
         <httpcomponents-client-version>4.5.2</httpcomponents-client-version>
+        <httpcomponents.core.version>4.4.6</httpcomponents.core.version>
 
         <guava-version>20.0</guava-version>
 
@@ -77,7 +78,8 @@
         <spring.version>4.3.7.RELEASE</spring.version>
         <spring-security.version>4.1.4.RELEASE</spring-security.version>
 
-        <jsoup.version>1.7.3</jsoup.version>
+        <!--was 1.7.3-->
+        <jsoup.version>1.8.3</jsoup.version>
         <rome.version>1.7.1</rome.version>
         <xalan-version>2.7.2</xalan-version>
 
@@ -94,6 +96,67 @@
         <odata_client.version>2.3.4</odata_client.version>
         <ehcache.version>3.1.3</ehcache.version>
         <cache-api.version>1.0.0</cache-api.version>
+
+        <!-- DD4T PROPERTIES -->
+        <net.sf.ehcache.version>2.9.0</net.sf.ehcache.version>
+        <activation.version>1.1.1</activation.version>
+        <activemq.version>5.10.0</activemq.version>
+
+        <!-- Web 8: 3.4 -->
+        <!--<commons-lang3.version>3.3.2</commons-lang3.version>-->
+        <!-- /Web 8: 3.4 -->
+
+        <!-- Versions which do differ for each Tridion version -->
+
+        <!-- Web 8: 1.9 -->
+        <commons-codec.version>1.8</commons-codec.version>
+
+        <easylicense.version>2.5</easylicense.version>
+        <easymock.version>3.2</easymock.version>
+        <el-impl.version>2.2</el-impl.version>
+        <ehcache.jcache.version>1.0.1</ehcache.jcache.version>
+        <fast-classpath-scanner.version>2.4.1</fast-classpath-scanner.version>
+        <gson.version>2.3.1</gson.version>
+
+        <!-- Web 8: 18.0 -->
+        <guava.version>15.0</guava.version>
+
+        <!--<jackson.version>2.6.4</jackson.version>-->
+        <javax.jms.version>1.1-rev-1</javax.jms.version>
+        <!--<javax.servlet-api.version>3.0.1</javax.servlet-api.version>-->
+        <jetty-util.version>6.1.26</jetty-util.version>
+        <javax.validation.version>1.1.0.Final</javax.validation.version>
+        <!--<jcl-over-slf4j.version>1.6.4</jcl-over-slf4j.version>-->
+        <jcl-over-slf4j.version>1.7.21</jcl-over-slf4j.version>
+        <!--<joda-time.version>2.8.2</joda-time.version>-->
+        <jsoup.version>1.8.3</jsoup.version>
+        <!--<jsp-api.version>2.2</jsp-api.version>-->
+        <!--<jstl.version>1.2</jstl.version>-->
+        <!--<junit.version>4.11</junit.version>-->
+        <resteasy.version>3.0.8.Final</resteasy.version>
+
+
+        <scala.library.version>2.10.5</scala.library.version>
+        <!--<sdl.odata.client.version>2.0.5</sdl.odata.client.version>-->
+
+        <!-- Versions which do differ for each Tridion version -->
+        <!--<spring.version>3.2.8.RELEASE</spring.version>-->
+        <!--<logback.version>1.0.13</logback.version>-->
+        <!--<slf4j.version>1.6.4</slf4j.version>-->
+        <!--2013SP1: <slf4j.version>1.6.4</slf4j.version>-->
+        <!--2013SP1: <logback.version>1.0.0</logback.version>-->
+
+        <!--<tridion.web7.version>7.1.0</tridion.web7.version>-->
+        <!--<tridion.web8.version>8.5.0-1011</tridion.web8.version>-->
+        <!--&lt;!&ndash;<tridion.web8.version>8.1.0-1233</tridion.web8.version>&ndash;&gt;-->
+        <!--<tridion.web8.oss.version>8.1.1-1008</tridion.web8.oss.version>-->
+        <!--<tridion.web8.common.config.version>8.1.1-1002</tridion.web8.common.config.version>-->
+        <!--<tridion.web8.discovery.client.version>8.1.1-1009</tridion.web8.discovery.client.version>-->
+
+        <urlrewritefilter.version>4.0.3</urlrewritefilter.version>
+        <xml-apis.version>1.4.01</xml-apis.version>
+
+        <!---->
     </properties>
 
     <scm>
@@ -280,116 +343,6 @@
                 <groupId>com.sdl</groupId>
                 <artifactId>odata_client</artifactId>
                 <version>${odata_client.version}</version>
-            </dependency>
-
-            <!-- DD4T -->
-            <dependency>
-                <groupId>org.dd4t</groupId>
-                <artifactId>dd4t-api</artifactId>
-                <version>${dd4t.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.tridion.contentdelivery</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl.web</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.dd4t</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.dd4t</groupId>
-                <artifactId>dd4t-core</artifactId>
-                <version>${dd4t.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.tridion.contentdelivery</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl.web</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.dd4t</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.dd4t</groupId>
-                <artifactId>dd4t-databind</artifactId>
-                <version>${dd4t.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.tridion.contentdelivery</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl.web</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.dd4t</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.dd4t</groupId>
-                <artifactId>dd4t-providers</artifactId>
-                <version>${dd4t.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.tridion.contentdelivery</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl.web</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.dd4t</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <dependency>
@@ -627,6 +580,11 @@
                 <artifactId>commons-validator</artifactId>
                 <version>${commons-validator.version}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>${commons-codec.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>jaxen</groupId>
@@ -644,6 +602,11 @@
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>${httpcomponents-client-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>${httpcomponents.core.version}</version>
             </dependency>
 
             <!-- Google -->
@@ -738,6 +701,46 @@
                 <artifactId>annotations</artifactId>
                 <version>${jb-annotations.version}</version>
             </dependency>
+
+            <!--added for dd4t-->
+            <!-- Spring -->
+
+            <!-- Spring Framework -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jms</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.github.lukehutch</groupId>
+                <artifactId>fast-classpath-scanner</artifactId>
+                <version>${fast-classpath-scanner.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.module</groupId>
+                <artifactId>jackson-module-afterburner</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>javax.jms</groupId>
+                <artifactId>jms-api</artifactId>
+                <version>${javax.jms.version}</version>
+            </dependency>
+
+            <!-- Only used for JMS cache invalidation -->
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-client</artifactId>
+                <version>${activemq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>net.sf.ehcache</groupId>
+                <artifactId>ehcache</artifactId>
+                <version>${net.sf.ehcache.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

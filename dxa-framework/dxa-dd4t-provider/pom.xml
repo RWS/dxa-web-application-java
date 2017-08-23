@@ -36,22 +36,6 @@
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.dd4t</groupId>
-            <artifactId>dd4t-providers</artifactId>
-        </dependency>
     </dependencies>
 
 </project>

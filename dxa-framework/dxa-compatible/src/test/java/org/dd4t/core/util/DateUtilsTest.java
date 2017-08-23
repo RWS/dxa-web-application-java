@@ -12,6 +12,9 @@ import org.slf4j.LoggerFactory;
 import java.sql.Timestamp;
 import java.util.Calendar;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 @RunWith (Theories.class)
 public class DateUtilsTest {
 
@@ -27,12 +30,32 @@ public class DateUtilsTest {
     private DateTime beginTime;
     private DateTime endTime;
 
+    public static final String timeWithMS = "2015-07-02T19:30:02.24";
+
+    public static final String timeWithoutMS = "2015-07-04T19:30:02";
+
     @Before
     public void setUp () {
 
         beginTime = DateTime.now().minusWeeks(1);
         endTime = DateTime.now().plusWeeks(1);
         LOG.info("Done setting up dates.");
+    }
+
+    @Test
+    public void testConvertStringToDateWithMS() {
+        DateTime date = DateUtils.convertStringToDate(timeWithMS);
+
+        assertNotNull("Unexpected null result in timeWithMS", date);
+        assertEquals("Invalid ConvertStringToDateWithMS month", 2, date.getDayOfMonth());
+    }
+
+    @Test
+    public void testConvertStringToDateWithoutMS() {
+        DateTime date = DateUtils.convertStringToDate(timeWithoutMS);
+
+        assertNotNull("Unexpected null result in timeWithoutMS", date);
+        assertEquals("Invalid ConvertStringToDateWithMS month", 4, date.getDayOfMonth());
     }
 
     @Test

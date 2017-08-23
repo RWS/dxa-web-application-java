@@ -22,11 +22,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.type.MapType;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
+import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.core.databind.BaseViewModel;
 import org.dd4t.core.databind.TridionViewModel;
 import org.dd4t.core.exceptions.SerializationException;
@@ -36,6 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -49,6 +53,7 @@ import java.util.Set;
 public class ComponentPresentationDeserializer extends StdDeserializer<ComponentPresentation> {
 
     private static final Logger LOG = LoggerFactory.getLogger(ComponentPresentationDeserializer.class);
+    private static final String FIELD_SET_IMPL_CLASS = "org.dd4t.contentmodel.impl.FieldSetImpl";
     private Class<? extends ComponentTemplate> concreteComponentTemplateClass = null;
     private Class<? extends Component> concreteComponentClass = null;
 
@@ -111,6 +116,14 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
             } else if (key.equalsIgnoreCase(DataBindConstants.RENDERED_CONTENT_NODE)) {
                 if (componentPresentation != null) {
                     componentPresentation.setRenderedContent(element.getValue().asText());
+                }
+            } else if (key.equalsIgnoreCase(DataBindConstants.EXTENSION_DATA_NODE)) {
+                if (componentPresentation != null) {
+                    TypeFactory typeFactory = mapper.getTypeFactory();
+                    MapType mapType = typeFactory.constructMapType(HashMap.class, String.class, getFieldSetImplClass());
+                    Map<String,FieldSet> extensionData = JsonDataBinder.getGenericMapper().readValue(element.getValue().traverse(), mapType);
+
+                    componentPresentation.setExtensionData(extensionData);
                 }
             }
         }
@@ -192,6 +205,15 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
             return false;
         }
         return true;
+    }
+
+    private Class getFieldSetImplClass() throws IOException {
+        try {
+            return Class.forName(FIELD_SET_IMPL_CLASS);
+        } catch (ClassNotFoundException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new IOException("Class org.dd4t.contentmodel.impl.FieldSetImpl not found!");
+        }
     }
 
     private ComponentPresentation getConcreteComponentPresentation () {

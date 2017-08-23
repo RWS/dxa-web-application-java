@@ -38,6 +38,7 @@ public class DataBindConstants {
     public static final String COMPONENT_TEMPLATE_NODE_NAME = "ComponentTemplate";
     public static final String ORDER_ON_PAGE_NODE = "OrderOnPage";
     public static final String RENDERED_CONTENT_NODE = "RenderedContent";
+    public static final String EXTENSION_DATA_NODE = "ExtensionData";
     public static final String ROOT_ELEMENT_NAME = "RootElementName";
     public static final String LAST_PUBLISHED_DATE = "LastPublishedDate";
     public static final String LAST_MODIFIED_DATE = "RevisionDate";

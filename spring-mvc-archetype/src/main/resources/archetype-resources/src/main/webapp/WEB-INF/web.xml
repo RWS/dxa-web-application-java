@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="WebApp_ID"
+         version="3.0"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <display-name>DD4T 2</display-name>
+    <servlet>
+        <servlet-name>dispatcher</servlet-name>
+        <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>classpath:dispatcher-servlet.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>dispatcher</servlet-name>
+        <url-pattern>*.html</url-pattern>
+        <url-pattern>*.txt</url-pattern>
+        <url-pattern>*.dcp</url-pattern>
+        <url-pattern>*.png</url-pattern>
+        <url-pattern>*.jpg</url-pattern>
+        <url-pattern>*.gif</url-pattern>
+        <url-pattern>*.jpeg</url-pattern>
+        <url-pattern>*.pdf</url-pattern>
+        <url-pattern>*.vcf</url-pattern>
+        <url-pattern>*.swf</url-pattern>
+        <url-pattern>*.zip</url-pattern>
+        <url-pattern>*.xls</url-pattern>
+        <url-pattern>*.xlsx</url-pattern>
+    </servlet-mapping>
+    <!-- Spring Loading servlets from Web.xml -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:dispatcher-servlet.xml</param-value>
+    </context-param>
+
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <error-page>
+        <error-code>404</error-code>
+        <location>/404.html</location>
+    </error-page>
+
+    <error-page>
+        <error-code>500</error-code>
+        <location>/500.html</location>
+    </error-page>
+
+</web-app>

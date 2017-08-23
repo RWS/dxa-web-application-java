@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xsd:element name="Configuration" id="cd_dynamic_confN10006">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="URLMappings" id="cd_dynamic_confN1000D" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>This describes the publication url mappings</p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="StaticMappings" id="cd_dynamic_confN1001E">
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="Publications" id="cd_dynamic_confN10025">
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Publication" id="cd_dynamic_confN1002C"
+                                                                 minOccurs="0" maxOccurs="unbounded">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Host" id="cd_dynamic_confN10035"
+                                                                             maxOccurs="unbounded">
+                                                                    <xsd:complexType>
+                                                                        <xsd:attribute name="Domain" type="xsd:string"
+                                                                                       use="optional">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>The domain name where the
+                                                                                        publication is hosted (eg.
+                                                                                        www.google.com or google.com
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:attribute>
+                                                                        <xsd:attribute name="Port" type="xsd:string"
+                                                                                       use="optional">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>The port number of the host where
+                                                                                        the publication is hosted
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:attribute>
+                                                                        <xsd:attribute name="Protocol" type="xsd:string"
+                                                                                       use="optional">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>What protocol is used to access
+                                                                                        the publication(eg. http, https)
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:attribute>
+                                                                        <xsd:attribute name="Path" type="xsd:string"
+                                                                                       use="optional">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>If the publication is not hosted
+                                                                                        on the root path, then the
+                                                                                        relative path to the host should
+                                                                                        be specified
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:attribute>
+                                                                    </xsd:complexType>
+                                                                </xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="Id" type="xsd:string" use="optional"/>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="StorageMapping" id="cd_dynamic_confN10088">
+                                <xsd:complexType>
+                                    <xsd:attribute name="IdentifyPublicationByProperty" type="xsd:string"
+                                                   use="required">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>This describes the property of the Publication object which can be
+                                                    used to identify the desired Publication.
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                        <xsd:attribute name="PathScanDepth" type="xsd:string" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>Defines the deepest level at which the URI will be looked for. If omitted, this
+                                        value defaults to 100. Any value lower than 1 will be considered as a value 1.
+                                    </p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="TCDLEngine" id="cd_dynamic_confN100B0" minOccurs="0">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Holds information about properties used by the Rendering/Transforming Engine.</p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Properties" type="PropertiesType" id="cd_dynamic_confN100C1"
+                                         minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>Holds properties used by the Rendering Engine.</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element name="Tags" id="cd_dynamic_confN100C2" minOccurs="0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>Holds tags used by the Rendering Engine.</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="Tag" id="cd_dynamic_confN1010B" minOccurs="0"
+                                                     maxOccurs="unbounded">
+                                            <xsd:complexType>
+                                                <xsd:annotation>
+                                                    <xsd:documentation>
+                                                        <p>Holds tag used by the Rendering Engine.</p>
+                                                    </xsd:documentation>
+                                                </xsd:annotation>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Handler" id="cd_dynamic_confN1010C"
+                                                                 maxOccurs="unbounded">
+                                                        <xsd:annotation>
+                                                            <xsd:documentation>
+                                                                <p>Holds handler of the tag.</p>
+                                                            </xsd:documentation>
+                                                        </xsd:annotation>
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="Class" type="xsd:string"
+                                                                           use="required">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>This describes the full qualified class name
+                                                                            of handler.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="AllowCodeBlock" type="xsd:boolean"
+                                                                           use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>This describes allow code block or not. true
+                                                                            or false are values for this attribute.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                                <xsd:attribute name="Namespace" type="xsd:string" use="required">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>This describes the namespace of the tag.</p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="Name" type="xsd:string" use="required">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>This describes the name of the tag.</p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="TagBundle" id="cd_dynamic_confN100D0" minOccurs="0"
+                                         maxOccurs="unbounded">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>
+                                            Specifies a tag bundle. A tag bundle is a JAR file containing a
+                                            set of renderers. This
+                                            JAR file must be on the classpath.
+                                            Use this element to add the renderers in this JAR file to the TCDL
+                                            Renderer Engine.
+                                        </p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="Resource" type="xsd:string" use="required">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>A reference to the configuration file for the tag bundle. The
+                                                    file must be present on the classpath, e.g. loadable as a
+                                                    resource.
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="Version" type="xsd:string">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <p>The version of this Content Delivery Dynamic configuration file. This must be set to your
+                            Content Delivery version (without specifying a service pack), e.g. "7.0".
+                        </p>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:complexType name="PropertiesType">
+        <xsd:sequence>
+            <xsd:element name="Property" id="cd_dynamic_confN1010A" minOccurs="0" maxOccurs="unbounded">
+                <xsd:complexType>
+                    <xsd:attribute name="Name" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                <p>This describes the name of the property.</p>
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                    <xsd:attribute name="Value" type="xsd:string">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                <p>This describes the value of the property.</p>
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:attribute>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+</xsd:schema>

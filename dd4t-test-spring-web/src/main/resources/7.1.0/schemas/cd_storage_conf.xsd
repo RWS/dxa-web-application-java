@@ -1,0 +1,1575 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xsd:element name="Configuration" id="cd_storage_confN10006">
+        <xsd:annotation>
+            <xsd:documentation>
+                <p>Root of the Content Delivery Storage Layer configuration file.</p>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="Global" id="cd_storage_confN10016">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Global settings for the Storage Layer.</p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:all>
+                            <xsd:element name="ObjectCache" minOccurs="0" id="cd_storage_confN10026">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>Controls the caching of Content Data Store objects.</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="Policy" minOccurs="0" id="cd_storage_confN10037">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>Determines what policy the cache uses to determine which objects
+                                                        stay in the cache and which objects are removed from the cache
+                                                        when it is full.
+                                                    </p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Param" minOccurs="0" maxOccurs="unbounded"
+                                                                 id="cd_storage_confN10048">
+                                                        <xsd:annotation>
+                                                            <xsd:documentation>
+                                                                <p>A named parameter for the Policy. The
+                                                                    <code>LRUPolicy</code>
+                                                                    has a number of named parameters that you can use to
+                                                                    set the overall cache size, and to specify
+                                                                    individual caching options per cache region. The
+                                                                    parameters are:
+                                                                </p>
+                                                                <p>
+                                                                    <strong>Overall cache</strong>
+                                                                </p>
+                                                                <p>To configure the overall cache, use either
+                                                                    <code>Size</code>
+                                                                    or<code>MemSize</code>:
+                                                                </p>
+                                                                <dl>
+                                                                    <dt>
+                                                                        <code>Size</code>
+                                                                    </dt>
+                                                                    <dd>
+                                                                        <p>The maximum size of the entire cache, in
+                                                                            number of objects. Defaults to 128.
+                                                                        </p>
+                                                                    </dd>
+                                                                    <dt>
+                                                                        <code>MemSize</code>
+                                                                    </dt>
+                                                                    <dd>
+                                                                        <p>The maximum size of the cache, in Kilobytes
+                                                                            or Megabytes. Write this value as an integer
+                                                                            followed by
+                                                                            <code>K</code>
+                                                                            or
+                                                                            <code>Kb</code>
+                                                                            (for Kilobytes), or
+                                                                            <code>M</code>
+                                                                            or
+                                                                            <code>Mb</code>
+                                                                            (for Megabytes). For example,
+                                                                            <code>32M</code>
+                                                                            denotes 32 Megabytes.
+                                                                        </p>
+                                                                        <p>Note that if you set
+                                                                            <code>MemSize</code>
+                                                                            to a value higher than the Java heap size
+                                                                            (256 Mb by default), errors will occur. To
+                                                                            fix this, either enter
+                                                                            a lower value for
+                                                                            <code>MemSize</code>
+                                                                            or increase the heap size.
+                                                                        </p>
+                                                                    </dd>
+                                                                </dl>
+                                                                <p>
+                                                                    <strong>Cache for a specific region</strong>
+                                                                </p>
+                                                                <p>Configure a cache region separately only if you are
+                                                                    experiencing problems with your cache. Parameters
+                                                                    for caching a specific region involve a
+                                                                    <code>&lt;REGIONNAME&gt;</code>
+                                                                    string. This string can have one of the following
+                                                                    values:
+                                                                </p>
+                                                                <ul>
+                                                                    <li>
+                                                                        <code>
+                                                                            com.tridion.broker.binaries.meta.BinaryMeta
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>
+                                                                            com.tridion.broker.meta.categorization.Category
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com.tridion.linking.ComponentLink</code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>
+                                                                            com.tridion.broker.components.meta.ComponentMeta
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com.tridion.ComponentPresentation</code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>
+                                                                            com.tridion.broker.componentpresentations.meta.ComponentPresentationMeta
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>
+                                                                            com.tridion.personalization.CustomerCharacteristic
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com.tridion.linking.PageLink</code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com.tridion.broker.pages.meta.PageMeta
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com.tridion.timeframes.Timeframe</code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>
+                                                                            com.tridion.tracking.components.TrackedComponent
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>
+                                                                            com.tridion.tracking.componentlinks.TrackedComponentLink
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com.tridion.tracking.pages.TrackedPage
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com.tridion.personalization.TrackingKey
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com.tridion.user.User</code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com.tridion.broker.xslt.XSLT</code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com_tridion_linking_PageLinkInfo</code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com_tridion_linking_ComponentLinkInfo
+                                                                        </code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com_tridion_Transformer</code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>com_tridion_TransformerResults</code>
+                                                                    </li>
+                                                                    <li>
+                                                                        <code>
+                                                                            com_tridion_broker_components_meta_componentmeta_QueryResults
+                                                                        </code>
+                                                                    </li>
+                                                                </ul>
+                                                                <p>Note that SDL Tridion add-on products may introduce
+                                                                    additional cache region names to specify.
+                                                                </p>
+                                                                <p>The parameters for configuring region-specific
+                                                                    caching are:
+                                                                </p>
+                                                                <dl>
+                                                                    <dt>
+                                                                        <code>RegionSize:&lt;REGIONNAME&gt;</code>
+                                                                    </dt>
+                                                                    <dd>
+                                                                        <p>The maximum size of the cache for the cache
+                                                                            region called
+                                                                            <code>&lt;REGIONNAME&gt;</code>, in number
+                                                                            of objects.
+                                                                        </p>
+                                                                    </dd>
+                                                                    <dt>
+                                                                        <code>RegionMemSize:&lt;REGIONNAME&gt;</code>
+                                                                    </dt>
+                                                                    <dd>
+                                                                        <p>The maximum size of the cache for the cache
+                                                                            region called
+                                                                            <code>&lt;REGIONNAME&gt;</code>, in
+                                                                            Kilobytes or Megabytes. Write this value as
+                                                                            an integer followed by
+                                                                            <code>K</code>
+                                                                            or
+                                                                            <code>Kb</code>
+                                                                            (for Kilobytes), or
+                                                                            <code>M</code>
+                                                                            or
+                                                                            <code>Mb</code>
+                                                                            (for Megabytes). For example,
+                                                                            <code>32M</code>
+                                                                            denotes 32 Megabytes.
+                                                                        </p>
+                                                                    </dd>
+                                                                </dl>
+                                                            </xsd:documentation>
+                                                        </xsd:annotation>
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="Name" type="xsd:string" use="required">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>The name of the parameter</p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="Value" type="xsd:string"
+                                                                           use="required">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>The value of the parameter</p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                                <xsd:attribute name="Class" type="xsd:string" use="required">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>Specifies the Java class name that implements the caching
+                                                                policy. The only value you can select for the
+                                                                <code>Class</code>
+                                                                attribute is<code>com.tridion.cache.LRUPolicy</code>.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="Type" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>The Least Recently Used (LRU) policy governs how objects
+                                                                are cached. When the cache reaches its maximum size, the
+                                                                least recently used objects are removed from the cache.
+                                                                There is no other value available for this attribute
+                                                                than
+                                                                <code>LRU</code>.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="Features" minOccurs="0" id="cd_storage_confN101AA">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>Specifies one or more Java classes that add functionality to the
+                                                        cache.
+                                                    </p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Feature" minOccurs="0" maxOccurs="unbounded"
+                                                                 id="cd_storage_confN101BB">
+                                                        <xsd:annotation>
+                                                            <xsd:documentation>
+                                                                <p>Specifies a Java class that add functionality to the
+                                                                    cache.
+                                                                </p>
+                                                            </xsd:documentation>
+                                                        </xsd:annotation>
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Param" minOccurs="0"
+                                                                             maxOccurs="unbounded"
+                                                                             id="cd_storage_confN101CD">
+                                                                    <xsd:annotation>
+                                                                        <xsd:documentation>
+                                                                            <p>A named parameter for the Feature.</p>
+                                                                        </xsd:documentation>
+                                                                    </xsd:annotation>
+                                                                    <xsd:complexType>
+                                                                        <xsd:attribute name="Name" type="xsd:string"
+                                                                                       use="required">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>The name of the parameter.</p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:attribute>
+                                                                        <xsd:attribute name="Value" type="xsd:string"
+                                                                                       use="required">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>The value of the parameter.</p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:attribute>
+                                                                    </xsd:complexType>
+                                                                </xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="Class" type="xsd:string"
+                                                                           use="required">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>The Java class that implements this
+                                                                            Feature.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="Type" type="xsd:string" use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>--INTERNAL USE ONLY--</p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="RemoteSynchronization" minOccurs="0"
+                                                     id="cd_storage_confN10221">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>Configures communication with other caches. Use the Connector
+                                                        child element to configure communication through either RMI
+                                                        (Remote Method Invocation) or JMS (Java Message Service).
+                                                    </p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Connector" minOccurs="0"
+                                                                 id="cd_storage_confN10232">
+                                                        <xsd:annotation>
+                                                            <xsd:documentation>
+                                                                <p>Specifies a Connector that enables communication with
+                                                                    other caches through either RMI (Remote Method
+                                                                    Invocation) or JMS (Java Message Service).
+                                                                </p>
+                                                            </xsd:documentation>
+                                                        </xsd:annotation>
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="JndiContext" minOccurs="0"
+                                                                             id="cd_storage_confN10243">
+                                                                    <xsd:annotation>
+                                                                        <xsd:documentation>
+                                                                            <p>The JNDI context (a set of properties)
+                                                                                for when you use the JMS Connector.
+                                                                            </p>
+                                                                        </xsd:documentation>
+                                                                    </xsd:annotation>
+                                                                    <xsd:complexType>
+                                                                        <xsd:sequence>
+                                                                            <xsd:element name="Property" minOccurs="0"
+                                                                                         maxOccurs="unbounded"
+                                                                                         id="cd_storage_confN10254">
+                                                                                <xsd:annotation>
+                                                                                    <xsd:documentation>
+                                                                                        <p>A named JNDI property for the
+                                                                                            JMS Connector.
+                                                                                        </p>
+                                                                                    </xsd:documentation>
+                                                                                </xsd:annotation>
+                                                                                <xsd:complexType>
+                                                                                    <xsd:attribute name="Name"
+                                                                                                   type="xsd:string"
+                                                                                                   use="required">
+                                                                                        <xsd:annotation>
+                                                                                            <xsd:documentation>
+                                                                                                <p>The name of this JNDI
+                                                                                                    property.
+                                                                                                </p>
+                                                                                            </xsd:documentation>
+                                                                                        </xsd:annotation>
+                                                                                    </xsd:attribute>
+                                                                                    <xsd:attribute name="Value"
+                                                                                                   type="xsd:string"
+                                                                                                   use="required">
+                                                                                        <xsd:annotation>
+                                                                                            <xsd:documentation>
+                                                                                                <p>The value of this
+                                                                                                    JNDI property.
+                                                                                                </p>
+                                                                                            </xsd:documentation>
+                                                                                        </xsd:annotation>
+                                                                                    </xsd:attribute>
+                                                                                </xsd:complexType>
+                                                                            </xsd:element>
+                                                                        </xsd:sequence>
+                                                                    </xsd:complexType>
+                                                                </xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="Class" type="xsd:string"
+                                                                           use="required">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>The Java class that implements the Connector.
+                                                                            Set this to one of the following values:
+                                                                        </p>
+                                                                        <ul>
+                                                                            <li>To use RMI, set to
+                                                                                <code>
+                                                                                    com.tridion.cache.RMICacheChannelConnector
+                                                                                </code>
+                                                                                . This Connector requires a Cache
+                                                                                Channel Service.
+                                                                            </li>
+                                                                            <li>To use JMS, set to
+                                                                                <code>
+                                                                                    com.tridion.cache.JMSCacheChannelConnector
+                                                                                </code>
+                                                                                . Only use this value if you are
+                                                                                familiar with JMS, and if you have a
+                                                                                standalone JMS client, or a JMS client
+                                                                                inside a J2EE container of a Web
+                                                                                application, enabled. If you run Content
+                                                                                Delivery with the same Web application
+                                                                                server, no further configuration is
+                                                                                needed; if you run (parts of) Content
+                                                                                Delivery as Windows services, you need
+                                                                                to add the location of the JMS-related
+                                                                                JAR files in the classpath.
+                                                                            </li>
+                                                                        </ul>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="Topic" type="xsd:string"
+                                                                           use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>For use with a JMS Connector only: the name
+                                                                            of the topic that will be used to publish
+                                                                            CacheEvents to.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="TopicConnectionFactory"
+                                                                           type="xsd:string" use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>For use with a JMS Connector only: the JNDI
+                                                                            name of the TopicConnectionFactory via which
+                                                                            JMS topic connections can be made.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="Strategy" use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>For use with a JMS Connector
+                                                                        only: the JMS strategy used.
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                                <xsd:simpleType>
+                                                                    <xsd:restriction base="xsd:string">
+                                                                        <xsd:enumeration value="AsyncJMS10">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>JMS 1.0-compliant asynchronous
+                                                                                        messaging
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:enumeration>
+                                                                        <xsd:enumeration value="AsyncJMS11">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>JMS 1.1-compliant asynchronous
+                                                                                        messaging. The attribute
+                                                                                        defaults to this value if left
+                                                                                        empty.
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:enumeration>
+                                                                        <xsd:enumeration value="AsyncJMS10MDB">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>JMS 1.0-compliant Message Driven
+                                                                                        Bean messaging. This strategy
+                                                                                        sends messages but does not
+                                                                                        receive them. Use it in Content
+                                                                                        Deployer but not on your
+                                                                                        Presentation Server.
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:enumeration>
+                                                                        <xsd:enumeration value="AsyncJMS11MDB">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>JMS 1.1-compliant Message Driven
+                                                                                        Bean messaging This strategy
+                                                                                        sends messages but does not
+                                                                                        receive them. Use it in Content
+                                                                                        Deployer but not on your
+                                                                                        Presentation Server.
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:enumeration>
+                                                                        <xsd:enumeration value="SyncJMS11">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>JMS 1.1-compliant synchronous
+                                                                                        messaging
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:enumeration>
+                                                                    </xsd:restriction>
+                                                                </xsd:simpleType>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="Host" type="xsd:string" use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>For use with an RMI Connector only. The
+                                                                            hostname of the machine running the remote
+                                                                            Cache Channel Service. Defaults to
+                                                                            localhost.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="Port" type="xsd:integer"
+                                                                           use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>For use with an RMI Connector only. The port
+                                                                            number the remote cache channel service
+                                                                            listens on. Defaults to 1099.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="InstanceIdentifier" type="xsd:string"
+                                                                           use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>Identifies the instance of this Connector.
+                                                                            Use if you are running multiple Connectors
+                                                                            simultaneously.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                                <xsd:attribute name="Host" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>--INTERNAL USE ONLY--</p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="Port" type="xsd:integer" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>--INTERNAL USE ONLY--</p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="InstanceIdentifier" type="xsd:string"
+                                                               use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>--INTERNAL USE ONLY--</p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="Queuesize" type="xsd:integer" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>The size of this cache's event queue. If this is omitted
+                                                                then a maximum size of 128 events is assumed.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="ServiceMonitorInterval" type="xsd:integer"
+                                                               use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>The amount of time (in milliseconds) that the Content
+                                                                Broker waits between checks to see if it can still
+                                                                establish communication with the Cache Channel Service
+                                                                (when using RMI) or the J2EE server (when using JMS).
+                                                                When communication is lost (for example, because of a
+                                                                restart of the Cache Channel Service), this parameter
+                                                                indicates the amount of time between attempts to
+                                                                reestablish communication. This means that any actions
+                                                                you perform within this time frame when communication is
+                                                                down, will not be synchronized. If you do not specify
+                                                                this attribute, a default value of 60 seconds is used.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="FlushCacheDuringDisconnectInterval"
+                                                               type="xsd:integer" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>If the Content Broker loses the connection to the Cache
+                                                                Channel Service or J2EE server, it continues to cache
+                                                                items while disconnected. (Note that the cache will be
+                                                                flushed as soon as the connection is reestablished.)
+                                                                This attribute specifies how often the cache should be
+                                                                flushed while the connection is unavailable. Possible
+                                                                values for this attribute are:
+                                                            </p>
+                                                            <dl>
+                                                                <dt>
+                                                                    <code>-1</code>
+                                                                    (default value)
+                                                                </dt>
+                                                                <dd>
+                                                                    <p>the cache is not flushed at all while the
+                                                                        connection is lost.
+                                                                    </p>
+                                                                </dd>
+                                                                <dt>
+                                                                    <code>0</code>
+                                                                </dt>
+                                                                <dd>
+                                                                    <p>the cache is flushed as soon as the connection is
+                                                                        lost. No caching is done while the connection is
+                                                                        unavailable. This prevents stale items in the
+                                                                        Content Broker cache, but it can mean a serious
+                                                                        performance hit.
+                                                                    </p>
+                                                                </dd>
+                                                                <dt>a number equal to or higher than the value of
+                                                                    <code>ServiceMonitorInterval</code>
+                                                                    (which defaults to 60000 if left unspecified)
+                                                                </dt>
+                                                                <dd>
+                                                                    <p>after the connection is lost, the Content Broker
+                                                                        immediately flushes the cache, and continues to
+                                                                        flush at the interval specified. Use this type
+                                                                        of value to cause items to be cached while the
+                                                                        connection is down, while still ensuring regular
+                                                                        flushing.
+                                                                    </p>
+                                                                </dd>
+                                                            </dl>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:all>
+                                    <xsd:attribute name="Enabled" type="xsd:string" use="required">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>Switches caching on (value<code>true</code>) or off (value
+                                                    <code>false</code>).
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="MetaQueryConstants" minOccurs="0" id="cd_storage_confN103D8">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>Configures constants used in querying.</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:sequence minOccurs="0">
+                                        <xsd:element name="CategoryQuerySeparator" minOccurs="0"
+                                                     id="cd_storage_confN103EA">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>--INTERNAL USE ONLY--</p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                                <xsd:attribute name="Value" type="xsd:string" use="required">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>The value of the Category Query separator. Do not set the
+                                                                Category Query separator to any of the following values:
+                                                                &amp; | ; ! ( ) = , &lt; &gt; - " ?
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="FindByURLCaseSensitivity" minOccurs="0"
+                                                     id="cd_storage_confN1040A">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>
+                                                        <em>Important:</em>
+                                                        This setting needs to be changed only under the following
+                                                        exceptional circumstances:
+                                                    </p>
+                                                    <ul>
+                                                        <li>You use the
+                                                            <code>findByURL()</code>
+                                                            or
+                                                            <code>findByPageURL()</code>
+                                                            method in your code
+                                                        </li>
+                                                        <li>The default setting for case sensitivity as listed below is
+                                                            incorrect for your implementation.
+                                                        </li>
+                                                    </ul>
+                                                    <p>Two interfaces in the public Broker API (and all classes that
+                                                        implement them have a method called
+                                                        <code>findByURL()</code>
+                                                        or<codeph>findByPageURL()</codeph>. They are:
+                                                    </p>
+                                                    <ul>
+                                                        <li>
+                                                            <code>com.tridion.storage.dao.BinaryVariantDAO</code>
+                                                        </li>
+                                                        <li>
+                                                            <code>com.tridion.storage.dao.ItemDAO</code>
+                                                        </li>
+                                                    </ul>
+                                                    <p>Calling the
+                                                        <code>findByURL</code>
+                                                        or
+                                                        <code>findByPageURL()</code>
+                                                        method on a class that implements one of these interfaces is one
+                                                        way of retrieving a Page or a binary by way of a URL lookup.
+                                                        Depending on the storage medium you use, the URL lookup of a
+                                                        page or binary by the Content Broker may fail because the lookup
+                                                        is case-sensitive.
+                                                    </p>
+                                                    <p>For example, when a page is stored on the Windows file system as
+                                                        <code>mypage.html</code>
+                                                        and when IIS is used as a Web and application server, accessing
+                                                        the URL
+                                                        <code>MyPage.html</code>
+                                                        will retrieve the page, as will a call to
+                                                        <code>findByPageURL()</code>.
+                                                    </p>
+                                                    <p>However, when using Tomcat as a Web and application server,
+                                                        Tomcat would not serve the page (because Tomcat is
+                                                        case-sensitive), but
+                                                        <code>findByPageURL()</code>
+                                                        would successfully retrieve the page. This leads to inconsistent
+                                                        behavior.
+                                                    </p>
+                                                    <p>To solve this problem, you can configure the case sensitivity of
+                                                        the
+                                                        <code>findByURL()</code>
+                                                        or
+                                                        <codeph>findByPageURL()</codeph>
+                                                        method in the current element. Only the UNIX file system remains
+                                                        unaffected by this setting.
+                                                    </p>
+                                                    <p>The following overviews shows for each storage medium how the
+                                                        value of the current element (or the absence of a value) affects
+                                                        the case sensitivity of the URL lookup.
+                                                    </p>
+                                                    <dl>
+                                                        <dt>SQL Server database</dt>
+                                                        <dd>Case-sensitive only if case-sensitivity is explicitly set to
+                                                            <code>true</code>
+                                                        </dd>
+                                                        <dt>Oracle database</dt>
+                                                        <dd>Case-sensitive only if case-sensitivity is explicitly set to
+                                                            <code>true</code>
+                                                        </dd>
+                                                        <dt>IBM DB2 database</dt>
+                                                        <dd>Case-sensitive only if case-sensitivity is explicitly set to
+                                                            <code>true</code>
+                                                        </dd>
+                                                        <dt>Windows file system</dt>
+                                                        <dd>Case-sensitive only if case-sensitivity is explicitly set to
+                                                            <code>true</code>
+                                                        </dd>
+                                                        <dt>UNIX file system</dt>
+                                                        <dd>Always case-sensitive, the setting is ignored</dd>
+                                                    </dl>
+                                                    <p>For example, the following text makes URL lookup on the Windows
+                                                        operating system case-sensitive:
+                                                    </p>
+                                                    <tt>
+                                                        &lt;MetaQueryConstants&gt;
+                                                        &lt;FindByURLCaseSensitivity Value="true" /&gt;
+                                                        &lt;/MetaQueryConstants&gt;
+                                                    </tt>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                                <xsd:attribute name="Value" type="xsd:string" use="required">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>The value of this setting, either
+                                                                <code>true</code>
+                                                                or<code>false</code>.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="Storages" id="cd_storage_confN104B3">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>This is the configuration of all the available storage locations</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="StorageBindings" maxOccurs="1" minOccurs="0"
+                                                     id="cd_storage_confN104C3">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>This overrides the default Tridion dao bundles.</p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Bundle" minOccurs="1" maxOccurs="unbounded"
+                                                                 id="cd_storage_confN104D5">
+                                                        <xsd:annotation>
+                                                            <xsd:documentation>
+                                                                <p>Defines a storage bundle containing dao
+                                                                    definitions.
+                                                                </p>
+                                                            </xsd:documentation>
+                                                        </xsd:annotation>
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="src" type="xsd:string" use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>The relative location of the storage
+                                                                            bundle.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="Wrappers" maxOccurs="1" minOccurs="0"
+                                                     id="cd_storage_confN104F9">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>This node contains StorageWrapper definitions.</p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Wrapper" minOccurs="1" maxOccurs="unbounded"
+                                                                 id="cd_storage_confN1050B">
+                                                        <xsd:annotation>
+                                                            <xsd:documentation>
+                                                                <p>Defines a storage wrapper to be used by the
+                                                                    StorageLayer.
+                                                                </p>
+                                                            </xsd:documentation>
+                                                        </xsd:annotation>
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:any minOccurs="0" maxOccurs="unbounded"
+                                                                         processContents="skip"/>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="Name" type="xsd:string" use="required">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>Name of the defined Wrapper Source.</p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                        <xsd:element name="Storage" maxOccurs="unbounded" id="cd_storage_confN10537">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>This is the configuration of the StorageProvider used by the item
+                                                        types / publication storage mappings
+                                                    </p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                            <xsd:complexType>
+                                                <xsd:sequence>
+                                                    <xsd:element name="Pool" minOccurs="0" id="cd_storage_confN10548">
+                                                        <xsd:annotation>
+                                                            <xsd:documentation>
+                                                                <p>Specifies pooling for this database.</p>
+                                                            </xsd:documentation>
+                                                        </xsd:annotation>
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="Type" type="xsd:string" use="required">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>Either of the following:</p>
+                                                                        <dl>
+                                                                            <dt>
+                                                                                <code>jdbc</code>
+                                                                            </dt>
+                                                                            <dd>a more configurable connection pool
+                                                                                manager. If additional connections are
+                                                                                attempted, the connection is queued. For
+                                                                                this value, include the following
+                                                                                attributes:
+                                                                                <code>Size</code>,
+                                                                                <code>MonitorInterval</code>,
+                                                                                <code>IdleTimeout</code>, and
+                                                                                <code>CheckOutTimeout</code>.
+                                                                            </dd>
+                                                                            <dt>
+                                                                                <code>tridion</code>
+                                                                            </dt>
+                                                                            <dd>Only allows you to specify the size of
+                                                                                the pool. If additional connections are
+                                                                                attempted, an exception is raised. For
+                                                                                this value, include the
+                                                                                <code>Size</code>
+                                                                                attribute only.
+                                                                            </dd>
+                                                                        </dl>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="Size" type="xsd:integer"
+                                                                           use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>The size of the pool, that is, the number of
+                                                                            connections permissible in the pool. This
+                                                                            number must be equal to or higher than the
+                                                                            number of Workers deployed in your Content
+                                                                            Deployer.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="MonitorInterval" type="xsd:integer"
+                                                                           use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>Number of seconds between checks on the
+                                                                            pool.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="IdleTimeout" type="xsd:integer"
+                                                                           use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>Number of seconds a connection can remain
+                                                                            idle before it is closed.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                            <xsd:attribute name="CheckoutTimeout" type="xsd:integer"
+                                                                           use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>Number of seconds a connection can remain
+                                                                            checked out before it is returned to the
+                                                                            pool.
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="DataSource" minOccurs="0"
+                                                                 id="cd_storage_confN105C8">
+                                                        <xsd:complexType>
+                                                            <xsd:sequence>
+                                                                <xsd:element name="Property" minOccurs="0"
+                                                                             maxOccurs="unbounded"
+                                                                             id="cd_storage_confN105D0">
+                                                                    <xsd:annotation>
+                                                                        <xsd:documentation>
+                                                                            <p>Specify a datasource property. These
+                                                                                properties depend on the actual driver
+                                                                                chosen:
+                                                                            </p>
+                                                                            <dl>
+                                                                                <dt>
+                                                                                    <code>serverName</code>
+                                                                                    (all drivers)
+                                                                                </dt>
+                                                                                <dd>
+                                                                                    <p>The name of the database server
+                                                                                        host.
+                                                                                    </p>
+                                                                                </dd>
+                                                                                <dt>
+                                                                                    <code>portNumber</code>
+                                                                                    (all drivers)
+                                                                                </dt>
+                                                                                <dd>
+                                                                                    <p>Indicates the port of the
+                                                                                        database server:
+                                                                                        <code>1433</code>
+                                                                                        for Microsoft SQL Server,
+                                                                                        <code>1521</code>
+                                                                                        for Oracle,
+                                                                                        <code>50000</code>
+                                                                                        for DB2.
+                                                                                    </p>
+                                                                                </dd>
+                                                                                <dt>
+                                                                                    <code>databaseName</code>
+                                                                                    (all drivers)
+                                                                                </dt>
+                                                                                <dd>
+                                                                                    <p>The name of the database</p>
+                                                                                </dd>
+                                                                                <dt>
+                                                                                    <code>user</code>
+                                                                                    (all drivers)
+                                                                                </dt>
+                                                                                <dd>
+                                                                                    <p>The name of a user who can access
+                                                                                        the database
+                                                                                    </p>
+                                                                                </dd>
+                                                                                <dt>
+                                                                                    <code>password</code>
+                                                                                    (all drivers)
+                                                                                </dt>
+                                                                                <dd>
+                                                                                    <p>The password of that user</p>
+                                                                                </dd>
+                                                                                <dt>
+                                                                                    <code>driverType</code>
+                                                                                    (Oracle and DB2 drivers only)
+                                                                                </dt>
+                                                                                <dd>
+                                                                                    <p>The type of driver:
+                                                                                        <code>thin</code>
+                                                                                        for Oracle,
+                                                                                        <code>4</code>
+                                                                                        for DB2
+                                                                                    </p>
+                                                                                </dd>
+                                                                                <dt>
+                                                                                    <code>networkProtocol</code>
+                                                                                    (Oracle only)
+                                                                                </dt>
+                                                                                <dd>
+                                                                                    <p>The network protocol to use (
+                                                                                        <code>tcp</code>).
+                                                                                    </p>
+                                                                                </dd>
+                                                                            </dl>
+                                                                        </xsd:documentation>
+                                                                    </xsd:annotation>
+                                                                    <xsd:complexType>
+                                                                        <xsd:attribute name="Name" type="xsd:string"
+                                                                                       use="required">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>Name of a property supported by
+                                                                                        the selected DataSource
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:attribute>
+                                                                        <xsd:attribute name="Value" type="xsd:string"
+                                                                                       use="required">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>Value for the named property</p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:attribute>
+                                                                    </xsd:complexType>
+                                                                </xsd:element>
+                                                            </xsd:sequence>
+                                                            <xsd:attribute name="Class" use="required">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>The fully qualified classname of
+                                                                        the DataSource implementation to use. This
+                                                                        depends on the type of database you use
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                                <xsd:simpleType>
+                                                                    <xsd:restriction base="xsd:string">
+                                                                        <xsd:enumeration
+                                                                                value="com.microsoft.sqlserver.jdbc.SQLServerDataSource">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>Microsoft SQL Server
+                                                                                        implementation
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:enumeration>
+                                                                        <xsd:enumeration
+                                                                                value="oracle.jdbc.pool.OracleDataSource">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>Oracle implememntation. If you
+                                                                                        use this value, also explicitly
+                                                                                        set the
+                                                                                        <code>driverType</code>
+                                                                                        named property in a
+                                                                                        <code>Property</code>
+                                                                                        child element.
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:enumeration>
+                                                                        <xsd:enumeration
+                                                                                value="com.ibm.db2.jcc.DB2SimpleDataSource">
+                                                                            <xsd:annotation>
+                                                                                <xsd:documentation>
+                                                                                    <p>IBM DB2 implementation. If you
+                                                                                        use this value, also explicitly
+                                                                                        set the
+                                                                                        <code>driverType</code>
+                                                                                        named property in a
+                                                                                        <code>Property</code>
+                                                                                        child element.
+                                                                                    </p>
+                                                                                </xsd:documentation>
+                                                                            </xsd:annotation>
+                                                                        </xsd:enumeration>
+                                                                    </xsd:restriction>
+                                                                </xsd:simpleType>
+                                                            </xsd:attribute>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                    <xsd:element name="Root" minOccurs="0" id="cd_storage_confN106AB">
+                                                        <xsd:annotation>
+                                                            <xsd:documentation>
+                                                                <p>This is used for a filesystem based storage
+                                                                    provider
+                                                                </p>
+                                                            </xsd:documentation>
+                                                        </xsd:annotation>
+                                                        <xsd:complexType>
+                                                            <xsd:attribute name="Path" type="xsd:string" use="optional">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p>The storage location to be used for the
+                                                                            filesystem based operations
+                                                                        </p>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:attribute>
+                                                        </xsd:complexType>
+                                                    </xsd:element>
+                                                </xsd:sequence>
+                                                <xsd:attribute name="Type" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>This is the type of the storageProvider used, File,
+                                                                Persistence, etc.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="Class" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>This is the implementing class of the storage provider,
+                                                                in this class all the logic resides for item type
+                                                                storage
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="Id" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>This is the identifier of the storage provider, this is
+                                                                used to map itemtypes and publication storage
+                                                                configuration to a storage provider
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="Username" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>Specifies the name of the user to use for database
+                                                                interaction.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="Password" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>Specifies the password to use for database interaction.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="Url" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>Specifies the URL that the database driver should connect
+                                                                to.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="Driver" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>Specifies the fully qualified classname for the driver to
+                                                                be used.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="JNDIName" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>Specifies the JNDI name of a Datasource to use. When
+                                                                used, No other attributes or a DataSource may be
+                                                                specified.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="dialect" type="xsd:string" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>This is the dialect used by the persistence based storage
+                                                                providers
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="IsolationLevel" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>This is the DB isolation level and if it is not
+                                                                specified, READ_COMMITED will be used as default.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                    <xsd:simpleType>
+                                                        <xsd:restriction base="xsd:string">
+                                                            <xsd:enumeration value="NONE">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p/>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:enumeration>
+                                                            <xsd:enumeration value="READ_UNCOMMITTED">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p/>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:enumeration>
+                                                            <xsd:enumeration value="READ_COMMITTED">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p/>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:enumeration>
+                                                            <xsd:enumeration value="REPEATABLE_READ">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p/>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:enumeration>
+                                                            <xsd:enumeration value="SERIALIZABLE">
+                                                                <xsd:annotation>
+                                                                    <xsd:documentation>
+                                                                        <p/>
+                                                                    </xsd:documentation>
+                                                                </xsd:annotation>
+                                                            </xsd:enumeration>
+                                                        </xsd:restriction>
+                                                    </xsd:simpleType>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="defaultFilesystem" type="xsd:boolean"
+                                                               use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>Tells if the file structure of the fileSystem storage
+                                                                will be the default one.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                                <xsd:attribute name="defaultStorage" type="xsd:boolean" use="optional">
+                                                    <xsd:annotation>
+                                                        <xsd:documentation>
+                                                            <p>Tells if the fileSystem storage will be by default is
+                                                                there is no license found.
+                                                            </p>
+                                                        </xsd:documentation>
+                                                    </xsd:annotation>
+                                                </xsd:attribute>
+                                            </xsd:complexType>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                    <xsd:attribute name="TempFileSystemTransactionLocation" type="xsd:string"
+                                                   use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>This is used as temporal storage for filesystem transactions for all
+                                                    file system storages ('java.io.tmpdir' Java system property is used
+                                                    by default).
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="Taxonomies" minOccurs="0" id="cd_storage_confN107D6">
+                                <xsd:annotation>
+                                    <xsd:documentation>Configuration settings for taxonomomies storage
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="CountEnabled" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>If set to True the keyword reference counts will be
+                                                updated during storage modifications, impacting storage performance.
+                                                When set to False keyword reference count not updated.
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                            <xsd:element name="Transaction" minOccurs="0" id="cd_storage_confN107F0">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>Configures transaction storage settings, how long before a transaction gets
+                                            rolledback and on which interval to monitor for outstanding transactions.
+                                        </p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:attribute name="Timeout" type="xsd:int" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>The timeout specifies how long it will wait before proceeding rolling
+                                                    back a transaction
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="MonitorInterval" type="xsd:int" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>The monitoring interval specifies in which interval it will check if
+                                                    transactions should be rolled back
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:all>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="ItemTypes" id="cd_storage_confN10822">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>This is the configuration of the storage for item types, per itemtype or publication /
+                                itemtype combination you can choose which storage provider to use
+                            </p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="Item" type="Item" maxOccurs="unbounded" minOccurs="0"
+                                         id="cd_storage_confN10832">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>This describes the storage item type mappings</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                            </xsd:element>
+                            <xsd:element name="Publication" maxOccurs="unbounded" minOccurs="0"
+                                         id="cd_storage_confN10842">
+                                <xsd:annotation>
+                                    <xsd:documentation>
+                                        <p>This allows per publication item type storage mapping</p>
+                                    </xsd:documentation>
+                                </xsd:annotation>
+                                <xsd:complexType>
+                                    <xsd:sequence>
+                                        <xsd:element name="Item" type="Item" maxOccurs="unbounded" minOccurs="0"
+                                                     id="cd_storage_confN10854">
+                                            <xsd:annotation>
+                                                <xsd:documentation>
+                                                    <p>This describes the storage item type mappings</p>
+                                                </xsd:documentation>
+                                            </xsd:annotation>
+                                        </xsd:element>
+                                    </xsd:sequence>
+                                    <xsd:attribute name="defaultStorageId" type="xsd:string" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>This relates to the default storage provider to be used for this
+                                                    publication
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="Id" type="xsd:int" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>This is the publication identifier of this publication</p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                    <xsd:attribute name="cached" type="xsd:boolean" use="optional">
+                                        <xsd:annotation>
+                                            <xsd:documentation>
+                                                <p>This enables caching for this publication for all storage opertions
+                                                    unless overriden per item
+                                                </p>
+                                            </xsd:documentation>
+                                        </xsd:annotation>
+                                    </xsd:attribute>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                        <xsd:attribute name="defaultStorageId" type="xsd:string" use="required">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>This is the default storage provider identifier to use for all storage opertions
+                                        unless overriden per item or publication
+                                    </p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                        <xsd:attribute name="cached" type="xsd:boolean" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>This enables caching for the storage provider for all storage opertions unless
+                                        overriden per item or publication
+                                    </p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+                <xsd:element name="License" minOccurs="0" id="cd_storage_confN108B5">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            <p>Specifies the location of the Content Broker license file. Without a license file,
+                                Content Broker stores content on the local file system only.
+                            </p>
+                        </xsd:documentation>
+                    </xsd:annotation>
+                    <xsd:complexType>
+                        <xsd:attribute name="Location" type="xsd:string" use="optional">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    <p>The full path and filename of the Content Broker license file.</p>
+                                </xsd:documentation>
+                            </xsd:annotation>
+                        </xsd:attribute>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:sequence>
+            <xsd:attribute name="Version" type="xsd:decimal" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <p>The version of this Content Delivery Storage configuration file. This must be set to your
+                            Content Delivery version (without specifying a service pack), e.g. "7.0".
+                        </p>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+    <xsd:complexType name="Item">
+        <xsd:annotation>
+            <xsd:documentation>
+                <p>This describes the storage item type mappings</p>
+            </xsd:documentation>
+        </xsd:annotation>
+        <xsd:attribute name="typeMapping" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <p>This is the mapping name of the item to be mapped, by default, this must have one of the
+                        following values:
+                    </p>
+                    <ul>
+                        <li>Binary</li>
+                        <li>ComponentLinkClick</li>
+                        <li>ComponentPresentation</li>
+                        <li>ComponentVisit</li>
+                        <li>DynamicLinkInfo</li>
+                        <li>ExtensionData</li>
+                        <li>Metadata</li>
+                        <li>Page</li>
+                        <li>Personalization</li>
+                        <li>Publication</li>
+                        <li>Query</li>
+                        <li>Taxonomy</li>
+                        <li>Timeframe</li>
+                        <li>TrackedPage</li>
+                        <li>XSLT</li>
+                    </ul>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="storageId" type="xsd:string" use="required">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <p>This is the storage identifier relating to the storage provider to be used for this specific Item
+                        type
+                    </p>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="cached" type="xsd:boolean" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <p>This enables caching on the specific Item type (for this storage provider)</p>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+        <xsd:attribute name="itemExtension" type="xsd:string" use="optional">
+            <xsd:annotation>
+                <xsd:documentation>
+                    <p>This is an optional configuration of extended properties to be checked on the Item Type mapping
+                    </p>
+                </xsd:documentation>
+            </xsd:annotation>
+        </xsd:attribute>
+    </xsd:complexType>
+</xsd:schema>

@@ -1,0 +1,827 @@
+Warning: JAVA_HOME environment variable is not set.
+Apache Maven 3.2.1 (ea8b2b07643dbb1b84b6d16e1f08391b666bc1e9; 2014-02-14T18:37:52+01:00)
+Maven home: /Users/rai/Tools/maven/apache-maven-3.2.1
+Java version: 1.7.0_79, vendor: Oracle Corporation
+Java home: /Library/Java/JavaVirtualMachines/jdk1.7.0_79.jdk/Contents/Home/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "mac os x", version: "10.11.2", arch: "x86_64", family: "mac"
+[INFO] Error stacktraces are turned on.
+[DEBUG] Reading global settings from /Users/rai/Tools/maven/apache-maven-3.2.1/conf/settings.xml
+[DEBUG] Reading user settings from /Users/rai/.m2/settings.xml
+[DEBUG] Using local repository at /Users/rai/.m2/repository
+[DEBUG] Using manager EnhancedLocalRepositoryManager with priority 10.0 for /Users/rai/.m2/repository
+[INFO] Scanning for projects...
+[DEBUG] Dependency collection stats: {ConflictMarker.analyzeTime=0, ConflictMarker.markTime=1, ConflictMarker.nodeCount=1, ConflictIdSorter.graphTime=0, ConflictIdSorter.topsortTime=0, ConflictIdSorter.conflictIdCount=1, ConflictIdSorter.conflictIdCycleCount=0, ConflictResolver.totalTime=2, ConflictResolver.conflictItemCount=1, DefaultDependencyCollector.collectTime=36, DefaultDependencyCollector.transformTime=4}
+[DEBUG] org.apache.maven.archetype:archetype-packaging:jar:2.3:
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:1.1:runtime
+[DEBUG] Created new class realm maven.api
+[DEBUG] Importing foreign packages into class realm maven.api
+[DEBUG]   Imported: org.apache.maven.wagon.events < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.impl < plexus.core
+[DEBUG]   Imported: org.apache.maven.exception < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.Xpp3Dom < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.version < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.metadata < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.collection < plexus.core
+[DEBUG]   Imported: org.apache.maven.monitor < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.repository < plexus.core
+[DEBUG]   Imported: org.apache.maven.repository < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.resource < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.logging < plexus.core
+[DEBUG]   Imported: org.apache.maven.profiles < plexus.core
+[DEBUG]   Imported: org.apache.maven.classrealm < plexus.core
+[DEBUG]   Imported: org.apache.maven.execution.scope < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.artifact < plexus.core
+[DEBUG]   Imported: org.apache.maven.execution < plexus.core
+[DEBUG]   Imported: org.apache.maven.reporting < plexus.core
+[DEBUG]   Imported: org.apache.maven.usability < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.container < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.component < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.transfer < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.authentication < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.pull.XmlSerializer < plexus.core
+[DEBUG]   Imported: org.apache.maven.lifecycle < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.* < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.graph < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.classworlds < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.internal.impl < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.repository < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.resolution < plexus.core
+[DEBUG]   Imported: javax.inject.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.settings < plexus.core
+[DEBUG]   Imported: org.codehaus.classworlds < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.toolchain < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.spi < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.observers < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.pull.XmlPullParserException < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.util.xml.pull.XmlPullParser < plexus.core
+[DEBUG]   Imported: org.apache.maven.configuration < plexus.core
+[DEBUG]   Imported: org.apache.maven.cli < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.context < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.authorization < plexus.core
+[DEBUG]   Imported: org.apache.maven.project < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.installation < plexus.core
+[DEBUG]   Imported: org.eclipse.aether.deployment < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.lifecycle < plexus.core
+[DEBUG]   Imported: org.apache.maven.rtinfo < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.configuration < plexus.core
+[DEBUG]   Imported: org.apache.maven.artifact < plexus.core
+[DEBUG]   Imported: org.apache.maven.model < plexus.core
+[DEBUG]   Imported: org.slf4j.* < plexus.core
+[DEBUG]   Imported: javax.enterprise.inject.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.wagon.proxy < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.* < plexus.core
+[DEBUG]   Imported: org.apache.maven.plugin < plexus.core
+[DEBUG]   Imported: org.codehaus.plexus.personality < plexus.core
+[DEBUG] Populating class realm maven.api
+[DEBUG] Created new class realm extension>org.apache.maven.archetype:archetype-packaging:2.3
+[DEBUG] Importing foreign packages into class realm extension>org.apache.maven.archetype:archetype-packaging:2.3
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm extension>org.apache.maven.archetype:archetype-packaging:2.3
+[DEBUG]   Included: org.apache.maven.archetype:archetype-packaging:jar:2.3
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:1.1
+[DEBUG] Dependency collection stats: {ConflictMarker.analyzeTime=1, ConflictMarker.markTime=0, ConflictMarker.nodeCount=84, ConflictIdSorter.graphTime=0, ConflictIdSorter.topsortTime=0, ConflictIdSorter.conflictIdCount=45, ConflictIdSorter.conflictIdCycleCount=0, ConflictResolver.totalTime=6, ConflictResolver.conflictItemCount=71, DefaultDependencyCollector.collectTime=357, DefaultDependencyCollector.transformTime=7}
+[DEBUG] org.sonatype.plugins:nexus-staging-maven-plugin:jar:1.6.5:
+[DEBUG]    org.sonatype.nexus.maven:nexus-common:jar:1.6.5:compile
+[DEBUG]       org.sonatype.plexus:plexus-sec-dispatcher:jar:1.4:compile
+[DEBUG]          org.sonatype.plexus:plexus-cipher:jar:1.7:compile
+[DEBUG]    com.google.guava:guava:jar:14.0.1:compile
+[DEBUG]    org.sonatype.nexus:nexus-client-core:jar:2.9.1-02:compile
+[DEBUG]       org.sonatype.nexus.plugins:nexus-restlet1x-model:jar:2.9.1-02:compile
+[DEBUG]          org.apache.maven:maven-model:jar:3.0.4:compile
+[DEBUG]       org.slf4j:slf4j-api:jar:1.7.7:compile
+[DEBUG]       com.google.code.findbugs:jsr305:jar:2.0.1:compile
+[DEBUG]       com.intellij:annotations:jar:9.0.4:compile
+[DEBUG]       commons-io:commons-io:jar:2.4:compile
+[DEBUG]       com.thoughtworks.xstream:xstream:jar:1.4.7:compile
+[DEBUG]          xmlpull:xmlpull:jar:1.1.3.1:compile
+[DEBUG]          xpp3:xpp3_min:jar:1.1.4c:compile
+[DEBUG]       joda-time:joda-time:jar:2.2:compile
+[DEBUG]       commons-lang:commons-lang:jar:2.6:compile
+[DEBUG]       commons-beanutils:commons-beanutils-core:jar:1.8.3:compile
+[DEBUG]       org.sonatype.sisu.siesta:siesta-client:jar:1.7:compile
+[DEBUG]          org.sonatype.sisu.siesta:siesta-common:jar:1.7:compile
+[DEBUG]             javax.ws.rs:jsr311-api:jar:1.1.1:compile
+[DEBUG]             com.sun.jersey:jersey-core:jar:1.17.1:compile
+[DEBUG]             javax.validation:validation-api:jar:1.1.0.Final:compile
+[DEBUG]          com.sun.jersey:jersey-client:jar:1.17.1:compile
+[DEBUG]          com.sun.jersey.contribs:jersey-apache-client4:jar:1.17.1:compile
+[DEBUG]       org.sonatype.sisu.siesta:siesta-jackson:jar:1.7:compile
+[DEBUG]          com.fasterxml.jackson.core:jackson-annotations:jar:2.3.1:compile
+[DEBUG]          com.fasterxml.jackson.core:jackson-core:jar:2.3.1:compile
+[DEBUG]          com.fasterxml.jackson.core:jackson-databind:jar:2.3.1:compile
+[DEBUG]          com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:jar:2.3.1:compile
+[DEBUG]             com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:jar:2.3.1:compile
+[DEBUG]          com.fasterxml.jackson.module:jackson-module-jaxb-annotations:jar:2.3.1:compile
+[DEBUG]       org.apache.httpcomponents:httpclient:jar:4.3.5:compile
+[DEBUG]          commons-codec:commons-codec:jar:1.6:compile
+[DEBUG]       org.apache.httpcomponents:httpcore:jar:4.3.2:compile
+[DEBUG]       org.slf4j:jcl-over-slf4j:jar:1.7.7:compile
+[DEBUG]       javax.inject:javax.inject:jar:1:compile
+[DEBUG]    org.sonatype.spice.zapper:spice-zapper:jar:1.3:compile
+[DEBUG]       org.fusesource.hawtbuf:hawtbuf-proto:jar:1.9:compile
+[DEBUG]          org.fusesource.hawtbuf:hawtbuf:jar:1.9:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:3.0.8:compile
+[DEBUG]    org.codehaus.plexus:plexus-interpolation:jar:1.15:compile
+[DEBUG]    org.sonatype.aether:aether-api:jar:1.13.1:compile
+[DEBUG]    ch.qos.logback:logback-core:jar:1.1.2:runtime
+[DEBUG]    ch.qos.logback:logback-classic:jar:1.1.2:runtime
+[DEBUG] Created new class realm extension>org.sonatype.plugins:nexus-staging-maven-plugin:1.6.5
+[DEBUG] Importing foreign packages into class realm extension>org.sonatype.plugins:nexus-staging-maven-plugin:1.6.5
+[DEBUG]   Imported:  < maven.api
+[DEBUG] Populating class realm extension>org.sonatype.plugins:nexus-staging-maven-plugin:1.6.5
+[DEBUG]   Included: org.sonatype.plugins:nexus-staging-maven-plugin:jar:1.6.5
+[DEBUG]   Included: org.sonatype.nexus.maven:nexus-common:jar:1.6.5
+[DEBUG]   Included: org.sonatype.plexus:plexus-sec-dispatcher:jar:1.4
+[DEBUG]   Included: org.sonatype.plexus:plexus-cipher:jar:1.7
+[DEBUG]   Included: com.google.guava:guava:jar:14.0.1
+[DEBUG]   Included: org.sonatype.nexus:nexus-client-core:jar:2.9.1-02
+[DEBUG]   Included: org.sonatype.nexus.plugins:nexus-restlet1x-model:jar:2.9.1-02
+[DEBUG]   Included: org.slf4j:slf4j-api:jar:1.7.7
+[DEBUG]   Included: com.google.code.findbugs:jsr305:jar:2.0.1
+[DEBUG]   Included: com.intellij:annotations:jar:9.0.4
+[DEBUG]   Included: commons-io:commons-io:jar:2.4
+[DEBUG]   Included: com.thoughtworks.xstream:xstream:jar:1.4.7
+[DEBUG]   Included: xmlpull:xmlpull:jar:1.1.3.1
+[DEBUG]   Included: xpp3:xpp3_min:jar:1.1.4c
+[DEBUG]   Included: joda-time:joda-time:jar:2.2
+[DEBUG]   Included: commons-lang:commons-lang:jar:2.6
+[DEBUG]   Included: commons-beanutils:commons-beanutils-core:jar:1.8.3
+[DEBUG]   Included: org.sonatype.sisu.siesta:siesta-client:jar:1.7
+[DEBUG]   Included: org.sonatype.sisu.siesta:siesta-common:jar:1.7
+[DEBUG]   Included: javax.ws.rs:jsr311-api:jar:1.1.1
+[DEBUG]   Included: com.sun.jersey:jersey-core:jar:1.17.1
+[DEBUG]   Included: javax.validation:validation-api:jar:1.1.0.Final
+[DEBUG]   Included: com.sun.jersey:jersey-client:jar:1.17.1
+[DEBUG]   Included: com.sun.jersey.contribs:jersey-apache-client4:jar:1.17.1
+[DEBUG]   Included: org.sonatype.sisu.siesta:siesta-jackson:jar:1.7
+[DEBUG]   Included: com.fasterxml.jackson.core:jackson-annotations:jar:2.3.1
+[DEBUG]   Included: com.fasterxml.jackson.core:jackson-core:jar:2.3.1
+[DEBUG]   Included: com.fasterxml.jackson.core:jackson-databind:jar:2.3.1
+[DEBUG]   Included: com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:jar:2.3.1
+[DEBUG]   Included: com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:jar:2.3.1
+[DEBUG]   Included: com.fasterxml.jackson.module:jackson-module-jaxb-annotations:jar:2.3.1
+[DEBUG]   Included: org.apache.httpcomponents:httpclient:jar:4.3.5
+[DEBUG]   Included: commons-codec:commons-codec:jar:1.6
+[DEBUG]   Included: org.apache.httpcomponents:httpcore:jar:4.3.2
+[DEBUG]   Included: org.slf4j:jcl-over-slf4j:jar:1.7.7
+[DEBUG]   Included: javax.inject:javax.inject:jar:1
+[DEBUG]   Included: org.sonatype.spice.zapper:spice-zapper:jar:1.3
+[DEBUG]   Included: org.fusesource.hawtbuf:hawtbuf-proto:jar:1.9
+[DEBUG]   Included: org.fusesource.hawtbuf:hawtbuf:jar:1.9
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:3.0.8
+[DEBUG]   Included: org.codehaus.plexus:plexus-interpolation:jar:1.15
+[DEBUG]   Included: ch.qos.logback:logback-core:jar:1.1.2
+[DEBUG]   Included: ch.qos.logback:logback-classic:jar:1.1.2
+[DEBUG] Extension realms for project org.dd4t:dd4t-spring-mvc-archetype:maven-archetype:1.5-SNAPSHOT: [ClassRealm[extension>org.apache.maven.archetype:archetype-packaging:2.3, parent: sun.misc.Launcher$AppClassLoader@d16e5d6], ClassRealm[extension>org.sonatype.plugins:nexus-staging-maven-plugin:1.6.5, parent: sun.misc.Launcher$AppClassLoader@d16e5d6]]
+[DEBUG] Created new class realm project>org.dd4t:dd4t-spring-mvc-archetype:1.5-SNAPSHOT
+[DEBUG] Populating class realm project>org.dd4t:dd4t-spring-mvc-archetype:1.5-SNAPSHOT
+[DEBUG]   Included: org.apache.maven.archetype:archetype-packaging:jar:2.3
+[DEBUG] Looking up lifecyle mappings for packaging maven-archetype from ClassRealm[project>org.dd4t:dd4t-spring-mvc-archetype:1.5-SNAPSHOT, parent: ClassRealm[maven.api, parent: null]]
+[INFO] Inspecting build with total of 1 modules...
+[INFO] Installing Nexus Staging features:
+[INFO]   ... total of 1 executions of maven-deploy-plugin replaced with nexus-staging-maven-plugin
+[DEBUG] Resolving plugin version for org.apache.maven.plugins:maven-install-plugin
+[DEBUG] Could not find metadata org.apache.maven.plugins:maven-install-plugin/maven-metadata.xml in local (/Users/rai/.m2/repository)
+[DEBUG] Skipped remote update check for org.apache.maven.plugins:maven-install-plugin/maven-metadata.xml, locally cached metadata up-to-date.
+[DEBUG] Resolved plugin version for org.apache.maven.plugins:maven-install-plugin to 2.5.2 from repository central (http://repo.maven.apache.org/maven2, releases)
+[DEBUG] Resolving plugin version for org.apache.maven.plugins:maven-resources-plugin
+[DEBUG] Could not find metadata org.apache.maven.plugins:maven-resources-plugin/maven-metadata.xml in local (/Users/rai/.m2/repository)
+[DEBUG] Skipped remote update check for org.apache.maven.plugins:maven-resources-plugin/maven-metadata.xml, locally cached metadata up-to-date.
+[DEBUG] Resolved plugin version for org.apache.maven.plugins:maven-resources-plugin to 2.7 from repository central (http://repo.maven.apache.org/maven2, releases)
+[DEBUG] Resolving plugin version for org.apache.maven.plugins:maven-deploy-plugin
+[DEBUG] Could not find metadata org.apache.maven.plugins:maven-deploy-plugin/maven-metadata.xml in local (/Users/rai/.m2/repository)
+[DEBUG] Skipped remote update check for org.apache.maven.plugins:maven-deploy-plugin/maven-metadata.xml, locally cached metadata up-to-date.
+[DEBUG] Resolved plugin version for org.apache.maven.plugins:maven-deploy-plugin to 2.8.2 from repository central (http://repo.maven.apache.org/maven2, releases)
+[DEBUG] Resolving plugin prefix archetype from [org.apache.maven.plugins, org.codehaus.mojo]
+[DEBUG] Resolved plugin prefix archetype to org.apache.maven.plugins:maven-archetype-plugin from POM org.dd4t:dd4t-spring-mvc-archetype:maven-archetype:1.5-SNAPSHOT
+[DEBUG] === REACTOR BUILD PLAN ================================================
+[DEBUG] Project: org.dd4t:dd4t-spring-mvc-archetype:maven-archetype:1.5-SNAPSHOT
+[DEBUG] Tasks:   [clean]
+[DEBUG] Style:   Regular
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Project: org.dd4t:dd4t-spring-mvc-archetype:maven-archetype:1.5-SNAPSHOT
+[DEBUG] Tasks:   [archetype:create-from-project]
+[DEBUG] Style:   Aggregating
+[DEBUG] =======================================================================
+[INFO] 
+[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building dd4t-spring-mvc-archetype 1.5-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] === PROJECT BUILD PLAN ================================================
+[DEBUG] Project:       org.dd4t:dd4t-spring-mvc-archetype:1.5-SNAPSHOT
+[DEBUG] Dependencies (collect): []
+[DEBUG] Dependencies (resolve): []
+[DEBUG] Repositories (dependencies): [central (http://repo.maven.apache.org/maven2, releases)]
+[DEBUG] Repositories (plugins)     : [central (http://repo.maven.apache.org/maven2, releases)]
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-clean-plugin:2.5:clean (default-clean)
+[DEBUG] Style:         Regular
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <directory default-value="${project.build.directory}"/>
+  <excludeDefaultDirectories default-value="false">${clean.excludeDefaultDirectories}</excludeDefaultDirectories>
+  <failOnError default-value="true">${maven.clean.failOnError}</failOnError>
+  <followSymLinks default-value="false">${clean.followSymLinks}</followSymLinks>
+  <outputDirectory default-value="${project.build.outputDirectory}"/>
+  <reportDirectory default-value="${project.reporting.outputDirectory}"/>
+  <retryOnError default-value="true">${maven.clean.retryOnError}</retryOnError>
+  <skip default-value="false">${clean.skip}</skip>
+  <testOutputDirectory default-value="${project.build.testOutputDirectory}"/>
+  <verbose>${clean.verbose}</verbose>
+</configuration>
+[DEBUG] =======================================================================
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ dd4t-spring-mvc-archetype ---
+[DEBUG] Dependency collection stats: {ConflictMarker.analyzeTime=0, ConflictMarker.markTime=0, ConflictMarker.nodeCount=3, ConflictIdSorter.graphTime=0, ConflictIdSorter.topsortTime=0, ConflictIdSorter.conflictIdCount=3, ConflictIdSorter.conflictIdCycleCount=0, ConflictResolver.totalTime=0, ConflictResolver.conflictItemCount=3, DefaultDependencyCollector.collectTime=8, DefaultDependencyCollector.transformTime=0}
+[DEBUG] org.apache.maven.plugins:maven-clean-plugin:jar:2.5:
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.0.6:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:3.0:compile
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-clean-plugin:2.5
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-clean-plugin:2.5
+[DEBUG]   Imported:  < project>org.dd4t:dd4t-spring-mvc-archetype:1.5-SNAPSHOT
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-clean-plugin:2.5
+[DEBUG]   Included: org.apache.maven.plugins:maven-clean-plugin:jar:2.5
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:3.0
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.0.6
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-clean-plugin:2.5:clean from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-clean-plugin:2.5, parent: sun.misc.Launcher$AppClassLoader@d16e5d6]
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-clean-plugin:2.5:clean' with basic configurator -->
+[DEBUG]   (f) directory = /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target
+[DEBUG]   (f) excludeDefaultDirectories = false
+[DEBUG]   (f) failOnError = true
+[DEBUG]   (f) followSymLinks = false
+[DEBUG]   (f) outputDirectory = /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/classes
+[DEBUG]   (f) reportDirectory = /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/site
+[DEBUG]   (f) retryOnError = true
+[DEBUG]   (f) skip = false
+[DEBUG]   (f) testOutputDirectory = /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/test-classes
+[DEBUG] -- end configuration --
+[INFO] Deleting /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/test-classes/projects/basic/goal.txt
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/test-classes/projects/basic/archetype.properties
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/test-classes/projects/basic
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/test-classes/projects
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/test-classes
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/dd4t-spring-mvc-archetype-archetype-1.5-SNAPSHOT.jar
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/META-INF/maven/archetype-metadata.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/META-INF/maven
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/META-INF
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/META-INF/maven/archetype-metadata.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/META-INF/maven
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/META-INF
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views/pages/examplepagetemplate.jsp
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views/pages
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/webapp/WEB-INF
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/webapp
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/logback.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/ehcache.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dispatcher-servlet.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dd4t.properties
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_storage_conf.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_link_conf.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_dynamic_conf.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_ambient_conf.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/ehcache.xsd
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/cd_storage_conf.xsd
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/cd_link_conf.xsd
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/cd_dynamic_conf.xsd
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_conf.xsd
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_cartridge_conf.xsd
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/resources
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/java/models/GenericTextField.java
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/java/models
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/java/controllers/PageController.java
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/java/controllers/ComponentPresentationController.java
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/java/controllers/BinaryController.java
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/java/controllers
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main/java
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src/main
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/src
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources/pom.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources/archetype-resources
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main/resources
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src/main
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/src
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/spring-mvc-archetype.iml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/pom.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources/archetype-catalog.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes/archetype-resources
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/classes
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/test/resources/projects/basic/goal.txt
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/test/resources/projects/basic/archetype.properties
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/test/resources/projects/basic
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/test/resources/projects
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/test/resources
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/test
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/META-INF/maven/archetype-metadata.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/META-INF/maven
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/META-INF
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/META-INF/maven/archetype-metadata.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/META-INF/maven
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/META-INF
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views/pages/examplepagetemplate.jsp
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views/pages
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/webapp/WEB-INF
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/webapp
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/logback.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/ehcache.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dispatcher-servlet.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dd4t.properties
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_storage_conf.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_link_conf.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_dynamic_conf.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_ambient_conf.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/WEB-INF
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/ehcache.xsd
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/cd_storage_conf.xsd
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/cd_link_conf.xsd
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/cd_dynamic_conf.xsd
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_conf.xsd
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_cartridge_conf.xsd
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources/schemas
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/resources
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/java/models/GenericTextField.java
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/java/models
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/java/controllers/PageController.java
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/java/controllers/ComponentPresentationController.java
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/java/controllers/BinaryController.java
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/java/controllers
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main/java
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src/main
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/src
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources/pom.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources/archetype-resources
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main/resources
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src/main
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/src
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/spring-mvc-archetype.iml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/pom.xml
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources/archetype-catalog.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src
+[INFO] Deleting file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/pom.xml
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources
+[INFO] Deleting directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target
+[DEBUG] Skipping non-existing directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/classes
+[DEBUG] Skipping non-existing directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/test-classes
+[DEBUG] Skipping non-existing directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/site
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building dd4t-spring-mvc-archetype 1.5-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[DEBUG] Resolving plugin prefix archetype from [org.apache.maven.plugins, org.codehaus.mojo]
+[DEBUG] Resolved plugin prefix archetype to org.apache.maven.plugins:maven-archetype-plugin from POM org.dd4t:dd4t-spring-mvc-archetype:maven-archetype:1.5-SNAPSHOT
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] Lifecycle default -> [validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-test-sources, generate-test-resources, process-test-resources, test-compile, process-test-classes, test, prepare-package, package, pre-integration-test, integration-test, post-integration-test, verify, install, deploy]
+[DEBUG] Lifecycle clean -> [pre-clean, clean, post-clean]
+[DEBUG] Lifecycle site -> [pre-site, site, post-site, site-deploy]
+[DEBUG] === PROJECT BUILD PLAN ================================================
+[DEBUG] Project:       org.dd4t:dd4t-spring-mvc-archetype:1.5-SNAPSHOT
+[DEBUG] Dependencies (collect): []
+[DEBUG] Dependencies (resolve): []
+[DEBUG] Repositories (dependencies): [central (http://repo.maven.apache.org/maven2, releases)]
+[DEBUG] Repositories (plugins)     : [central (http://repo.maven.apache.org/maven2, releases)]
+[DEBUG] --- init fork of org.dd4t:dd4t-spring-mvc-archetype:1.5-SNAPSHOT for org.apache.maven.plugins:maven-archetype-plugin:2.3:create-from-project (default-cli) ---
+[DEBUG] Dependencies (collect): []
+[DEBUG] Dependencies (resolve): []
+[DEBUG] --- exit fork of org.dd4t:dd4t-spring-mvc-archetype:1.5-SNAPSHOT for org.apache.maven.plugins:maven-archetype-plugin:2.3:create-from-project (default-cli) ---
+[DEBUG] -----------------------------------------------------------------------
+[DEBUG] Goal:          org.apache.maven.plugins:maven-archetype-plugin:2.3:create-from-project (default-cli)
+[DEBUG] Style:         Aggregating
+[DEBUG] Configuration: <?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+  <archetypeFilteredExtentions>${archetype.filteredExtentions}</archetypeFilteredExtentions>
+  <archetypeLanguages>${archetype.languages}</archetypeLanguages>
+  <archetypePostPhase default-value="package">${archetype.postPhase}</archetypePostPhase>
+  <archetypeRegistryFile default-value="${user.home}/.m2/archetype.xml"/>
+  <defaultEncoding default-value="UTF-8">${archetype.encoding}</defaultEncoding>
+  <interactive default-value="false">${interactive}</interactive>
+  <keepParent>${archetype.keepParent}</keepParent>
+  <localRepository default-value="${localRepository}"/>
+  <outputDirectory default-value="${project.build.directory}/generated-sources/archetype"/>
+  <packageName>${packageName}</packageName>
+  <partialArchetype>${archetype.partialArchetype}</partialArchetype>
+  <preserveCData>${archetype.preserveCData}</preserveCData>
+  <project default-value="${project}"/>
+  <propertyFile>${archetype.properties}</propertyFile>
+  <session default-value="${session}"/>
+  <testMode>${testMode}</testMode>
+</configuration>
+[DEBUG] =======================================================================
+[INFO] 
+[INFO] >>> maven-archetype-plugin:2.3:create-from-project (default-cli) @ dd4t-spring-mvc-archetype >>>
+[INFO] 
+[INFO] <<< maven-archetype-plugin:2.3:create-from-project (default-cli) @ dd4t-spring-mvc-archetype <<<
+[INFO] 
+[INFO] --- maven-archetype-plugin:2.3:create-from-project (default-cli) @ dd4t-spring-mvc-archetype ---
+[DEBUG] Dependency collection stats: {ConflictMarker.analyzeTime=1, ConflictMarker.markTime=0, ConflictMarker.nodeCount=134, ConflictIdSorter.graphTime=0, ConflictIdSorter.topsortTime=0, ConflictIdSorter.conflictIdCount=60, ConflictIdSorter.conflictIdCycleCount=0, ConflictResolver.totalTime=8, ConflictResolver.conflictItemCount=125, DefaultDependencyCollector.collectTime=125, DefaultDependencyCollector.transformTime=10}
+[DEBUG] org.apache.maven.plugins:maven-archetype-plugin:jar:2.3:
+[DEBUG]    org.apache.maven.archetype:archetype-catalog:jar:2.3:compile
+[DEBUG]    org.apache.maven.archetype:archetype-descriptor:jar:2.3:compile
+[DEBUG]    org.apache.maven.archetype:archetype-registry:jar:2.3:compile
+[DEBUG]    org.apache.maven.archetype:archetype-common:jar:2.3:compile
+[DEBUG]       net.sourceforge.jchardet:jchardet:jar:1.0:compile
+[DEBUG]       org.codehaus.plexus:plexus-component-annotations:jar:1.5.5:compile
+[DEBUG]       dom4j:dom4j:jar:1.6.1:compile
+[DEBUG]          xml-apis:xml-apis:jar:1.0.b2:compile
+[DEBUG]       jdom:jdom:jar:1.0:compile
+[DEBUG]       org.apache.maven:maven-model:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-project:jar:2.2.1:compile
+[DEBUG]          org.apache.maven:maven-plugin-registry:jar:2.2.1:compile
+[DEBUG]          org.codehaus.plexus:plexus-interpolation:jar:1.11:compile
+[DEBUG]       org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1:compile
+[DEBUG]          junit:junit:jar:4.11:test
+[DEBUG]             org.hamcrest:hamcrest-core:jar:1.3:test
+[DEBUG]       org.codehaus.plexus:plexus-velocity:jar:1.1.8:compile
+[DEBUG]       org.apache.velocity:velocity:jar:1.5:compile
+[DEBUG]          commons-lang:commons-lang:jar:2.1:compile
+[DEBUG]          oro:oro:jar:2.0.8:compile
+[DEBUG]    org.codehaus.plexus:plexus-utils:jar:3.0.21:compile
+[DEBUG]    commons-io:commons-io:jar:2.2:compile
+[DEBUG]    org.apache.maven:maven-plugin-api:jar:2.2.1:compile
+[DEBUG]    org.apache.maven:maven-core:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-settings:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-plugin-parameter-documenter:jar:2.2.1:compile
+[DEBUG]       org.slf4j:slf4j-jdk14:jar:1.5.6:runtime
+[DEBUG]          org.slf4j:slf4j-api:jar:1.5.6:runtime
+[DEBUG]       org.slf4j:jcl-over-slf4j:jar:1.5.6:runtime
+[DEBUG]       org.apache.maven.reporting:maven-reporting-api:jar:2.2.1:compile
+[DEBUG]          org.apache.maven.doxia:doxia-sink-api:jar:1.1:compile
+[DEBUG]          org.apache.maven.doxia:doxia-logging-api:jar:1.1:compile
+[DEBUG]       org.apache.maven:maven-profile:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-artifact:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-repository-metadata:jar:2.2.1:compile
+[DEBUG]       org.apache.maven:maven-error-diagnostics:jar:2.2.1:compile
+[DEBUG]       commons-cli:commons-cli:jar:1.2:compile
+[DEBUG]       org.apache.maven:maven-plugin-descriptor:jar:2.2.1:compile
+[DEBUG]       org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-6:compile
+[DEBUG]          org.codehaus.plexus:plexus-component-api:jar:1.0-alpha-16:compile
+[DEBUG]             org.codehaus.plexus:plexus-classworlds:jar:1.2-alpha-7:compile
+[DEBUG]       org.apache.maven:maven-artifact-manager:jar:2.2.1:compile
+[DEBUG]          backport-util-concurrent:backport-util-concurrent:jar:3.1:compile
+[DEBUG]       org.apache.maven:maven-monitor:jar:2.2.1:compile
+[DEBUG]       classworlds:classworlds:jar:1.1:compile
+[DEBUG]       org.sonatype.plexus:plexus-sec-dispatcher:jar:1.3:compile
+[DEBUG]          org.sonatype.plexus:plexus-cipher:jar:1.4:compile
+[DEBUG]    org.apache.maven.shared:maven-invoker:jar:2.1.1:compile
+[DEBUG]    commons-collections:commons-collections:jar:3.2.1:compile
+[DEBUG]    org.codehaus.groovy:groovy:jar:1.8.3:compile
+[DEBUG]       antlr:antlr:jar:2.7.7:compile
+[DEBUG]       asm:asm:jar:3.2:compile
+[DEBUG]       asm:asm-commons:jar:3.2:compile
+[DEBUG]       asm:asm-util:jar:3.2:compile
+[DEBUG]       asm:asm-analysis:jar:3.2:compile
+[DEBUG]       asm:asm-tree:jar:3.2:compile
+[DEBUG]    org.beanshell:bsh:jar:2.0b4:compile
+[DEBUG]    org.apache.maven.shared:maven-script-interpreter:jar:1.0:compile
+[DEBUG]       org.apache.ant:ant:jar:1.8.1:compile
+[DEBUG] Created new class realm plugin>org.apache.maven.plugins:maven-archetype-plugin:2.3
+[DEBUG] Importing foreign packages into class realm plugin>org.apache.maven.plugins:maven-archetype-plugin:2.3
+[DEBUG]   Imported:  < project>org.dd4t:dd4t-spring-mvc-archetype:1.5-SNAPSHOT
+[DEBUG] Populating class realm plugin>org.apache.maven.plugins:maven-archetype-plugin:2.3
+[DEBUG]   Included: org.apache.maven.plugins:maven-archetype-plugin:jar:2.3
+[DEBUG]   Included: org.apache.maven.archetype:archetype-catalog:jar:2.3
+[DEBUG]   Included: org.apache.maven.archetype:archetype-descriptor:jar:2.3
+[DEBUG]   Included: org.apache.maven.archetype:archetype-registry:jar:2.3
+[DEBUG]   Included: org.apache.maven.archetype:archetype-common:jar:2.3
+[DEBUG]   Included: net.sourceforge.jchardet:jchardet:jar:1.0
+[DEBUG]   Included: org.codehaus.plexus:plexus-component-annotations:jar:1.5.5
+[DEBUG]   Included: dom4j:dom4j:jar:1.6.1
+[DEBUG]   Included: xml-apis:xml-apis:jar:1.0.b2
+[DEBUG]   Included: jdom:jdom:jar:1.0
+[DEBUG]   Included: org.codehaus.plexus:plexus-interpolation:jar:1.11
+[DEBUG]   Included: org.codehaus.plexus:plexus-velocity:jar:1.1.8
+[DEBUG]   Included: org.apache.velocity:velocity:jar:1.5
+[DEBUG]   Included: commons-lang:commons-lang:jar:2.1
+[DEBUG]   Included: oro:oro:jar:2.0.8
+[DEBUG]   Included: org.codehaus.plexus:plexus-utils:jar:3.0.21
+[DEBUG]   Included: commons-io:commons-io:jar:2.2
+[DEBUG]   Included: org.slf4j:slf4j-jdk14:jar:1.5.6
+[DEBUG]   Included: org.slf4j:slf4j-api:jar:1.5.6
+[DEBUG]   Included: org.slf4j:jcl-over-slf4j:jar:1.5.6
+[DEBUG]   Included: org.apache.maven.reporting:maven-reporting-api:jar:2.2.1
+[DEBUG]   Included: org.apache.maven.doxia:doxia-sink-api:jar:1.1
+[DEBUG]   Included: org.apache.maven.doxia:doxia-logging-api:jar:1.1
+[DEBUG]   Included: commons-cli:commons-cli:jar:1.2
+[DEBUG]   Included: org.codehaus.plexus:plexus-interactivity-api:jar:1.0-alpha-6
+[DEBUG]   Included: backport-util-concurrent:backport-util-concurrent:jar:3.1
+[DEBUG]   Included: org.sonatype.plexus:plexus-sec-dispatcher:jar:1.3
+[DEBUG]   Included: org.sonatype.plexus:plexus-cipher:jar:1.4
+[DEBUG]   Included: org.apache.maven.shared:maven-invoker:jar:2.1.1
+[DEBUG]   Included: commons-collections:commons-collections:jar:3.2.1
+[DEBUG]   Included: org.codehaus.groovy:groovy:jar:1.8.3
+[DEBUG]   Included: antlr:antlr:jar:2.7.7
+[DEBUG]   Included: asm:asm:jar:3.2
+[DEBUG]   Included: asm:asm-commons:jar:3.2
+[DEBUG]   Included: asm:asm-util:jar:3.2
+[DEBUG]   Included: asm:asm-analysis:jar:3.2
+[DEBUG]   Included: asm:asm-tree:jar:3.2
+[DEBUG]   Included: org.beanshell:bsh:jar:2.0b4
+[DEBUG]   Included: org.apache.maven.shared:maven-script-interpreter:jar:1.0
+[DEBUG]   Included: org.apache.ant:ant:jar:1.8.1
+[DEBUG]   Excluded: org.apache.maven:maven-model:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-project:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-registry:jar:2.2.1
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-container-default:jar:1.0-alpha-9-stable-1
+[DEBUG]   Excluded: junit:junit:jar:4.11
+[DEBUG]   Excluded: org.hamcrest:hamcrest-core:jar:1.3
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-api:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-core:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-settings:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-parameter-documenter:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-profile:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-artifact:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-repository-metadata:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-error-diagnostics:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-plugin-descriptor:jar:2.2.1
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-component-api:jar:1.0-alpha-16
+[DEBUG]   Excluded: org.codehaus.plexus:plexus-classworlds:jar:1.2-alpha-7
+[DEBUG]   Excluded: org.apache.maven:maven-artifact-manager:jar:2.2.1
+[DEBUG]   Excluded: org.apache.maven:maven-monitor:jar:2.2.1
+[DEBUG]   Excluded: classworlds:classworlds:jar:1.1
+[DEBUG] Configuring mojo org.apache.maven.plugins:maven-archetype-plugin:2.3:create-from-project from plugin realm ClassRealm[plugin>org.apache.maven.plugins:maven-archetype-plugin:2.3, parent: sun.misc.Launcher$AppClassLoader@d16e5d6]
+[DEBUG] Setting property: classpath.resource.loader.class => 'org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader'.
+[DEBUG] Setting property: site.resource.loader.class => 'org.codehaus.plexus.velocity.SiteResourceLoader'.
+[DEBUG] Setting property: velocimacro.messages.on => 'false'.
+[DEBUG] Setting property: resource.loader => 'classpath,site'.
+[DEBUG] Setting property: runtime.log.invalid.references => 'false'.
+[DEBUG] Setting property: resource.manager.logwhenfound => 'false'.
+[DEBUG] *******************************************************************
+[DEBUG] Starting Apache Velocity v1.5 (compiled: 2007-02-22 08:52:29)
+[DEBUG] RuntimeInstance initializing.
+[DEBUG] Default Properties File: org/apache/velocity/runtime/defaults/velocity.properties
+[DEBUG] LogSystem has been deprecated. Please use a LogChute implementation.
+[DEBUG] Default ResourceManager initializing. (class org.apache.velocity.runtime.resource.ResourceManagerImpl)
+[DEBUG] ResourceLoader instantiated: org.codehaus.plexus.velocity.ContextClassLoaderResourceLoader
+[DEBUG] ResourceLoader instantiated: org.codehaus.plexus.velocity.SiteResourceLoader
+[DEBUG] ResourceCache: initialized (class org.apache.velocity.runtime.resource.ResourceCacheImpl)
+[DEBUG] Default ResourceManager initialization complete.
+[DEBUG] Loaded System Directive: org.apache.velocity.runtime.directive.Literal
+[DEBUG] Loaded System Directive: org.apache.velocity.runtime.directive.Macro
+[DEBUG] Loaded System Directive: org.apache.velocity.runtime.directive.Parse
+[DEBUG] Loaded System Directive: org.apache.velocity.runtime.directive.Include
+[DEBUG] Loaded System Directive: org.apache.velocity.runtime.directive.Foreach
+[DEBUG] Created '20' parsers.
+[DEBUG] Velocimacro : initialization starting.
+[DEBUG] Velocimacro : allowInline = true : VMs can be defined inline in templates
+[DEBUG] Velocimacro : allowInlineToOverride = false : VMs defined inline may NOT replace previous VM definitions
+[DEBUG] Velocimacro : allowInlineLocal = false : VMs defined inline will be global in scope if allowed.
+[DEBUG] Velocimacro : autoload off : VM system will not automatically reload global library macros
+[DEBUG] Velocimacro : Velocimacro : initialization complete.
+[DEBUG] RuntimeInstance successfully initialized.
+[DEBUG] Configuring mojo 'org.apache.maven.plugins:maven-archetype-plugin:2.3:create-from-project' with basic configurator -->
+[DEBUG]   (f) archetypePostPhase = package
+[DEBUG]   (f) archetypeRegistryFile = /Users/rai/.m2/archetype.xml
+[DEBUG]   (f) defaultEncoding = UTF-8
+[DEBUG]   (f) interactive = false
+[DEBUG]   (f) localRepository =        id: local
+      url: file:///Users/rai/.m2/repository/
+   layout: default
+snapshots: [enabled => true, update => always]
+ releases: [enabled => true, update => always]
+
+[DEBUG]   (f) outputDirectory = /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype
+[DEBUG]   (f) project = MavenProject: org.dd4t:dd4t-spring-mvc-archetype:1.5-SNAPSHOT @ /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/pom.xml
+[DEBUG]   (f) session = org.apache.maven.execution.MavenSession@72b0185d
+[DEBUG] -- end configuration --
+[DEBUG] Using default languages = [java, groovy, csharp, aspectj]
+[DEBUG] Creating ArchetypeConfiguration from ArchetypeDefinition, MavenProject and Properties
+[DEBUG] Adding requiredProperty groupId
+[DEBUG] Adding requiredProperty artifactId
+[DEBUG] Adding requiredProperty version
+[DEBUG] Adding requiredProperty package
+[DEBUG] Resolving package in /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype using languages [java, groovy, csharp, aspectj]
+[DEBUG] Found 4 potential archetype files
+[DEBUG] Found 4 archetype files for package resolution 
+[DEBUG] Package resolved to 
+[INFO] Setting default groupId: org.dd4t
+[INFO] Setting default artifactId: dd4t-spring-mvc-archetype
+[INFO] Setting default version: 1.5-SNAPSHOT
+[INFO] Setting default package: org.dd4t
+[DEBUG] Creating ArchetypeConfiguration from ArchetypeDefinition, MavenProject and Properties
+[DEBUG] Adding requiredProperty package
+[DEBUG] Setting property package=org.dd4t
+[DEBUG] Adding requiredProperty version
+[DEBUG] Setting property version=1.5-SNAPSHOT
+[DEBUG] Adding requiredProperty groupId
+[DEBUG] Setting property groupId=org.dd4t
+[DEBUG] Adding requiredProperty artifactId
+[DEBUG] Setting property artifactId=dd4t-spring-mvc-archetype
+[DEBUG] Adding requiredProperty groupId
+[DEBUG] Setting property groupId=org.dd4t
+[DEBUG] Adding requiredProperty artifactId
+[DEBUG] Setting property artifactId=org.dd4t
+[DEBUG] Adding requiredProperty version
+[DEBUG] Setting property version=org.dd4t
+[DEBUG] Adding requiredProperty package
+[DEBUG] Setting property package=org.dd4t
+[DEBUG] Entering batch mode
+[DEBUG] Using default extensions = [java, xml, txt, groovy, cs, mdo, aj, jsp, gsp, vm, html, xhtml, properties, .classpath, .project]
+[DEBUG] Creating archetype in /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype
+[DEBUG] Creating archetype's pom
+[DEBUG] Archetype's files output directory /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources
+[DEBUG] Starting archetype's descriptor dd4t-spring-mvc-archetype
+[DEBUG] Resolving files for org.dd4t:dd4t-spring-mvc-archetype:maven-archetype:1.5-SNAPSHOT in /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype
+[DEBUG] Resolved 25 files
+[DEBUG] Resolved Files:[archetype-catalog.xml, build.txt, spring-mvc-archetype.iml, src/main/resources/archetype-resources/pom.xml, src/main/resources/archetype-resources/src/main/java/controllers/BinaryController.java, src/main/resources/archetype-resources/src/main/java/controllers/ComponentPresentationController.java, src/main/resources/archetype-resources/src/main/java/controllers/PageController.java, src/main/resources/archetype-resources/src/main/java/models/GenericTextField.java, src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_cartridge_conf.xsd, src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_conf.xsd, src/main/resources/archetype-resources/src/main/resources/schemas/cd_dynamic_conf.xsd, src/main/resources/archetype-resources/src/main/resources/schemas/cd_link_conf.xsd, src/main/resources/archetype-resources/src/main/resources/schemas/cd_storage_conf.xsd, src/main/resources/archetype-resources/src/main/resources/schemas/ehcache.xsd, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_ambient_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_dynamic_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_link_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_storage_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dd4t.properties, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dispatcher-servlet.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/ehcache.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/logback.xml, src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views/pages/examplepagetemplate.jsp, src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml, src/main/resources/META-INF/maven/archetype-metadata.xml]
+[DEBUG] Scanned for files 25
+[DEBUG] - archetype-catalog.xml
+[DEBUG] - build.txt
+[DEBUG] - spring-mvc-archetype.iml
+[DEBUG] - src/main/resources/archetype-resources/pom.xml
+[DEBUG] - src/main/resources/archetype-resources/src/main/java/controllers/BinaryController.java
+[DEBUG] - src/main/resources/archetype-resources/src/main/java/controllers/ComponentPresentationController.java
+[DEBUG] - src/main/resources/archetype-resources/src/main/java/controllers/PageController.java
+[DEBUG] - src/main/resources/archetype-resources/src/main/java/models/GenericTextField.java
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_cartridge_conf.xsd
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_conf.xsd
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/schemas/cd_dynamic_conf.xsd
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/schemas/cd_link_conf.xsd
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/schemas/cd_storage_conf.xsd
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/schemas/ehcache.xsd
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_ambient_conf.xml
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_dynamic_conf.xml
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_link_conf.xml
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_storage_conf.xml
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dd4t.properties
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dispatcher-servlet.xml
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/ehcache.xml
+[DEBUG] - src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/logback.xml
+[DEBUG] - src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views/pages/examplepagetemplate.jsp
+[DEBUG] - src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml
+[DEBUG] - src/main/resources/META-INF/maven/archetype-metadata.xml
+[DEBUG] Resolving filesets with package=org.dd4t, languages=[java, groovy, csharp, aspectj] and extentions=[java, xml, txt, groovy, cs, mdo, aj, jsp, gsp, vm, html, xhtml, properties, .classpath, .project]
+[DEBUG] Using languages includes java/**,groovy/**,csharp/**,aspectj/**
+[DEBUG] Using filtered includes **/*.java,**/*.xml,**/*.txt,**/*.groovy,**/*.cs,**/*.mdo,**/*.aj,**/*.jsp,**/*.gsp,**/*.vm,**/*.html,**/*.xhtml,**/*.properties,**/.classpath,**/.project
+[DEBUG] Scanned 0 sources in 25 files
+[DEBUG] Scanned 22 resources in 25 files
+[DEBUG] Scanned 16 filtered files in 22 files
+Scanned 16 filtered files in 22 files: src/main/resources/archetype-resources/pom.xml, src/main/resources/archetype-resources/src/main/java/controllers/BinaryController.java, src/main/resources/archetype-resources/src/main/java/controllers/ComponentPresentationController.java, src/main/resources/archetype-resources/src/main/java/controllers/PageController.java, src/main/resources/archetype-resources/src/main/java/models/GenericTextField.java, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_ambient_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_dynamic_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_link_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_storage_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dd4t.properties, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dispatcher-servlet.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/ehcache.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/logback.xml, src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views/pages/examplepagetemplate.jsp, src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml, src/main/resources/META-INF/maven/archetype-metadata.xml
+[DEBUG] Creating filesets filtered at level 3
+[DEBUG] Sorted 1 groups in 16 files
+[DEBUG] Sorted Files: [src/main/resources/archetype-resources/pom.xml, src/main/resources/archetype-resources/src/main/java/controllers/BinaryController.java, src/main/resources/archetype-resources/src/main/java/controllers/ComponentPresentationController.java, src/main/resources/archetype-resources/src/main/java/controllers/PageController.java, src/main/resources/archetype-resources/src/main/java/models/GenericTextField.java, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_ambient_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_dynamic_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_link_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_storage_conf.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dd4t.properties, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dispatcher-servlet.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/ehcache.xml, src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/logback.xml, src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views/pages/examplepagetemplate.jsp, src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml, src/main/resources/META-INF/maven/archetype-metadata.xml]
+[DEBUG] Creating filesets for group src/main/resources
+[DEBUG] Created Fileset src/main/resources (Filtered-Flat) [**/*.jsp, **/*.java, **/*.xml, **/*.properties -- ]
+[DEBUG] Resolved fileSets [src/main/resources (Filtered-Flat) [**/*.jsp, **/*.java, **/*.xml, **/*.properties -- ]]
+[DEBUG] Creating filesets at level 3
+[DEBUG] Sorted 1 groups in 6 files
+[DEBUG] Sorted Files: [src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_cartridge_conf.xsd, src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_conf.xsd, src/main/resources/archetype-resources/src/main/resources/schemas/cd_dynamic_conf.xsd, src/main/resources/archetype-resources/src/main/resources/schemas/cd_link_conf.xsd, src/main/resources/archetype-resources/src/main/resources/schemas/cd_storage_conf.xsd, src/main/resources/archetype-resources/src/main/resources/schemas/ehcache.xsd]
+[DEBUG] Creating filesets for group src/main/resources
+[DEBUG] Created Fileset src/main/resources (Copied-Flat) [**/*.xsd -- ]
+[DEBUG] Resolved fileSets [src/main/resources (Copied-Flat) [**/*.xsd -- ]]
+[DEBUG] Scanned 0 test sources in 3 files
+[DEBUG] Scanned 0 test resources in 3 files
+[DEBUG] Scanned 0 site resources in 3 files
+[DEBUG] Scanned 0 other sources in 3 files at level 3
+[DEBUG] Scanned 0 other sources in 3 files at level 2
+[DEBUG] Scanned 0 other resources in 3 files at level 2
+[DEBUG] Scanned 3 other resources in 3 files at level 0
+[DEBUG] Scanned 2 filtered files in 3 files
+Scanned 2 filtered files in 3 files: archetype-catalog.xml, build.txt
+[DEBUG] Creating filesets filtered at level 0
+[DEBUG] Created Fileset  (Filtered-Flat) [archetype-catalog.xml, build.txt -- ]
+[DEBUG] Resolved fileSets [ (Filtered-Flat) [archetype-catalog.xml, build.txt -- ]]
+[DEBUG] Creating filesets at level 0
+[DEBUG] Created Fileset  (Copied-Flat) [spring-mvc-archetype.iml -- ]
+[DEBUG] Resolved fileSets [ (Copied-Flat) [spring-mvc-archetype.iml -- ]]
+[DEBUG] Resolved filesets for dd4t-spring-mvc-archetype
+[DEBUG] Creating Archetype/Module files from /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype to /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/src/main/resources/archetype-resources
+[DEBUG] Using fileset src/main/resources (Filtered-Flat) [**/*.jsp, **/*.java, **/*.xml, **/*.properties -- ]
+[DEBUG] Scanned 16 resources
+[DEBUG] Package as Directory: Package:org.dd4t->org/dd4t
+[DEBUG] InputFileName:src/main/resources/archetype-resources/pom.xml
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/pom.xml
+[WARNING] Archetype uses ${version} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/src/main/resources/archetype-resources/pom.xml contains this property already
+[WARNING] Archetype uses ${groupId} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/src/main/resources/archetype-resources/pom.xml contains this property already
+[WARNING] Archetype uses ${artifactId} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/src/main/resources/archetype-resources/pom.xml contains this property already
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/java/controllers/BinaryController.java
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/java/controllers/BinaryController.java
+[WARNING] Archetype uses ${package} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/src/main/resources/archetype-resources/src/main/java/controllers/BinaryController.java contains this property already
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/java/controllers/ComponentPresentationController.java
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/java/controllers/ComponentPresentationController.java
+[WARNING] Archetype uses ${package} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/src/main/resources/archetype-resources/src/main/java/controllers/ComponentPresentationController.java contains this property already
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/java/controllers/PageController.java
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/java/controllers/PageController.java
+[WARNING] Archetype uses ${package} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/src/main/resources/archetype-resources/src/main/java/controllers/PageController.java contains this property already
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/java/models/GenericTextField.java
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/java/models/GenericTextField.java
+[WARNING] Archetype uses ${package} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/src/main/resources/archetype-resources/src/main/java/models/GenericTextField.java contains this property already
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_ambient_conf.xml
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_ambient_conf.xml
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_dynamic_conf.xml
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_dynamic_conf.xml
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_link_conf.xml
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_link_conf.xml
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_storage_conf.xml
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/cd_storage_conf.xml
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dd4t.properties
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dd4t.properties
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dispatcher-servlet.xml
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dispatcher-servlet.xml
+[WARNING] Archetype uses ${package} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/dispatcher-servlet.xml contains this property already
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/ehcache.xml
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/ehcache.xml
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/logback.xml
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/WEB-INF/classes/logback.xml
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views/pages/examplepagetemplate.jsp
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/webapp/WEB-INF/views/pages/examplepagetemplate.jsp
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/webapp/WEB-INF/web.xml
+[DEBUG] InputFileName:src/main/resources/META-INF/maven/archetype-metadata.xml
+[DEBUG] OutputFileName:src/main/resources/META-INF/maven/archetype-metadata.xml
+[DEBUG] Processed src/main/resources files
+[DEBUG] Using fileset src/main/resources (Copied-Flat) [**/*.xsd -- ]
+[DEBUG] Scanned 6 resources
+[DEBUG] Package as Directory: Package:org.dd4t->org/dd4t
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_cartridge_conf.xsd
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_cartridge_conf.xsd
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_conf.xsd
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/cd_ambient_conf.xsd
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/cd_dynamic_conf.xsd
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/cd_dynamic_conf.xsd
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/cd_link_conf.xsd
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/cd_link_conf.xsd
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/cd_storage_conf.xsd
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/cd_storage_conf.xsd
+[DEBUG] InputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/ehcache.xsd
+[DEBUG] OutputFileName:src/main/resources/archetype-resources/src/main/resources/schemas/ehcache.xsd
+[DEBUG] Copied src/main/resources files
+[DEBUG] Using fileset  (Filtered-Flat) [archetype-catalog.xml, build.txt -- ]
+[DEBUG] Scanned 2 resources
+[DEBUG] Package as Directory: Package:org.dd4t->org/dd4t
+[DEBUG] InputFileName:archetype-catalog.xml
+[DEBUG] OutputFileName:archetype-catalog.xml
+[DEBUG] InputFileName:build.txt
+[DEBUG] OutputFileName:build.txt
+[WARNING] Archetype uses ${package} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/build.txt contains this property already
+[WARNING] Archetype uses ${version} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/build.txt contains this property already
+[WARNING] Archetype uses ${groupId} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/build.txt contains this property already
+[WARNING] Archetype uses ${artifactId} for internal processing, but file /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/build.txt contains this property already
+[DEBUG] Processed  files
+[DEBUG] Using fileset  (Copied-Flat) [spring-mvc-archetype.iml -- ]
+[DEBUG] Scanned 1 resources
+[DEBUG] Package as Directory: Package:org.dd4t->org/dd4t
+[DEBUG] InputFileName:spring-mvc-archetype.iml
+[DEBUG] OutputFileName:spring-mvc-archetype.iml
+[DEBUG] Copied  files
+[DEBUG] Created files for dd4t-spring-mvc-archetype
+[DEBUG] Created Archetype dd4t-spring-mvc-archetype template pom(s)
+[DEBUG] Archetype dd4t-spring-mvc-archetype descriptor written
+[DEBUG] Added basic integration test
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building dd4t-spring-mvc-archetype-archetype 1.5-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-resources-plugin:2.7:resources (default-resources) @ dd4t-spring-mvc-archetype-archetype ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 27 resources
+[INFO] 
+[INFO] --- maven-resources-plugin:2.7:testResources (default-testResources) @ dd4t-spring-mvc-archetype-archetype ---
+[WARNING] Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] Copying 2 resources
+[INFO] 
+[INFO] --- maven-archetype-plugin:2.3:jar (default-jar) @ dd4t-spring-mvc-archetype-archetype ---
+[INFO] Building archetype jar: /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype/target/dd4t-spring-mvc-archetype-archetype-1.5-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 0.895 s
+[INFO] Finished at: 2015-12-18T15:22:57+01:00
+[INFO] Final Memory: 11M/245M
+[INFO] ------------------------------------------------------------------------
+[INFO] Archetype created in /Users/rai/Sources/dd4t-2-java/spring-mvc-archetype/target/generated-sources/archetype
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 3.245 s
+[INFO] Finished at: 2015-12-18T15:22:57+01:00
+[INFO] Final Memory: 18M/310M
+[INFO] ------------------------------------------------------------------------

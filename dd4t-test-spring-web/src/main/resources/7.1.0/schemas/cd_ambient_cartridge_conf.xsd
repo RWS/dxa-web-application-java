@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xsd:element name="CartridgeDefinition" id="cd_ambient_cartridge_confN10006">
+        <xsd:complexType>
+            <xsd:all>
+                <xsd:element name="ClaimDefinitions" type="ClaimDefinitionsType" minOccurs="0"
+                             id="cd_ambient_cartridge_confN1000D"/>
+                <xsd:element name="ClaimProcessorDefinitions" id="cd_ambient_cartridge_confN10012">
+                    <xsd:complexType>
+                        <xsd:sequence>
+                            <xsd:element name="ClaimProcessorDefinition" maxOccurs="unbounded"
+                                         id="cd_ambient_cartridge_confN10019">
+                                <xsd:complexType>
+                                    <xsd:all>
+                                        <xsd:element name="RequestStart" type="MethodSpecType" minOccurs="0"
+                                                     id="cd_ambient_cartridge_confN10021"/>
+                                        <xsd:element name="RequestEnd" type="MethodSpecType" minOccurs="0"
+                                                     id="cd_ambient_cartridge_confN10026"/>
+                                        <xsd:element name="SessionStart" type="MethodSpecType" minOccurs="0"
+                                                     id="cd_ambient_cartridge_confN1002B"/>
+                                    </xsd:all>
+                                    <xsd:attribute name="Uri" type="xsd:anyURI" use="required"/>
+                                    <xsd:attribute name="ConfigProviderClass" type="xsd:string" use="optional"/>
+                                    <xsd:attribute name="ImplementationClass" type="xsd:string" use="optional"/>
+                                    <xsd:attribute name="Description" type="xsd:string" use="optional"/>
+                                </xsd:complexType>
+                            </xsd:element>
+                        </xsd:sequence>
+                    </xsd:complexType>
+                </xsd:element>
+            </xsd:all>
+            <xsd:attribute name="Uri" type="xsd:anyURI" use="required"/>
+            <xsd:attribute name="Description" type="xsd:string" use="optional"/>
+            <xsd:attribute name="Version" type="xsd:string" use="required">
+                <xsd:annotation>
+                    <xsd:documentation>
+                        <p>The version of this configuration file. This must be set to your Content Delivery version
+                            (without specifying a service pack), e.g. "7.0".
+                        </p>
+                    </xsd:documentation>
+                </xsd:annotation>
+            </xsd:attribute>
+        </xsd:complexType>
+    </xsd:element>
+
+    <xsd:complexType name="ClaimDefinitionsType">
+        <xsd:sequence>
+            <xsd:element name="ClaimDefinition" minOccurs="0" maxOccurs="unbounded"
+                         id="cd_ambient_cartridge_confN1006B">
+                <xsd:complexType>
+                    <xsd:attribute name="Uri" type="xsd:anyURI" use="required"/>
+                    <xsd:attribute name="Scope" use="optional">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:enumeration value="REQUEST">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            <p>The Claim is removed when onRequestEnd() has been called. This is the
+                                                default value if this attribute is not set.
+                                            </p>
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                                <xsd:enumeration value="SESSION">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            <p>The Claim is removed when the session ends.</p>
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:enumeration>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:attribute>
+                    <xsd:attribute name="Subject" type="xsd:string" use="optional"/>
+                    <xsd:attribute name="Description" type="xsd:string" use="optional"/>
+                </xsd:complexType>
+            </xsd:element>
+        </xsd:sequence>
+    </xsd:complexType>
+
+    <xsd:complexType name="MethodSpecType">
+        <xsd:all>
+            <xsd:element name="InputClaims" type="ClaimDefinitionsType" minOccurs="0"
+                         id="cd_ambient_cartridge_confN100B0"/>
+            <xsd:element name="OutputClaims" type="ClaimDefinitionsType" minOccurs="0"
+                         id="cd_ambient_cartridge_confN100B5"/>
+        </xsd:all>
+    </xsd:complexType>
+</xsd:schema>

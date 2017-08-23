@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/javaee"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-jsptaglibrary_2_1.xsd"
+        version="2.1">
+    <description>
+        This tag library contains several XPM tags and functions
+        useful for outputting XPM markup in JSP views.
+    </description>
+
+    <tlib-version>2.1</tlib-version>
+
+    <short-name>dd4t-xpm</short-name>
+    <uri>http://www.dd4t.org/tags/2.0/xpm</uri>
+
+    <tag>
+        <name>init</name>
+        <tag-class>org.dd4t.mvc.tags.XPMPageInitTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>page</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.dd4t.contentmodel.Page</type>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>view</name>
+        <tag-class>org.dd4t.mvc.tags.XPMComponentPresentationTag</tag-class>
+        <body-content>empty</body-content>
+        <attribute>
+            <name>model</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.dd4t.core.databind.TridionViewModel</type>
+        </attribute>
+    </tag>
+
+    <tag>
+        <name>editable</name>
+        <tag-class>org.dd4t.mvc.tags.XPMComponentFieldTag</tag-class>
+        <body-content>scriptless</body-content>
+        <attribute>
+            <name>model</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>org.dd4t.core.databind.TridionViewModel</type>
+        </attribute>
+        <attribute>
+            <name>field</name>
+            <required>true</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>index</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Integer</type>
+        </attribute>
+        <attribute>
+            <name>enclosed</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.String</type>
+        </attribute>
+        <attribute>
+            <name>useEnclosingTags</name>
+            <required>false</required>
+            <rtexprvalue>true</rtexprvalue>
+            <type>java.lang.Boolean</type>
+        </attribute>
+    </tag>
+
+    <function>
+        <name>enabled</name>
+        <function-class>org.dd4t.mvc.utils.XPMRenderer</function-class>
+        <function-signature>boolean isXPMActive()</function-signature>
+    </function>
+
+    <function>
+        <name>active</name>
+        <function-class>org.dd4t.mvc.utils.XPMRenderer</function-class>
+        <function-signature>boolean isXPMEnabled()</function-signature>
+    </function>
+</taglib>

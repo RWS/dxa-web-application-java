@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               Version="6.1"
+               xsi:noNamespaceSchemaLocation="../../schemas/cd_dynamic_conf.xsd">
+    <!-- The URLMappings define the relation between publication id's and domain names. -->
+    <URLMappings>
+        <StaticMappings>
+            <!-- The Publications element is a container for separate Publication elements. -->
+            <Publications>
+                <!-- The publication element allows you to specify Publication specific settings.
+                 The Id indicates the id of the publication. This should be a number. -->
+                <Publication Id="1">
+                    <!-- The Host element allows you to specify information about the site that
+                        can be used to create URLs for Dynamic Links.
+                        The following attributes are specified:
+                           Domain    The domain of the website, for example www.tridion.com. The default domain is localhost.
+                           Port      The port of the website, for instance 8080. The default port is 80.
+                           Path      The path of the virtual directory of your website. The default path is /.
+                           Protocol  The protocol used for the website. The default protocol is http. -->
+                    <Host Domain="localhost" Port="80" Protocol="http" Path=""/>
+                </Publication>
+            </Publications>
+        </StaticMappings>
+        <StorageMapping IdentifyPublicationByProperty="publicationUrl"/>
+    </URLMappings>
+</Configuration>

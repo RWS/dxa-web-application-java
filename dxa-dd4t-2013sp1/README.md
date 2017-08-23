@@ -54,3 +54,13 @@ Usage of `install-libs` tool
 ---
 1. Download and unpack [`/install-libs/`](https://github.com/sdl/dxa-web-application-java/tree/release/1.6/install-libs).
 2. Run `install.bat help` (or `install.sh help` for *nix) for detailed usage help.
+
+Usage of older scripts
+---
+In the current repository you have two scripts `mvn-install.bat` and `mvn-install.sh` for Windows and *nix systems accordignly. It's strongly recommended to use `install-libs` tool, but in case you do want to follor the older way to install missing libs, you can use these scripts:
+
+To install all Tridion dependencies (aka JAR files) in your local Maven repository as these are not available in Maven Central. The general command to do this is:
+
+		mvn -q install:install-file -DgroupId=com.tridion -DartifactId=cd_broker -Dversion=7.1.0 -Dpackaging=jar -Dfile=cd_broker-7.1.0.jar
+	
+The script runs this command for all needed artifacts at once. You need to make sure that you run it in the directory where your Tridion jars are. Note that you have to rename them. For example, *cd_core.jar* has to become *cd_core-7.1.0.jar*. In addition to the Tridion jar, the script also installs the third party dependencies *easylicense-2.5.jar*,*sqljdbc4-4.0.0.jar*, *jdbcpool-1.0.jar* and the Tridion Contextual Web Delivery libraries should you need them.

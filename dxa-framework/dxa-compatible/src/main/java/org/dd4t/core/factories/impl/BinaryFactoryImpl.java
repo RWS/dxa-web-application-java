@@ -94,8 +94,7 @@ public class BinaryFactoryImpl extends BaseFactory implements BinaryFactory {
 
     /**
      * Get a binary by the url and publicationId.
-     * <p/>
-     * Null values should be handled on the controller level
+     * <p>Null values should be handled on the controller level</p>
      *
      * @param url           String representing the path part of the binary URL
      * @param publicationId int representing the Publication context id

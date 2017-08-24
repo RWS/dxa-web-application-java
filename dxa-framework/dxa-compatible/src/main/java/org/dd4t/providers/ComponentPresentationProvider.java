@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * Dynamic Component Presentation Provider.
- * <p/>
+ * <p></p>
  * Note that this class is NOT used when fetching pages with static Component Presentations!
  */
 public interface ComponentPresentationProvider {
@@ -31,7 +31,7 @@ public interface ComponentPresentationProvider {
     /**
      * Retrieves content of a Dynamic Component Presentation by looking up its componentId and publicationId.
      * A templateId is not provided, so the DCP with the highest linking priority is retrieved.
-     * <p/>
+     * <p></p>
      * <b>Note: This method performs significantly slower than getDynamicComponentPresentation(int, int, int)!
      * Do provide a templateId!</b>
      *
@@ -58,13 +58,13 @@ public interface ComponentPresentationProvider {
     /**
      * Retrieves content of a Dynamic Component Presentation by looking up its componentId and publicationId.
      * A templateId is not provided, so the DCP with the highest linking priority is retrieved.
-     * <p/>
+     * <p></p>
      * <b>Note: This method performs significantly slower than getDynamicComponentPresentation(int, int, int)!
      * Do provide a templateId!</b>
      *
      * @param componentId   int representing the Component item id
      * @param publicationId int representing the Publication id of the DCP
-     * @return ComponentPresentationResultItem<String> representing the DCP
+     * @return ComponentPresentationResultItem&lt;String&gt; representing the DCP
      * @throws ItemNotFoundException  if the requested DCP does not exist
      * @throws SerializationException if something went wrong during deserialization
      */    
@@ -77,7 +77,7 @@ public interface ComponentPresentationProvider {
      * @param componentId   int representing the Component item id
      * @param templateId    int representing the Component Template item id
      * @param publicationId int representing the Publication id of the DCP
-     * @return ComponentPresentationResultItem<String> representing the DCP
+     * @return ComponentPresentationResultItem&lt;String&gt; representing the DCP
      * @throws ItemNotFoundException  if the requested DCP does not exist
      * @throws SerializationException if something went wrong during deserialization
      */    

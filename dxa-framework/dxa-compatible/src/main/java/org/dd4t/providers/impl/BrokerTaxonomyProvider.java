@@ -34,7 +34,7 @@ import java.util.List;
  * Provides access to taxonomies published to a Content Delivery database. It returns keywords with all their parent/
  * children relationships resolved. It also provides the capability to retrieve related items (i.e. Tridion items that
  * use each Keyword in the taxonomy directly).
- * <p/>
+ * <p></p>
  * TODO: finish this for all taxonomy providers
  *
  * @author Mihai Cadariu, Raimond Kempees

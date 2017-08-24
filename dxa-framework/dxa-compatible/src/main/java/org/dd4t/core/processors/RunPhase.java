@@ -18,7 +18,7 @@ package org.dd4t.core.processors;
 
 /**
  * RunPhase
- * <p/>
+ * <p></p>
  * Used to configure custom processors and the phase
  * in which they should run when the Factory classes go to
  * work.

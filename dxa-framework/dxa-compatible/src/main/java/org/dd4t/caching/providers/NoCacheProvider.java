@@ -28,7 +28,6 @@ import java.util.List;
 
 /**
  * TODO: move this to dd4t-caching
- * <p/>
  * CacheProvider which doesn't cache anything.
  *
  * @author rooudsho

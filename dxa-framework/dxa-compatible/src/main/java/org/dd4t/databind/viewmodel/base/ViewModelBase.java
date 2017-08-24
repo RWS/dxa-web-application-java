@@ -44,7 +44,7 @@ public abstract class ViewModelBase implements BaseViewModel {
 
     /**
      * Default constructor. Leave this a no arg constructor!
-     * <p/>
+     * <p></p>
      * The constructor is fired at runtime and adds the associated
      * view model names on the List.
      */

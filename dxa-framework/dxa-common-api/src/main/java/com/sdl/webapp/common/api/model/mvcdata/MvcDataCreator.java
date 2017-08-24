@@ -142,11 +142,11 @@ public final class MvcDataCreator {
 
     /**
      * This method treats {@link #mergeChoose(Object, Object, Class)} differently.
-     * <p/>
+     * <p></p>
      * {@code newValue} in calls is actually an old value,
      * but if it happens to be null or empty, then it's replaced by a value
      * from {@link DefaultsMvcData} instance.
-     * <p/>
+     * <p></p>
      * Normally, {@code newValue} comes from an object that is being merged in, thus if is is empty, then the
      * {@code MvcData} saves the original value.
      */

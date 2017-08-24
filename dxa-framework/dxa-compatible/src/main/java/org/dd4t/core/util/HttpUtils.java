@@ -117,7 +117,7 @@ public final class HttpUtils {
 
     /**
      * Returns the most likely IP-address of the client, no guarantee though.
-     * <p/>
+     * <p></p>
      * If the client is behind a proxy it should be the 1st ip address in the
      * HTTP_X_FORWARDED_FOR header if not we use the REMOTE_ADDR header
      */
@@ -139,7 +139,7 @@ public final class HttpUtils {
 
     /**
      * Checking for local ip addresses, e.g.
-     * <p/>
+     * <p></p>
      * <pre>
      *     10.x.x.x
      *     172.[16-31].x.x
@@ -191,7 +191,7 @@ public final class HttpUtils {
     }
 
     /**
-     * Parse a query string (e.g. <code>"abc=123&cde=456"</code>) into a list of name/value pairs.
+     * Parse a query string (e.g. {@code "abc=123&cde=456"}) into a list of name/value pairs.
      */
     public static List<NameValuePair> parseQueryParams (final String queryString) {
 

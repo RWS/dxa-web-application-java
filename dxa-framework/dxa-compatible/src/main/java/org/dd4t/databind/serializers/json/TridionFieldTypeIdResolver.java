@@ -32,7 +32,7 @@ import java.util.Map;
 /**
  * Resolves Tridion Field Types to their proper concrete
  * classes, which are subclasses of the abstract BaseField class.
- * <p/>
+ * <p></p>
  * This is done based on the "FieldType" parameter which
  * is sent by the DD4T templating assembly for each serialized Tridion Field.
  *

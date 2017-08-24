@@ -115,7 +115,7 @@ public class TaxonomyFactoryImpl extends BaseFactory implements TaxonomyFactory 
     /**
      * Returns the root Keyword of Taxonomy by reading the specified taxonomy from the local cache or from the
      * Taxonomy provider, if not found in cache.
-     * <p/>
+     * <p></p>
      * The returned classified items are filtered to only Components based on the given Schema URI.
      *
      * @param taxonomyURI String representing the taxonomy TCMURI to read

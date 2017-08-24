@@ -41,8 +41,7 @@ public interface TaxonomyFactory {
     /**
      * Returns the root Keyword of Taxonomy by reading the specified taxonomy from the local cache or from the
      * Taxonomy provider, if not found in cache.
-     * <p/>
-     * The returned classified items are filtered to only Components based on the given Schema URI.
+     * <p>The returned classified items are filtered to only Components based on the given Schema URI.</p>
      *
      * @param taxonomyURI String representing the taxonomy TCMURI to read
      * @param schemaURI   String representing the filter for classified related Components to return for each Keyword

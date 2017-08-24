@@ -11,7 +11,7 @@ import java.util.Date;
  * when fetching actual content for Pages and Binaries. This meta contains information
  * like the Last Publish Date, which by default is not stored inside the Item's Json
  * content.
- * <p/>
+ * <p></p>
  * This interface can be extended in the future if so required.
  *
  * @author R. Kempees

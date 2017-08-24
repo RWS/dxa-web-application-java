@@ -41,7 +41,7 @@ public class BrokerComponentPresentationProvider extends AbstractComponentPresen
     /**
      * Retrieves content of a Dynamic Component Presentation by looking up its componentId and publicationId.
      * A templateId is not provided, so the DCP with the highest linking priority is retrieved.
-     * <p/>
+     * <p></p>
      * <b>Note: This method performs significantly slower than getDynamicComponentPresentation(int, int, int)!
      * Do provide a templateId!</b>
      *

@@ -41,7 +41,7 @@ import java.util.Map;
  * Provides access to taxonomies published to a Content Delivery database. It returns keywords with all their parent/
  * children relationships resolved. It also provides the capability to retrieve related items (i.e. Tridion items that
  * use each Keyword in the taxonomy directly).
- * <p/>
+ * <p></p>
  * TODO TODO TODO. Proper interface (same for client and service)
  * TODO: Proper overrides
  * TODO: decompress

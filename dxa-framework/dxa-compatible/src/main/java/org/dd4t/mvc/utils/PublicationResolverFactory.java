@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 /**
  * PublicationResolverFactoryImpl hides actual implementation
  * Configured through Spring beans
- * <p/>
+ * <p></p>
  * This is needed for allowing static access in PublicationUrl.java,
  * an EL function.
  *

@@ -18,11 +18,9 @@ package org.dd4t.contentmodel;
 
 /**
  * Interface for a binary items i.e. images and pdfs.
- * <p/>
- * Bear in mind that this interface is only valid for fetching actual
- * binaries through the BinaryFactory and a Binary Controller.
- * <p/>
- * This class is NOT for deserializing Multimedia Components!
+ * <p>Bear in mind that this interface is only valid for fetching actual
+ * binaries through the BinaryFactory and a Binary Controller.</p>
+ * <p>This class is NOT for deserializing Multimedia Components!</p>
  *
  * @author bjornl
  * @see org.dd4t.contentmodel.Multimedia

@@ -253,7 +253,7 @@ public class DefaultSerializer implements DataBinder, org.dd4t.core.serializers.
 	}
 
 	/**
-	 * This serializer is supposed to run everything that starts with a <?xml (which is dd4t-1 proper declared xml)
+	 * This serializer is supposed to run everything that starts with a {@code <?xml (which is dd4t-1 proper declared xml)}
 	 */
 	@Override
 	public boolean canDeserialize(String source) {

@@ -88,7 +88,7 @@ public class PageFactoryImpl extends BaseFactory implements PageFactory {
      * This method explicitly used for querying the Broker Storage
      * for pages and returns raw content as string. Does NOT trigger
      * processors.
-     * <p/>
+     * <p></p>
      * To handle nulls, check for a returned null in the controller.
      *
      * @param url           the url of the page

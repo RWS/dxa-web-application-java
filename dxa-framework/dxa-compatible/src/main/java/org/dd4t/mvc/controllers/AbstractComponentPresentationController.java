@@ -36,11 +36,11 @@ import java.text.ParseException;
 
 /**
  * dd4t-2
- * <p/>
+ * <p></p>
  * Extend this class in your own web project for default functionality.
- * <p/>
+ * <p></p>
  * Do not add stuff here, as this will be loaded as library only.
- * <p/>
+ * <p></p>
  * Important Note: concrete implementing classes will need to add the
  * {@literal @RequestMapping} annotations!
  */
@@ -70,12 +70,12 @@ public class AbstractComponentPresentationController {
     /**
      * Renders the component template response, the exact mapping needs to be
      * determined.
-     * <p/>
+     * <p></p>
      * TODO: split this logic. It is now used for two different things:
      * 1. For attempting to fetch a DCP which is on a Page
      * 2. Attempt to load a DCP based on the incoming URL. Which is something totally different, as we need the publication path
      * to actually do this.
-     * <p/>
+     * <p></p>
      * For now, if you use this controller to load DCPs, make sure that the componentViewPrefix variable is actually the publication path,
      * or simply extend this controller and be creative with the ComponentPresentationFactory and resolving Publication Ids
      *

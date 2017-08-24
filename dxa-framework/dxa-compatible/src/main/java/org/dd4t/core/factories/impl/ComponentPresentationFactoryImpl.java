@@ -73,15 +73,13 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
      * Get the component by the component uri and template uri.
      * but NO CT rendering (so from the Dynamic Template Tab) should take place,
      * as this is done in a View
-     * <p/>
-     * Null values should be handled in the controller
-     * <p/>
-     * The Content Service should use ComponentPresentationFactory.getComponentPresentation(int publicationId, int componentId, int templateId)
+     * <p>Null values should be handled in the controller</p>
+     * <p>The Content Service should use ComponentPresentationFactory.getComponentPresentation(int publicationId, int componentId, int templateId)
      * OR
      * ComponentPresentationAssembler.getContent(int componentId, int componentTemplateId)
      * if we want to use REL linking. :)
      * Metadata should be added into the DD4T stack @ publishtime
-     * Rendered output is cached in output cache
+     * Rendered output is cached in output cache</p>
      *
      * @return the component
      * @throws org.dd4t.core.exceptions.FactoryException if no item found NotAuthorizedException if the user is not authorized to get the component

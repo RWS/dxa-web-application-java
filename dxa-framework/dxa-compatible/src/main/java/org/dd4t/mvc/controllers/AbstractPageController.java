@@ -39,9 +39,9 @@ import java.io.IOException;
 
 /**
  * dd4t-2
- * <p/>
+ * <p></p>
  * Extend this class in your own web project for default functionality.
- * <p/>
+ * <p></p>
  * Do NOT add stuff here, as this will in the near future be loaded as library through maven only.
  *
  * @author R. Kempees
@@ -59,7 +59,7 @@ public abstract class AbstractPageController extends AbstractBaseController {
      * All page requests are handled by this method. The page meta XML is
      * queried based on the request URI, the page meta XML contains the actual
      * view name to be rendered.
-     * <p/>
+     * <p></p>
      * Important Note: concrete implementing classes will need to add the
      * {@literal @RequestMapping} annotations!
      */

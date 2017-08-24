@@ -25,7 +25,7 @@ import org.dd4t.core.processors.RunPhase;
  * - Before the item is cached in the DD4T object cache
  * - After the item is cached in the DD4T object cache (this means every time).
  * - On both occassions, which should happen rarely.
- * <p/>
+ * <p></p>
  * Note: running processors after fetching an item from cache is
  * perfectly fine, but in case of expensive operations, be sure to
  * use additional caching (like output caching in a web application) to

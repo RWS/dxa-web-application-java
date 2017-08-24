@@ -31,31 +31,37 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 @Slf4j
 public class DefaultContentProvider extends AbstractDefaultContentProvider {
 
-    @Autowired
-    private ModelBuilderPipeline builderPipeline;
+    private final ModelBuilderPipeline builderPipeline;
+
+    private final DefaultModelService modelService;
+
+    private final WebRequestContext webRequestContext;
 
     @Autowired
-    private DefaultModelService modelService;
-
     public DefaultContentProvider(WebRequestContext webRequestContext,
                                   StaticContentResolver staticContentResolver,
-                                  LinkResolver linkResolver) {
+                                  LinkResolver linkResolver,
+                                  ModelBuilderPipeline builderPipeline,
+                                  DefaultModelService modelService) {
         super(webRequestContext, linkResolver, staticContentResolver);
+        this.webRequestContext = webRequestContext;
+        this.builderPipeline = builderPipeline;
+        this.modelService = modelService;
     }
 
     @Override
     protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
-        PageModelData modelData = modelService.loadPageModel(PageRequestDto.builder()
-                .path(path)
-                .includePages(INCLUDE)
-                .build());
+        PageModelData modelData = modelService.loadPageModel(
+                PageRequestDto.builder(localization.getId(), path)
+                        .includePages(INCLUDE)
+                        .build());
         return builderPipeline.createPageModel(modelData);
     }
 
     @NotNull
     @Override
     protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
-        EntityModelData modelData = modelService.loadEntity(componentId);
+        EntityModelData modelData = modelService.loadEntity(webRequestContext.getLocalization().getId(), componentId);
         try {
             return builderPipeline.createEntityModel(modelData);
         } catch (DxaException e) {

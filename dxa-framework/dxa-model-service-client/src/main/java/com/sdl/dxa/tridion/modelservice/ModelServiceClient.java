@@ -35,14 +35,14 @@ public class ModelServiceClient {
 
     private static final String PREVIEW_SESSION_TOKEN = "preview-session-token";
 
-    private final RestTemplate restTemplate;
-
     private final ModelServiceConfiguration configuration;
 
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @Autowired(required = false)
+    private RestTemplate restTemplate = new RestTemplate();
+
     @Autowired
-    public ModelServiceClient(RestTemplate restTemplate,
-                              ModelServiceConfiguration configuration) {
-        this.restTemplate = restTemplate;
+    public ModelServiceClient(ModelServiceConfiguration configuration) {
         this.configuration = configuration;
     }
 

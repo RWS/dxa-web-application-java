@@ -5,9 +5,7 @@ import com.sdl.web.client.impl.OAuthTokenProvider;
 import com.sdl.web.content.client.configuration.impl.BaseClientConfigurationLoader;
 import com.sdl.web.discovery.datalayer.model.ContentServiceCapability;
 import com.sdl.web.discovery.datalayer.model.KeyValuePair;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -15,10 +13,12 @@ import org.springframework.util.Assert;
 import java.util.Objects;
 import java.util.Optional;
 
-@Slf4j
-@Getter
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Component
 public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
+
+    private static final Logger log = getLogger(ModelServiceConfiguration.class);
 
     private final String pageModelUrl;
 
@@ -30,7 +30,6 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
 
     private OAuthTokenProvider oAuthTokenProvider;
 
-    @Getter(AccessLevel.PROTECTED)
     private String serviceUrl;
 
     public ModelServiceConfiguration(
@@ -59,6 +58,31 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
         this.entityModelUrl = this.serviceUrl + entityModelUrl;
         this.navigationApiUrl = this.serviceUrl + navigationApiUrl;
         this.onDemandApiUrl = this.serviceUrl + onDemandApiUrl;
+    }
+
+    @Override
+    protected String getServiceUrl() {
+        return serviceUrl;
+    }
+
+    public String getPageModelUrl() {
+        return pageModelUrl;
+    }
+
+    public String getEntityModelUrl() {
+        return entityModelUrl;
+    }
+
+    public String getNavigationApiUrl() {
+        return navigationApiUrl;
+    }
+
+    public String getOnDemandApiUrl() {
+        return onDemandApiUrl;
+    }
+
+    public OAuthTokenProvider getOAuthTokenProvider() {
+        return oAuthTokenProvider;
     }
 
     private String loadServiceUrlFromCapability(String modelServiceKey) throws ConfigurationException {

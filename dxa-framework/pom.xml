@@ -26,7 +26,6 @@
         <module>dxa-compatible</module>
         <module>dxa-data-model</module>
         <module>dxa-tridion-common</module>
-        <module>dxa-model-service-client</module>
     </modules>
 
     <dependencies>

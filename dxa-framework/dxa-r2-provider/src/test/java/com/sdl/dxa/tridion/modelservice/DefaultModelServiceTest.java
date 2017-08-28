@@ -4,6 +4,7 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
+import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -44,7 +45,7 @@ public class DefaultModelServiceTest {
     }
 
     @Test
-    public void shouldLoadPageModel_AsModel() throws ContentProviderException {
+    public void shouldLoadPageModel_AsModel() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given 
         PageRequestDto pageRequest = PageRequestDto.builder(42, "/path")
                 .uriType("tcm").includePages(PageRequestDto.PageInclusion.INCLUDE)
@@ -62,7 +63,7 @@ public class DefaultModelServiceTest {
     }
 
     @Test
-    public void shouldLoadPageModel_AsString() throws ContentProviderException {
+    public void shouldLoadPageModel_AsString() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given
         PageRequestDto pageRequest = PageRequestDto.builder(666, "/path")
                 .uriType("tcm").includePages(PageRequestDto.PageInclusion.INCLUDE)
@@ -78,7 +79,7 @@ public class DefaultModelServiceTest {
     }
 
     @Test
-    public void shouldLoadEntityModel_AsModel() throws ContentProviderException {
+    public void shouldLoadEntityModel_AsModel() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given
         EntityRequestDto entityRequestDto = EntityRequestDto.builder(42, 1, 2)
                 .uriType("tcm")
@@ -96,7 +97,7 @@ public class DefaultModelServiceTest {
     }
 
     @Test
-    public void shouldLoadEntityModel_AsModel_FromEntityId() throws ContentProviderException {
+    public void shouldLoadEntityModel_AsModel_FromEntityId() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given
         EntityModelData actual = new EntityModelData();
         actual.setId("123");

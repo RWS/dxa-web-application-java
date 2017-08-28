@@ -1,9 +1,8 @@
 package com.sdl.dxa.dd4t.providers;
 
-import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
 import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
-import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
+import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
 import org.junit.Before;
@@ -41,27 +40,27 @@ public class ModelServicePageProviderTest {
     }
 
     @Test
-    public void shouldLoadPageContent_InModelService_ForDD4TRawContent() throws SerializationException, ItemNotFoundException, DxaItemNotFoundException {
+    public void shouldLoadPageContent_InModelService_ForDD4TRawContent() throws SerializationException, ItemNotFoundException, ItemNotFoundInModelServiceException {
         //given
         String content = "content";
         //noinspection unchecked
-        when(modelServiceClient.getForType(anyString(), any(Class.class), anyString(), anyInt(), anyString(), any(PageRequestDto.PageInclusion.class)))
+        when(modelServiceClient.getForType(anyString(), any(Class.class), anyString(), anyInt(), anyString(), eq("INCLUDE")))
                 .thenReturn(content);
 
         //when
         String page = modelServicePageProvider.getPageContentByURL("/path", 42);
 
         //then
-        verify(modelServiceClient).getForType(eq("/conf?modelType=DD4T"), eq(String.class), eq("tcm"), eq(42), eq("/path"), eq(PageRequestDto.PageInclusion.INCLUDE));
+        verify(modelServiceClient).getForType(eq("/conf?raw=true&modelType=DD4T"), eq(String.class), eq("tcm"), eq(42), eq("/path"), eq("INCLUDE"));
         assertEquals(content, page);
     }
 
     @Test
-    public void shouldWrapDxa404Exception() throws DxaItemNotFoundException, SerializationException {
+    public void shouldWrapDxa404Exception() throws ItemNotFoundInModelServiceException, SerializationException {
         //given
-        DxaItemNotFoundException exception = new DxaItemNotFoundException("Msg");
+        ItemNotFoundInModelServiceException exception = new ItemNotFoundInModelServiceException("Msg");
         //noinspection unchecked
-        when(modelServiceClient.getForType(anyString(), any(Class.class), anyString(), anyInt(), anyString(), any(PageRequestDto.PageInclusion.class)))
+        when(modelServiceClient.getForType(anyString(), any(Class.class), anyString(), anyInt(), anyString(), eq("INCLUDE")))
                 .thenThrow(exception);
 
         //when

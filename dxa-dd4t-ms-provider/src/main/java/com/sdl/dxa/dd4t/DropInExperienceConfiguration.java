@@ -1,10 +1,10 @@
 package com.sdl.dxa.dd4t;
 
 import com.sdl.dxa.dd4t.providers.ModelServicePageProvider;
-import lombok.extern.slf4j.Slf4j;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
 import org.dd4t.providers.PayloadCacheProvider;
 import org.dd4t.providers.impl.BrokerPageProvider;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,10 +13,12 @@ import org.springframework.context.annotation.Profile;
 
 import javax.annotation.PostConstruct;
 
-@Slf4j
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Configuration
 @Profile("!custom.dd4t.ms.provider")
 public class DropInExperienceConfiguration {
+    private static final Logger log = getLogger(DropInExperienceConfiguration.class);
 
     private final PageFactoryImpl pageFactoryImpl;
 

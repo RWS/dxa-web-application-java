@@ -6,9 +6,10 @@ import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.modelservice.service.EntityModelService;
 import com.sdl.dxa.modelservice.service.PageModelService;
+import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
+import com.sdl.dxa.tridion.modelservice.exceptions.ModelServiceInternalServerErrorException;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
-import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -59,10 +60,10 @@ public class DefaultModelService implements PageModelService, EntityModelService
                     pageRequest.getIncludePages());
             log.trace("Loaded '{}' for pageRequest '{}'", page, pageRequest);
             return page;
-        } catch (DxaItemNotFoundException e) {
-            throw new PageNotFoundException("Cannot load page '" + pageRequest + "'", e);
-        } catch (InternalServerErrorException e) {
+        } catch (ModelServiceInternalServerErrorException e) {
             throw new ContentProviderException("Cannot load page from model service", e);
+        } catch (ItemNotFoundInModelServiceException e) {
+            throw new PageNotFoundException("Cannot load page '" + pageRequest + "'", e);
         }
     }
 
@@ -79,12 +80,16 @@ public class DefaultModelService implements PageModelService, EntityModelService
     @NotNull
     @Override
     public EntityModelData loadEntity(EntityRequestDto entityRequest) throws ContentProviderException {
-        EntityModelData modelData = modelServiceClient.getForType(configuration.getEntityModelUrl(), EntityModelData.class,
-                entityRequest.getUriType(),
-                entityRequest.getPublicationId(),
-                entityRequest.getComponentId(),
-                entityRequest.getTemplateId());
-        log.trace("Loaded '{}' for entityId '{}'", modelData, entityRequest.getComponentId());
-        return modelData;
+        try {
+            EntityModelData modelData = modelServiceClient.getForType(configuration.getEntityModelUrl(), EntityModelData.class,
+                    entityRequest.getUriType(),
+                    entityRequest.getPublicationId(),
+                    entityRequest.getComponentId(),
+                    entityRequest.getTemplateId());
+            log.trace("Loaded '{}' for entityId '{}'", modelData, entityRequest.getComponentId());
+            return modelData;
+        } catch (ItemNotFoundInModelServiceException e) {
+            throw new DxaItemNotFoundException("Entity " + entityRequest + " not found in the Model Service", e);
+        }
     }
 }

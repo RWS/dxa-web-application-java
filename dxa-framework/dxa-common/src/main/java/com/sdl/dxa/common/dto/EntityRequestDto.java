@@ -32,6 +32,8 @@ public class EntityRequestDto {
 
     private boolean resolveLink;
 
+    private DcpType dcpType;
+
     public static EntityRequestDtoBuilder builder(String publicationId, String entityId) {
         return builder(Integer.valueOf(publicationId), entityId);
     }
@@ -53,6 +55,20 @@ public class EntityRequestDto {
     }
 
     /**
+     * Strategy of DCP template resolving is template ID is missing in request.
+     */
+    public enum DcpType {
+        /**
+         * If template is not set, then load a default DXA Data Presentation.
+         */
+        DEFAULT,
+        /**
+         * If template is not set, then load a Component Presentation with the highest priority.
+         */
+        HIGHEST_PRIORITY
+    }
+
+    /**
      * Default values for builder.
      */
     @SuppressWarnings("unused")
@@ -61,6 +77,8 @@ public class EntityRequestDto {
         private String uriType = "tcm";
 
         private boolean resolveLink = true;
+
+        private DcpType dcpType = DcpType.DEFAULT;
 
         private EntityRequestDtoBuilder() {
         }

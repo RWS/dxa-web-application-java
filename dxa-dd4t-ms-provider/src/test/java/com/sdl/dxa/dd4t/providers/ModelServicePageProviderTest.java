@@ -36,6 +36,8 @@ public class ModelServicePageProviderTest {
     @Before
     public void init() {
         when(modelServiceConfiguration.getPageModelUrl()).thenReturn("/conf");
+        modelServicePageProvider.setContentIsCompressed("false");
+        modelServicePageProvider.setContentIsBase64Encoded(false);
     }
 
     @Test
@@ -50,7 +52,7 @@ public class ModelServicePageProviderTest {
         String page = modelServicePageProvider.getPageContentByURL("/path", 42);
 
         //then
-        verify(modelServiceClient).getForType(eq("/conf?raw=true&modelType=DD4T"), eq(String.class), eq("tcm"), eq(42), eq("/path"), eq(PageRequestDto.PageInclusion.INCLUDE));
+        verify(modelServiceClient).getForType(eq("/conf?modelType=DD4T"), eq(String.class), eq("tcm"), eq(42), eq("/path"), eq(PageRequestDto.PageInclusion.INCLUDE));
         assertEquals(content, page);
     }
 

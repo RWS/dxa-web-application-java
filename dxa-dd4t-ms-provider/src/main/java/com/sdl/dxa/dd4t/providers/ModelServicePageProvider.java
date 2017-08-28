@@ -38,6 +38,7 @@ public class ModelServicePageProvider extends BrokerPageProvider implements Page
         PageRequestDto pageRequestDto = PageRequestDto.builder(publication, url).build();
         try {
             String serviceUrl = fromUriString(modelServiceConfiguration.getPageModelUrl())
+                    .queryParam("raw", "true")
                     .queryParam("modelType", "DD4T")
                     .build().toUriString();
 

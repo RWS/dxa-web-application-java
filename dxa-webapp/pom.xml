@@ -163,6 +163,16 @@
         </profile>
 
         <profile>
+            <id>dd4t-ms-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa</groupId>
+                    <artifactId>dxa-dd4t-ms-provider</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+
+        <profile>
             <!-- Profile name is for internal naming, use -Dlegacy instead for this profile -->
             <id>internal-legacy</id>
             <activation>

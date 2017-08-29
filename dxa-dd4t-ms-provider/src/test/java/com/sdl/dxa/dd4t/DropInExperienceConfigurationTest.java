@@ -1,9 +1,13 @@
 package com.sdl.dxa.dd4t;
 
+import com.sdl.dxa.dd4t.providers.ModelServiceComponentPresentationProvider;
 import com.sdl.dxa.dd4t.providers.ModelServicePageProvider;
+import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
+import org.dd4t.providers.ComponentPresentationProvider;
 import org.dd4t.providers.PageProvider;
 import org.dd4t.providers.PayloadCacheProvider;
+import org.dd4t.providers.impl.BrokerComponentPresentationProvider;
 import org.dd4t.providers.impl.BrokerPageProvider;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
@@ -21,8 +25,11 @@ public class DropInExperienceConfigurationTest {
     public void shouldReplacePageProvider_IfEverythingIsSet() {
         //given 
         PageFactoryImpl pageFactory = mock(PageFactoryImpl.class);
-        DropInExperienceConfiguration configuration = new DropInExperienceConfiguration(pageFactory,
-                new BrokerPageProvider(), mock(PayloadCacheProvider.class));
+        ComponentPresentationFactoryImpl componentPresentationFactoryImpl = mock(ComponentPresentationFactoryImpl.class);
+        DropInExperienceConfiguration configuration = new DropInExperienceConfiguration(
+                pageFactory, componentPresentationFactoryImpl,
+                new BrokerPageProvider(), new BrokerComponentPresentationProvider(),
+                mock(PayloadCacheProvider.class));
 
         //when
         configuration.init();
@@ -39,6 +46,20 @@ public class DropInExperienceConfigurationTest {
             @Override
             public void describeTo(Description description) {
                 description.appendText("Page Provider is replaced");
+            }
+        }));
+
+        verify(componentPresentationFactoryImpl).setComponentPresentationProvider(argThat(new BaseMatcher<ComponentPresentationProvider>() {
+            @Override
+            public boolean matches(Object o) {
+                assertTrue(o instanceof ModelServiceComponentPresentationProvider);
+                assertFalse(((ModelServiceComponentPresentationProvider) o).isContentIsBase64Encoded());
+                return true;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("ComponentPresentationProvider is replaced");
             }
         }));
     }

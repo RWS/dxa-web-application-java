@@ -42,6 +42,22 @@ public final class PathUtils {
         return DEFAULT_PAGE_EXTENSION;
     }
 
+    public static String combinePath(String url, String path) {
+        if(url == null && path == null) {
+            return null;
+        }
+
+        if(url == null) {
+            url = "";
+        }
+
+        if(path == null) {
+            path = "";
+        }
+
+        return url.concat(path).replaceAll("//", "/");
+    }
+
     /**
      * Normalizes given path to have an explicit page name and extension.
      * <p>Adds an explicit <code>index</code> page name if other page is not in a <code>path</code>.</p>

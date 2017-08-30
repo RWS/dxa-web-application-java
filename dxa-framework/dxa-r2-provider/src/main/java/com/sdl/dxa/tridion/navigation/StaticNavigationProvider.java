@@ -17,16 +17,17 @@ import java.nio.charset.StandardCharsets;
 @Service("r2StaticNavigationProvider")
 public class StaticNavigationProvider extends AbstractStaticNavigationProvider {
 
-    @Autowired
-    private DefaultModelService modelService;
+    private final DefaultModelService modelService;
 
-    public StaticNavigationProvider(ObjectMapper objectMapper, LinkResolver linkResolver) {
+    @Autowired
+    public StaticNavigationProvider(ObjectMapper objectMapper, LinkResolver linkResolver, DefaultModelService modelService) {
         super(objectMapper, linkResolver);
+        this.modelService = modelService;
     }
 
     @Override
     protected InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
-        String pageContent = modelService.loadPageContent(PageRequestDto.builder().path(path).build());
+        String pageContent = modelService.loadPageContent(PageRequestDto.builder(localization.getId(), path).build());
         // NOTE: This assumes page content is always in UTF-8 encoding
         return new ByteArrayInputStream(pageContent.getBytes(StandardCharsets.UTF_8));
     }

@@ -1,14 +1,13 @@
 package com.sdl.dxa.tridion.modelservice;
 
+import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
+import com.sdl.dxa.tridion.modelservice.exceptions.ModelServiceBadRequestException;
+import com.sdl.dxa.tridion.modelservice.exceptions.ModelServiceInternalServerErrorException;
 import com.sdl.web.client.impl.OAuthTokenProvider;
-import com.sdl.webapp.common.controller.exception.BadRequestException;
-import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
-import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.tridion.ambientdata.AmbientDataContext;
 import com.tridion.ambientdata.claimstore.ClaimStore;
 import com.tridion.ambientdata.web.WebClaims;
-import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,35 +26,38 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-@Slf4j
+import static org.slf4j.LoggerFactory.getLogger;
+
 @Service
 public class ModelServiceClient {
+
+    private static final Logger log = getLogger(ModelServiceClient.class);
 
     private static final String X_PREVIEW_SESSION_TOKEN = "x-preview-session-token";
 
     private static final String PREVIEW_SESSION_TOKEN = "preview-session-token";
 
-    private final RestTemplate restTemplate;
-
     private final ModelServiceConfiguration configuration;
 
+    @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
+    @Autowired(required = false)
+    private RestTemplate restTemplate = new RestTemplate();
+
     @Autowired
-    public ModelServiceClient(RestTemplate restTemplate,
-                              ModelServiceConfiguration configuration) {
-        this.restTemplate = restTemplate;
+    public ModelServiceClient(ModelServiceConfiguration configuration) {
         this.configuration = configuration;
     }
 
     @CacheResult(cacheName = "model-service",
             exceptionCacheName = "failures", cachedExceptions = {
-            DxaItemNotFoundException.class,
-            BadRequestException.class
+            ItemNotFoundInModelServiceException.class,
+            ModelServiceBadRequestException.class
     })
-    public <T> T getForType(String serviceUrl, Class<T> type, Object... params) throws DxaItemNotFoundException {
+    public <T> T getForType(String serviceUrl, Class<T> type, Object... params) throws ItemNotFoundInModelServiceException {
         return _makeRequest(serviceUrl, type, false, params);
     }
 
-    private <T> T _makeRequest(String serviceUrl, Class<T> type, boolean isRetry, Object... params) throws DxaItemNotFoundException {
+    private <T> T _makeRequest(String serviceUrl, Class<T> type, boolean isRetry, Object... params) throws ItemNotFoundInModelServiceException {
         try {
             HttpHeaders headers = new HttpHeaders();
 
@@ -72,19 +74,19 @@ public class ModelServiceClient {
                 if (statusCode == HttpStatus.NOT_FOUND) {
                     String message = "Item not found requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
                     log.info(message);
-                    throw new DxaItemNotFoundException(message, e);
+                    throw new ItemNotFoundInModelServiceException(message, e);
                 } else if (statusCode == HttpStatus.UNAUTHORIZED && !isRetry) {
                     log.info("Got 401 status code, reason: {}, check if token is expired and retry if so", statusCode.getReasonPhrase());
                     return _makeRequest(serviceUrl, type, true, params);
                 } else {
                     String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase();
                     log.info(message);
-                    throw new BadRequestException(message, e);
+                    throw new ModelServiceBadRequestException(message, e);
                 }
             }
             String message = "Internal server error requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
             log.warn(message);
-            throw new InternalServerErrorException(message, e);
+            throw new ModelServiceInternalServerErrorException(message, e);
         }
     }
 
@@ -111,8 +113,6 @@ public class ModelServiceClient {
         }
     }
 
-
-    @NotNull
     private Optional<String> _getClaimValue(URI uri, String key, Function<Object, Optional<String>> deriveValue) {
         ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
         if (claimStore != null) {

@@ -27,6 +27,10 @@
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-tridion-provider</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-model-service-client</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.sdl.dxa</groupId>

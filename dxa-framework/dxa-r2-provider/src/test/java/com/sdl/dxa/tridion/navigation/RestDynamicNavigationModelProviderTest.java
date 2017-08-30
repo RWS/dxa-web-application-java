@@ -5,6 +5,7 @@ import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
 import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
+import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
@@ -45,7 +46,7 @@ public class RestDynamicNavigationModelProviderTest {
     }
 
     @Test
-    public void shouldCall_ModelService_ForNavigationModel() throws ContentProviderException {
+    public void shouldCall_ModelService_ForNavigationModel() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given
         when(serviceClient.getForType(eq("/nav"), eq(TaxonomyNodeModelData.class), eq(42))).thenReturn(new TaxonomyNodeModelData().setKey("123"));
 
@@ -58,9 +59,9 @@ public class RestDynamicNavigationModelProviderTest {
     }
 
     @Test
-    public void shouldReturnOptionalEmpty_When404Exception_ForNavigationModel() throws ContentProviderException {
+    public void shouldReturnOptionalEmpty_When404Exception_ForNavigationModel() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given
-        when(serviceClient.getForType(eq("/nav"), eq(TaxonomyNodeModelData.class), eq(42))).thenThrow(new DxaItemNotFoundException());
+        when(serviceClient.getForType(eq("/nav"), eq(TaxonomyNodeModelData.class), eq(42))).thenThrow(new ItemNotFoundInModelServiceException());
 
         //when
         Optional<TaxonomyNodeModelData> data = provider.getNavigationModel(SitemapRequestDto.builder(42).build());
@@ -70,7 +71,7 @@ public class RestDynamicNavigationModelProviderTest {
     }
 
     @Test
-    public void shouldCall_ModelService_ForNavigationSubtree() throws ContentProviderException {
+    public void shouldCall_ModelService_ForNavigationSubtree() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given
         NavigationFilter navigationFilter = new NavigationFilter().setWithAncestors(true).setDescendantLevels(666);
         SitemapItemModelData[] value = {new TaxonomyNodeModelData(), new SitemapItemModelData()};
@@ -90,10 +91,10 @@ public class RestDynamicNavigationModelProviderTest {
     }
 
     @Test
-    public void shouldReturnOptionalEmpty_When404Exception_ForNavigationSubtree() throws ContentProviderException {
+    public void shouldReturnOptionalEmpty_When404Exception_ForNavigationSubtree() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given
         when(serviceClient.getForType(eq("/od"), eq(SitemapItemModelData[].class), eq(42), eq("t1"), any(), any()))
-                .thenThrow(new DxaItemNotFoundException());
+                .thenThrow(new ItemNotFoundInModelServiceException());
         SitemapRequestDto requestDto = SitemapRequestDto.builder(42)
                 .sitemapId("t1")
                 .build();
@@ -106,7 +107,7 @@ public class RestDynamicNavigationModelProviderTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void shouldProceed_WithException_WhenRequestIsBad_NavModel() throws DxaItemNotFoundException {
+    public void shouldProceed_WithException_WhenRequestIsBad_NavModel() throws DxaItemNotFoundException, ItemNotFoundInModelServiceException {
         //given
         when(serviceClient.getForType(eq("/nav"), eq(TaxonomyNodeModelData.class), eq(42))).thenThrow(new BadRequestException());
 
@@ -117,7 +118,7 @@ public class RestDynamicNavigationModelProviderTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void shouldProceed_WithException_WhenRequestIsBad_Subtree() throws DxaItemNotFoundException {
+    public void shouldProceed_WithException_WhenRequestIsBad_Subtree() throws DxaItemNotFoundException, ItemNotFoundInModelServiceException {
         //given
         when(serviceClient.getForType(eq("/od"), eq(SitemapItemModelData[].class), eq(42), eq("t1"), any(), any()))
                 .thenThrow(new BadRequestException());

@@ -4,8 +4,8 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
+import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.web.client.configuration.api.ConfigurationException;
-import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import org.junit.Before;
@@ -26,9 +26,6 @@ public class DefaultModelServiceTest {
     private ModelServiceConfiguration configuration;
 
     @Mock
-    private WebRequestContext webRequestContext;
-
-    @Mock
     private Localization localization;
 
     @Mock
@@ -42,18 +39,16 @@ public class DefaultModelServiceTest {
 
     @Before
     public void init() {
-        when(webRequestContext.getLocalization()).thenReturn(localization);
-        when(localization.getId()).thenReturn("666");
 
         when(configuration.getPageModelUrl()).thenReturn("/model-service/page");
         when(configuration.getEntityModelUrl()).thenReturn("/model-service/entity");
     }
 
     @Test
-    public void shouldLoadPageModel_AsModel() throws ContentProviderException {
+    public void shouldLoadPageModel_AsModel() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given 
-        PageRequestDto pageRequest = PageRequestDto.builder()
-                .uriType("tcm").publicationId(42).path("/path").includePages(PageRequestDto.PageInclusion.INCLUDE)
+        PageRequestDto pageRequest = PageRequestDto.builder(42, "/path")
+                .uriType("tcm").includePages(PageRequestDto.PageInclusion.INCLUDE)
                 .build();
         PageModelData modelData = new PageModelData();
         modelData.setId("123");
@@ -68,12 +63,12 @@ public class DefaultModelServiceTest {
     }
 
     @Test
-    public void shouldLoadPageModel_AsString() throws ContentProviderException {
+    public void shouldLoadPageModel_AsString() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given
-        PageRequestDto pageRequest = PageRequestDto.builder()
-                .uriType("tcm").path("/path").includePages(PageRequestDto.PageInclusion.INCLUDE)
+        PageRequestDto pageRequest = PageRequestDto.builder(666, "/path")
+                .uriType("tcm").includePages(PageRequestDto.PageInclusion.INCLUDE)
                 .build();
-        when(modelServiceClient.getForType(eq("/model-service/page?raw=true"), eq(String.class), eq("tcm"), eq("666"),
+        when(modelServiceClient.getForType(eq("/model-service/page?raw=true"), eq(String.class), eq("tcm"), eq(666),
                 eq("/path"), eq(PageRequestDto.PageInclusion.INCLUDE))).thenReturn("hello");
 
         //when
@@ -84,10 +79,10 @@ public class DefaultModelServiceTest {
     }
 
     @Test
-    public void shouldLoadEntityModel_AsModel() throws ContentProviderException {
+    public void shouldLoadEntityModel_AsModel() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given
-        EntityRequestDto entityRequestDto = EntityRequestDto.builder()
-                .uriType("tcm").publicationId(42).componentId(1).templateId(2)
+        EntityRequestDto entityRequestDto = EntityRequestDto.builder(42, 1, 2)
+                .uriType("tcm")
                 .build();
         EntityModelData actual = new EntityModelData();
         actual.setId("123");
@@ -102,15 +97,15 @@ public class DefaultModelServiceTest {
     }
 
     @Test
-    public void shouldLoadEntityModel_AsModel_FromEntityId() throws ContentProviderException {
+    public void shouldLoadEntityModel_AsModel_FromEntityId() throws ContentProviderException, ItemNotFoundInModelServiceException {
         //given
         EntityModelData actual = new EntityModelData();
         actual.setId("123");
-        when(modelServiceClient.getForType(eq("/model-service/entity"), eq(EntityModelData.class), eq("tcm"), eq("666"),
+        when(modelServiceClient.getForType(eq("/model-service/entity"), eq(EntityModelData.class), eq("tcm"), eq(666),
                 eq(1), eq(2))).thenReturn(actual);
 
         //when
-        EntityModelData entity = service.loadEntity("1-2");
+        EntityModelData entity = service.loadEntity("666", "1-2");
 
         //then
         assertEquals(entity, actual);

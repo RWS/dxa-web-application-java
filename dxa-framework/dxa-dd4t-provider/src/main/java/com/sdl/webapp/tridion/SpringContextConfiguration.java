@@ -18,6 +18,7 @@ import org.dd4t.databind.builder.json.JsonModelConverter;
 import org.dd4t.providers.ComponentPresentationProvider;
 import org.dd4t.providers.NoCacheProvider;
 import org.dd4t.providers.PayloadCacheProvider;
+import org.dd4t.providers.impl.BrokerComponentPresentationProvider;
 import org.dd4t.providers.impl.BrokerLinkProvider;
 import org.dd4t.providers.impl.BrokerPageProvider;
 import org.dd4t.providers.impl.BrokerTaxonomyProvider;

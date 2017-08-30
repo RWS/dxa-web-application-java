@@ -1,0 +1,20 @@
+{
+  "Meta": {
+    "ContentType": "HTML Fragment",
+    "NamespaceId": 0,
+    "TemplatePriority": 300,
+    "TemplateId": 9195,
+    "ComponentId": 1468,
+    "PublicationId": 1065,
+    "Encoding": "UTF8",
+    "ObjectSize": 98
+  },
+  "FileLocation": "file",
+  "NamespaceId": 1,
+  "PublicationId": 2,
+  "ComponentId": 3,
+  "ComponentTemplateId": 4,
+  "Content": "content",
+  "Dynamic": true,
+  "ObjectSize": 3748
+}

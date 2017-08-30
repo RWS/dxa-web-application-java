@@ -7,8 +7,9 @@ import org.springframework.util.Assert;
 
 /**
  * Data transfer object (DTO) for page requests.
+ * Fields {@code path} nad {@code publication ID} are guaranteed to be set.
  */
-@Builder(toBuilder = true)
+@Builder(toBuilder = true, builderMethodName = "hiddenBuilder")
 @Value
 @EqualsAndHashCode(exclude = "depthCounter")
 public class PageRequestDto {
@@ -29,17 +30,16 @@ public class PageRequestDto {
 
     private DepthCounter depthCounter;
 
-    /**
-     * Way you expect the content to be.
-     * Handy to have it in DTO to support key generation for caching even if you do not override methods, but use different names,
-     * so that the same requests with different expected return content type won't clash on the same return type.
-     */
-    public enum ContentType {
-        RAW, MODEL
+    public static PageRequestDtoBuilder builder(String publicationId, String path) {
+        return builder(Integer.valueOf(publicationId), path);
     }
 
-    public enum DataModelType {
-        R2, DD4T
+    public static PageRequestDtoBuilder builder(int publicationId, String path) {
+        return hiddenBuilder().publicationId(publicationId).path(path);
+    }
+
+    private static PageRequestDtoBuilder hiddenBuilder() {
+        return new PageRequestDtoBuilder();
     }
 
     /**
@@ -74,6 +74,9 @@ public class PageRequestDto {
         private int expansionDepth = 100;
 
         private DepthCounter depthCounter = new DepthCounter(expansionDepth);
+
+        private PageRequestDtoBuilder() {
+        }
 
         public PageRequestDtoBuilder expansionDepth(int expansionDepth) {
             Assert.isTrue(expansionDepth > 0, "Expansion depth should be a positive number");

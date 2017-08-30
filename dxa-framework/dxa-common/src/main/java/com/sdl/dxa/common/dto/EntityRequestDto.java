@@ -12,8 +12,10 @@ import java.util.List;
  * Data transfer object (DTO) for page requests.
  */
 @Value
-@Builder
+@Builder(toBuilder = true, builderMethodName = "hiddenBuilder")
 public class EntityRequestDto {
+
+    protected static final String COMPONENT_TEMPLATE_IDS_FORMAT = "%s-%s";
 
     private int publicationId;
 
@@ -30,6 +32,46 @@ public class EntityRequestDto {
 
     private boolean resolveLink;
 
+    private DcpType dcpType;
+
+    private DataModelType dataModelType;
+
+    private ContentType contentType;
+
+    public static EntityRequestDtoBuilder builder(String publicationId, String entityId) {
+        return builder(Integer.valueOf(publicationId), entityId);
+    }
+
+    public static EntityRequestDtoBuilder builder(int publicationId, String entityId) {
+        return hiddenBuilder().publicationId(publicationId).entityId(entityId);
+    }
+
+    public static EntityRequestDtoBuilder builder(int publicationId, int componentId) {
+        return hiddenBuilder().publicationId(publicationId).componentId(componentId);
+    }
+
+    public static EntityRequestDtoBuilder builder(int publicationId, int componentId, int templateId) {
+        return hiddenBuilder().publicationId(publicationId).entityId(String.format(COMPONENT_TEMPLATE_IDS_FORMAT, componentId, templateId));
+    }
+
+    private static EntityRequestDtoBuilder hiddenBuilder() {
+        return new EntityRequestDtoBuilder();
+    }
+
+    /**
+     * Strategy of DCP template resolving is template ID is missing in request.
+     */
+    public enum DcpType {
+        /**
+         * If template is not set, then load a default DXA Data Presentation.
+         */
+        DEFAULT,
+        /**
+         * If template is not set, then load a Component Presentation with the highest priority.
+         */
+        HIGHEST_PRIORITY
+    }
+
     /**
      * Default values for builder.
      */
@@ -40,12 +82,32 @@ public class EntityRequestDto {
 
         private boolean resolveLink = true;
 
+        private DcpType dcpType = DcpType.DEFAULT;
+
+        private DataModelType dataModelType = DataModelType.R2;
+
+        private ContentType contentType = ContentType.MODEL;
+
+        private EntityRequestDtoBuilder() {
+        }
+
+        public EntityRequestDtoBuilder componentId(int componentId) {
+            return entityId(String.format(COMPONENT_TEMPLATE_IDS_FORMAT, componentId, templateId));
+        }
+
+        public EntityRequestDtoBuilder templateId(int templateId) {
+            return entityId(String.format(COMPONENT_TEMPLATE_IDS_FORMAT, componentId, templateId));
+        }
+
         public EntityRequestDtoBuilder entityId(@NotNull String entityId) {
             Assert.isTrue(entityId.matches("\\d+-\\d+"), "Entity ID should be of format CompId-TemplateId");
-            this.entityId = entityId;
             List<String> parts = Splitter.on("-").splitToList(entityId);
-            componentId(Integer.parseInt(parts.get(0)));
-            templateId(Integer.parseInt(parts.get(1)));
+            int componentId = Integer.parseInt(parts.get(0));
+            int templateId = Integer.parseInt(parts.get(1));
+
+            this.entityId = templateId == 0 ? parts.get(0) : entityId;
+            this.componentId = componentId;
+            this.templateId = templateId;
             return this;
         }
     }

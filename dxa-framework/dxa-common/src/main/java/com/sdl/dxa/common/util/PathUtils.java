@@ -43,6 +43,33 @@ public final class PathUtils {
     }
 
     /**
+     * Replaces multiple slashes from the path.
+     * <pre>
+     * <code>&lt;empty&gt;    -&gt; /</code>
+     * <code>/          -&gt; /</code>
+     * <code>//          -&gt; /</code>
+     * <code>/articles/ + legacy      -&gt; /articles/legacy</code>
+     * <code>/articles + /legacy      -&gt; /articles/legacy</code>
+     * <code>/articles/ + /legacy      -&gt; /articles/legacy</code>
+     * </pre>
+     *
+     * @param path path to normalize
+     * @return a normalized path
+     */
+    @Contract("null ,null -> null; _,_ -> !null")
+    public static String combinePath(String url, String path) {
+        String securedUrl, securedPath;
+        if(url == null && path == null) {
+            return null;
+        }
+
+        securedUrl = url == null ? "" : url;
+        securedPath = path == null ? "" : path;
+
+        return securedUrl.concat("/").concat(securedPath).replaceAll("/+", "/");
+    }
+
+    /**
      * Normalizes given path to have an explicit page name and extension.
      * <p>Adds an explicit <code>index</code> page name if other page is not in a <code>path</code>.</p>
      * <p>Adds an explicit <code>.html</code> extension if other extension is not in a <code>path</code>.</p>

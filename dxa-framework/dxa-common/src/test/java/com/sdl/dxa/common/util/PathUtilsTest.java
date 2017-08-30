@@ -69,6 +69,26 @@ public class PathUtilsTest {
     }
 
     @Test
+    public void shouldRemoveDoubleSlashFromPath() {
+        String expected = "/path/to/index";
+        assertEquals(expected, PathUtils.combinePath("/path", "to/index"));
+        assertEquals(expected, PathUtils.combinePath("/path", "/to/index"));
+        assertEquals(expected, PathUtils.combinePath("/path/", "to/index"));
+        assertEquals(expected, PathUtils.combinePath("/path/", "/to/index"));
+        assertEquals(expected, PathUtils.combinePath("/", "path/to/index"));
+        assertEquals(expected, PathUtils.combinePath("", "/path/to/index"));
+        assertEquals(expected, PathUtils.combinePath("/", "/path/to/index"));
+        assertEquals("/", PathUtils.combinePath("/", ""));
+        assertEquals("/", PathUtils.combinePath("//", ""));
+        assertEquals("/", PathUtils.combinePath("", "/"));
+        assertEquals("/", PathUtils.combinePath("", "//"));
+        assertEquals("/", PathUtils.combinePath("", ""));
+        assertEquals("/", PathUtils.combinePath(null, ""));
+        assertEquals("/", PathUtils.combinePath("", null));
+        assertNull(PathUtils.combinePath(null, null));
+    }
+
+    @Test
     public void shouldDefineWhetherThePathIsHome() {
         assertTrue(PathUtils.isHomePath("/", "/"));
         assertTrue(PathUtils.isHomePath("/", null));

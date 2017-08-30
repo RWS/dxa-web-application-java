@@ -42,20 +42,31 @@ public final class PathUtils {
         return DEFAULT_PAGE_EXTENSION;
     }
 
+    /**
+     * Replaces multiple slashes from the path.
+     * <pre>
+     * <code>&lt;empty&gt;    -&gt; /</code>
+     * <code>/          -&gt; /</code>
+     * <code>//          -&gt; /</code>
+     * <code>/articles/ + legacy      -&gt; /articles/legacy</code>
+     * <code>/articles + /legacy      -&gt; /articles/legacy</code>
+     * <code>/articles/ + /legacy      -&gt; /articles/legacy</code>
+     * </pre>
+     *
+     * @param path path to normalize
+     * @return a normalized path
+     */
+    @Contract("null ,null -> null; _,_ -> !null")
     public static String combinePath(String url, String path) {
+        String securedUrl, securedPath;
         if(url == null && path == null) {
             return null;
         }
 
-        if(url == null) {
-            url = "";
-        }
+        securedUrl = url == null ? "" : url;
+        securedPath = path == null ? "" : path;
 
-        if(path == null) {
-            path = "";
-        }
-
-        return url.concat(path).replaceAll("//", "/");
+        return securedUrl.concat("/").concat(securedPath).replaceAll("/+", "/");
     }
 
     /**

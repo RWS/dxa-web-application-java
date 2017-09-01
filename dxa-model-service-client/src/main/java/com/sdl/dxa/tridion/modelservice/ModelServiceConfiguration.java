@@ -10,35 +10,50 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
+import javax.annotation.PostConstruct;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
+// this artifact is to be used with older versions of DXA or DD4T which use Spring 3, which fails on lambdas
+@SuppressWarnings("Convert2Lambda")
 public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
 
     private static final Logger log = getLogger(ModelServiceConfiguration.class);
 
-    private final String pageModelUrl;
+    @Value("${dxa.model.service.url.page.model}")
+    private String pageModelUrl;
 
-    private final String entityModelUrl;
+    @Value("${dxa.model.service.url.entity.model}")
+    private String entityModelUrl;
 
-    private final String navigationApiUrl;
+    @Value("${dxa.model.service.url.api.navigation}")
+    private String navigationApiUrl;
 
-    private final String onDemandApiUrl;
+    @Value("${dxa.model.service.url.api.navigation.subtree}")
+    private String onDemandApiUrl;
+
+    @Value("${dxa.model.service.key:#{null}}")
+    private String modelServiceKey;
+
+    @Value("${dxa.model.service.url:#{null}}")
+    private String modelServiceUrl;
 
     private OAuthTokenProvider oAuthTokenProvider;
 
     private String serviceUrl;
 
-    public ModelServiceConfiguration(
-            @Value("${dxa.model.service.url.page.model}") String pageModelUrl,
-            @Value("${dxa.model.service.url.entity.model}") String entityModelUrl,
-            @Value("${dxa.model.service.url.api.navigation}") String navigationApiUrl,
-            @Value("${dxa.model.service.url.api.navigation.subtree}") String onDemandApiUrl,
-            @Value("${dxa.model.service.key:#{null}}") String modelServiceKey,
-            @Value("${dxa.model.service.url:#{null}}") String modelServiceUrl) throws ConfigurationException {
+    public ModelServiceConfiguration() throws ConfigurationException {
+        //required empty
+    }
+
+    @PostConstruct
+    public void init() throws ConfigurationException {
         if (isTokenConfigurationAvailable()) {
             this.oAuthTokenProvider = new OAuthTokenProvider(getOauthTokenProviderConfiguration());
             // try to get token to validate credentials
@@ -85,14 +100,30 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
         return oAuthTokenProvider;
     }
 
+
     private String loadServiceUrlFromCapability(String modelServiceKey) throws ConfigurationException {
         Optional<ContentServiceCapability> capability = getCapabilityFromDiscoveryService(ContentServiceCapability.class);
         if (capability.isPresent()) {
             return capability.get().getExtensionProperties().stream()
-                    .filter(keyValuePair -> Objects.equals(keyValuePair.getKey(), modelServiceKey))
-                    .map(KeyValuePair::getValue)
+                    .filter(new Predicate<KeyValuePair>() { // NOSONAR
+                        @Override
+                        public boolean test(KeyValuePair keyValuePair) {
+                            return Objects.equals(keyValuePair.getKey(), modelServiceKey);
+                        }
+                    })
+                    .map(new Function<KeyValuePair, String>() { // NOSONAR
+                        @Override
+                        public String apply(KeyValuePair keyValuePair) {
+                            return keyValuePair.getValue();
+                        }
+                    })
                     .findFirst()
-                    .orElseThrow(() -> new ConfigurationException("DXA Model Service URL is not available on Discovery"));
+                    .orElseThrow(new Supplier<ConfigurationException>() { // NOSONAR
+                        @Override
+                        public ConfigurationException get() {
+                            return new ConfigurationException("DXA Model Service URL is not available on Discovery");
+                        }
+                    });
         } else {
             throw new ConfigurationException("ContentServiceCapability is not available, cannot get Model Service url");
         }

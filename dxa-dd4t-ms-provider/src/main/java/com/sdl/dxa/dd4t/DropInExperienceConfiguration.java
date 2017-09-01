@@ -2,79 +2,71 @@ package com.sdl.dxa.dd4t;
 
 import com.sdl.dxa.dd4t.providers.ModelServiceComponentPresentationProvider;
 import com.sdl.dxa.dd4t.providers.ModelServicePageProvider;
+import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
+import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
 import org.dd4t.providers.PayloadCacheProvider;
-import org.dd4t.providers.impl.BrokerComponentPresentationProvider;
-import org.dd4t.providers.impl.BrokerPageProvider;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
-
-import javax.annotation.PostConstruct;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+@SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 @Configuration
-@Profile("!custom.dd4t.ms.provider")
-public class DropInExperienceConfiguration {
+@Profile("auto.dd4t.ms.provider")
+public class DropInExperienceConfiguration implements ApplicationContextAware {
 
     private static final Logger log = getLogger(DropInExperienceConfiguration.class);
 
-    private final PageFactoryImpl pageFactoryImpl;
+    @Autowired
+    private ModelServiceClient modelServiceClient;
 
-    private final ComponentPresentationFactoryImpl componentPresentationFactory;
+    @Autowired
+    private ModelServiceConfiguration modelServiceConfiguration;
 
-    private final BrokerPageProvider brokerPageProvider;
-
-    private final BrokerComponentPresentationProvider componentPresentationProvider;
-
-    private final PayloadCacheProvider payloadCacheProvider;
-
-    @Autowired(required = false)
-    public DropInExperienceConfiguration(PageFactoryImpl pageFactoryImpl,
-                                         ComponentPresentationFactoryImpl componentPresentationFactory,
-                                         BrokerPageProvider brokerPageProvider,
-                                         BrokerComponentPresentationProvider componentPresentationProvider,
-                                         PayloadCacheProvider payloadCacheProvider) {
-        this.pageFactoryImpl = pageFactoryImpl;
-        this.componentPresentationFactory = componentPresentationFactory;
-        this.brokerPageProvider = brokerPageProvider;
-        this.componentPresentationProvider = componentPresentationProvider;
-        this.payloadCacheProvider = payloadCacheProvider;
+    public DropInExperienceConfiguration() {
+        // required empty
     }
 
-    @PostConstruct
-    public void init() {
-        if (pageFactoryImpl != null && brokerPageProvider != null &&
-                componentPresentationFactory != null && componentPresentationProvider != null) {
-            pageFactoryImpl.setPageProvider(modelServicePageProvider());
-            componentPresentationFactory.setComponentPresentationProvider(modelServiceComponentPresentationProvider());
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) {
+        PageFactoryImpl pageFactory = applicationContext.getBean(PageFactoryImpl.class);
+        ComponentPresentationFactoryImpl componentPresentationFactory = applicationContext.getBean(ComponentPresentationFactoryImpl.class);
+
+        PayloadCacheProvider cacheProvider = applicationContext.getBean(PayloadCacheProvider.class);
+
+        ModelServicePageProvider modelServicePageProvider = modelServicePageProvider(cacheProvider);
+
+        ModelServiceComponentPresentationProvider modelServiceComponentPresentationProvider = componentPresentationProvider(cacheProvider);
+
+        if (pageFactory != null && componentPresentationFactory != null) {
+            pageFactory.setPageProvider(modelServicePageProvider);
+            componentPresentationFactory.setComponentPresentationProvider(modelServiceComponentPresentationProvider);
             log.info("Default DD4T Page/CP Providers have been replaced with default DXA Model Service Page/CP Providers. " +
-                    "Run application with 'custom.dd4t.ms.provider' Spring profile to use any custom beans configuration.");
+                    "Run application with 'auto.dd4t.ms.provider' Spring profile to use any custom beans configuration.");
         }
     }
 
-    @Bean
-    @Primary
-    public ModelServicePageProvider modelServicePageProvider() {
-        ModelServicePageProvider provider = new ModelServicePageProvider();
-        provider.setContentIsCompressed("false");
-        provider.setContentIsBase64Encoded(false);
-        provider.setCacheProvider(payloadCacheProvider);
-        return provider;
+    private ModelServiceComponentPresentationProvider componentPresentationProvider(PayloadCacheProvider cacheProvider) {
+        ModelServiceComponentPresentationProvider modelServiceComponentPresentationProvider = new ModelServiceComponentPresentationProvider();
+        modelServiceComponentPresentationProvider.setContentIsCompressed("false");
+        modelServiceComponentPresentationProvider.setCacheProvider(cacheProvider);
+        modelServiceComponentPresentationProvider.setModelServiceClient(modelServiceClient);
+        modelServiceComponentPresentationProvider.setModelServiceConfiguration(modelServiceConfiguration);
+        return modelServiceComponentPresentationProvider;
     }
 
-    @Bean
-    @Primary
-    public ModelServiceComponentPresentationProvider modelServiceComponentPresentationProvider() {
-        ModelServiceComponentPresentationProvider provider = new ModelServiceComponentPresentationProvider();
-        provider.setContentIsCompressed("false");
-        provider.setContentIsBase64Encoded(false);
-        provider.setCacheProvider(payloadCacheProvider);
-        return provider;
+    private ModelServicePageProvider modelServicePageProvider(PayloadCacheProvider cacheProvider) {
+        ModelServicePageProvider modelServicePageProvider = new ModelServicePageProvider();
+        modelServicePageProvider.setContentIsCompressed("false");
+        modelServicePageProvider.setCacheProvider(cacheProvider);
+        modelServicePageProvider.setModelServiceClient(modelServiceClient);
+        modelServicePageProvider.setModelServiceConfiguration(modelServiceConfiguration);
+        return modelServicePageProvider;
     }
 }

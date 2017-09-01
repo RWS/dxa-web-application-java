@@ -7,40 +7,58 @@ import org.dd4t.core.factories.impl.PageFactoryImpl;
 import org.dd4t.providers.ComponentPresentationProvider;
 import org.dd4t.providers.PageProvider;
 import org.dd4t.providers.PayloadCacheProvider;
-import org.dd4t.providers.impl.BrokerComponentPresentationProvider;
-import org.dd4t.providers.impl.BrokerPageProvider;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.context.ApplicationContext;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class DropInExperienceConfigurationTest {
+
+    @Mock
+    private ApplicationContext applicationContext;
+
+    @Mock
+    private PageFactoryImpl pageFactory;
+
+    @Mock
+    private ComponentPresentationFactoryImpl componentPresentationFactoryImpl;
+
+    @Mock
+    private PayloadCacheProvider payloadCacheProvider;
+
+    @InjectMocks
+    private DropInExperienceConfiguration configuration;
+
+    @Before
+    public void init() {
+        when(applicationContext.getBean(eq(PageFactoryImpl.class))).thenReturn(pageFactory);
+        when(applicationContext.getBean(eq(ComponentPresentationFactoryImpl.class))).thenReturn(componentPresentationFactoryImpl);
+        when(applicationContext.getBean(eq(PayloadCacheProvider.class))).thenReturn(payloadCacheProvider);
+    }
 
     @Test
     public void shouldReplacePageProvider_IfEverythingIsSet() {
-        //given 
-        PageFactoryImpl pageFactory = mock(PageFactoryImpl.class);
-        ComponentPresentationFactoryImpl componentPresentationFactoryImpl = mock(ComponentPresentationFactoryImpl.class);
-        DropInExperienceConfiguration configuration = new DropInExperienceConfiguration(
-                pageFactory, componentPresentationFactoryImpl,
-                new BrokerPageProvider(), new BrokerComponentPresentationProvider(),
-                mock(PayloadCacheProvider.class));
+        //given
 
         //when
-        configuration.init();
+        configuration.setApplicationContext(applicationContext);
 
         //then
         verify(pageFactory).setPageProvider(argThat(new BaseMatcher<PageProvider>() {
             @Override
             public boolean matches(Object o) {
-                assertTrue(o instanceof ModelServicePageProvider);
-                assertFalse(((ModelServicePageProvider) o).isContentIsBase64Encoded());
-                return true;
+                return o instanceof ModelServicePageProvider;
             }
 
             @Override
@@ -52,9 +70,7 @@ public class DropInExperienceConfigurationTest {
         verify(componentPresentationFactoryImpl).setComponentPresentationProvider(argThat(new BaseMatcher<ComponentPresentationProvider>() {
             @Override
             public boolean matches(Object o) {
-                assertTrue(o instanceof ModelServiceComponentPresentationProvider);
-                assertFalse(((ModelServiceComponentPresentationProvider) o).isContentIsBase64Encoded());
-                return true;
+                return o instanceof ModelServiceComponentPresentationProvider;
             }
 
             @Override

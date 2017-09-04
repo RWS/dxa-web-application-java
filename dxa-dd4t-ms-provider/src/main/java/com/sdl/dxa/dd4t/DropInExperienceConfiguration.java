@@ -48,7 +48,7 @@ public class DropInExperienceConfiguration implements ApplicationContextAware {
             pageFactory.setPageProvider(modelServicePageProvider);
             componentPresentationFactory.setComponentPresentationProvider(modelServiceComponentPresentationProvider);
             log.info("Default DD4T Page/CP Providers have been replaced with default DXA Model Service Page/CP Providers. " +
-                    "Run application with 'auto.dd4t.ms.provider' Spring profile to use any custom beans configuration.");
+                    "Run application without 'auto.dd4t.ms.provider' Spring profile to use any custom beans configuration.");
         }
     }
 

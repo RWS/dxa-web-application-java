@@ -133,15 +133,6 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>context-expressions-legacy-module</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-context-expressions-legacy</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
 
         <profile>
             <id>smarttarget-module</id>
@@ -152,57 +143,7 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>smarttarget-legacy-module</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-smarttarget-legacy</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
 
-        <profile>
-            <id>dd4t-ms-module</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa</groupId>
-                    <artifactId>dxa-dd4t-ms-provider</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <!-- Profile name is for internal naming, use -Dlegacy instead for this profile -->
-            <id>internal-legacy</id>
-            <activation>
-                <property>
-                    <name>legacy</name>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa</groupId>
-                    <artifactId>dxa-dd4t-provider</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-
-        <profile>
-            <!-- Profile name is for internal naming -->
-            <id>internal-r2</id>
-            <activation>
-                <property>
-                    <name>!legacy</name>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa</groupId>
-                    <artifactId>dxa-r2-provider</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
     </profiles>
 
     <!-- Needed here because archetype comes without parent tag -->
@@ -228,6 +169,10 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-r2-provider</artifactId>
         </dependency>
 
         <dependency>

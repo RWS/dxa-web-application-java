@@ -168,10 +168,6 @@
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
-            <artifactId>dxa-common-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-tridion-provider</artifactId>
         </dependency>
 

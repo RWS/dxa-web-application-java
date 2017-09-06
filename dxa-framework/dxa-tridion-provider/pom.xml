@@ -22,17 +22,12 @@
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
-            <artifactId>dxa-common-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-tridion-common</artifactId>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-model-service-client</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-data-model</artifactId>

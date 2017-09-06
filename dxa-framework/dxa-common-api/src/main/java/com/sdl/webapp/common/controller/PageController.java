@@ -67,8 +67,6 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 //todo dxa2 create error controller for error handling
 public class PageController extends BaseController {
 
-    // TODO: Move this to common-impl or core-module
-
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     @Autowired

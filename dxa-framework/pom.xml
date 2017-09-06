@@ -19,7 +19,6 @@
     <modules>
         <module>dxa-common</module>
         <module>dxa-common-api</module>
-        <module>dxa-common-impl</module>
         <module>dxa-tridion-provider</module>
         <module>dxa-compatible</module>
         <module>dxa-data-model</module>

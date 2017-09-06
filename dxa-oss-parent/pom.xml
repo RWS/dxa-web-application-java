@@ -240,12 +240,6 @@
                 <version>${dxa.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-r2-provider</artifactId>
-                <version>${dxa.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-core</artifactId>
                 <version>${dxa-module-core.version}</version>

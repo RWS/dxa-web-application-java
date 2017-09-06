@@ -2,22 +2,14 @@ package com.sdl.webapp.tridion.contextengine;
 
 import org.junit.Test;
 
-import java.net.URI;
-import java.util.Map;
-
 import static org.junit.Assert.assertNull;
 
-public class AbstractAdfContextClaimsProviderTest {
+public class AdfContextClaimsProviderTest {
 
     @Test
     public void shouldReturnNullAsDeviceFamily() throws Exception {
         //given
-        AbstractAdfContextClaimsProvider provider = new AbstractAdfContextClaimsProvider() {
-            @Override
-            protected Map<URI, Object> getCurrentClaims() {
-                return null;
-            }
-        };
+        AdfContextClaimsProvider provider = new AdfContextClaimsProvider();
 
         //when
         String deviceFamily = provider.getDeviceFamily();

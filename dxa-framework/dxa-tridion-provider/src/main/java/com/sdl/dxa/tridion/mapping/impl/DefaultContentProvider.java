@@ -1,8 +1,14 @@
-package com.sdl.webapp.tridion.mapping;
+package com.sdl.dxa.tridion.mapping.impl;
 
+import com.sdl.dxa.api.datamodel.model.ContentModelData;
+import com.sdl.dxa.api.datamodel.model.EntityModelData;
+import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.caching.wrapper.CopyingCache;
+import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
+import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
+import com.sdl.dxa.tridion.modelservice.DefaultModelService;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;
@@ -38,7 +44,9 @@ import com.tridion.meta.NameValuePair;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
@@ -51,9 +59,15 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 
+@Service
 @Slf4j
-public abstract class AbstractDefaultContentProvider implements ContentProvider {
+public class DefaultContentProvider implements ContentProvider {
+
+    private final ModelBuilderPipeline builderPipeline;
+
+    private final DefaultModelService modelService;
 
     private final WebRequestContext webRequestContext;
 
@@ -64,12 +78,80 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
     @Autowired
-    public AbstractDefaultContentProvider(WebRequestContext webRequestContext,
-                                          LinkResolver linkResolver,
-                                          StaticContentResolver staticContentResolver) {
+    public DefaultContentProvider(WebRequestContext webRequestContext,
+                                  StaticContentResolver staticContentResolver,
+                                  LinkResolver linkResolver,
+                                  ModelBuilderPipeline builderPipeline,
+                                  DefaultModelService modelService) {
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
         this.staticContentResolver = staticContentResolver;
+        this.builderPipeline = builderPipeline;
+        this.modelService = modelService;
+    }
+
+    protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
+        PageModelData modelData = modelService.loadPageModel(
+                PageRequestDto.builder(localization.getId(), path)
+                        .includePages(INCLUDE)
+                        .build());
+        return builderPipeline.createPageModel(modelData);
+    }
+
+    @NotNull
+    protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
+        EntityModelData modelData = modelService.loadEntity(webRequestContext.getLocalization().getId(), componentId);
+        try {
+            return builderPipeline.createEntityModel(modelData);
+        } catch (DxaException e) {
+            throw new ContentProviderException("Cannot build the entity model for componentId" + componentId, e);
+        }
+    }
+
+    protected <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException {
+        List<T> entities = new ArrayList<>();
+        for (ComponentMetadata metadata : components) {
+            entities.add(builderPipeline.createEntityModel(EntityModelData.builder()
+                    .id(metadata.getId())
+                    .metadata(getContentModelData(metadata))
+                    .schemaId(metadata.getSchemaId())
+                    .build(), entityClass));
+        }
+        return entities;
+    }
+
+    @NotNull
+    private ContentModelData getContentModelData(ComponentMetadata metadata) {
+        ContentModelData outer = new ContentModelData();
+        ContentModelData standardMetaContents = new ContentModelData();
+        String dateTimeStringFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+
+        metadata.getCustom().entrySet()
+                .forEach(entry -> {
+                    ComponentMetadata.MetaEntry data = entry.getValue();
+                    if (data != null && data.getValue() != null) {
+                        Object value = data.getValue();
+                        String field;
+                        if (data.getMetaType() == ComponentMetadata.MetaType.DATE) {
+                            field = new DateTime(value).toString(dateTimeStringFormat);
+                        } else {
+                            field = value.toString();
+                        }
+
+                        standardMetaContents.put(entry.getKey(), field);
+                    }
+                });
+
+        if (!standardMetaContents.containsKey("dateCreated")) {
+            standardMetaContents.put("dateCreated", new DateTime(metadata.getLastPublicationDate()).toString(dateTimeStringFormat));
+        }
+
+        if (!standardMetaContents.containsKey("name")) {
+            standardMetaContents.put("name", metadata.getTitle());
+        }
+
+        outer.put("standardMeta", standardMetaContents);
+        return outer;
     }
 
     @Autowired(required = false)
@@ -124,13 +206,6 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
                         .baseUrl(webRequestContext.getBaseUrl())
                         .build());
     }
-
-    protected abstract PageModel _loadPage(String path, Localization localization) throws ContentProviderException;
-
-    @NotNull
-    protected abstract EntityModel _getEntityModel(String componentId) throws ContentProviderException;
-
-    protected abstract <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException;
 
     protected List<String> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {
         Query query = buildQuery(simpleBrokerQuery);
@@ -267,5 +342,4 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
                 return new CustomMetaKeyColumn(simpleBrokerQuery.getSort(), MetadataType.DATE);
         }
     }
-
 }

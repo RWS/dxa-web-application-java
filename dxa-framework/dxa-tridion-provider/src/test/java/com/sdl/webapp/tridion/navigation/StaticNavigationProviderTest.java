@@ -3,6 +3,8 @@ package com.sdl.webapp.tridion.navigation;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.sdl.dxa.DxaSpringInitialization;
+import com.sdl.dxa.common.dto.PageRequestDto;
+import com.sdl.dxa.tridion.modelservice.DefaultModelService;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -24,25 +26,26 @@ import org.springframework.test.util.ReflectionTestUtils;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
-import static com.sdl.webapp.tridion.navigation.AbstractStaticNavigationProvider.TYPE_STRUCTURE_GROUP;
+import static com.sdl.webapp.tridion.navigation.StaticNavigationProvider.TYPE_STRUCTURE_GROUP;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AbstractStaticNavigationProviderTest {
+public class StaticNavigationProviderTest {
 
     private static final String NAVIGATION_JSON = "/navigation.json";
 
@@ -57,9 +60,27 @@ public class AbstractStaticNavigationProviderTest {
     @Mock
     private LinkResolver linkResolver;
 
+    @Mock
+    private DefaultModelService defaultModelService;
+
     @InjectMocks
     @Spy
-    private TestStaticNavigationProvider provider;
+    private StaticNavigationProvider provider;
+
+    private static SitemapItem getSiteMapGroup(String title, String url) {
+        SitemapItem siteMap = getSiteMap(title, url, true);
+        siteMap.setType(TYPE_STRUCTURE_GROUP);
+        return siteMap;
+    }
+
+    private static SitemapItem getSiteMap(String title, String url, boolean visible) {
+        SitemapItem sitemapItem = new SitemapItem();
+        sitemapItem.setTitle(title);
+        sitemapItem.setUrl(url);
+        sitemapItem.setVisible(visible);
+        sitemapItem.setItems(Collections.emptySet());
+        return sitemapItem;
+    }
 
     @Before
     public void before() throws IOException, ContentProviderException {
@@ -88,21 +109,8 @@ public class AbstractStaticNavigationProviderTest {
 
         // CM orders navigation model and the collection IS already sorted once we load it in DXA
         when(objectMapper.readValue(any(InputStream.class), eq(SitemapItem.class))).thenReturn(parentGroup);
-    }
 
-    private static SitemapItem getSiteMapGroup(String title, String url) {
-        SitemapItem siteMap = getSiteMap(title, url, true);
-        siteMap.setType(TYPE_STRUCTURE_GROUP);
-        return siteMap;
-    }
-
-    private static SitemapItem getSiteMap(String title, String url, boolean visible) {
-        SitemapItem sitemapItem = new SitemapItem();
-        sitemapItem.setTitle(title);
-        sitemapItem.setUrl(url);
-        sitemapItem.setVisible(visible);
-        sitemapItem.setItems(Collections.emptySet());
-        return sitemapItem;
+        when(defaultModelService.loadPageContent(any(PageRequestDto.class))).thenReturn("");
     }
 
     @Test
@@ -128,7 +136,7 @@ public class AbstractStaticNavigationProviderTest {
     @SuppressWarnings("unchecked")
     public void shouldGetNavigationModeFactoryException() throws ContentProviderException {
         //given
-        when(provider.getPageContent(anyString(), any(Localization.class))).thenThrow(ContentProviderException.class);
+        doThrow(ContentProviderException.class).when(provider).getPageContent(anyString(), any(Localization.class));
 
         //when
         provider.getNavigationModel(localization);
@@ -235,7 +243,7 @@ public class AbstractStaticNavigationProviderTest {
         //given
         InputStream navigation = new ClassPathResource("navigation.json").getInputStream();
         String navigationJson = IOUtils.toString(navigation);
-        when(provider.getPageContent(anyString(), eq(localization))).thenReturn(new ByteArrayInputStream(navigationJson.getBytes()));
+        doReturn(new ByteArrayInputStream(navigationJson.getBytes())).when(provider).getPageContent(anyString(), eq(localization));
 
         ReflectionTestUtils.setField(provider, "objectMapper", new DxaSpringInitialization().objectMapper());
 
@@ -254,16 +262,15 @@ public class AbstractStaticNavigationProviderTest {
         assertFalse(iterator.hasNext());
     }
 
-    private static class TestStaticNavigationProvider extends AbstractStaticNavigationProvider {
+    @Test
+    public void shouldBuildCorrectPageRequest() throws ContentProviderException {
+        //given
 
-        public TestStaticNavigationProvider(ObjectMapper objectMapper, LinkResolver linkResolver) {
-            super(objectMapper, linkResolver);
-        }
+        //when
+        provider.getPageContent("/path", localization);
 
-        @Override
-        protected InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
-            return new ByteArrayInputStream(path.getBytes(StandardCharsets.UTF_8));
-        }
+        //then
+        verify(defaultModelService).loadPageContent(eq(PageRequestDto.builder(localization.getId(), "/path").build()));
     }
 
 }

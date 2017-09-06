@@ -1,6 +1,8 @@
 package com.sdl.webapp.tridion.navigation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdl.dxa.common.dto.PageRequestDto;
+import com.sdl.dxa.tridion.modelservice.DefaultModelService;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -13,9 +15,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -26,7 +31,8 @@ import java.util.Objects;
  * Implementation of {@link NavigationProvider} based on statically generated (published) <code>Navigation.json</code>.
  */
 @Slf4j
-public abstract class AbstractStaticNavigationProvider implements NavigationProvider {
+@Service
+public class StaticNavigationProvider implements NavigationProvider {
 
     static final String TYPE_STRUCTURE_GROUP = "StructureGroup";
 
@@ -34,13 +40,18 @@ public abstract class AbstractStaticNavigationProvider implements NavigationProv
 
     private final LinkResolver linkResolver;
 
+    private final DefaultModelService modelService;
+
     @Value("${dxa.tridion.navigation.modelUrl}")
     private String navigationModelUrl;
 
     @Autowired
-    public AbstractStaticNavigationProvider(ObjectMapper objectMapper, LinkResolver linkResolver) {
+    public StaticNavigationProvider(ObjectMapper objectMapper,
+                                    LinkResolver linkResolver,
+                                    DefaultModelService modelService) {
         this.objectMapper = objectMapper;
         this.linkResolver = linkResolver;
+        this.modelService = modelService;
     }
 
     private static List<Link> createLinksForVisibleItems(Iterable<SitemapItem> items) {
@@ -161,5 +172,9 @@ public abstract class AbstractStaticNavigationProvider implements NavigationProv
         return sitemapItem;
     }
 
-    protected abstract InputStream getPageContent(String path, Localization localization) throws ContentProviderException;
+    protected InputStream getPageContent(String path, Localization localization) throws ContentProviderException {
+        String pageContent = modelService.loadPageContent(PageRequestDto.builder(localization.getId(), path).build());
+        // NOTE: This assumes page content is always in UTF-8 encoding
+        return new ByteArrayInputStream(pageContent.getBytes(StandardCharsets.UTF_8));
+    }
 }

@@ -254,10 +254,11 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     private String getPageTitle(PageModelData modelData) {
         Localization localization = webRequestContext.getLocalization();
+        String title = "defaultPageTitle".equals(modelData.getTitle()) ? localization.getResource("defaultPageTitle") : modelData.getTitle();
         String separator = localization.getResource("core.pageTitleSeparator");
         String postfix = localization.getResource("core.pageTitlePostfix");
-        log.trace("Model page title '{}', pageTitleSeparator '{}', postfix '{}'", modelData.getTitle(), separator, postfix);
-        return modelData.getTitle() + separator + postfix;
+        log.trace("Model page title '{}', pageTitleSeparator '{}', postfix '{}'", title, separator, postfix);
+        return title + separator + postfix;
     }
 
     private RegionModel createRegionModel(RegionModelData regionModelData, ConditionalKeyBuilder keyBuilder) {

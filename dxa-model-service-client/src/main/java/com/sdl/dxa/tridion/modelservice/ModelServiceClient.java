@@ -25,11 +25,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-@SuppressWarnings({"Convert2Lambda", "LambdaCanBeReplacedWithAnonymous"})
 @Service
 public class ModelServiceClient {
 
@@ -93,27 +91,12 @@ public class ModelServiceClient {
     }
 
     private void processPreviewToken(HttpHeaders headers) {
+        //noinspection unchecked
         String previewToken = _getClaimValue(WebClaims.REQUEST_HEADERS, X_PREVIEW_SESSION_TOKEN,
-                new Function<Object, Optional<String>>() { // NOSONAR
-                    @Override
-                    public Optional<String> apply(Object claim) {
-                        //noinspection unchecked
-                        return Optional.of(((List<String>) claim).get(0));
-                    }
-                })
-                .orElseGet(new Supplier<String>() { // NOSONAR
-                    @Override
-                    public String get() {
-                        return _getClaimValue(WebClaims.REQUEST_COOKIES, PREVIEW_SESSION_TOKEN,
-                                new Function<Object, Optional<String>>() { // NOSONAR
-                                    @Override
-                                    public Optional<String> apply(Object claim) {
-                                        return Optional.of(claim.toString());
-                                    }
-                                })
-                                .orElse(null);
-                    }
-                });
+                claim -> Optional.of(((List<String>) claim).get(0)))
+                .orElseGet(() -> _getClaimValue(WebClaims.REQUEST_COOKIES, PREVIEW_SESSION_TOKEN,
+                        claim -> Optional.of(claim.toString()))
+                        .orElse(null));
 
         if (previewToken != null) {
             // commented because of bug in CIS https://jira.sdl.com/browse/CRQ-3935

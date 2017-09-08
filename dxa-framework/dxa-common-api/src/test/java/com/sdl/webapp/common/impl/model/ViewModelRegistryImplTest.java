@@ -34,7 +34,7 @@ public class ViewModelRegistryImplTest {
     @Before
     public void init() throws SemanticMappingException {
         registry.registerViewModel(MvcDataCreator.creator()
-                .fromQualifiedName("Core:Entity:TestEntity")
+                .fromQualifiedName("AreaName:Entity:TestEntity")
                 .create(), TestEntity.class);
 
         registry.registerViewModel(MvcDataCreator.creator()
@@ -69,7 +69,7 @@ public class ViewModelRegistryImplTest {
 
         //when
         registry.registerViewModel(MvcDataCreator.creator()
-                .fromQualifiedName("Core:Entity:TestEntity")
+                .fromQualifiedName("AreaName:Entity:TestEntity")
                 .create(), TestEntity3.class);
 
         //then

@@ -26,14 +26,11 @@ public interface MvcData {
     MvcData deepCopy();
 
     /**
-     * <p>Returns a map of metadata for current MvcData.</p>
-     * todo dxa2 will return a copy
+     * Returns a map of metadata for current MvcData.
      *
      * @return a {@link java.util.Map} object with metadata
      */
-    @Deprecated
     Map<String, Object> getMetadata();
 
-    @Deprecated
     void addMetadataValue(String key, Object obj);
 }

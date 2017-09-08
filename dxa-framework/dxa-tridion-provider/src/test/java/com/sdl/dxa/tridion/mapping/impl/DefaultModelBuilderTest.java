@@ -23,7 +23,7 @@ import com.sdl.webapp.common.api.mapping.semantic.config.EntitySemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
-import com.sdl.webapp.common.api.mapping.views.AbstractInitializer;
+import com.sdl.webapp.common.api.mapping.views.AbstractModuleInitializer;
 import com.sdl.webapp.common.api.mapping.views.RegisteredViewModel;
 import com.sdl.webapp.common.api.mapping.views.RegisteredViewModels;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -208,7 +208,7 @@ public class DefaultModelBuilderTest {
             @RegisteredViewModel(viewName = "Header", modelClass = RegionModelImpl.class),
             @RegisteredViewModel(viewName = "Info", modelClass = RegionModelImpl.class)
     })
-    private static class TestClassInitializer extends AbstractInitializer {
+    private static class TestClassInitializer extends AbstractModuleInitializer {
 
         @Override
         protected String getAreaName() {

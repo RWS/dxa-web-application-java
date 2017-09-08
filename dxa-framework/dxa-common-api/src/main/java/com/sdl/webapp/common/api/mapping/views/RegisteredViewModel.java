@@ -9,8 +9,6 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation that wires view name and a model class representing data for this view with optional controller name.
- *
- * @since 1.4 as a replacement for {@link RegisteredView}
  */
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

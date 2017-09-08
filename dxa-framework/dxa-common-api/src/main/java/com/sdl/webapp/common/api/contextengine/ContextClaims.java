@@ -13,7 +13,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -84,36 +83,6 @@ public abstract class ContextClaims {
     }
 
     /**
-     * Returns a single claim value.
-     *
-     * @param propertyName a name of property to retrieve from claims
-     * @param cls          a class to cast to
-     * @param <T>          a generic expected type
-     * @return a value of given type of null if not present
-     * @deprecated since 1.5, use {@link #getSingleClaim(String, Class)}
-     */
-    @Nullable
-    @Deprecated
-    public <T> T getClaimValue(@NonNull String propertyName, @NonNull Class<T> cls) {
-        return getSingleClaim(propertyName, cls);
-    }
-
-    /**
-     * <p>Gets a list of claim values. Expects to have a list in a map of claims.</p>
-     *
-     * @param propertyName a name of property to retrieve from claims
-     * @param cls          a class to cast each element to
-     * @param <T>          a generic expected type
-     * @return a list of values of given type of null if not present
-     * @deprecated since 1.5
-     */
-    @Nullable
-    @Deprecated
-    public <T> ArrayList<T> getClaimValues(@NonNull String propertyName, @NonNull Class<T> cls) {
-        return new ArrayList<>(getClaimsList(propertyName, cls));
-    }
-
-    /**
      * Gets a name of a particular aspect.
      *
      * @return a name of aspect
@@ -126,7 +95,6 @@ public abstract class ContextClaims {
      * @param propertyName a name of a property
      * @return a full name of a claim
      */
-    //todo dxa2 will probably be private
     @NonNull
     protected String getClaimName(String propertyName) {
         return String.format("%s.%s", getAspectName(), propertyName);

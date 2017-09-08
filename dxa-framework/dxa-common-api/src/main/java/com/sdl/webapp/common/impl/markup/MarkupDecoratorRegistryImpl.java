@@ -46,7 +46,7 @@ public class MarkupDecoratorRegistryImpl implements MarkupDecoratorRegistry {
 
         @Override
         public int compare(MarkupDecorator o1, MarkupDecorator o2) {
-            return o1.getPriority() - o2.getPriority();
+            return o1.getOrder() - o2.getOrder();
         }
     }
 }

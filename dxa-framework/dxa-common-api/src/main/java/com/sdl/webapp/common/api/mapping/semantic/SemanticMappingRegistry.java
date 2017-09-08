@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.mapping.semantic;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntityInfo;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticPropertyInfo;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.views.AbstractModuleInitializer;
 import com.sdl.webapp.common.api.model.EntityModel;
 
 import java.lang.reflect.Field;
@@ -47,8 +48,9 @@ public interface SemanticMappingRegistry {
      * Registers the entity classes in the specified package and subpackages.
      *
      * @param basePackage The base package - this package and its subpackages are scanned for entity classes.
+     * @deprecated since 2.0, use {@link AbstractModuleInitializer} for this
      */
-    //todo dxa2 deprecate and remove?
+    @Deprecated
     void registerEntities(String basePackage);
 
     /**

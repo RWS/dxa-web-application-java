@@ -12,7 +12,7 @@ public class JsonFormatter extends BaseFormatter {
 
     public JsonFormatter(HttpServletRequest request, WebRequestContext context) {
         super(request, context);
-        this.addMediaType("application/json");
+        this._addMediaType("application/json");
     }
 
     /**

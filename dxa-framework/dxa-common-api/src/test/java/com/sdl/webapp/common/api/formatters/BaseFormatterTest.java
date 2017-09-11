@@ -23,7 +23,7 @@ public class BaseFormatterTest {
         BaseFormatter baseFormatter = getBaseFormatter(expected);
 
         //when
-        baseFormatter.addMediaType(expected);
+        baseFormatter._addMediaType(expected);
         List<String> list = baseFormatter.getValidTypes(Collections.singletonList(expected));
 
         //then
@@ -109,6 +109,19 @@ public class BaseFormatterTest {
     public void shouldGetPreferableScoreForCurrentFormatter() {
         //given
         @NotNull BaseFormatter baseFormatter = getBaseFormatter("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c");
+        baseFormatter._addMediaType("text/x-dvi");
+
+        //when
+        double score = baseFormatter.score();
+
+        //then
+        assertEquals(0.8, score, 0.0);
+    }
+
+    @Test
+    public void shouldCallInternalMethod_FromDeprecated() {
+        //given
+        @NotNull BaseFormatter baseFormatter = getBaseFormatter("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c");
         baseFormatter.addMediaType("text/x-dvi");
 
         //when
@@ -122,8 +135,8 @@ public class BaseFormatterTest {
     public void shouldSelectBestPreferableScoreForCurrentFormatter() {
         //given
         @NotNull BaseFormatter baseFormatter = getBaseFormatter("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c");
-        baseFormatter.addMediaType("text/x-dvi");
-        baseFormatter.addMediaType("text/html");
+        baseFormatter._addMediaType("text/x-dvi");
+        baseFormatter._addMediaType("text/html");
 
         //when
         double score = baseFormatter.score();

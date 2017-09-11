@@ -24,9 +24,12 @@ public abstract class BaseFormatter implements DataFormatter {
 
     private final List<String> _mediaTypes = new ArrayList<>();
 
-    //todo dxa2 package-private access
+    /**
+     * @deprecated since 2.0, use {@link #_addMediaType(String)} instead
+     */
+    @Deprecated
     public void addMediaType(String mediaType) {
-        _mediaTypes.add(mediaType);
+        _addMediaType(mediaType);
     }
 
     @Override
@@ -75,5 +78,9 @@ public abstract class BaseFormatter implements DataFormatter {
         }
 
         return result;
+    }
+
+    void _addMediaType(String mediaType) {
+        _mediaTypes.add(mediaType);
     }
 }

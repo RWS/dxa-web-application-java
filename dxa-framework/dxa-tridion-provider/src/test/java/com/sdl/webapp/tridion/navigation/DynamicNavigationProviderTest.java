@@ -51,7 +51,7 @@ public class DynamicNavigationProviderTest {
     private OnDemandNavigationModelProvider onDemandNavigationModelProvider;
 
     @Mock
-    private AbstractStaticNavigationProvider staticNavigationProvider;
+    private StaticNavigationProvider staticNavigationProvider;
 
     @Mock
     private Localization localization;

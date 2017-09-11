@@ -19,7 +19,7 @@ public class AtomFormatter extends FeedFormatter {
 
     public AtomFormatter(HttpServletRequest request, WebRequestContext context) {
         super(request, context);
-        this.addMediaType("application/atom+xml");
+        this._addMediaType("application/atom+xml");
     }
 
     @Override

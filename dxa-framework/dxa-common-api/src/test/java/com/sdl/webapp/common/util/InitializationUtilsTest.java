@@ -46,15 +46,20 @@ public class InitializationUtilsTest {
         Collection<Resource> resources = InitializationUtils.getAllResources();
 
         //then
-        assertEquals(6, resources.size());
+        // also loads properties from production classpath since resources are loaded using wildcard classpath*
+        // should not affect production usage though
+        assertEquals(9, resources.size());
         assertThat(resources, contains(
                 // contains() also check the order of items
                 hasProperty("path", containsString("dxa.defaults.properties")),
                 hasProperty("path", containsString("dxa.modules.cid.properties")),
                 hasProperty("path", containsString("dxa.modules.xo.properties")),
                 hasProperty("path", containsString("dxa.properties")),
+                hasProperty("path", containsString("dxa.addons.device-families.properties")),
                 hasProperty("path", containsString("dxa.addons.staging.properties")),
-                hasProperty("path", containsString("dxa.addons.utf8-bom"))));
+                hasProperty("path", containsString("dxa.addons.tests.properties")),
+                hasProperty("path", containsString("dxa.addons.utf8-bom")),
+                hasProperty("path", containsString("dxa.addons.device-families.properties"))));
     }
 
     @Test

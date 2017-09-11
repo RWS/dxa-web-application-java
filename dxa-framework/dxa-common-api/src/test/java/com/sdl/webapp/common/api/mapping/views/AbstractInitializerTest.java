@@ -34,7 +34,7 @@ public class AbstractInitializerTest {
     private ViewModelRegistry registry;
 
     @InjectMocks
-    private AbstractInitializer initializer = new TestClass();
+    private AbstractModuleInitializer initializer = new TestClass();
 
     @Test
     public void shouldRegisterAllKnownAnnotations() {
@@ -42,17 +42,10 @@ public class AbstractInitializerTest {
         ReflectionTestUtils.invokeMethod(initializer, "initialize");
 
         //then
-        verifyRegistration("test1", "Entity", Test1.class);
-
-        verifyRegistration("test2", "Entity", Test2.class);
-        verifyRegistration("test2.1", "Entity", Test21.class);
-        verifyRegistration(null, "Entity", NoView1.class);
-
         verifyRegistration("test3", "Entity", Test3.class);
 
         verifyRegistration("test4", "Entity", Test4.class);
         verifyRegistration("test4.1", "Entity", Test41.class);
-        verifyRegistration("test1", "Entity", Test1.class);
         verifyRegistration(null, "Entity", NoView2.class);
         verifyRegistration(null, "Page", NoViewPage.class);
         verifyRegistration(null, "Region", NoViewRegion.class);
@@ -83,12 +76,6 @@ public class AbstractInitializerTest {
         }), eq(clazz));
     }
 
-    @RegisteredView(viewName = "test1", clazz = Test1.class)
-    @RegisteredViews({
-            @RegisteredView(viewName = "test2", clazz = Test2.class),
-            @RegisteredView(viewName = "test2.1", clazz = Test21.class),
-            @RegisteredView(clazz = NoView1.class)
-    })
     @RegisteredViewModel(viewName = "test3", modelClass = Test3.class)
     @RegisteredViewModels({
             @RegisteredViewModel(viewName = "test4", modelClass = Test4.class),
@@ -99,24 +86,12 @@ public class AbstractInitializerTest {
             @RegisteredViewModel(modelClass = NotEntity.class),
             @RegisteredViewModel(modelClass = NotEntity2.class, controllerName = "Hello")
     })
-    private static class TestClass extends AbstractInitializer {
+    private static class TestClass extends AbstractModuleInitializer {
 
         @Override
         protected String getAreaName() {
             return AREA;
         }
-    }
-
-    private static class Test1 extends AbstractEntityModel {
-
-    }
-
-    private static class Test2 extends AbstractEntityModel {
-
-    }
-
-    private static class Test21 extends AbstractEntityModel {
-
     }
 
     private static class Test3 extends AbstractEntityModel {
@@ -128,10 +103,6 @@ public class AbstractInitializerTest {
     }
 
     private static class Test41 extends AbstractEntityModel {
-
-    }
-
-    private static class NoView1 extends AbstractEntityModel {
 
     }
 

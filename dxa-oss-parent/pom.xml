@@ -216,11 +216,6 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-common-impl</artifactId>
-                <version>${dxa.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-tridion-common</artifactId>
                 <version>${dxa.version}</version>
             </dependency>
@@ -238,18 +233,6 @@
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-tridion-provider</artifactId>
                 <version>${dxa.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-r2-provider</artifactId>
-                <version>${dxa.version}</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-dd4t-provider</artifactId>
-                <version>${dxa.version}</version>
-                <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
@@ -288,27 +271,7 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-context-expressions-abstract</artifactId>
-                <version>${dxa-module-context-expressions}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-context-expressions-legacy</artifactId>
-                <version>${dxa-module-context-expressions}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-smarttarget</artifactId>
-                <version>${dxa-module-smarttarget.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-smarttarget-abstract</artifactId>
-                <version>${dxa-module-smarttarget.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-smarttarget-legacy</artifactId>
                 <version>${dxa-module-smarttarget.version}</version>
             </dependency>
             <dependency>

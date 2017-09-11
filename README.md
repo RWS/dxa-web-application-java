@@ -79,8 +79,6 @@ DD4T support
 ---
 DD4T 2.1 for Java is incorporated into DXA codebase in `dxa-compatible` artifact. You don't need separate dependencies on DD4T if you're migrating to DXA from DD4T.
 
-`dxa-dd4t-2013sp1` is a former `dd4t-providers` artifact which you only need if you have DD4T-based (or DXA pre-1.6 legacy) application that uses on-premise SDL Tridion 2013SP1.
-
 Snapshots
 ---------
 DXA publishes SNAPSHOT versions to Sonatype. If you want to use them, you have to configure `https://oss.sonatype.org/content/repositories/snapshots` as a repository in your Maven settings. Read [this](https://maven.apache.org/settings.html#Repositories) for instructions.

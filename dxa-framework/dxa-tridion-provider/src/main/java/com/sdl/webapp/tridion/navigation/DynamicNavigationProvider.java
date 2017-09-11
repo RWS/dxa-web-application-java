@@ -38,7 +38,7 @@ import static com.sdl.dxa.common.util.PathUtils.isHomePath;
 
 /**
  * Navigation Provider implementation based on Taxonomies (Categories &amp; Keywords).
- * <p>Falls back to {@link AbstractStaticNavigationProvider} when dynamic navigation is not available.</p>
+ * <p>Falls back to {@link StaticNavigationProvider} when dynamic navigation is not available.</p>
  */
 @Slf4j
 @Primary
@@ -46,7 +46,7 @@ import static com.sdl.dxa.common.util.PathUtils.isHomePath;
 @Profile("dynamic.navigation.provider")
 public class DynamicNavigationProvider implements NavigationProvider, OnDemandNavigationProvider {
 
-    private final AbstractStaticNavigationProvider staticNavigationProvider;
+    private final StaticNavigationProvider staticNavigationProvider;
 
     private final NavigationModelProvider navigationModelProvider;
 
@@ -55,7 +55,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
     private final LinkResolver linkResolver;
 
     @Autowired
-    public DynamicNavigationProvider(AbstractStaticNavigationProvider staticNavigationProvider,
+    public DynamicNavigationProvider(StaticNavigationProvider staticNavigationProvider,
                                      LinkResolver linkResolver,
                                      NavigationModelProvider navigationModelProvider,
                                      OnDemandNavigationModelProvider onDemandNavigationModelProvider) {

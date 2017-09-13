@@ -1,15 +1,17 @@
 package com.sdl.dxa.caching.wrapper;
 
+import com.sdl.dxa.caching.LocalizationAwareCacheKey;
+import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import org.junit.Test;
 
 import javax.cache.Cache;
-import javax.cache.CacheManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -19,16 +21,17 @@ public class PagesCopyingCacheTest {
     @Test
     public void shouldUseSimplePagesCache_ToGetCache() {
         //given 
-        CacheManager cacheManager = mock(CacheManager.class);
         //noinspection unchecked
         Cache<Object, Object> cache = mock(Cache.class);
-        when(cacheManager.getCache(eq("pages"))).thenReturn(cache);
+
+        NamedCacheProvider cacheProvider = mock(NamedCacheProvider.class);
+        when(cacheProvider.getCache(eq("pages"), any(), any())).thenReturn(cache);
 
         PagesCopyingCache pagesCopyingCache = new PagesCopyingCache();
-        pagesCopyingCache.setCacheManager(cacheManager);
+        pagesCopyingCache.setCacheProvider(cacheProvider);
 
-        //when
-        Cache<Object, PageModel> actual = pagesCopyingCache.getCache();
+        // when
+        Cache<LocalizationAwareCacheKey, PageModel> actual = pagesCopyingCache.getCache();
 
         //then
         assertSame(cache, actual);

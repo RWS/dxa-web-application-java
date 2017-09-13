@@ -1,6 +1,5 @@
 package com.sdl.dxa.caching;
 
-import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.WebRequestContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.interceptor.KeyGenerator;
@@ -17,11 +16,12 @@ public class LocalizationAwareKeyGenerator implements KeyGenerator {
     private WebRequestContext webRequestContext;
 
     @Override
-    public Object generate(Object target, Method method, Object... params) {
-        return SimpleKeyGenerator.generateKey(Lists.asList(webRequestContext.getLocalization().getId(), params).toArray(new Object[params.length + 1]));
+    public LocalizationAwareCacheKey generate(Object target, Method method, Object... params) {
+        return new LocalizationAwareCacheKey(webRequestContext.getLocalization().getId(),
+                SimpleKeyGenerator.generateKey(params));
     }
 
-    public Object generate(Object... params) {
+    public LocalizationAwareCacheKey generate(Object... params) {
         return generate(null, null, params);
     }
 }

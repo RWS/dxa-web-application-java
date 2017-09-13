@@ -65,6 +65,15 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
         return serviceUrl;
     }
 
+    /**
+     * Returns a health check URL for the Model Service. HTTP status after calling to the returned endpoint is supposed to show the status of Model Service.
+     *
+     * @return URL of the MS for the health check
+     */
+    public String getHealthCheckUrl() {
+        return getServiceUrl();
+    }
+
     public String getPageModelUrl() {
         return pageModelUrl;
     }

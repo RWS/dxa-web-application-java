@@ -1,7 +1,7 @@
 package com.sdl.webapp.common.impl.taglib.dxa;
 
+import com.sdl.dxa.caching.CompositeOutputCacheKeyBase;
 import com.sdl.dxa.caching.NeverCached;
-import com.sdl.dxa.caching.wrapper.CompositeOutputCacheKey;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.ViewModel;
@@ -32,11 +32,11 @@ public class EntityTag extends AbstractMarkupTag {
     private String viewName;
 
     @Override
-    protected Optional<CompositeOutputCacheKey> getCacheKey(String include, ViewModel model) {
+    protected Optional<CompositeOutputCacheKeyBase> getCacheKey(String include, ViewModel model) {
         if (model.getClass().isAnnotationPresent(NeverCached.class)) {
             return Optional.empty();
         }
-        return Optional.of(new CompositeOutputCacheKey(entity.getId(), viewName, include, model.getMvcData(), (HttpServletRequest) pageContext.getRequest()));
+        return Optional.of(new CompositeOutputCacheKeyBase(entity.getId(), viewName, include, model.getMvcData(), (HttpServletRequest) pageContext.getRequest()));
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.markup;
 
-import com.sdl.dxa.caching.wrapper.CompositeOutputCacheKey;
+import com.sdl.dxa.caching.CompositeOutputCacheKeyBase;
+import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.dxa.caching.wrapper.OutputCache;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.ViewModel;
@@ -22,7 +23,7 @@ public class AbstractMarkupTag extends TagSupport {
 
     private MarkupDecoratorRegistry markupDecoratorRegistry = null;
 
-    protected Optional<CompositeOutputCacheKey> getCacheKey(String include, ViewModel model) {
+    protected Optional<CompositeOutputCacheKeyBase> getCacheKey(String include, ViewModel model) {
         return Optional.empty();
     }
 
@@ -80,24 +81,27 @@ public class AbstractMarkupTag extends TagSupport {
     }
 
     private HtmlNode _processInclude(String include, ViewModel model) throws ServletException, IOException {
-        StringWriter sw = new StringWriter();
         pageContext.getRequest().setAttribute("ParentModel", model);
 
-        Optional<CompositeOutputCacheKey> optionalKey = getCacheKey(include, model);
-        Object specificKey = optionalKey.map(compositeOutputCacheKey -> getOutputCache().getSpecificKey(compositeOutputCacheKey)).orElse(null);
-        if (optionalKey.isPresent() && getOutputCache().containsKey(specificKey)) {
-            return getOutputCache().get(specificKey);
+        OutputCache outputCache = getOutputCache();
+
+        Optional<CompositeOutputCacheKeyBase> optionalKey = getCacheKey(include, model);
+        LocalizationAwareCacheKey specificKey = optionalKey.map(outputCache::getSpecificKey).orElse(null);
+        boolean cacheAccessible = optionalKey.isPresent() && specificKey != null;
+
+        if (cacheAccessible && outputCache.containsKey(specificKey)) {
+            return outputCache.get(specificKey);
         }
 
-        try {
+        try (StringWriter sw = new StringWriter()) {
             pageContext.pushBody(sw);
             pageContext.include(include);
             String renderedHtml = sw.toString();
             ParsableHtmlNode markup = new ParsableHtmlNode(renderedHtml);
             HtmlNode htmlNode = this.decorateMarkup(markup, model);
 
-            if (optionalKey.isPresent() && specificKey != null) {
-                getOutputCache().addAndGet(specificKey, htmlNode);
+            if (cacheAccessible) {
+                outputCache.addAndGet(specificKey, htmlNode);
             }
 
             return htmlNode;

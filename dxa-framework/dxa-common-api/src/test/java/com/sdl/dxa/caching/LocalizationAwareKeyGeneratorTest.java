@@ -34,7 +34,7 @@ public class LocalizationAwareKeyGeneratorTest {
     @Test
     public void shouldDelegateGeneration_ToSimpleKeyGenerator() {
         //given
-        Object expected = SimpleKeyGenerator.generateKey("42", "a", "b", "c");
+        Object expected = new LocalizationAwareCacheKey("42", SimpleKeyGenerator.generateKey("a", "b", "c"));
 
         //when
         Object actual = keyGenerator.generate("a", "b", "c");

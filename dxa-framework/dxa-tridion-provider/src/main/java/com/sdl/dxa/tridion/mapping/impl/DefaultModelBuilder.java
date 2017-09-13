@@ -7,9 +7,10 @@ import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.caching.ConditionalKey;
+import com.sdl.dxa.caching.ConditionalKey.ConditionalKeyBuilder;
+import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.dxa.caching.NeverCached;
-import com.sdl.dxa.caching.wrapper.ConditionalKey;
-import com.sdl.dxa.caching.wrapper.ConditionalKey.ConditionalKeyBuilder;
 import com.sdl.dxa.caching.wrapper.EntitiesCache;
 import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
@@ -96,7 +97,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                 modelType = viewModelRegistry.getViewModelType(mvcData);
             }
 
-            Object key = entitiesCache.getSpecificKey(modelData);
+            LocalizationAwareCacheKey key = entitiesCache.getSpecificKey(modelData);
             synchronized (this) {
                 if (entitiesCache.containsKey(key)) {
                     //noinspection unchecked
@@ -189,7 +190,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @Override
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
-        Object cacheKey = pagesCopyingCache.getSpecificKey(modelData);
+        LocalizationAwareCacheKey cacheKey = pagesCopyingCache.getSpecificKey(modelData);
         synchronized (this) {
             if (pagesCopyingCache.containsKey(cacheKey)) {
                 return pagesCopyingCache.get(cacheKey);

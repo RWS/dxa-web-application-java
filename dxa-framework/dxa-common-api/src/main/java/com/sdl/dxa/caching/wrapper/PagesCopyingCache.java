@@ -1,6 +1,7 @@
 package com.sdl.dxa.caching.wrapper;
 
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.webapp.common.api.model.PageModel;
 import org.springframework.stereotype.Component;
 
@@ -13,7 +14,12 @@ public class PagesCopyingCache extends CopyingCache<PageModelData, PageModel> {
     }
 
     @Override
-    public Object getSpecificKey(PageModelData pageModelData, Object... keyParams) {
+    public Class<PageModel> getValueType() {
+        return PageModel.class;
+    }
+
+    @Override
+    public LocalizationAwareCacheKey getSpecificKey(PageModelData pageModelData, Object... keyParams) {
         return getKey(pageModelData.getUrlPath(), pageModelData.getMvcData());
     }
 

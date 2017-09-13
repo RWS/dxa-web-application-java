@@ -1,4 +1,4 @@
-package com.sdl.dxa.caching.wrapper;
+package com.sdl.dxa.caching;
 
 import lombok.Builder;
 import lombok.Value;
@@ -10,7 +10,7 @@ import lombok.Value;
 @Builder
 public class ConditionalKey {
 
-    private Object key;
+    private LocalizationAwareCacheKey key;
 
     private boolean skipCaching;
 }

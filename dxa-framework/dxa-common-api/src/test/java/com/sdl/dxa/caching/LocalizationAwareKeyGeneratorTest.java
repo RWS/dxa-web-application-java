@@ -7,10 +7,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.Serializable;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -34,15 +38,26 @@ public class LocalizationAwareKeyGeneratorTest {
     @Test
     public void shouldDelegateGeneration_ToSimpleKeyGenerator() {
         //given
-        Object expected = new LocalizationAwareCacheKey("42", SimpleKeyGenerator.generateKey("a", "b", "c"));
+        LocalizationAwareCacheKey expected = new LocalizationAwareCacheKey("42", (Serializable) SimpleKeyGenerator.generateKey("a", "b", "c"));
 
         //when
-        Object actual = keyGenerator.generate("a", "b", "c");
-        Object actual2 = keyGenerator.generate(null, null, "a", "b", "c");
+        LocalizationAwareCacheKey actual = keyGenerator.generate("a", "b", "c");
+        LocalizationAwareCacheKey actual2 = keyGenerator.generate(null, null, "a", "b", "c");
 
         //then
         assertEquals(expected, actual);
         assertEquals(expected, actual2);
+    }
+
+    @Test
+    public void shouldWrapWithSimpleKey_IfParamIsSingle() {
+        //given 
+
+        //when
+        LocalizationAwareCacheKey key = keyGenerator.generate("a");
+
+        //then
+        assertTrue(key.getKey() instanceof SimpleKey);
     }
 
 }

@@ -7,6 +7,7 @@ import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.content.client.configuration.impl.BaseClientConfigurationLoader;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Triple;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +21,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.TimeUnit;
 
 import static com.sdl.web.client.configuration.ClientConstants.Cache.DEFAULT_CACHE_URI;
@@ -41,6 +46,10 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     @Getter
     private CacheManager cacheManager;
+
+    private Set<String> ownCachesNames = new ConcurrentSkipListSet<>();
+
+    private Map<Triple<String, Class, Class>, Cache> ownCaches = new ConcurrentSkipListMap<>();
 
     private com.sdl.web.client.cache.CacheProvider cilCacheProvider;
 
@@ -71,6 +80,15 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
                                                     of(this.cilCacheProvider.getCacheExpirationPeriod(), TimeUnit.SECONDS))
                                     )));
         }
+
+        if (!ownCachesNames.contains(cacheName)) {
+            Triple<String, Class, Class> triple = Triple.of(cacheName, keyType, valueType);
+            if (!ownCaches.containsKey(triple)) {
+                ownCaches.put(triple, cache);
+                ownCachesNames.add(cacheName);
+            }
+        }
+
         return cache;
     }
 
@@ -80,8 +98,18 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
     }
 
     @Override
+    public Collection<Cache> getOwnCaches() {
+        return ownCaches.values();
+    }
+
+    @Override
+    public boolean isCacheEnabled() {
+        return cilCacheProvider.isCacheEnabled();
+    }
+
+    @Override
     public boolean isCacheEnabled(String cacheName) {
-        return cilCacheProvider.isCacheEnabled() && !disabledCaches.contains(cacheName);
+        return isCacheEnabled() && !disabledCaches.contains(cacheName);
     }
 
     private CacheManager getCacheManager(String cacheManagerUri) {

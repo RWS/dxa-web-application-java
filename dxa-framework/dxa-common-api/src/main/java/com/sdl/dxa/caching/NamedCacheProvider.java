@@ -3,6 +3,7 @@ package com.sdl.dxa.caching;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
+import java.util.Collection;
 
 /**
  * Cache provider fox DXA that prefers cache name over types.
@@ -30,6 +31,22 @@ public interface NamedCacheProvider {
      * @return cache instance, never {@code null} by convention
      */
     Cache<Object, Object> getCache(String cacheName);
+
+    /**
+     * Returns a collection of all the caches requested only through this instance of the provider.
+     * Hence, the caches created or used purely by, for example, CIL are not included.
+     * State of the caches is not guaranteed, thus they may be closed.
+     *
+     * @return collection of own current caches
+     */
+    Collection<Cache> getOwnCaches();
+
+    /**
+     * Checks if the cache is enabled on the global level and not for the specific caches.
+     *
+     * @return whether caching is globally not disabled
+     */
+    boolean isCacheEnabled();
 
     /**
      * Checks whether caching is enabled for the given cache name.

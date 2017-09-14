@@ -9,5 +9,5 @@ public class LocalizationAwareCacheKey implements Serializable {
 
     private String localizationId;
 
-    private Object key;
+    private Serializable key;
 }

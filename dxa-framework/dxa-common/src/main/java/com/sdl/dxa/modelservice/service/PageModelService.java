@@ -12,6 +12,4 @@ public interface PageModelService {
      */
     @NotNull
     PageModelData loadPageModel(PageRequestDto pageRequest) throws ContentProviderException;
-
-    public PageModelData processR2PageModel(String pageContent, PageRequestDto pageRequest) throws ContentProviderException;
 }

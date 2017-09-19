@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<config>
-    <cache alias="defaultCache">
-        <expiry>
-            <ttl unit="seconds">60</ttl>
-        </expiry>
-        <heap unit="entries">10000</heap>
-    </cache>
-</config>

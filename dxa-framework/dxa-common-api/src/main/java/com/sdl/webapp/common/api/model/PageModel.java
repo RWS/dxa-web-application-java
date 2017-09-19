@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.model;
 
-import com.sdl.dxa.caching.wrapper.VolatileModel;
+import com.sdl.dxa.caching.VolatileModel;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,7 +10,7 @@ public interface PageModel extends ViewModel, FeedItemsProvider, CanFilterEntiti
 
     String getId();
 
-    void setId(String Id);
+    void setId(String id);
 
     String getName();
 

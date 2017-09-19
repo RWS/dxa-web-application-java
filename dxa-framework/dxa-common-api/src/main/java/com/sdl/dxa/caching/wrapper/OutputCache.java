@@ -1,5 +1,7 @@
 package com.sdl.dxa.caching.wrapper;
 
+import com.sdl.dxa.caching.CompositeOutputCacheKeyBase;
+import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import org.springframework.stereotype.Component;
 
@@ -8,10 +10,10 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * Output cache that accepts a composite key as a required key.
  *
- * @see CompositeOutputCacheKey
+ * @see CompositeOutputCacheKeyBase
  */
 @Component
-public class OutputCache extends SimpleCacheWrapper<CompositeOutputCacheKey, HtmlNode> {
+public class OutputCache extends SimpleCacheWrapper<CompositeOutputCacheKeyBase, HtmlNode> {
 
     private static final String USER_AGENT_HEADER = "User-Agent";
 
@@ -21,7 +23,12 @@ public class OutputCache extends SimpleCacheWrapper<CompositeOutputCacheKey, Htm
     }
 
     @Override
-    public Object getSpecificKey(CompositeOutputCacheKey keyBase, Object... keyParams) {
+    public Class<HtmlNode> getValueType() {
+        return HtmlNode.class;
+    }
+
+    @Override
+    public LocalizationAwareCacheKey getSpecificKey(CompositeOutputCacheKeyBase keyBase, Object... keyParams) {
         HttpServletRequest request = keyBase.getRequest();
         return getKey(keyBase.getPageId(),
                 keyBase.getName(),

@@ -1,35 +1,39 @@
 package com.sdl.dxa.caching.wrapper;
 
+import com.sdl.dxa.caching.ConditionalKey;
+import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
+import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.NeverCached;
+import com.sdl.dxa.caching.VolatileModel;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.cache.Cache;
-import javax.cache.CacheManager;
 
 /**
  * Wrapper on {@link Cache}.
  *
+ * @param <B> base type used for a key calculation in {@link #getSpecificKey(Object, Object...)}
  * @param <V> value type of the cache
  */
 @Slf4j
-public abstract class SimpleCacheWrapper<K, V> {
+public abstract class SimpleCacheWrapper<B, V> {
 
     private LocalizationAwareKeyGenerator keyGenerator;
 
-    private Cache<Object, V> cache;
+    private NamedCacheProvider cacheProvider;
 
     @Autowired
     public void setKeyGenerator(LocalizationAwareKeyGenerator keyGenerator) {
         this.keyGenerator = keyGenerator;
     }
 
-    @Autowired(required = false) // cannot autowire in constructor because CacheManager may not exist
-    public void setCacheManager(CacheManager cacheManager) {
-        cache = cacheManager == null ? null : cacheManager.getCache(getCacheName());
+    @Autowired
+    public void setCacheProvider(NamedCacheProvider cacheProvider) {
+        this.cacheProvider = cacheProvider;
     }
 
     /**
@@ -40,12 +44,19 @@ public abstract class SimpleCacheWrapper<K, V> {
     public abstract String getCacheName();
 
     /**
+     * Returns current cache value type.
+     *
+     * @return value type
+     */
+    public abstract Class<V> getValueType();
+
+    /**
      * Returns current cache instance.
      *
      * @return current cache for model
      */
-    public Cache<Object, V> getCache() {
-        return this.cache;
+    public Cache<LocalizationAwareCacheKey, V> getCache() {
+        return cacheProvider.getCache(getCacheName(), LocalizationAwareCacheKey.class, getValueType());
     }
 
     /**
@@ -54,11 +65,11 @@ public abstract class SimpleCacheWrapper<K, V> {
      * @return whether caching is enabled
      */
     public boolean isCachingEnabled() {
-        return getCache() != null;
+        return cacheProvider.isCacheEnabled(getCacheName());
     }
 
     /**
-     * Checks if conditional key doesn't prevent caching and procedd wth {@link #addAndGet(Object, Object)}.
+     * Checks if conditional key doesn't prevent caching and proceed with {@link #addAndGet(LocalizationAwareCacheKey, Object)}.
      *
      * @param key   conditional key with a key formed by {@link #getSpecificKey(Object, Object...)} and a flag whether this needs to be cached
      * @param value value to cache
@@ -80,7 +91,7 @@ public abstract class SimpleCacheWrapper<K, V> {
      * @param key   key formed by {@link #getSpecificKey(Object, Object...)}
      * @return value put in cache
      */
-    public V addAndGet(Object key, V value) {
+    public V addAndGet(LocalizationAwareCacheKey key, V value) {
         if (!isCachingEnabled()) {
             return value;
         }
@@ -102,7 +113,7 @@ public abstract class SimpleCacheWrapper<K, V> {
      * @return value from cache of {@code null} if not found
      */
     @Nullable
-    public V get(Object key) {
+    public V get(LocalizationAwareCacheKey key) {
         return containsKey(key) ? getCache().get(key) : null;
     }
 
@@ -113,7 +124,7 @@ public abstract class SimpleCacheWrapper<K, V> {
      * @param keyParams set of params to form the key
      * @return the cache key
      */
-    public abstract Object getSpecificKey(K keyBase, Object... keyParams);
+    public abstract LocalizationAwareCacheKey getSpecificKey(B keyBase, Object... keyParams);
 
     /**
      * Returns whether caching is enabled and the key based on list of params is cached.
@@ -121,7 +132,7 @@ public abstract class SimpleCacheWrapper<K, V> {
      * @param key key formed by {@link #getSpecificKey(Object, Object...)}
      * @return whether key is in cache
      */
-    public boolean containsKey(Object key) {
+    public boolean containsKey(LocalizationAwareCacheKey key) {
         if (!isCachingEnabled()) {
             return false;
         }
@@ -134,19 +145,19 @@ public abstract class SimpleCacheWrapper<K, V> {
         return contains;
     }
 
-    protected Object getKey(Object... keyParams) {
+    protected LocalizationAwareCacheKey getKey(Object... keyParams) {
         return this.keyGenerator.generate(keyParams);
     }
 
-    private void _logPut(Object key, String cacheName) {
+    private void _logPut(LocalizationAwareCacheKey key, String cacheName) {
         log.trace("Cache entry for key '{}' put in cache '{}'", key, cacheName);
     }
 
-    private void _logHit(Object key, String cacheName) {
+    private void _logHit(LocalizationAwareCacheKey key, String cacheName) {
         log.trace("Cache entry for key '{}' found in cache '{}'", key, cacheName);
     }
 
-    private void _logMiss(Object key, String cacheName) {
+    private void _logMiss(LocalizationAwareCacheKey key, String cacheName) {
         log.trace("No cache entry for key '{}' in cache '{}'", key, cacheName);
     }
 }

@@ -9,6 +9,7 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
+import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.wrapper.EntitiesCache;
 import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
@@ -51,13 +52,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.cache.Cache;
 import java.io.IOException;
 import java.util.Collections;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -229,6 +233,7 @@ public class DefaultModelBuilderTest {
         public PagesCopyingCache pagesCopyingCache() {
             LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
             PagesCopyingCache copyingCache = new PagesCopyingCache();
+            copyingCache.setCacheProvider(namedCacheProvider());
             copyingCache.setKeyGenerator(keyGenerator);
             return spy(copyingCache);
         }
@@ -237,8 +242,17 @@ public class DefaultModelBuilderTest {
         public EntitiesCache entitiesCache() {
             LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
             EntitiesCache entitiesCache = new EntitiesCache();
+            entitiesCache.setCacheProvider(namedCacheProvider());
             entitiesCache.setKeyGenerator(keyGenerator);
             return entitiesCache;
+        }
+
+        @Bean
+        public NamedCacheProvider namedCacheProvider() {
+            NamedCacheProvider provider = mock(NamedCacheProvider.class);
+            Cache cache = mock(Cache.class);
+            when(provider.getCache(anyString(), any(), any())).thenReturn(cache);
+            return provider;
         }
 
         @Bean

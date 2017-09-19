@@ -1,6 +1,4 @@
-package com.sdl.dxa.caching.wrapper;
-
-import com.sdl.dxa.caching.NeverCached;
+package com.sdl.dxa.caching;
 
 /**
  * Interface that determines if the implementor model is cacheable and may be cached.

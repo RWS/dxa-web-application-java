@@ -2,9 +2,11 @@ package com.sdl.dxa.caching;
 
 import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
 import com.sdl.web.client.cache.CacheProviderInitializer;
+import com.sdl.web.client.cache.GeneralCacheProvider;
 import com.sdl.web.client.configuration.ClientConstants;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.content.client.configuration.impl.BaseClientConfigurationLoader;
+import com.sdl.webapp.common.util.InitializationUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Triple;
@@ -21,7 +23,9 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -57,7 +61,17 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
     public DefaultNamedCacheProvider(ModelServiceConfiguration modelServiceConfiguration) throws ConfigurationException {
         this.modelServiceConfiguration = modelServiceConfiguration;
         this.cilCacheProvider = CacheProviderInitializer.getCacheProvider(getCacheConfiguration());
-        this.cacheManager = getCacheManager(getCacheConfiguration().getProperty(ClientConstants.Cache.CLIENT_CACHE_URI));
+        this.cacheManager = getCacheManager(
+                this.cilCacheProvider instanceof GeneralCacheProvider ?
+                        getCacheConfiguration().getProperty(ClientConstants.Cache.CLIENT_CACHE_URI) :
+                        InitializationUtils.getConfiguration("dxa.caching.configuration", null));
+
+        //cannot be null because of default value
+        //noinspection ConstantConditions
+        List<String> requiredCaches = Arrays.asList(
+                InitializationUtils.getConfiguration("dxa.caching.required.caches", "").split(",\\s?"));
+        cacheManager.getCacheNames().forEach(requiredCaches::remove);
+        requiredCaches.forEach(this::getCache);
     }
 
     @Override
@@ -115,7 +129,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
     private CacheManager getCacheManager(String cacheManagerUri) {
         String configUrl = cacheManagerUri;
         if (configUrl == null || configUrl.isEmpty()) {
-            log.warn("Config URI for Cache Provider in is empty, using default fallback option");
+            log.warn("Config URI for Cache Provider is empty, using default fallback option");
             configUrl = DEFAULT_CACHE_URI;
         }
 

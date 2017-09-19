@@ -8,11 +8,8 @@
         </expiry>
         <resources>
             <heap unit="entries">10000</heap>
-            <!--<offheap unit="MB">100</offheap>-->
         </resources>
     </cache-template>
-
-    <cache alias="failures" uses-template="default"/>
 
     <cache alias="defaultCache" uses-template="default"/>
 </config>

@@ -45,8 +45,8 @@
     </developers>
 
     <properties>
-        <dd4t.version>2.1.5-DXA18</dd4t.version>
-        <cd-cil.version>10.0.0-SNAPSHOT</cd-cil.version>
+        <dd4t.version>2.0.15.2-DXA18</dd4t.version>
+        <cd-cil.version>10.1.0-SNAPSHOT</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
@@ -153,7 +153,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.sdl.web</groupId>
+                <groupId>com.sdl.delivery</groupId>
                 <artifactId>cil</artifactId>
                 <version>${cd-cil.version}</version>
                 <type>pom</type>

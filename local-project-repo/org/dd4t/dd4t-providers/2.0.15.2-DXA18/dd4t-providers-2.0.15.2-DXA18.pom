@@ -5,16 +5,11 @@
     <parent>
         <artifactId>dd4t-parent</artifactId>
         <groupId>org.dd4t</groupId>
-        <version>2.1.5-DXA18</version>
+        <version>2.0.15.2-DXA18</version>
     </parent>
-
     <modelVersion>4.0.0</modelVersion>
-    <packaging>jar</packaging>
-    <artifactId>dd4t-api</artifactId>
-    <version>2.1.5-DXA18</version>
-
     <name>${project.groupId}:${project.artifactId}</name>
-    <description>Contains the dd4t interfaces and content model.</description>
+    <description>Providers for fetching Tridion content. For embedded usage.</description>
     <url>https://github.com/dd4t</url>
 
     <licenses>
@@ -44,31 +39,30 @@
         <developerConnection>scm:git:git@github.com:/dd4t/dd4t-2-java.git</developerConnection>
         <url>git@github.com:/dd4t/dd4t-2-java.git</url>
     </scm>
+    <artifactId>dd4t-providers</artifactId>
+    <packaging>jar</packaging>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <tridion.version>10.1.0-SNAPSHOT</tridion.version>
+        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.11</version>
-            <scope>test</scope>
+            <groupId>org.dd4t</groupId>
+            <artifactId>dd4t-core</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>cil</artifactId>
+            <version>${tridion.version}</version>
+            <type>pom</type>
         </dependency>
     </dependencies>
 </project>

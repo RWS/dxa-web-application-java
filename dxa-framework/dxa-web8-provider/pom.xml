@@ -50,7 +50,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sdl.web</groupId>
+            <groupId>com.sdl.delivery</groupId>
             <artifactId>cil</artifactId>
             <type>pom</type>
         </dependency>

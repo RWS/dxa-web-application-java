@@ -25,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -61,16 +62,19 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
     public DefaultNamedCacheProvider(ModelServiceConfiguration modelServiceConfiguration) throws ConfigurationException {
         this.modelServiceConfiguration = modelServiceConfiguration;
         this.cilCacheProvider = CacheProviderInitializer.getCacheProvider(getCacheConfiguration());
-        this.cacheManager = getCacheManager(
-                this.cilCacheProvider instanceof GeneralCacheProvider ?
-                        getCacheConfiguration().getProperty(ClientConstants.Cache.CLIENT_CACHE_URI) :
-                        InitializationUtils.getConfiguration("dxa.caching.configuration", null));
+
+        boolean cilUsesGeneralCache = this.cilCacheProvider instanceof GeneralCacheProvider;
+        String cacheConfigurationUri = cilUsesGeneralCache ? getCacheConfiguration().getProperty(ClientConstants.Cache.CLIENT_CACHE_URI) :
+                InitializationUtils.getConfiguration("dxa.caching.configuration", null);
+        log.info("Using cache config {}, CIL uses GeneralCacheProvider: {}", cacheConfigurationUri, cilUsesGeneralCache);
+        this.cacheManager = getCacheManager(cacheConfigurationUri);
 
         //cannot be null because of default value
         //noinspection ConstantConditions
-        List<String> requiredCaches = Arrays.asList(
-                InitializationUtils.getConfiguration("dxa.caching.required.caches", "").split(",\\s?"));
+        List<String> requiredCaches = new LinkedList<>(Arrays.asList(
+                InitializationUtils.getConfiguration("dxa.caching.required.caches", "").split(",\\s?")));
         cacheManager.getCacheNames().forEach(requiredCaches::remove);
+        log.info("Required caches not yet created: '{}', creating them", requiredCaches);
         requiredCaches.forEach(this::getCache);
     }
 
@@ -100,6 +104,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
             if (!ownCaches.containsKey(triple)) {
                 ownCaches.put(triple, cache);
                 ownCachesNames.add(cacheName);
+                log.debug("Added cache {} to own caches of DXA", cacheName);
             }
         }
 

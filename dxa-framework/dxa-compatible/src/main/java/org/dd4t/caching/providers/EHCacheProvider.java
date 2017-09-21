@@ -30,7 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -45,49 +44,26 @@ import java.util.concurrent.ConcurrentSkipListSet;
  */
 public class EHCacheProvider implements PayloadCacheProvider, CacheInvalidator {
 
-    private static final String CONFIG_FILENAME = "/ehcache-legacy.xml";
-
     /**
      * The name of the EHCache that contains the cached items for this
      * application
      */
     public static final String CACHE_NAME = "DD4T-Objects";
-
     public static final String CACHE_NAME_DEPENDENCY = "DD4T-Dependencies";
-
     public static final String DEPENDENT_KEY_FORMAT = "%s:%s";
 
     public static final int ADJUST_TTL = 2;
 
     private static final Logger LOG = LoggerFactory.getLogger(EHCacheProvider.class);
 
-    private final Cache cache;
+    private final Cache cache = CacheManager.getInstance().getCache(CACHE_NAME);
 
-    private final Cache dependencyCache;
+    private final Cache dependencyCache = CacheManager.create().getCache(CACHE_NAME_DEPENDENCY);
 
     private int expiredTTL = 299;
-
     private int cacheDependencyTTL = 299;
-
     private int cacheTTL = 3599;
-
     private boolean checkForPreview = false;
-
-    public EHCacheProvider() {
-        this(CONFIG_FILENAME);
-    }
-
-    public EHCacheProvider(String configFileName) {
-        LOG.debug("Starting cache provider with config file {}", configFileName);
-
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-        URL config = classLoader.getResource(configFileName);
-        if (config == null) {
-            config = EHCacheProvider.class.getResource(configFileName);
-        }
-        cache = CacheManager.create(config).getCache(CACHE_NAME);
-        dependencyCache = CacheManager.create(config).getCache(CACHE_NAME_DEPENDENCY);
-    }
 
     private static String getKey(Serializable key) {
         String[] parts = ((String) key).split(":");

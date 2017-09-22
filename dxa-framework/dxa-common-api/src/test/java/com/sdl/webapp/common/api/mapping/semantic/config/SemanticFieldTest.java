@@ -11,8 +11,6 @@ public class SemanticFieldTest {
     @Test
     public void shouldGenerateXPath() {
         //given
-        FieldPath fieldPath = new FieldPath("/Metadata/Test/Test2");
-
         SemanticField single = new SemanticField("name", "/Metadata", false, Collections.emptyMap());
         SemanticField metadata = new SemanticField("name", "/Metadata/Test/Test2", false, Collections.emptyMap());
         SemanticField content = new SemanticField("name", "/TSISchema/Test/Test2", false, Collections.emptyMap());
@@ -29,7 +27,17 @@ public class SemanticFieldTest {
         assertEquals("tcm:Metadata/custom:Metadata/custom:Test/custom:Test2", fromMetadata);
         assertEquals("tcm:Content/custom:TSISchema/custom:Test/custom:Test2", fromContent);
         assertEquals("tcm:Content/custom:TSISchema/custom:Test[1]/custom:field/custom:Test2", fromContext);
+    }
 
+    @Test
+    public void shouldUseFieldPath_ToStorePath() {
+        //given
+        FieldPath fieldPath = new FieldPath("/Metadata/Test/Test2");
+
+        //when
+        SemanticField metadata = new SemanticField("name", "/Metadata/Test/Test2", false, Collections.emptyMap());
+
+        //then
         assertEquals(fieldPath, metadata.getPath());
     }
 }

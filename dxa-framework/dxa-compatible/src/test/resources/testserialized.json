@@ -72,6 +72,7 @@
   },
   "ComponentPresentations": [
     {
+      "Conditions": null,
       "Component": {
         "Id": "tcm:1081-9921",
         "Title": "Context Expression Smoke Test - Description",
@@ -225,10 +226,10 @@
       "ExtensionData": null,
       "IsDynamic": false,
       "RenderedContent": "",
-      "OrderOnPage": 0,
-      "Conditions": null
+      "OrderOnPage": 0
     },
     {
+      "Conditions": null,
       "Component": {
         "Id": "tcm:1081-9922",
         "Title": "test-include-for-mobile",
@@ -472,10 +473,10 @@
       },
       "IsDynamic": false,
       "RenderedContent": "",
-      "OrderOnPage": 0,
-      "Conditions": null
+      "OrderOnPage": 0
     },
     {
+      "Conditions": null,
       "Component": {
         "Id": "tcm:1081-9931",
         "Title": "test-include-for-android",
@@ -719,10 +720,10 @@
       },
       "IsDynamic": false,
       "RenderedContent": "",
-      "OrderOnPage": 0,
-      "Conditions": null
+      "OrderOnPage": 0
     },
     {
+      "Conditions": null,
       "Component": {
         "Id": "tcm:1081-9923",
         "Title": "test-exclude-for-mobile",
@@ -966,10 +967,10 @@
       },
       "IsDynamic": false,
       "RenderedContent": "",
-      "OrderOnPage": 0,
-      "Conditions": null
+      "OrderOnPage": 0
     },
     {
+      "Conditions": null,
       "Component": {
         "Id": "tcm:1081-9930",
         "Title": "test-exclude-for-android",
@@ -1213,10 +1214,10 @@
       },
       "IsDynamic": false,
       "RenderedContent": "",
-      "OrderOnPage": 0,
-      "Conditions": null
+      "OrderOnPage": 0
     },
     {
+      "Conditions": null,
       "Component": {
         "Id": "tcm:1081-9924",
         "Title": "test-include-for-mobile-and-apple",
@@ -1461,10 +1462,10 @@
       },
       "IsDynamic": false,
       "RenderedContent": "",
-      "OrderOnPage": 0,
-      "Conditions": null
+      "OrderOnPage": 0
     },
     {
+      "Conditions": null,
       "Component": {
         "Id": "tcm:1081-9933",
         "Title": "test-include-for-mobile-and-android",
@@ -1709,10 +1710,10 @@
       },
       "IsDynamic": false,
       "RenderedContent": "",
-      "OrderOnPage": 0,
-      "Conditions": null
+      "OrderOnPage": 0
     },
     {
+      "Conditions": null,
       "Component": {
         "Id": "tcm:1081-9925",
         "Title": "test-include-for-mobile-not-apple",
@@ -1963,10 +1964,10 @@
       },
       "IsDynamic": false,
       "RenderedContent": "",
-      "OrderOnPage": 0,
-      "Conditions": null
+      "OrderOnPage": 0
     },
     {
+      "Conditions": null,
       "Component": {
         "Id": "tcm:1081-9932",
         "Title": "test-include-for-mobile-not-android",
@@ -2217,8 +2218,7 @@
       },
       "IsDynamic": true,
       "RenderedContent": "",
-      "OrderOnPage": 0,
-      "Conditions": null
+      "OrderOnPage": 0
     }
   ],
   "StructureGroup": {

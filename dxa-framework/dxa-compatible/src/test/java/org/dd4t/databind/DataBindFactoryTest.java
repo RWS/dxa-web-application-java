@@ -19,8 +19,6 @@ import org.springframework.util.Assert;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -56,7 +54,8 @@ public class DataBindFactoryTest {
 
         assertNotNull(serialized);
 
-        Files.write(Paths.get("/Users/rai/Sources/dd4t-2-java/dd4t-core/src/test/resources/testserialized.json"), serialized.getBytes());
+        String rootFolder = new File(ClassLoader.getSystemResource(".").getPath()).getParentFile().getParentFile().getPath();
+        FileUtils.write(new File(rootFolder + "/src/test/resources/testserialized.json"), serialized, "UTF-8");
     }
 
     @Test

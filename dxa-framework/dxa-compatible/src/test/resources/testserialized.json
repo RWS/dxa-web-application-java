@@ -1,0 +1,2232 @@
+{
+  "Id": "tcm:1081-9929-64",
+  "Title": "Context Expression Smoke Test",
+  "CustomProperties": {},
+  "ExtensionData": null,
+  "RevisionDate": "2016-06-13T15:42:13",
+  "Publication": {
+    "Id": "tcm:0-1081-1",
+    "Title": "500 Automated Test Parent (Legacy)",
+    "CustomProperties": {},
+    "ExtensionData": null
+  },
+  "OwningPublication": {
+    "Id": "tcm:0-1065-1",
+    "Title": "401 Automated Test Parent",
+    "CustomProperties": {},
+    "ExtensionData": null
+  },
+  "Folder": null,
+  "LastPublishedDate": "2017-08-29T00:00:00",
+  "Version": 3,
+  "MetadataFields": {},
+  "Categories": null,
+  "Schema": null,
+  "Filename": "context-expression-smoke-test",
+  "PageTemplate": {
+    "Id": "tcm:1081-108-128",
+    "Title": "Content Page Without Navigation",
+    "CustomProperties": {},
+    "ExtensionData": null,
+    "RevisionDate": "2014-06-25T14:37:02.387",
+    "Publication": null,
+    "OwningPublication": null,
+    "Folder": null,
+    "LastPublishedDate": null,
+    "Version": 0,
+    "MetadataFields": {
+      "includes": {
+        "Name": "includes",
+        "Values": [
+          "system/include/header",
+          "system/include/footer",
+          "system/include/content-tools"
+        ],
+        "NumericValues": [],
+        "DateTimeValues": [],
+        "LinkedComponentValues": [],
+        "EmbeddedValues": null,
+        "FieldType": 0,
+        "XPath": null,
+        "CategoryId": null,
+        "CategoryName": null
+      },
+      "view": {
+        "Name": "view",
+        "Values": [
+          "GeneralPage"
+        ],
+        "NumericValues": [],
+        "DateTimeValues": [],
+        "LinkedComponentValues": [],
+        "EmbeddedValues": null,
+        "FieldType": 0,
+        "XPath": null,
+        "CategoryId": null,
+        "CategoryName": null
+      }
+    },
+    "Categories": null,
+    "Schema": null,
+    "FileExtension": "html"
+  },
+  "ComponentPresentations": [
+    {
+      "Component": {
+        "Id": "tcm:1081-9921",
+        "Title": "Context Expression Smoke Test - Description",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2016-06-13T17:01:45",
+        "Publication": {
+          "Id": "tcm:0-1081-1",
+          "Title": "500 Automated Test Parent (Legacy)",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "OwningPublication": {
+          "Id": "tcm:0-1065-1",
+          "Title": "401 Automated Test Parent",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "Folder": {
+          "Id": "tcm:1081-2643-2",
+          "Title": "ContextExpression",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "PublicationId": "tcm:0-1081-1"
+        },
+        "LastPublishedDate": "0001-01-01T00:00:00",
+        "Version": 3,
+        "MetadataFields": {},
+        "Categories": [],
+        "Schema": {
+          "Id": "tcm:1081-80-8",
+          "Title": "Article",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "RevisionDate": null,
+          "Publication": null,
+          "OwningPublication": null,
+          "Folder": null,
+          "LastPublishedDate": null,
+          "Version": 0,
+          "MetadataFields": null,
+          "Categories": null,
+          "Schema": null,
+          "RootElementName": "Article"
+        },
+        "ComponentType": "NORMAL",
+        "Fields": {
+          "headline": {
+            "Name": "headline",
+            "Values": [
+              "Context Expression Smoke Test"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": "tcm:Content/custom:Article/custom:headline",
+            "CategoryId": null,
+            "CategoryName": null
+          },
+          "articleBody": {
+            "Name": "articleBody",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "subheading": {
+                  "Name": "subheading",
+                  "Values": [
+                    "Description"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:subheading",
+                  "KeywordValues": []
+                },
+                "content": {
+                  "Name": "content",
+                  "Values": [
+                    "<p>Automated test related to this page covers the following set of test cases for Context Expression:\n<br /></p><div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\"><div class=\"content-header-title\"><div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\"><div class=\"content-header-title\"><div class=\"content-header-id\"><div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\"><div class=\"content-header-title\"><a class=\"nolink\" href=\"http://nl1tr01.global.sdl.corp/testrail/index.php?/cases/view/5886804\">C5886804</a> - Context Expression installation Web App [Web8]</div></div></div><div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\"><div class=\"content-header-title\"><a class=\"nolink\" href=\"http://nl1tr01.global.sdl.corp/testrail/index.php?/cases/view/5971594\">C5971594</a> - Conditional CP - Include TG - True</div></div></div><div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\"><div class=\"content-header-title\"><a class=\"nolink\" href=\"http://nl1tr01.global.sdl.corp/testrail/index.php?/cases/view/5971595\">C5971595</a> - Conditional CP - Include TG - False\n<br /><div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\"><div class=\"content-header-title\"><a class=\"nolink\" href=\"http://nl1tr01.global.sdl.corp/testrail/index.php?/cases/view/5971596\">C5971596</a> - Conditional CP - Include multiple TGs - True</div></div></div><div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\"><div class=\"content-header-title\"><a class=\"nolink\" href=\"http://nl1tr01.global.sdl.corp/testrail/index.php?/cases/view/5971597\">C5971597</a> - Conditional CP - Include multiple TGs - True-False</div></div></div></div></div></div><div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\"><div class=\"content-header-title\"><a class=\"nolink\" href=\"http://nl1tr01.global.sdl.corp/testrail/index.php?/cases/view/5971599\">C5971599</a> - Conditional CP - Exclude TG - True</div></div></div><div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\"><div class=\"content-header-title\"><a class=\"nolink\" href=\"http://nl1tr01.global.sdl.corp/testrail/index.php?/cases/view/5971600\">C5971600</a> - Conditional CP - Exclude TG - False\n<br /><div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\"><div class=\"content-header-title\"><a class=\"nolink\" href=\"http://nl1tr01.global.sdl.corp/testrail/index.php?/cases/view/5971604\">C5971604</a> - Conditional CP - Include|Exclude TGs - True/True</div></div></div><a class=\"nolink\" href=\"http://nl1tr01.global.sdl.corp/testrail/index.php?/cases/view/5971605\">C5971605</a> - Conditional CP - Include|Exclude TGs - True/False\n<div id=\"qpane-header\" class=\"qpane-header content-header content-header-default\"><div class=\"content-header-inner\" /></div></div></div></div><br /><strong>note</strong>: this test is executed with the user agent corresponding to Apple iPhone 5 device\n<br /><em>Mozilla/5.0 (iPhone; CPU iPhone OS 9_1 like Mac OS X) AppleWebKit/601.1.46 (KHTML, like Gecko) Version/9.0 Mobile/13B143 Safari/601.1</em><br /></div><div class=\"content-header-id\" /></div></div></div></div></div></div>"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 2,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:content",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Content/custom:Article/custom:articleBody",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-232-8",
+              "Title": "Paragraph",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "Paragraph"
+            }
+          }
+        },
+        "Multimedia": null,
+        "EclId": null
+      },
+      "ComponentTemplate": {
+        "Id": "tcm:1081-83-32",
+        "Title": "Article",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2015-07-16T15:20:52.71",
+        "Publication": null,
+        "OwningPublication": null,
+        "Folder": null,
+        "LastPublishedDate": null,
+        "Version": 0,
+        "MetadataFields": {
+          "view": {
+            "Name": "view",
+            "Values": [
+              "Article"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": null,
+            "CategoryId": null,
+            "CategoryName": null
+          }
+        },
+        "Categories": null,
+        "Schema": null,
+        "OutputFormat": "HTML Fragment"
+      },
+      "ExtensionData": null,
+      "IsDynamic": false,
+      "RenderedContent": "",
+      "OrderOnPage": 0,
+      "Conditions": null
+    },
+    {
+      "Component": {
+        "Id": "tcm:1081-9922",
+        "Title": "test-include-for-mobile",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2016-06-13T13:58:32",
+        "Publication": {
+          "Id": "tcm:0-1081-1",
+          "Title": "500 Automated Test Parent (Legacy)",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "OwningPublication": {
+          "Id": "tcm:0-1065-1",
+          "Title": "401 Automated Test Parent",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "Folder": {
+          "Id": "tcm:1081-2643-2",
+          "Title": "ContextExpression",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "PublicationId": "tcm:0-1081-1"
+        },
+        "LastPublishedDate": "0001-01-01T00:00:00",
+        "Version": 1,
+        "MetadataFields": {
+          "standardMeta": {
+            "Name": "standardMeta",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "dateCreated": {
+                  "Name": "dateCreated",
+                  "Values": [],
+                  "NumericValues": [],
+                  "DateTimeValues": [
+                    "2016-06-13T14:57:26.973"
+                  ],
+                  "LinkedComponentValues": [],
+                  "FieldType": 9,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:dateCreated",
+                  "KeywordValues": []
+                },
+                "name": {
+                  "Name": "name",
+                  "Values": [
+                    "test-include-for-mobile-short-title"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:name",
+                  "KeywordValues": []
+                },
+                "description": {
+                  "Name": "description",
+                  "Values": [
+                    "test-include-for-mobile-meta-description"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 1,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:description",
+                  "KeywordValues": []
+                },
+                "introText": {
+                  "Name": "introText",
+                  "Values": [
+                    "test-include-for-mobile-intro-text"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:introText",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-231-8",
+              "Title": "Standard Metadata",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "StandardMetadata"
+            }
+          }
+        },
+        "Categories": [],
+        "Schema": {
+          "Id": "tcm:1081-80-8",
+          "Title": "Article",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "RevisionDate": null,
+          "Publication": null,
+          "OwningPublication": null,
+          "Folder": null,
+          "LastPublishedDate": null,
+          "Version": 0,
+          "MetadataFields": null,
+          "Categories": null,
+          "Schema": null,
+          "RootElementName": "Article"
+        },
+        "ComponentType": "NORMAL",
+        "Fields": {
+          "headline": {
+            "Name": "headline",
+            "Values": [
+              "test-include-for-mobile-headline"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": "tcm:Content/custom:Article/custom:headline",
+            "CategoryId": null,
+            "CategoryName": null
+          },
+          "articleBody": {
+            "Name": "articleBody",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "subheading": {
+                  "Name": "subheading",
+                  "Values": [
+                    "test-include-for-mobile-subheading"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:subheading",
+                  "KeywordValues": []
+                },
+                "content": {
+                  "Name": "content",
+                  "Values": [
+                    "test-include-for-mobile-content"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 2,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:content",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Content/custom:Article/custom:articleBody",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-232-8",
+              "Title": "Paragraph",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "Paragraph"
+            }
+          }
+        },
+        "Multimedia": null,
+        "EclId": null
+      },
+      "ComponentTemplate": {
+        "Id": "tcm:1081-83-32",
+        "Title": "Article",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2015-07-16T15:20:52.71",
+        "Publication": null,
+        "OwningPublication": null,
+        "Folder": null,
+        "LastPublishedDate": null,
+        "Version": 0,
+        "MetadataFields": {
+          "view": {
+            "Name": "view",
+            "Values": [
+              "Article"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": null,
+            "CategoryId": null,
+            "CategoryName": null
+          }
+        },
+        "Categories": null,
+        "Schema": null,
+        "OutputFormat": "HTML Fragment"
+      },
+      "ExtensionData": {
+        "ContextExpressions": {
+          "Schema": null,
+          "Include": {
+            "Name": "Include",
+            "Values": [
+              "cx.isMobile"
+            ],
+            "FieldType": 0
+          }
+        }
+      },
+      "IsDynamic": false,
+      "RenderedContent": "",
+      "OrderOnPage": 0,
+      "Conditions": null
+    },
+    {
+      "Component": {
+        "Id": "tcm:1081-9931",
+        "Title": "test-include-for-android",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2016-06-13T14:52:51",
+        "Publication": {
+          "Id": "tcm:0-1081-1",
+          "Title": "500 Automated Test Parent (Legacy)",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "OwningPublication": {
+          "Id": "tcm:0-1065-1",
+          "Title": "401 Automated Test Parent",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "Folder": {
+          "Id": "tcm:1081-2643-2",
+          "Title": "ContextExpression",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "PublicationId": "tcm:0-1081-1"
+        },
+        "LastPublishedDate": "0001-01-01T00:00:00",
+        "Version": 2,
+        "MetadataFields": {
+          "standardMeta": {
+            "Name": "standardMeta",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "dateCreated": {
+                  "Name": "dateCreated",
+                  "Values": [],
+                  "NumericValues": [],
+                  "DateTimeValues": [
+                    "2016-06-13T14:57:26.973"
+                  ],
+                  "LinkedComponentValues": [],
+                  "FieldType": 9,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:dateCreated",
+                  "KeywordValues": []
+                },
+                "name": {
+                  "Name": "name",
+                  "Values": [
+                    "test-include-for-android-short-title"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:name",
+                  "KeywordValues": []
+                },
+                "description": {
+                  "Name": "description",
+                  "Values": [
+                    "test-include-for-android-meta-description"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 1,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:description",
+                  "KeywordValues": []
+                },
+                "introText": {
+                  "Name": "introText",
+                  "Values": [
+                    "test-include-for-android-intro-text"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:introText",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-231-8",
+              "Title": "Standard Metadata",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "StandardMetadata"
+            }
+          }
+        },
+        "Categories": [],
+        "Schema": {
+          "Id": "tcm:1081-80-8",
+          "Title": "Article",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "RevisionDate": null,
+          "Publication": null,
+          "OwningPublication": null,
+          "Folder": null,
+          "LastPublishedDate": null,
+          "Version": 0,
+          "MetadataFields": null,
+          "Categories": null,
+          "Schema": null,
+          "RootElementName": "Article"
+        },
+        "ComponentType": "NORMAL",
+        "Fields": {
+          "headline": {
+            "Name": "headline",
+            "Values": [
+              "test-include-for-android-headline"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": "tcm:Content/custom:Article/custom:headline",
+            "CategoryId": null,
+            "CategoryName": null
+          },
+          "articleBody": {
+            "Name": "articleBody",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "subheading": {
+                  "Name": "subheading",
+                  "Values": [
+                    "test-include-for-android-subheading"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:subheading",
+                  "KeywordValues": []
+                },
+                "content": {
+                  "Name": "content",
+                  "Values": [
+                    "test-include-for-android-content"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 2,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:content",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Content/custom:Article/custom:articleBody",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-232-8",
+              "Title": "Paragraph",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "Paragraph"
+            }
+          }
+        },
+        "Multimedia": null,
+        "EclId": null
+      },
+      "ComponentTemplate": {
+        "Id": "tcm:1081-83-32",
+        "Title": "Article",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2015-07-16T15:20:52.71",
+        "Publication": null,
+        "OwningPublication": null,
+        "Folder": null,
+        "LastPublishedDate": null,
+        "Version": 0,
+        "MetadataFields": {
+          "view": {
+            "Name": "view",
+            "Values": [
+              "Article"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": null,
+            "CategoryId": null,
+            "CategoryName": null
+          }
+        },
+        "Categories": null,
+        "Schema": null,
+        "OutputFormat": "HTML Fragment"
+      },
+      "ExtensionData": {
+        "ContextExpressions": {
+          "Schema": null,
+          "Include": {
+            "Name": "Include",
+            "Values": [
+              "cx.isAndroid"
+            ],
+            "FieldType": 0
+          }
+        }
+      },
+      "IsDynamic": false,
+      "RenderedContent": "",
+      "OrderOnPage": 0,
+      "Conditions": null
+    },
+    {
+      "Component": {
+        "Id": "tcm:1081-9923",
+        "Title": "test-exclude-for-mobile",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2016-06-13T14:01:57",
+        "Publication": {
+          "Id": "tcm:0-1081-1",
+          "Title": "500 Automated Test Parent (Legacy)",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "OwningPublication": {
+          "Id": "tcm:0-1065-1",
+          "Title": "401 Automated Test Parent",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "Folder": {
+          "Id": "tcm:1081-2643-2",
+          "Title": "ContextExpression",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "PublicationId": "tcm:0-1081-1"
+        },
+        "LastPublishedDate": "0001-01-01T00:00:00",
+        "Version": 3,
+        "MetadataFields": {
+          "standardMeta": {
+            "Name": "standardMeta",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "dateCreated": {
+                  "Name": "dateCreated",
+                  "Values": [],
+                  "NumericValues": [],
+                  "DateTimeValues": [
+                    "2016-06-13T15:01:54"
+                  ],
+                  "LinkedComponentValues": [],
+                  "FieldType": 9,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:dateCreated",
+                  "KeywordValues": []
+                },
+                "name": {
+                  "Name": "name",
+                  "Values": [
+                    "test-exclude-for-mobile-short-title"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:name",
+                  "KeywordValues": []
+                },
+                "description": {
+                  "Name": "description",
+                  "Values": [
+                    "test-exclude-for-mobile-meta-description"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 1,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:description",
+                  "KeywordValues": []
+                },
+                "introText": {
+                  "Name": "introText",
+                  "Values": [
+                    "test-exclude-for-mobile-intro-text"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:introText",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-231-8",
+              "Title": "Standard Metadata",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "StandardMetadata"
+            }
+          }
+        },
+        "Categories": [],
+        "Schema": {
+          "Id": "tcm:1081-80-8",
+          "Title": "Article",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "RevisionDate": null,
+          "Publication": null,
+          "OwningPublication": null,
+          "Folder": null,
+          "LastPublishedDate": null,
+          "Version": 0,
+          "MetadataFields": null,
+          "Categories": null,
+          "Schema": null,
+          "RootElementName": "Article"
+        },
+        "ComponentType": "NORMAL",
+        "Fields": {
+          "headline": {
+            "Name": "headline",
+            "Values": [
+              "test-exclude-for-mobile-headline"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": "tcm:Content/custom:Article/custom:headline",
+            "CategoryId": null,
+            "CategoryName": null
+          },
+          "articleBody": {
+            "Name": "articleBody",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "subheading": {
+                  "Name": "subheading",
+                  "Values": [
+                    "test-exclude-for-mobile-subheading"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:subheading",
+                  "KeywordValues": []
+                },
+                "content": {
+                  "Name": "content",
+                  "Values": [
+                    "test-exclude-for-mobile-content"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 2,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:content",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Content/custom:Article/custom:articleBody",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-232-8",
+              "Title": "Paragraph",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "Paragraph"
+            }
+          }
+        },
+        "Multimedia": null,
+        "EclId": null
+      },
+      "ComponentTemplate": {
+        "Id": "tcm:1081-83-32",
+        "Title": "Article",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2015-07-16T15:20:52.71",
+        "Publication": null,
+        "OwningPublication": null,
+        "Folder": null,
+        "LastPublishedDate": null,
+        "Version": 0,
+        "MetadataFields": {
+          "view": {
+            "Name": "view",
+            "Values": [
+              "Article"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": null,
+            "CategoryId": null,
+            "CategoryName": null
+          }
+        },
+        "Categories": null,
+        "Schema": null,
+        "OutputFormat": "HTML Fragment"
+      },
+      "ExtensionData": {
+        "ContextExpressions": {
+          "Schema": null,
+          "Exclude": {
+            "Name": "Exclude",
+            "Values": [
+              "cx.isMobile"
+            ],
+            "FieldType": 0
+          }
+        }
+      },
+      "IsDynamic": false,
+      "RenderedContent": "",
+      "OrderOnPage": 0,
+      "Conditions": null
+    },
+    {
+      "Component": {
+        "Id": "tcm:1081-9930",
+        "Title": "test-exclude-for-android",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2016-06-13T14:52:28",
+        "Publication": {
+          "Id": "tcm:0-1081-1",
+          "Title": "500 Automated Test Parent (Legacy)",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "OwningPublication": {
+          "Id": "tcm:0-1065-1",
+          "Title": "401 Automated Test Parent",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "Folder": {
+          "Id": "tcm:1081-2643-2",
+          "Title": "ContextExpression",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "PublicationId": "tcm:0-1081-1"
+        },
+        "LastPublishedDate": "0001-01-01T00:00:00",
+        "Version": 2,
+        "MetadataFields": {
+          "standardMeta": {
+            "Name": "standardMeta",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "dateCreated": {
+                  "Name": "dateCreated",
+                  "Values": [],
+                  "NumericValues": [],
+                  "DateTimeValues": [
+                    "2016-06-13T15:01:54"
+                  ],
+                  "LinkedComponentValues": [],
+                  "FieldType": 9,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:dateCreated",
+                  "KeywordValues": []
+                },
+                "name": {
+                  "Name": "name",
+                  "Values": [
+                    "test-exclude-for-android-short-title"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:name",
+                  "KeywordValues": []
+                },
+                "description": {
+                  "Name": "description",
+                  "Values": [
+                    "test-exclude-for-android-meta-description"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 1,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:description",
+                  "KeywordValues": []
+                },
+                "introText": {
+                  "Name": "introText",
+                  "Values": [
+                    "test-exclude-for-android-intro-text"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:introText",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-231-8",
+              "Title": "Standard Metadata",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "StandardMetadata"
+            }
+          }
+        },
+        "Categories": [],
+        "Schema": {
+          "Id": "tcm:1081-80-8",
+          "Title": "Article",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "RevisionDate": null,
+          "Publication": null,
+          "OwningPublication": null,
+          "Folder": null,
+          "LastPublishedDate": null,
+          "Version": 0,
+          "MetadataFields": null,
+          "Categories": null,
+          "Schema": null,
+          "RootElementName": "Article"
+        },
+        "ComponentType": "NORMAL",
+        "Fields": {
+          "headline": {
+            "Name": "headline",
+            "Values": [
+              "test-exclude-for-android-headline"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": "tcm:Content/custom:Article/custom:headline",
+            "CategoryId": null,
+            "CategoryName": null
+          },
+          "articleBody": {
+            "Name": "articleBody",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "subheading": {
+                  "Name": "subheading",
+                  "Values": [
+                    "test-exclude-for-android-subheading"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:subheading",
+                  "KeywordValues": []
+                },
+                "content": {
+                  "Name": "content",
+                  "Values": [
+                    "test-exclude-for-android-content"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 2,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:content",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Content/custom:Article/custom:articleBody",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-232-8",
+              "Title": "Paragraph",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "Paragraph"
+            }
+          }
+        },
+        "Multimedia": null,
+        "EclId": null
+      },
+      "ComponentTemplate": {
+        "Id": "tcm:1081-83-32",
+        "Title": "Article",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2015-07-16T15:20:52.71",
+        "Publication": null,
+        "OwningPublication": null,
+        "Folder": null,
+        "LastPublishedDate": null,
+        "Version": 0,
+        "MetadataFields": {
+          "view": {
+            "Name": "view",
+            "Values": [
+              "Article"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": null,
+            "CategoryId": null,
+            "CategoryName": null
+          }
+        },
+        "Categories": null,
+        "Schema": null,
+        "OutputFormat": "HTML Fragment"
+      },
+      "ExtensionData": {
+        "ContextExpressions": {
+          "Schema": null,
+          "Exclude": {
+            "Name": "Exclude",
+            "Values": [
+              "cx.isAndroid"
+            ],
+            "FieldType": 0
+          }
+        }
+      },
+      "IsDynamic": false,
+      "RenderedContent": "",
+      "OrderOnPage": 0,
+      "Conditions": null
+    },
+    {
+      "Component": {
+        "Id": "tcm:1081-9924",
+        "Title": "test-include-for-mobile-and-apple",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2016-06-13T14:03:05",
+        "Publication": {
+          "Id": "tcm:0-1081-1",
+          "Title": "500 Automated Test Parent (Legacy)",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "OwningPublication": {
+          "Id": "tcm:0-1065-1",
+          "Title": "401 Automated Test Parent",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "Folder": {
+          "Id": "tcm:1081-2643-2",
+          "Title": "ContextExpression",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "PublicationId": "tcm:0-1081-1"
+        },
+        "LastPublishedDate": "0001-01-01T00:00:00",
+        "Version": 2,
+        "MetadataFields": {
+          "standardMeta": {
+            "Name": "standardMeta",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "dateCreated": {
+                  "Name": "dateCreated",
+                  "Values": [],
+                  "NumericValues": [],
+                  "DateTimeValues": [
+                    "2016-06-13T15:03:00"
+                  ],
+                  "LinkedComponentValues": [],
+                  "FieldType": 9,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:dateCreated",
+                  "KeywordValues": []
+                },
+                "name": {
+                  "Name": "name",
+                  "Values": [
+                    "test-include-for-mobile-and-apple-short-title"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:name",
+                  "KeywordValues": []
+                },
+                "description": {
+                  "Name": "description",
+                  "Values": [
+                    "test-include-for-mobile-and-apple-meta-description"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 1,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:description",
+                  "KeywordValues": []
+                },
+                "introText": {
+                  "Name": "introText",
+                  "Values": [
+                    "test-include-for-mobile-and-apple-intro-text"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:introText",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-231-8",
+              "Title": "Standard Metadata",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "StandardMetadata"
+            }
+          }
+        },
+        "Categories": [],
+        "Schema": {
+          "Id": "tcm:1081-80-8",
+          "Title": "Article",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "RevisionDate": null,
+          "Publication": null,
+          "OwningPublication": null,
+          "Folder": null,
+          "LastPublishedDate": null,
+          "Version": 0,
+          "MetadataFields": null,
+          "Categories": null,
+          "Schema": null,
+          "RootElementName": "Article"
+        },
+        "ComponentType": "NORMAL",
+        "Fields": {
+          "headline": {
+            "Name": "headline",
+            "Values": [
+              "test-include-for-mobile-and-apple-headline"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": "tcm:Content/custom:Article/custom:headline",
+            "CategoryId": null,
+            "CategoryName": null
+          },
+          "articleBody": {
+            "Name": "articleBody",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "subheading": {
+                  "Name": "subheading",
+                  "Values": [
+                    "test-include-for-mobile-and-apple-subheading"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:subheading",
+                  "KeywordValues": []
+                },
+                "content": {
+                  "Name": "content",
+                  "Values": [
+                    "test-include-for-mobile-and-apple-content"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 2,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:content",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Content/custom:Article/custom:articleBody",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-232-8",
+              "Title": "Paragraph",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "Paragraph"
+            }
+          }
+        },
+        "Multimedia": null,
+        "EclId": null
+      },
+      "ComponentTemplate": {
+        "Id": "tcm:1081-83-32",
+        "Title": "Article",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2015-07-16T15:20:52.71",
+        "Publication": null,
+        "OwningPublication": null,
+        "Folder": null,
+        "LastPublishedDate": null,
+        "Version": 0,
+        "MetadataFields": {
+          "view": {
+            "Name": "view",
+            "Values": [
+              "Article"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": null,
+            "CategoryId": null,
+            "CategoryName": null
+          }
+        },
+        "Categories": null,
+        "Schema": null,
+        "OutputFormat": "HTML Fragment"
+      },
+      "ExtensionData": {
+        "ContextExpressions": {
+          "Schema": null,
+          "Include": {
+            "Name": "Include",
+            "Values": [
+              "cx.isMobile",
+              "cx.isApple"
+            ],
+            "FieldType": 0
+          }
+        }
+      },
+      "IsDynamic": false,
+      "RenderedContent": "",
+      "OrderOnPage": 0,
+      "Conditions": null
+    },
+    {
+      "Component": {
+        "Id": "tcm:1081-9933",
+        "Title": "test-include-for-mobile-and-android",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2016-06-13T14:54:43",
+        "Publication": {
+          "Id": "tcm:0-1081-1",
+          "Title": "500 Automated Test Parent (Legacy)",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "OwningPublication": {
+          "Id": "tcm:0-1065-1",
+          "Title": "401 Automated Test Parent",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "Folder": {
+          "Id": "tcm:1081-2643-2",
+          "Title": "ContextExpression",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "PublicationId": "tcm:0-1081-1"
+        },
+        "LastPublishedDate": "0001-01-01T00:00:00",
+        "Version": 2,
+        "MetadataFields": {
+          "standardMeta": {
+            "Name": "standardMeta",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "dateCreated": {
+                  "Name": "dateCreated",
+                  "Values": [],
+                  "NumericValues": [],
+                  "DateTimeValues": [
+                    "2016-06-13T15:03:00"
+                  ],
+                  "LinkedComponentValues": [],
+                  "FieldType": 9,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:dateCreated",
+                  "KeywordValues": []
+                },
+                "name": {
+                  "Name": "name",
+                  "Values": [
+                    "test-include-for-mobile-and-android-short-title"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:name",
+                  "KeywordValues": []
+                },
+                "description": {
+                  "Name": "description",
+                  "Values": [
+                    "test-include-for-mobile-and-android-meta-description"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 1,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:description",
+                  "KeywordValues": []
+                },
+                "introText": {
+                  "Name": "introText",
+                  "Values": [
+                    "test-include-for-mobile-and-android-intro-text"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:introText",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-231-8",
+              "Title": "Standard Metadata",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "StandardMetadata"
+            }
+          }
+        },
+        "Categories": [],
+        "Schema": {
+          "Id": "tcm:1081-80-8",
+          "Title": "Article",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "RevisionDate": null,
+          "Publication": null,
+          "OwningPublication": null,
+          "Folder": null,
+          "LastPublishedDate": null,
+          "Version": 0,
+          "MetadataFields": null,
+          "Categories": null,
+          "Schema": null,
+          "RootElementName": "Article"
+        },
+        "ComponentType": "NORMAL",
+        "Fields": {
+          "headline": {
+            "Name": "headline",
+            "Values": [
+              "test-include-for-mobile-and-android-headline"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": "tcm:Content/custom:Article/custom:headline",
+            "CategoryId": null,
+            "CategoryName": null
+          },
+          "articleBody": {
+            "Name": "articleBody",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "subheading": {
+                  "Name": "subheading",
+                  "Values": [
+                    "test-include-for-mobile-and-android-subheading"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:subheading",
+                  "KeywordValues": []
+                },
+                "content": {
+                  "Name": "content",
+                  "Values": [
+                    "test-include-for-mobile-and-android-content"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 2,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:content",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Content/custom:Article/custom:articleBody",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-232-8",
+              "Title": "Paragraph",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "Paragraph"
+            }
+          }
+        },
+        "Multimedia": null,
+        "EclId": null
+      },
+      "ComponentTemplate": {
+        "Id": "tcm:1081-83-32",
+        "Title": "Article",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2015-07-16T15:20:52.71",
+        "Publication": null,
+        "OwningPublication": null,
+        "Folder": null,
+        "LastPublishedDate": null,
+        "Version": 0,
+        "MetadataFields": {
+          "view": {
+            "Name": "view",
+            "Values": [
+              "Article"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": null,
+            "CategoryId": null,
+            "CategoryName": null
+          }
+        },
+        "Categories": null,
+        "Schema": null,
+        "OutputFormat": "HTML Fragment"
+      },
+      "ExtensionData": {
+        "ContextExpressions": {
+          "Schema": null,
+          "Include": {
+            "Name": "Include",
+            "Values": [
+              "cx.isMobile",
+              "cx.isAndroid"
+            ],
+            "FieldType": 0
+          }
+        }
+      },
+      "IsDynamic": false,
+      "RenderedContent": "",
+      "OrderOnPage": 0,
+      "Conditions": null
+    },
+    {
+      "Component": {
+        "Id": "tcm:1081-9925",
+        "Title": "test-include-for-mobile-not-apple",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2016-06-13T14:03:44",
+        "Publication": {
+          "Id": "tcm:0-1081-1",
+          "Title": "500 Automated Test Parent (Legacy)",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "OwningPublication": {
+          "Id": "tcm:0-1065-1",
+          "Title": "401 Automated Test Parent",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "Folder": {
+          "Id": "tcm:1081-2643-2",
+          "Title": "ContextExpression",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "PublicationId": "tcm:0-1081-1"
+        },
+        "LastPublishedDate": "0001-01-01T00:00:00",
+        "Version": 2,
+        "MetadataFields": {
+          "standardMeta": {
+            "Name": "standardMeta",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "dateCreated": {
+                  "Name": "dateCreated",
+                  "Values": [],
+                  "NumericValues": [],
+                  "DateTimeValues": [
+                    "2016-06-13T15:03:41"
+                  ],
+                  "LinkedComponentValues": [],
+                  "FieldType": 9,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:dateCreated",
+                  "KeywordValues": []
+                },
+                "name": {
+                  "Name": "name",
+                  "Values": [
+                    "test-include-for-mobile-not-apple-short-title"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:name",
+                  "KeywordValues": []
+                },
+                "description": {
+                  "Name": "description",
+                  "Values": [
+                    "test-include-for-mobile-not-apple-meta-description"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 1,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:description",
+                  "KeywordValues": []
+                },
+                "introText": {
+                  "Name": "introText",
+                  "Values": [
+                    "test-include-for-mobile-not-apple-intro-text"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:introText",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-231-8",
+              "Title": "Standard Metadata",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "StandardMetadata"
+            }
+          }
+        },
+        "Categories": [],
+        "Schema": {
+          "Id": "tcm:1081-80-8",
+          "Title": "Article",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "RevisionDate": null,
+          "Publication": null,
+          "OwningPublication": null,
+          "Folder": null,
+          "LastPublishedDate": null,
+          "Version": 0,
+          "MetadataFields": null,
+          "Categories": null,
+          "Schema": null,
+          "RootElementName": "Article"
+        },
+        "ComponentType": "NORMAL",
+        "Fields": {
+          "headline": {
+            "Name": "headline",
+            "Values": [
+              "test-include-for-mobile-not-apple-headline"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": "tcm:Content/custom:Article/custom:headline",
+            "CategoryId": null,
+            "CategoryName": null
+          },
+          "articleBody": {
+            "Name": "articleBody",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "subheading": {
+                  "Name": "subheading",
+                  "Values": [
+                    "test-include-for-mobile-not-apple-subheading"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:subheading",
+                  "KeywordValues": []
+                },
+                "content": {
+                  "Name": "content",
+                  "Values": [
+                    "test-include-for-mobile-not-apple-content"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 2,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:content",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Content/custom:Article/custom:articleBody",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-232-8",
+              "Title": "Paragraph",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "Paragraph"
+            }
+          }
+        },
+        "Multimedia": null,
+        "EclId": null
+      },
+      "ComponentTemplate": {
+        "Id": "tcm:1081-83-32",
+        "Title": "Article",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2015-07-16T15:20:52.71",
+        "Publication": null,
+        "OwningPublication": null,
+        "Folder": null,
+        "LastPublishedDate": null,
+        "Version": 0,
+        "MetadataFields": {
+          "view": {
+            "Name": "view",
+            "Values": [
+              "Article"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": null,
+            "CategoryId": null,
+            "CategoryName": null
+          }
+        },
+        "Categories": null,
+        "Schema": null,
+        "OutputFormat": "HTML Fragment"
+      },
+      "ExtensionData": {
+        "ContextExpressions": {
+          "Schema": null,
+          "Exclude": {
+            "Name": "Exclude",
+            "Values": [
+              "cx.isApple"
+            ],
+            "FieldType": 0
+          },
+          "Include": {
+            "Name": "Include",
+            "Values": [
+              "cx.isMobile"
+            ],
+            "FieldType": 0
+          }
+        }
+      },
+      "IsDynamic": false,
+      "RenderedContent": "",
+      "OrderOnPage": 0,
+      "Conditions": null
+    },
+    {
+      "Component": {
+        "Id": "tcm:1081-9932",
+        "Title": "test-include-for-mobile-not-android",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2016-06-13T14:53:53",
+        "Publication": {
+          "Id": "tcm:0-1081-1",
+          "Title": "500 Automated Test Parent (Legacy)",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "OwningPublication": {
+          "Id": "tcm:0-1065-1",
+          "Title": "401 Automated Test Parent",
+          "CustomProperties": {},
+          "ExtensionData": null
+        },
+        "Folder": {
+          "Id": "tcm:1081-2643-2",
+          "Title": "ContextExpression",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "PublicationId": "tcm:0-1081-1"
+        },
+        "LastPublishedDate": "0001-01-01T00:00:00",
+        "Version": 2,
+        "MetadataFields": {
+          "standardMeta": {
+            "Name": "standardMeta",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "dateCreated": {
+                  "Name": "dateCreated",
+                  "Values": [],
+                  "NumericValues": [],
+                  "DateTimeValues": [
+                    "2016-06-13T15:03:41"
+                  ],
+                  "LinkedComponentValues": [],
+                  "FieldType": 9,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:dateCreated",
+                  "KeywordValues": []
+                },
+                "name": {
+                  "Name": "name",
+                  "Values": [
+                    "test-include-for-mobile-not-android-short-title"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:name",
+                  "KeywordValues": []
+                },
+                "description": {
+                  "Name": "description",
+                  "Values": [
+                    "test-include-for-mobile-not-android-meta-description"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 1,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:description",
+                  "KeywordValues": []
+                },
+                "introText": {
+                  "Name": "introText",
+                  "Values": [
+                    "test-include-for-mobile-not-android-intro-text"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta[1]/custom:introText",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Metadata/custom:Metadata/custom:standardMeta",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-231-8",
+              "Title": "Standard Metadata",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "StandardMetadata"
+            }
+          }
+        },
+        "Categories": [],
+        "Schema": {
+          "Id": "tcm:1081-80-8",
+          "Title": "Article",
+          "CustomProperties": {},
+          "ExtensionData": null,
+          "RevisionDate": null,
+          "Publication": null,
+          "OwningPublication": null,
+          "Folder": null,
+          "LastPublishedDate": null,
+          "Version": 0,
+          "MetadataFields": null,
+          "Categories": null,
+          "Schema": null,
+          "RootElementName": "Article"
+        },
+        "ComponentType": "NORMAL",
+        "Fields": {
+          "headline": {
+            "Name": "headline",
+            "Values": [
+              "test-include-for-mobile-not-android-headline"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": "tcm:Content/custom:Article/custom:headline",
+            "CategoryId": null,
+            "CategoryName": null
+          },
+          "articleBody": {
+            "Name": "articleBody",
+            "Values": [],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": [
+              {
+                "Schema": null,
+                "subheading": {
+                  "Name": "subheading",
+                  "Values": [
+                    "test-include-for-mobile-not-android-subheading"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 0,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:subheading",
+                  "KeywordValues": []
+                },
+                "content": {
+                  "Name": "content",
+                  "Values": [
+                    "test-include-for-mobile-not-android-content"
+                  ],
+                  "NumericValues": [],
+                  "DateTimeValues": [],
+                  "LinkedComponentValues": [],
+                  "FieldType": 2,
+                  "XPath": "tcm:Content/custom:Article/custom:articleBody[1]/custom:content",
+                  "KeywordValues": []
+                }
+              }
+            ],
+            "FieldType": 4,
+            "XPath": "tcm:Content/custom:Article/custom:articleBody",
+            "EmbeddedSchema": {
+              "Id": "tcm:1081-232-8",
+              "Title": "Paragraph",
+              "CustomProperties": {},
+              "ExtensionData": null,
+              "RevisionDate": null,
+              "Publication": null,
+              "OwningPublication": null,
+              "Folder": null,
+              "LastPublishedDate": null,
+              "Version": 0,
+              "MetadataFields": null,
+              "Categories": null,
+              "Schema": null,
+              "RootElementName": "Paragraph"
+            }
+          }
+        },
+        "Multimedia": null,
+        "EclId": null
+      },
+      "ComponentTemplate": {
+        "Id": "tcm:1081-83-32",
+        "Title": "Article",
+        "CustomProperties": {},
+        "ExtensionData": null,
+        "RevisionDate": "2015-07-16T15:20:52.71",
+        "Publication": null,
+        "OwningPublication": null,
+        "Folder": null,
+        "LastPublishedDate": null,
+        "Version": 0,
+        "MetadataFields": {
+          "view": {
+            "Name": "view",
+            "Values": [
+              "Article"
+            ],
+            "NumericValues": [],
+            "DateTimeValues": [],
+            "LinkedComponentValues": [],
+            "EmbeddedValues": null,
+            "FieldType": 0,
+            "XPath": null,
+            "CategoryId": null,
+            "CategoryName": null
+          }
+        },
+        "Categories": null,
+        "Schema": null,
+        "OutputFormat": "HTML Fragment"
+      },
+      "ExtensionData": {
+        "ContextExpressions": {
+          "Schema": null,
+          "Exclude": {
+            "Name": "Exclude",
+            "Values": [
+              "cx.isAndroid"
+            ],
+            "FieldType": 0
+          },
+          "Include": {
+            "Name": "Include",
+            "Values": [
+              "cx.isMobile"
+            ],
+            "FieldType": 0
+          }
+        }
+      },
+      "IsDynamic": true,
+      "RenderedContent": "",
+      "OrderOnPage": 0,
+      "Conditions": null
+    }
+  ],
+  "StructureGroup": {
+    "Id": "tcm:1081-2589-4",
+    "Title": "Smoke",
+    "CustomProperties": {},
+    "ExtensionData": null,
+    "PublicationId": "tcm:0-1081-1"
+  },
+  "Url": null
+}

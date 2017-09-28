@@ -18,8 +18,11 @@ package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
-import org.dd4t.contentmodel.*;
+import org.dd4t.contentmodel.ComponentPresentation;
+import org.dd4t.contentmodel.GenericPage;
+import org.dd4t.contentmodel.HasMetadata;
+import org.dd4t.contentmodel.PageTemplate;
+import org.dd4t.contentmodel.StructureGroup;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
 
@@ -34,52 +37,32 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata, Seri
     @JsonProperty ("Filename")
     protected String fileName;
 
-	@Element(name = "pageTemplate")
+    @Element(name = "pageTemplate")
     @JsonProperty ("PageTemplate")
     @JsonDeserialize (as = PageTemplateImpl.class)
     protected PageTemplate pageTemplate;
 
-	@ElementList(name = "componentPresentations", required = false)
+    @ElementList(name = "componentPresentations", required = false)
     @JsonProperty ("ComponentPresentations")
     @JsonDeserialize (contentAs = ComponentPresentation.class)
     protected List<ComponentPresentation> componentPresentations;
 
-	@Element(name = "structureGroup", required = false)
+    @Element(name = "structureGroup", required = false)
     @JsonProperty ("StructureGroup")
     @JsonDeserialize (as = StructureGroupImpl.class)
     protected StructureGroup structureGroup;
+
+    @JsonProperty("Url")
+    protected String url;
 
     @Override
     public PageTemplate getPageTemplate () {
         return pageTemplate;
     }
 
-    protected String url;
-
-    public String getUrl() {
-		return url;
-	}
-
-	public void setUrl(String url) {
-		this.url = url;
-	}
-
-	@Override
+    @Override
     public void setPageTemplate (PageTemplate pageTemplate) {
         this.pageTemplate = pageTemplate;
-    }
-
-    @Override
-    public List<ComponentPresentation> getComponentPresentations () {
-        if (componentPresentations == null) {
-            componentPresentations = new ArrayList<>();
-        }
-        return componentPresentations;
-    }
-
-    @Override
-    public void setComponentPresentations (List<ComponentPresentation> componentPresentations) {
-        this.componentPresentations = componentPresentations;
     }
 
     /**
@@ -123,6 +106,19 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata, Seri
     }
 
     @Override
+    public List<ComponentPresentation> getComponentPresentations() {
+        if (componentPresentations == null) {
+            componentPresentations = new ArrayList<>();
+        }
+        return componentPresentations;
+    }
+
+    @Override
+    public void setComponentPresentations(List<ComponentPresentation> componentPresentations) {
+        this.componentPresentations = componentPresentations;
+    }
+
+    @Override
     public StructureGroup getStructureGroup () {
         return structureGroup;
     }
@@ -130,5 +126,13 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata, Seri
     @Override
     public void setStructureGroup (StructureGroup structureGroup) {
         this.structureGroup = structureGroup;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

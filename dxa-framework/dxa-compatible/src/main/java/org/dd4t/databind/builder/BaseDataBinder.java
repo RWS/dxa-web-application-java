@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Base class serving as entry point for all ModelBuilders
- * <p></p>
+ * <p/>
  * - Loads configs
  * - Preloads model classes
  * - Gives a unified / single design pattern to load concrete ModelConverters
@@ -50,11 +50,11 @@ import java.util.concurrent.ConcurrentMap;
  * @since 17/11/14.
  */
 public abstract class BaseDataBinder {
-    private static final Logger LOG = LoggerFactory.getLogger(BaseDataBinder.class);
-
-
     protected static final ConcurrentMap<String, List<Class<? extends BaseViewModel>>> VIEW_MODELS = new ConcurrentHashMap<>();
+
     protected static final ConcurrentMap<String, List<Class<? extends BaseViewModel>>> ABSTRACT_OR_INTERFACE_MODELS = new ConcurrentHashMap<>();
+
+    private static final Logger LOG = LoggerFactory.getLogger(BaseDataBinder.class);
 
     protected ModelConverter converter;
     protected String viewModelMetaKeyName;
@@ -66,60 +66,125 @@ public abstract class BaseDataBinder {
     protected Class<? extends Component> concreteComponentImpl;
     protected Class<? extends Field> concreteFieldImpl;
 
-    public void setConcreteComponentTemplateImpl (final Class<? extends ComponentTemplate> concreteComponentTemplateImpl) {
-        this.concreteComponentTemplateImpl = concreteComponentTemplateImpl;
+    protected static BaseViewModel getModelOrNullForExistingEntry(Map<String, BaseViewModel> models, Class modelClass) {
+        for (BaseViewModel baseViewModel : models.values()) {
+            LOG.debug(baseViewModel.getClass().getName() + "==" + modelClass.getName());
+            if (baseViewModel.getClass().equals(modelClass)) {
+                return baseViewModel;
+            }
+        }
+        return null;
     }
 
-    public void setConcreteComponentPresentationImpl (final Class<? extends ComponentPresentation> concreteComponentPresentationImpl) {
-        this.concreteComponentPresentationImpl = concreteComponentPresentationImpl;
+    private static void addAbstractOrInterfaceToWatchList(final ClassInfo classInfo, final Class<? extends BaseViewModel> concreteModelClass) {
+        final List<Class<? extends BaseViewModel>> concreteClasses;
+        if (ABSTRACT_OR_INTERFACE_MODELS.containsKey(classInfo.getClassName())) {
+            concreteClasses = ABSTRACT_OR_INTERFACE_MODELS.get(classInfo.getClassName());
+
+
+            if (!concreteClasses.contains(concreteModelClass)) {
+                concreteClasses.add(concreteModelClass);
+            }
+        } else {
+            concreteClasses = new ArrayList<>();
+            concreteClasses.add(concreteModelClass);
+            ABSTRACT_OR_INTERFACE_MODELS.putIfAbsent(classInfo.getClassName(), concreteClasses);
+        }
     }
 
-    public void setConcreteComponentImpl (final Class<? extends Component> concreteComponentImpl) {
-        this.concreteComponentImpl = concreteComponentImpl;
+    /**
+     * Get the key with which a model class is registered, which is either
+     * related models.
+     * <p/>
+     * We should be able to get multiple keys for the same view model
+     * <p/>
+     * We should be able to match both view models and schema root element names. So the
+     */
+    private static void storeModelClass(final ViewModel viewModelParameters, final Class<? extends BaseViewModel> model) {
+
+        final List<String> modelNames = new ArrayList<>();
+        String[] viewModelNames = viewModelParameters.viewModelNames();
+
+        if (viewModelNames.length > 0) {
+            modelNames.addAll(Arrays.asList(viewModelNames));
+
+        }
+        String[] rootElementNames = viewModelParameters.rootElementNames();
+        if (rootElementNames.length > 0) {
+            modelNames.addAll(Arrays.asList(rootElementNames));
+        }
+        storeModelClassForModelNames(modelNames, model);
     }
 
-    public void setConverter (final ModelConverter converter) {
-        this.converter = converter;
-    }
+    private static void storeModelClassForModelNames(final List<String> viewModelNames, final Class<? extends BaseViewModel> model) {
+        for (String viewModelName : viewModelNames) {
+            LOG.info("Storing viewModelName: {}, for class: {}", viewModelName, model.toString());
 
-    public void setViewModelMetaKeyName (final String viewModelMetaKeyName) {
-        this.viewModelMetaKeyName = viewModelMetaKeyName;
-    }
 
-    public void setViewModelPackageRoot (final String viewModelPackageRoot) {
-        this.viewModelPackageRoot = viewModelPackageRoot;
-    }
+            if (StringUtils.isNotEmpty(viewModelName)) {
 
-    public void setRenderDefaultComponentModelsOnly (final boolean renderDefaultComponentModelsOnly) {
-        this.renderDefaultComponentModelsOnly = renderDefaultComponentModelsOnly;
-    }
+                List<Class<? extends BaseViewModel>> classList = VIEW_MODELS.get(viewModelName);
+                if (classList == null) {
+                    classList = new ArrayList<>();
+                    classList.add(model);
 
-    public void setRenderDefaultComponentsIfNoModelFound (final boolean renderDefaultComponentsIfNoModelFound) {
-        this.renderDefaultComponentsIfNoModelFound = renderDefaultComponentsIfNoModelFound;
+                    // Store different classes for the same key
+                    // Determine which class to use at deserialization time?
+                    // No, just deserialize all.
+
+
+                    VIEW_MODELS.putIfAbsent(viewModelName, classList);
+
+
+                } else {
+                    LOG.info("Key: {} already exists. Model for key is: {}", viewModelName, model.toString());
+
+                    if (!classList.contains(model)) {
+                        classList.add(model);
+                    }
+                }
+            }
+        }
     }
 
     public boolean isRenderDefaultComponentModelsOnly () {
         return renderDefaultComponentModelsOnly;
     }
 
+    public void setRenderDefaultComponentModelsOnly(final boolean renderDefaultComponentModelsOnly) {
+        this.renderDefaultComponentModelsOnly = renderDefaultComponentModelsOnly;
+    }
+
     public boolean isRenderDefaultComponentsIfNoModelFound () {
         return renderDefaultComponentsIfNoModelFound;
+    }
+
+    public void setRenderDefaultComponentsIfNoModelFound(final boolean renderDefaultComponentsIfNoModelFound) {
+        this.renderDefaultComponentsIfNoModelFound = renderDefaultComponentsIfNoModelFound;
     }
 
     public Class<? extends ComponentPresentation> getConcreteComponentPresentationImpl () {
         return concreteComponentPresentationImpl;
     }
 
+    public void setConcreteComponentPresentationImpl(final Class<? extends ComponentPresentation> concreteComponentPresentationImpl) {
+        this.concreteComponentPresentationImpl = concreteComponentPresentationImpl;
+    }
+
     public Class<? extends ComponentTemplate> getConcreteComponentTemplateImpl () {
         return concreteComponentTemplateImpl;
+    }
+
+    public void setConcreteComponentTemplateImpl(final Class<? extends ComponentTemplate> concreteComponentTemplateImpl) {
+        this.concreteComponentTemplateImpl = concreteComponentTemplateImpl;
     }
 
     public Class<? extends Component> getConcreteComponentImpl () {
         return concreteComponentImpl;
     }
 
-    public void setConcreteFieldImpl (final Class<? extends Field> concreteFieldImpl) {
-        this.concreteFieldImpl = concreteFieldImpl;
+    public void setConcreteComponentImpl(final Class<? extends Component> concreteComponentImpl) {
+        this.concreteComponentImpl = concreteComponentImpl;
     }
 
     public boolean renderDefaultComponentModelsOnly () {
@@ -134,26 +199,32 @@ public abstract class BaseDataBinder {
         return converter;
     }
 
+    public void setConverter(final ModelConverter converter) {
+        this.converter = converter;
+    }
+
     public String getViewModelMetaKeyName () {
         return viewModelMetaKeyName;
+    }
+
+    public void setViewModelMetaKeyName(final String viewModelMetaKeyName) {
+        this.viewModelMetaKeyName = viewModelMetaKeyName;
     }
 
     public String getViewModelPackageRoot () {
         return viewModelPackageRoot;
     }
 
+    public void setViewModelPackageRoot(final String viewModelPackageRoot) {
+        this.viewModelPackageRoot = viewModelPackageRoot;
+    }
+
     public Class<? extends Field> getConcreteFieldImpl () {
         return concreteFieldImpl;
     }
 
-    protected static BaseViewModel getModelOrNullForExistingEntry (Map<String, BaseViewModel> models, Class modelClass) {
-        for (BaseViewModel baseViewModel : models.values()) {
-            LOG.debug(baseViewModel.getClass().getName() + "==" + modelClass.getName());
-            if (baseViewModel.getClass().equals(modelClass)) {
-                return baseViewModel;
-            }
-        }
-        return null;
+    public void setConcreteFieldImpl(final Class<? extends Field> concreteFieldImpl) {
+        this.concreteFieldImpl = concreteFieldImpl;
     }
 
     public boolean classHasViewModelDerivatives(String className) {
@@ -268,22 +339,6 @@ public abstract class BaseDataBinder {
         }
     }
 
-    private static void addAbstractOrInterfaceToWatchList (final ClassInfo classInfo, final Class<? extends BaseViewModel> concreteModelClass) {
-        final List<Class<?extends BaseViewModel>> concreteClasses;
-        if (ABSTRACT_OR_INTERFACE_MODELS.containsKey(classInfo.getClassName())) {
-            concreteClasses = ABSTRACT_OR_INTERFACE_MODELS.get(classInfo.getClassName());
-
-
-            if (!concreteClasses.contains(concreteModelClass)) {
-                concreteClasses.add(concreteModelClass);
-            }
-        } else {
-            concreteClasses = new ArrayList<>();
-            concreteClasses.add(concreteModelClass);
-            ABSTRACT_OR_INTERFACE_MODELS.putIfAbsent(classInfo.getClassName(), concreteClasses);
-        }
-    }
-
     private void processViewModelClass (final ClassInfo classInfo) throws ClassNotFoundException {
         final Class<? extends BaseViewModel> clazz = (Class<? extends BaseViewModel>) Class.forName(classInfo.getClassName());
 
@@ -294,14 +349,18 @@ public abstract class BaseDataBinder {
             final ViewModel viewModelParameters = clazz.getAnnotation(ViewModel.class);
 
             if (hasProperModelInformation(viewModelParameters, clazz)) {
-                LOG.debug("Parameters: Viewmodel name(s):{}, Root Element name(s){}, Set Component: {}, Set raw: {} ", new Object[]{viewModelParameters.viewModelNames(), viewModelParameters.rootElementNames(), viewModelParameters.setComponentObject(), viewModelParameters.setRawData()});
+                LOG.debug("Parameters: Viewmodel name(s):{}, Root Element name(s){}, Set Component: {}, Set raw: {} ", viewModelParameters.viewModelNames(), viewModelParameters.rootElementNames(), viewModelParameters.setComponentObject(), viewModelParameters.setRawData());
                 storeModelClass(viewModelParameters, clazz);
             }
         }
     }
 
     private boolean isDatabindStandardClass (ClassInfo classInfo) {
-        return classInfo.getClassName().equals(DataBindConstants.VIEW_MODEL_BASE_CLASS_NAME) || classInfo.getClassName().equals(DataBindConstants.TRIDION_VIEW_MODEL_BASE_CLASS_NAME) || classInfo.getClassName().equals(DataBindConstants.TRIDION_VIEW_MODEL_INTERFACE) || classInfo.getClassName().equals(DataBindConstants.BASE_VIEW_MODEL_INTERFACE);
+        return classInfo.getClassName().equals(DataBindConstants.VIEW_MODEL_ANNOTATION)
+                || classInfo.getClassName().equals(DataBindConstants.VIEW_MODEL_BASE_CLASS_NAME)
+                || classInfo.getClassName().equals(DataBindConstants.TRIDION_VIEW_MODEL_BASE_CLASS_NAME)
+                || classInfo.getClassName().equals(DataBindConstants.TRIDION_VIEW_MODEL_INTERFACE)
+                || classInfo.getClassName().equals(DataBindConstants.BASE_VIEW_MODEL_INTERFACE);
     }
 
     private boolean hasNonStandardParent (ClassInfo classInfo) {
@@ -324,60 +383,5 @@ public abstract class BaseDataBinder {
         }
 
         return true;
-    }
-
-    /**
-     * Get the key with which a model class is registered, which is either
-     * related models.
-     * <p></p>
-     * We should be able to get multiple keys for the same view model
-     * <p></p>
-     * We should be able to match both view models and schema root element names. So the
-     */
-    private static void storeModelClass (final ViewModel viewModelParameters, final Class<? extends BaseViewModel> model) {
-
-        final List<String> modelNames = new ArrayList<>();
-        String[] viewModelNames = viewModelParameters.viewModelNames();
-
-        if (viewModelNames.length > 0) {
-            modelNames.addAll(Arrays.asList(viewModelNames));
-
-        }
-        String[] rootElementNames = viewModelParameters.rootElementNames();
-        if (rootElementNames.length > 0) {
-            modelNames.addAll(Arrays.asList(rootElementNames));
-        }
-        storeModelClassForModelNames(modelNames, model);
-    }
-
-    private static void storeModelClassForModelNames (final List<String> viewModelNames, final Class<? extends BaseViewModel> model) {
-        for (String viewModelName : viewModelNames) {
-            LOG.info("Storing viewModelName: {}, for class: {}", viewModelName, model.toString());
-
-
-            if (StringUtils.isNotEmpty(viewModelName)) {
-
-                List<Class<? extends BaseViewModel>> classList = VIEW_MODELS.get(viewModelName);
-                if (classList == null) {
-                    classList = new ArrayList<>();
-                    classList.add(model);
-
-                    // Store different classes for the same key
-                    // Determine which class to use at deserialization time?
-                    // No, just deserialize all.
-
-
-                    VIEW_MODELS.putIfAbsent(viewModelName,classList);
-
-
-                } else {
-                    LOG.info("Key: {} already exists. Model for key is: {}", viewModelName, model.toString());
-
-                    if (!classList.contains(model)) {
-                        classList.add(model);
-                    }
-                }
-            }
-        }
     }
 }

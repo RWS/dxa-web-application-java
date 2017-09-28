@@ -47,6 +47,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
     private static boolean isToBeRefreshed(ServletServerHttpResponse res, long notModifiedSince, long lastModified, boolean isVersioned, boolean isPreview) {
 
+        // If preview is enabled we never want to cache images as they may change after editing them
         if (isPreview){
             return true;            
         }

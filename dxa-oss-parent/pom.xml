@@ -115,7 +115,7 @@
         <easymock.version>3.2</easymock.version>
         <el-impl.version>2.2</el-impl.version>
         <ehcache.jcache.version>1.0.1</ehcache.jcache.version>
-        <fast-classpath-scanner.version>2.4.1</fast-classpath-scanner.version>
+        <fast-classpath-scanner.version>2.4.7</fast-classpath-scanner.version>
         <gson.version>2.3.1</gson.version>
 
         <!-- Web 8: 18.0 -->

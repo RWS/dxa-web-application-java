@@ -16,63 +16,65 @@
 
 package org.dd4t.contentmodel.impl;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.Keyword;
-import org.dd4t.core.serializers.impl.json.FieldTypeConverter;
+import org.dd4t.databind.serializers.json.FieldTypeSerializer;
 import org.simpleframework.xml.Attribute;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementList;
-import org.simpleframework.xml.convert.Convert;
 
 import java.util.LinkedList;
 import java.util.List;
 
-
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 @JsonIgnoreProperties (value = {"Value"}, ignoreUnknown = true)
 public abstract class BaseField implements Field {
-	@Element(name = "name", required = false)
+
+    @Element(name = "name", required = false)
     @JsonProperty ("Name")
     private String name;
-	
-	@ElementList(name = "textValues", required = false)
+
+    @ElementList(name = "textValues", required = false)
     @JsonProperty ("Values")
     private List<String> textValues;
 
-	@ElementList(name = "numericValues", required = false)
+    @ElementList(name = "numericValues", required = false)
     @JsonProperty ("NumericValues")
     private List<Double> numericValues;
 
-	@ElementList(name = "dateTimeValues", required = false)	
+    @ElementList(name = "dateTimeValues", required = false)
     @JsonProperty ("DateTimeValues")
     private List<String> dateValues;
 
-	@ElementList(name = "linkedComponentValues", required = false)
+    @ElementList(name = "linkedComponentValues", required = false)
     @JsonProperty ("LinkedComponentValues")
     @JsonDeserialize (contentAs = ComponentImpl.class)
     private List<Component> componentLinkValues;
 
-	@ElementList(name = "keywords", type = KeywordImpl.class, required = false)	
+    @ElementList(name = "keywords", type = KeywordImpl.class, required = false)
     @JsonDeserialize (contentAs = KeywordImpl.class)
     private List<Keyword> keywordValues;
 
-	@ElementList(name = "embeddedValues", type = FieldSetImpl.class, required = false)
+    @ElementList(name = "embeddedValues", type = FieldSetImpl.class, required = false)
     @JsonProperty ("EmbeddedValues")
     @JsonDeserialize (contentAs = FieldSetImpl.class)
     private List<FieldSet> embeddedValues;
 
-	@Attribute(required = false)
+    @Attribute(required = false)
     @JsonProperty ("FieldType")
+    @JsonSerialize(using = FieldTypeSerializer.class)
     private FieldType fieldType;
 
-	@Attribute(required = false)
+    @Attribute(required = false)
     @JsonProperty ("XPath")
     private String xPath;
 
@@ -84,60 +86,6 @@ public abstract class BaseField implements Field {
      */
     @Override
     public abstract List<Object> getValues ();
-
-    /**
-     * Get the numeric field values
-     *
-     * @return numericValues
-     */
-    public List<Double> getNumericValues () {
-        return numericValues == null ? new LinkedList<Double>() : numericValues;
-    }
-
-    /**
-     * Set the numeric field values
-     *
-     * @param numericValues
-     */
-    public void setNumericValues (List<Double> numericValues) {
-        this.numericValues = numericValues;
-    }
-
-    /**
-     * Get the date time values
-     *
-     * @return
-     */
-    public List<String> getDateTimeValues () {
-        return dateValues == null ? new LinkedList<String>() : dateValues;
-    }
-
-    /**
-     * Set the date time field values
-     *
-     * @param dateTimeValues
-     */
-    public void setDateTimeValues (List<String> dateTimeValues) {
-        this.dateValues = dateTimeValues;
-    }
-
-    /**
-     * Get the linked component values
-     *
-     * @return
-     */
-    public List<Component> getLinkedComponentValues () {
-        return componentLinkValues != null ? componentLinkValues : new LinkedList<Component>();
-    }
-
-    /**
-     * Set the linked component field values
-     *
-     * @param linkedComponentValues
-     */
-    public void setLinkedComponentValues (List<Component> linkedComponentValues) {
-        this.componentLinkValues = linkedComponentValues;
-    }
 
     /**
      * Get the name of the field.
@@ -200,6 +148,60 @@ public abstract class BaseField implements Field {
     }
 
     /**
+     * Get the numeric field values
+     *
+     * @return numericValues
+     */
+    public List<Double> getNumericValues() {
+        return numericValues == null ? new LinkedList<Double>() : numericValues;
+    }
+
+    /**
+     * Set the numeric field values
+     *
+     * @param numericValues
+     */
+    public void setNumericValues(List<Double> numericValues) {
+        this.numericValues = numericValues;
+    }
+
+    /**
+     * Get the date time values
+     *
+     * @return
+     */
+    public List<String> getDateTimeValues() {
+        return dateValues == null ? new LinkedList<String>() : dateValues;
+    }
+
+    /**
+     * Set the date time field values
+     *
+     * @param dateTimeValues
+     */
+    public void setDateTimeValues(List<String> dateTimeValues) {
+        this.dateValues = dateTimeValues;
+    }
+
+    /**
+     * Get the linked component values
+     *
+     * @return
+     */
+    public List<Component> getLinkedComponentValues() {
+        return componentLinkValues != null ? componentLinkValues : new LinkedList<Component>();
+    }
+
+    /**
+     * Set the linked component field values
+     *
+     * @param linkedComponentValues
+     */
+    public void setLinkedComponentValues(List<Component> linkedComponentValues) {
+        this.componentLinkValues = linkedComponentValues;
+    }
+
+    /**
      * Get the text field values
      *
      * @return a list of text values
@@ -240,14 +242,14 @@ public abstract class BaseField implements Field {
         return keywordValues != null ? keywordValues : new LinkedList<Keyword>();
     }
 
-    @JsonSetter ("Keywords")
-    public void setKeywords (List<Keyword> keywordValues) {
-        this.keywordValues = keywordValues;
-    }
-
     // DD4T 2.0.2 template support
     @JsonSetter ("KeywordValues")
     private void setKeywordValues (List<Keyword> keywordValues) {
+        this.keywordValues = keywordValues;
+    }
+
+    @JsonSetter("Keywords")
+    public void setKeywords(List<Keyword> keywordValues) {
         this.keywordValues = keywordValues;
     }
 

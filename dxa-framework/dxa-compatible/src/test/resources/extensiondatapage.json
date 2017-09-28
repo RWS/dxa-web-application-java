@@ -1,7 +1,7 @@
 {
   "RevisionDate": "2016-06-13T15:42:13",
   "Filename": "context-expression-smoke-test",
-  "LastPublishedDate": "0001-01-01T00:00:00",
+  "LastPublishedDate": "2017-08-29T00:00:00",
   "PageTemplate": {
     "FileExtension": "html",
     "RevisionDate": "2014-06-25T14:37:02.387",
@@ -1644,7 +1644,7 @@
         "Title": "Article"
       },
       "RenderedContent": "",
-      "IsDynamic": false,
+      "IsDynamic": true,
       "OrderOnPage": 0,
       "ExtensionData": {
         "ContextExpressions": {

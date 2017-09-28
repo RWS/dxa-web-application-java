@@ -16,11 +16,11 @@
 
 package org.dd4t.contentmodel.impl;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import org.dd4t.contentmodel.Component;
 import org.dd4t.contentmodel.ComponentPresentation;
 import org.dd4t.contentmodel.ComponentTemplate;
@@ -40,16 +40,21 @@ import java.util.Map;
  *
  * @author bjornl, rai, sdl
  */
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public class ComponentPresentationImpl implements ComponentPresentation, Serializable {
 
     private static final long serialVersionUID = -7971393961257030293L;
 
-	@Element(name = "component", required = false)
+    @JsonProperty("Conditions")
+    @JsonDeserialize(contentAs = ConditionImpl.class)
+    List<Condition> conditions;
+
+    @Element(name = "component", required = false)
     @JsonProperty ("Component")
     @JsonDeserialize (as = ComponentImpl.class)
     private Component component;
 
-	@Element(name = "componentTemplate", required = false)
+    @Element(name = "componentTemplate", required = false)
     @JsonProperty ("ComponentTemplate")
     @JsonDeserialize (as = ComponentTemplateImpl.class)
     private ComponentTemplate componentTemplate;
@@ -58,20 +63,16 @@ public class ComponentPresentationImpl implements ComponentPresentation, Seriali
     @JsonDeserialize (contentAs = FieldSetImpl.class)
     private Map<String, FieldSet> extensionData;
 
-	@Element(name = "isDynamic", required = false)
+    @Element(name = "isDynamic", required = false)
     @JsonProperty ("IsDynamic")
     private boolean isDynamic;
 
-	@Element(name = "renderedContent", required = false)
+    @Element(name = "renderedContent", required = false)
     @JsonProperty ("RenderedContent")
     private String renderedContent;
 
     @JsonProperty ("OrderOnPage")
     private int orderOnPage;
-
-    @JsonProperty ("Conditions")
-    @JsonDeserialize (contentAs = ConditionImpl.class)
-    List<Condition> conditions;
 
     @JsonIgnore
     private Map<String, BaseViewModel> baseViewModels;
@@ -120,8 +121,18 @@ public class ComponentPresentationImpl implements ComponentPresentation, Seriali
     }
 
     @Override
+    public Map<String, FieldSet> getExtensionData() {
+        return extensionData;
+    }
+
+    @Override
     public String getRenderedContent () {
         return renderedContent;
+    }
+
+    @Override
+    public void setExtensionData(final Map<String, FieldSet> extensionData) {
+        this.extensionData = extensionData;
     }
 
     @Override
@@ -129,34 +140,24 @@ public class ComponentPresentationImpl implements ComponentPresentation, Seriali
         this.renderedContent = renderedContent;
     }
 
+    public int getOrderOnPage() {
+        return orderOnPage;
+    }
+
     @Override
+    @JsonIgnore
     public boolean isDynamic () {
         return isDynamic;
     }
 
     @Override
-    public void setIsDynamic (final boolean isDynamic) {
-        this.isDynamic = isDynamic;
-    }
-
-    public int getOrderOnPage () {
-        return orderOnPage;
-    }
-
-    @Override
-    public void setOrderOnPage (final int orderOnPage) {
+    public void setOrderOnPage(final int orderOnPage) {
         this.orderOnPage = orderOnPage;
     }
 
     @Override
-    public void setConditions (final List<Condition> conditions) {
-        this.conditions = conditions;
-    }
-
-    // DD4T 2.2 Templates
-    @JsonSetter ("TargetGroupConditions")
-    private void setTargetGroupConditions(final List<Condition> conditions) {
-        this.conditions = conditions;
+    public void setIsDynamic (final boolean isDynamic) {
+        this.isDynamic = isDynamic;
     }
 
     @Override
@@ -168,16 +169,21 @@ public class ComponentPresentationImpl implements ComponentPresentation, Seriali
     }
 
     @Override
+    public void setConditions(final List<Condition> conditions) {
+        this.conditions = conditions;
+    }
+
+    @Override
+    public void setViewModel(final Map<String, BaseViewModel> models) {
+        this.baseViewModels = models;
+    }
+
+    @Override
     public Map<String, BaseViewModel> getAllViewModels () {
         if (this.baseViewModels == null) {
             return new HashMap<>();
         }
         return this.baseViewModels;
-    }
-
-    @Override
-    public void setViewModel (final Map<String, BaseViewModel> models) {
-        this.baseViewModels = models;
     }
 
     @Override
@@ -187,6 +193,16 @@ public class ComponentPresentationImpl implements ComponentPresentation, Seriali
         }
         return null;
     }
+
+    // DD4T 2.2 Templates
+    @JsonSetter("TargetGroupConditions")
+    private void setTargetGroupConditions(final List<Condition> conditions) {
+        this.conditions = conditions;
+    }
+
+
+
+
 
     /**
      * Sets the raw component content form the broker.
@@ -203,16 +219,6 @@ public class ComponentPresentationImpl implements ComponentPresentation, Seriali
     @Override
     public String getRawComponentContent () {
         return this.rawComponentContent;
-    }
-
-    @Override
-    public Map<String, FieldSet> getExtensionData () {
-        return extensionData;
-    }
-
-    @Override
-    public void setExtensionData (final Map<String, FieldSet> extensionData) {
-        this.extensionData = extensionData;
     }
 
 

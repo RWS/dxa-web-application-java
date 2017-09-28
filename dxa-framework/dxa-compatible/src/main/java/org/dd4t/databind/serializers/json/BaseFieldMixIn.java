@@ -27,7 +27,7 @@ import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
  */
 @JsonTypeInfo (
         use = JsonTypeInfo.Id.CUSTOM,
-        include = JsonTypeInfo.As.EXTERNAL_PROPERTY,
+        include = JsonTypeInfo.As.EXISTING_PROPERTY,
         property = "FieldType",
         visible = true)
 @JsonTypeIdResolver (TridionFieldTypeIdResolver.class)

@@ -16,10 +16,9 @@
 
 package org.dd4t.contentmodel.impl;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.dd4t.contentmodel.Category;
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.OrganizationalItem;
@@ -31,44 +30,47 @@ import org.joda.time.DateTime;
 import org.simpleframework.xml.Element;
 import org.simpleframework.xml.ElementMap;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Base class for all tridion items except for publications and organizational items
  *
  * @author bjornl
  */
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE)
 public abstract class BaseRepositoryLocalItem extends BaseItem implements RepositoryLocalItem {
-	@Element(name = "revisionDate", required = false)
+
+    @Element(name = "revisionDate", required = false)
     @JsonProperty ("RevisionDate")
     protected String revisionDateAsString;
 
-	@Element(name = "publication", required = false)
+    @Element(name = "publication", required = false)
     @JsonProperty ("Publication")
     @JsonDeserialize (as = PublicationImpl.class)
     protected Publication publication;
 
-	@Element(name = "owningPublication", required = false)
+    @Element(name = "owningPublication", required = false)
     @JsonProperty ("OwningPublication")
     @JsonDeserialize (as = PublicationImpl.class)
     protected Publication owningPublication;
 
     // TODO: move lower in the chain
-	@Element(name = "folder", required = false)	
+    @Element(name = "folder", required = false)
     @JsonProperty ("Folder")
     @JsonDeserialize (as = OrganizationalItemImpl.class)
     protected OrganizationalItem organizationalItem;
 
-	@Element(name = "lastPublishedDate", required = false)	
+    @Element(name = "lastPublishedDate", required = false)
     @JsonProperty ("LastPublishedDate")
     protected String lastPublishedDateAsString;
 
-	@Element(name = "version", required = false)
+    @Element(name = "version", required = false)
     @JsonProperty ("Version")
     protected int version;
 
-	@ElementMap(name = "metadata", keyType = String.class, valueType = Field.class, entry = "item", required = false)
+    @ElementMap(name = "metadata", keyType = String.class, valueType = Field.class, entry = "item", required = false)
     @JsonProperty ("MetadataFields")
     // TODO: for XML add a separate MixIn
     @JsonDeserialize (contentAs = BaseField.class)
@@ -77,8 +79,8 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
     @JsonProperty ("Categories")
     @JsonDeserialize (contentAs = CategoryImpl.class)
     protected List<Category> categories;
-    
-	@Element(name = "schema", required = false)
+
+    @Element(name = "schema", required = false)
     @JsonProperty ("Schema")
     @JsonDeserialize (as = SchemaImpl.class)
     private Schema schema;
@@ -148,6 +150,11 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
         this.revisionDateAsString = DateUtils.convertDateToString(date);
     }
 
+    public int getVersion() {
+
+        return version;
+    }
+
     @Override
     public DateTime getLastPublishedDate () {
         if (lastPublishedDateAsString == null || lastPublishedDateAsString.isEmpty()) {
@@ -156,19 +163,14 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
         return DateUtils.convertStringToDate(lastPublishedDateAsString);
     }
 
-    @Override
-    public void setLastPublishedDate (DateTime date) {
-        this.lastPublishedDateAsString = DateUtils.convertDateToString(date);
-    }
-
-    public int getVersion () {
-
-        return version;
-    }
-
     public void setVersion (int version) {
 
         this.version = version;
+    }
+
+    @Override
+    public void setLastPublishedDate(DateTime date) {
+        this.lastPublishedDateAsString = DateUtils.convertDateToString(date);
     }
 
     public Map<String, Field> getMetadata () {
@@ -189,6 +191,7 @@ public abstract class BaseRepositoryLocalItem extends BaseItem implements Reposi
     public void setCategories (List<Category> categories) {
         this.categories = categories;
     }
+
 
     @Override
     public Schema getSchema () {

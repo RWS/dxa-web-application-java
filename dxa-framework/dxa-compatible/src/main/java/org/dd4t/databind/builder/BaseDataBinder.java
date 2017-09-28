@@ -41,11 +41,11 @@ import java.util.concurrent.ConcurrentMap;
 
 /**
  * Base class serving as entry point for all ModelBuilders
- * <p/>
+ * <p>
  * - Loads configs
  * - Preloads model classes
  * - Gives a unified / single design pattern to load concrete ModelConverters
- *
+ * </p>
  * @author R. Kempees
  * @since 17/11/14.
  */
@@ -95,9 +95,7 @@ public abstract class BaseDataBinder {
     /**
      * Get the key with which a model class is registered, which is either
      * related models.
-     * <p/>
-     * We should be able to get multiple keys for the same view model
-     * <p/>
+     * <p>We should be able to get multiple keys for the same view model</p>
      * We should be able to match both view models and schema root element names. So the
      */
     private static void storeModelClass(final ViewModel viewModelParameters, final Class<? extends BaseViewModel> model) {

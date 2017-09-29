@@ -63,7 +63,7 @@ public abstract class AbstractTridionLinkResolver implements LinkResolver {
         }
 
         final int itemId = Integer.parseInt(parts[1]);
-        final int itemType = parts.length > 2 ? Integer.parseInt(parts[2]) : 16;
+        final int itemType = parts.length > 2 && !parts[2].startsWith("v") ? Integer.parseInt(parts[2]) : 16;
 
         switch (itemType) {
             case 16:

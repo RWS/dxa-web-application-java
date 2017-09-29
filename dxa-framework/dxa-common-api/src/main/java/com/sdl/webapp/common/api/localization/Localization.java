@@ -33,6 +33,16 @@ public interface Localization {
     boolean isStaticContent(String url);
 
     /**
+     * Determines if the specified URL refers to static content within the webapp
+     *
+     * @return {@code true} if the specified URL refers to static content within the webapp, {@code false} otherwise.
+     * @param url a {@link java.lang.String} object.
+     */
+    default boolean isNonPublishedAsset(String url) {
+        return false;
+    }
+
+    /**
      * <p>isDefault.</p>
      *
      * @return {@code true} when this is the default localization, {@code false} otherwise.

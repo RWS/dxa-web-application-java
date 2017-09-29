@@ -125,14 +125,16 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
             return false;
         }
         builder.setVersion(assetsVersion);
+        builder.setHtmlDesignPublished(false);
         return true;
-}
+    }
 
     private boolean loadVersionFromBroker(String id, String path, LocalizationImpl.Builder builder) throws LocalizationFactoryException {
         try {
             StaticContentItem item = contentProvider.getStaticContent(VERSION_PATH, id, path);
             try (final InputStream in = item.getContent()) {
                 builder.setVersion(objectMapper.readTree(in).get("version").asText());
+                builder.setHtmlDesignPublished(true);
                 return true;
             }
         } catch (StaticContentNotFoundException e) {
@@ -153,6 +155,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
 
         try (final InputStream in = new FileInputStream(file)) {
             builder.setVersion(objectMapper.readTree(in).get("version").asText());
+            builder.setHtmlDesignPublished(false);
             return true;
         } catch (IOException e) {
             throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + id +

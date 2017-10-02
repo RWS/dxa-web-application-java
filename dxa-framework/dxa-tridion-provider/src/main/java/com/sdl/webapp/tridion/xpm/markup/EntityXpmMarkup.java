@@ -118,11 +118,8 @@ public class EntityXpmMarkup implements MarkupDecorator {
         return markup;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public int getPriority() {
+    public int getOrder() {
         return 1;
     }
 

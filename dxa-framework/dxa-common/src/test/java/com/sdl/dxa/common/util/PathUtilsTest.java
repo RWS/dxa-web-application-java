@@ -69,6 +69,26 @@ public class PathUtilsTest {
     }
 
     @Test
+    public void shouldRemoveDoubleSlashFromPath() {
+        String expected = "/path/to/index";
+        assertEquals(expected, PathUtils.combinePath("/path", "to/index"));
+        assertEquals(expected, PathUtils.combinePath("/path", "/to/index"));
+        assertEquals(expected, PathUtils.combinePath("/path/", "to/index"));
+        assertEquals(expected, PathUtils.combinePath("/path/", "/to/index"));
+        assertEquals(expected, PathUtils.combinePath("/", "path/to/index"));
+        assertEquals(expected, PathUtils.combinePath("", "/path/to/index"));
+        assertEquals(expected, PathUtils.combinePath("/", "/path/to/index"));
+        assertEquals("/", PathUtils.combinePath("/", ""));
+        assertEquals("/", PathUtils.combinePath("//", ""));
+        assertEquals("/", PathUtils.combinePath("", "/"));
+        assertEquals("/", PathUtils.combinePath("", "//"));
+        assertEquals("/", PathUtils.combinePath("", ""));
+        assertEquals("/", PathUtils.combinePath(null, ""));
+        assertEquals("/", PathUtils.combinePath("", null));
+        assertNull(PathUtils.combinePath(null, null));
+    }
+
+    @Test
     public void shouldDefineWhetherThePathIsHome() {
         assertTrue(PathUtils.isHomePath("/", "/"));
         assertTrue(PathUtils.isHomePath("/", null));
@@ -187,6 +207,22 @@ public class PathUtilsTest {
         assertFalse(PathUtils.hasDefaultExtension(".html"));
     }
 
+
+    @Test
+    public void shouldGetFileName_FromFullFilename() {
+        //when
+        assertEquals("filename", PathUtils.getFileName("/filename.html"));
+        assertEquals("filename", PathUtils.getFileName("filename.html"));
+        assertEquals("filename", PathUtils.getFileName("/test/filename.html"));
+    }
+
+    @Test
+    public void shouldGetExtension_FromFullFilename() {
+        //when
+        assertEquals("html", PathUtils.getExtension("/filename.html"));
+        assertEquals("html", PathUtils.getExtension("filename.html"));
+        assertEquals("html", PathUtils.getExtension("/test/filename.html"));
+    }
 
     @Test
     public void shouldSayIfPathHasExtensionPart() {

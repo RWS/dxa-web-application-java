@@ -4,4 +4,4 @@
  cd dxa-builder
  call .\gradlew.bat
  cd ..
- call .\gradlew.bat
+ call .\gradlew.bat -Pcommand="clean install"

@@ -6,13 +6,13 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>2.0.0-CTP2</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-tridion-provider</artifactId>
 
     <name>DXA - Tridion provider</name>
-    <description>DXA Providers for Web8 that provides common functionality</description>
+    <description>DXA Providers for SDL Web8</description>
 
     <dependencies>
         <!-- SDL Digital Experience Accelerator -->
@@ -22,12 +22,15 @@
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
-            <artifactId>dxa-common-impl</artifactId>
-            <scope>test</scope>
+            <artifactId>dxa-tridion-common</artifactId>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
-            <artifactId>dxa-tridion-common</artifactId>
+            <artifactId>dxa-model-service-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.dxa</groupId>
+            <artifactId>dxa-data-model</artifactId>
         </dependency>
 
         <dependency>
@@ -74,6 +77,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>

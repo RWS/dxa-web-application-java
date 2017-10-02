@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * Thrown when a content provider cannot find the requested page.
  */
-//todo dxa2 move to appropriate package
 @Getter
 @ResponseStatus(reason = "Page not found", code = HttpStatus.NOT_FOUND)
 public class PageNotFoundException extends DxaItemNotFoundException {

@@ -136,7 +136,6 @@ public class EclItemTest {
             return new ApplicationContextHolder();
         }
 
-        @SuppressWarnings("Duplicates")
         @Bean
         public ObjectMapper objectMapper() {
             return new DxaSpringInitialization().objectMapper();

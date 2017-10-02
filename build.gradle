@@ -32,7 +32,8 @@ task help(type: MavenHelpTask)
 task buildFramework(type: MavenBuildTask) {
     configurations = [
             ["dxa-oss-parent"],
-            ["dxa-framework"],
+            ["dxa-model-service-client"],
+            ["dxa-framework", "dxa-dd4t-ms-provider"],
             ["> dxa-webapp > clean org.apache.maven.plugins:maven-archetype-plugin:2.4:create-from-project -Darchetype.properties=archetype.properties"]
     ]
 }

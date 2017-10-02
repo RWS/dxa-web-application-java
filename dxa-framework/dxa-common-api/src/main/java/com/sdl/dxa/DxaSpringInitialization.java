@@ -47,7 +47,6 @@ import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitializa
 //todo dxa2 rename com.sdl.webapp to com.sdl.dxa
 @ComponentScan(basePackages = {"com.sdl.webapp", "com.sdl.dxa"})
 @Slf4j
-//TODO dxa2 consider moving web-defaults (e.g. view resolvers) to a different configuration
 public class DxaSpringInitialization {
 
     @Value("${dxa.web.views.prefix}")

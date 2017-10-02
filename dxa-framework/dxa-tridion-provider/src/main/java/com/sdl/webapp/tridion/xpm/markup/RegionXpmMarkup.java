@@ -102,7 +102,7 @@ public class RegionXpmMarkup implements MarkupDecorator {
      * {@inheritDoc}
      */
     @Override
-    public int getPriority() {
+    public int getOrder() {
         return 1;
     }
 }

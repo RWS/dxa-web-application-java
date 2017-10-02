@@ -1,9 +1,11 @@
 package com.sdl.webapp.common.api.navigation;
 
+import com.sdl.webapp.common.api.content.ContentProviderException;
+
 /**
  * Thrown when an error occurs related to a navigation provider.
  */
-public class NavigationProviderException extends com.sdl.webapp.common.api.content.NavigationProviderException {
+public class NavigationProviderException extends ContentProviderException {
 
     public NavigationProviderException() {
     }

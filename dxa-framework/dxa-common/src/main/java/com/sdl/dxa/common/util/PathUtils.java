@@ -27,6 +27,8 @@ public final class PathUtils {
 
     private static final Pattern PAGE_TITLE_SEQUENCE = Pattern.compile("^(?<sequence>\\d{3}\\s?)(?<pageName>(?<sequenceStop>[^\\d]).*)$");
 
+    private static final Pattern FILE_NAME_PATTERN = Pattern.compile(".*?/?(?<fileName>[^/.]*)\\.(?<extension>[^/.]*)$");
+
     private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/(index(\\.html)?)?)$");
 
     private PathUtils() {
@@ -38,6 +40,33 @@ public final class PathUtils {
 
     public static String getDefaultPageExtension() {
         return DEFAULT_PAGE_EXTENSION;
+    }
+
+    /**
+     * Replaces multiple slashes from the path.
+     * <pre>
+     * <code>&lt;empty&gt;    -&gt; /</code>
+     * <code>/          -&gt; /</code>
+     * <code>//          -&gt; /</code>
+     * <code>/articles/ + legacy      -&gt; /articles/legacy</code>
+     * <code>/articles + /legacy      -&gt; /articles/legacy</code>
+     * <code>/articles/ + /legacy      -&gt; /articles/legacy</code>
+     * </pre>
+     *
+     * @param path path to normalize
+     * @return a normalized path
+     */
+    @Contract("null ,null -> null; _,_ -> !null")
+    public static String combinePath(String url, String path) {
+        String securedUrl, securedPath;
+        if(url == null && path == null) {
+            return null;
+        }
+
+        securedUrl = url == null ? "" : url;
+        securedPath = path == null ? "" : path;
+
+        return securedUrl.concat("/").concat(securedPath).replaceAll("/+", "/");
     }
 
     /**
@@ -222,6 +251,42 @@ public final class PathUtils {
      */
     public static boolean isHomePath(@Nullable String urlToCheck, @Nullable String homePath) {
         return urlToCheck != null && defaultIfEmpty(homePath, "/").equalsIgnoreCase(urlToCheck);
+    }
+
+    /**
+     * Gets a file name without extension from full filename.
+     *
+     * @param fullFileName full file name with extension
+     * @return file name without extension, or null if doesn't match
+     */
+    @Contract("null -> null")
+    public static String getFileName(@Nullable String fullFileName) {
+        return _getFromFileName(fullFileName, "fileName");
+    }
+
+    /**
+     * Gets an extension without filename from full filename.
+     *
+     * @param fullFileName full file name with extension
+     * @return extension of the file, or null if doesn't match
+     */
+    @Contract("null -> null")
+    public static String getExtension(@Nullable String fullFileName) {
+        return _getFromFileName(fullFileName, "extension");
+    }
+
+    @Nullable
+    @Contract("null, _ -> null")
+    private static String _getFromFileName(@Nullable String fullFileName, String groupName) {
+        if (fullFileName == null) {
+            return null;
+        }
+
+        Matcher matcher = FILE_NAME_PATTERN.matcher(fullFileName);
+        if (matcher.matches()) {
+            return matcher.group(groupName);
+        }
+        return null;
     }
 
     /**

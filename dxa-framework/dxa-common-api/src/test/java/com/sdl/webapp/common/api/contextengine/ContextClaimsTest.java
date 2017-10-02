@@ -60,11 +60,11 @@ public class ContextClaimsTest {
         claims.setClaims(CLAIMS);
 
         //when
-        Boolean aBoolean = claims.getClaimValue("boolean", Boolean.class);
-        String string = claims.getClaimValue("string", String.class);
-        Integer integer = claims.getClaimValue("integer", Integer.class);
-        Long aLong = claims.getClaimValue("long", Long.class);
-        Double aDouble = claims.getClaimValue("double", Double.class);
+        Boolean aBoolean = claims.getSingleClaim("boolean", Boolean.class);
+        String string = claims.getSingleClaim("string", String.class);
+        Integer integer = claims.getSingleClaim("integer", Integer.class);
+        Long aLong = claims.getSingleClaim("long", Long.class);
+        Double aDouble = claims.getSingleClaim("double", Double.class);
 
         //then
         assertEquals(true, aBoolean);
@@ -81,8 +81,8 @@ public class ContextClaimsTest {
         claims.setClaims(CLAIMS);
 
         //when
-        List<String> set = claims.getClaimValues("set", String.class);
-        List<String> list = claims.getClaimValues("list", String.class);
+        List<String> set = claims.getClaimsList("set", String.class);
+        List<String> list = claims.getClaimsList("list", String.class);
 
         //then
         assertThat(set, hasItems("str1", "str2"));

@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ServiceConfig CacheEnabled="true" ConnectionTimeout="10000"
-               CacheUri="ehcache-cil.xml"
+               CacheUri="ehcache.xml"
                CacheExpirationDuration="60" ServiceAvailabilityCheck="true"
                CacheProviderClass="com.sdl.web.client.cache.GeneralCacheProvider" CacheConnectionTimeout="10000">
-    <!-- NOTE: cache expiration is set to only 5 seconds to prevent caching issues with XPM Session Preview. It should be set higher on a Live site -->
-
     <!-- Specify your CIS Environment's Discovery Service URL below -->
     <DiscoveryService ServiceUri="*DISCOVERY_SERVICE_URL*"/>
 

@@ -19,10 +19,6 @@ public final class ControllerUtils {
 
     public static final String SECTION_ERROR_VIEW = "Shared/Error/SectionError";
 
-    @Deprecated
-    //todo dxa2 remove
-    public static final String NOT_FOUND_ERROR_VIEW = "Shared/Error/NotFoundError";
-
     public static final String SERVER_ERROR_VIEW = "Shared/Error/ServerError";
 
     private ControllerUtils() {

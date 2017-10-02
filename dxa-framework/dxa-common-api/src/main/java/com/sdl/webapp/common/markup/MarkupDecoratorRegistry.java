@@ -22,7 +22,6 @@ public interface MarkupDecoratorRegistry {
      *
      * @param decoratorId a {@link java.lang.String} object.
      * @return a {@link java.util.List} object.
-     * @deprecated todo dxa2 registering decorators should be done against the class and not the string-name
      */
     List<MarkupDecorator> getDecorators(String decoratorId);
 }

@@ -46,7 +46,7 @@
 
     <properties>
         <dd4t.version>2.0.15.2-DXA18</dd4t.version>
-        <cd-cil.version>10.1.0-SNAPSHOT</cd-cil.version>
+        <cd-cil.version>10.1.0-1004</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>

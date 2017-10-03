@@ -43,7 +43,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <tridion.version>10.1.0-1004</tridion.version>
+        <tridion.version>10.1.0-1001</tridion.version>
         <java.version>1.8</java.version>
     </properties>
 
@@ -59,7 +59,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sdl.delivery</groupId>
+            <groupId>com.sdl.web</groupId>
             <artifactId>cil</artifactId>
             <version>${tridion.version}</version>
             <type>pom</type>

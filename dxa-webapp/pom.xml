@@ -20,7 +20,7 @@
 
     <properties>
         <dxa-bom.version>1.8.0-SNAPSHOT</dxa-bom.version>
-        <dxa-release-branch>release/1.7</dxa-release-branch>
+        <dxa-release-branch>release/1.8</dxa-release-branch>
         <java-version>1.8</java-version>
     </properties>
 

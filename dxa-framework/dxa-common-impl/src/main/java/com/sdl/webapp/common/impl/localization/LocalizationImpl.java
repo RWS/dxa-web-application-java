@@ -112,10 +112,7 @@ public class LocalizationImpl implements Localization {
      */
     @Override
     public boolean isNonPublishedAsset(String url) {
-        if (!this.isHtmlDesignPublished && SYSTEM_ASSETS_PATTERN.matcher(url).matches()){
-            return true;
-        }
-        return false;
+        return !this.isHtmlDesignPublished && SYSTEM_ASSETS_PATTERN.matcher(url).matches();
     }
 
     /**

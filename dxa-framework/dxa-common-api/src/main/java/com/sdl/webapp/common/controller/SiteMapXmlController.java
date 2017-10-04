@@ -62,7 +62,7 @@ public class SiteMapXmlController {
      *
      * @throws NavigationProviderException If an error occurs so that the navigation data cannot be retrieved.
      */
-    @RequestMapping(value = {"/sitemap.xml", "{path}/sitemap.xml"}, produces = MediaType.APPLICATION_XML_VALUE)
+    @RequestMapping(value = {"/sitemap.xml", "/{path}/sitemap.xml"}, produces = MediaType.APPLICATION_XML_VALUE)
     @ResponseBody
     public String handleGetSiteMapXml(HttpServletResponse response) throws NavigationProviderException {
         LOG.trace("handleGetSiteMapXml");

@@ -43,6 +43,9 @@ public class LocalizationImpl implements Localization {
     private final String version;
 
     @Getter
+    private final boolean isHtmlDesignPublished;
+
+    @Getter
     private final List<SiteLocalization> siteLocalizations;
 
     private final Map<String, String> configuration;
@@ -68,7 +71,7 @@ public class LocalizationImpl implements Localization {
         this.default_ = builder.default_;
         this.staging = builder.staging;
         this.version = builder.version;
-
+        this.isHtmlDesignPublished = builder.htmlDesignPublished;
         this.siteLocalizations = builder.siteLocalizationsBuilder.build();
         this.configuration = builder.configurationBuilder.build();
         this.resources = builder.resourcesBuilder.build();
@@ -97,12 +100,19 @@ public class LocalizationImpl implements Localization {
         if (url.startsWith(mediaRoot)) {
             return true;
         }
-
         final String p = path.equals("/") ? url : url.substring(path.length());
         if (SYSTEM_RESOURCES_PATTERN.matcher(p).matches()) {
             return true;
         }
         return p.equals(FAVICON_PATH) || SYSTEM_ASSETS_PATTERN.matcher(p).matches();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isNonPublishedAsset(String url) {
+        return !this.isHtmlDesignPublished && SYSTEM_ASSETS_PATTERN.matcher(url).matches();
     }
 
     /**
@@ -177,6 +187,7 @@ public class LocalizationImpl implements Localization {
         private boolean default_;
         private boolean staging;
         private String version;
+        private boolean htmlDesignPublished;
 
         private Builder() {
         }
@@ -208,6 +219,11 @@ public class LocalizationImpl implements Localization {
 
         public Builder setVersion(String version) {
             this.version = version;
+            return this;
+        }
+
+        public Builder setHtmlDesignPublished(boolean htmlDesignPublished) {
+            this.htmlDesignPublished = htmlDesignPublished;
             return this;
         }
 

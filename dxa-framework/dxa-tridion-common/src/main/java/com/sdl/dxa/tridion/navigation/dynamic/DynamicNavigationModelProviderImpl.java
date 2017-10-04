@@ -111,12 +111,11 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
         log.debug("Overridden depth counter using value from descendants level: {}", request);
 
         if (isNullOrEmpty(request.getSitemapId())) {
-            log.trace("Sitemap ID is empty, expanding all taxonomy roots");
-
             if(request.getNavigationFilter().getDescendantLevels() != 0) {
+                log.trace("Sitemap ID is empty, expanding all taxonomy roots");
+
                 // normally expand level is equal to requested descendants level, but when we load categories (=roots) instead
                 // top-level keywords, we add extra level and need to decrease expand level then by one
-
                 SitemapRequestDto adaptedRequest = request.nextExpandLevel();
 
                 return Optional.of(getTaxonomyRoots(adaptedRequest, keyword -> true).stream()

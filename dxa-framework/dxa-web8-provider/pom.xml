@@ -54,6 +54,10 @@
             <artifactId>cil</artifactId>
             <type>pom</type>
         </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>xalan</groupId>

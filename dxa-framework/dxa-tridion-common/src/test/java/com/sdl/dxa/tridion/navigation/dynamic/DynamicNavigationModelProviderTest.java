@@ -388,11 +388,10 @@ public class DynamicNavigationModelProviderTest {
                 .build();
 
         //when
-        assertThrows(() -> navigationModelProvider.getNavigationSubtree(requestDto), BadRequestException.class,
-                () -> {
-                    verifyFiltering(DepthFilter.FILTER_DOWN, false);
-                    verifyFiltering(DepthFilter.FILTER_UP, false);
-                });
+        assertEquals(Optional.of(Collections.emptyList()), navigationModelProvider.getNavigationSubtree(requestDto));
+        verifyFiltering(DepthFilter.FILTER_DOWN, false);
+        verifyFiltering(DepthFilter.FILTER_UP, false);
+
     }
 
     @Test

@@ -54,6 +54,6 @@ public class ListWrapperConverter implements SemanticModelConverter<ListWrapper>
     @NotNull
     private Object convertValue(Object toConvert, TypeDescriptor targetType, SemanticField semanticField,
                                 ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
-        return genericSemanticModelDataConverter.convert(toConvert, targetType, semanticField, pipeline, dataProvider.embedded(toConvert));
+        return genericSemanticModelDataConverter.convert(toConvert, targetType, semanticField, pipeline, dataProvider.getFor(toConvert));
     }
 }

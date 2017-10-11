@@ -71,10 +71,15 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
     }
 
     @Nullable
+    public DefaultSemanticFieldDataProvider getFor(Object model) {
+        return _getFor(model, semanticSchema);
+    }
+
+    @Nullable
     public DefaultSemanticFieldDataProvider embedded(Object value) {
         DefaultSemanticFieldDataProvider provider = _getFor(value, this.semanticSchema);
         if (provider != null) {
-            provider.embeddingLevel++;
+            provider.embeddingLevel = this.embeddingLevel + 1;
         }
         return provider;
     }

@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <cd-cil.version>8.5.0-1008</cd-cil.version>
+        <cd-cil.version>8.5.0-1011</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
@@ -312,16 +312,7 @@
                         <groupId>com.sdl.web</groupId>
                         <artifactId>web-ambient-engine</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl</groupId>
-                        <artifactId>odata_client</artifactId>
-                    </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl</groupId>
-                <artifactId>odata_client</artifactId>
-                <version>${odata_client.version}</version>
             </dependency>
 
             <dependency>

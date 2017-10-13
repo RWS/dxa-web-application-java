@@ -179,8 +179,25 @@ public class DxaSpringInitialization {
 
         @Override
         public boolean checkResource(Locale locale) throws Exception {
-            return new ClassPathResource(loadDxaProperties().getProperty("dxa.web.views.folder") + this.getUrl()).exists()
-                    || new ClassPathResource(this.getUrl()).exists();
+            String inModule = loadDxaProperties().getProperty("dxa.web.views.folder") + this.getUrl();
+            if (new ClassPathResource(inModule).exists()) {
+                log.trace("Resolved view {} in a JAR module", inModule);
+                return true;
+            }
+
+            String aroundWebapp = "../.." + this.getUrl();
+            if (Thread.currentThread().getContextClassLoader().getResource(aroundWebapp) != null) {
+                log.trace("Resolved view {} in a WebApp", aroundWebapp);
+                return true;
+            }
+
+            if (new ClassPathResource(this.getUrl()).exists()) {
+                log.trace("Resolved view {} in a classpath", this.getUrl());
+                return true;
+            }
+
+            log.trace("Cannot resolve view {}", this.getUrl());
+            return false;
         }
     }
 }

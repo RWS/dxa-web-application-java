@@ -47,7 +47,13 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     private WebRequestContext webRequestContext;
 
-    private static boolean isToBeRefreshed(ServletServerHttpResponse res, long notModifiedSince, long lastModified, boolean isVersioned) {
+    private static boolean isToBeRefreshed(ServletServerHttpResponse res, long notModifiedSince, long lastModified, boolean isVersioned, boolean isPreview) {
+
+        // If preview is enabled we never want to cache images as they may change after editing them
+        if (isPreview){
+            return true;            
+        }
+
         if (isVersioned) {
             res.getHeaders().setCacheControl(CACHE_CONTROL_WEEK);
             res.getHeaders().setExpires(lastModified + Weeks.ONE.toStandardSeconds().getSeconds() * 1000L);
@@ -66,8 +72,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
         }
     }
 
-    private static void fallbackForContentProvider(ServletServerHttpRequest req, String requestPath,
-                                                   ServletServerHttpResponse res)
+    private static void fallbackForContentProvider(ServletServerHttpRequest req, String requestPath, ServletServerHttpResponse res, boolean isPreview)
             throws IOException, StaticContentNotFoundException {
         LOG.debug("Static resource not found in static content provider. Fallback to webapp content...");
 
@@ -81,7 +86,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             res.getHeaders().setContentType(MediaType.parseMediaType(mimeType));
 
             if (isToBeRefreshed(res, req.getHeaders().getIfModifiedSince(),
-                    ManagementFactory.getRuntimeMXBean().getStartTime(), false)) {
+                    ManagementFactory.getRuntimeMXBean().getStartTime(), false, isPreview)) {
                 try (final InputStream in = contentResource.openStream(); final OutputStream out = res.getBody()) {
                     IOUtils.copy(in, out);
                 }
@@ -95,6 +100,11 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException, IOException {
+        return preHandle(request, response, handler, webRequestContext.isPreview());
+    }
+
+
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler, boolean isPreview) throws ServletException {
         final String requestPath = webRequestContext.getRequestPath();
         LOG.trace("preHandle: {}", requestPath);
 
@@ -107,14 +117,14 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             try (final ServletServerHttpResponse res = new ServletServerHttpResponse(response)) {
                 if (localization.isNonPublishedAsset(requestPath))
                 {
-                    fallbackForContentProvider(req, removeVersionNumber(requestPath), res);
+                    fallbackForContentProvider(req, removeVersionNumber(requestPath), res, isPreview);
                 }
                 StaticContentItem staticContentItem = null;
 
                 try {
                     staticContentItem = contentProvider.getStaticContent(requestPath, localization.getId(), localization.getPath());
                 } catch (StaticContentNotFoundException e) {
-                    fallbackForContentProvider(req, removeVersionNumber(requestPath), res);
+                    fallbackForContentProvider(req, removeVersionNumber(requestPath), res, isPreview);
                 }
 
                 if (staticContentItem != null) {
@@ -123,7 +133,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
                     // http://stackoverflow.com/questions/1587667/should-http-304-not-modified-responses-contain-cache-control-headers
                     if (isToBeRefreshed(res, req.getHeaders().getIfModifiedSince(),
-                            staticContentItem.getLastModified(), staticContentItem.isVersioned())) {
+                            staticContentItem.getLastModified(), staticContentItem.isVersioned(), isPreview)) {
                         try (final InputStream in = staticContentItem.getContent(); final OutputStream out = res.getBody()) {
                             IOUtils.copy(in, out);
                         }

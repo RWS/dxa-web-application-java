@@ -52,11 +52,13 @@ class XmlProperty extends Property {
         this
     }
 
+    @Override
     def processProperty(String filename, String value) {
         if (value == null) {
             return
         }
         if (this.isCanBeEmpty() || value) {
+            println "Modified $filename, set ${name == null ? 'property to ' : (name + ' = ')} $value"
             new XmlWriter().from(filename).to(filename).format('raw')
                     .open()
                     .modify(this.acceptValue(value))

@@ -1,10 +1,12 @@
 package com.sdl.dxa.builder.configuration.parameters
 
-class Property {
+abstract class Property {
     List<String> files
     String name
     boolean append
     Map<String, String> valueMapping
+
+    Tuple2<String, String> wrap
 
     //region Builder methods
     Property withMapping(String mapping) {
@@ -34,6 +36,11 @@ class Property {
         this
     }
 
+    Property wrappedWith(String left, String right) {
+        this.wrap = new Tuple2<>(left, right)
+        this
+    }
+
     Property inFile(String file) {
         if (!this.files) {
             this.files = []
@@ -52,15 +59,24 @@ class Property {
         if (value == null) {
             return null
         }
+
+        def result
+
         if (this.valueMapping) {
             if (this.valueMapping.containsKey(value)) {
-                return this.valueMapping.get(value)
+                result = this.valueMapping.get(value)
             } else if (this.valueMapping.containsKey('$self$')) {
-                return value
+                // mapping when you have a special value or original value otherwise (no -> $null$; $self$)
+                result = value
+            } else {
+                throw new IllegalArgumentException("Cannot map $value for property $name")
             }
-            throw new IllegalArgumentException("Cannot map $value for property $name")
         } else {
-            return value
+            result = value
         }
+
+        return this.wrap ? (this.wrap.first + result + this.wrap.second) : result
     }
+
+    abstract def processProperty(String filename, String value)
 }

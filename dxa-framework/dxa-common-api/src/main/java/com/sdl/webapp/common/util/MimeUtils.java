@@ -219,4 +219,13 @@ public final class MimeUtils {
         return null;
     }
 
+    /**
+     * <p>getMimeTypeByHash.</p>
+     *
+     * @param hash a {@link java.lang.String} object.
+     * @return a {@link java.lang.String} object.
+     */
+    static public String getMimeTypeByHash(String hash) {
+        return MIME_TYPES.get(hash);
+    }
 }

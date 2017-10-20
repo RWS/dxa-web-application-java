@@ -10,14 +10,15 @@ import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.Ordered;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.InternalResourceView;
@@ -34,17 +35,39 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = DxaSpringInitializationTest.TestContextConfiguration.class)
 @ActiveProfiles("test")
 public class DxaSpringInitializationTest {
 
     @Autowired
-    private ViewResolver dxaViewResolver;
+    @Qualifier("overrideDeviceContextualViewResolver")
+    private ViewResolver overrideDeviceContextualViewResolver;
+
+    @Autowired
+    @Qualifier("deviceContextualViewResolver")
+    private ViewResolver deviceContextualViewResolver;
+
+    @Autowired
+    @Qualifier("forwardRedirectViewResolver")
+    private ViewResolver forwardRedirectViewResolver;
+
+    @Autowired
+    @Qualifier("fallbackViewResolver")
+    private ViewResolver fallbackViewResolver;
+
+    @Autowired
+    @Qualifier("beanNameViewResolver")
+    private ViewResolver beanNameViewResolver;
+
+    @Autowired
+    @Qualifier("overrideViewResolver")
+    private ViewResolver overrideViewResolver;
+
 
     @Test
     public void shouldFindOverriddenView() throws Exception {
         //when
-        View view = dxaViewResolver.resolveViewName("Override", Locale.getDefault());
+        View view = overrideDeviceContextualViewResolver.resolveViewName("Override", Locale.getDefault());
 
         //then
         assertNotNull(view);
@@ -54,7 +77,7 @@ public class DxaSpringInitializationTest {
     @Test
     public void shouldDetectDeviceFamilyAndChangeViewName() throws Exception {
         //when
-        View view = dxaViewResolver.resolveViewName("TestView", Locale.getDefault());
+        View view = deviceContextualViewResolver.resolveViewName("TestView", Locale.getDefault());
 
         //then
         assertNotNull(view);
@@ -66,14 +89,58 @@ public class DxaSpringInitializationTest {
         //given 
 
         //when
-        View view = dxaViewResolver.resolveViewName("redirect:RedirectTestView", Locale.getDefault());
-        View view2 = dxaViewResolver.resolveViewName("forward:ForwardTestView", Locale.getDefault());
+        View view = forwardRedirectViewResolver.resolveViewName("redirect:RedirectTestView", Locale.getDefault());
+        View view2 = forwardRedirectViewResolver.resolveViewName("forward:ForwardTestView", Locale.getDefault());
 
         //then
         assertTrue(view instanceof RedirectView);
         assertTrue(view2 instanceof InternalResourceView);
         assertEquals("RedirectTestView", ((RedirectView) view).getUrl());
         assertEquals("ForwardTestView", ((InternalResourceView) view2).getUrl());
+    }
+
+    @Test
+    public void shouldFindNormalView() throws Exception {
+        //given 
+
+        //when
+        View view = fallbackViewResolver.resolveViewName("TestView", Locale.getDefault());
+
+        //then
+        assertNotNull(view);
+        assertTrue(view.toString().contains("TestView.jsp"));
+    }
+
+    @Test
+    public void shouldFindOverridenView() throws Exception {
+        //given
+
+        //when
+        View view = overrideViewResolver.resolveViewName("TestView2", Locale.getDefault());
+
+        //then
+        assertNotNull(view);
+        assertTrue(view.toString().contains("TestView2.jsp"));
+    }
+
+    @Test
+    public void shouldInitializeResolverInCorrectOrder() {
+        //given
+        Ordered v1 = (Ordered) forwardRedirectViewResolver;
+        Ordered v2 = (Ordered) overrideDeviceContextualViewResolver;
+        Ordered v3 = (Ordered) deviceContextualViewResolver;
+        Ordered v4 = (Ordered) overrideViewResolver;
+        Ordered v5 = (Ordered) beanNameViewResolver;
+        Ordered v6 = (Ordered) fallbackViewResolver;
+
+        //when
+        //then
+        //highest number is lowest precedence
+        assertTrue(v6.getOrder() > v5.getOrder());
+        assertTrue(v5.getOrder() > v4.getOrder());
+        assertTrue(v4.getOrder() > v3.getOrder());
+        assertTrue(v3.getOrder() > v2.getOrder());
+        assertTrue(v2.getOrder() > v1.getOrder());
     }
 
 
@@ -131,9 +198,34 @@ public class DxaSpringInitializationTest {
             return new ApplicationContextHolder();
         }
 
-        @Bean
-        public ViewResolver dxaViewResolver() {
-            return dxaSpringInitialization().dxaViewResolver();
+        @Bean("overrideDeviceContextualViewResolver")
+        public ViewResolver overrideDeviceContextualViewResolver() {
+            return dxaSpringInitialization().overrideDeviceContextualViewResolver();
+        }
+
+        @Bean("fallbackViewResolver")
+        public ViewResolver fallbackViewResolver() {
+            return dxaSpringInitialization().fallbackViewResolver();
+        }
+
+        @Bean("forwardRedirectViewResolver")
+        public ViewResolver forwardRedirectViewResolver() {
+            return dxaSpringInitialization().forwardRedirectViewResolver();
+        }
+
+        @Bean("deviceContextualViewResolver")
+        public ViewResolver deviceContextualViewResolver() {
+            return dxaSpringInitialization().deviceContextualViewResolver();
+        }
+
+        @Bean("beanNameViewResolver")
+        public ViewResolver beanNameViewResolver() {
+            return dxaSpringInitialization().beanNameViewResolver();
+        }
+
+        @Bean("overrideViewResolver")
+        public ViewResolver overrideViewResolver() {
+            return dxaSpringInitialization().overrideViewResolver();
         }
 
         @Bean

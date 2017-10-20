@@ -24,7 +24,6 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
@@ -35,7 +34,6 @@ import org.springframework.web.servlet.view.UrlBasedViewResolver;
 import java.util.Locale;
 
 import static com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter.FILTER_NAME;
-import static com.sdl.webapp.common.util.InitializationUtils.loadDxaProperties;
 import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitialization;
 
 /**
@@ -70,55 +68,53 @@ public class DxaSpringInitialization {
     }
 
     @Bean
-    public ViewResolver fallbackViewResolver() {
-        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
-        viewResolver.setViewClass(JstlView.class);
-        viewResolver.setPrefix(viewResolverPrefix);
-        viewResolver.setSuffix(viewResolverSuffix);
-        viewResolver.setOrder(Ordered.LOWEST_PRECEDENCE);
-        return viewResolver;
-    }
-
-    @Bean
-    public ViewResolver dxaViewResolver() {
-        final UrlBasedViewResolver viewResolver = new UrlBasedViewResolver() {
-
+    public ViewResolver forwardRedirectViewResolver() {
+        UrlBasedViewResolver viewResolver = new UrlBasedViewResolver() {
             @Override
             public View resolveViewName(String viewName, Locale locale) throws Exception {
                 if (viewName.startsWith(FORWARD_URL_PREFIX) || viewName.startsWith(REDIRECT_URL_PREFIX)) {
                     return super.resolveViewName(viewName, locale);
                 }
-
-                View view = tryViewNames(locale, processDeviceFamily(viewName), viewResolverOverride + "/" + viewName);
-
-                return view != null ? view : super.resolveViewName(viewName, locale);
-            }
-
-            private View tryViewNames(Locale locale, String... viewNames) throws Exception {
-                for (String viewName : viewNames) {
-                    View view = super.resolveViewName(viewName, locale);
-                    if (null != view) {
-                        log.debug("Found view name {}, using it", viewName);
-                        return view;
-                    }
-                }
                 return null;
             }
-
-            private String processDeviceFamily(String viewName) {
-                ContextEngine contextEngine = ApplicationContextHolder.getContext().getBean(ContextEngine.class);
-                String deviceFamily = contextEngine.getDeviceFamily();
-                log.debug("Current device family is {}", deviceFamily);
-                return "desktop".equals(deviceFamily) ? viewName : (viewName + "." + deviceFamily);
-            }
         };
-
-        viewResolver.setViewClass(OptionalJstlView.class);
-        viewResolver.setOrder(1);
+        viewResolver.setViewClass(JstlView.class);
+        viewResolver.setOrder(0);
         viewResolver.setPrefix(viewResolverPrefix);
         viewResolver.setSuffix(viewResolverSuffix);
         return viewResolver;
     }
+
+    @Bean
+    public ViewResolver overrideDeviceContextualViewResolver() {
+        UrlBasedViewResolver viewResolver = new ContextualDeviceUrlBasedViewResolver();
+        viewResolver.setViewClass(OptionalJstlView.class);
+        viewResolver.setOrder(10);
+        viewResolver.setPrefix(viewResolverPrefix + viewResolverOverride);
+        viewResolver.setSuffix(viewResolverSuffix);
+        return viewResolver;
+    }
+
+    @Bean
+    public ViewResolver deviceContextualViewResolver() {
+        UrlBasedViewResolver viewResolver = new ContextualDeviceUrlBasedViewResolver();
+        viewResolver.setViewClass(OptionalJstlView.class);
+        viewResolver.setOrder(20);
+        viewResolver.setPrefix(viewResolverPrefix);
+        viewResolver.setSuffix(viewResolverSuffix);
+        return viewResolver;
+    }
+
+    @Bean
+    public ViewResolver overrideViewResolver() {
+        UrlBasedViewResolver viewResolver = new UrlBasedViewResolver();
+        viewResolver.setViewClass(OptionalJstlView.class);
+        viewResolver.setOrder(30);
+        viewResolver.setPrefix(viewResolverPrefix + viewResolverOverride);
+        viewResolver.setSuffix(viewResolverSuffix);
+        return viewResolver;
+    }
+
 
     @Bean
     public BeanNameViewResolver beanNameViewResolver() {
@@ -133,6 +129,16 @@ public class DxaSpringInitialization {
         RssView rssView = new RssView();
         traceBeanInitialization(rssView);
         return rssView;
+    }
+
+    @Bean
+    public ViewResolver fallbackViewResolver() {
+        InternalResourceViewResolver viewResolver = new InternalResourceViewResolver();
+        viewResolver.setViewClass(JstlView.class);
+        viewResolver.setPrefix(viewResolverPrefix);
+        viewResolver.setSuffix(viewResolverSuffix);
+        viewResolver.setOrder(Ordered.LOWEST_PRECEDENCE);
+        return viewResolver;
     }
 
     @Bean(name = "atomFeedView")
@@ -175,29 +181,32 @@ public class DxaSpringInitialization {
         return new DxaViewModelJsonChainFilter();
     }
 
+    private static class ContextualDeviceUrlBasedViewResolver extends UrlBasedViewResolver {
+
+        private String processDeviceFamily(String viewName) {
+            ContextEngine contextEngine = ApplicationContextHolder.getContext().getBean(ContextEngine.class);
+            String deviceFamily = contextEngine.getDeviceFamily();
+            log.debug("Current device family is {}", deviceFamily);
+            return "desktop".equals(deviceFamily) ? viewName : (viewName + "." + deviceFamily);
+        }
+
+        @Override
+        public View resolveViewName(String viewName, Locale locale) throws Exception {
+            return super.resolveViewName(processDeviceFamily(viewName), locale);
+        }
+
+
+    }
+
     private static class OptionalJstlView extends JstlView {
 
         @Override
         public boolean checkResource(Locale locale) throws Exception {
-            String aroundWebapp = "../.." + this.getUrl();
-            if (Thread.currentThread().getContextClassLoader().getResource(aroundWebapp) != null) {
-                log.trace("Resolved view {} in a WebApp", aroundWebapp);
-                return true;
+            boolean exists = ApplicationContextHolder.getContext().getResource(this.getUrl()).exists();
+            if (exists) {
+                log.debug("Found view in application context: {}", this.getUrl());
             }
-
-            String inModule = loadDxaProperties().getProperty("dxa.web.views.folder") + this.getUrl();
-            if (new ClassPathResource(inModule).exists()) {
-                log.trace("Resolved view {} in a JAR module", inModule);
-                return true;
-            }
-
-            if (new ClassPathResource(this.getUrl()).exists()) {
-                log.trace("Resolved view {} in a classpath", this.getUrl());
-                return true;
-            }
-
-            log.trace("Cannot resolve view {}", this.getUrl());
-            return false;
+            return exists;
         }
     }
 }

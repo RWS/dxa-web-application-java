@@ -18,10 +18,10 @@ package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.JsonNode;
-
 import org.dd4t.contentmodel.Field;
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Schema;
@@ -40,6 +40,7 @@ import java.util.Map;
  * Embedded fields basically are an array of
  * ambiguous and unknown keynames, with multiple Fields in them
  */
+@JsonIgnoreProperties(value = {"content"}, allowGetters = true)
 public class FieldSetImpl implements FieldSet, Serializable {
 
     private static final Logger LOG = LoggerFactory.getLogger(FieldSetImpl.class);
@@ -47,9 +48,8 @@ public class FieldSetImpl implements FieldSet, Serializable {
     private static final long serialVersionUID = -2184588044467613932L;
 
     private final Map<String, Object> rawContent = new HashMap<>();
-    
-    @ElementMap(name = "fields", keyType = String.class, valueType = Field.class, entry = "item", required = false)    
-    @JsonIgnore
+
+    @ElementMap(name = "fields", keyType = String.class, valueType = Field.class, entry = "item", required = false)
     private Map<String, Field> content = new HashMap<>();
 
     @Element(name = "schema", required = true)
@@ -64,6 +64,25 @@ public class FieldSetImpl implements FieldSet, Serializable {
     @Override
     public void setSchema (Schema schema) {
         this.schema = schema;
+    }
+
+    /**
+     * Get the content
+     *
+     * @return a map of field objects representing the content
+     */
+    @Override
+    @JsonGetter
+    public Map<String, Field> getContent() {
+        return content;
+    }
+
+    /**
+     * Set the content
+     */
+    @Override
+    public void setContent(Map<String, Field> content) {
+        this.content = content;
     }
 
     @JsonAnyGetter
@@ -83,23 +102,5 @@ public class FieldSetImpl implements FieldSet, Serializable {
         }
 
         rawContent.put(fieldKey, embeddedField);
-    }
-
-    /**
-     * Get the content
-     *
-     * @return a map of field objects representing the content
-     */
-    @Override
-    public Map<String, Field> getContent () {
-        return content;
-    }
-
-    /**
-     * Set the content
-     */
-    @Override
-    public void setContent (Map<String, Field> content) {
-        this.content = content;
     }
 }

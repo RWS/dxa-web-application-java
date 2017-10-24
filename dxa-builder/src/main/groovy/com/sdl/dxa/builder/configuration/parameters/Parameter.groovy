@@ -62,7 +62,7 @@ class Parameter {
     }
 
     String request() {
-        println "\n  ::  ${description}? Default value: '${value ?: 'no default'}   '\n\nPress <Enter> to choose default value or type 'halt' to stop"
+        println "\n  ::  ${description}? Default value: '${value ?: 'no default'}'\n\nPress <Enter> to choose default value or type 'halt' to stop"
         validator?.describe()
 
         def userValue

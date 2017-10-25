@@ -37,6 +37,13 @@ class Parameter {
         this
     }
 
+    Parameter withSystemEnv(String varName) {
+        if (System.getenv(varName) != null) {
+            this.value = System.getenv(varName)
+        }
+        this
+    }
+
     Parameter versionAdded(String version) {
         this.versionAdded = version
         this

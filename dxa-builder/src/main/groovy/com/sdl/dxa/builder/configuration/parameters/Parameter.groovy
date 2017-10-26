@@ -68,8 +68,27 @@ class Parameter {
         batch ? get() : request()
     }
 
+    String request(Map<Property, String> props, String version, boolean isBatch, Map<String, ?> configuration = [:]) {
+        if (!this.isSupportedInCurrentVersion(version)) {
+            return null
+        }
+
+        println("::: ${this.description}\n" +
+                "::: ${this.process(isBatch, configuration)}")
+        println ''
+
+        if (this.properties) {
+            this.properties.each {
+                props[it] = this.get()
+            }
+        }
+
+        return this.get()
+    }
+
     String request() {
-        println "\n  ::  ${description}? Default value: '${value ?: 'no default'}'\n\nPress <Enter> to choose default value or type 'halt' to stop"
+        println "\n  ::  ${description}\n  ::  Default value: '${value ?: 'no default'}'" +
+                "\n\nPress <Enter> to choose default value or type 'halt' to stop"
         validator?.describe()
 
         def userValue

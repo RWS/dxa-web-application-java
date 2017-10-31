@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.tridion.broker.StorageException;
@@ -35,6 +36,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
 
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
+
 
 /**
  * Static content resolver is capable to resolve static (also versioned) binary content from broker database, and to cache it for same request.

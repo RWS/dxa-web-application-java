@@ -63,6 +63,8 @@ public class StaticContentResolver {
     public StaticContentResolver(WebApplicationContext webApplicationContext) {
         this.webApplicationContext = webApplicationContext;
     }
+	  @Autowired
+    private WebRequestContext webRequestContext;
 
     /**
      * Resolves static content with a given path in a given publication.
@@ -143,7 +145,7 @@ public class StaticContentResolver {
         }
 
         long componentTime = componentMeta.getLastPublicationDate().getTime();
-        boolean shouldRefresh = isToBeRefreshed(file, componentTime);
+        boolean shouldRefresh = webRequestContext.isPreview() || isToBeRefreshed(file, componentTime);
         
         if (shouldRefresh) {
             BinaryData binaryData = binaryContentRetriever.getBinary(publicationId, itemId, binaryMeta.getVariantId());

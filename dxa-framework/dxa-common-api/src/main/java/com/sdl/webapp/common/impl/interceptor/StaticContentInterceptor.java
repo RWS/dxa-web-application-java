@@ -48,7 +48,6 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private WebRequestContext webRequestContext;
 
     private static boolean isToBeRefreshed(ServletServerHttpResponse res, long notModifiedSince, long lastModified, boolean isVersioned, boolean isPreview) {
-		res.getHeaders().setLastModified(lastModified);
 
         // If preview is enabled we never want to cache images as they may change after editing them
         if (isPreview){
@@ -62,7 +61,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             res.getHeaders().setCacheControl(CACHE_CONTROL_HOUR);
             res.getHeaders().setExpires(lastModified + Hours.ONE.toStandardSeconds().getSeconds() * 1000L);
         }
-
+        res.getHeaders().setLastModified(lastModified);
 
         if (lastModified > notModifiedSince + 1000L) {
             res.setStatusCode(HttpStatus.OK);

@@ -120,6 +120,7 @@ public class DefaultContentProviderTest {
         verify(staticContentResolver).getStaticContent(eq(StaticContentRequestDto.builder("path", "localizationId")
                 .localizationPath("localizationPath")
                 .baseUrl("baseUrl")
+				.noCache(false)
                 .build()));
     }
 }

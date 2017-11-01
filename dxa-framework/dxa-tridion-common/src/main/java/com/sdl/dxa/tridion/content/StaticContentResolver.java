@@ -63,8 +63,6 @@ public class StaticContentResolver {
     public StaticContentResolver(WebApplicationContext webApplicationContext) {
         this.webApplicationContext = webApplicationContext;
     }
-	  @Autowired
-    private WebRequestContext webRequestContext;
 
     /**
      * Resolves static content with a given path in a given publication.
@@ -150,7 +148,7 @@ public class StaticContentResolver {
          
          if(!shouldRefresh)
          {
-             shouldRefresh = file.exists() && webRequestContext.isPreview();
+             shouldRefresh = file.exists() && requestDto.getNoCache();
          }
         
         if (shouldRefresh) {

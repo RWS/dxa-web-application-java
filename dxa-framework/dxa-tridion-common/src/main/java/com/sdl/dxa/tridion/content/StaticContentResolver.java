@@ -143,8 +143,9 @@ public class StaticContentResolver {
         }
 
         long componentTime = componentMeta.getLastPublicationDate().getTime();
-        boolean shouldRefresh = isToBeRefreshed(file, componentTime);
-        
+
+         boolean shouldRefresh =  isToBeRefreshed(file, componentTime) || requestDto.isNoCache();
+         
         if (shouldRefresh) {
             BinaryData binaryData = binaryContentRetriever.getBinary(publicationId, itemId, binaryMeta.getVariantId());
 

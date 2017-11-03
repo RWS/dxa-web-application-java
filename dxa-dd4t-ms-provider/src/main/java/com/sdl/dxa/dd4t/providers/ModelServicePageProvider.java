@@ -44,7 +44,6 @@ public class ModelServicePageProvider extends BrokerPageProvider implements Page
     public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, SerializationException {
         try {
             String serviceUrl = fromUriString(modelServiceConfiguration.getPageModelUrl())
-                    .queryParam("raw", "true")
                     .queryParam("modelType", "DD4T")
                     .build().toUriString();
 

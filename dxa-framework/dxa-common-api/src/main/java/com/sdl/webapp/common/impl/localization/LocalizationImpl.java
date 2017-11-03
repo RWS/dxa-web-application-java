@@ -8,6 +8,7 @@ import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.SiteLocalization;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
+import com.sdl.webapp.common.util.FileUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -104,7 +105,7 @@ public class LocalizationImpl implements Localization {
         if (SYSTEM_RESOURCES_PATTERN.matcher(p).matches()) {
             return true;
         }
-        return p.equals(FAVICON_PATH) || SYSTEM_ASSETS_PATTERN.matcher(p).matches();
+        return FileUtils.isFavicon(p) || SYSTEM_ASSETS_PATTERN.matcher(p).matches();
     }
 
     /**

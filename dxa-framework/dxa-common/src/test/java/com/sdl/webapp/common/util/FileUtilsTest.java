@@ -208,4 +208,25 @@ public class FileUtilsTest {
         assertTrue(oldFile);
     }
 
+    @Test
+    public void shouldFindFavicon() {
+        assertFalse(FileUtils.isFavicon("/"));
+        assertFalse(FileUtils.isFavicon("/not-favicon.ico"));
+        assertTrue(FileUtils.isFavicon("/favicon.ico"));
+    }
+
+    @Test
+    public void shouldDetectBascifConfigurationFiles() {
+        assertFalse(FileUtils.isEssentialConfiguration("/"));
+        assertFalse(FileUtils.isEssentialConfiguration("/media/file.png"));
+        assertFalse(FileUtils.isEssentialConfiguration("/somepath/somefile.ext"));
+        assertFalse(FileUtils.isEssentialConfiguration("/system"));
+        assertFalse(FileUtils.isEssentialConfiguration("/system"));
+
+        assertTrue(FileUtils.isEssentialConfiguration("/system/assets/config.json"));
+        assertTrue(FileUtils.isEssentialConfiguration("/system/folder/config.txt"));
+        assertTrue(FileUtils.isEssentialConfiguration("/system/system/config.txt"));
+        assertTrue(FileUtils.isEssentialConfiguration("/system/v32/system/config.txt"));
+    }
+
 }

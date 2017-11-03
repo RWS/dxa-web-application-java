@@ -14,8 +14,8 @@ public class StaticContentRequestDto {
     private String localizationPath;
 
     private String baseUrl;
-    
-    private boolean noCache;
+
+    private boolean noMediaCache;
 
     public static StaticContentRequestDtoBuilder builder(String binaryPath, String localizationId) {
         return hiddenBuilder().localizationId(localizationId).binaryPath(binaryPath);

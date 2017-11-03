@@ -4,11 +4,18 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 /**
  * Utilities to work with files.
  */
 public final class FileUtils {
+
+    protected static final Pattern SYSTEM_FOLDER_PATTERN = Pattern.compile("/system(/v\\d+\\.\\d+)?/[^\\\\]+/.*");
+
+    protected static final String VERSION_JSON = "/version.json";
+
+    private static final String FAVICON_PATH = "/favicon.ico";
 
     private FileUtils() {
     }
@@ -56,6 +63,26 @@ public final class FileUtils {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Returns if this path is a path of a favicon.
+     *
+     * @param path the given path to check
+     * @return whether it's a favicon
+     */
+    public static boolean isFavicon(String path) {
+        return FAVICON_PATH.equals(path);
+    }
+
+    /**
+     * Checks whether this path is a part of DXA essential configuration, or some basic files that are required for DXA to start.
+     *
+     * @param path the given path to check
+     * @return whether DXA need this file to start
+     */
+    public static boolean isEssentialConfiguration(@NotNull String path) {
+        return VERSION_JSON.equals(path) || SYSTEM_FOLDER_PATTERN.matcher(path).matches() || isFavicon(path);
     }
 
     /**

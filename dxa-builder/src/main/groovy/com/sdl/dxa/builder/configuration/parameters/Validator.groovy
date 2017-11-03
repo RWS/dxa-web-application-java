@@ -101,6 +101,7 @@ class Validator {
 
     static Validator url() {
         new Validator(description: 'Should match a valid URL', validate: { String url ->
+            url = url.replace("sdl.corp", "sdl.com") // workaround for valid internal corporate domain
             notEmpty().validate(url) &&
                     (new UrlValidator(ALLOW_ALL_SCHEMES + ALLOW_LOCAL_URLS + ALLOW_2_SLASHES).isValid(url)
                             || url?.matches(/^((https?|ftp):\/\/)?localhost(:\d+)?(\/[^\s]*)?$/))

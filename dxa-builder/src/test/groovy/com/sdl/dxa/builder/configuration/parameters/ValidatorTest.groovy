@@ -45,6 +45,16 @@ class ValidatorTest {
     }
 
     @Test
+    void shouldValidateInternalURLs() {
+        //given
+        def validator = Validator.url()
+
+        //when, then
+        Assert.assertFalse(validator.validate("http://uadevadosenko.sdl.cor:8083/discovery.svc")) // cor
+        Assert.assertTrue(validator.validate("http://uadevadosenko.sdl.corp:8083/discovery.svc")) // corp
+    }
+
+    @Test
     void shouldValidateIPs() {
         //given
         def validator = Validator.ip()

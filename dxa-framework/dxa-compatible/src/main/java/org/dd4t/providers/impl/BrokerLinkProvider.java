@@ -40,6 +40,25 @@ public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvid
 
     private static final Logger LOG = LoggerFactory.getLogger(BrokerLinkProvider.class);
 
+    private static String getLinkAsString(final String sourcePageUri, final String targetComponentUri, final String componentTemplateUri) {
+        try {
+            TCMURI componentTcmUri = new TCMURI(targetComponentUri);
+            TCMURI sourcePageTcmUri = new TCMURI(sourcePageUri);
+            TCMURI excludeTemplateTcmUri = new TCMURI(componentTemplateUri);
+
+            ComponentLink componentLink = new ComponentLinkImpl(componentTcmUri.getPublicationId());
+            Link link = componentLink.getLink(sourcePageTcmUri.getItemId()
+                    , componentTcmUri.getItemId(), excludeTemplateTcmUri.getItemId(), "", "", true, false);
+
+            if (link.isResolved()) {
+                return link.getURL();
+            }
+        } catch (Exception ex) {
+            LOG.error("Unable to resolve link to " + targetComponentUri + ": " + ex.getMessage(), ex);
+        }
+        return null;
+    }
+
     /**
      * Returns a link URL to the given Component TcmUri, if exists. Otherwise, returns null.
      *
@@ -91,21 +110,6 @@ public class BrokerLinkProvider extends BaseBrokerProvider implements LinkProvid
         String link = getLinkAsString(Constants.TCM_ZERO_URI, targetComponentUri, excludeComponentTemplateUri);
         if (StringUtils.isNotEmpty(link)) {
             return link;
-        }
-        return null;
-    }
-
-    private static String getLinkAsString (final String sourcePageUri, final String targetComponentUri, final String componentTemplateUri) {
-        try {
-            TCMURI componentURI = new TCMURI(targetComponentUri);
-            ComponentLink componentLink = new ComponentLinkImpl(componentURI.getPublicationId());
-            Link link = componentLink.getLink(sourcePageUri, targetComponentUri, componentTemplateUri, "", "", true, false);
-
-            if (link.isResolved()) {
-                return link.getURL();
-            }
-        } catch (Exception ex) {
-            LOG.error("Unable to resolve link to " + targetComponentUri + ": " + ex.getMessage(), ex);
         }
         return null;
     }

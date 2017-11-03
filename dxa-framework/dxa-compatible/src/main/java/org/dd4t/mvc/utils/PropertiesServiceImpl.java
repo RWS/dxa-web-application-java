@@ -34,7 +34,7 @@ public class PropertiesServiceImpl extends PropertiesServiceBase {
 
     private static final Logger LOG = LoggerFactory.getLogger(PropertiesServiceImpl.class);
 
-    private PropertiesServiceImpl () {
+    public PropertiesServiceImpl() {
     }
 
     @Override

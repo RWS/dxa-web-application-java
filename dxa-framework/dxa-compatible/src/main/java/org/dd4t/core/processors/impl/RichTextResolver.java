@@ -47,7 +47,7 @@ public class RichTextResolver extends BaseProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RichTextResolver.class);
 
-    public RichTextResolver () {
+    public RichTextResolver() {
     }
 
     /**
@@ -56,7 +56,7 @@ public class RichTextResolver extends BaseProcessor implements Processor {
      * @param item the to resolve the links
      */
     @Override
-    public void execute (Item item, RequestContext context) throws ProcessorException {
+    public void execute(Item item, RequestContext context) throws ProcessorException {
         if (item instanceof Page) {
             try {
                 resolvePage((Page) item);
@@ -79,13 +79,14 @@ public class RichTextResolver extends BaseProcessor implements Processor {
                 throw new ProcessorException(e);
             }
         } else {
-            LOG.debug("RichTextResolverFilter. Item is not a GenericPage or GenericComponent so no component to resolve");
+            LOG.debug("RichTextResolverFilter. Item is not a GenericPage or GenericComponent so no component to " +
+                    "resolve");
         }
         LOG.debug("RichTextResolverFilter finished");
 
     }
 
-    protected void resolvePage (Page page) throws TransformerException {
+    protected void resolvePage(Page page) throws TransformerException {
         List<ComponentPresentation> cpList = page.getComponentPresentations();
         if (cpList != null) {
             for (ComponentPresentation cp : cpList) {
@@ -95,14 +96,14 @@ public class RichTextResolver extends BaseProcessor implements Processor {
         resolveMap(page.getMetadata());
     }
 
-    protected void resolveComponent (Component component) throws TransformerException {
+    protected void resolveComponent(Component component) throws TransformerException {
         if (component != null) {
             resolveMap(component.getContent());
             resolveMap(component.getMetadata());
         }
     }
 
-    protected void resolveMap (Map<String, Field> fieldMap) throws TransformerException {
+    protected void resolveMap(Map<String, Field> fieldMap) throws TransformerException {
         if (fieldMap == null || fieldMap.isEmpty()) {
             return;
         }
@@ -115,13 +116,13 @@ public class RichTextResolver extends BaseProcessor implements Processor {
                 EmbeddedField ef = (EmbeddedField) field;
 
                 for (FieldSet fs : ef.getEmbeddedValues()) {
-                    resolveMap(fs.getContent());
+                    resolveMap(fs.getFieldSet());
                 }
             }
         }
     }
 
-    protected void resolveXhtmlField (XhtmlField xhtmlField) throws TransformerException {
+    protected void resolveXhtmlField(XhtmlField xhtmlField) throws TransformerException {
         try {
             RichTextUtils.resolveXhtmlField(xhtmlField, false, null, null);
         } catch (ItemNotFoundException | SerializationException e) {

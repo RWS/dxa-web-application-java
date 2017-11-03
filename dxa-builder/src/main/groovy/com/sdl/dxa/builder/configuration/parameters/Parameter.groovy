@@ -7,6 +7,9 @@ class Parameter {
     Validator validator
     String value
 
+    // We don't care about case sensitivity in most cases
+    private boolean isValueCaseSensitive = false;
+
     String versionAdded
 
     private boolean valid = false
@@ -34,6 +37,11 @@ class Parameter {
 
     Parameter withDefaultValue(Object project, String cliName, String defaultValue) {
         this.value = project && project.hasProperty(cliName) ? (project[cliName] as String).trim() : defaultValue
+        this
+    }
+
+    Parameter withCaseSensitiveValue() {
+        this.isValueCaseSensitive = true
         this
     }
 
@@ -117,10 +125,10 @@ class Parameter {
             validator?.describe()
             throw new IllegalArgumentException("Invalid value '${value}' for '${description}'")
         }
-        value
+        this.isValueCaseSensitive ? value : value.toLowerCase()
     }
 
     private boolean isValid(String userValue) {
-        valid = valid || validator == null || validator.validate(userValue)
+        valid = valid || validator == null || validator.setIsCaseSensitive(this.isValueCaseSensitive).validate(userValue)
     }
 }

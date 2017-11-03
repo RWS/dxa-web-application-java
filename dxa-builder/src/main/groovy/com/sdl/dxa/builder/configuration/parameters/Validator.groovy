@@ -11,6 +11,8 @@ class Validator {
 
     Closure<Boolean> validate
 
+    private static isCaseSens = false
+
     def describe = { String prefix = "" ->
         println prefix + description
     }
@@ -18,6 +20,11 @@ class Validator {
     //region Builder methods
     Validator withDescription(String description) {
         this.description = description
+        this
+    }
+
+    Validator setIsCaseSensitive(boolean value) {
+        isCaseSens = value
         this
     }
 
@@ -29,7 +36,13 @@ class Validator {
 
     //region Validators create methods
     static Validator valueInList(String... values) {
-        new Validator(description: "Value should be one of ${values}", validate: { values.contains(it) })
+        new Validator(description: "Value should be one of ${values}", validate: {
+            if(!isCaseSens) {
+                it = it.toLowerCase();
+                values = values*.toLowerCase()
+            }
+            values.contains(it)
+        })
     }
 
     static Validator commaInputFromList(Collection<String> values) {
@@ -37,8 +50,14 @@ class Validator {
             if ('-' == input) {
                 return true
             }
-            def tokenize = input.tokenize(' ,')
-            values.containsAll(tokenize)
+
+            if(!isCaseSens) {
+                input = input.toLowerCase();
+                values = values*.toLowerCase()
+            }
+
+            def tokenize = input.tokenize(' ,');
+            values.containsAll(tokenize);
         })
     }
 

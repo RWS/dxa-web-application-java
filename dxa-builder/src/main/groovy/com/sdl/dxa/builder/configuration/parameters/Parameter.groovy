@@ -7,6 +7,9 @@ class Parameter {
     Validator validator
     String value
 
+    // We don't care about case sensitivity in most cases
+    boolean isValueCaseSensitive
+
     String versionAdded
 
     private boolean valid = false
@@ -34,6 +37,11 @@ class Parameter {
 
     Parameter withDefaultValue(Object project, String cliName, String defaultValue) {
         this.value = project && project.hasProperty(cliName) ? (project[cliName] as String).trim() : defaultValue
+        this
+    }
+
+    Parameter withCaseSensitiveValue() {
+        this.isValueCaseSensitive = true
         this
     }
 
@@ -65,7 +73,8 @@ class Parameter {
             this.value = this.dynamicDefault(configuration)
         }
 
-        batch ? get() : request()
+        def value = batch ? get() : request()
+        this.isValueCaseSensitive ? value : value.toLowerCase()
     }
 
     String request(Map<Property, String> props, String version, boolean isBatch, Map<String, ?> configuration = [:]) {
@@ -121,6 +130,6 @@ class Parameter {
     }
 
     private boolean isValid(String userValue) {
-        valid = valid || validator == null || validator.validate(userValue)
+        valid = valid || validator == null || validator.setCaseSensitive(this.isValueCaseSensitive).validate(userValue)
     }
 }

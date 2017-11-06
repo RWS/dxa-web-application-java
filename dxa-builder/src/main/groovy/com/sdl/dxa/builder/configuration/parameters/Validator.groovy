@@ -11,7 +11,7 @@ class Validator {
 
     Closure<Boolean> validate
 
-    private static isCaseSens = false
+    boolean caseSensitive
 
     def describe = { String prefix = "" ->
         println prefix + description
@@ -23,42 +23,44 @@ class Validator {
         this
     }
 
-    Validator setIsCaseSensitive(boolean value) {
-        isCaseSens = value
-        this
-    }
-
     Validator withValidateClosure(Closure<Boolean> closure) {
         this.validate = closure
         this
     }
-    //endregion
+
+    Validator setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive
+        this
+    }
+//endregion
 
     //region Validators create methods
     static Validator valueInList(String... values) {
-        new Validator(description: "Value should be one of ${values}", validate: {
-            if(!isCaseSens) {
-                it = it.toLowerCase();
+        def validator = new Validator(description: "Value should be one of ${values}", validate: {
+            if (!delegate.caseSensitive) {
+                it = it.toLowerCase()
                 values = values*.toLowerCase()
             }
             values.contains(it)
         })
+        validator.validate.delegate = validator
     }
 
     static Validator commaInputFromList(Collection<String> values) {
-        new Validator(description: "Allowed values are: ${values}, or '-' for empty list", validate: { String input ->
+        def validator = new Validator(description: "Allowed values are: ${values}, or '-' for empty list", validate: { String input ->
             if ('-' == input) {
                 return true
             }
 
-            if(!isCaseSens) {
-                input = input.toLowerCase();
+            if (!delegate.getCaseSensitive()) {
+                input = input.toLowerCase()
                 values = values*.toLowerCase()
             }
 
-            def tokenize = input.tokenize(' ,');
-            values.containsAll(tokenize);
+            def tokenize = input.tokenize(' ,')
+            values.containsAll(tokenize)
         })
+        validator.validate.delegate = validator
     }
 
     static Validator notEmpty() {

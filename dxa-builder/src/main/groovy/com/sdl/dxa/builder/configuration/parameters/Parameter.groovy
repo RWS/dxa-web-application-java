@@ -8,7 +8,7 @@ class Parameter {
     String value
 
     // We don't care about case sensitivity in most cases
-    private boolean isValueCaseSensitive = false;
+    boolean isValueCaseSensitive
 
     String versionAdded
 
@@ -73,7 +73,8 @@ class Parameter {
             this.value = this.dynamicDefault(configuration)
         }
 
-        batch ? get() : request()
+        def value = batch ? get() : request()
+        this.isValueCaseSensitive ? value : value.toLowerCase()
     }
 
     String request(Map<Property, String> props, String version, boolean isBatch, Map<String, ?> configuration = [:]) {
@@ -125,10 +126,10 @@ class Parameter {
             validator?.describe()
             throw new IllegalArgumentException("Invalid value '${value}' for '${description}'")
         }
-        this.isValueCaseSensitive ? value : value.toLowerCase()
+        value
     }
 
     private boolean isValid(String userValue) {
-        valid = valid || validator == null || validator.setIsCaseSensitive(this.isValueCaseSensitive).validate(userValue)
+        valid = valid || validator == null || validator.setCaseSensitive(this.isValueCaseSensitive).validate(userValue)
     }
 }

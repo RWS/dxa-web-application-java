@@ -55,4 +55,19 @@ class ValidatorTest {
         //then
         Assert.assertFalse(validator.validate("http://sdl.com"))
     }
+
+    @Test
+    void shouldBeAwareOfCaseSensitivity() {
+        Assert.assertTrue(Validator.valueInList("abc", "zxc", "qwe").setCaseSensitive(true).validate("qwe"))
+        Assert.assertTrue(Validator.valueInList("abc", "zxc", "qwe").setCaseSensitive(false).validate("QWE"))
+        Assert.assertTrue(Validator.valueInList("abc", "zxc", "QwE").setCaseSensitive(false).validate("qwe"))
+
+        Assert.assertFalse(Validator.valueInList("abc", "zxc", "qwe").setCaseSensitive(true).validate("QWE"))
+
+        Assert.assertTrue(Validator.commaInputFromList(["abc", "zxc", "qwe"]).setCaseSensitive(true).validate("qwe, zxc"))
+        Assert.assertTrue(Validator.commaInputFromList(["abc", "zxc", "qwe"]).setCaseSensitive(false).validate("QWE, ZXC"))
+        Assert.assertTrue(Validator.commaInputFromList(["abc", "ZxC", "QwE"]).setCaseSensitive(false).validate("qwe, zxc"))
+
+        Assert.assertFalse(Validator.commaInputFromList(["abc", "zxc", "qwe"]).setCaseSensitive(true).validate("QWE, ZXC"))
+    }
 }

@@ -217,16 +217,25 @@ public class FileUtilsTest {
 
     @Test
     public void shouldDetectBascifConfigurationFiles() {
-        assertFalse(FileUtils.isEssentialConfiguration("/"));
-        assertFalse(FileUtils.isEssentialConfiguration("/media/file.png"));
-        assertFalse(FileUtils.isEssentialConfiguration("/somepath/somefile.ext"));
-        assertFalse(FileUtils.isEssentialConfiguration("/system"));
-        assertFalse(FileUtils.isEssentialConfiguration("/system"));
+        assertFalse(FileUtils.isEssentialConfiguration("/", "/"));
+        assertFalse(FileUtils.isEssentialConfiguration("/media/file.png", "/"));
+        assertFalse(FileUtils.isEssentialConfiguration("/somepath/somefile.ext", "/"));
+        assertFalse(FileUtils.isEssentialConfiguration("/system", "/"));
 
-        assertTrue(FileUtils.isEssentialConfiguration("/system/assets/config.json"));
-        assertTrue(FileUtils.isEssentialConfiguration("/system/folder/config.txt"));
-        assertTrue(FileUtils.isEssentialConfiguration("/system/system/config.txt"));
-        assertTrue(FileUtils.isEssentialConfiguration("/system/v32/system/config.txt"));
+        assertTrue(FileUtils.isEssentialConfiguration("/system/assets/config.json", "/"));
+        assertTrue(FileUtils.isEssentialConfiguration("/system/folder/config.txt", "/"));
+        assertTrue(FileUtils.isEssentialConfiguration("/system/system/config.txt", "/"));
+        assertTrue(FileUtils.isEssentialConfiguration("/system/v32/system/config.txt", "/"));
+
+        assertFalse(FileUtils.isEssentialConfiguration("/abc", "/abc"));
+        assertFalse(FileUtils.isEssentialConfiguration("/abc/media/file.png", "/abc"));
+        assertFalse(FileUtils.isEssentialConfiguration("/abc/somepath/somefile.ext", "/abc"));
+        assertFalse(FileUtils.isEssentialConfiguration("/abc/system", "/"));
+
+        assertTrue(FileUtils.isEssentialConfiguration("/abc/system/assets/config.json", "/abc"));
+        assertTrue(FileUtils.isEssentialConfiguration("/abc/system/folder/config.txt", "/abc"));
+        assertTrue(FileUtils.isEssentialConfiguration("/abc/system/system/config.txt", "/abc"));
+        assertTrue(FileUtils.isEssentialConfiguration("/abc/system/v32/system/config.txt", "/abc"));
     }
 
 }

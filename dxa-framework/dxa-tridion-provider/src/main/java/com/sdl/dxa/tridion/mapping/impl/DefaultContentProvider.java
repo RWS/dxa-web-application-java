@@ -206,7 +206,7 @@ public class DefaultContentProvider implements ContentProvider {
                 StaticContentRequestDto.builder(path, localizationId)
                         .localizationPath(localizationPath)
                         .baseUrl(webRequestContext.getBaseUrl())
-                        .noMediaCache(!FileUtils.isEssentialConfiguration(path) && webRequestContext.isPreview())
+                        .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
                         .build());
     }
 

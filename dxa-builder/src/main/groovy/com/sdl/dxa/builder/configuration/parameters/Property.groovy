@@ -4,6 +4,7 @@ abstract class Property {
     List<String> files
     String name
     boolean append
+    boolean caseSensitive
     Map<String, String> valueMapping
 
     Tuple2<String, String> wrap
@@ -63,6 +64,10 @@ abstract class Property {
         def result
 
         if (this.valueMapping) {
+            if (this.caseSensitive) {
+                value = value.toLowerCase()
+            }
+
             if (this.valueMapping.containsKey(value)) {
                 result = this.valueMapping.get(value)
             } else if (this.valueMapping.containsKey('$self$')) {

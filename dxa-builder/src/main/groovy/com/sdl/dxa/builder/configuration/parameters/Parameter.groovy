@@ -73,7 +73,10 @@ class Parameter {
             this.value = this.dynamicDefault(configuration)
         }
 
-        batch ? get() : request()
+        def temp = batch ? get() : request()
+        this.value = this.isValueCaseSensitive ? temp : temp.toLowerCase()
+
+        this.value
     }
 
     String request(Map<Property, String> props, String version, boolean isBatch, Map<String, ?> configuration = [:]) {
@@ -86,7 +89,9 @@ class Parameter {
         println ''
 
         if (this.properties) {
+            def param = this;
             this.properties.each {
+                it.caseSensitive = param.isValueCaseSensitive
                 props[it] = this.get()
             }
         }
@@ -107,7 +112,6 @@ class Parameter {
         }
 
         userValue = userValue == null ? '' : userValue.trim()
-        userValue = this.isValueCaseSensitive ? userValue : userValue.toLowerCase()
 
         if (userValue.toLowerCase() == 'halt') {
             System.exit(0)

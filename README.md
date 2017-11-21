@@ -30,8 +30,7 @@ If you encounter any issues with the Digital Experience Accelerator, please reac
 
 Documentation
 -------------
-Documentation can be found online in the SDL documentation portal: http://docs.sdl.com/sdldxa
-
+Documentation can be found online in the SDL documentation portal: https://docs.sdl.com/SDLDXA18
 
 Repositories
 ------------

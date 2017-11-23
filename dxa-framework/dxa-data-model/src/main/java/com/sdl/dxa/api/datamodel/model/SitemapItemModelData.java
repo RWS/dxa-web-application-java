@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ComparisonChain;
+import com.sdl.dxa.api.datamodel.json.Polymorphic;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -22,6 +23,7 @@ import java.util.TreeSet;
 @EqualsAndHashCode(exclude = "parent")
 @Accessors(chain = true)
 @JsonTypeName
+@Polymorphic
 public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
 
     @JsonProperty("Id")

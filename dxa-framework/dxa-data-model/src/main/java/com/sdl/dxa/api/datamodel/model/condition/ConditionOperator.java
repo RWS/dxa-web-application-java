@@ -8,7 +8,11 @@ public enum ConditionOperator {
     EQUALS(0),
     GREATER_THAN(1),
     LESS_THEN(2),
-    NOT_EQUAL(3);
+    NOT_EQUAL(3),
+    STRING_EQUALS(4),
+    CONTAINS(5),
+    STARTS_WITH(6),
+    ENDS_WITH(7);
 
     private final int index;
 

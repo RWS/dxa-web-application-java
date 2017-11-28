@@ -7,6 +7,9 @@ class Parameter {
     Validator validator
     String value
 
+    // We don't care about case sensitivity in most cases
+    boolean isValueCaseSensitive
+
     String versionAdded
 
     private boolean valid = false
@@ -37,6 +40,18 @@ class Parameter {
         this
     }
 
+    Parameter withCaseSensitiveValue() {
+        this.isValueCaseSensitive = true
+        this
+    }
+
+    Parameter withSystemEnv(String varName) {
+        if (System.getenv(varName) != null) {
+            this.value = System.getenv(varName)
+        }
+        this
+    }
+
     Parameter versionAdded(String version) {
         this.versionAdded = version
         this
@@ -58,11 +73,35 @@ class Parameter {
             this.value = this.dynamicDefault(configuration)
         }
 
-        batch ? get() : request()
+        def temp = batch ? get() : request()
+        this.value = this.isValueCaseSensitive ? temp : temp.toLowerCase()
+
+        this.value
+    }
+
+    String request(Map<Property, String> props, String version, boolean isBatch, Map<String, ?> configuration = [:]) {
+        if (!this.isSupportedInCurrentVersion(version)) {
+            return null
+        }
+
+        println("::: ${this.description}\n" +
+                "::: ${this.process(isBatch, configuration)}")
+        println ''
+
+        if (this.properties) {
+            def param = this;
+            this.properties.each {
+                it.caseSensitive = param.isValueCaseSensitive
+                props[it] = this.get()
+            }
+        }
+
+        return this.get()
     }
 
     String request() {
-        println "${description}? <Enter> for default '${value ?: 'no default'}'"
+        println "\n  ::  ${description}\n  ::  Default value: '${value ?: 'no default'}'" +
+                "\n\nPress <Enter> to choose default value or type 'halt' to stop"
         validator?.describe()
 
         def userValue
@@ -95,6 +134,6 @@ class Parameter {
     }
 
     private boolean isValid(String userValue) {
-        valid = valid || validator == null || validator.validate(userValue)
+        valid = valid || validator == null || validator.setCaseSensitive(this.isValueCaseSensitive).validate(userValue)
     }
 }

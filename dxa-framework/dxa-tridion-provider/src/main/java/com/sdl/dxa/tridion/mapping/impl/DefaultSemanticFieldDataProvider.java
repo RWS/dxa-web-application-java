@@ -49,6 +49,10 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
 
     private int embeddingLevel = 0;
 
+    private int iteration = 0;
+
+    private String context = null;
+
     private DefaultSemanticFieldDataProvider(ModelDataWrapper dataWrapper, SemanticSchema semanticSchema) {
         this.dataWrapper = dataWrapper;
         this.semanticSchema = semanticSchema;
@@ -70,11 +74,42 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
         return new DefaultSemanticFieldDataProvider(((CanWrapContentAndMetadata) model).getDataWrapper(), semanticSchema);
     }
 
+    /**
+     * Shifts the context of this data provider to the given index for the given mode. It is used to iterate over lists of values and to save XPath context.
+     *
+     * @param model         current item in the list
+     * @param semanticField current parent semantic field inside which we iterate
+     * @param index         current item index in a list
+     * @return data provider shifted to the given index
+     */
+    @Nullable
+    public DefaultSemanticFieldDataProvider iteration(Object model, SemanticField semanticField, int index) {
+        DefaultSemanticFieldDataProvider provider = _getFor(model, semanticSchema);
+        if (provider != null) {
+            provider.embeddingLevel = this.embeddingLevel;
+            provider.iteration = index + 1;
+            provider.context = semanticField.getXPath(this.context) + "[" + provider.iteration + "]";
+            log.trace("Iterating over some list, current index = {}, item = {}, embedding level = {}, context = {}",
+                    index, model, this.embeddingLevel, provider.context);
+        }
+        return provider;
+    }
+
+    /**
+     * Increases the embedding level of the data provider saving the current XPath context. It is used to go inside the nested maps.
+     *
+     * @param value current value in the map
+     * @return data provider embedded to the next elvel
+     */
     @Nullable
     public DefaultSemanticFieldDataProvider embedded(Object value) {
         DefaultSemanticFieldDataProvider provider = _getFor(value, this.semanticSchema);
         if (provider != null) {
-            provider.embeddingLevel++;
+            provider.iteration = this.iteration;
+            provider.context = this.context;
+            provider.embeddingLevel = this.embeddingLevel + 1;
+            log.trace("Embedding into embedding level = {}, index = {}, item = {}, context = {}",
+                    provider.iteration, value, this.embeddingLevel, provider.context);
         }
         return provider;
     }
@@ -99,7 +134,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
 
         Object value = genericSemanticModelDataConverter.convert(field.get(), targetType, semanticField, pipeline, this);
 
-        return new FieldData(value, semanticField.getXPath(null));
+        return new FieldData(value, semanticField.getXPath(this.context));
     }
 
     @Override

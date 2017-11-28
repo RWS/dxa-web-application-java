@@ -32,13 +32,15 @@ public class ListWrapperConverter implements SemanticModelConverter<ListWrapper>
         if (targetType.isCollection()) {
             Collection<Object> result = targetType.getCollectionType() == List.class ? new ArrayList<>() : new HashSet<>();
 
-            for (Object value : ((ListWrapper<?>) toConvert).getValues()) {
-                result.add(convertValue(value, elementType, semanticField, pipeline, dataProvider));
+            List<?> values = ((ListWrapper<?>) toConvert).getValues();
+            for (int i = 0, valuesSize = values.size(); i < valuesSize; i++) {
+                Object value = values.get(i);
+                result.add(convertValue(value, elementType, semanticField, pipeline, dataProvider, i));
             }
 
             return result;
         } else {
-            return convertValue(toConvert.getValues().get(0), elementType, semanticField, pipeline, dataProvider);
+            return convertValue(toConvert.getValues().get(0), elementType, semanticField, pipeline, dataProvider, 0);
         }
     }
 
@@ -53,7 +55,7 @@ public class ListWrapperConverter implements SemanticModelConverter<ListWrapper>
 
     @NotNull
     private Object convertValue(Object toConvert, TypeDescriptor targetType, SemanticField semanticField,
-                                ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider) throws FieldConverterException {
-        return genericSemanticModelDataConverter.convert(toConvert, targetType, semanticField, pipeline, dataProvider.embedded(toConvert));
+                                ModelBuilderPipeline pipeline, DefaultSemanticFieldDataProvider dataProvider, int index) throws FieldConverterException {
+        return genericSemanticModelDataConverter.convert(toConvert, targetType, semanticField, pipeline, dataProvider.iteration(toConvert, semanticField, index));
     }
 }

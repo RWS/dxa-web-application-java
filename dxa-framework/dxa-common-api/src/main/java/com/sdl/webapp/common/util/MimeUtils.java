@@ -205,18 +205,27 @@ public final class MimeUtils {
     }
 
     /**
-     * <p>getMimeType.</p>
+     * <p>getMimeType returns mime type base on file extension or one of the {@link MIME_TYPES}'s key</p>
      *
-     * @param filename a {@link java.lang.String} object.
-     * @return a {@link java.lang.String} object.
+     * @param filename a {@link java.lang.String} object is a key of mime type in {@link MIME_TYPES}.
+     * @return a {@link java.lang.String} object which represents one of {@link MIME_TYPES} value.
      */
     static public String getMimeType(String filename) {
-        int suffixIndex = filename.lastIndexOf('.');
-        if (suffixIndex != -1) {
-            String suffix = filename.substring(suffixIndex + 1);
-            return MIME_TYPES.get(suffix);
+        String[] parts = filename.toLowerCase().split("\\.");
+        if (parts.length == 1) {
+            return MIME_TYPES.get(filename.toLowerCase());
+        } else if (parts.length > 1) {
+            int i = parts.length - 1;
+            String abbr = parts[i];
+
+            // Exception for tar.gz files
+            if (abbr.equals("gz") && parts[i - 1].equals("tar")) {
+                abbr = String.join(".", parts[i - 1], abbr);
+            }
+
+            return MIME_TYPES.get(abbr);
         }
+
         return null;
     }
-
 }

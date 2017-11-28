@@ -53,7 +53,9 @@ public class LinkingProcessor extends BaseProcessor implements LinkResolverProce
 
     @Resource
     private LinkResolver linkResolver;
+
     private String contextPath;
+
     private Map<String, Object> params = new HashMap<>();
 
     /**
@@ -62,7 +64,7 @@ public class LinkingProcessor extends BaseProcessor implements LinkResolverProce
      * @param item the to resolve the links
      */
     @Override
-    public void execute (Item item, RequestContext context) throws ProcessorException {
+    public void execute(Item item, RequestContext context) throws ProcessorException {
         linkResolver.setContextPath(contextPath);
 
         if (item instanceof Page) {
@@ -80,11 +82,12 @@ public class LinkingProcessor extends BaseProcessor implements LinkResolverProce
                 throw new ProcessorException(e);
             }
         } else {
-            LOG.debug("DefaultLinkResolverFilter. Item is not a GenericPage or GenericComponent so no component to resolve");
+            LOG.debug("DefaultLinkResolverFilter. Item is not a GenericPage or GenericComponent so no component to " +
+                    "resolve");
         }
     }
 
-    protected void resolvePage (Page page) throws TransformerException {
+    protected void resolvePage(Page page) throws TransformerException {
         List<ComponentPresentation> cpList = page.getComponentPresentations();
         if (cpList != null) {
             for (ComponentPresentation cp : cpList) {
@@ -94,7 +97,7 @@ public class LinkingProcessor extends BaseProcessor implements LinkResolverProce
         resolveMap(page.getMetadata());
     }
 
-    protected void resolveComponentOnPage (Component component) throws TransformerException {
+    protected void resolveComponentOnPage(Component component) throws TransformerException {
         if (component != null) {
             // resolve regular content
             resolveMap(component.getContent());
@@ -103,7 +106,7 @@ public class LinkingProcessor extends BaseProcessor implements LinkResolverProce
         }
     }
 
-    protected void resolveComponent (Component component) throws TransformerException {
+    protected void resolveComponent(Component component) throws TransformerException {
         try {
             if (component != null) {
                 resolveMap(component.getContent());
@@ -115,7 +118,7 @@ public class LinkingProcessor extends BaseProcessor implements LinkResolverProce
         }
     }
 
-    protected void resolveMap (Map<String, Field> fieldMap) throws TransformerException {
+    protected void resolveMap(Map<String, Field> fieldMap) throws TransformerException {
         if (fieldMap != null && !fieldMap.isEmpty()) {
             Collection<Field> values = fieldMap.values();
             for (Field field : values) {
@@ -130,15 +133,15 @@ public class LinkingProcessor extends BaseProcessor implements LinkResolverProce
         }
     }
 
-    protected void resolveList (List<FieldSet> fslist) throws TransformerException {
+    protected void resolveList(List<FieldSet> fslist) throws TransformerException {
         if (fslist != null && !fslist.isEmpty()) {
             for (FieldSet fs : fslist) {
-                resolveMap(fs.getContent());
+                resolveMap(fs.getFieldSet());
             }
         }
     }
 
-    protected void resolveComponentLinkField (ComponentLinkField componentLinkField) throws TransformerException {
+    protected void resolveComponentLinkField(ComponentLinkField componentLinkField) throws TransformerException {
         List<Object> compList = componentLinkField.getValues();
 
         for (Object component : compList) {
@@ -146,7 +149,7 @@ public class LinkingProcessor extends BaseProcessor implements LinkResolverProce
         }
     }
 
-    protected void resolveXhtmlField (XhtmlField xhtmlField) throws TransformerException {
+    protected void resolveXhtmlField(XhtmlField xhtmlField) throws TransformerException {
         try {
             RichTextUtils.resolveXhtmlField(xhtmlField, true, this.linkResolver, this.getContextPath());
         } catch (ItemNotFoundException | SerializationException e) {
@@ -154,17 +157,17 @@ public class LinkingProcessor extends BaseProcessor implements LinkResolverProce
         }
     }
 
-    public LinkResolver getLinkResolver () {
+    public LinkResolver getLinkResolver() {
         return linkResolver;
     }
 
     @Override
-    public String getContextPath () {
+    public String getContextPath() {
         return this.contextPath;
     }
 
     @Override
-    public void setContextPath (String contextPath) {
+    public void setContextPath(String contextPath) {
         this.contextPath = contextPath;
         this.params = new HashMap<>();
         this.params.put("contextpath", contextPath);

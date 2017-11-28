@@ -27,25 +27,31 @@ public interface FieldSet {
 
     /**
      * This method is deprecated in dd4t-2; it will return a null.
-     * If you do want to use it please utilize the  
+     * If you do want to use it please utilize the
      * org.dd4t.core.processors.impl.FieldSetSchemaProcessor from
      * dd4t-compatibility to have it filled as it was in dd4t-1.
-     * I 
+     * I
      *
      * @return the schema
      */
-	@Deprecated
-    Schema getSchema ();
+    @Deprecated
+    Schema getSchema();
 
     /**
      * Set the schema of the component
      *
      * @param schema
      */
-    void setSchema (Schema schema);
+    void setSchema(Schema schema);
 
-    Map<String, Field> getContent ();
+    Map<String, Field> getFieldSet();
 
-    void setContent (Map<String, Field> content);
+    void setFieldSet(Map<String, Field> content);
+
+    @Deprecated
+    Map<String, Field> getContent();
+
+    @Deprecated
+    void setContent(Map<String, Field> content);
 
 }

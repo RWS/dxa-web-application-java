@@ -110,16 +110,20 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
 
         log.debug("Overridden depth counter using value from descendants level: {}", request);
 
-        if (isNullOrEmpty(request.getSitemapId()) && request.getNavigationFilter().getDescendantLevels() != 0) {
-            log.trace("Sitemap ID is empty, expanding all taxonomy roots");
+        if (isNullOrEmpty(request.getSitemapId())) {
+            if(request.getNavigationFilter().getDescendantLevels() != 0) {
+                log.trace("Sitemap ID is empty, expanding all taxonomy roots");
 
-            // normally expand level is equal to requested descendants level, but when we load categories (=roots) instead
-            // top-level keywords, we add extra level and need to decrease expand level then by one
-            SitemapRequestDto adaptedRequest = request.nextExpandLevel();
+                // normally expand level is equal to requested descendants level, but when we load categories (=roots) instead
+                // top-level keywords, we add extra level and need to decrease expand level then by one
+                SitemapRequestDto adaptedRequest = request.nextExpandLevel();
 
-            return Optional.of(getTaxonomyRoots(adaptedRequest, keyword -> true).stream()
-                    .map(keyword -> createTaxonomyNode(keyword, adaptedRequest))
-                    .collect(Collectors.toList()));
+                return Optional.of(getTaxonomyRoots(adaptedRequest, keyword -> true).stream()
+                        .map(keyword -> createTaxonomyNode(keyword, adaptedRequest))
+                        .collect(Collectors.toList()));
+            } else {
+                return Optional.of(Collections.emptyList());
+            }
         }
 
         TaxonomyUrisHolder info = parse(request.getSitemapId(), request.getLocalizationId());

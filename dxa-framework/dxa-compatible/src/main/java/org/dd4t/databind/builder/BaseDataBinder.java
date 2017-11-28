@@ -45,7 +45,7 @@ import java.util.concurrent.ConcurrentMap;
  * - Loads configs
  * - Preloads model classes
  * - Gives a unified / single design pattern to load concrete ModelConverters
- * </p>
+ *
  * @author R. Kempees
  * @since 17/11/14.
  */
@@ -95,7 +95,9 @@ public abstract class BaseDataBinder {
     /**
      * Get the key with which a model class is registered, which is either
      * related models.
-     * <p>We should be able to get multiple keys for the same view model</p>
+     * <p>
+     * We should be able to get multiple keys for the same view model
+     * <p>
      * We should be able to match both view models and schema root element names. So the
      */
     private static void storeModelClass(final ViewModel viewModelParameters, final Class<? extends BaseViewModel> model) {
@@ -292,7 +294,7 @@ public abstract class BaseDataBinder {
 
     private void processClass (final ClassInfo classInfo) {
 
-        LOG.debug("Name: {}, Has abstracts or interfaces: {}", classInfo.getClassName(), classInfo.getDirectlyImplementedInterfaces().size() > 0 || hasNonStandardParent(classInfo));
+        LOG.debug("Name: {}, Has abstracts or interfaces: {}", classInfo.getClassName(), !classInfo.getDirectlyImplementedInterfaces().isEmpty() || hasNonStandardParent(classInfo));
 
         if (isDatabindStandardClass(classInfo) || classInfo.getClassName().equals(Object.class.getCanonicalName())) {
             LOG.debug("Not processing standard class: " + classInfo.getClassName());
@@ -307,7 +309,7 @@ public abstract class BaseDataBinder {
                 processInterfaceForModels(classInfo);
             }
 
-            if (classInfo.getSubclasses() != null && classInfo.getSubclasses().size() > 0) {
+            if (classInfo.getSubclasses() != null && !classInfo.getSubclasses().isEmpty()) {
                 LOG.debug("we have subclasses. processing.");
 
 
@@ -330,7 +332,6 @@ public abstract class BaseDataBinder {
             LOG.debug(implementingClass.getClassName() + " implements interface: " + classInfo.getClassName() + ". Making note of it.");
 
             final Class<? extends BaseViewModel> concreteModelClass = (Class<? extends BaseViewModel>) Class.forName(implementingClass.getClassName());
-// TODO: not the most efficient
             addAbstractOrInterfaceToWatchList(classInfo, concreteModelClass);
             processClass(implementingClass);
             LOG.info("Added interface: {}, direct class: {}", classInfo.getClassName(), implementingClass.getClassName());
@@ -356,7 +357,11 @@ public abstract class BaseDataBinder {
     private boolean isDatabindStandardClass (ClassInfo classInfo) {
         return classInfo.getClassName().equals(DataBindConstants.VIEW_MODEL_ANNOTATION)
                 || classInfo.getClassName().equals(DataBindConstants.VIEW_MODEL_BASE_CLASS_NAME)
-                || classInfo.getClassName().equals(DataBindConstants.TRIDION_VIEW_MODEL_BASE_CLASS_NAME)
+                || isTridionViewModelClass(classInfo);
+    }
+
+    private boolean isTridionViewModelClass(ClassInfo classInfo) {
+        return classInfo.getClassName().equals(DataBindConstants.TRIDION_VIEW_MODEL_BASE_CLASS_NAME)
                 || classInfo.getClassName().equals(DataBindConstants.TRIDION_VIEW_MODEL_INTERFACE)
                 || classInfo.getClassName().equals(DataBindConstants.BASE_VIEW_MODEL_INTERFACE);
     }

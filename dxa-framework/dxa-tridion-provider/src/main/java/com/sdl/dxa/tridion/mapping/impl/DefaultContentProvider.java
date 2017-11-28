@@ -27,6 +27,7 @@ import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.util.FileUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
 import com.tridion.broker.querying.Query;
@@ -200,10 +201,12 @@ public class DefaultContentProvider implements ContentProvider {
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
+
         return staticContentResolver.getStaticContent(
                 StaticContentRequestDto.builder(path, localizationId)
                         .localizationPath(localizationPath)
                         .baseUrl(webRequestContext.getBaseUrl())
+                        .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
                         .build());
     }
 

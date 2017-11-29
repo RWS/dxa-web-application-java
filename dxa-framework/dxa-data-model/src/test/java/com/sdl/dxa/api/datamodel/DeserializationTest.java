@@ -11,6 +11,11 @@ import com.sdl.dxa.api.datamodel.model.KeywordModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.RichTextData;
+import com.sdl.dxa.api.datamodel.model.condition.Condition;
+import com.sdl.dxa.api.datamodel.model.condition.ConditionOperator;
+import com.sdl.dxa.api.datamodel.model.condition.CustomerCharacteristicCondition;
+import com.sdl.dxa.api.datamodel.model.condition.KeywordCondition;
+import com.sdl.dxa.api.datamodel.model.condition.TargetGroupCondition;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,7 +27,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,11 +37,12 @@ import java.util.ListIterator;
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(loader = AnnotationConfigContextLoader.class)
+@ContextConfiguration(classes = DeserializationTest.SpringConfigurationContext.class)
 public class DeserializationTest {
 
     @Autowired
@@ -68,7 +73,38 @@ public class DeserializationTest {
         assertEquals("ActionName", page.getMvcData().getActionName());
         assertEquals("Value1", page.getMvcData().getParameters().get("Key1"));
 
+        assertConditions(page.getConditions());
+
         assertRegions(page.getRegions());
+    }
+
+    private void assertConditions(List<Condition> conditions) {
+        ListIterator<Condition> iterator = conditions.listIterator();
+
+        TargetGroupCondition condition = ((TargetGroupCondition) iterator.next());
+        assertEquals("moo 1", condition.getTargetGroup().getDescription());
+        assertFalse(condition.isNegate());
+        assertTrue(condition.getTargetGroup().getConditions().size() == 2);
+
+        CustomerCharacteristicCondition condition1 = (CustomerCharacteristicCondition) iterator.next();
+        assertEquals("JJ0", condition1.getValue());
+        assertEquals("John Johnson 0", condition1.getName());
+        assertTrue(condition1.isNegate());
+        assertEquals(ConditionOperator.EQUALS, condition1.getOperator());
+
+        assertEquals(ConditionOperator.GREATER_THAN, ((CustomerCharacteristicCondition) iterator.next()).getOperator());
+
+        assertEquals(ConditionOperator.LESS_THEN, ((CustomerCharacteristicCondition) iterator.next()).getOperator());
+
+        assertEquals(ConditionOperator.NOT_EQUAL, ((CustomerCharacteristicCondition) iterator.next()).getOperator());
+
+        assertEquals(ConditionOperator.UNKNOWN_BY_CLIENT, ((CustomerCharacteristicCondition) iterator.next()).getOperator());
+
+        KeywordCondition keywordCondition = (KeywordCondition) iterator.next();
+        assertEquals("kw", keywordCondition.getValue());
+        assertEquals(ConditionOperator.NOT_EQUAL, keywordCondition.getOperator());
+        assertNull(keywordCondition.getKeywordModelData());
+        assertTrue(keywordCondition.isNegate());
     }
 
     private void assertRegions(List<RegionModelData> regions) {

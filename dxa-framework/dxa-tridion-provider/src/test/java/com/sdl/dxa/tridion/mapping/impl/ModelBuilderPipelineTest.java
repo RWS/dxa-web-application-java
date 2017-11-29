@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 public class ModelBuilderPipelineTest {
 
-    private PageModelData pageModelData = new PageModelData("1", null, null, null, "title", null, null);
+    private PageModelData pageModelData = new PageModelData("1", null, null, null, "title", null, null, null);
 
     private EntityModelData entityModelData = new EntityModelData("1", "url", null, null, null);
 

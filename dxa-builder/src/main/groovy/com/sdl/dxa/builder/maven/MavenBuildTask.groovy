@@ -25,6 +25,11 @@ class MavenBuildTask extends DefaultTask {
 
     def customCommandDelimiter = /\s*>\s*/
 
+    static String mvnVersion() {
+        def mvnVersion = BuildTask.determineShell() + "mvn --version"
+        return mvnVersion.execute().text
+    }
+
     @TaskAction
     def run() {
         printMvnVersion()
@@ -49,7 +54,7 @@ class MavenBuildTask extends DefaultTask {
                     System.in.read()
                 }
                 println "Error building ${output.command}"
-                System.exit(output.code);
+                System.exit(output.code)
             } else {
                 outputPool.submit {
                     println "= SUCCESS (in ${output.timeSeconds}s): ${output.command}"
@@ -77,7 +82,7 @@ class MavenBuildTask extends DefaultTask {
 
     }
 
-    def BuildTask buildTask(String task, Closure callback, boolean verbose) {
+    BuildTask buildTask(String task, Closure callback, boolean verbose) {
         task = task.trim()
 
         if (task =~ customCommandDelimiter) {
@@ -114,10 +119,7 @@ class MavenBuildTask extends DefaultTask {
         if (!isVersionShown) {
             isVersionShown = true
 
-            def mvnVersion = BuildTask.determineShell() + "mvn --version"
-            println mvnVersion
-            mvnVersion.execute().in.eachLine { println it }
-            println ""
+            println mvnVersion()
         }
     }
 }

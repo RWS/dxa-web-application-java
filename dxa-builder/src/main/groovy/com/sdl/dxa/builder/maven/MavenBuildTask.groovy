@@ -40,6 +40,11 @@ class MavenBuildTask extends DefaultTask {
 
     @TaskAction
     def run() {
+        if (!configurations) {
+            println "Nothing to do with Maven"
+            return
+        }
+
         printMvnVersion()
 
         def pool = Executors.newFixedThreadPool(numberThreads)

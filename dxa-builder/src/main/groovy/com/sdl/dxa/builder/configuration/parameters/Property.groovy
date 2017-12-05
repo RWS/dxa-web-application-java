@@ -64,7 +64,7 @@ abstract class Property {
         def result
 
         if (this.valueMapping) {
-            if (this.caseSensitive) {
+            if (!this.caseSensitive) {
                 value = value.toLowerCase()
             }
 

@@ -89,7 +89,7 @@ class Parameter {
         println ''
 
         if (this.properties) {
-            def param = this;
+            def param = this
             this.properties.each {
                 it.caseSensitive = param.isValueCaseSensitive
                 props[it] = this.get()
@@ -101,7 +101,9 @@ class Parameter {
 
     String request() {
         println "\n  ::  ${description}\n  ::  Default value: '${value ?: 'no default'}'" +
+                (this.isValueCaseSensitive ? "\n  ::  This value is case-sensitive" : '') +
                 "\n\nPress <Enter> to choose default value or type 'halt' to stop"
+
         validator?.describe()
 
         def userValue
@@ -127,6 +129,9 @@ class Parameter {
 
     String get() {
         if (!isValid(value)) {
+            if (this.isValueCaseSensitive) {
+                println "This value is case-sensitive"
+            }
             validator?.describe()
             throw new IllegalArgumentException("Invalid value '${value}' for '${description}'")
         }

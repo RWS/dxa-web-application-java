@@ -30,7 +30,7 @@ class XmlWriterTest {
                 '/element/outerTag/innerTag/text()'                   : 'new value',
         ]).save()
 
-        Assert.assertEquals(new File(example).text, new File(pathTo).text)
+        Assert.assertEquals(new File(example).text.normalize(), new File(pathTo).text.normalize())
     }
 
     @Test
@@ -50,7 +50,7 @@ class XmlWriterTest {
                 .modifyByXPath([:])
                 .save()
 
-        Assert.assertEquals(new File(example).text, new File(pathTo).text)
+        Assert.assertEquals(new File(example).text.normalize(), new File(pathTo).text.normalize())
 
         writer = new XmlWriter()
                 .from(fromPath)
@@ -63,7 +63,7 @@ class XmlWriterTest {
                 .modifyByXPath([:])
                 .save()
 
-        Assert.assertEquals(new File(example).text, new File(pathTo).text)
+        Assert.assertEquals(new File(example).text.normalize(), new File(pathTo).text.normalize())
     }
 
     @Test
@@ -93,7 +93,7 @@ class XmlWriterTest {
                 .save()
 
         //then
-        Assert.assertEquals(new File(example).text, new File(pathTo).text)
+        Assert.assertEquals(new File(example).text.normalize(), new File(pathTo).text.normalize())
     }
 
     String path(String path) {

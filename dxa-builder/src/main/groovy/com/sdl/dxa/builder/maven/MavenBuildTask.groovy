@@ -30,6 +30,14 @@ class MavenBuildTask extends DefaultTask {
         return mvnVersion.execute().text
     }
 
+    static boolean isMvnInstalled() {
+        try {
+            return mvnVersion().contains("Maven")
+        } catch (Exception ignored) {
+            return false
+        }
+    }
+
     @TaskAction
     def run() {
         printMvnVersion()
@@ -116,7 +124,7 @@ class MavenBuildTask extends DefaultTask {
     }
 
     private static void printMvnVersion() {
-        if (!isVersionShown) {
+        if (!isVersionShown && isMvnInstalled()) {
             isVersionShown = true
 
             println mvnVersion()

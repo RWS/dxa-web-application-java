@@ -135,5 +135,9 @@
             <groupId>jdom</groupId>
             <artifactId>jdom</artifactId>
         </dependency>
+        <dependency>
+            <groupId>xalan</groupId>
+            <artifactId>xalan</artifactId>
+        </dependency>
     </dependencies>
 </project>

@@ -1,7 +1,5 @@
 package com.sdl.dxa.caching;
 
-import com.sdl.webapp.common.api.model.ViewModel;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Inherited;
 import java.lang.annotation.Retention;
@@ -9,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotates types that should never be cached to be used with subtypes of {@link ViewModel}.
+ * Annotates types that should never be cached.
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

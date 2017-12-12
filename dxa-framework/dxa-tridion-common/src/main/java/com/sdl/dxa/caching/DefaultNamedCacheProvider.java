@@ -1,20 +1,18 @@
 package com.sdl.dxa.caching;
 
-import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
 import com.sdl.web.client.cache.CacheProviderInitializer;
 import com.sdl.web.client.cache.GeneralCacheProvider;
 import com.sdl.web.client.configuration.ClientConstants;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.content.client.configuration.impl.BaseClientConfigurationLoader;
-import com.sdl.webapp.common.util.InitializationUtils;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Triple;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
@@ -23,10 +21,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListMap;
@@ -44,10 +39,14 @@ import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguratio
 @Component
 public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader implements NamedCacheProvider {
 
-    private final ModelServiceConfiguration modelServiceConfiguration;
-
     @Value("#{'${dxa.caching.disabled.caches}'.split(',\\s?')}")
     private Set<String> disabledCaches;
+
+    @Value("#{'${dxa.caching.required.caches}'.split(',\\s?')}")
+    private Set<String> requiredCaches;
+
+    @Value("${dxa.caching.configuration:#{null}")
+    private String cachingConfigurationFile;
 
     @Getter
     private CacheManager cacheManager;
@@ -58,21 +57,23 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     private com.sdl.web.client.cache.CacheProvider cilCacheProvider;
 
-    @Autowired
-    public DefaultNamedCacheProvider(ModelServiceConfiguration modelServiceConfiguration) throws ConfigurationException {
-        this.modelServiceConfiguration = modelServiceConfiguration;
+    public DefaultNamedCacheProvider() throws ConfigurationException {
+        // empty
+    }
+
+    @PostConstruct
+    public void init() throws ConfigurationException {
         this.cilCacheProvider = CacheProviderInitializer.getCacheProvider(getCacheConfiguration());
 
         boolean cilUsesGeneralCache = this.cilCacheProvider instanceof GeneralCacheProvider;
-        String cacheConfigurationUri = cilUsesGeneralCache ? getCacheConfiguration().getProperty(ClientConstants.Cache.CLIENT_CACHE_URI) :
-                InitializationUtils.getConfiguration("dxa.caching.configuration", null);
+        String cacheConfigurationUri = cilUsesGeneralCache ?
+                getCacheConfiguration().getProperty(ClientConstants.Cache.CLIENT_CACHE_URI) :
+                cachingConfigurationFile;
         log.info("Using cache config {}, CIL uses GeneralCacheProvider: {}", cacheConfigurationUri, cilUsesGeneralCache);
         this.cacheManager = getCacheManager(cacheConfigurationUri);
 
         //cannot be null because of default value
         //noinspection ConstantConditions
-        List<String> requiredCaches = new LinkedList<>(Arrays.asList(
-                InitializationUtils.getConfiguration("dxa.caching.required.caches", "").split(",\\s?")));
         cacheManager.getCacheNames().forEach(requiredCaches::remove);
         log.info("Required caches not yet created: '{}', creating them", requiredCaches);
         requiredCaches.forEach(this::getCache);
@@ -80,7 +81,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     @Override
     protected String getServiceUrl() {
-        return modelServiceConfiguration.getHealthCheckUrl();
+        return "";
     }
 
     @Override

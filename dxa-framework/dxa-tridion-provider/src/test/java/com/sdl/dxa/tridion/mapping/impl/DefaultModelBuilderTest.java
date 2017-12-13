@@ -9,7 +9,9 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
+import com.sdl.dxa.caching.LocalizationIdProvider;
 import com.sdl.dxa.caching.NamedCacheProvider;
+import com.sdl.dxa.caching.WebRequestContextLocalizationIdProvider;
 import com.sdl.dxa.caching.wrapper.EntitiesCache;
 import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
@@ -224,6 +226,11 @@ public class DefaultModelBuilderTest {
     @Profile("test")
     public static class SpringConfigurationContext {
 
+        @Bean
+        public LocalizationIdProvider webRequestContextLocalizationIdProvider() {
+            return new WebRequestContextLocalizationIdProvider();
+        }
+        
         @Bean
         public LocalizationAwareKeyGenerator localizationAwareKeyGenerator() {
             return mock(LocalizationAwareKeyGenerator.class);

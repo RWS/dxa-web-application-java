@@ -4,6 +4,7 @@ import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.NeverCached;
+import com.sdl.dxa.caching.WebRequestContextLocalizationIdProvider;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.AllArgsConstructor;
@@ -59,8 +60,10 @@ public class CopyingCacheTest {
         when(localization.getId()).thenReturn("42");
         when(webRequestContext.getLocalization()).thenReturn(localization);
 
+        WebRequestContextLocalizationIdProvider localizationIdProvider = new WebRequestContextLocalizationIdProvider();
+        ReflectionTestUtils.setField(localizationIdProvider, "webRequestContext", webRequestContext);
         LocalizationAwareKeyGenerator keyGenerator = new LocalizationAwareKeyGenerator();
-        ReflectionTestUtils.setField(keyGenerator, "webRequestContext", webRequestContext);
+        ReflectionTestUtils.setField(keyGenerator, "localizationIdProvider", localizationIdProvider);
         testingCache = new TestingCache();
 
         NamedCacheProvider provider = mock(NamedCacheProvider.class);

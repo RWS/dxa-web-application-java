@@ -45,7 +45,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
     @Value("#{'${dxa.caching.required.caches}'.split(',\\s?')}")
     private Set<String> requiredCaches;
 
-    @Value("${dxa.caching.configuration:#{null}")
+    @Value("${dxa.caching.configuration:#{null}}")
     private String cachingConfigurationFile;
 
     @Getter

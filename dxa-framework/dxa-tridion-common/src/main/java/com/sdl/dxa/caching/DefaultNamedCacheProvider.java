@@ -8,7 +8,11 @@ import com.sdl.web.content.client.configuration.impl.BaseClientConfigurationLoad
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Triple;
-import org.ehcache.config.builders.ResourcePoolsBuilder;
+import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.expiry.Duration;
+import org.ehcache.xml.XmlConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,6 +21,8 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.spi.CachingProvider;
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.file.Path;
@@ -30,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 
 import static com.sdl.web.client.configuration.ClientConstants.Cache.DEFAULT_CACHE_URI;
 import static java.nio.file.Files.exists;
-import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
 import static org.ehcache.expiry.Duration.of;
 import static org.ehcache.expiry.Expirations.timeToLiveExpiration;
 import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguration;
@@ -47,6 +52,8 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     @Value("${dxa.caching.configuration:#{null}}")
     private String cachingConfigurationFile;
+
+    private boolean isCilConfigUsed;
 
     @Getter
     private CacheManager cacheManager;
@@ -66,6 +73,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
         this.cilCacheProvider = CacheProviderInitializer.getCacheProvider(getCacheConfiguration());
 
         boolean cilUsesGeneralCache = this.cilCacheProvider instanceof GeneralCacheProvider;
+        this.isCilConfigUsed = cilUsesGeneralCache;
         String cacheConfigurationUri = cilUsesGeneralCache ?
                 getCacheConfiguration().getProperty(ClientConstants.Cache.CLIENT_CACHE_URI) :
                 cachingConfigurationFile;
@@ -90,14 +98,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
         Cache<K, V> cache = this.cacheManager.getCache(cacheName, keyType, valueType);
         if (cache == null) {
             log.debug("Cache name {} for key {} and value {} does not exist, auto-creating", cacheName, keyType, valueType);
-            cache = cacheManager.createCache(cacheName,
-                    fromEhcacheCacheConfiguration(
-                            newCacheConfigurationBuilder(keyType, valueType, ResourcePoolsBuilder.heap(10000))
-                                    .withExpiry(timeToLiveExpiration(
-                                            this.cilCacheProvider.getCacheExpirationPeriod() == null ?
-                                                    of(5, TimeUnit.MINUTES) :
-                                                    of(this.cilCacheProvider.getCacheExpirationPeriod(), TimeUnit.SECONDS))
-                                    )));
+            cache = cacheManager.createCache(cacheName, buildDefaultCacheConfiguration(keyType, valueType));
         }
 
         if (!ownCachesNames.contains(cacheName)) {
@@ -132,27 +133,76 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
         return isCacheEnabled() && !disabledCaches.contains(cacheName);
     }
 
+    @NotNull
+    private <K, V> javax.cache.configuration.Configuration<K, V> buildDefaultCacheConfiguration(Class<K> keyType, Class<V> valueType) {
+        return fromEhcacheCacheConfiguration(isCilConfigUsed ?
+                buildDefaultCilCacheConfiguration(keyType, valueType) :
+                buildDefaultConfigCacheConfiguration(keyType, valueType));
+    }
+
+    @NotNull
+    private <V, K> CacheConfigurationBuilder<K, V> buildDefaultConfigCacheConfiguration(Class<K> keyType, Class<V> valueType) {
+        URI configUri = getConfigUri(cachingConfigurationFile);
+        if (configUri == null) {
+            log.warn("Cannot load {}, using fallback (CIL) configuration", cachingConfigurationFile);
+            return buildDefaultCilCacheConfiguration(keyType, valueType);
+        }
+
+        try {
+            return new XmlConfiguration(configUri.toURL()).newCacheConfigurationBuilderFromTemplate("default", keyType, valueType);
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | MalformedURLException e) {
+            log.warn("Exception happened when creating cache, using fallback (CIL) configuration", e);
+            return buildDefaultCilCacheConfiguration(keyType, valueType);
+        }
+    }
+
+    @NotNull
+    private <K, V> CacheConfigurationBuilder<K, V> buildDefaultCilCacheConfiguration(Class<K> keyType, Class<V> valueType) {
+        CacheConfigurationBuilder<K, V> configurationBuilder = buildDefaultConfigCacheConfiguration(keyType, valueType);
+
+        Integer cacheExpirationPeriod = this.cilCacheProvider.getCacheExpirationPeriod();
+        Duration timeToLive;
+        if (cacheExpirationPeriod != null) {
+            timeToLive = of(cacheExpirationPeriod, TimeUnit.SECONDS);
+        } else {
+            log.warn("Cache Expiration Period is not set, fallback to 5 minutes, set it in cd_client_conf.xml");
+            timeToLive = of(5, TimeUnit.MINUTES);
+        }
+
+        return configurationBuilder.withExpiry(timeToLiveExpiration(timeToLive));
+    }
+
     private CacheManager getCacheManager(String cacheManagerUri) {
+        CachingProvider cachingProvider = Caching.getCachingProvider(); // NOSONAR
+        URI configUri = getConfigUri(cacheManagerUri);
+        return configUri != null ?
+                cachingProvider.getCacheManager(configUri, null) :
+                cachingProvider.getCacheManager();
+    }
+
+    @Nullable
+    private URI getConfigUri(String cacheManagerUri) {
         String configUrl = cacheManagerUri;
         if (configUrl == null || configUrl.isEmpty()) {
             log.warn("Config URI for Cache Provider is empty, using default fallback option");
             configUrl = DEFAULT_CACHE_URI;
         }
 
-        CachingProvider cachingProvider = Caching.getCachingProvider(); // NOSONAR
         Path configPath = Paths.get(configUrl);
         if (exists(configPath)) {
-            return cachingProvider.getCacheManager(configPath.toUri(), null);
-        }
-
-        URL cacheManagerUrl = getClass().getClassLoader().getResource(configUrl);
-        if (cacheManagerUrl != null) {
-            try {
-                return cachingProvider.getCacheManager(cacheManagerUrl.toURI(), null);
-            } catch (URISyntaxException e) {
-                log.warn("Config URI {} is not syntactically correct, fallback to last default option", cacheManagerUri, e);
+            return configPath.toUri();
+        } else {
+            URL resource = getClass().getClassLoader().getResource(configUrl);
+            if (resource != null) {
+                try {
+                    return resource.toURI();
+                } catch (URISyntaxException e) {
+                    log.warn("Config URI {} is not syntactically correct, fallback to last default option", cacheManagerUri, e);
+                }
             }
         }
-        return cachingProvider.getCacheManager();
+
+        log.warn("Cannot find EhCache config {}", cacheManagerUri);
+        return null;
     }
 }

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Triple;
 import org.ehcache.config.builders.CacheConfigurationBuilder;
+import org.ehcache.config.builders.ResourcePoolsBuilder;
 import org.ehcache.expiry.Duration;
 import org.ehcache.xml.XmlConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -36,6 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.sdl.web.client.configuration.ClientConstants.Cache.DEFAULT_CACHE_URI;
 import static java.nio.file.Files.exists;
+import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
 import static org.ehcache.expiry.Duration.of;
 import static org.ehcache.expiry.Expirations.timeToLiveExpiration;
 import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguration;
@@ -142,23 +144,24 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     @NotNull
     private <V, K> CacheConfigurationBuilder<K, V> buildDefaultConfigCacheConfiguration(Class<K> keyType, Class<V> valueType) {
-        URI configUri = getConfigUri(cachingConfigurationFile);
-        if (configUri == null) {
-            log.warn("Cannot load {}, using fallback (CIL) configuration", cachingConfigurationFile);
-            return buildDefaultCilCacheConfiguration(keyType, valueType);
-        }
-
         try {
-            return new XmlConfiguration(configUri.toURL()).newCacheConfigurationBuilderFromTemplate("default", keyType, valueType);
-        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException | MalformedURLException e) {
-            log.warn("Exception happened when creating cache, using fallback (CIL) configuration", e);
-            return buildDefaultCilCacheConfiguration(keyType, valueType);
+            return buildConfigCacheConfiguration(cachingConfigurationFile, keyType, valueType);
+        } catch (MalformedURLException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
+            log.warn("Exception happened when creating cache, using fallback configuration", e);
+            return buildFallbackCacheConfiguration(keyType, valueType);
         }
     }
 
     @NotNull
     private <K, V> CacheConfigurationBuilder<K, V> buildDefaultCilCacheConfiguration(Class<K> keyType, Class<V> valueType) {
-        CacheConfigurationBuilder<K, V> configurationBuilder = buildDefaultConfigCacheConfiguration(keyType, valueType);
+        CacheConfigurationBuilder<K, V> configurationBuilder;
+        try {
+            configurationBuilder = buildConfigCacheConfiguration(
+                    getCacheConfiguration().getProperty(ClientConstants.Cache.CLIENT_CACHE_URI), keyType, valueType);
+        } catch (ConfigurationException | IllegalAccessException | InstantiationException | ClassNotFoundException | MalformedURLException e) {
+            log.warn("Cannot create a default CIL cache configuration, fallback to default configuration", e);
+            configurationBuilder = buildDefaultConfigCacheConfiguration(keyType, valueType);
+        }
 
         Integer cacheExpirationPeriod = this.cilCacheProvider.getCacheExpirationPeriod();
         Duration timeToLive;
@@ -170,6 +173,22 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
         }
 
         return configurationBuilder.withExpiry(timeToLiveExpiration(timeToLive));
+    }
+
+    @NotNull
+    private <V, K> CacheConfigurationBuilder<K, V> buildConfigCacheConfiguration(String config, Class<K> keyType, Class<V> valueType)
+            throws MalformedURLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+        URI configUri = getConfigUri(config);
+        if (configUri == null) {
+            throw new MalformedURLException("Cannot load " + config);
+        }
+
+        return new XmlConfiguration(configUri.toURL()).newCacheConfigurationBuilderFromTemplate("default", keyType, valueType);
+    }
+
+    private <K, V> CacheConfigurationBuilder<K, V> buildFallbackCacheConfiguration(Class<K> keyType, Class<V> valueType) {
+        return newCacheConfigurationBuilder(keyType, valueType, ResourcePoolsBuilder.heap(10000))
+                .withExpiry(timeToLiveExpiration(of(5, TimeUnit.MINUTES)));
     }
 
     private CacheManager getCacheManager(String cacheManagerUri) {

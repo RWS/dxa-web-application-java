@@ -8,7 +8,6 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.support.CompositeCacheManager;
-import org.springframework.cache.support.NoOpCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -38,7 +37,7 @@ public class TridionCacheConfiguration extends CachingConfigurerSupport {
         CompositeCacheManager compositeCacheManager = new CompositeCacheManager(
                 new SpringJCacheManagerAdapter(defaultCacheProvider));
         compositeCacheManager.setFallbackToNoOpCache(true);
-        return defaultCacheProvider.isCacheEnabled() ? compositeCacheManager : new NoOpCacheManager();
+        return compositeCacheManager;
     }
 
     @Override

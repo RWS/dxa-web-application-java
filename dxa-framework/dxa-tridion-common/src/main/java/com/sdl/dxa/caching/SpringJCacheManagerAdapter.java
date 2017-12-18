@@ -4,6 +4,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.jcache.JCacheCache;
+import org.springframework.cache.support.NoOpCache;
 
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +26,9 @@ public class SpringJCacheManagerAdapter implements CacheManager {
     @Override
     public Cache getCache(String name) {
         if (!caches.containsKey(name)) {
-            caches.putIfAbsent(name, new JCacheCache(cacheProvider.getCache(name)));
+            Cache cache = cacheProvider.isCacheEnabled(name) ?
+                    new JCacheCache(cacheProvider.getCache(name)) : new NoOpCache(name);
+            caches.putIfAbsent(name, cache);
         }
         return caches.get(name);
     }

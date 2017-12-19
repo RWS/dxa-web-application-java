@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.annotation.PostConstruct;
 import javax.cache.Cache;
 
 /**
@@ -34,6 +35,12 @@ public abstract class SimpleCacheWrapper<B, V> {
     @Autowired
     public void setCacheProvider(NamedCacheProvider cacheProvider) {
         this.cacheProvider = cacheProvider;
+    }
+
+    @PostConstruct
+    public void init() {
+        log.debug("Creating of cache {} on startup", getCacheName());
+        getCache();
     }
 
     /**

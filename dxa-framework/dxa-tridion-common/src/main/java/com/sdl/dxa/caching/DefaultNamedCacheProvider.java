@@ -146,7 +146,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
     private <V, K> CacheConfigurationBuilder<K, V> buildDefaultConfigCacheConfiguration(Class<K> keyType, Class<V> valueType) {
         try {
             return buildConfigCacheConfiguration(cachingConfigurationFile, keyType, valueType);
-        } catch (MalformedURLException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
+        } catch (ConfigurationException | MalformedURLException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
             log.warn("Exception happened when creating cache, using fallback configuration", e);
             return buildFallbackCacheConfiguration(keyType, valueType);
         }
@@ -177,13 +177,17 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     @NotNull
     private <V, K> CacheConfigurationBuilder<K, V> buildConfigCacheConfiguration(String config, Class<K> keyType, Class<V> valueType)
-            throws MalformedURLException, IllegalAccessException, ClassNotFoundException, InstantiationException {
+            throws MalformedURLException, IllegalAccessException, ClassNotFoundException, InstantiationException, ConfigurationException {
         URI configUri = getConfigUri(config);
         if (configUri == null) {
-            throw new MalformedURLException("Cannot load " + config);
+            throw new MalformedURLException("Cannot load because it doesn't exist: " + config);
         }
 
-        return new XmlConfiguration(configUri.toURL()).newCacheConfigurationBuilderFromTemplate("default", keyType, valueType);
+        CacheConfigurationBuilder<K, V> cacheConfigurationBuilder = new XmlConfiguration(configUri.toURL()).newCacheConfigurationBuilderFromTemplate("default", keyType, valueType);
+        if (cacheConfigurationBuilder == null) {
+            throw new ConfigurationException("Cannot load 'default' template from " + config);
+        }
+        return cacheConfigurationBuilder;
     }
 
     private <K, V> CacheConfigurationBuilder<K, V> buildFallbackCacheConfiguration(Class<K> keyType, Class<V> valueType) {

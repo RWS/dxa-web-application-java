@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <cd-cil.version>10.1.0-1012</cd-cil.version>
+        <cd-cil.version>8.5.0-1011</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>

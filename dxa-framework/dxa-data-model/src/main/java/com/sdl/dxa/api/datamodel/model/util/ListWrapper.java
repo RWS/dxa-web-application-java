@@ -44,7 +44,7 @@ public class ListWrapper<T> implements DelegatesToList<T> {
 
     public ListWrapper(List<T> values) {
         this.values = new ArrayList<>();
-        values.forEach(this.values::add);
+        this.values.addAll(values);
     }
 
     /**

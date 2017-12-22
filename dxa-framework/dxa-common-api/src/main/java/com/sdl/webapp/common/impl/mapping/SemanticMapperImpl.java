@@ -152,7 +152,9 @@ public class SemanticMapperImpl implements SemanticMapper {
                         if (xPath == null) {
                             xPath = semanticField.getXPath("");
                         }
-                        xpmPropertyMetadata.put(field.getName(), xPath);
+                        if (fieldDataProvider.getSemanticSchema().getSemanticFields().containsKey(fieldSemantics)) {
+                            xpmPropertyMetadata.put(field.getName(), xPath);
+                        }
                         if (isFieldSet) {
                             break;
                         }

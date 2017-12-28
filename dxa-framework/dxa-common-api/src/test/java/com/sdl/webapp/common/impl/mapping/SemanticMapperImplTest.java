@@ -11,6 +11,7 @@ import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperties
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -64,7 +65,7 @@ public class SemanticMapperImplTest {
         return new SemanticField(fieldName, path, multiValue, values);
     }
 
-    private void mockData(Field field, SemanticField semanticField, FieldData fieldData, FieldData... rest) throws NoSuchFieldException, SemanticMappingException {
+    private void mockData(Field field, SemanticField semanticField, FieldData fieldData, FieldData... rest) throws SemanticMappingException {
         when(fieldDataProvider.getFieldData(semanticField, new TypeDescriptor(field))).thenReturn(fieldData, rest);
     }
 
@@ -72,6 +73,9 @@ public class SemanticMapperImplTest {
     @Test
     public void shouldCorrectlyResolveSemanticMappings() throws SemanticMappingException, NoSuchFieldException {
         //given
+        SemanticSchema semanticSchema = new SemanticSchema(1L, "not important", Collections.emptySet(), TestArticle.getSemantics());
+        when(fieldDataProvider.getSemanticSchema()).thenReturn(semanticSchema);
+
         // headline in Article
         mockData(TestArticle.class.getDeclaredField("headline"), TestArticle.SEMANTIC_FIELDS.get("headline"), new FieldData("HEADLINE", "tcm:Content/HeadlineField"));
 

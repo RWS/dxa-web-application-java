@@ -119,6 +119,10 @@ public class PublicApiDoclet {
 
         if (obj instanceof Object[]) {
             Class<?> componentType = expect.getComponentType();
+            if (componentType == null) {
+                return null;
+            }
+
             Object[] array = (Object[]) obj;
             List<Object> list = new ArrayList<>(array.length);
             for (Object entry : array) {

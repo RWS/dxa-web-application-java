@@ -53,20 +53,20 @@ import java.util.Locale;
 
 /**
  * @author edwin
- * <p/>
+ * <p></p>
  * The BinaryController is responsible for serving binary files (images,
  * pdf documents etc) that are managed by Tridion. These binaries are
  * stored in the broker database. On first request the binary is read
  * from the broker database and is stored on file system in a location
  * specified by <code>binaryRootFolder</code>.
- * <p/>
+ * <p></p>
  * The first request will be time consuming as the cached version of the
  * file needs to be written to filesystem. For every subsequent request
  * the cached version will be served.
- * <p/>
+ * <p></p>
  * The request mapping supports an array of strings, but we need a way
  * to configure this without modifying source code.
- * <p/>
+ * <p></p>
  * Important Note: concrete implementing classes will need to add the
  * {@literal @RequestMapping} annotations!
  */
@@ -93,64 +93,6 @@ public class AbstractBinaryController {
      */
     private boolean removeContextPath = false;
 
-    public void getBinary(final HttpServletRequest request, final HttpServletResponse response) throws
-            ItemNotFoundException {
-        String binaryPath = getBinaryPath(request);
-        LOG.debug(">> {} binary {}", request.getMethod(), binaryPath);
-
-        int resizeToWidth = -1;
-        if (request.getParameterMap().containsKey("resizeToWidth")) {
-            resizeToWidth = Integer.parseInt(request.getParameter("resizeToWidth"));
-        }
-
-        Binary binary;
-
-        int publicationId = publicationResolver.discoverPublicationIdByImagesUrl(binaryPath);
-        if (publicationId == Constants.UNKNOWN_PUBLICATION_ID) {
-            throw new ItemNotFoundException("Could not resolve Publication Id for binary path");
-        }
-        String path = String.format("%s/%d%s", binaryRootFolder, publicationId, binaryPath);
-        if (resizeToWidth > -1) {
-            path = insertIntoPath(path, request.getParameter("resizeToWidth"));
-        }
-
-        try {
-
-            binary = binaryFactory.getBinaryByURL(binaryPath, publicationId);
-
-            if (binary == null) {
-                response.setStatus(HttpStatus.NOT_FOUND.value());
-                LOG.error("Item not found:" + binaryPath);
-                return;
-            }
-
-            // Check if anything changed, if nothing changed return a 304
-            String modifiedHeader = request.getHeader(Constants.HEADER_IF_MODIFIED_SINCE);
-            if (StringUtils.isNotEmpty(modifiedHeader) && createDateFormat().format(binary.getLastPublishedDate()
-                    .toDate()).equals(modifiedHeader)) {
-                response.setStatus(HttpStatus.NOT_MODIFIED.value());
-                return;
-            }
-
-            fillResponse(request, response, binary, path, resizeToWidth);
-            // Close when used only.
-            IOUtils.closeQuietly(response.getOutputStream());
-        } catch (IOException | FactoryException e) {
-            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
-            LOG.error(e.getMessage(), e);
-            throw new ItemNotFoundException(e);
-        }
-    }
-
-    private String insertIntoPath(String path, String toInsert) {
-        int i = path.lastIndexOf('.');
-        if (i == 0) {
-            LOG.warn("path to binary has no extension: " + path);
-            return path;
-        }
-        return path.substring(0, i + 1) + toInsert + path.substring(i);
-    }
-
     private static String getImageType(String path) {
         int i = path.lastIndexOf('.');
         if (i == 0) {
@@ -158,45 +100,6 @@ public class AbstractBinaryController {
             return "png";
         }
         return path.substring(i + 1);
-    }
-
-    private void fillResponse(final HttpServletRequest request, final HttpServletResponse response, final Binary
-            binary, final String path, int resizeToWidth) throws IOException {
-        InputStream content = null;
-        try {
-            final long contentLength;
-            if (isUseBinaryStorage()) {
-                // Check last modified dates
-                File binaryFile = new File(path);
-                if (!binaryFile.exists() || binary.getLastPublishedDate().isAfter(binaryFile.lastModified())) {
-                    if (resizeToWidth == -1) {
-                        saveBinary(binary, binaryFile);
-                    } else {
-                        writeResizedImage(binary, path, resizeToWidth, binaryFile);
-                    }
-                }
-                content = new FileInputStream(binaryFile);
-                contentLength = binaryFile.length();
-            } else {
-                content = binary.getBinaryData().getInputStream();
-                contentLength = binary.getBinaryData().getDataSize();
-            }
-
-            response.setContentType(getContentType(binary, path, request));
-            response.setHeader(Constants.HEADER_CONTENT_LENGTH, Long.toString(contentLength));
-            response.setHeader(Constants.HEADER_LAST_MODIFIED, createDateFormat().format(binary.getLastPublishedDate
-                    ().toDate()));
-            response.setStatus(HttpStatus.OK.value());
-
-            // Write binary data to output stream
-            byte[] buffer = new byte[response.getBufferSize()];
-            int len;
-            while ((len = content.read(buffer)) != -1) {
-                response.getOutputStream().write(buffer, 0, len);
-            }
-        } finally {
-            IOUtils.closeQuietly(content);
-        }
     }
 
     private static void writeResizedImage(final Binary binary, final String path, final int resizeToWidth, final File
@@ -274,39 +177,6 @@ public class AbstractBinaryController {
         return ret;
     }
 
-    private String getContentType(final Binary binary, final String path, final HttpServletRequest request) {
-        String mimeType = null;
-        ServletContext servletContext = request.getSession().getServletContext();
-
-        try {
-            mimeType = binary.getMimeType();
-            if (mimeType == null) {
-                File binaryFile = new File(path);
-                mimeType = servletContext.getMimeType(binaryFile.getName());
-            }
-        } catch (Exception e) {
-            LOG.error("Error occurred getting mime-type", e);
-        }
-
-        if (mimeType == null) {
-            LOG.warn("Could not identify mime type for binary file '" + path + "'");
-        }
-
-        return mimeType;
-    }
-
-    protected String getBinaryPath(final HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        if (this.removeContextPath) {
-            String contextPath = request.getContextPath();
-            if (StringUtils.isNotEmpty(contextPath)) {
-                requestURI = requestURI.substring(contextPath.length());
-            }
-        }
-
-        return requestURI;
-    }
-
     private static void saveBinary(final Binary binary, final File binaryFile) throws IOException {
         BufferedOutputStream bufferedOutput = null;
 
@@ -345,6 +215,142 @@ public class AbstractBinaryController {
         }
 
         LOG.info("Binary is stored in '{}'", binaryFile.getPath());
+    }
+
+    public void getBinary(final HttpServletRequest request, final HttpServletResponse response) throws
+            ItemNotFoundException {
+        String binaryPath = getBinaryPath(request);
+        LOG.debug(">> {} binary {}", request.getMethod(), binaryPath);
+
+        int resizeToWidth = -1;
+        if (request.getParameterMap().containsKey("resizeToWidth")) {
+            resizeToWidth = Integer.parseInt(request.getParameter("resizeToWidth"));
+        }
+
+        Binary binary;
+
+        int publicationId = publicationResolver.discoverPublicationIdByImagesUrl(binaryPath);
+        if (publicationId == Constants.UNKNOWN_PUBLICATION_ID) {
+            throw new ItemNotFoundException("Could not resolve Publication Id for binary path");
+        }
+        String path = String.format("%s/%d%s", binaryRootFolder, publicationId, binaryPath);
+        if (resizeToWidth > -1) {
+            path = insertIntoPath(path, request.getParameter("resizeToWidth"));
+        }
+
+        try {
+
+            binary = binaryFactory.getBinaryByURL(binaryPath, publicationId);
+
+            if (binary == null) {
+                response.setStatus(HttpStatus.NOT_FOUND.value());
+                LOG.error("Item not found:" + binaryPath);
+                return;
+            }
+
+            // Check if anything changed, if nothing changed return a 304
+            String modifiedHeader = request.getHeader(Constants.HEADER_IF_MODIFIED_SINCE);
+            if (StringUtils.isNotEmpty(modifiedHeader) && createDateFormat().format(binary.getLastPublishedDate()
+                    .toDate()).equals(modifiedHeader)) {
+                response.setStatus(HttpStatus.NOT_MODIFIED.value());
+                return;
+            }
+
+            fillResponse(request, response, binary, path, resizeToWidth);
+        } catch (IOException | FactoryException e) {
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            LOG.error(e.getMessage(), e);
+            throw new ItemNotFoundException(e);
+        } finally {
+            try {
+                if (response != null && response.getOutputStream() != null) {
+                    response.getOutputStream().close();
+                }
+            } catch (IOException ioe) {
+                LOG.error("Failed to close servlet output stream", ioe);
+            }
+        }
+    }
+
+    private String insertIntoPath(String path, String toInsert) {
+        int i = path.lastIndexOf('.');
+        if (i == 0) {
+            LOG.warn("path to binary has no extension: " + path);
+            return path;
+        }
+        return path.substring(0, i + 1) + toInsert + path.substring(i);
+    }
+
+    private void fillResponse(final HttpServletRequest request, final HttpServletResponse response, final Binary
+            binary, final String path, int resizeToWidth) throws IOException {
+        InputStream content = null;
+        try {
+            final long contentLength;
+            if (isUseBinaryStorage()) {
+                // Check last modified dates
+                File binaryFile = new File(path);
+                if (!binaryFile.exists() || binary.getLastPublishedDate().isAfter(binaryFile.lastModified())) {
+                    if (resizeToWidth == -1) {
+                        saveBinary(binary, binaryFile);
+                    } else {
+                        writeResizedImage(binary, path, resizeToWidth, binaryFile);
+                    }
+                }
+                content = new FileInputStream(binaryFile);
+                contentLength = binaryFile.length();
+            } else {
+                content = binary.getBinaryData().getInputStream();
+                contentLength = binary.getBinaryData().getDataSize();
+            }
+
+            response.setContentType(getContentType(binary, path, request));
+            response.setHeader(Constants.HEADER_CONTENT_LENGTH, Long.toString(contentLength));
+            response.setHeader(Constants.HEADER_LAST_MODIFIED, createDateFormat().format(binary.getLastPublishedDate
+                    ().toDate()));
+            response.setStatus(HttpStatus.OK.value());
+
+            // Write binary data to output stream
+            byte[] buffer = new byte[response.getBufferSize()];
+            int len;
+            while ((len = content.read(buffer)) != -1) {
+                response.getOutputStream().write(buffer, 0, len);
+            }
+        } finally {
+            IOUtils.closeQuietly(content);
+        }
+    }
+
+    private String getContentType(final Binary binary, final String path, final HttpServletRequest request) {
+        String mimeType = null;
+        ServletContext servletContext = request.getSession().getServletContext();
+
+        try {
+            mimeType = binary.getMimeType();
+            if (mimeType == null) {
+                File binaryFile = new File(path);
+                mimeType = servletContext.getMimeType(binaryFile.getName());
+            }
+        } catch (Exception e) {
+            LOG.error("Error occurred getting mime-type", e);
+        }
+
+        if (mimeType == null) {
+            LOG.warn("Could not identify mime type for binary file '" + path + "'");
+        }
+
+        return mimeType;
+    }
+
+    protected String getBinaryPath(final HttpServletRequest request) {
+        String requestURI = request.getRequestURI();
+        if (this.removeContextPath) {
+            String contextPath = request.getContextPath();
+            if (StringUtils.isNotEmpty(contextPath)) {
+                requestURI = requestURI.substring(contextPath.length());
+            }
+        }
+
+        return requestURI;
     }
 
     public void setBinaryRootFolder(final String binaryRootFolder) {

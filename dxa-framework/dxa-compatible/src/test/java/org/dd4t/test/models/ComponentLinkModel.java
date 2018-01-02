@@ -8,20 +8,17 @@ import org.dd4t.databind.annotations.ViewModelProperty;
  *
  * @author R. Kempees
  */
-@ViewModel (
-        viewModelNames = {"generic-content"},
-        rootElementNames = {"Generic"},
-        setComponentObject = true)
+@ViewModel(viewModelNames = {"generic-content"}, rootElementNames = {""}, setComponentObject = true)
 public class ComponentLinkModel extends AbstractModelClass {
 
     @ViewModelProperty
     private String heading;
 
-    public String getHeading () {
+    public String getHeading() {
         return heading;
     }
 
-    public void setHeading (final String heading) {
+    public void setHeading(final String heading) {
         this.heading = heading;
     }
 }

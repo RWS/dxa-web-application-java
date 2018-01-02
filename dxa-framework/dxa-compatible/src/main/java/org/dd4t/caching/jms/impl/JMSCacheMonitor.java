@@ -40,7 +40,7 @@ public class JMSCacheMonitor {
 
             MQServerStatus previousServerStatus = MQServerStatus.UP;
             try {
-                while (true) {
+                while (!Thread.currentThread().isInterrupted()) {
                     LOG.debug("JMS MQ server is {} ", serverStatus);
 
                     if (cacheInvalidator != null) {
@@ -57,6 +57,7 @@ public class JMSCacheMonitor {
                 }
             } catch (InterruptedException e) {
                 LOG.debug("Cache monitor thread interrupted");
+                Thread.currentThread().interrupt();
             }
         }
     };
@@ -64,26 +65,27 @@ public class JMSCacheMonitor {
     private Thread thread;
 
     @PostConstruct
-    public void init(){
+    public void init() {
         LOG.debug("Create new instance");
 
-        LOG.debug("Using Monitor interval (or cache refresh time when JMS is down) = {} seconds", monitorServiceInterval, monitorServiceInterval / 1000);
+        LOG.debug("Using Monitor interval (or cache refresh time when JMS is down) = {} seconds",
+                monitorServiceInterval, monitorServiceInterval / 1000);
         thread = new Thread(monitor);
         thread.setName("Dd4tWebAppJMSMonitorThread");
-        
+
         LOG.debug("Start cache monitor thread");
 
         thread.start();
     }
-    
-    public int getMonitorServiceInterval() {
-		return monitorServiceInterval;
-	}
 
-	public void setMonitorServiceInterval(int monitorServiceInterval) {
-		this.monitorServiceInterval = monitorServiceInterval;
-	}
-	
+    public int getMonitorServiceInterval() {
+        return monitorServiceInterval;
+    }
+
+    public void setMonitorServiceInterval(int monitorServiceInterval) {
+        this.monitorServiceInterval = monitorServiceInterval;
+    }
+
     public boolean isMQServerUp() {
         return serverStatus == MQServerStatus.UP;
     }

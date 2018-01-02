@@ -18,7 +18,6 @@ package org.dd4t.contentmodel.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.Item;
 import org.simpleframework.xml.Element;
@@ -45,7 +44,7 @@ public abstract class BaseItem implements Item, Serializable {
     @JsonProperty ("CustomProperties")
     private Map<String, Object> customProperties = new HashMap<>();
 
-    @JsonProperty (value = "ExtensionData", required = false)
+    @JsonProperty(value = "ExtensionData")
     @JsonDeserialize (contentAs = FieldSetImpl.class)
     private Map<String, FieldSet> extensionData;
 

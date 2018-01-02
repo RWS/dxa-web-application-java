@@ -19,7 +19,6 @@ package org.dd4t.contentmodel.impl;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-
 import org.dd4t.contentmodel.Category;
 import org.dd4t.contentmodel.Keyword;
 import org.simpleframework.xml.ElementList;
@@ -53,7 +52,7 @@ public class CategoryImpl extends BaseItem implements Category, Serializable {
 
     // DD4T 2.0.2 template support
     @JsonSetter ("KeywordValues")
-    private void setKeywordValues (List<Keyword> keywordValues) {
+    public void setKeywordValues(List<Keyword> keywordValues) {
         this.keywords = keywordValues;
     }
 }

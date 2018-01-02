@@ -18,6 +18,8 @@ package org.dd4t.caching.impl;
 
 import org.dd4t.caching.CacheElement;
 
+import java.io.Serializable;
+
 /**
  * Wrapper around a 'payload' object that represents the actual object in the
  * cache. The payload is wrapped inside this cache element object, so we can
@@ -26,7 +28,7 @@ import org.dd4t.caching.CacheElement;
  *
  * @author Mihai Cadariu
  */
-public class CacheElementImpl<T> implements CacheElement<T> {
+public class CacheElementImpl<T> implements CacheElement<T>, Serializable {
     private boolean isExpired;
     private boolean isNull;
     private T payload;

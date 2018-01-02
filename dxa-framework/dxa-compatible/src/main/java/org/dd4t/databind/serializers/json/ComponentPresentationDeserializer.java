@@ -57,7 +57,7 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
     private Class<? extends ComponentTemplate> concreteComponentTemplateClass = null;
     private Class<? extends Component> concreteComponentClass = null;
 
-    protected JsonDataBinder dataBinder;
+    protected transient JsonDataBinder dataBinder;
 
 	public ComponentPresentationDeserializer (Class<? extends ComponentPresentation> componentPresentation, Class<? extends ComponentTemplate> componentTemplateClass, Class<? extends Component> concreteComponentClass, JsonDataBinder databinder) {
         super(componentPresentation);
@@ -92,20 +92,7 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
                 rawComponentData = element.getValue();
                 LOG.trace("Data is: {}", rawComponentData);
             } else if (key.equalsIgnoreCase(DataBindConstants.COMPONENT_TEMPLATE_NODE_NAME)) {
-                LOG.debug("Deserializing Component Template Data.");
-                JsonParser parser = null;
-                try {
-                    parser = element.getValue().traverse();
-                    final ComponentTemplate componentTemplate = JsonDataBinder.getGenericMapper().readValue(parser, this.concreteComponentTemplateClass);
-
-                    if (componentPresentation != null) {
-                        componentPresentation.setComponentTemplate(componentTemplate);
-                    }
-                    viewModelName = dataBinder.findComponentTemplateViewName(componentTemplate);
-                } finally {
-                    IOUtils.closeQuietly(parser);
-                }
-                LOG.debug("Found view model name: " + viewModelName);
+                viewModelName = getViewModelName(componentPresentation, element);
             } else if (key.equalsIgnoreCase(DataBindConstants.IS_DYNAMIC_NODE)) {
                 final String isDynamic = element.getValue().asText().toLowerCase();
                 setIsDynamic(componentPresentation, isDynamic);
@@ -140,6 +127,27 @@ public class ComponentPresentationDeserializer extends StdDeserializer<Component
             throw new IOException(e);
         }
         return componentPresentation;
+    }
+
+    private String getViewModelName(final ComponentPresentation componentPresentation, final Map.Entry<String,
+            JsonNode> element) throws IOException {
+        final String viewModelName;
+        LOG.debug("Deserializing Component Template Data.");
+        JsonParser parser = null;
+        try {
+            parser = element.getValue().traverse();
+            final ComponentTemplate componentTemplate = JsonDataBinder.getGenericMapper().readValue(parser,
+                    this.concreteComponentTemplateClass);
+
+            if (componentPresentation != null) {
+                componentPresentation.setComponentTemplate(componentTemplate);
+            }
+            viewModelName = dataBinder.findComponentTemplateViewName(componentTemplate);
+        } finally {
+            IOUtils.closeQuietly(parser);
+        }
+        LOG.debug("Found view model name: " + viewModelName);
+        return viewModelName;
     }
 
     private void renderComponentData (final ComponentPresentation componentPresentation, final JsonNode rawComponentData, final String viewModelName, final String rootElementName) throws IOException, SerializationException {

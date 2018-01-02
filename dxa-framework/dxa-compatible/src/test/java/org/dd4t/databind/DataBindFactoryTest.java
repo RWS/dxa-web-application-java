@@ -43,7 +43,7 @@ public class DataBindFactoryTest {
     private static ApplicationContext applicationContext;
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         applicationContext = new ClassPathXmlApplicationContext("application-context.xml");
     }
 
@@ -90,7 +90,7 @@ public class DataBindFactoryTest {
 
     @Test
     public void testEmbeddedSerialization() throws URISyntaxException, SerializationException, IOException {
-        String page = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("test.json").toURI()));
+        String page = FileUtils.readFileToString(new File(ClassLoader.getSystemResource("fulltestencoded.json").toURI()));
         DataBinder databinder = applicationContext.getBean(DataBinder.class);
         Page deserializedPage = databinder.buildPage(CompressionUtils.decompressGZip(CompressionUtils.decodeBase64
                 (page)), PageImpl.class);

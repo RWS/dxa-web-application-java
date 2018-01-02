@@ -47,9 +47,6 @@ public class RichTextResolver extends BaseProcessor implements Processor {
 
     private static final Logger LOG = LoggerFactory.getLogger(RichTextResolver.class);
 
-    public RichTextResolver() {
-    }
-
     /**
      * Recursively resolves all components links.
      *

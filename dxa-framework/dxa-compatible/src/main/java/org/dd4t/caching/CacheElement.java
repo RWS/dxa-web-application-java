@@ -16,6 +16,8 @@
 
 package org.dd4t.caching;
 
+import java.io.Serializable;
+
 /**
  * Wrapper around a 'payload' object that represents the actual object in the
  * cache. The payload is wrapped inside this cache element object, so we can
@@ -24,20 +26,21 @@ package org.dd4t.caching;
  *
  * @author Mihai Cadariu
  */
-public interface CacheElement<T> {
-    T getPayload ();
+public interface CacheElement<T> extends Serializable {
 
-    void setPayload (T payload);
+    T getPayload();
 
-    boolean isExpired ();
+    void setPayload(T payload);
 
-    void setExpired (boolean update);
-    
+    boolean isExpired();
+
+    void setExpired(boolean update);
+
     boolean isNull();
-    
+
     void setNull(boolean isnull);
 
-    String getDependentKey ();
+    String getDependentKey();
 
-    void setDependentKey (String dependentKey);
+    void setDependentKey(String dependentKey);
 }

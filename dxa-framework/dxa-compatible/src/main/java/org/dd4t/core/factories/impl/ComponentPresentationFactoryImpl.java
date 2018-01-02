@@ -73,9 +73,9 @@ public class ComponentPresentationFactoryImpl extends BaseFactory implements Com
      * Get the component by the component uri and template uri.
      * but NO CT rendering (so from the Dynamic Template Tab) should take place,
      * as this is done in a View
-     * <p/>
+     * <p></p>
      * Null values should be handled in the controller
-     * <p/>
+     * <p></p>
      * The Content Service should use ComponentPresentationFactory.getComponentPresentation(int publicationId, int
      * componentId, int templateId)
      * OR

@@ -32,7 +32,7 @@ task help(type: MavenHelpTask)
 task buildFramework(type: MavenBuildTask) {
     configurations = [
             ["dxa-oss-parent"],
-            ["dxa-model-service-client"],
+            ["dxa-model-service-client", "dxa-javadoc-tools"],
             ["dxa-framework", "dxa-dd4t-ms-provider"],
             ["> dxa-webapp > clean org.apache.maven.plugins:maven-archetype-plugin:2.4:create-from-project -Darchetype.properties=archetype.properties"]
     ]
@@ -73,7 +73,14 @@ task buildArchetype(type: MavenBuildTask, dependsOn: prepareArchetype) {
     configurations = [["dxa-webapp/target/generated-sources/archetype"]]
 }
 
-task buildDxa(type: MavenBuildTask, dependsOn: [buildFramework, buildArchetype])
+task buildPublicApiDocs(type: MavenBuildTask, dependsOn: buildFramework) {
+    configurations = [
+            //[ "> dxa-framework/dxa-common-api > javadoc:javadoc@publicApi" ],
+            //[ "> dxa-framework/dxa-tridion-provider > javadoc:javadoc@publicApi" ]
+    ]
+}
+
+task buildDxa(type: MavenBuildTask, dependsOn: [buildFramework, buildArchetype, buildPublicApiDocs])
 
 def mavenSettings = {
     if (project.hasProperty('command')) {

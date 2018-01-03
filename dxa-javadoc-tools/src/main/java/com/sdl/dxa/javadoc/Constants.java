@@ -1,4 +1,4 @@
-package com.sdl.dxa.builder.javadoc;
+package com.sdl.dxa.javadoc;
 
 public class Constants {
 

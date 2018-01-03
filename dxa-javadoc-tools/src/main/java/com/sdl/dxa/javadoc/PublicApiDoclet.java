@@ -1,4 +1,4 @@
-package com.sdl.dxa.builder.javadoc;
+package com.sdl.dxa.javadoc;
 
 import com.sun.javadoc.ClassDoc;
 import com.sun.javadoc.Doc;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static com.sdl.dxa.builder.javadoc.Constants.PUBLIC_API_TAG;
+import static com.sdl.dxa.javadoc.Constants.PUBLIC_API_TAG;
 
 /**
  * Doclet that supports custom Javadoc tag {@code dxa.publicApi} to decide whether the element should be included in JavaDoc.

@@ -1,5 +1,3 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
 group 'com.sdl.dxa'
 version version
 
@@ -204,11 +202,6 @@ publishing {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    if (Os.isFamily(Os.FAMILY_MAC)) {
-        compile files("${System.properties['java.home']}/../Classes/classes.jar")
-    } else {
-        compile files("${System.properties['java.home']}/../lib/tools.jar")
-    }
     compile 'org.jdom:jdom2:2.0.5'
     compile 'jaxen:jaxen:1.1.4'
     compile group: 'commons-validator', name: 'commons-validator', version: '1.5.1'

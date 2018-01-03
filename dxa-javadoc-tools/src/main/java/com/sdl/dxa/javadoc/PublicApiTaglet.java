@@ -1,4 +1,4 @@
-package com.sdl.dxa.builder.javadoc;
+package com.sdl.dxa.javadoc;
 
 import com.sun.javadoc.Tag;
 import com.sun.tools.doclets.Taglet;

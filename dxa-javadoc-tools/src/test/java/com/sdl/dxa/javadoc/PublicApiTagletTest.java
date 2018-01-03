@@ -1,18 +1,18 @@
-package com.sdl.dxa.builder.javadoc;
+package com.sdl.dxa.javadoc;
 
 import com.sun.javadoc.Tag;
 import com.sun.tools.doclets.Taglet;
+import junit.framework.TestCase;
+import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.sdl.dxa.builder.javadoc.Constants.PUBLIC_API_TAG;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class PublicApiTagletTest {
 
@@ -25,8 +25,8 @@ public class PublicApiTagletTest {
         PublicApiTaglet.register(tagletMap);
 
         //then
-        assertTrue(tagletMap.containsKey(PUBLIC_API_TAG));
-        assertTrue(tagletMap.get(PUBLIC_API_TAG) instanceof PublicApiTaglet);
+        TestCase.assertTrue(tagletMap.containsKey(Constants.PUBLIC_API_TAG));
+        TestCase.assertTrue(tagletMap.get(Constants.PUBLIC_API_TAG) instanceof PublicApiTaglet);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class PublicApiTagletTest {
         String name = new PublicApiTaglet().getName();
 
         //then
-        assertEquals(PUBLIC_API_TAG, name);
+        Assert.assertEquals(Constants.PUBLIC_API_TAG, name);
     }
 
     @Test
@@ -65,10 +65,10 @@ public class PublicApiTagletTest {
         String template = String.format("<dt><strong>%s</strong><dd><table cellpadding=2 cellspacing=0><tr><td>%s</td></tr></table></dd></dt>", header, "%s");
 
         PublicApiTaglet taglet = new PublicApiTaglet();
-        Tag tag1 = mock(Tag.class);
-        when(tag1.text()).thenReturn("tag1");
-        Tag tag2 = mock(Tag.class);
-        when(tag2.text()).thenReturn("tag2");
+        Tag tag1 = Mockito.mock(Tag.class);
+        Mockito.when(tag1.text()).thenReturn("tag1");
+        Tag tag2 = Mockito.mock(Tag.class);
+        Mockito.when(tag2.text()).thenReturn("tag2");
 
         //when
 

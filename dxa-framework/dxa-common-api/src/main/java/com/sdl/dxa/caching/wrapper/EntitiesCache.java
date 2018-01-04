@@ -5,6 +5,11 @@ import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.webapp.common.api.model.EntityModel;
 import org.springframework.stereotype.Component;
 
+/**
+ * Default implementation of entities cache for manual access.
+ *
+ * @dxa.publicApi
+ */
 @Component
 public class EntitiesCache extends SimpleCacheWrapper<EntityModelData, EntityModel> {
 

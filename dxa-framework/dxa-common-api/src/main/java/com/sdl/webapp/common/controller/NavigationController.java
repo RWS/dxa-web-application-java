@@ -36,6 +36,7 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODE
  * </p>
  *
  * @see ControllerUtils
+ * @dxa.publicApi
  */
 @Controller
 @RequestMapping(INCLUDE_MAPPING + "/Navigation")

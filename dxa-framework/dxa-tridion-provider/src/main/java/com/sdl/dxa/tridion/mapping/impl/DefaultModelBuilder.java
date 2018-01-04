@@ -57,6 +57,8 @@ import static com.sdl.webapp.common.util.StringUtils.dashify;
 
 /**
  * Default implementation of {@link EntityModelBuilder} and {@link PageModelBuilder}.
+ *
+ * @dxa.publicApi
  */
 @Slf4j
 @Service

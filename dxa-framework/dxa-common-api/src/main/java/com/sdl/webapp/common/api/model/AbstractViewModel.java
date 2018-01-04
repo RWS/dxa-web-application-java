@@ -23,6 +23,8 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Basic abstract implementation of the {@link ViewModel}. Default extending point for your custom {@link PageModel}.
+ *
+ * @dxa.publicApi
  */
 @Data
 @NoArgsConstructor

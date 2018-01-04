@@ -16,6 +16,7 @@ import java.util.TreeSet;
 
 /**
  * Represents a special kind of {@link SitemapItem} which is used for Taxonomy Nodes.
+ * @dxa.publicApi
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

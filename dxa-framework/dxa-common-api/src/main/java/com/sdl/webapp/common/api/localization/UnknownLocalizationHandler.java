@@ -7,6 +7,7 @@ import javax.servlet.ServletRequest;
  * <p>This extension point allows an implementation to handle requests for an unknown {@link Localization} and resolve it,
  * and optionally, in case localization is not resolvable, provide a fallback exception
  * that will be used to render error page instead of the default HTTP 404 with a plain-text error message.</p>
+ * @dxa.publicApi
  */
 public interface UnknownLocalizationHandler {
 

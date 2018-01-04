@@ -1,5 +1,7 @@
 package com.sdl.dxa.javadoc;
 
+import com.sun.javadoc.ClassDoc;
+import com.sun.javadoc.Doc;
 import com.sun.javadoc.Tag;
 import com.sun.tools.doclets.Taglet;
 
@@ -14,8 +16,6 @@ import java.util.stream.Collectors;
  * @see <a href="https://maven.apache.org/plugins/maven-javadoc-plugin/examples/taglet-configuration.html">How to use custom taglet with Maven</a>
  */
 public class PublicApiTaglet implements Taglet {
-
-    private static final String HEADER = "This is DXA Public API";
 
     @SuppressWarnings("unused")
     public static void register(Map<String, Taglet> tagletMap) {
@@ -70,7 +70,7 @@ public class PublicApiTaglet implements Taglet {
      */
     @Override
     public String toString(Tag tag) {
-        return toString(tag.text());
+        return toString(getHeader(tag), tag.text());
     }
 
     /**
@@ -89,16 +89,22 @@ public class PublicApiTaglet implements Taglet {
             return toString(tags[0]);
         }
 
-        return toString("<ul><li>" +
+        return toString(getHeader(tags[0]), "<ul><li>" +
                 Arrays.stream(tags)
                         .map(Tag::text)
                         .collect(Collectors.joining("</li><li>")) +
                 "</li></ul>");
     }
 
-    private String toString(String body) {
+    private String getHeader(Tag tag) {
+        Doc holder = tag.holder();
+        return holder instanceof ClassDoc && Utils.forcesChildrenToBePublic(((ClassDoc) holder)) ? Constants.HEADER_WITH_CHILDREN
+                : Constants.HEADER;
+    }
+
+    private String toString(String header, String body) {
         return "<dt>" +
-                "<strong>" + HEADER + "</strong>" +
+                "<strong>" + header + "</strong>" +
                 "<dd>" +
                 "<table cellpadding=2 cellspacing=0>" +
                 "<tr>" +

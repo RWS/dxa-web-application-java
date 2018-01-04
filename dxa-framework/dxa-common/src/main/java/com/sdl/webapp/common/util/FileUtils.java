@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * Utilities to work with files.
+ * @dxa.publicApi
  */
 public final class FileUtils {
 

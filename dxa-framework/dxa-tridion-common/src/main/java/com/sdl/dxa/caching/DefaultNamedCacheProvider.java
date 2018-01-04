@@ -42,6 +42,11 @@ import static org.ehcache.expiry.Duration.of;
 import static org.ehcache.expiry.Expirations.timeToLiveExpiration;
 import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguration;
 
+/**
+ * Default implementation of DXA cache.
+ *
+ * @dxa.publicApi
+ */
 @Slf4j
 @Component
 public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader implements NamedCacheProvider {

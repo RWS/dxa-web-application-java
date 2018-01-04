@@ -9,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Slf4j
-/**
- * <p>DefaultMediaHelper class.</p>
- */
 @Component
 public class DefaultMediaHelper implements MediaHelper {
 

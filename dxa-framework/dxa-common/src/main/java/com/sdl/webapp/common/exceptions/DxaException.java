@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.exceptions;
 
+/**
+ * @dxa.publicApi
+ */
 public class DxaException extends Exception {
 
     public DxaException() {

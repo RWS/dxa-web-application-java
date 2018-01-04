@@ -24,6 +24,7 @@ import java.util.List;
  * If the Model Builder gets {@code null}, it has to construct the View Model.
  * {@linkplain DefaultModelBuilder} should normally be the first.
  *
+ * @dxa.publicApi
  * @see EntityModelBuilder
  * @see PageModelBuilder
  */

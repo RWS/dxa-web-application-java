@@ -24,6 +24,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
  * List controller for the Core area that handles include requests to <code>/system/mvc/Framework/List/{regionName}/{entityId}</code>.
  *
  * @see ControllerUtils
+ * @dxa.publicApi
  */
 @Slf4j
 @Controller

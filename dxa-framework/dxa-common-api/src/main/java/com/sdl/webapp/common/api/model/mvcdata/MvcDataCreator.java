@@ -8,6 +8,7 @@ import java.util.Map;
 
 /**
  * <p>Used to create {@link MvcData} instances.</p>
+ * @dxa.publicApi
  */
 public final class MvcDataCreator {
 

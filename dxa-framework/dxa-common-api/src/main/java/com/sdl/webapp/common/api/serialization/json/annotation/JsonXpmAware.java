@@ -9,6 +9,7 @@ import java.lang.annotation.Target;
 
 /**
  * Tells {@link XpmAwareJsonFilter} to hide the specified element if XPM is not enabled.
+ * @dxa.publicApi
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.CONSTRUCTOR, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)

@@ -9,6 +9,7 @@ import java.util.Map;
 
 /**
  * Very generic Entity Model which maps all CM fields to a Settings dictionary (effectively bypassing semantic mapping).
+ * @dxa.publicApi
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

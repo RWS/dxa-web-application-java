@@ -12,6 +12,9 @@ import java.util.regex.Pattern;
 import static java.lang.Integer.parseInt;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/**
+ * @dxa.publicApi
+ */
 public final class StringUtils {
 
     /**

@@ -6,6 +6,8 @@ import lombok.Getter;
 
 /**
  * ContextClaims with a 'device' aspect.
+ *
+ * @dxa.publicApi
  */
 public class DeviceClaims extends ContextClaims {
 

@@ -7,6 +7,8 @@ import java.util.Collection;
 
 /**
  * Cache provider fox DXA that prefers cache name over types.
+ *
+ * @dxa.publicApi
  */
 public interface NamedCacheProvider {
 
@@ -20,6 +22,7 @@ public interface NamedCacheProvider {
      * @param <K>       generic type for key
      * @param <V>       generic type for value
      * @return cache instance, never {@code null} by convention
+     * @dxa.publicApi
      */
     <K, V> Cache<K, V> getCache(String cacheName, Class<K> keyType, Class<V> valueType);
 
@@ -29,6 +32,7 @@ public interface NamedCacheProvider {
      *
      * @param cacheName name of the cache to be created
      * @return cache instance, never {@code null} by convention
+     * @dxa.publicApi
      */
     Cache<Object, Object> getCache(String cacheName);
 
@@ -38,6 +42,7 @@ public interface NamedCacheProvider {
      * State of the caches is not guaranteed, thus they may be closed.
      *
      * @return collection of own current caches
+     * @dxa.publicApi
      */
     Collection<Cache> getOwnCaches();
 
@@ -45,6 +50,7 @@ public interface NamedCacheProvider {
      * Checks if the cache is enabled on the global level and not for the specific caches.
      *
      * @return whether caching is globally not disabled
+     * @dxa.publicApi
      */
     boolean isCacheEnabled();
 
@@ -53,6 +59,7 @@ public interface NamedCacheProvider {
      *
      * @param cacheName name of the cache
      * @return whether caching is enabled
+     * @dxa.publicApi
      */
     boolean isCacheEnabled(String cacheName);
 
@@ -60,6 +67,7 @@ public interface NamedCacheProvider {
      * Current cache manager used by this provider.
      *
      * @return current cache manager
+     * @dxa.publicApi
      */
     CacheManager getCacheManager();
 }

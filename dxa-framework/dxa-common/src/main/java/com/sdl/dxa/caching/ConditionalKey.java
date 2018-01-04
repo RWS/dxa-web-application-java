@@ -4,7 +4,9 @@ import lombok.Builder;
 import lombok.Value;
 
 /**
- * Entity that determines if this key should be cached.
+ * Key that determines if the value with this key may be cached. Used for dynamic refusal of caching.
+ *
+ * @dxa.publicApi
  */
 @Value
 @Builder

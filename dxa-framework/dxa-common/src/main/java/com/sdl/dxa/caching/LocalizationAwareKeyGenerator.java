@@ -9,6 +9,11 @@ import org.springframework.stereotype.Component;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 
+/**
+ * Default implementation of localization-aware cache key generator.
+ *
+ * @dxa.publicApi
+ */
 @Component
 public class LocalizationAwareKeyGenerator implements KeyGenerator {
 

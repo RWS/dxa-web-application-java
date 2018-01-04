@@ -1,5 +1,8 @@
 package com.sdl.webapp.common.markup.html;
 
+/**
+ * @dxa.publicApi
+ */
 public abstract class HtmlRenderable {
 
     // Cached HTML string, to avoid rendering multiple times
@@ -22,9 +25,6 @@ public abstract class HtmlRenderable {
 
     public abstract String renderHtml();
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String toString() {
         return getClass().getSimpleName() + ": " + toHtml();

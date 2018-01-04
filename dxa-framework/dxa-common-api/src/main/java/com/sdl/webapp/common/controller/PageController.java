@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -61,6 +60,7 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
  * Page controller is a main controller and a entry point to DXA. This handles requests that come from the client.
+ * @dxa.publicApi
  */
 @Controller
 @Slf4j
@@ -199,7 +199,7 @@ public class PageController extends BaseController {
 
     @RequestMapping(value = {"/navigation.json", "/{path}/navigation.json"}, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public SitemapItem handleGetNavigationJson(HttpServletRequest request) throws NavigationProviderException, JsonProcessingException {
+    public SitemapItem handleGetNavigationJson(HttpServletRequest request) throws NavigationProviderException {
         log.trace("handleGetNavigationJson");
         ignoreByName(request, "XpmMetadata", "XpmPropertyMetadata");
         return navigationProvider.getNavigationModel(webRequestContext.getLocalization());

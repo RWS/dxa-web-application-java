@@ -4,6 +4,7 @@ import com.sdl.webapp.common.exceptions.DxaException;
 
 /**
  * Thrown when an error occurs related to a content provider.
+ * @dxa.publicApi
  */
 public class ContentProviderException extends DxaException {
 

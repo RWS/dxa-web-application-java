@@ -5,6 +5,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Link resolver that resolves links to components.
+ *
+ * @dxa.publicApi
  */
 @FunctionalInterface
 public interface LinkResolver {

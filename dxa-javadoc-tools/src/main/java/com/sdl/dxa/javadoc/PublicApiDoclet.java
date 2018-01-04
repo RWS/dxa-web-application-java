@@ -68,7 +68,7 @@ public class PublicApiDoclet {
         if (doc instanceof RootDoc) {
             return true;
         }
-        if (doc.tags(PUBLIC_API_TAG).length > 0) {
+        if (_isDeclaredPublicApi(doc)) {
             return true;
         }
         if (doc instanceof PackageDoc && parentPackages.contains(doc.name())) {
@@ -82,15 +82,26 @@ public class PublicApiDoclet {
             ClassDoc classDoc = (ClassDoc) doc;
             if (classDoc.methods() != null) {
                 Optional<MethodDoc> methodDoc = Arrays.stream(classDoc.methods())
-                        .filter(mDoc -> isPublicApiDoc(mDoc, parentPackages, parentClasses))
+                        .filter(PublicApiDoclet::_isDeclaredPublicApi)
                         .findAny();
                 if (methodDoc.isPresent()) {
-                    _memorizeParents(methodDoc.get(), parentPackages, parentClasses);
-                    return true;
+                    return _memorizeParents(methodDoc.get(), parentPackages, parentClasses);
                 }
             }
         }
+        if (doc instanceof MethodDoc) {
+            //let's check if this is a method of an interface that's a part of public API
+            ClassDoc containingClass = ((MethodDoc) doc).containingClass();
+            //we can decide for interfaces or final util classes
+            boolean possibleToGuess = Utils.forcesChildrenToBePublic(containingClass);
+            return possibleToGuess && _isDeclaredPublicApi(containingClass) &&
+                    _memorizeParents(doc, parentPackages, parentClasses);
+        }
         return false;
+    }
+
+    private static boolean _isDeclaredPublicApi(Doc doc) {
+        return doc.tags(PUBLIC_API_TAG).length > 0;
     }
 
     private static boolean _memorizeParents(Doc doc, Set<String> parentPackages, Set<String> parentClasses) {

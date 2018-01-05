@@ -5,7 +5,7 @@ import lombok.Setter;
 import lombok.experimental.Accessors;
 
 /**
- * <p>MediaHelper interface.</p>
+ * @dxa.publicApi
  */
 public interface MediaHelper {
 

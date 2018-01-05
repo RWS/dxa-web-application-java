@@ -6,6 +6,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
+ * Application context holder that allows to get the Spring Context in a static context.
+ *
  * @dxa.publicApi
  */
 @Component

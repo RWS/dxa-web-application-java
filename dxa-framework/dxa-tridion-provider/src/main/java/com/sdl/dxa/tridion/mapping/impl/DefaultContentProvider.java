@@ -62,6 +62,11 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 
+/**
+ * Content Provider default implementation. Look at {@link ContentProvider} documentation for details.
+ *
+ * @dxa.publicApi
+ */
 @Service
 @Slf4j
 public class DefaultContentProvider implements ContentProvider {
@@ -160,6 +165,11 @@ public class DefaultContentProvider implements ContentProvider {
         this.entityEvaluators = entityEvaluators;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
         PageModel pageModel = _loadPage(path, localization);
@@ -172,7 +182,10 @@ public class DefaultContentProvider implements ContentProvider {
     }
 
     /**
+     * {@inheritDoc}
      * If you need copying cache for dynamic logic, use {@link CopyingCache}.
+     *
+     * @dxa.publicApi
      */
     @Override
     public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
@@ -184,6 +197,11 @@ public class DefaultContentProvider implements ContentProvider {
         return entityModel;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     public <T extends EntityModel> void populateDynamicList(DynamicList<T, SimpleBrokerQuery> dynamicList, Localization localization) throws ContentProviderException {
         if (localization == null) {
@@ -198,6 +216,11 @@ public class DefaultContentProvider implements ContentProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {

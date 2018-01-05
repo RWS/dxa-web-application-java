@@ -56,7 +56,7 @@ import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 import static com.sdl.webapp.common.util.StringUtils.dashify;
 
 /**
- * Default implementation of {@link EntityModelBuilder} and {@link PageModelBuilder}.
+ * Default implementation of {@link EntityModelBuilder} and {@link PageModelBuilder}. Priority of this builder is always {@code highest precedence}.
  *
  * @dxa.publicApi
  */
@@ -87,6 +87,11 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         return HIGHEST_PRECEDENCE;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     public <T extends EntityModel> T buildEntityModel(@Nullable T originalEntityModel, EntityModelData modelData,
                                                       @Nullable Class<T> expectedClass) throws DxaException {
@@ -227,6 +232,11 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
         LocalizationAwareCacheKey cacheKey = pagesCopyingCache.getSpecificKey(modelData);

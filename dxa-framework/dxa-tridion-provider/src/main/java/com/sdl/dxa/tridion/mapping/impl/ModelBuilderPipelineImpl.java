@@ -46,6 +46,11 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
         this.pageModelBuilders = pageModelBuilders;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     @NotNull
     public PageModel createPageModel(@NotNull PageModelData modelData) {
@@ -57,12 +62,22 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
         return pageModel; //NOSONAR
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     @NotNull
     public <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData) throws DxaException {
         return createEntityModel(modelData, null);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @NotNull
     @Override
     public <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData, @Nullable Class<T> expectedClass) throws DxaException {

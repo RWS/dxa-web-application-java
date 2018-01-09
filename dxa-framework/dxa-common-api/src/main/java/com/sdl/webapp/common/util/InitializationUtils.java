@@ -5,7 +5,6 @@ import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.io.ClassPathResource;
@@ -205,9 +204,12 @@ public final class InitializationUtils {
     private static void addActiveProfiles(ConfigurableWebApplicationContext servletAppContext, String activeProfiles) {
         if (!isEmpty(activeProfiles)) {
             ConfigurableEnvironment environment = servletAppContext.getEnvironment();
-            Arrays.stream(activeProfiles.split(","))
-                    .filter(StringUtils::isNotEmpty)
-                    .forEach(profile -> environment.addActiveProfile(profile.trim()));
+            for (String profile : activeProfiles.split(",")) {
+                String trimmed = profile.trim();
+                if (!trimmed.isEmpty()) {
+                    environment.addActiveProfile(trimmed);
+                }
+            }
         }
     }
 

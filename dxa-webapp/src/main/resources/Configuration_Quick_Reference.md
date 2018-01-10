@@ -1,6 +1,6 @@
 # DXA Configuration manual
 
-The framework and web application is configurable, and this readme briefly describes how you configure your application.
+The framework and web application are configurable, and this readme briefly describes how you configure your application.
 
 Application is configured differently in different parts of the system:
 - SDL Web CIL configuration

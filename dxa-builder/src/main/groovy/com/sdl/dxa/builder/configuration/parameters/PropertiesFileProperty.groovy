@@ -20,13 +20,11 @@ class PropertiesFileProperty extends Property {
 
         layout.load(new InputStreamReader(new FileInputStream(file)))
 
-        def properties = new Properties()
-        properties.load(file.newDataInputStream())
-
         if (this.append) {
-            def old = properties.get(this.name)
-            if (old == null || !(old as String).contains(value)) {
-                config.setProperty(this.name, "${(old == null || old == '' ? '' : old + ', ')}${value}")
+            def list = config.getList(this.name)
+            if (!list.contains(value)) {
+                list.add(value)
+                config.setProperty(this.name, list)
             }
         } else {
             config.setProperty(this.name, value)

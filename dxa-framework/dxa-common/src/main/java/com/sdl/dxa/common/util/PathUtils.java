@@ -17,6 +17,8 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * This utils class holds helper-methods for the logic related to operations with page paths.
+ *
+ * @dxa.publicApi
  */
 @Slf4j
 public final class PathUtils {
@@ -59,7 +61,7 @@ public final class PathUtils {
     @Contract("null ,null -> null; _,_ -> !null")
     public static String combinePath(String url, String path) {
         String securedUrl, securedPath;
-        if(url == null && path == null) {
+        if (url == null && path == null) {
             return null;
         }
 

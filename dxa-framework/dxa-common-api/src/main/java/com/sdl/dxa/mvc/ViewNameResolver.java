@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.model.MvcData;
 /**
  * Resolves a view name based on MVC data and view's type.
  *
+ * @dxa.publicApi
  * @since 1.5
  */
 @FunctionalInterface

@@ -23,11 +23,13 @@ import org.dd4t.contentmodel.FieldSet;
 import org.dd4t.contentmodel.FieldType;
 import org.dd4t.contentmodel.Multimedia;
 import org.dd4t.core.databind.BaseViewModel;
+import org.dd4t.core.resolvers.LinkResolver;
 import org.dd4t.databind.util.TypeUtils;
 import org.dd4t.databind.viewmodel.base.ModelFieldMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,9 +40,13 @@ import java.util.List;
  * @author R. Kempees
  */
 public abstract class AbstractModelConverter {
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractModelConverter.class);
 
-    protected static String getFieldKeyForModelProperty (final String fieldName, final ModelFieldMapping m) {
+    @Resource(name = "linkResolver")
+    private LinkResolver linkResolver;
+
+    protected static String getFieldKeyForModelProperty(final String fieldName, final ModelFieldMapping m) {
         final String fieldKey;
         if (m.getViewModelProperty() == null) {
             fieldKey = fieldName;
@@ -54,7 +60,8 @@ public abstract class AbstractModelConverter {
         return fieldKey;
     }
 
-    protected static <T extends BaseViewModel> void addToListTypeField (final T model, final Field modelField, final Object fieldValue) throws IllegalAccessException {
+    protected static <T extends BaseViewModel> void addToListTypeField(final T model, final Field modelField, final
+    Object fieldValue) throws IllegalAccessException {
         List list = (List) modelField.get(model);
         if (list == null) {
             list = new ArrayList();
@@ -65,7 +72,8 @@ public abstract class AbstractModelConverter {
         }
     }
 
-    protected <T extends BaseViewModel> void setFieldValue (final T model, final Field f, final Object fieldValue, final FieldType fieldType) throws IllegalAccessException {
+    protected <T extends BaseViewModel> void setFieldValue(final T model, final Field f, final Object fieldValue,
+                                                           final FieldType fieldType) throws IllegalAccessException {
 
         boolean isMultiValued = false;
         Class<?> fieldTypeOfFieldToSet = TypeUtils.determineTypeOfField(f);
@@ -73,7 +81,8 @@ public abstract class AbstractModelConverter {
             isMultiValued = true;
         }
 
-        if (fieldType == FieldType.EMBEDDED && (FieldSet.class.isAssignableFrom(fieldTypeOfFieldToSet) || Embedded.class.isAssignableFrom(fieldTypeOfFieldToSet))) {
+        if (fieldType == FieldType.EMBEDDED && (FieldSet.class.isAssignableFrom(fieldTypeOfFieldToSet) || Embedded
+                .class.isAssignableFrom(fieldTypeOfFieldToSet))) {
             setEmbeddedFieldSetOnModelField(model, f, (org.dd4t.contentmodel.Field) fieldValue, isMultiValued);
         } else if (fieldValue instanceof org.dd4t.contentmodel.Field) {
             setFieldValueOnField(model, f, (org.dd4t.contentmodel.Field) fieldValue, isMultiValued);
@@ -83,7 +92,8 @@ public abstract class AbstractModelConverter {
     }
 
 
-    private <T extends BaseViewModel> void setEmbeddedFieldSetOnModelField (final T model, final Field f, final org.dd4t.contentmodel.Field fieldValue, final boolean isMultiValued) throws IllegalAccessException {
+    private <T extends BaseViewModel> void setEmbeddedFieldSetOnModelField(final T model, final Field f, final org
+            .dd4t.contentmodel.Field fieldValue, final boolean isMultiValued) throws IllegalAccessException {
         LOG.debug("Setting Embedded Field on Model field");
 
         Object valueToSet;
@@ -105,7 +115,8 @@ public abstract class AbstractModelConverter {
         }
     }
 
-    private <T extends BaseViewModel> void setComponentOnField (final T model, final Field f, final Component fieldValue, final boolean isMultiValued) throws IllegalAccessException {
+    private <T extends BaseViewModel> void setComponentOnField(final T model, final Field f, final Component
+            fieldValue, final boolean isMultiValued) throws IllegalAccessException {
         LOG.debug("Setting component or multimedia on field");
 
         Object valueToSet = fieldValue;
@@ -123,7 +134,8 @@ public abstract class AbstractModelConverter {
         }
     }
 
-    private <T extends BaseViewModel> void setFieldValueOnField (final T model, final Field f, final org.dd4t.contentmodel.Field fieldValue, final boolean isMultiValued) throws IllegalAccessException {
+    private <T extends BaseViewModel> void setFieldValueOnField(final T model, final Field f, final org.dd4t
+            .contentmodel.Field fieldValue, final boolean isMultiValued) throws IllegalAccessException {
         List<Object> values = fieldValue.getValues();
 
         if (values != null && !values.isEmpty()) {
@@ -136,5 +148,13 @@ public abstract class AbstractModelConverter {
         } else {
             LOG.debug("No value(s) found!");
         }
+    }
+
+    public LinkResolver getLinkResolver() {
+        return linkResolver;
+    }
+
+    public void setLinkResolver(final LinkResolver linkResolver) {
+        this.linkResolver = linkResolver;
     }
 }

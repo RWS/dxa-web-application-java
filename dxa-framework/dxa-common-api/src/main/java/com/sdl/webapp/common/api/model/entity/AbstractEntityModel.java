@@ -27,6 +27,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 
 /**
  * Abstract implementation of entity model. This is a basic extension point to create your models.
+ * @dxa.publicApi
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

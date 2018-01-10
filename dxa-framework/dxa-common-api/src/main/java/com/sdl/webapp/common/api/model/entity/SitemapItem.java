@@ -23,6 +23,9 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
+/**
+ * @dxa.publicApi
+ */
 @Data
 @ToString(exclude = {"parent"})
 @EqualsAndHashCode(callSuper = true, of = {"title", "originalTitle", "type", "publishedDate"})

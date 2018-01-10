@@ -8,6 +8,7 @@ import java.util.Map;
 
 /**
  * SemanticMapper is intended to help getting a DXA entity filled up with data using semantic mappings of a model.
+ * @dxa.publicApi
  */
 @FunctionalInterface
 public interface SemanticMapper {

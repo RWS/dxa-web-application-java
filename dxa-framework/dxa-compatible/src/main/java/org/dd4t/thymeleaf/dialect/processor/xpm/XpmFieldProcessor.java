@@ -1,7 +1,5 @@
 package org.dd4t.thymeleaf.dialect.processor.xpm;
 
-import java.util.List;
-
 import org.dd4t.core.services.PropertiesService;
 import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
 import org.dd4t.mvc.utils.XPMRenderer;
@@ -19,6 +17,8 @@ import org.thymeleaf.standard.expression.IStandardExpression;
 import org.thymeleaf.standard.expression.IStandardExpressionParser;
 import org.thymeleaf.standard.expression.StandardExpressions;
 import org.thymeleaf.templatemode.TemplateMode;
+
+import java.util.List;
 
 /**
  * Custom processor that generates the Experience Manager tags on the page level
@@ -97,7 +97,7 @@ public class XpmFieldProcessor extends AbstractElementTagProcessor {
 	        structureHandler.replaceWith(model, false);
         } 
         catch(IllegalArgumentException ex) {
-        	LOG.debug(createMessage(context));
+            LOG.error(createMessage(context));
         }
     }
 

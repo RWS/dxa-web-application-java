@@ -91,4 +91,9 @@ public class NoCacheProvider implements PayloadCacheProvider, CacheInvalidator, 
     public void addDependency (final String cacheKey, final String dependencyKey) {
         LOG.debug("Nothing to add by design.");
     }
+
+    @Override
+    public boolean isEnabled() {
+        return false;
+    }
 }

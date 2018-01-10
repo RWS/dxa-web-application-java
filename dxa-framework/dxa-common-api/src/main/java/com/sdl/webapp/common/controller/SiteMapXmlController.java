@@ -23,9 +23,12 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
 
 /**
  * Controller which returns the sitemap in XML format.
+ *
+ * @dxa.publicApi
  */
 @Controller
 public class SiteMapXmlController {
+
     private static final Logger LOG = LoggerFactory.getLogger(SiteMapXmlController.class);
 
     private final WebRequestContext webRequestContext;

@@ -3,7 +3,6 @@ package org.dd4t.test.models;
 import org.dd4t.contentmodel.Keyword;
 import org.dd4t.databind.annotations.ViewModel;
 import org.dd4t.databind.annotations.ViewModelProperty;
-import org.dd4t.databind.viewmodel.base.TridionViewModelBase;
 import org.joda.time.DateTime;
 
 import java.util.List;
@@ -14,11 +13,11 @@ import java.util.List;
  * @author R. Kempees
  */
 
-@ViewModel (
-        viewModelNames = {"generic-content"},
-        rootElementNames = {"Generic"},
-        setComponentObject = true)
-public class Generic extends TridionViewModelBase {
+@ViewModel(viewModelNames = {"generic-content"}, rootElementNames = {"Generic"}, setComponentObject = true)
+public class Generic extends AbstractModelClass {
+
+    @ViewModelProperty(isComponentLinkUrl = true)
+    private String urlForThisComponent;
 
     @ViewModelProperty
     private String heading;
@@ -42,8 +41,15 @@ public class Generic extends TridionViewModelBase {
     @ViewModelProperty (entityFieldName = "multimedialink")
     private Image multimedia;
 
+    @ViewModelProperty(entityFieldName = "multimedialink", resolveLinkForComponentLinkField = true)
+    private String multimediaUrl;
+
     @ViewModelProperty (entityFieldName = "componentlink")
     private AbstractModelClass componentLink;
+
+
+    @ViewModelProperty(entityFieldName = "componentlink", resolveLinkForComponentLinkField = true)
+    private String componentLinkUrl;
 
     @ViewModelProperty
     List<EmbeddedOne> embedded;
@@ -55,77 +61,99 @@ public class Generic extends TridionViewModelBase {
 
     }
 
-    public String getHeading () {
+    public String getHeading() {
         return heading;
     }
 
-    public void setHeading (final String heading) {
+    public void setHeading(final String heading) {
         this.heading = heading;
     }
 
-    public List<String> getBody () {
+    public List<String> getBody() {
         return body;
     }
 
-    public void setBody (final List<String> body) {
+    public void setBody(final List<String> body) {
         this.body = body;
     }
 
-    public double getNumeric () {
+    public double getNumeric() {
         return numeric;
     }
 
-    public void setNumeric (final double numeric) {
+    public void setNumeric(final double numeric) {
         this.numeric = numeric;
     }
 
-    public DateTime getDate () {
+    public DateTime getDate() {
         return date;
     }
 
-    public void setDate (final DateTime date) {
+    public void setDate(final DateTime date) {
         this.date = date;
     }
 
-    public String getExternalLink () {
+    public String getExternalLink() {
         return externalLink;
     }
 
-    public void setExternalLink (final String externalLink) {
+    public void setExternalLink(final String externalLink) {
         this.externalLink = externalLink;
     }
 
-    public Image getMultimedia () {
+    public Image getMultimedia() {
         return multimedia;
     }
 
-    public void setMultimedia (final Image multimedia) {
+    public void setMultimedia(final Image multimedia) {
         this.multimedia = multimedia;
     }
 
-    public AbstractModelClass getComponentLink () {
+    public String getMultimediaUrl() {
+        return multimediaUrl;
+    }
+
+    public void setMultimediaUrl(final String multimediaUrl) {
+        this.multimediaUrl = multimediaUrl;
+    }
+
+    public AbstractModelClass getComponentLink() {
         return componentLink;
     }
 
-    public void setComponentLink (final AbstractModelClass componentLink) {
+    public void setComponentLink(final AbstractModelClass componentLink) {
         this.componentLink = componentLink;
     }
 
+    public String getComponentLinkUrl() {
+        return componentLinkUrl;
+    }
 
-    public List<EmbeddedOne> getEmbedded () {
+    public void setComponentLinkUrl(final String componentLinkUrl) {
+        this.componentLinkUrl = componentLinkUrl;
+    }
+
+    public List<EmbeddedOne> getEmbedded() {
         return embedded;
     }
 
-    public void setEmbedded (final List<EmbeddedOne> embedded) {
+    public void setEmbedded(final List<EmbeddedOne> embedded) {
         this.embedded = embedded;
     }
 
-    public Keyword getKeyword () {
+    public Keyword getKeyword() {
         return keyword;
     }
 
-    public void setKeyword (final Keyword keyword) {
+    public void setKeyword(final Keyword keyword) {
         this.keyword = keyword;
     }
 
+    public String getUrlForThisComponent() {
+        return urlForThisComponent;
+    }
+
+    public void setUrlForThisComponent(final String urlForThisComponent) {
+        this.urlForThisComponent = urlForThisComponent;
+    }
 }

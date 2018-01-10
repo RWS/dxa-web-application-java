@@ -1,13 +1,15 @@
 package org.dd4t.caching;
 
+import java.io.Serializable;
+
 /**
  * Interface determines the necessary data to act as a cache dependency
- * 
- * @author Rogier Oudshoorn
  *
+ * @author Rogier Oudshoorn
  */
-public interface CacheDependency {
-	public int getPublicationId();
-	
-	public int getItemId();
+public interface CacheDependency extends Serializable {
+
+    int getPublicationId();
+
+    int getItemId();
 }

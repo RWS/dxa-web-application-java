@@ -13,9 +13,12 @@ import java.util.Objects;
 import java.util.Set;
 
 /**
- * <p>LogbackRepeatingToSingleFilter class.</p>
+ * Folter for logback to prevent repeating messages.
+ *
+ * @dxa.publicApi
  */
 public class LogbackRepeatingToSingleFilter extends Filter<ILoggingEvent> {
+
     private Set<EventData> events = new HashSet<>(16);
 
     @Setter
@@ -42,7 +45,9 @@ public class LogbackRepeatingToSingleFilter extends Filter<ILoggingEvent> {
     @EqualsAndHashCode
     @AllArgsConstructor
     private static class EventData {
+
         private String message;
+
         private Level level;
     }
 }

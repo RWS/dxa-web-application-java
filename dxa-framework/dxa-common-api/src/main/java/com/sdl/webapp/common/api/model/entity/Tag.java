@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
  * </p>
  *
  * @see KeywordModel
+ * @dxa.publicApi
  */
 @Data
 @EqualsAndHashCode

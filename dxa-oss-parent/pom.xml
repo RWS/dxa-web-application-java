@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <cd-cil.version>8.5.0-1011</cd-cil.version>
+        <cd-cil.version>10.1.0-1012</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
@@ -90,7 +90,7 @@
         <findbugs.annotations.version>2.0.1</findbugs.annotations.version>
         <openpojo.version>0.8.4</openpojo.version>
         <jb-annotations.version>13.0</jb-annotations.version>
-        <jaxen.version>1.1.4</jaxen.version>
+        <jaxen.version>1.1.6</jaxen.version>
         <jdom2.version>2.0.5</jdom2.version>
         <powermock.version>1.6.6</powermock.version>
         <odata_client.version>2.3.4</odata_client.version>
@@ -190,6 +190,33 @@
             <organizationUrl>http://www.sdl.com</organizationUrl>
         </developer>
     </developers>
+
+    <profiles>
+        <profile>
+            <id>default-profile</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <file>
+                    <exists>${java.home}/../lib/tools.jar</exists>
+                </file>
+            </activation>
+            <properties>
+                <toolsjar>${java.home}/../lib/tools.jar</toolsjar>
+            </properties>
+        </profile>
+        <profile>
+            <id>mac-profile</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+                <file>
+                    <exists>${java.home}/../Classes/classes.jar</exists>
+                </file>
+            </activation>
+            <properties>
+                <toolsjar>${java.home}/../Classes/classes.jar</toolsjar>
+            </properties>
+        </profile>
+    </profiles>
 
     <dependencyManagement>
         <dependencies>
@@ -319,6 +346,14 @@
                 <groupId>com.51degrees</groupId>
                 <artifactId>device-detection-core</artifactId>
                 <version>${device-detection.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sun</groupId>
+                <artifactId>tools</artifactId>
+                <version>${java-version}</version>
+                <scope>system</scope>
+                <systemPath>${toolsjar}</systemPath>
             </dependency>
 
             <dependency>
@@ -772,6 +807,35 @@
                             </manifest>
                         </archive>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.0.0-M1</version>
+                    <configuration>
+                        <taglet>com.sdl.dxa.javadoc.PublicApiTaglet</taglet>
+                        <tagletArtifact>
+                            <groupId>com.sdl.dxa</groupId>
+                            <artifactId>dxa-javadoc-tools</artifactId>
+                            <version>${project.version}</version>
+                        </tagletArtifact>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>publicApi</id>
+                            <configuration>
+                                <doclet>com.sdl.dxa.javadoc.PublicApiDoclet</doclet>
+                                <docletArtifact>
+                                    <groupId>com.sdl.dxa</groupId>
+                                    <artifactId>dxa-javadoc-tools</artifactId>
+                                    <version>${project.version}</version>
+                                </docletArtifact>
+                                <useStandardDocletOptions>true</useStandardDocletOptions>
+                                <reportOutputDirectory>${project.reporting.outputDirectory}/publicApi
+                                </reportOutputDirectory>
+                            </configuration>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>

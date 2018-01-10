@@ -17,14 +17,14 @@
 package org.dd4t.core.factories.impl;
 
 import org.dd4t.contentmodel.Item;
+import org.dd4t.core.databind.DataBinder;
 import org.dd4t.core.exceptions.ProcessorException;
 import org.dd4t.core.processors.Processor;
 import org.dd4t.core.processors.RunPhase;
 import org.dd4t.core.request.RequestContext;
 import org.dd4t.providers.PayloadCacheProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,11 +35,15 @@ import java.util.List;
  * @author bjornl, rai
  */
 public abstract class BaseFactory {
-    private static final Logger LOG = LoggerFactory.getLogger(BaseFactory.class);
+
     protected PayloadCacheProvider cacheProvider;
     protected List<Processor> processors;
 
-    public List<Processor> getProcessors () {
+    @Resource
+    protected List<DataBinder> dataBinders;
+
+
+    public List<Processor> getProcessors() {
         if (processors == null) {
             this.processors = new ArrayList<>();
         }
@@ -51,7 +55,7 @@ public abstract class BaseFactory {
      *
      * @param processors list of Processors to run
      */
-    public void setProcessors (List<Processor> processors) {
+    public void setProcessors(List<Processor> processors) {
         this.processors = new ArrayList<>();
 
         for (Processor processor : processors) {
@@ -67,7 +71,7 @@ public abstract class BaseFactory {
      * @throws org.dd4t.core.exceptions.ProcessorException
      */
 
-    public void executeProcessors (Item item, RunPhase runPhase, RequestContext context) throws ProcessorException {
+    public void executeProcessors(Item item, RunPhase runPhase, RequestContext context) throws ProcessorException {
         if (item != null) {
             for (Processor processor : getProcessors()) {
                 if (runPhase == processor.getRunPhase() || processor.getRunPhase() == RunPhase.BOTH) {
@@ -77,14 +81,48 @@ public abstract class BaseFactory {
         }
     }
 
-    private void execute (Processor processor, Item item, RequestContext context) throws ProcessorException {
+
+    /**
+     * Method finds the relevant databinder for given source by calling canDeserialize() on them.
+     *
+     * @param source
+     * @return
+     */
+    protected DataBinder selectDataBinder(final String source) {
+        if (dataBinders == null || dataBinders.isEmpty()) {
+            return null;
+        }
+
+        if (dataBinders.size() == 1) {
+            return dataBinders.get(0);
+        }
+
+        for (DataBinder binder : dataBinders) {
+            if (binder.canDeserialize(source)) {
+                return binder;
+            }
+        }
+
+        return null;
+    }
+
+
+    public List<DataBinder> getDataBinders() {
+        return dataBinders;
+    }
+
+    public void setDataBinders(List<DataBinder> dataBinder) {
+        this.dataBinders = dataBinder;
+    }
+
+    private void execute(Processor processor, Item item, RequestContext context) throws ProcessorException {
         processor.execute(item, context);
     }
 
     /**
      * Set the cache agent.
      */
-    public void setCacheProvider (PayloadCacheProvider cacheAgent) {
+    public void setCacheProvider(PayloadCacheProvider cacheAgent) {
         cacheProvider = cacheAgent;
     }
 }

@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api.localization;
 
 /**
  * Localization resolver.
+ * @dxa.publicApi
  */
 public interface LocalizationResolver {
 

@@ -144,6 +144,73 @@
       }
     }
   ],
+  "Conditions": [
+    {
+      "$type": "TargetGroupCondition",
+      "TargetGroup": {
+        "Description": "moo 1",
+        "Conditions": [
+          {
+            "$type": "TargetGroupCondition",
+            "TargetGroup": {
+              "Description": "moo 1 1"
+            },
+            "Negate": true
+          },
+          {
+            "$type": "TargetGroupCondition",
+            "TargetGroup": {
+              "Description": "moo 1 2"
+            },
+            "Negate": true
+          }
+        ]
+      },
+      "Negate": false
+    },
+    {
+      "$type": "CustomerCharacteristicCondition",
+      "Name": "John Johnson 0",
+      "Value": "JJ0",
+      "Operator": 0,
+      "Negate": true
+    },
+    {
+      "$type": "CustomerCharacteristicCondition",
+      "Name": "John Johnson 1",
+      "Value": "JJ1",
+      "Operator": 1,
+      "Negate": true
+    },
+    {
+      "$type": "CustomerCharacteristicCondition",
+      "Name": "John Johnson 2",
+      "Value": "JJ2",
+      "Operator": 2,
+      "Negate": true
+    },
+    {
+      "$type": "CustomerCharacteristicCondition",
+      "Name": "John Johnson 3",
+      "Value": "JJ3",
+      "Operator": 3,
+      "Negate": true
+    },
+    {
+      "$type": "CustomerCharacteristicCondition",
+      "Name": "John Johnson minint",
+      "Value": "JJminint",
+      "Operator": -2147483648,
+      "Negate": true
+    },
+    {
+      "$type": "KeywordCondition",
+      "Operator": 3,
+      "Value": "kw",
+      "KeywordModelData": null,
+      "Negate": true
+    }
+  ],
   "MvcData": {
     "ViewName": "ViewName",
     "ActionName": "ActionName",

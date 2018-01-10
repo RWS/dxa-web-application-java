@@ -6,6 +6,11 @@ import com.sdl.webapp.common.util.StringUtils;
 
 import java.util.List;
 
+/**
+ * MVC utils to work with String MVC Data.
+ *
+ * @dxa.publicApi
+ */
 public final class MvcUtils {
 
     private MvcUtils() {
@@ -26,8 +31,8 @@ public final class MvcUtils {
     /**
      * Builds a {@link MvcModelData} from a qualified view name.
      *
-     * @param qualifiedViewName fully qualified name in a defined format. Format must be 'ViewName'
-     *                          or 'AreaName:ViewName' or 'AreaName:ControllerName:ViewName.'
+     * @param qualifiedViewName    fully qualified name in a defined format. Format must be 'ViewName'
+     *                             or 'AreaName:ViewName' or 'AreaName:ControllerName:ViewName.'
      * @param replaceSpaceWithDash defines if spaces in ViewName need to be replaced with '-'
      * @return a {@link MvcModelData} with existing fields initiated
      * @throws IllegalArgumentException if format is wrong

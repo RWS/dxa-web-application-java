@@ -53,20 +53,20 @@ import java.util.Locale;
 
 /**
  * @author edwin
- * <p>
+ * <p></p>
  * The BinaryController is responsible for serving binary files (images,
  * pdf documents etc) that are managed by Tridion. These binaries are
  * stored in the broker database. On first request the binary is read
  * from the broker database and is stored on file system in a location
  * specified by <code>binaryRootFolder</code>.
- * <p>
+ * <p></p>
  * The first request will be time consuming as the cached version of the
  * file needs to be written to filesystem. For every subsequent request
  * the cached version will be served.
- * <p>
+ * <p></p>
  * The request mapping supports an array of strings, but we need a way
  * to configure this without modifying source code.
- * <p>
+ * <p></p>
  * Important Note: concrete implementing classes will need to add the
  * {@literal @RequestMapping} annotations!
  */

@@ -25,6 +25,7 @@ public class RenderException extends FactoryException {
     private static final long serialVersionUID = -4298178762605101264L;
 
     public RenderException () {
+        super();
     }
 
     public RenderException (final String message) {

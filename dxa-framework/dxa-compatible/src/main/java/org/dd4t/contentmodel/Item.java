@@ -16,6 +16,7 @@
 
 package org.dd4t.contentmodel;
 
+import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -23,7 +24,7 @@ import java.util.Map;
  *
  * @author Quirijn Slings
  */
-public interface Item {
+public interface Item extends Serializable {
 
     /**
      * Get the tridion id.

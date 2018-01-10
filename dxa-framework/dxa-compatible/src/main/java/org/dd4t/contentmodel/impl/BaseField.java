@@ -244,7 +244,7 @@ public abstract class BaseField implements Field {
 
     // DD4T 2.0.2 template support
     @JsonSetter ("KeywordValues")
-    private void setKeywordValues (List<Keyword> keywordValues) {
+    public void setKeywordValues(List<Keyword> keywordValues) {
         this.keywordValues = keywordValues;
     }
 

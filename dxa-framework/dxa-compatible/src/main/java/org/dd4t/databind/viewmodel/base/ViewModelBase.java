@@ -31,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * test
- *
  * @author R. Kempees
  */
 public abstract class ViewModelBase implements BaseViewModel {
@@ -48,14 +46,14 @@ public abstract class ViewModelBase implements BaseViewModel {
      * The constructor is fired at runtime and adds the associated
      * view model names on the List.
      */
-    public ViewModelBase () {
+    public ViewModelBase() {
         this.viewModelNames = new ArrayList<>();
         this.modelProperties = new HashMap<>();
         setGenericParameters();
         setFieldParameters();
     }
 
-    protected void setGenericParameters () {
+    protected void setGenericParameters() {
         LOG.trace("Setting generic parameters on model.");
         final ViewModel viewModelAnnotation = this.getClass().getAnnotation(ViewModel.class);
         if (null != viewModelAnnotation) {
@@ -74,7 +72,7 @@ public abstract class ViewModelBase implements BaseViewModel {
         }
     }
 
-    private void setFieldParameters () {
+    private void setFieldParameters() {
         Field[] fields = this.getClass().getDeclaredFields();
         for (Field f : fields) {
             ViewModelProperty viewModelProperty = f.getAnnotation(ViewModelProperty.class);
@@ -85,28 +83,32 @@ public abstract class ViewModelBase implements BaseViewModel {
                 } else {
                     viewModelPropertyName = f.getName();
                 }
+
+                if (viewModelProperty.resolveLinkForComponentLinkField()) {
+                    viewModelPropertyName += "__url";
+                }
                 this.modelProperties.put(viewModelPropertyName, new ModelFieldMapping(viewModelProperty, f));
             }
         }
     }
 
     @Override
-    public List<String> getViewNames () {
+    public List<String> getViewNames() {
         return viewModelNames;
     }
 
     @Override
-    public boolean setRawDataOnModel () {
+    public boolean setRawDataOnModel() {
         return setRawDataOnModel;
     }
 
     @Override
-    public void setRawData (Object data) {
+    public void setRawData(Object data) {
         this.rawData = data;
     }
 
     @Override
-    public String getRawDataAsString () {
+    public String getRawDataAsString() {
         if (this.rawData != null) {
             return (String) rawData;
         }
@@ -115,7 +117,7 @@ public abstract class ViewModelBase implements BaseViewModel {
 
 
     @Override
-    public Map<String, Object> getModelProperties () {
+    public Map<String, Object> getModelProperties() {
         return this.modelProperties;
     }
 }

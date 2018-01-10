@@ -20,6 +20,7 @@ import java.util.List;
  *
  * @param <T> resulting type of {@link EntityModel} that is returned by implementor
  * @param <Q> type of a query
+ * @dxa.publicApi
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

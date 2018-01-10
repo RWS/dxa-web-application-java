@@ -10,6 +10,8 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Represents a pipeline/chain of configured Strongly Typed View Model Builders based on DXA R2 Data Model.
+ *
+ * @dxa.publicApi
  */
 public interface ModelBuilderPipeline {
 

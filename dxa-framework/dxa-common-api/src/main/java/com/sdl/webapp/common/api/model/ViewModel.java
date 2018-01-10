@@ -6,6 +6,8 @@ import java.util.Map;
 
 /**
  * Basic DXA View Model. Everything that is a part of entity/region/page models in DXA is a ViewModel.
+ *
+ * @dxa.publicApi
  */
 public interface ViewModel {
 
@@ -23,6 +25,11 @@ public interface ViewModel {
      */
     void setMvcData(MvcData mvcData);
 
+    /**
+     * Returns XPM metadata for the current {@link ViewModel}.
+     *
+     * @return current XPM metadata
+     */
     Map<String, Object> getXpmMetadata();
 
     /**

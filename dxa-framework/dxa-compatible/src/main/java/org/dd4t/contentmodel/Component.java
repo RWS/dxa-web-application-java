@@ -43,6 +43,7 @@ public interface Component extends RepositoryLocalItem {
      *
      * @param schema
      */
+    @Override
     void setSchema (Schema schema);
 
     /**
@@ -137,7 +138,7 @@ public interface Component extends RepositoryLocalItem {
 
     String getEclId ();
 
-    public enum ComponentType {
+    enum ComponentType {
         MULTIMEDIA(0), NORMAL(1), UNKNOWN(-1);
         private final int value;
         private static final Logger LOG = LoggerFactory.getLogger(ComponentType.class);

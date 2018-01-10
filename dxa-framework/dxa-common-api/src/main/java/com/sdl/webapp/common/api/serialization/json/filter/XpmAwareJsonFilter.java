@@ -13,6 +13,8 @@ import org.springframework.stereotype.Component;
 /**
  * Checks if the annotated member is annotated with {@link JsonXpmAware} or, as a fallback option, is named as
  * {@code XpmMetadata} or {@code XpmPropertyMetadata}. If so, checks if this is XPM enabled environment.
+ *
+ * @dxa.publicApi
  */
 @Component
 @Slf4j

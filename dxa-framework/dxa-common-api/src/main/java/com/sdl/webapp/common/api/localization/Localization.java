@@ -8,6 +8,7 @@ import java.util.Map;
 
 /**
  * <p>Localization interface.</p>
+ * @dxa.publicApi
  */
 public interface Localization {
     /**

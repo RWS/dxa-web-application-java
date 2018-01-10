@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * Localization utils class holds helper-methods for the logic related to CM and {@link Localization} operations.
+ * @dxa.publicApi
  */
 @Slf4j
 public final class LocalizationUtils {

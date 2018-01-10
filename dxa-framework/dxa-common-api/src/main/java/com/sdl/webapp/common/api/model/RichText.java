@@ -10,6 +10,9 @@ import org.springframework.util.CollectionUtils;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * @dxa.publicApi
+ */
 @Data
 public class RichText {
 

@@ -128,10 +128,12 @@ public class PageImpl extends BasePage implements GenericPage, HasMetadata, Seri
         this.structureGroup = structureGroup;
     }
 
+    @Override
     public String getUrl() {
         return url;
     }
 
+    @Override
     public void setUrl(String url) {
         this.url = url;
     }

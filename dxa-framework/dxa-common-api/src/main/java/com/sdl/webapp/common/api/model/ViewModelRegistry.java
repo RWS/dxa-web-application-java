@@ -7,6 +7,7 @@ import java.util.Set;
 
 /**
  * Registry that maps view names to view model object types.
+ * @dxa.publicApi
  */
 public interface ViewModelRegistry {
 

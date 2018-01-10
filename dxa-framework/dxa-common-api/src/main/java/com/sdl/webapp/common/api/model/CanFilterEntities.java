@@ -6,6 +6,8 @@ import java.util.Collection;
 
 /**
  * The implementor can filter {@link EntityModel} accepting a list of {@link ConditionalEntityEvaluator}.
+ *
+ * @dxa.publicApi
  */
 public interface CanFilterEntities {
 

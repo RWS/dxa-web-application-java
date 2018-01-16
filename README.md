@@ -4,9 +4,9 @@ SDL Digital Experience Accelerator Java Spring MVC web application
 
 About
 -----
-The SDL Digital Experience Accelerator (DXA) is a reference implementation of SDL Web 8 and SDL Tridion 2013 SP1(*) intended to help you create, design and publish an SDL Web/Tridion-based website quickly.
+The SDL Digital Experience Accelerator (DXA) is a reference implementation of SDL Web (version 8, 8.5, or Cloud) that we provide to help you more quickly create, design, and publish a website based on SDL Web.
 
-It is available for .NET and Java Web Applications and has a modular architecture consisting of a Framework and example web application providing core functionality and separate Modules for additional, optional functionality.
+DXA is available for both .NET and Java web applications. Its modular architecture consists of a framework and example web application, which includes all core SDL Web functionality as well as separate Modules for additional, optional functionality.
 
 This repository contains the source code of the DXA Framework, example web application and Maven archetype for Java. 
 The full DXA distribution (including CM-side items and installation support) is downloadable from the [SDL Appstore site](https://appstore.sdl.com/web-content-management/app/sdl-digital-experience-accelerator-java/737/) (latest version)
